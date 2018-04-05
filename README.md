@@ -2,7 +2,9 @@
 
 Shipping providers and data structures mappers.
 The project is entended to offer a unified interface for different shipping providers.
+
 **Note: The project is the first beta version of my draft that I am making Open Source.**
+**Written with Python 3**
 
 Use DHL mapper and providers to send rate request
 
