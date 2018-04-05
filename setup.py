@@ -7,5 +7,5 @@ setup(name='py_soap',
       author='DanH91',
       author_email='danielk.developer@gmail.com',
       license='MIT',
-      packages=['soap'],
+      packages=['pysoap'],
       zip_safe=False)
