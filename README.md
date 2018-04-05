@@ -76,9 +76,8 @@ TODOS:
 - Add tests
 - Add more features coverage to providers mappers
 - Add Dependencies packages
-
-  ... [py-dhl](https://github.com/OpenShip/py-dhl),
-  ... [py-fedex](https://github.com/OpenShip/py-fedex),
-  ... [py-soap](https://github.com/OpenShip/py-soap)
+[py-dhl](https://github.com/OpenShip/py-dhl)
+[py-fedex](https://github.com/OpenShip/py-fedex)
+[py-soap](https://github.com/OpenShip/py-soap)
 
 Contributions are welcome.
