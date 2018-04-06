@@ -9,7 +9,8 @@ The project is entended to offer a unified interface for different shipping prov
 Use DHL mapper and providers to send rate request
 
 ```python
-from open_mappers.mappers.dhl.dhl_mapper import initProvider, DHLClient
+from open_mappers.mappers.dhl.dhl_client import  DHLClient
+from open_mappers.mappers.dhl.dhl_provider import initProvider
 from open_mappers.domain import entities as E
 
 dhlClient = DHLClient(
@@ -41,7 +42,8 @@ quotes = dhlProvider.mapper.quote_response(response)
 Use Fedex mapper and providers to send rate request
 
 ```python
-from open_mappers.mappers.dhl.fedex_mapper import initProvider, FedexClient
+from open_mappers.mappers.fedex.fedex_client import  FedexClient
+from open_mappers.mappers.fedex.fedex_provider import initProvider
 from open_mappers.domain import entities as E
 
 fedexClient = FedexClient(
