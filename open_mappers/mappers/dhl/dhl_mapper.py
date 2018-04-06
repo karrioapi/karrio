@@ -5,11 +5,6 @@ from pydhl import DCT_req_global as Request, DCT_Response_global as Response
 from ...domain import entities as E 
 from ...domain.mapper import Mapper
 from .dhl_client import DHLClient
-from .dhl_provider import DHLProvider
-
-def initProvider(client: DHLClient) -> DHLProvider:
-    mapper = DHLMapper(client)
-    return DHLProvider(client, mapper)
 
 class DHLMapper(Mapper):
     def __init__(self, client: DHLClient):

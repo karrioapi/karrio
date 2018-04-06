@@ -25,3 +25,8 @@ class DHLProvider(Provider):
         req = urllib.request.Request(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         with urllib.request.urlopen(req, context=ctx) as f:
             return Response.parseString(f.read())
+
+
+def initProvider(client: DHLClient) -> DHLProvider:
+    mapper = DHLMapper(client)
+    return DHLProvider(client, mapper)

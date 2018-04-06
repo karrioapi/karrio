@@ -40,3 +40,8 @@ class FedexProvider(Provider):
         with urllib.request.urlopen(req, context=ctx) as f:
           res = parseString(f.read().decode('utf-8'))
           return Rate.parseString( res.getElementsByTagName('RateReply')[0].toxml('utf-8') )
+
+
+def initProvider(client: FedexClient) -> FedexProvider:
+    mapper = FedexMapper(client)
+    return FedexProvider(client, mapper)

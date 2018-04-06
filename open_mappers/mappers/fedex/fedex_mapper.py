@@ -3,13 +3,9 @@ from datetime import datetime
 from typing import List, Tuple
 from functools import reduce
 from pyfedex import rate_v22 as Rate
-from .fedex_provider import FedexProvider, FedexClient
+from .fedex_client import FedexClient
 from ...domain.mapper import Mapper
 from ...domain import entities as E
-
-def initProvider(client: FedexClient) -> FedexProvider:
-    mapper = FedexMapper(client)
-    return FedexProvider(client, mapper)
 
 class FedexMapper(Mapper):
     def __init__(self, client: FedexClient):
