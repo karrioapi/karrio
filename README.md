@@ -1,4 +1,4 @@
-# open_mappers
+# open-mappers
 
 Shipping providers and data structures mappers.
 The project is entended to offer a unified interface for different shipping providers.
