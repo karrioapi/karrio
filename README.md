@@ -37,6 +37,29 @@ response = dhlProvider.get_quotes(request)
 
 quotes = dhlProvider.mapper.quote_response(response)
 
+print(E.jsonify(quotes))
+# -->
+#[
+#    [ --> Quote list
+#        {
+#            "BaseCharge": 195.32,
+#            "Discount": 0,
+#            "DutiesAndTaxes": 0,
+#            "ExtraCharges": [
+#                {
+#                    "Name": "FUEL SURCHARGE",
+#                    "Value": 10.74
+#                }
+#            ],
+#            "Provider": "DHL",
+#            "ServiceName": "EXPRESS WORLDWIDE DOC",
+#            "ServiceType": "TD",
+#            "TotalCharge": 206.06
+#        }
+#    ],
+#    [] --> Error list
+#]
+
 ```
 
 Use Fedex mapper and providers to send rate request
@@ -77,10 +100,6 @@ TODOS:
 
 - Add tests
 - Add more features coverage to providers mappers
-- Add Dependencies packages
-
-[py-dhl](https://github.com/OpenShip/py-dhl)
-[py-fedex](https://github.com/OpenShip/py-fedex)
-[py-soap](https://github.com/OpenShip/py-soap)
+- Error handling for xml responses from providers
 
 Contributions are welcome.
