@@ -3,8 +3,17 @@
 Shipping providers and data structures mappers.
 The project is entended to offer a unified interface for different shipping providers.
 
-**Note: The project is the first beta version of my draft that I am making Open Source.**
-**Written with Python 3**
+**Note: This project is the first draft version shared as Open Source.**
+
+**Note:** Written with Python 3
+
+## You can play with it
+
+### Installation
+
+```shell
+  pip install --process-dependency-links -e git://github.com/OpenShip/open_mappers.git#egg=open_mappers
+```
 
 Use DHL mapper and providers to send rate request
 
