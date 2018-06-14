@@ -1,7 +1,7 @@
 # open-mappers
 
 Shipping providers and data structures mappers.
-The project is entended to offer a unified interface for different shipping providers.
+The project goal is to offer a unified interface (API) for different shipping providers.
 
 **Note: This project is the first draft version shared as Open Source.**
 
