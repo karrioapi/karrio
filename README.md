@@ -7,7 +7,7 @@ SOAP Python Data Structure generated from [SOAP Envelope](http://schemas.xmlsoap
 ### Installation
 
 ```shell
-  pip install -e git://github.com/OpenShip/py-dhl.git#egg=py-dhl
+  pip install -e git://github.com/OpenShip/py-soap.git#egg=py-soap
 ```
 
 ```python
