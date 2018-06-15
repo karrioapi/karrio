@@ -107,7 +107,6 @@ quotes = fedexProvider.mapper.quote_response(response)
 
 TODOS:
 
-- Add tests
 - Add more features coverage to providers mappers
 - Error handling for xml responses from providers
 
