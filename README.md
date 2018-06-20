@@ -1,7 +1,6 @@
 # open-mappers
 
-Shipping providers and data structures mappers.
-The project goal is to offer a unified interface (API) for different shipping providers.
+Shipping carriers API integrations made easy with Python
 
 **Note: This project is the first draft version shared as Open Source.**
 
@@ -15,9 +14,15 @@ The project goal is to offer a unified interface (API) for different shipping pr
   pip install --process-dependency-links -e git://github.com/OpenShip/open_mappers.git#egg=open_mappers
 ```
 
+### Geting Started
+
 [WIKI](https://github.com/OpenShip/open-mappers/wiki)
 
-TODOS:
+### License
+
+Please see [LICENSE](https://github.com/OpenShip/open-mappers/blob/master/LICENSE) for licensing details.
+
+### TODOS
 
 - Add more features coverage to proxies mappers
 - Error handling for xml responses from proxies
@@ -25,3 +30,7 @@ TODOS:
 - Write more documentation in wiki
 
 Contributions are welcome.
+
+### Author
+
+DanielK, [@DanHK91](https://twitter.com/DanHK91)/[https://danielk.xyz](https://danielk.xyz/)/[OpenShip]()
