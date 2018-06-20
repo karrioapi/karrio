@@ -4,16 +4,16 @@ import urllib.request
 import ssl
 from pyfedex import rate_v22 as Rate
 from pysoap import envelope as soap
-from ...domain.provider import Provider
+from ...domain.proxy import Proxy
 from .fedex_mapper import FedexMapper
 from .fedex_client import FedexClient
 
 ctx = ssl._create_unverified_context()
 
-class FedexProvider(Provider):
+class FedexProxy(Proxy):
 
-    def __init__(self, client: FedexClient, mapper: FedexMapper):
-        self.name = "Fedex"
+    def __init__(self, client: FedexClient, mapper: FedexMapper, name : str = "Fedex"):
+        self.name = name
         self.client = client
         self.mapper = mapper
 
@@ -42,6 +42,6 @@ class FedexProvider(Provider):
           return Rate.parseString( res.getElementsByTagName('RateReply')[0].toxml('utf-8') )
 
 
-def initProvider(client: FedexClient) -> FedexProvider:
+def initProvider(client: FedexClient) -> FedexProxy:
     mapper = FedexMapper(client)
-    return FedexProvider(client, mapper)
+    return FedexProxy(client, mapper)

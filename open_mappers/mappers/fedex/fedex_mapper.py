@@ -11,7 +11,13 @@ class FedexMapper(Mapper):
     def __init__(self, client: FedexClient):
         self.client = client
 
-    def quote_request(self, payload: E.QuoteRequest) -> Rate.RateRequest:
+        userCredential = WebAuthenticationCredential(Key=client.user_key, Password=client.password)
+        self.webAuthenticationDetail = WebAuthenticationDetail(UserCredential=userCredential)
+        self.clientDetail = ClientDetail(AccountNumber=client.account_number, MeterNumber=client.meter_number)
+
+
+
+    def create_quote_request(self, payload: E.quote_request) -> Rate.RateRequest:
         transactionDetail = Rate.TransactionDetail(CustomerTransactionId="FTC")
         version = Rate.VersionId(ServiceId="crs", Major=22, Intermediate=0, Minor=0)
 
@@ -81,14 +87,16 @@ class FedexMapper(Mapper):
 
         shipment.RateRequestTypes.append("LIST")
         return Rate.RateRequest(
-            WebAuthenticationDetail=self.client.webAuthenticationDetail,
-            ClientDetail=self.client.clientDetail,
+            WebAuthenticationDetail=self.webAuthenticationDetail,
+            ClientDetail=self.clientDetail,
             TransactionDetail=transactionDetail,
             Version=version,
             RequestedShipment=shipment
 	    )
 
-    def quote_response(self, res: Rate.RateReply) -> Tuple[List[E.Quote], List[E.Error]]:
+
+
+    def create_quote_response(self, res: Rate.RateReply) -> Tuple[List[E.Quote], List[E.Error]]:
         quotes = reduce(extractDetails, res.RateReplyDetails, [])
         errors = []
         return (quotes, errors)
@@ -98,18 +106,18 @@ def extractDetails(quotes: List[E.Quote], detail: Rate.RateReplyDetail):
     if not detail.RatedShipmentDetails:
         return quotes
     shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
-    Discounts_ = map(lambda d: E.Charge(Name=d.RateDiscountType, Value=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
-    Surcharges_ = map(lambda s: E.Charge(Name=s.SurchargeType, Value=float(s.Amount.Amount)), shipmentDetail.Surcharges)
-    Taxes_ = map(lambda t: E.Charge(Name=t.TaxType, Value=float(t.Amount.Amount)), shipmentDetail.Taxes)
+    Discounts_ = map(lambda d: E.Charge(name=d.RateDiscountType, value=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
+    Surcharges_ = map(lambda s: E.Charge(Name=s.SurchargeType, value=float(s.Amount.Amount)), shipmentDetail.Surcharges)
+    Taxes_ = map(lambda t: E.Charge(name=t.TaxType, value=float(t.Amount.Amount)), shipmentDetail.Taxes)
     return quotes + [
         E.Quote(
-            Provider="Fedex", 
-            ServiceName=detail.ServiceType,
-            ServiceType=detail.ActualRateType,
-            BaseCharge=float(shipmentDetail.TotalBaseCharge.Amount),
-            TotalCharge=float(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
-            DutiesAndTaxes=float(shipmentDetail.TotalTaxes.Amount),
-            Discount=float(shipmentDetail.TotalFreightDiscounts.Amount),
-            ExtraCharges=list(Discounts_) + list(Surcharges_) + list(Taxes_)
+            carrier="Fedex", 
+            service_name=detail.ServiceType,
+            service_type=detail.ActualRateType,
+            base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
+            total_charge=float(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
+            duties_and_taxes=float(shipmentDetail.TotalTaxes.Amount),
+            discount=float(shipmentDetail.TotalFreightDiscounts.Amount),
+            extra_charges=list(Discounts_) + list(Surcharges_) + list(Taxes_)
         )
     ]
