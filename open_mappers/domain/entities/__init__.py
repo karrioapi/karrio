@@ -43,8 +43,8 @@ class Error():
 
 
 class Quote():
-    def __init__(self, provider: str, service_name: str, service_type: str, base_charge: float, duties_and_taxes: float, total_charge: float, discount: float = None, extra_charges: List[charge] = []):
-        self.provider = provider
+    def __init__(self, carrier: str, service_name: str, service_type: str, base_charge: float, duties_and_taxes: float, total_charge: float, discount: float = None, extra_charges: List[charge] = []):
+        self.carrier = carrier
         self.service_name = service_name
         self.service_type = service_type
         self.base_charge = base_charge
