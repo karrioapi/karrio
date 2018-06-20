@@ -107,7 +107,7 @@ def extractDetails(quotes: List[E.Quote], detail: Rate.RateReplyDetail):
         return quotes
     shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
     Discounts_ = map(lambda d: E.Charge(name=d.RateDiscountType, value=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
-    Surcharges_ = map(lambda s: E.Charge(Name=s.SurchargeType, value=float(s.Amount.Amount)), shipmentDetail.Surcharges)
+    Surcharges_ = map(lambda s: E.Charge(name=s.SurchargeType, value=float(s.Amount.Amount)), shipmentDetail.Surcharges)
     Taxes_ = map(lambda t: E.Charge(name=t.TaxType, value=float(t.Amount.Amount)), shipmentDetail.Taxes)
     return quotes + [
         E.Quote(

@@ -31,7 +31,7 @@ class ShipmentDetails():
 
 
 
-class charge():
+class Charge():
     def __init__(self, name: str = None, value: str = None):
         self.name = name
         self.value = value
@@ -43,7 +43,7 @@ class Error():
 
 
 class Quote():
-    def __init__(self, carrier: str, service_name: str, service_type: str, base_charge: float, duties_and_taxes: float, total_charge: float, discount: float = None, extra_charges: List[charge] = []):
+    def __init__(self, carrier: str, service_name: str, service_type: str, base_charge: float, duties_and_taxes: float, total_charge: float, discount: float = None, extra_charges: List[Charge] = []):
         self.carrier = carrier
         self.service_name = service_name
         self.service_type = service_type

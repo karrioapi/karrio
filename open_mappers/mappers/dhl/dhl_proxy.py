@@ -27,6 +27,6 @@ class DHLProxy(Proxy):
             return Response.parseString(f.read())
 
 
-def initProvider(client: DHLClient) -> DHLProxy:
+def initProxy(client: DHLClient) -> DHLProxy:
     mapper = DHLMapper(client)
     return DHLProxy(client, mapper)

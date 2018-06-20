@@ -60,7 +60,7 @@ class DHLMapper(Mapper):
             Pieces=Pieces
         )
 
-        GetQuote = Req.GetQuoteType(Req=Request_, From=From_, To=To_, BkgDetails=BkgDetails_)
+        GetQuote = Req.GetQuoteType(Request=Request_, From=From_, To=To_, BkgDetails=BkgDetails_)
         
         return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
 
@@ -82,8 +82,8 @@ def extractQuote(quotes: List[E.Quote], qtdshp: Res.QtdShpType) -> List[E.Quote]
     if not qtdshp.QtdShpExChrg:
         return quotes
     ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
-    Discount_ = reduce(lambda d, ec: d + ec.Value if "Discount" in ec.Name else d, ExtraCharges, 0)
-    DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.Value if "TAXES PAID" in ec.Name else d, ExtraCharges, 0)
+    Discount_ = reduce(lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
+    DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
     return quotes + [
         E.Quote(
             carrier="DHL", 
