@@ -1,80 +1,98 @@
 from typing import List, Tuple
 from functools import reduce
 import time
-from pydhl import DCT_req_global as Request, DCT_Response_global as Response
 from ...domain import entities as E 
 from ...domain.mapper import Mapper
 from .dhl_client import DHLClient
+from pydhl import DCT_req_global as Req, DCT_Response_global as Res
+from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
 
 class DHLMapper(Mapper):
     def __init__(self, client: DHLClient):
         self.client = client
 
-    def quote_request(self, payload: E.QuoteRequest) -> Request.DCTRequest:
-        Request_ = self.client.initRequest()
+    def init_request(self) -> Request:
+        ServiceHeader_ = ServiceHeader(
+            MessageReference="1234567890123456789012345678901",
+            MessageTime=time.strftime('%Y-%m-%dT%H:%M:%S'),
+            SiteID=self.client.site_id, 
+            Password=self.client.password
+        )
+        MetaData_ = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
+        return Request(ServiceHeader=ServiceHeader_, MetaData=MetaData_)
 
-        From_ = Request.DCTFrom(
-            CountryCode=payload.Shipper.Address.CountryCode, 
-            Postalcode=payload.Shipper.Address.PostalCode,
-            City=payload.Shipper.Address.City,
-            Suburb=payload.Shipper.Address.StateOrProvince
+
+
+    def create_quote_request(self, payload: E.quote_request) -> Req.DCTRequest:
+        Request_ = self.init_request()
+
+        From_ = Req.DCTFrom(
+            CountryCode=payload.shipper.address.country_code, 
+            Postalcode=payload.shipper.address.postal_code,
+            City=payload.shipper.address.city,
+            Suburb=payload.shipper.address.state_or_province
         )
 
-        To_ = Request.DCTTo(
-            CountryCode=payload.Recipient.Address.CountryCode, 
-            Postalcode=payload.Recipient.Address.PostalCode,
-            City=payload.Recipient.Address.City,
-            Suburb=payload.Recipient.Address.StateOrProvince
+        To_ = Req.DCTTo(
+            CountryCode=payload.recipient.address.country_code, 
+            Postalcode=payload.recipient.address.postal_code,
+            City=payload.recipient.address.city,
+            Suburb=payload.recipient.address.state_or_province
         )
 
-        Pieces = Request.PiecesType()
-        for p in payload.ShipmentDetails.Packages:
-            Pieces.add_Piece(Request.PieceType(
-                PieceID=p.Id, 
-                PackageTypeCode=p.PackagingType, 
-                Height=p.Height, Width=p.Width,
-                Weight=p.Weight, Depth=p.Lenght
+        Pieces = Req.PiecesType()
+        for p in payload.shipment_details.packages:
+            Pieces.add_Piece(Req.PieceType(
+                PieceID=p.id, 
+                PackageTypeCode=p.packaging_type, 
+                Height=p.height, Width=p.width,
+                Weight=p.weight, Depth=p.lenght
             ))
 
-        BkgDetails_ = Request.BkgDetailsType(
+        BkgDetails_ = Req.BkgDetailsType(
             PaymentCountryCode="CA", NetworkTypeCode="AL", 
-            WeightUnit=payload.ShipmentDetails.WeightUnit, 
-            DimensionUnit=payload.ShipmentDetails.DimensionUnit,
+            WeightUnit=payload.shipment_details.weight_unit, 
+            DimensionUnit=payload.shipment_details.dimension_unit,
             ReadyTime=time.strftime("PT%HH%MM"),
             Date=time.strftime("%Y-%m-%d"), 
             PaymentAccountNumber=self.client.account_number,
-            IsDutiable=payload.ShipmentDetails.IsDutiable,
+            IsDutiable=payload.shipment_details.is_dutiable,
             Pieces=Pieces
         )
 
-        GetQuote = Request.GetQuoteType(Request=Request_, From=From_, To=To_, BkgDetails=BkgDetails_)
+        GetQuote = Req.GetQuoteType(Req=Request_, From=From_, To=To_, BkgDetails=BkgDetails_)
         
-        return Request.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
+        return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
 
-    def quote_response(self, res: Response.DCTResponse) -> Tuple[List[E.Quote], List[E.Error]]:
+
+
+    def quote_response(self, res: Res.DCTResponse) -> Tuple[List[E.Quote], List[E.Error]]:
         quotes = reduce(extractDetails, res.GetQuoteResponse.BkgDetails, [])
         errors = []
         return (quotes, errors)
 
 
-def extractDetails(quotes: List[E.Quote], detail: Response.BkgDetailsType): 
+
+
+""" Helpers functions """
+def extractDetails(quotes: List[E.Quote], detail: Res.BkgDetailsType): 
     return quotes + reduce(extractQuote, detail.QtdShp, [])
 
-def extractQuote(quotes: List[E.Quote], qtdshp: Response.QtdShpType) -> List[E.Quote]:
+def extractQuote(quotes: List[E.Quote], qtdshp: Res.QtdShpType) -> List[E.Quote]:
     if not qtdshp.QtdShpExChrg:
         return quotes
-    ExtraCharges=list(map(lambda s: E.Charge(Name=s.LocalServiceTypeName, Value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
+    ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
     Discount_ = reduce(lambda d, ec: d + ec.Value if "Discount" in ec.Name else d, ExtraCharges, 0)
     DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.Value if "TAXES PAID" in ec.Name else d, ExtraCharges, 0)
     return quotes + [
         E.Quote(
-            Provider="DHL", 
-            ServiceName=qtdshp.LocalProductName,
-            ServiceType=qtdshp.NetworkTypeCode,
-            BaseCharge=float(qtdshp.WeightCharge),
-            TotalCharge=float(qtdshp.ShippingCharge),
-            DutiesAndTaxes=DutiesAndTaxes_,
-            Discount=Discount_,
-            ExtraCharges=list(map(lambda s: E.Charge(Name=s.LocalServiceTypeName, Value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
+            carrier="DHL", 
+            service_name=qtdshp.LocalProductName,
+            service_type=qtdshp.NetworkTypeCode,
+            base_charge=float(qtdshp.WeightCharge),
+            total_charge=float(qtdshp.ShippingCharge),
+            duties_and_taxes=DutiesAndTaxes_,
+            discount=Discount_,
+            extra_charges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
         )
     ]

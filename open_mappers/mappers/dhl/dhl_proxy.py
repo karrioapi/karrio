@@ -3,14 +3,14 @@ import ssl
 from io import StringIO
 from pydhl import DCT_Response_global as Response, DCT_req_global as Request
 from .dhl_mapper import DHLMapper, DHLClient
-from ...domain.provider import Provider
+from ...domain.proxy import Proxy
 
 ctx = ssl._create_unverified_context()
 
-class DHLProvider(Provider):
+class DHLProxy(Proxy):
 
-    def __init__(self, client: DHLClient, mapper: DHLMapper):
-        self.name = "DHL"
+    def __init__(self, client: DHLClient, mapper: DHLMapper, name : str = "DHL"):
+        self.name = name
         self.client = client
         self.mapper = mapper
 
@@ -27,6 +27,6 @@ class DHLProvider(Provider):
             return Response.parseString(f.read())
 
 
-def initProvider(client: DHLClient) -> DHLProvider:
+def initProvider(client: DHLClient) -> DHLProxy:
     mapper = DHLMapper(client)
-    return DHLProvider(client, mapper)
+    return DHLProxy(client, mapper)
