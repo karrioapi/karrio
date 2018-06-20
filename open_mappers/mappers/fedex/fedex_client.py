@@ -1,4 +1,3 @@
-from pyfedex.rate_v22 import WebAuthenticationCredential, WebAuthenticationDetail, ClientDetail
 from ...domain.client import Client
 
 class FedexClient(Client):

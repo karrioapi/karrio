@@ -6,6 +6,7 @@ from pyfedex import rate_v22 as Rate
 from .fedex_client import FedexClient
 from ...domain.mapper import Mapper
 from ...domain import entities as E
+from pyfedex.rate_v22 import WebAuthenticationCredential, WebAuthenticationDetail, ClientDetail
 
 class FedexMapper(Mapper):
     def __init__(self, client: FedexClient):
@@ -22,42 +23,42 @@ class FedexMapper(Mapper):
         version = Rate.VersionId(ServiceId="crs", Major=22, Intermediate=0, Minor=0)
 
         shipper = Rate.Party(
-            Contact=None if not payload.Shipper.Contact else Rate.Contact(
-                CompanyName=payload.Shipper.Contact.CompanyName, 
-                PhoneNumber=payload.Shipper.Contact.PhoneNumber
+            Contact=None if not payload.shipper.contact else Rate.Contact(
+                CompanyName=payload.shipper.contact.company_name, 
+                PhoneNumber=payload.shipper.contact.phone_number
             ),
             Address=Rate.Address(
-                City=payload.Shipper.Address.City,
-                StateOrProvinceCode=payload.Shipper.Address.StateOrProvince,
-                PostalCode=payload.Shipper.Address.PostalCode,
-                CountryCode=payload.Shipper.Address.CountryCode
+                City=payload.shipper.address.city,
+                StateOrProvinceCode=payload.shipper.address.state_or_province,
+                PostalCode=payload.shipper.address.postal_code,
+                CountryCode=payload.shipper.address.country_code
             )
         )
-        for line in payload.Shipper.Address.AddressLines:
+        for line in payload.shipper.address.address_lines:
             shipper.Address.StreetLines.append(line)
 
         recipient = Rate.Party(
-            Contact=None if not payload.Recipient.Contact else Rate.Contact(
-                CompanyName=payload.Recipient.Contact.CompanyName, 
-                PhoneNumber=payload.Recipient.Contact.PhoneNumber
+            Contact=None if not payload.recipient.contact else Rate.Contact(
+                CompanyName=payload.recipient.contact.company_name, 
+                PhoneNumber=payload.recipient.contact.phone_number
             ),
             Address=Rate.Address(
-                City=payload.Recipient.Address.City,
-                StateOrProvinceCode=payload.Recipient.Address.StateOrProvince,
-                PostalCode=payload.Recipient.Address.PostalCode,
-                CountryCode=payload.Recipient.Address.CountryCode
+                City=payload.recipient.address.city,
+                StateOrProvinceCode=payload.recipient.address.state_or_province,
+                PostalCode=payload.recipient.address.postal_code,
+                CountryCode=payload.recipient.address.country_code
             )
         )
-        for line in payload.Recipient.Address.AddressLines:
+        for line in payload.recipient.address.address_lines:
             recipient.Address.StreetLines.append(line)
 
-        totalWeight = reduce(lambda r, p: r + p.Weight, payload.ShipmentDetails.Packages, 0)
+        totalWeight = reduce(lambda r, p: r + p.weight, payload.shipment_details.packages, 0)
 
         shipment = Rate.RequestedShipment(
             ShipTimestamp=datetime.now(),
             PackagingType="YOUR_PACKAGING",
             TotalWeight=Rate.Weight(
-                Units=payload.ShipmentDetails.WeightUnit, 
+                Units=payload.shipment_details.weight_unit, 
                 Value=totalWeight
             ),
             PreferredCurrency="USD",
@@ -69,19 +70,19 @@ class FedexMapper(Mapper):
                     AccountNumber=self.client.account_number
                 ))
             ),
-            PackageCount=len(payload.ShipmentDetails.Packages)
+            PackageCount=len(payload.shipment_details.packages)
         )
 
-        for p in payload.ShipmentDetails.Packages:
+        for p in payload.shipment_details.packages:
             shipment.RequestedPackageLineItems.append(Rate.RequestedPackageLineItem(
                 GroupPackageCount=1,
                 Weight=Rate.Weight(
-                    Units=payload.ShipmentDetails.WeightUnit, 
-                    Value=p.Weight
+                    Units=payload.shipment_details.weight_unit, 
+                    Value=p.weight
                 ),
                 Dimensions=Rate.Dimensions(
-                    Length=p.Lenght, Width=p.Width, Height=p.Height, 
-                    Units=payload.ShipmentDetails.DimensionUnit
+                    Length=p.lenght, Width=p.width, Height=p.height, 
+                    Units=payload.shipment_details.dimension_unit
                 )
             ))
 
