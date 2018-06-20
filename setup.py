@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='open-mappers',
-      version='0.1.dev1',
+      version='0.1.dev2',
       description='Shipping providers gateways and mappers',
       url='https://github.com/OpenShip/open-mappers',
       author='DanH91',
