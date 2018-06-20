@@ -42,6 +42,6 @@ class FedexProxy(Proxy):
           return Rate.parseString( res.getElementsByTagName('RateReply')[0].toxml('utf-8') )
 
 
-def initProxy(client: FedexClient) -> FedexProxy:
+def init_proxy(client: FedexClient) -> FedexProxy:
     mapper = FedexMapper(client)
     return FedexProxy(client, mapper)
