@@ -97,13 +97,13 @@ class FedexMapper(Mapper):
 
 
 
-    def create_quote_response(self, res: Rate.RateReply) -> Tuple[List[E.Quote], List[E.Error]]:
-        quotes = reduce(extractDetails, res.RateReplyDetails, [])
+    def parse_quote_response(self, res: Rate.RateReply) -> Tuple[List[E.quote_details], List[E.Error]]:
+        quotes = reduce(extract_details, res.RateReplyDetails, [])
         errors = []
         return (quotes, errors)
 
 
-def extractDetails(quotes: List[E.Quote], detail: Rate.RateReplyDetail): 
+def extract_details(quotes: List[E.quote_details], detail: Rate.RateReplyDetail): 
     if not detail.RatedShipmentDetails:
         return quotes
     shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
@@ -111,7 +111,7 @@ def extractDetails(quotes: List[E.Quote], detail: Rate.RateReplyDetail):
     Surcharges_ = map(lambda s: E.Charge(name=s.SurchargeType, value=float(s.Amount.Amount)), shipmentDetail.Surcharges)
     Taxes_ = map(lambda t: E.Charge(name=t.TaxType, value=float(t.Amount.Amount)), shipmentDetail.Taxes)
     return quotes + [
-        E.Quote(
+        E.Quote.parse(
             carrier="Fedex", 
             service_name=detail.ServiceType,
             service_type=detail.ActualRateType,

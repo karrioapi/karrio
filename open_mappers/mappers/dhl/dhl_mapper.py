@@ -66,8 +66,8 @@ class DHLMapper(Mapper):
 
 
 
-    def quote_response(self, res: Res.DCTResponse) -> Tuple[List[E.Quote], List[E.Error]]:
-        quotes = reduce(extractDetails, res.GetQuoteResponse.BkgDetails, [])
+    def parse_quote_response(self, res: Res.DCTResponse) -> Tuple[List[E.quote_details], List[E.Error]]:
+        quotes = reduce(extract_details, res.GetQuoteResponse.BkgDetails, [])
         errors = []
         return (quotes, errors)
 
@@ -75,17 +75,17 @@ class DHLMapper(Mapper):
 
 
 """ Helpers functions """
-def extractDetails(quotes: List[E.Quote], detail: Res.BkgDetailsType): 
-    return quotes + reduce(extractQuote, detail.QtdShp, [])
+def extract_details(quotes: List[E.quote_details], detail: Res.BkgDetailsType): 
+    return quotes + reduce(extract_quote, detail.QtdShp, [])
 
-def extractQuote(quotes: List[E.Quote], qtdshp: Res.QtdShpType) -> List[E.Quote]:
+def extract_quote(quotes: List[E.quote_details], qtdshp: Res.QtdShpType) -> List[E.Quote]:
     if not qtdshp.QtdShpExChrg:
         return quotes
     ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
     Discount_ = reduce(lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
     DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
     return quotes + [
-        E.Quote(
+        E.Quote.parse(
             carrier="DHL", 
             service_name=qtdshp.LocalProductName,
             service_type=qtdshp.NetworkTypeCode,
