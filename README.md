@@ -33,4 +33,4 @@ Contributions are welcome.
 
 ### Author
 
-DanielK, [@DanHK91](https://twitter.com/DanHK91)/[https://danielk.xyz](https://danielk.xyz/)/[OpenShip]()
+DanielK, [@DanHK91](https://twitter.com/DanHK91)/[https://danielk.xyz](https://danielk.xyz/)/[OpenShip](https://openship.xyz/)
