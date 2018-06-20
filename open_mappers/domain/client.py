@@ -1,3 +1,4 @@
 
 class Client:
-    pass
+    """ Unitied API carrier Client (Interface) """
+    server_url: str
