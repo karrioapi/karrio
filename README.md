@@ -1,4 +1,4 @@
-# open-mappers
+# openship
 
 Shipping carriers API integrations made easy with Python
 
@@ -11,16 +11,16 @@ Shipping carriers API integrations made easy with Python
 ### Installation
 
 ```shell
-  pip install --process-dependency-links -e git://github.com/OpenShip/open_mappers.git#egg=open_mappers
+  pip install --process-dependency-links -e git://github.com/OpenShip/openship.git#egg=openship
 ```
 
 ### Geting Started
 
-[WIKI](https://github.com/OpenShip/open-mappers/wiki)
+[WIKI](https://github.com/OpenShip/openship/wiki)
 
 ### License
 
-Please see [LICENSE](https://github.com/OpenShip/open-mappers/blob/master/LICENSE) for licensing details.
+Please see [LICENSE](https://github.com/OpenShip/openship/blob/master/LICENSE) for licensing details.
 
 ### TODOS
 
