@@ -82,14 +82,16 @@ def extract_details(quotes: List[E.quote_details], detail: Res.BkgDetailsType):
     return quotes + reduce(extract_quote, detail.QtdShp, [])
 
 def extract_quote(quotes: List[E.quote_details], qtdshp: Res.QtdShpType) -> List[E.Quote]:
-    if not qtdshp.QtdShpExChrg:
-        return quotes
     ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
     Discount_ = reduce(lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
     DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
     return quotes + [
         E.Quote.parse(
             carrier="DHL", 
+            delivery_date = str(qtdshp.DeliveryDate[0].DlvyDateTime),
+            delivery_time = str(qtdshp.DeliveryTime),
+            pickup_date = str(qtdshp.PickupDate),
+            pickup_time = str(qtdshp.PickupCutoffTime),
             service_name=qtdshp.LocalProductName,
             service_type=qtdshp.NetworkTypeCode,
             base_charge=float(qtdshp.WeightCharge),

@@ -54,7 +54,7 @@ class FedexMapper(Mapper):
 
         totalWeight = reduce(lambda r, p: r + p.weight, payload.shipment_details.packages, 0)
 
-        packagin_type = "YOUR_PACKAGING" if not payload.shipment_details.packaging_type else payload.shipment_details.packaging_type
+        packaging_type = "YOUR_PACKAGING" if not payload.shipment_details.packaging_type else payload.shipment_details.packaging_type
 
         currency = "USD" if not payload.shipment_details.currency else payload.shipment_details.currency
 
