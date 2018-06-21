@@ -9,6 +9,7 @@ class Quote():
         return quote_request(**quote_request_type(**args)._asdict())
 
     def parse(**args) -> quote_details:
+        """ create a quote details data """
         return quote_details(**args)
 
 class Party():
