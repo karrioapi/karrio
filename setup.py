@@ -1,9 +1,9 @@
 from setuptools import setup
 
-setup(name='open-mappers',
+setup(name='openship',
       version='0.1.dev2',
       description='Shipping providers gateways and mappers',
-      url='https://github.com/OpenShip/open-mappers',
+      url='https://github.com/OpenShip/openship',
       author='DanH91',
       author_email='danielk.developer@gmail.com',
       license='MIT',
