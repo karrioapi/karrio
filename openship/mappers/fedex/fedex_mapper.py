@@ -68,7 +68,7 @@ class FedexMapper(Mapper):
 
         shipment = Rate.RequestedShipment(
             ShipTimestamp=datetime.now(),
-            PackagingType=packaging_type
+            PackagingType=packaging_type,
             TotalWeight=Rate.Weight(
                 Units=payload.shipment_details.weight_unit, 
                 Value=totalWeight
