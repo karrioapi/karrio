@@ -54,20 +54,32 @@ class FedexMapper(Mapper):
 
         totalWeight = reduce(lambda r, p: r + p.weight, payload.shipment_details.packages, 0)
 
+        packagin_type = "YOUR_PACKAGING" if not payload.shipment_details.packaging_type else payload.shipment_details.packaging_type
+
+        currency = "USD" if not payload.shipment_details.currency else payload.shipment_details.currency
+
+        payment_type = "SENDER" 
+        if payload.shipment_details.charges_payment and payload.shipment_details.charges_payment.type:
+            payment_type = payload.shipment_details.charges_payment.type
+
+        payment_account = self.client.account_number
+        if payload.shipment_details.charges_payment and payload.shipment_details.charges_payment.account_number:
+            payment_account = payload.shipment_details.charges_payment.account_number
+
         shipment = Rate.RequestedShipment(
             ShipTimestamp=datetime.now(),
-            PackagingType="YOUR_PACKAGING",
+            PackagingType=packaging_type
             TotalWeight=Rate.Weight(
                 Units=payload.shipment_details.weight_unit, 
                 Value=totalWeight
             ),
-            PreferredCurrency="USD",
+            PreferredCurrency=currency,
             Shipper=shipper,
             Recipient=recipient,
             ShippingChargesPayment=Rate.Payment(
-                PaymentType="SENDER",
+                PaymentType=payment_type,
                 Payor=Rate.Payor(ResponsibleParty=Rate.Party(
-                    AccountNumber=self.client.account_number
+                    AccountNumber=payment_account
                 ))
             ),
             PackageCount=len(payload.shipment_details.packages)

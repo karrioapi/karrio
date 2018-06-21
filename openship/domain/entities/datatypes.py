@@ -48,6 +48,7 @@ class shipment_details(NamedTuple):
     total_weight: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
+    payment_country_code: str = None
 
 class quote_request(NamedTuple):
     shipper: party 

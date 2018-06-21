@@ -49,8 +49,11 @@ class DHLMapper(Mapper):
                 Weight=p.weight, Depth=p.lenght
             ))
 
+        payment_country_code = "CA" if not payload.shipment_details.payment_country_code else payload.shipment_details.payment_country_code
+
         BkgDetails_ = Req.BkgDetailsType(
-            PaymentCountryCode="CA", NetworkTypeCode="AL", 
+            PaymentCountryCode=payment_country_code, 
+            NetworkTypeCode="AL", 
             WeightUnit=payload.shipment_details.weight_unit, 
             DimensionUnit=payload.shipment_details.dimension_unit,
             ReadyTime=time.strftime("PT%HH%MM"),
