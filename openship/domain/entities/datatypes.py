@@ -1,5 +1,4 @@
 from typing import List, NamedTuple
-import json
 
 class contact_type(NamedTuple):
     company_name: str = None
@@ -80,8 +79,3 @@ class quote_details():
         self.pickup_time = pickup_time
         self.delivery_date = delivery_date
         self.pickup_date = pickup_date
-
-
-
-def jsonify(entity): 
-    return json.dumps(entity, default=lambda o: o.__dict__ if hasattr(o, '__dict__') else str(o), sort_keys=True, indent=4)
