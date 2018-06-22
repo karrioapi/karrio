@@ -70,41 +70,41 @@ class DHLMapper(Mapper):
 
 
     def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
-        quotes = reduce(extract_quote, response.findall('.//QtdShp'), [])
-        errors = reduce(extract_error, response.findall('.//Condition'), [])
+        quotes = reduce(self._extract_quote, response.findall('.//QtdShp'), [])
+        errors = reduce(self._extract_error, response.findall('.//Condition'), [])
         return (quotes, errors)
 
 
 
 
-""" Helpers functions """
-def extract_error(errors: List[E.Error], conditionNode: Res.ConditionType) -> List[E.Error]:
-    condition = Res.ConditionType()
-    condition.build(conditionNode)
-    return errors + [
-        E.Error(code=condition.ConditionCode, message=condition.ConditionData)
-    ]
+    """ Helpers functions """
+    def _extract_error(self, errors: List[E.Error], conditionNode: Res.ConditionType) -> List[E.Error]:
+        condition = Res.ConditionType()
+        condition.build(conditionNode)
+        return errors + [
+            E.Error(code=condition.ConditionCode, message=condition.ConditionData, carrier=self.client.carrier_name)
+        ]
 
 
-def extract_quote(quotes: List[E.quote_details], qtdshpNode: Res.QtdShpType) -> List[E.quote_details]:
-    qtdshp = Res.QtdShpType()
-    qtdshp.build(qtdshpNode)
-    ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
-    Discount_ = reduce(lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
-    DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
-    return quotes + [
-        E.Quote.parse(
-            carrier="DHL", 
-            delivery_date = str(qtdshp.DeliveryDate[0].DlvyDateTime),
-            delivery_time = str(qtdshp.DeliveryTime),
-            pickup_date = str(qtdshp.PickupDate),
-            pickup_time = str(qtdshp.PickupCutoffTime),
-            service_name=qtdshp.LocalProductName,
-            service_type=qtdshp.NetworkTypeCode,
-            base_charge=float(qtdshp.WeightCharge),
-            total_charge=float(qtdshp.ShippingCharge),
-            duties_and_taxes=DutiesAndTaxes_,
-            discount=Discount_,
-            extra_charges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
-        )
-    ]
+    def _extract_quote(self, quotes: List[E.quote_details], qtdshpNode: Res.QtdShpType) -> List[E.quote_details]:
+        qtdshp = Res.QtdShpType()
+        qtdshp.build(qtdshpNode)
+        ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
+        Discount_ = reduce(lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
+        DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
+        return quotes + [
+            E.Quote.parse(
+                carrier=self.client.carrier_name, 
+                delivery_date = str(qtdshp.DeliveryDate[0].DlvyDateTime),
+                delivery_time = str(qtdshp.DeliveryTime),
+                pickup_date = str(qtdshp.PickupDate),
+                pickup_time = str(qtdshp.PickupCutoffTime),
+                service_name=qtdshp.LocalProductName,
+                service_type=qtdshp.NetworkTypeCode,
+                base_charge=float(qtdshp.WeightCharge),
+                total_charge=float(qtdshp.ShippingCharge),
+                duties_and_taxes=DutiesAndTaxes_,
+                discount=Discount_,
+                extra_charges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
+            )
+        ]
