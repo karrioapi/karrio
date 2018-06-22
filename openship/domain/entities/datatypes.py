@@ -84,4 +84,4 @@ class quote_details():
 
 
 def jsonify(entity): 
-    return json.dumps(entity, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+    return json.dumps(entity, default=lambda o: o.__dict__ if hasattr(o, '__dict__') else str(o), sort_keys=True, indent=4)
