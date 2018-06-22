@@ -69,19 +69,26 @@ class DHLMapper(Mapper):
 
 
 
-    def parse_quote_response(self, res: Res.DCTResponse) -> Tuple[List[E.quote_details], List[E.Error]]:
-        quotes = reduce(extract_details, res.GetQuoteResponse.BkgDetails, [])
-        errors = []
+    def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+        quotes = reduce(extract_quote, response.findall('.//QtdShp'), [])
+        errors = reduce(extract_error, response.findall('.//Condition'), [])
         return (quotes, errors)
 
 
 
 
 """ Helpers functions """
-def extract_details(quotes: List[E.quote_details], detail: Res.BkgDetailsType): 
-    return quotes + reduce(extract_quote, detail.QtdShp, [])
+def extract_error(errors: List[E.Error], conditionNode: Res.ConditionType) -> List[E.Error]:
+    condition = Res.ConditionType()
+    condition.build(conditionNode)
+    return errors + [
+        E.Error(code=condition.ConditionCode, message=condition.ConditionData)
+    ]
 
-def extract_quote(quotes: List[E.quote_details], qtdshp: Res.QtdShpType) -> List[E.Quote]:
+
+def extract_quote(quotes: List[E.quote_details], qtdshpNode: Res.QtdShpType) -> List[E.quote_details]:
+    qtdshp = Res.QtdShpType()
+    qtdshp.build(qtdshpNode)
     ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
     Discount_ = reduce(lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
     DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
