@@ -12,10 +12,10 @@ ctx = ssl._create_unverified_context()
 
 class FedexProxy(Proxy):
 
-    def __init__(self, client: FedexClient, mapper: FedexMapper, name : str = "Fedex"):
+    def __init__(self, client: FedexClient, mapper: FedexMapper = None, name : str = "Fedex"):
         self.name = name
         self.client = client
-        self.mapper = mapper
+        self.mapper = FedexMapper(client) if mapper is None else mapper
 
     def get_quotes(self, RateRequest_: Rate.RateRequest) -> Rate.RateReply:
         body = soap.Body()
@@ -37,11 +37,4 @@ class FedexProxy(Proxy):
             headers={'Content-Type': 'application/xml'}, 
             method="POST"
         )
-        with urllib.request.urlopen(req, context=ctx) as f:
-          res = parseString(f.read().decode('utf-8'))
-          return Rate.parseString( res.getElementsByTagName('RateReply')[0].toxml('utf-8') )
-
-
-def init_proxy(client: FedexClient) -> FedexProxy:
-    mapper = FedexMapper(client)
-    return FedexProxy(client, mapper)
+        return to_xml(result)
