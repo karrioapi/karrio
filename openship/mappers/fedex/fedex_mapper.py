@@ -109,28 +109,40 @@ class FedexMapper(Mapper):
 
 
 
-    def parse_quote_response(self, res: Rate.RateReply) -> Tuple[List[E.quote_details], List[E.Error]]:
-        quotes = reduce(extract_details, res.RateReplyDetails, [])
-        errors = []
+    def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+        quotes = reduce(self._extract_details, response.findall('.//RateReplyDetails'), [])
+        errors = reduce(self._extract_errors, response.findall('.//Notifications'), [])
         return (quotes, errors)
 
 
-def extract_details(quotes: List[E.quote_details], detail: Rate.RateReplyDetail): 
-    if not detail.RatedShipmentDetails:
-        return quotes
-    shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
-    Discounts_ = map(lambda d: E.Charge(name=d.RateDiscountType, value=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
-    Surcharges_ = map(lambda s: E.Charge(name=s.SurchargeType, value=float(s.Amount.Amount)), shipmentDetail.Surcharges)
-    Taxes_ = map(lambda t: E.Charge(name=t.TaxType, value=float(t.Amount.Amount)), shipmentDetail.Taxes)
-    return quotes + [
-        E.Quote.parse(
-            carrier="Fedex", 
-            service_name=detail.ServiceType,
-            service_type=detail.ActualRateType,
-            base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
-            total_charge=float(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
-            duties_and_taxes=float(shipmentDetail.TotalTaxes.Amount),
-            discount=float(shipmentDetail.TotalFreightDiscounts.Amount),
-            extra_charges=list(Discounts_) + list(Surcharges_) + list(Taxes_)
-        )
-    ]
+    def _extract_errors(self, errors: List[E.Error], notificationNode) -> List[E.Error]:
+        notification = Rate.Notification()
+        notification.build(notificationNode)
+        if notification.Severity != 'ERROR':
+            return errors
+        return errors + [
+            E.Error(code=notification.Code, message=notification.Message, carrier=self.client.carrier_name)
+        ]
+
+
+    def _extract_details(self, quotes: List[E.quote_details], detailNode) -> List[E.quote_details]: 
+        detail = Rate.RateReplyDetail()
+        detail.build(detailNode)
+        if not detail.RatedShipmentDetails:
+            return quotes
+        shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
+        Discounts_ = map(lambda d: E.Charge(name=d.RateDiscountType, value=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
+        Surcharges_ = map(lambda s: E.Charge(name=s.SurchargeType, value=float(s.Amount.Amount)), shipmentDetail.Surcharges)
+        Taxes_ = map(lambda t: E.Charge(name=t.TaxType, value=float(t.Amount.Amount)), shipmentDetail.Taxes)
+        return quotes + [
+            E.Quote.parse(
+                carrier=self.client.carrier_name, 
+                service_name=detail.ServiceType,
+                service_type=detail.ActualRateType,
+                base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
+                total_charge=float(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
+                duties_and_taxes=float(shipmentDetail.TotalTaxes.Amount),
+                discount=float(shipmentDetail.TotalFreightDiscounts.Amount),
+                extra_charges=list(Discounts_) + list(Surcharges_) + list(Taxes_)
+            )
+        ]
