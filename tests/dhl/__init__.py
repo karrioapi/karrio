@@ -5,13 +5,14 @@ recipient = {"address": {"city":"Lome", "country_code":"TG"}}
 shipment_details = {"packages": [{"id":"1", "height":3, "lenght":10, "width":3,"weight":4.0}]}
 from openship.mappers.dhl import  DHLClient
 client = DHLClient(...)
-from openship.mappers.dhl import init_proxy
-dhlProxy = init_proxy(client)
-from openship.domain.entities import Quote, jsonify
+from openship.mappers.dhl import DHLProxy
+dhlProxy = DHLProxy(client)
+from openship.domain.entities import Quote
 payload = Quote.create(shipper=shipper, recipient=recipient, shipment_details=shipment_details)
 request = dhlProxy.mapper.create_quote_request(payload)
 response = dhlProxy.get_quotes(request)
 quotes = dhlProxy.mapper.parse_quote_response(response)
+from gds_helpers import jsonify
 print(jsonify(quotes))
 
 '''
@@ -218,4 +219,55 @@ print(jsonify(quotes))
     ],
     []
 ]
+'''
+
+'''
+<?xml version="1.0" ?>
+<DCTResponse>
+    <GetQuoteResponse>
+        <Response>
+            <ServiceHeader>
+                <MessageTime>2018-06-22T04:49:29.292000+01:00</MessageTime>
+                <MessageReference>1234567890123456789012345678901</MessageReference>
+                <SiteID></SiteID>
+            </ServiceHeader>
+        </Response>
+        <Note>
+            <ActionStatus>Failure</ActionStatus>
+            <Condition>
+                <ConditionCode>340004</ConditionCode>
+                <ConditionData>The location information is missing. At least one attribute post code, city name or suburb name should be provided</ConditionData>
+            </Condition>
+            <Condition>
+                <ConditionCode>220001</ConditionCode>
+                <ConditionData>Failure - request</ConditionData>
+            </Condition>
+        </Note>
+    </GetQuoteResponse>
+</DCTResponse>
+'''
+
+'''
+<?xml version="1.0" encoding="UTF-8"?>
+<res:ErrorResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com err-res.xsd'>
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2018-06-22T04:55:31+01:00</MessageTime>
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID></SiteID>
+            <Password></Password>
+        </ServiceHeader>
+        <Status>
+            <ActionStatus>Error</ActionStatus>
+            <Condition>
+                <ConditionCode>111</ConditionCode>
+                <ConditionData>Error in parsing request XML:Error: The
+                    content of element type &quot;ServiceHeader&quot;
+                    must match
+                    &quot;(MessageTime,MessageReference,SiteID,Password)&quot;.
+                    at line 9, column 30</ConditionData>
+            </Condition>
+        </Status>
+    </Response>
+</res:ErrorResponse><!-- ServiceInvocationId:20180622045531_96ab_f3e91245-69d2-422e-b943-83fbe8f8181b -->
 '''
