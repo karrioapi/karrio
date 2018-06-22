@@ -6,7 +6,7 @@ setup(name='openship',
       url='https://github.com/OpenShip/openship',
       author='DanH91',
       author_email='danielk.developer@gmail.com',
-      license='MIT',
+      license='LGPL',
       packages=['openship'],
       install_requires=[
             'py-fedex==0.1.dev0',
