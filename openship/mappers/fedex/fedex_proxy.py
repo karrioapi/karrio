@@ -12,8 +12,7 @@ ctx = ssl._create_unverified_context()
 
 class FedexProxy(Proxy):
 
-    def __init__(self, client: FedexClient, mapper: FedexMapper = None, name : str = "Fedex"):
-        self.name = name
+    def __init__(self, client: FedexClient, mapper: FedexMapper = None):
         self.client = client
         self.mapper = FedexMapper(client) if mapper is None else mapper
 

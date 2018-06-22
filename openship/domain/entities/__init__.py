@@ -32,6 +32,7 @@ class ShipmentDetails():
 
 
 class Error():
-    def __init__(self, message: str = None, code: str = None):
+    def __init__(self, message: str = None, code: str = None, carrier: str = None):
         self.message = message
         self.code = code
+        self.carrier = carrier

@@ -6,8 +6,7 @@ from ...domain.proxy import Proxy
 
 class DHLProxy(Proxy):
 
-    def __init__(self, client: DHLClient, mapper: DHLMapper = None, name : str = "DHL"):
-        self.name = name
+    def __init__(self, client: DHLClient, mapper: DHLMapper = None):
         self.client = client
         self.mapper = DHLMapper(client) if mapper is None else mapper
 
