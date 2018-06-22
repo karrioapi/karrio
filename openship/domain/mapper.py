@@ -10,6 +10,6 @@ class Mapper:
         """ Create carrier specific quote request xml data from  """
         raise Exception("Not Supported")
 
-    def parse_quote_response(self, res) -> Tuple[List[E.quote_details], List[E.Error]]:
+    def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
         """ Create united API quote result list from carrier xml response  """
         raise Exception("Not Supported")
