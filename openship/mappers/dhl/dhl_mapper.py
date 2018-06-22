@@ -65,7 +65,7 @@ class DHLMapper(Mapper):
 
         GetQuote = Req.GetQuoteType(Request=Request_, From=From_, To=To_, BkgDetails=BkgDetails_)
         
-        return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
+        return Req.DCTRequest(GetQuote=GetQuote)
 
 
 
