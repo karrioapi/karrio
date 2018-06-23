@@ -24,8 +24,8 @@ Please see [LICENSE](https://github.com/OpenShip/openship/blob/master/LICENSE) f
 
 ### TODOS
 
+- Add more cariers proxies and mappers
 - Add more features coverage to proxies mappers
-- Error handling for xml responses from proxies
 - Handle unsuported features
 - Write more documentation in wiki
 
