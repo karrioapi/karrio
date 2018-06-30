@@ -68,7 +68,7 @@ class Charge:
         self.value = value
 
 class TrackingEvent:
-    def __init__(self, date: str, time: str, description: str, location: str, code: str, signatory: str = None):
+    def __init__(self, date: str, description: str, location: str, code: str, time: str = None, signatory: str = None):
         self.date = date
         self.time = time
         self.description = description
