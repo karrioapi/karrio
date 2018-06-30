@@ -109,6 +109,28 @@ class FedexMapper(Mapper):
 	    )
 
 
+    def create_tracking_request(self, payload: E.tracking_request) -> Track.TrackRequest:    
+        version = Track.VersionId(ServiceId="trck", Major=14, Intermediate=0, Minor=0)
+        transactionDetail = Track.TransactionDetail(
+            CustomerTransactionId="Track By Number_v14",
+            Localization=Track.Localization(LanguageCode=payload.language_code or "en")
+        )
+        track_request = Track.TrackRequest(
+            WebAuthenticationDetail=self.webAuthenticationDetail,
+            ClientDetail=self.clientDetail,
+            TransactionDetail=transactionDetail,
+            Version=version,
+        )
+        for tracking_number in payload.tracking_numbers:
+            track_request.add_SelectionDetails(Track.TrackSelectionDetail(
+                CarrierCode="FDXE",
+                PackageIdentifier=Track.TrackPackageIdentifier(
+                    Type="TRACKING_NUMBER_OR_DOORTAG",
+                    Value=tracking_number
+                )
+            ))
+        return track_request
+
 
 
     def parse_error_response(self, response):
