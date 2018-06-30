@@ -188,6 +188,8 @@ class FedexMapper(Mapper):
     def _extract_tracking(self, trackings: List[E.tracking_details], trackDetailNode) -> List[E.tracking_details]:
         trackDetail = Track.TrackDetail()
         trackDetail.build(trackDetailNode)
+        if trackDetail.Notification.Severity == 'ERROR':
+            return trackings
         return trackings + [
             E.Tracking.parse(
                 carrier=self.client.carrier_name,
