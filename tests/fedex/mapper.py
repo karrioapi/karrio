@@ -2,13 +2,14 @@ import unittest
 from gds_helpers import to_xml, jsonify, export
 from openship.mappers.fedex import FedexClient, FedexProxy
 from openship.domain.entities import Tracking
+from openship.mappers.fedex.fedex_proxy import _create_envelope, _export_envolope 
 
 proxy = FedexProxy(FedexClient(
   "https://wsbeta.fedex.com:443/web-services",
   "user_key",
   "password",
-  "account_number",
-  "meter_number",
+  "2349857",
+  "1293587",
   "carrier_name"  
 ))
 
@@ -20,16 +21,19 @@ class TestFeDexMapper(unittest.TestCase):
       
         self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
 
-    # def test_create_tracking_request(self):
-    #   payload = Tracking.create(tracking_numbers=["8346088391"])
-    #   tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
-    #   tracking_req_xml_obj.Request.ServiceHeader.MessageTime = None # remove MessageTime for testing purpose
-    #   xmlStr = export(
-    #     tracking_req_xml_obj, 
-    #     name_='req:KnownTrackingRequest',
-    #     namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd"'
-    #   )
-    #   self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
+    def test_create_tracking_request(self):
+        payload = Tracking.create(tracking_numbers=["794887075005"])
+        tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
+        envelope_= _create_envelope(tracking_req_xml_obj)
+        xmlStr = _export_envolope(
+            envelope_, 
+            envelope_prefix='soapenv:', 
+            child_name='TrackRequest', 
+            child_prefix='v14:',
+            namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v14="http://fedex.com/ws/track/v14"'
+        )
+
+        self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
 
     def test_parse_tracking_response(self):
       parsed_response = proxy.mapper.parse_tracking_response(to_xml(TrackingResponseXml))
@@ -107,28 +111,22 @@ AuthError = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soa
 '''
 
 TrackingRequestXml = '''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v14="http://fedex.com/ws/track/v14">
-   <soapenv:Header/>
    <soapenv:Body>
       <v14:TrackRequest>
          <v14:WebAuthenticationDetail>
-            <v14:ParentCredential>
-               <v14:Key>A4YlC6CtrGp0oAv7</v14:Key>
-               <v14:Password>GMd9tbHm3tDLUKuYkQQUJAI1a</v14:Password>
-            </v14:ParentCredential>
             <v14:UserCredential>
-               <v14:Key>MzFgqt08rlRz8WAB</v14:Key>
-               <v14:Password>i9yy72V1TfLQfr8gO6wB3Wgsw</v14:Password>
+               <v14:Key>user_key</v14:Key>
+               <v14:Password>password</v14:Password>
             </v14:UserCredential>
          </v14:WebAuthenticationDetail>
          <v14:ClientDetail>
-            <v14:AccountNumber>150067600</v14:AccountNumber>
-            <v14:MeterNumber>7003043</v14:MeterNumber>
+            <v14:AccountNumber>2349857</v14:AccountNumber>
+            <v14:MeterNumber>1293587</v14:MeterNumber>
          </v14:ClientDetail>
          <v14:TransactionDetail>
             <v14:CustomerTransactionId>Track By Number_v14</v14:CustomerTransactionId>
             <v14:Localization>
-               <v14:LanguageCode>EN</v14:LanguageCode>
-               <v14:LocaleCode>US</v14:LocaleCode>
+               <v14:LanguageCode>en</v14:LanguageCode>
             </v14:Localization>
          </v14:TransactionDetail>
          <v14:Version>
@@ -143,14 +141,6 @@ TrackingRequestXml = '''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.
                <v14:Type>TRACKING_NUMBER_OR_DOORTAG</v14:Type>
                <v14:Value>794887075005</v14:Value>
             </v14:PackageIdentifier>
-           
-            <v14:ShipmentAccountNumber/>
-           
-
-            <v14:SecureSpodAccount/>
-              <v14:Destination>
-               <v14:GeographicCoordinates>rates evertitque aequora</v14:GeographicCoordinates>
-            </v14:Destination>
          </v14:SelectionDetails>
       </v14:TrackRequest>
    </soapenv:Body>
