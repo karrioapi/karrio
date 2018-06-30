@@ -23,7 +23,8 @@ class DHLMapper(Mapper):
 
 
     def parse_error_response(self, response):
-        return reduce(self._extract_error, response.findall('.//Condition'), [])
+        conditions = response.xpath('.//*[local-name() = $name]', name="Condition")
+        return reduce(self._extract_error, conditions, [])
 
 
     """ Interface functions """
@@ -85,12 +86,14 @@ class DHLMapper(Mapper):
 
 
     def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
-        quotes = reduce(self._extract_quote, response.findall('.//QtdShp'), [])
+        qtdshp_list = response.xpath('.//*[local-name() = $name]', name="QtdShp")
+        quotes = reduce(self._extract_quote, qtdshp_list, [])
         return (quotes, self.parse_error_response(response))
 
 
     def parse_tracking_response(self, response) -> Tuple[List[E.tracking_details], List[E.Error]]:
-        trackings = reduce(self._extract_tracking, response.findall('.//AWBInfo'), [])
+        awbinfos = response.xpath('.//*[local-name() = $name]', name="AWBInfo")
+        trackings = reduce(self._extract_tracking, awbinfos, [])
         return (trackings, self.parse_error_response(response))
 
 
