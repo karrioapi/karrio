@@ -1,3 +1,5 @@
+from tests.dhl.mapper import *
+
 '''
 
 shipper = {"address": {"postal_code":"H3N1S4", "country_code":"CA"}}

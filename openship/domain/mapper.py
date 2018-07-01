@@ -7,9 +7,17 @@ class Mapper:
     client: Client
 
     def create_quote_request(self, payload: E.quote_request):
-        """ Create carrier specific quote request xml data from  """
+        """ Create carrier specific quote request xml data from payload """
         raise Exception("Not Supported")
 
     def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
         """ Create united API quote result list from carrier xml response  """
+        raise Exception("Not Supported")
+
+    def create_tracking_request(self, payload: E.tracking_request):
+        """ Create carrier specific tracking request xml data from payload """
+        raise Exception("Not Supported")
+
+    def parse_tracking_response(self, response) -> Tuple[List[E.tracking_details], List[E.Error]]:
+        """ Create united API tracking result list from carrier xml response  """
         raise Exception("Not Supported")

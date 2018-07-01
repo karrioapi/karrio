@@ -4,13 +4,14 @@ import time
 from ...domain import entities as E 
 from ...domain.mapper import Mapper
 from .dhl_client import DHLClient
-from pydhl import DCT_req_global as Req, DCT_Response_global as Res
+from pydhl import DCT_req_global as Req, DCT_Response_global as Res, tracking_request_known as Track, tracking_response as TrackRes
 from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
 
 class DHLMapper(Mapper):
     def __init__(self, client: DHLClient):
         self.client = client
 
+    """ Shared functions """
     def init_request(self) -> Request:
         ServiceHeader_ = ServiceHeader(
             MessageReference="1234567890123456789012345678901",
@@ -18,13 +19,18 @@ class DHLMapper(Mapper):
             SiteID=self.client.site_id, 
             Password=self.client.password
         )
-        MetaData_ = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
-        return Request(ServiceHeader=ServiceHeader_, MetaData=MetaData_)
+        return Request(ServiceHeader=ServiceHeader_)
 
 
+    def parse_error_response(self, response):
+        conditions = response.xpath('.//*[local-name() = $name]', name="Condition")
+        return reduce(self._extract_error, conditions, [])
 
+
+    """ Interface functions """
     def create_quote_request(self, payload: E.quote_request) -> Req.DCTRequest:
         Request_ = self.init_request()
+        Request_.MetaData = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
 
         From_ = Req.DCTFrom(
             CountryCode=payload.shipper.address.country_code, 
@@ -68,17 +74,32 @@ class DHLMapper(Mapper):
         return Req.DCTRequest(GetQuote=GetQuote)
 
 
+    def create_tracking_request(self, payload: E.tracking_request) -> Track.KnownTrackingRequest:
+        known_request = Track.KnownTrackingRequest(
+            Request=self.init_request(),
+            LanguageCode= payload.language_code or "en",
+            LevelOfDetails= payload.level_of_details or "ALL_CHECK_POINTS"
+        )
+        for tn in payload.tracking_numbers:
+            known_request.add_AWBNumber(tn)
+        return known_request
+
 
     def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
-        quotes = reduce(self._extract_quote, response.findall('.//QtdShp'), [])
-        errors = reduce(self._extract_error, response.findall('.//Condition'), [])
-        return (quotes, errors)
+        qtdshp_list = response.xpath('.//*[local-name() = $name]', name="QtdShp")
+        quotes = reduce(self._extract_quote, qtdshp_list, [])
+        return (quotes, self.parse_error_response(response))
 
+
+    def parse_tracking_response(self, response) -> Tuple[List[E.tracking_details], List[E.Error]]:
+        awbinfos = response.xpath('.//*[local-name() = $name]', name="AWBInfo")
+        trackings = reduce(self._extract_tracking, awbinfos, [])
+        return (trackings, self.parse_error_response(response))
 
 
 
     """ Helpers functions """
-    def _extract_error(self, errors: List[E.Error], conditionNode: Res.ConditionType) -> List[E.Error]:
+    def _extract_error(self, errors: List[E.Error], conditionNode) -> List[E.Error]:
         condition = Res.ConditionType()
         condition.build(conditionNode)
         return errors + [
@@ -86,7 +107,7 @@ class DHLMapper(Mapper):
         ]
 
 
-    def _extract_quote(self, quotes: List[E.quote_details], qtdshpNode: Res.QtdShpType) -> List[E.quote_details]:
+    def _extract_quote(self, quotes: List[E.quote_details], qtdshpNode) -> List[E.quote_details]:
         qtdshp = Res.QtdShpType()
         qtdshp.build(qtdshpNode)
         ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
@@ -106,5 +127,25 @@ class DHLMapper(Mapper):
                 duties_and_taxes=DutiesAndTaxes_,
                 discount=Discount_,
                 extra_charges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
+            )
+        ]
+
+
+    def _extract_tracking(self, trackings: List[E.tracking_details], awbInfoNode) -> List[E.tracking_details]:
+        awbInfo = TrackRes.AWBInfo()
+        awbInfo.build(awbInfoNode)
+        return trackings + [
+            E.Tracking.parse(
+                carrier=self.client.carrier_name,
+                tracking_number=awbInfo.AWBNumber,
+                shipment_date=str(awbInfo.ShipmentInfo.ShipmentDate),
+                events=list(map(lambda e: E.TrackingEvent(
+                    date=str(e.Date),
+                    time=str(e.Time),
+                    signatory=e.Signatory,
+                    code=e.ServiceEvent.EventCode,
+                    location=e.ServiceArea.Description,
+                    description=e.ServiceEvent.Description
+                ), awbInfo.ShipmentInfo.ShipmentEvent))
             )
         ]

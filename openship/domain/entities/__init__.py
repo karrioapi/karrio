@@ -12,6 +12,17 @@ class Quote():
         """ create a quote details data """
         return quote_details(**args)
 
+class Tracking():
+    """ manage tracking operations """
+
+    def create(**args) -> quote_request:
+        """ Create a tracking request payload """
+        return tracking_request(**args)
+
+    def parse(**args) -> tracking_details:
+        """ create a tracking details data """
+        return tracking_details(**args)
+
 class Party():
     """ manage party operations """
 

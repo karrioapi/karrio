@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 from typing import List, Tuple
 from functools import reduce
-from pyfedex import rate_v22 as Rate
+from pyfedex import rate_v22 as Rate, track_service_v14 as Track
 from .fedex_client import FedexClient
 from ...domain.mapper import Mapper
 from ...domain import entities as E
@@ -15,6 +15,7 @@ class FedexMapper(Mapper):
         userCredential = WebAuthenticationCredential(Key=client.user_key, Password=client.password)
         self.webAuthenticationDetail = WebAuthenticationDetail(UserCredential=userCredential)
         self.clientDetail = ClientDetail(AccountNumber=client.account_number, MeterNumber=client.meter_number)
+
 
 
 
@@ -108,14 +109,50 @@ class FedexMapper(Mapper):
 	    )
 
 
+    def create_tracking_request(self, payload: E.tracking_request) -> Track.TrackRequest:    
+        version = Track.VersionId(ServiceId="trck", Major=14, Intermediate=0, Minor=0)
+        transactionDetail = Track.TransactionDetail(
+            CustomerTransactionId="Track By Number_v14",
+            Localization=Track.Localization(LanguageCode=payload.language_code or "en")
+        )
+        track_request = Track.TrackRequest(
+            WebAuthenticationDetail=self.webAuthenticationDetail,
+            ClientDetail=self.clientDetail,
+            TransactionDetail=transactionDetail,
+            Version=version,
+        )
+        for tracking_number in payload.tracking_numbers:
+            track_request.add_SelectionDetails(Track.TrackSelectionDetail(
+                CarrierCode="FDXE",
+                PackageIdentifier=Track.TrackPackageIdentifier(
+                    Type="TRACKING_NUMBER_OR_DOORTAG",
+                    Value=tracking_number
+                )
+            ))
+        return track_request
+
+
+
+    def parse_error_response(self, response):
+        notifications = response.xpath('.//*[local-name() = $name]', name="Notifications")
+        return reduce(self._extract_error, notifications, [])
+
 
     def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
-        quotes = reduce(self._extract_details, response.findall('.//RateReplyDetails'), [])
-        errors = reduce(self._extract_errors, response.findall('.//Notifications'), [])
-        return (quotes, errors)
+        rate_replys = response.xpath('.//*[local-name() = $name]', name="RateReplyDetails")
+        quotes = reduce(self._extract_quote, rate_replys, [])
+        return (quotes, self.parse_error_response(response))
 
 
-    def _extract_errors(self, errors: List[E.Error], notificationNode) -> List[E.Error]:
+    def parse_tracking_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+        track_details = response.xpath('.//*[local-name() = $name]', name="TrackDetails")
+        trackings = reduce(self._extract_tracking, track_details, [])
+        return (trackings, self.parse_error_response(response))
+
+
+
+
+    def _extract_error(self, errors: List[E.Error], notificationNode) -> List[E.Error]:
         notification = Rate.Notification()
         notification.build(notificationNode)
         if notification.Severity != 'ERROR':
@@ -125,7 +162,7 @@ class FedexMapper(Mapper):
         ]
 
 
-    def _extract_details(self, quotes: List[E.quote_details], detailNode) -> List[E.quote_details]: 
+    def _extract_quote(self, quotes: List[E.quote_details], detailNode) -> List[E.quote_details]: 
         detail = Rate.RateReplyDetail()
         detail.build(detailNode)
         if not detail.RatedShipmentDetails:
@@ -144,5 +181,25 @@ class FedexMapper(Mapper):
                 duties_and_taxes=float(shipmentDetail.TotalTaxes.Amount),
                 discount=float(shipmentDetail.TotalFreightDiscounts.Amount),
                 extra_charges=list(Discounts_) + list(Surcharges_) + list(Taxes_)
+            )
+        ]
+
+
+    def _extract_tracking(self, trackings: List[E.tracking_details], trackDetailNode) -> List[E.tracking_details]:
+        trackDetail = Track.TrackDetail()
+        trackDetail.build(trackDetailNode)
+        if trackDetail.Notification.Severity == 'ERROR':
+            return trackings
+        return trackings + [
+            E.Tracking.parse(
+                carrier=self.client.carrier_name,
+                tracking_number=trackDetail.TrackingNumber,
+                shipment_date=str(trackDetail.StatusDetail.CreationTime),
+                events=list(map(lambda e: E.TrackingEvent(
+                    date=str(e.Timestamp),
+                    code=e.EventType,
+                    location=e.ArrivalLocation,
+                    description=e.EventDescription
+                ), trackDetail.Events))
             )
         ]

@@ -54,13 +54,29 @@ class quote_request(NamedTuple):
     recipient: party
     shipment_details: shipment_details
 
+class tracking_request(NamedTuple):
+    tracking_numbers: List[str]
+    language_code: str = None
+    level_of_details: str = None
 
-class Charge():
+
+''' Generic response data types '''
+
+class Charge:
     def __init__(self, name: str = None, value: str = None):
         self.name = name
         self.value = value
 
-class quote_details():
+class TrackingEvent:
+    def __init__(self, date: str, description: str, location: str, code: str, time: str = None, signatory: str = None):
+        self.date = date
+        self.time = time
+        self.description = description
+        self.location = location
+        self.code = code
+        self.signatory = signatory
+
+class quote_details:
     def __init__(self, carrier: str, service_name: str, service_type: str, 
         base_charge: float, duties_and_taxes: float, total_charge: float, 
         delivery_time: str = None, pickup_time: str = None, delivery_date: str = None, 
@@ -79,3 +95,11 @@ class quote_details():
         self.pickup_time = pickup_time
         self.delivery_date = delivery_date
         self.pickup_date = pickup_date
+
+
+class tracking_details():
+    def __init__(self, carrier: str, tracking_number: str, shipment_date: str, events: List[TrackingEvent] = []): 
+        self.carrier = carrier
+        self.events = events
+        self.shipment_date = shipment_date
+        self.tracking_number = tracking_number
