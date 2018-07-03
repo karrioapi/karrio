@@ -79,7 +79,7 @@ Please read [CONTRIBUTING.md](https://github.com/OpenShip/openship/blob/master/C
 
 ## Authors
 
-- **Daniel Kobina** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [OpenShip](https://openship.xyz/)
+- **Daniel K.** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [OpenShip](https://openship.xyz/)
 
 See also the list of [contributors](https://github.com/OpenShip/openship/blob/master/contributors) who participated in this project.
 
