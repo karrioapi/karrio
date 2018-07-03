@@ -1,36 +1,88 @@
-# openship
+# OpenShip
 
-Shipping carriers API integrations made easy with Python
+Shipping carriers API integrations Library
 
-**Note: This project is the first draft version shared as Open Source.**
+- Integrate multiple cariers: DHL, FedEx and more with ease
+- Use an intuitive unified API accross multiple cariers
+- Move fast by just reading the carier API documentation
+- Use your own developer credentials with negociated rates
+- Tested
 
-**Note:** Written with Python 3
+Openship prevent you from reinvinting the wheel and is easy to use:
 
-## You can play with it
+```shell
+>>> from openship.mappers.dhl import  DHLClient, DHLProxy
+>>> from openship.domain.entities Tracking
+>>> client = DHLClient(
+    "https://xmlpi-ea.dhl.com/XMLShippingServlet",
+    "YOUR_DHL_SITE_ID",
+    "YOUR_DHL_SITE_PASSWORD",
+    "YOUR_DHL_ACCOUNT_NUMBER",
+    "CARRIER_NAME"
+  )
+>>> proxy = DHLProxy(client)
+>>> payload = Tracking.create(tracking_numbers=["8346088391"])
+>>> tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
+>>> response = proxy.get_trackings(tracking_req_xml_obj)
+>>> trackings = proxy.mapper.parse_tracking_response(response)
+```
 
-### Installation
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine.
+
+### Prerequisites
+
+OpenShip is written in Python 3.5
+
+```shell
+$ Python --version
+Python 3.6.5
+```
+
+### Installing
+
+OpenShip can be installed with [pip](https://pip.pypa.io/):
 
 ```shell
   pip install --process-dependency-links -e git://github.com/OpenShip/openship.git#egg=openship
 ```
 
-### Geting Started
+Alternatively, you can grab the latest source code from [GitHub](https://github.com/OpenShip/openship):
 
-[WIKI](https://github.com/OpenShip/openship/wiki)
+```shell
+git clone https://github.com/OpenShip/openship.git
+cd openship
+python setup.py install
+```
 
-### License
+## Running the tests
 
-Please see [LICENSE](https://github.com/OpenShip/openship/blob/master/LICENSE) for licensing details.
+```shell
+python -m unittest -v
+```
 
-### TODOS
+## Documentation
 
-- Add more cariers proxies and mappers
-- Add more features coverage to proxies mappers
-- Handle unsuported features
-- Write more documentation in wiki
+OpenShip has usage and reference documentation at [OpenShip/Wiki](https://github.com/OpenShip/openship/wiki).
 
-Contributions are welcome.
+## Built With
 
-### Author
+- [generateDs-helpers](https://github.com/OpenShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation hepers
+- [py-dhl](https://github.com/OpenShip/py-fedex) - The DHL xml generated datatypes library
+- [py-fedex](https://github.com/OpenShip/py-dhl) - The FedEx xml generated datatypes library
+- [lxml](https://lxml.de/) - Processing XML and HTML with Python
 
-DanielK, [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [OpenShip](https://openship.xyz/)
+## Contributing
+
+Please read [CONTRIBUTING.md](https://github.com/OpenShip/openship/blob/master/CODE_OF_CONDUCT.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Authors
+
+- **Daniel Kobina** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [OpenShip](https://openship.xyz/)
+
+See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the LGPL License - see the [LICENSE.md](https://github.com/OpenShip/openship/blob/master/LICENSE) file for details
