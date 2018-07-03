@@ -33,7 +33,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-OpenShip is written in Python 3.5
+OpenShip is compatible with Python 3 +
 
 ```shell
 $ Python --version
@@ -81,7 +81,7 @@ Please read [CONTRIBUTING.md](https://github.com/OpenShip/openship/blob/master/C
 
 - **Daniel Kobina** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [OpenShip](https://openship.xyz/)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/OpenShip/openship/blob/master/contributors) who participated in this project.
 
 ## License
 
