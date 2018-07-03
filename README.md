@@ -68,7 +68,7 @@ OpenShip has usage and reference documentation at [OpenShip/Wiki](https://github
 
 ## Built With
 
-- [generateDs-helpers](https://github.com/OpenShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation hepers
+- [generateDs-helpers](https://github.com/OpenShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation helpers
 - [py-dhl](https://github.com/OpenShip/py-fedex) - The DHL xml generated datatypes library
 - [py-fedex](https://github.com/OpenShip/py-dhl) - The FedEx xml generated datatypes library
 - [lxml](https://lxml.de/) - Processing XML and HTML with Python
