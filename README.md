@@ -64,7 +64,7 @@ python -m unittest -v
 
 ## Documentation
 
-OpenShip has usage and reference documentation at [OpenShip/Wiki](https://github.com/OpenShip/openship/wiki).
+OpenShip has usage and reference documentation at [OpenShip/Wiki](https://doc.openship.xyz).
 
 ## Built With
 
