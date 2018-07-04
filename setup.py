@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='openship',
-      version='0.2-alpha',
+      version='1.0-beta',
       description='Shipping carriers mappers and proxies',
       url='https://github.com/OpenShip/openship',
       author='DanH91',
@@ -9,15 +9,15 @@ setup(name='openship',
       license='LGPL',
       packages=['openship'],
       install_requires=[
-            'py-fedex==0.1.dev0',
-            'py-dhl==0.1.dev0',
-            'py-soap==0.1.dev0',
+            'py-fedex==1.0',
+            'py-dhl==1.0',
+            'py-soap==1.0',
             'gds-helpers==0.2.0',
       ],
       dependency_links=[
-            'git+https://github.com/OpenShip/py-fedex.git@master#egg=py-fedex-0.1.dev0',
-            'git+https://github.com/OpenShip/py-dhl.git@master#egg=py-dhl-0.1.dev0',
-            'git+https://github.com/OpenShip/py-soap.git@master#egg=py-soap-0.1.dev0',
-            'git+https://github.com/OpenShip/generateDs-helpers.git@master#egg=gds-helpers-0.2.0',
+            'git+https://github.com/OpenShip/py-fedex.git@v1.0#egg=py-fedex-1.0',
+            'git+https://github.com/OpenShip/py-dhl.git@v1.0#egg=py-dhl-1.0',
+            'git+https://github.com/OpenShip/py-soap.git@v1.0#egg=py-soap-1.0',
+            'git+https://github.com/OpenShip/generateDs-helpers.git@v0.2.0#egg=gds-helpers-0.2.0',
       ],
       zip_safe=False)
