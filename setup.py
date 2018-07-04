@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='py-soap',
-      version='0.1.dev0',
+      version='1.0',
       description='SOAP Python Data Structure',
       url='https://github.com/OpenShip/py-soap',
       author='DanH91',
