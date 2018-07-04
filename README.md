@@ -2,9 +2,9 @@
 
 Shipping carriers API integrations Library
 
-- Integrate multiple cariers: DHL, FedEx and more with ease
+- Integrate multiple carriers: DHL, FedEx and more with ease
 - Use an intuitive unified API accross multiple cariers
-- Move fast by just reading the carier API documentation
+- Move fast by just reading the carrier API documentation
 - Use your own developer credentials with negociated rates
 - Tested
 
