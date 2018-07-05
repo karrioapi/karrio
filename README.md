@@ -47,7 +47,7 @@ OpenShip can be installed with [pip](https://pip.pypa.io/):
 For latest dev versions
 
 ```shell
-  pip install --process-dependency-links -e git://github.com/OpenShip/openship.git#egg=openship
+pip install --process-dependency-links -e git://github.com/OpenShip/openship.git#egg=openship
 ```
 
 Alternatively, you can grab the latest source code from [GitHub](https://github.com/OpenShip/openship):
@@ -61,7 +61,7 @@ python setup.py install
 For released version (change '@version' at your convenience)
 
 ```shell
-pip install --process-dependency-links git+git://github.com/OpenShip/openship.git@v1.0-beta
+pip install --process-dependency-links -e git+git://github.com/OpenShip/openship.git@v1.0-beta#egg=openship
 ```
 
 ## Running the tests
