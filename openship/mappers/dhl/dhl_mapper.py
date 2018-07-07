@@ -134,6 +134,8 @@ class DHLMapper(Mapper):
     def _extract_tracking(self, trackings: List[E.tracking_details], awbInfoNode) -> List[E.tracking_details]:
         awbInfo = TrackRes.AWBInfo()
         awbInfo.build(awbInfoNode)
+        if awbInfo.ShipmentInfo == None:
+            return trackings
         return trackings + [
             E.Tracking.parse(
                 carrier=self.client.carrier_name,
