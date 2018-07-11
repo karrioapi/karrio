@@ -29,6 +29,12 @@ class TestDHLTracking(unittest.TestCase):
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedTrackingResponse))
 
+    def test_tracking_single_not_found_parsing(self):
+        parsed_response = proxy.mapper.parse_tracking_response(
+            to_xml(TrackingSingleNotFound))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedTrackingSingNotFound))
+
 
 if __name__ == '__main__':
     unittest.main()
@@ -40,6 +46,17 @@ ParsedAuthError = [
         "code": "111",
         "message": " Error Parsing incoming request XML\n                    Error: Datatype error: In element\n                    'Password' : Value 'testPwd'\n                    with length '7' is less than minimum\n                    length facet of '8'.. at line 11, column 33"
     }
+]
+
+ParsedTrackingSingNotFound = [
+    [],
+    [
+        {
+            "carrier": "carrier_name",
+            "code": "103",
+            "message": "No Shipments Found for AWBNumber 123456789"
+        }
+    ]
 ]
 
 ParsedTrackingResponse = [
@@ -243,6 +260,28 @@ AuthError = '''<?xml version="1.0" encoding="UTF-8"?>
 </req:ShipmentTrackingErrorResponse>
 <!-- ServiceInvocationId:20180628011253_42d7_3a8bef3e-ebbd-4e1a-b248-d01e51b1c77f -->
 '''
+
+TrackingSingleNotFound = """<?xml version="1.0" encoding="UTF-8"?>
+<res:TrackingResponse xmlns:res="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingResponse.xsd">
+<Response>
+        <ServiceHeader>
+            <MessageTime>2002-06-25T11:28:56-08:00</MessageTime>
+            <MessageReference>1234567890123456789012345678</MessageReference>
+            <SiteID>TestSiteID</SiteID>
+        </ServiceHeader>
+    </Response>
+    <AWBInfo>
+        <AWBNumber/>
+        <Status>
+            <ActionStatus>No Shipments Found</ActionStatus>
+            <Condition>
+                <ConditionCode>103</ConditionCode>
+                <ConditionData>No Shipments Found for AWBNumber 123456789</ConditionData>
+            </Condition>
+        </Status>
+    </AWBInfo>
+</res:TrackingResponse>
+"""
 
 TrackingRequestXml = '''<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd">
 	<Request>
