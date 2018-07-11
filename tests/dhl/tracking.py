@@ -1,43 +1,32 @@
 import unittest
+from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
-from openship.mappers.dhl import DHLClient, DHLProxy
 from openship.domain.entities import Tracking
+from tests.dhl.fixture import proxy, strip
 
-proxy = DHLProxy(DHLClient(
-  "https://xmlpi-ea.dhl.com/XMLShippingServlet",
-  "site_id",
-  "password",
-  "account_number",
-  "carrier_name"
-))
+class TestDHLTracking(unittest.TestCase):
 
+    @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    def test_create_tracking_request(self, http_mock):
+      payload = Tracking.create(tracking_numbers=["8346088391"])
+      tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
+      tracking_req_xml_obj.Request.ServiceHeader.MessageTime = None # remove MessageTime for testing purpose
 
-class TestDHLMapper(unittest.TestCase):
+      proxy.get_trackings(tracking_req_xml_obj)
+
+      xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+      self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
 
     def test_error_parsing(self):
       parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
       
       self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
 
-    def test_create_tracking_request(self):
-      payload = Tracking.create(tracking_numbers=["8346088391"])
-      tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
-      tracking_req_xml_obj.Request.ServiceHeader.MessageTime = None # remove MessageTime for testing purpose
-      xmlStr = export(
-        tracking_req_xml_obj, 
-        name_='req:KnownTrackingRequest',
-        namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd"'
-      )
-      self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
-
     def test_parse_tracking_response(self):
       parsed_response = proxy.mapper.parse_tracking_response(to_xml(TrackingResponseXml))
       
       self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
 
-
-def strip(text):
-  return text.replace('\t','').replace('\n','').replace(' ','')
 
 if __name__ == '__main__':
     unittest.main()
