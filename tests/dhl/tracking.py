@@ -4,35 +4,34 @@ from gds_helpers import to_xml, jsonify, export
 from openship.domain.entities import Tracking
 from tests.dhl.fixture import proxy, strip
 
+
 class TestDHLTracking(unittest.TestCase):
 
     @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_create_tracking_request(self, http_mock):
-      payload = Tracking.create(tracking_numbers=["8346088391"])
-      tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
-      tracking_req_xml_obj.Request.ServiceHeader.MessageTime = None # remove MessageTime for testing purpose
+        payload = Tracking.create(tracking_numbers=["8346088391"])
+        tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
+        # remove MessageTime for testing purpose
+        tracking_req_xml_obj.Request.ServiceHeader.MessageTime = None
 
-      proxy.get_trackings(tracking_req_xml_obj)
+        proxy.get_trackings(tracking_req_xml_obj)
 
-      xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-      self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
+        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
 
-    def test_error_parsing(self):
-      parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
-      
-      self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
+    def test_tracking_auth_error_parsing(self):
+        parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
 
     def test_parse_tracking_response(self):
-      parsed_response = proxy.mapper.parse_tracking_response(to_xml(TrackingResponseXml))
-      
-      self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
+        parsed_response = proxy.mapper.parse_tracking_response(
+            to_xml(TrackingResponseXml))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedTrackingResponse))
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
 
 
 ParsedAuthError = [
