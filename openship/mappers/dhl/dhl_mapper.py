@@ -110,7 +110,7 @@ class DHLMapper(Mapper):
     def _extract_quote(self, quotes: List[E.quote_details], qtdshpNode) -> List[E.quote_details]:
         qtdshp = Res.QtdShpType()
         qtdshp.build(qtdshpNode)
-        ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
+        ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
         Discount_ = reduce(lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
         DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
         return quotes + [
@@ -122,11 +122,11 @@ class DHLMapper(Mapper):
                 pickup_time = str(qtdshp.PickupCutoffTime),
                 service_name=qtdshp.LocalProductName,
                 service_type=qtdshp.NetworkTypeCode,
-                base_charge=float(qtdshp.WeightCharge),
-                total_charge=float(qtdshp.ShippingCharge),
+                base_charge=float(qtdshp.WeightCharge or 0),
+                total_charge=float(qtdshp.ShippingCharge or 0),
                 duties_and_taxes=DutiesAndTaxes_,
                 discount=Discount_,
-                extra_charges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue)), qtdshp.QtdShpExChrg))
+                extra_charges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
             )
         ]
 

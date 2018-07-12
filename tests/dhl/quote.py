@@ -42,6 +42,12 @@ class TestDHLQuote(unittest.TestCase):
             to_xml(QuoteMissingArgsError))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedQuoteMissingArgsError))
+                
+    def test_parse_quote_vol_weight_higher_response(self):
+        parsed_response = proxy.mapper.parse_quote_response(
+            to_xml(QuoteVolWeightHigher))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedQuoteVolWeightHigher))
 
 
 if __name__ == '__main__':
@@ -106,6 +112,26 @@ ParsedQuoteResponse = [
             'service_name': 'EXPRESS EASY DOC', 
             'service_type': 'TD', 
             'total_charge': 213.47
+        }
+    ], 
+    []
+]
+
+ParsedQuoteVolWeightHigher = [
+    [
+        {
+            'base_charge': 0.0, 
+            'carrier': 'carrier_name', 
+            'delivery_date': '2017-11-13 11:59:00', 
+            'delivery_time': 'PT23H59M', 
+            'discount': 0, 
+            'duties_and_taxes': 0, 
+            'extra_charges': [], 
+            'pickup_date': '2017-11-10', 
+            'pickup_time': 'PT13H30M', 
+            'service_name': 'EXPRESS WORLDWIDE NONDOC', 
+            'service_type': 'TD', 
+            'total_charge': 0.0
         }
     ], 
     []
@@ -378,4 +404,83 @@ QuoteResponseXml = """<?xml version="1.0" ?>
         </Note>
     </GetQuoteResponse>
 </DCTResponse>
+"""
+
+QuoteVolWeightHigher = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<res:DCTResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com DCT-Response.xsd'>
+    <GetQuoteResponse>
+        <Response>
+            <ServiceHeader>
+                <MessageTime>2017-11-08T10:43:44.037+01:00</MessageTime>
+                <MessageReference>1234567890123456789012345678901</MessageReference>
+                <SiteID>xmlpidev</SiteID>
+            </ServiceHeader>
+        </Response>
+        <BkgDetails>
+            <QtdShp>
+                <OriginServiceArea>
+                    <FacilityCode>NIC</FacilityCode>
+                    <ServiceAreaCode>LCA</ServiceAreaCode>
+                </OriginServiceArea>
+                <DestinationServiceArea>
+                    <FacilityCode>AEC</FacilityCode>
+                    <ServiceAreaCode>ATH</ServiceAreaCode>
+                </DestinationServiceArea>
+                <GlobalProductCode>P</GlobalProductCode>
+                <LocalProductCode>P</LocalProductCode>
+                <ProductShortName>EXPRESS WORLDWIDE</ProductShortName>
+                <LocalProductName>EXPRESS WORLDWIDE NONDOC</LocalProductName>
+                <NetworkTypeCode>TD</NetworkTypeCode>
+                <POfferedCustAgreement>N</POfferedCustAgreement>
+                <TransInd>Y</TransInd>
+                <PickupDate>2017-11-10</PickupDate>
+                <PickupCutoffTime>PT13H30M</PickupCutoffTime>
+                <BookingTime>PT12H30M</BookingTime>
+                <ExchangeRate>0.000</ExchangeRate>
+                <WeightCharge>0</WeightCharge>
+                <WeightChargeTax>0.000</WeightChargeTax>
+                <TotalTransitDays>1</TotalTransitDays>
+                <PickupPostalLocAddDays>0</PickupPostalLocAddDays>
+                <DeliveryPostalLocAddDays>0</DeliveryPostalLocAddDays>
+                <PickupNonDHLCourierCode> </PickupNonDHLCourierCode>
+                <DeliveryNonDHLCourierCode> </DeliveryNonDHLCourierCode>
+                <DeliveryDate>
+                    <DeliveryType>QDDC</DeliveryType>
+                    <DlvyDateTime>2017-11-13 11:59:00</DlvyDateTime>
+                    <DeliveryDateTimeOffset>+00:00</DeliveryDateTimeOffset>
+                </DeliveryDate>
+                <DeliveryTime>PT23H59M</DeliveryTime>
+                <DimensionalWeight>70.000</DimensionalWeight>
+                <WeightUnit>KG</WeightUnit>
+                <PickupDayOfWeekNum>5</PickupDayOfWeekNum>
+                <DestinationDayOfWeekNum>1</DestinationDayOfWeekNum>
+                <PricingDate>2017-11-08</PricingDate>
+                <TotalTaxAmount>0.000</TotalTaxAmount>
+                <PickupWindowEarliestTime>09:00:00</PickupWindowEarliestTime>
+                <PickupWindowLatestTime>17:00:00</PickupWindowLatestTime>
+                <BookingCutoffOffset>PT1H</BookingCutoffOffset>
+            </QtdShp>
+        </BkgDetails>
+        <Srvs>
+            <Srv>
+                <GlobalProductCode>P</GlobalProductCode>
+                <MrkSrv>
+                    <LocalProductCode>P</LocalProductCode>
+                    <ProductShortName>EXPRESS WORLDWIDE</ProductShortName>
+                    <LocalProductName>EXPRESS WORLDWIDE NONDOC</LocalProductName>
+                    <ProductDesc>EXPRESS WORLDWIDE NONDOC</ProductDesc>
+                    <NetworkTypeCode>TD</NetworkTypeCode>
+                    <POfferedCustAgreement>N</POfferedCustAgreement>
+                    <TransInd>Y</TransInd>
+                    <LocalProductCtryCd>CY</LocalProductCtryCd>
+                    <GlobalServiceType>P</GlobalServiceType>
+                    <LocalServiceName>EXPRESS WORLDWIDE NONDOC</LocalServiceName>
+                </MrkSrv>
+            </Srv>
+        </Srvs>
+        <Note>
+            <ActionStatus>Success</ActionStatus>
+        </Note>
+    </GetQuoteResponse>
+</res:DCTResponse>
 """
