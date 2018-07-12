@@ -30,6 +30,12 @@ class TestDHLQuote(unittest.TestCase):
             to_xml(QuoteResponseXml))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedQuoteResponse))
+                
+    def test_parse_quote_parsing_error(self):
+        parsed_response = proxy.mapper.parse_quote_response(
+            to_xml(QuoteParsingError))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedQuoteParsingError))
 
 
 if __name__ == '__main__':
@@ -39,7 +45,14 @@ if __name__ == '__main__':
 
 
 ParsedQuoteParsingError = [
-    {}
+    [], 
+    [
+        {
+            'carrier': 'carrier_name', 
+            'code': '111', 
+            'message': 'Error in parsing request XML:Error: The\n                    content of element type "ServiceHeader"\n                    must match\n                    "(MessageTime,MessageReference,SiteID,Password)".\n                    at line 9, column 30'
+        }
+    ]
 ]
 
 ParsedQuoteResponse = [
