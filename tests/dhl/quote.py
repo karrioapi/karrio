@@ -36,6 +36,12 @@ class TestDHLQuote(unittest.TestCase):
             to_xml(QuoteParsingError))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedQuoteParsingError))
+                
+    def test_parse_quote_missing_args_error(self):
+        parsed_response = proxy.mapper.parse_quote_response(
+            to_xml(QuoteMissingArgsError))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedQuoteMissingArgsError))
 
 
 if __name__ == '__main__':
@@ -51,6 +57,17 @@ ParsedQuoteParsingError = [
             'carrier': 'carrier_name', 
             'code': '111', 
             'message': 'Error in parsing request XML:Error: The\n                    content of element type "ServiceHeader"\n                    must match\n                    "(MessageTime,MessageReference,SiteID,Password)".\n                    at line 9, column 30'
+        }
+    ]
+]
+
+ParsedQuoteMissingArgsError = [
+    [], 
+    [
+        {
+            'carrier': 'carrier_name', 
+            'code': '340004', 
+            'message': 'The location information is missing. At least one attribute post code, city name or suburb name should be provided'}, {'carrier': 'carrier_name', 'code': '220001', 'message': 'Failure - request'
         }
     ]
 ]
