@@ -35,6 +35,12 @@ class TestDHLTracking(unittest.TestCase):
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedTrackingSingNotFound))
 
+    def test_tracking_unknown_response_parsing(self):
+        parsed_response = proxy.mapper.parse_tracking_response(
+            to_xml(UnknownTrackResponse))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedUnknownTrackResponse))
+
 
 if __name__ == '__main__':
     unittest.main()
@@ -237,6 +243,19 @@ ParsedTrackingResponse = [
     ],
     []
 ]
+
+ParsedUnknownTrackResponse = [
+    [
+        {
+            'carrier': 'carrier_name',
+            'events': [],
+            'shipment_date': '2002-05-02 18:00:00',
+            'tracking_number': '4677100470'
+        }
+    ],
+    []
+]
+
 
 
 AuthError = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -632,3 +651,32 @@ TrackingResponseXml = '''<?xml version="1.0" encoding="UTF-8"?>
     </AWBInfo>
 </req:TrackingResponse>
 '''
+
+UnknownTrackResponse = """<?xml version="1.0" encoding="UTF-8"?>
+<res:TrackingResponse xmlns:res="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingResponse.xsd">
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2002-06-25T11:28:56-08:00</MessageTime>
+            <MessageReference>1234567890123456789012345678</MessageReference>
+            <SiteID>TestSiteID</SiteID>
+        </ServiceHeader>
+    </Response>
+    <AWBInfo>
+        <AWBNumber>4677100470</AWBNumber>
+        <Status>
+            <ActionStatus>success</ActionStatus>
+        </Status>
+        <ShipmentInfo>
+            <OriginServiceArea/>
+            <DestinationServiceArea/>
+            <ShipperName>CELLON FRANCE SAS </ShipperName>
+            <ShipperAccountNumber>221698790 </ShipperAccountNumber>
+            <ConsigneeName>KINTESTU WORLD EXP </ConsigneeName>
+            <ShipmentDate>2002-05-02T18:00:00</ShipmentDate>
+            <ShipperReference>
+                <ReferenceID>BLS : 22942</ReferenceID>
+            </ShipperReference>
+        </ShipmentInfo>
+    </AWBInfo>
+</res:TrackingResponse>
+"""
