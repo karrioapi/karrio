@@ -4,7 +4,7 @@ proxy = DHLProxy(DHLClient(
   "https://xmlpi-ea.dhl.com/XMLShippingServlet",
   "site_id",
   "password",
-  "account_number",
+  "1203598305",
   "carrier_name"
 ))
 
