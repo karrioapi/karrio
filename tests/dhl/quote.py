@@ -25,6 +25,13 @@ class TestDHLQuote(unittest.TestCase):
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
 
+    def test_parse_quote_response(self):
+        parsed_response = proxy.mapper.parse_quote_response(
+            to_xml(QuoteResponseXml))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedQuoteResponse))
+
+
 if __name__ == '__main__':
     unittest.main()
 
@@ -36,7 +43,41 @@ ParsedQuoteParsingError = [
 ]
 
 ParsedQuoteResponse = [
-    [],
+    [
+        {
+            'base_charge': 195.32, 
+            'carrier': 'carrier_name', 
+            'delivery_date': '2018-06-26 11:59:00', 
+            'delivery_time': 'PT23H59M', 
+            'discount': 0, 
+            'duties_and_taxes': 0, 
+            'extra_charges': [
+                {
+                    'name': 'FUEL SURCHARGE', 
+                    'value': 12.7
+                }
+            ], 
+            'pickup_date': '2018-06-21', 
+            'pickup_time': 'PT17H30M', 
+            'service_name': 'EXPRESS WORLDWIDE DOC', 
+            'service_type': 'TD', 
+            'total_charge': 208.02
+        }, 
+        {
+            'base_charge': 213.47, 
+            'carrier': 'carrier_name', 
+            'delivery_date': '2018-06-26 11:59:00', 
+            'delivery_time': 'PT23H59M', 
+            'discount': 0, 
+            'duties_and_taxes': 0, 
+            'extra_charges': [], 
+            'pickup_date': '2018-06-21', 
+            'pickup_time': 'PT17H30M', 
+            'service_name': 'EXPRESS EASY DOC', 
+            'service_type': 'TD', 
+            'total_charge': 213.47
+        }
+    ], 
     []
 ]
 
