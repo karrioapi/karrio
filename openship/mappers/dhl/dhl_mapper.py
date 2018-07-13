@@ -22,7 +22,7 @@ class DHLMapper(Mapper):
         return Request(ServiceHeader=ServiceHeader_)
 
 
-    def parse_error_response(self, response):
+    def parse_error_response(self, response) -> List[E.Error]:
         conditions = response.xpath('.//*[local-name() = $name]', name="Condition")
         return reduce(self._extract_error, conditions, [])
 
