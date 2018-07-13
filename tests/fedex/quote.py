@@ -32,9 +32,16 @@ class TestFeDexQuote(unittest.TestCase):
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
             to_xml(QuoteResponseXml))
-            
+
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedQuoteResponse))
+
+    def test_parse_quote_error_response(self):
+        parsed_response = proxy.mapper.parse_quote_response(
+            to_xml(QuoteErrorResponseXml))
+            
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedQuoteErrorResponse))
 
 
 if __name__ == '__main__':
@@ -84,7 +91,18 @@ ParsedQuoteResponse = [
     []
 ]
 
-QuoteErrorResponse = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+ParsedQuoteErrorResponse = [
+    [], 
+    [
+        {
+            'carrier': 'carrier_name', 
+            'code': '873', 
+            'message': 'All specified account numbers must match.  '
+        }
+    ]
+]
+
+QuoteErrorResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header/>
     <SOAP-ENV:Body>
         <RateReply xmlns="http://fedex.com/ws/rate/v22">
