@@ -2,7 +2,8 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from openship.domain.entities import Tracking
-from tests.dhl.fixture import proxy, strip
+from tests.dhl.fixture import proxy
+from tests.utils import strip
 
 
 class TestDHLTracking(unittest.TestCase):
