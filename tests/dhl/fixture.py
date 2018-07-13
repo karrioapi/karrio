@@ -7,6 +7,3 @@ proxy = DHLProxy(DHLClient(
   "1203598305",
   "carrier_name"
 ))
-
-def strip(text):
-  return text.replace('\t','').replace('\n','').replace(' ','')
