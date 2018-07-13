@@ -27,7 +27,8 @@ class TestFeDexTracking(unittest.TestCase):
                          jsonify(ParsedTrackingResponse))
 
     def test_tracking_auth_error_parsing(self):
-        parsed_response = proxy.mapper.parse_error_response(to_xml(TrackingAuthError))
+        parsed_response = proxy.mapper.parse_error_response(
+            to_xml(TrackingAuthError))
 
         self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
 

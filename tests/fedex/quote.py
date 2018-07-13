@@ -39,7 +39,7 @@ class TestFeDexQuote(unittest.TestCase):
     def test_parse_quote_error_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
             to_xml(QuoteErrorResponseXml))
-            
+
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedQuoteErrorResponse))
 
@@ -50,53 +50,53 @@ if __name__ == '__main__':
 ParsedQuoteResponse = [
     [
         {
-            'base_charge': 230.49, 
-            'carrier': 'carrier_name', 
-            'delivery_date': None, 
-            'delivery_time': None, 
-            'discount': 0.0, 
-            'duties_and_taxes': 0.0, 
+            'base_charge': 230.49,
+            'carrier': 'carrier_name',
+            'delivery_date': None,
+            'delivery_time': None,
+            'discount': 0.0,
+            'duties_and_taxes': 0.0,
             'extra_charges': [
                 {
-                    'name': 'FUEL', 
+                    'name': 'FUEL',
                     'value': 9.22
                 }
-            ], 
-            'pickup_date': None, 
-            'pickup_time': None, 
-            'service_name': 'INTERNATIONAL_PRIORITY', 
-            'service_type': 'PAYOR_ACCOUNT_SHIPMENT', 
+            ],
+            'pickup_date': None,
+            'pickup_time': None,
+            'service_name': 'INTERNATIONAL_PRIORITY',
+            'service_type': 'PAYOR_ACCOUNT_SHIPMENT',
             'total_charge': 239.71
-        }, 
+        },
         {
-            'base_charge': 207.47, 
-            'carrier': 'carrier_name', 
-            'delivery_date': None, 
-            'delivery_time': None, 
-            'discount': 0.0, 
-            'duties_and_taxes': 0.0, 
+            'base_charge': 207.47,
+            'carrier': 'carrier_name',
+            'delivery_date': None,
+            'delivery_time': None,
+            'discount': 0.0,
+            'duties_and_taxes': 0.0,
             'extra_charges': [
                 {
-                    'name': 'FUEL', 
+                    'name': 'FUEL',
                     'value': 8.3
                 }
-            ], 
-            'pickup_date': None, 
-            'pickup_time': None, 
-            'service_name': 'INTERNATIONAL_ECONOMY', 
-            'service_type': 'PAYOR_ACCOUNT_SHIPMENT', 
+            ],
+            'pickup_date': None,
+            'pickup_time': None,
+            'service_name': 'INTERNATIONAL_ECONOMY',
+            'service_type': 'PAYOR_ACCOUNT_SHIPMENT',
             'total_charge': 215.77
         }
-    ], 
+    ],
     []
 ]
 
 ParsedQuoteErrorResponse = [
-    [], 
+    [],
     [
         {
-            'carrier': 'carrier_name', 
-            'code': '873', 
+            'carrier': 'carrier_name',
+            'code': '873',
             'message': 'All specified account numbers must match.  '
         }
     ]
