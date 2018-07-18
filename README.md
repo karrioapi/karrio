@@ -3,12 +3,14 @@
 Shipping carriers API integrations Library
 
 - Integrate multiple carriers: DHL, FedEx and more with ease
-- Use an intuitive unified API accross multiple cariers
+- Use an intuitive, unified API across multiple carriers
 - Move fast by just reading the carrier API documentation
-- Use your own developer credentials with negociated rates
-- Tested
+- Use your developer credentials with negotiated rates
+- Tested 97% coverage
 
-Openship prevent you from reinvinting the wheel and is easy to use:
+[![Build Status](https://travis-ci.org/OpenShip/openship.svg?branch=master)](https://travis-ci.org/OpenShip/openship)
+
+Openship prevents you from reinventing the wheel and is easy to use:
 
 ```shell
 >>> from openship.mappers.dhl import  DHLClient, DHLProxy
