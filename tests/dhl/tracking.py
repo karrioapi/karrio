@@ -1,49 +1,50 @@
 import unittest
+from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
-from openship.mappers.dhl import DHLClient, DHLProxy
 from openship.domain.entities import Tracking
-
-proxy = DHLProxy(DHLClient(
-  "https://xmlpi-ea.dhl.com/XMLShippingServlet",
-  "site_id",
-  "password",
-  "account_number",
-  "carrier_name"
-))
+from tests.dhl.fixture import proxy
+from tests.utils import strip
 
 
-class TestDHLMapper(unittest.TestCase):
+class TestDHLTracking(unittest.TestCase):
 
-    def test_error_parsing(self):
-      parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
-      
-      self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
+    @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    def test_create_tracking_request(self, http_mock):
+        payload = Tracking.create(tracking_numbers=["8346088391"])
+        tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
+        # remove MessageTime for testing purpose
+        tracking_req_xml_obj.Request.ServiceHeader.MessageTime = None
 
-    def test_create_tracking_request(self):
-      payload = Tracking.create(tracking_numbers=["8346088391"])
-      tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
-      tracking_req_xml_obj.Request.ServiceHeader.MessageTime = None # remove MessageTime for testing purpose
-      xmlStr = export(
-        tracking_req_xml_obj, 
-        name_='req:KnownTrackingRequest',
-        namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd"'
-      )
-      self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
+        proxy.get_trackings(tracking_req_xml_obj)
+
+        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
+
+    def test_tracking_auth_error_parsing(self):
+        parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
 
     def test_parse_tracking_response(self):
-      parsed_response = proxy.mapper.parse_tracking_response(to_xml(TrackingResponseXml))
-      
-      self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
+        parsed_response = proxy.mapper.parse_tracking_response(
+            to_xml(TrackingResponseXml))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedTrackingResponse))
 
+    def test_tracking_single_not_found_parsing(self):
+        parsed_response = proxy.mapper.parse_tracking_response(
+            to_xml(TrackingSingleNotFound))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedTrackingSingNotFound))
 
-def strip(text):
-  return text.replace('\t','').replace('\n','').replace(' ','')
+    def test_tracking_unknown_response_parsing(self):
+        parsed_response = proxy.mapper.parse_tracking_response(
+            to_xml(UnknownTrackResponse))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedUnknownTrackResponse))
+
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
 
 
 ParsedAuthError = [
@@ -52,6 +53,17 @@ ParsedAuthError = [
         "code": "111",
         "message": " Error Parsing incoming request XML\n                    Error: Datatype error: In element\n                    'Password' : Value 'testPwd'\n                    with length '7' is less than minimum\n                    length facet of '8'.. at line 11, column 33"
     }
+]
+
+ParsedTrackingSingNotFound = [
+    [],
+    [
+        {
+            "carrier": "carrier_name",
+            "code": "103",
+            "message": "No Shipments Found for AWBNumber 123456789"
+        }
+    ]
 ]
 
 ParsedTrackingResponse = [
@@ -233,6 +245,19 @@ ParsedTrackingResponse = [
     []
 ]
 
+ParsedUnknownTrackResponse = [
+    [
+        {
+            'carrier': 'carrier_name',
+            'events': [],
+            'shipment_date': '2002-05-02 18:00:00',
+            'tracking_number': '4677100470'
+        }
+    ],
+    []
+]
+
+
 
 AuthError = '''<?xml version="1.0" encoding="UTF-8"?>
 <req:ShipmentTrackingErrorResponse xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com track-err-res.xsd">
@@ -255,6 +280,28 @@ AuthError = '''<?xml version="1.0" encoding="UTF-8"?>
 </req:ShipmentTrackingErrorResponse>
 <!-- ServiceInvocationId:20180628011253_42d7_3a8bef3e-ebbd-4e1a-b248-d01e51b1c77f -->
 '''
+
+TrackingSingleNotFound = """<?xml version="1.0" encoding="UTF-8"?>
+<res:TrackingResponse xmlns:res="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingResponse.xsd">
+<Response>
+        <ServiceHeader>
+            <MessageTime>2002-06-25T11:28:56-08:00</MessageTime>
+            <MessageReference>1234567890123456789012345678</MessageReference>
+            <SiteID>TestSiteID</SiteID>
+        </ServiceHeader>
+    </Response>
+    <AWBInfo>
+        <AWBNumber/>
+        <Status>
+            <ActionStatus>No Shipments Found</ActionStatus>
+            <Condition>
+                <ConditionCode>103</ConditionCode>
+                <ConditionData>No Shipments Found for AWBNumber 123456789</ConditionData>
+            </Condition>
+        </Status>
+    </AWBInfo>
+</res:TrackingResponse>
+"""
 
 TrackingRequestXml = '''<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd">
 	<Request>
@@ -605,3 +652,32 @@ TrackingResponseXml = '''<?xml version="1.0" encoding="UTF-8"?>
     </AWBInfo>
 </req:TrackingResponse>
 '''
+
+UnknownTrackResponse = """<?xml version="1.0" encoding="UTF-8"?>
+<res:TrackingResponse xmlns:res="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingResponse.xsd">
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2002-06-25T11:28:56-08:00</MessageTime>
+            <MessageReference>1234567890123456789012345678</MessageReference>
+            <SiteID>TestSiteID</SiteID>
+        </ServiceHeader>
+    </Response>
+    <AWBInfo>
+        <AWBNumber>4677100470</AWBNumber>
+        <Status>
+            <ActionStatus>success</ActionStatus>
+        </Status>
+        <ShipmentInfo>
+            <OriginServiceArea/>
+            <DestinationServiceArea/>
+            <ShipperName>CELLON FRANCE SAS </ShipperName>
+            <ShipperAccountNumber>221698790 </ShipperAccountNumber>
+            <ConsigneeName>KINTESTU WORLD EXP </ConsigneeName>
+            <ShipmentDate>2002-05-02T18:00:00</ShipmentDate>
+            <ShipperReference>
+                <ReferenceID>BLS : 22942</ReferenceID>
+            </ShipperReference>
+        </ShipmentInfo>
+    </AWBInfo>
+</res:TrackingResponse>
+"""

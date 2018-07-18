@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.6.5"
+install:
+  - pip install -r requirements.txt
+  - pip install codecov
+  - pip install . --process-dependency-links
+
+script: coverage run --include='openship/*' -m unittest -v
+
+after_success:
+  - coverage report -m
+  - codecov
