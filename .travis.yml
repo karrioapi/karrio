@@ -6,3 +6,6 @@ install:
   - pip install . --process-dependency-links
 
 script: coverage run --include='openship/*' -m unittest -v
+
+after_success:
+  - coverage report -m
