@@ -8,7 +8,7 @@ Shipping carriers API integrations Library
 - Use an intuitive, unified API across multiple carriers
 - Move fast by just reading the carrier API documentation
 - Use your developer credentials with negotiated rates
-- Tested 97% coverage
+- Tested
 
 Openship prevents you from reinventing the wheel and is easy to use:
 
