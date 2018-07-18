@@ -1,5 +1,7 @@
 # OpenShip
 
+[![Build Status](https://travis-ci.org/OpenShip/openship.svg?branch=master)](https://travis-ci.org/OpenShip/openship) [![codecov](https://codecov.io/gh/OpenShip/openship/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenShip/openship)
+
 Shipping carriers API integrations Library
 
 - Integrate multiple carriers: DHL, FedEx and more with ease
@@ -7,8 +9,6 @@ Shipping carriers API integrations Library
 - Move fast by just reading the carrier API documentation
 - Use your developer credentials with negotiated rates
 - Tested 97% coverage
-
-[![Build Status](https://travis-ci.org/OpenShip/openship.svg?branch=master)](https://travis-ci.org/OpenShip/openship)
 
 Openship prevents you from reinventing the wheel and is easy to use:
 
