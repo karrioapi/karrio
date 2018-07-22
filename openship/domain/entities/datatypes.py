@@ -98,7 +98,7 @@ class quote_details:
 
 
 class tracking_details():
-    def __init__(self, carrier: str, tracking_number: str, shipment_date: str, events: List[TrackingEvent] = []): 
+    def __init__(self, carrier: str, tracking_number: str, shipment_date: str = None, events: List[TrackingEvent] = []): 
         self.carrier = carrier
         self.events = events
         self.shipment_date = shipment_date
