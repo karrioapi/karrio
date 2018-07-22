@@ -50,9 +50,30 @@ if __name__ == '__main__':
 
 
 ParsedQuoteParsingError = [
+    [], 
+    [
+        {
+            'carrier': 'UPS', 
+            'code': '9380216', 
+            'message': 'Missing or Invalid Handling Unit One Quantity'
+        }, 
+        {
+            'carrier': 'UPS', 
+            'code': '9360541', 
+            'message': 'Missing or Invalid Pickup Date.'
+        }
+    ]
 ]
 
 ParsedQuoteMissingArgsError = [
+    [], 
+    [
+        {
+            'carrier': 'UPS', 
+            'code': '250002', 
+            'message': 'Invalid Authentication Information.'
+        }
+    ]
 ]
 
 ParsedQuoteResponse = [
