@@ -26,6 +26,7 @@ class TestFeDexQuote(unittest.TestCase):
         proxy.get_quotes(quote_req_xml_obj)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        print(xmlStr)
         self.assertEqual(strip(xmlStr), strip(
             QuoteRequestXml % str(timestamp.isoformat())))
 
@@ -128,75 +129,76 @@ QuoteErrorResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xml
 </SOAP-ENV:Envelope>
 '''
 
-QuoteRequestXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v22">
-    <SOAP-ENV:Body>
-        <RateRequest>
-            <WebAuthenticationDetail>
-                <UserCredential>
-                    <Key>user_key</Key>
-                    <Password>password</Password>
-                </UserCredential>
-            </WebAuthenticationDetail>
-            <ClientDetail>
-                <AccountNumber>2349857</AccountNumber>
-                <MeterNumber>1293587</MeterNumber>
-            </ClientDetail>
-            <TransactionDetail>
-                <CustomerTransactionId>FTC</CustomerTransactionId>
-            </TransactionDetail>
-            <Version>
-                <ServiceId>crs</ServiceId>
-                <Major>22</Major>
-                <Intermediate>0</Intermediate>
-                <Minor>0</Minor>
-            </Version>
-            <RequestedShipment>
-                <ShipTimestamp>%s</ShipTimestamp>
-                <PackagingType>YOUR_PACKAGING</PackagingType>
-                <TotalWeight>
-                    <Units>LB</Units>
-                    <Value>4.</Value>
-                </TotalWeight>
-                <PreferredCurrency>USD</PreferredCurrency>
-                <Shipper>
-                    <Address>
-                        <PostalCode>H3N1S4</PostalCode>
-                        <CountryCode>CA</CountryCode>
-                    </Address>
-                </Shipper>
-                <Recipient>
-                    <Address>
-                        <City>Lome</City>
-                        <CountryCode>TG</CountryCode>
-                    </Address>
-                </Recipient>
-                <ShippingChargesPayment>
-                    <PaymentType>SENDER</PaymentType>
-                    <Payor>
-                        <ResponsibleParty>
-                            <AccountNumber>2349857</AccountNumber>
-                        </ResponsibleParty>
-                    </Payor>
-                </ShippingChargesPayment>
-                <RateRequestTypes>LIST</RateRequestTypes>
-                <PackageCount>1</PackageCount>
-                <RequestedPackageLineItems>
-                    <GroupPackageCount>1</GroupPackageCount>
-                    <Weight>
-                        <Units>LB</Units>
-                        <Value>4.</Value>
-                    </Weight>
-                    <Dimensions>
-                        <Length>10</Length>
-                        <Width>3</Width>
-                        <Height>3</Height>
-                        <Units>IN</Units>
-                    </Dimensions>
-                </RequestedPackageLineItems>
-            </RequestedShipment>
-        </RateRequest>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>'''
+QuoteRequestXml = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://fedex.com/ws/rate/v22">
+    <tns:Body>
+        <ns:RateRequest>
+            <ns:WebAuthenticationDetail>
+                <ns:UserCredential>
+                    <ns:Key>user_key</ns:Key>
+                    <ns:Password>password</ns:Password>
+                </ns:UserCredential>
+            </ns:WebAuthenticationDetail>
+            <ns:ClientDetail>
+                <ns:AccountNumber>2349857</ns:AccountNumber>
+                <ns:MeterNumber>1293587</ns:MeterNumber>
+            </ns:ClientDetail>
+            <ns:TransactionDetail>
+                <ns:CustomerTransactionId>FTC</ns:CustomerTransactionId>
+            </ns:TransactionDetail>
+            <ns:Version>
+                <ns:ServiceId>crs</ns:ServiceId>
+                <ns:Major>22</ns:Major>
+                <ns:Intermediate>0</ns:Intermediate>
+                <ns:Minor>0</ns:Minor>
+            </ns:Version>
+            <ns:RequestedShipment>
+                <ns:ShipTimestamp>%s</ns:ShipTimestamp>
+                <ns:PackagingType>YOUR_PACKAGING</ns:PackagingType>
+                <ns:TotalWeight>
+                    <ns:Units>LB</ns:Units>
+                    <ns:Value>4.</ns:Value>
+                </ns:TotalWeight>
+                <ns:PreferredCurrency>USD</ns:PreferredCurrency>
+                <ns:Shipper>
+                    <ns:Address>
+                        <ns:PostalCode>H3N1S4</ns:PostalCode>
+                        <ns:CountryCode>CA</ns:CountryCode>
+                    </ns:Address>
+                </ns:Shipper>
+                <ns:Recipient>
+                    <ns:Address>
+                        <ns:City>Lome</ns:City>
+                        <ns:CountryCode>TG</ns:CountryCode>
+                    </ns:Address>
+                </ns:Recipient>
+                <ns:ShippingChargesPayment>
+                    <ns:PaymentType>SENDER</ns:PaymentType>
+                    <ns:Payor>
+                        <ns:ResponsibleParty>
+                            <ns:AccountNumber>2349857</ns:AccountNumber>
+                        </ns:ResponsibleParty>
+                    </ns:Payor>
+                </ns:ShippingChargesPayment>
+                <ns:RateRequestTypes>LIST</ns:RateRequestTypes>
+                <ns:PackageCount>1</ns:PackageCount>
+                <ns:RequestedPackageLineItems>
+                    <ns:GroupPackageCount>1</ns:GroupPackageCount>
+                    <ns:Weight>
+                        <ns:Units>LB</ns:Units>
+                        <ns:Value>4.</ns:Value>
+                    </ns:Weight>
+                    <ns:Dimensions>
+                        <ns:Length>10</ns:Length>
+                        <ns:Width>3</ns:Width>
+                        <ns:Height>3</ns:Height>
+                        <ns:Units>IN</ns:Units>
+                    </ns:Dimensions>
+                </ns:RequestedPackageLineItems>
+            </ns:RequestedShipment>
+        </ns:RateRequest>
+    </tns:Body>
+</tns:Envelope>
+'''
 
 QuoteResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header/>
