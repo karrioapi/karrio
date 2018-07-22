@@ -56,6 +56,44 @@ ParsedQuoteMissingArgsError = [
 ]
 
 ParsedQuoteResponse = [
+    [
+        {
+            'base_charge': 909.26, 
+            'carrier': 'UPS', 
+            'delivery_date': None, 
+            'delivery_time': None, 
+            'discount': 0, 
+            'duties_and_taxes': 0, 
+            'extra_charges': [
+                {
+                    'name': 'DSCNT', 
+                    'value': 776.36
+                }, 
+                {
+                    'name': 'HOL_WE_PU_DEL', 
+                    'value': 480.0
+                }, 
+                {
+                    'name': '2', 
+                    'value': 66.54
+                }, 
+                {
+                    'name': 'CA_BORDER', 
+                    'value': 30.0
+                }, 
+                {
+                    'name': 'LND_GROSS', 
+                    'value': 1109.08
+                }
+            ], 
+            'pickup_date': None, 
+            'pickup_time': None, 
+            'service_name': None, 
+            'service_type': '309', 
+            'total_charge': 332.72
+        }
+    ],
+    []
 ]
 
 
@@ -119,134 +157,112 @@ QuoteMissingArgsError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlso
 </soapenv:Envelope>
 """
 
-QuoteRequestXml = """<?xml version="1.0" encoding="UTF-8"?>
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <env:Header>
-      <upss:UPSSecurity>
-         <upss:UsernameToken>
-            <upss:Username>D@nielk91</upss:Username>
-            <upss:Password>Shikamaru91</upss:Password>
-         </upss:UsernameToken>
-         <upss:ServiceAccessToken>
-            <upss:AccessLicenseNumber>3D2AE545EC0E43FE</upss:AccessLicenseNumber>
-         </upss:ServiceAccessToken>
-      </upss:UPSSecurity>
-   </env:Header>
-   <env:Body>
-      <XOLTWS:FreightRateRequest xmlns:XOLTWS="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0">
-         <common:Request>
-            <common:RequestOption>1</common:RequestOption>
-            <common:TransactionReference>
-               <common:TransactionIdentifier>TransactionIdentifier</common:TransactionIdentifier>
-            </common:TransactionReference>
-         </common:Request>
-         <XOLTWS:ShipFrom>
-            <XOLTWS:Name>ShipFrom Name</XOLTWS:Name>
-            <XOLTWS:Address>
-               <XOLTWS:PostalCode>H8Z2Z3</XOLTWS:PostalCode>
-               <XOLTWS:CountryCode>CA</XOLTWS:CountryCode>
-            </XOLTWS:Address>
-            <XOLTWS:AttentionName>Contact</XOLTWS:AttentionName>
-            <XOLTWS:Phone>
-               <XOLTWS:Number>4389856072</XOLTWS:Number>
-               <XOLTWS:Extension>333</XOLTWS:Extension>
-            </XOLTWS:Phone>
-            <XOLTWS:EMailAddress>daniel@gmail.com</XOLTWS:EMailAddress>
-         </XOLTWS:ShipFrom>
-         <XOLTWS:ShipperNumber>002R48</XOLTWS:ShipperNumber>
-         <XOLTWS:ShipTo>
-            <XOLTWS:Name>ShipTo name</XOLTWS:Name>
-            <XOLTWS:Address>
-               <XOLTWS:AddressLine>3150 Paradise, Rd</XOLTWS:AddressLine>
-               <XOLTWS:City>Las Cegas</XOLTWS:City>
-               <XOLTWS:PostalCode>89109</XOLTWS:PostalCode>
-               <XOLTWS:CountryCode>US</XOLTWS:CountryCode>
-            </XOLTWS:Address>
-            <XOLTWS:AttentionName>Blah</XOLTWS:AttentionName>
-            <XOLTWS:Phone>
-               <XOLTWS:Number>+22648484858</XOLTWS:Number>
-               <XOLTWS:Extension>555</XOLTWS:Extension>
-            </XOLTWS:Phone>
-         </XOLTWS:ShipTo>
-         <XOLTWS:PaymentInformation>
-            <XOLTWS:Payer>
-               <XOLTWS:Name>Payer Name</XOLTWS:Name>
-               <XOLTWS:Address>
-                  <XOLTWS:AddressLine>AddressLine</XOLTWS:AddressLine>
-                  <XOLTWS:City>City</XOLTWS:City>
-                  <XOLTWS:StateProvinceCode>QC</XOLTWS:StateProvinceCode>
-                  <XOLTWS:PostalCode>H8Z2Z3</XOLTWS:PostalCode>
-                  <XOLTWS:CountryCode>CA</XOLTWS:CountryCode>
-               </XOLTWS:Address>
-               <XOLTWS:ShipperNumber>002R48</XOLTWS:ShipperNumber>
-               <XOLTWS:AccountType>AccountType</XOLTWS:AccountType>
-               <XOLTWS:AttentionName>AttentionName</XOLTWS:AttentionName>
-               <XOLTWS:Phone>
-                  <XOLTWS:Number>Phone number</XOLTWS:Number>
-                  <XOLTWS:Extension>Extension number</XOLTWS:Extension>
-               </XOLTWS:Phone>
-               <XOLTWS:EMailAddress>EMailAddress</XOLTWS:EMailAddress>
-            </XOLTWS:Payer>
-            <XOLTWS:ShipmentBillingOption>
-               <XOLTWS:Code>10</XOLTWS:Code>
-            </XOLTWS:ShipmentBillingOption>
-         </XOLTWS:PaymentInformation>
-         <XOLTWS:Service>
-            <XOLTWS:Code>309</XOLTWS:Code>
-            <XOLTWS:Description>UPS Ground Freight</XOLTWS:Description>
-         </XOLTWS:Service>
-         <XOLTWS:HandlingUnitOne>
-            <XOLTWS:Quantity>1</XOLTWS:Quantity>
-            <XOLTWS:Type>
-               <XOLTWS:Code>SKD</XOLTWS:Code>
-            </XOLTWS:Type>
-         </XOLTWS:HandlingUnitOne>
-         <XOLTWS:Commodity>
-            <XOLTWS:Description>Commodity description</XOLTWS:Description>
-            <XOLTWS:Weight>
-               <XOLTWS:UnitOfMeasurement>
-                  <XOLTWS:Code>LBS</XOLTWS:Code>
-               </XOLTWS:UnitOfMeasurement>
-               <XOLTWS:Value>1.5</XOLTWS:Value>
-            </XOLTWS:Weight>
-            <XOLTWS:Dimensions>
-               <XOLTWS:UnitOfMeasurement>
-                  <XOLTWS:Code>IN</XOLTWS:Code>
-               </XOLTWS:UnitOfMeasurement>
-               <XOLTWS:Width>1.5</XOLTWS:Width>
-               <XOLTWS:Height>1.5</XOLTWS:Height>
-               <XOLTWS:Length>1.5</XOLTWS:Length>
-            </XOLTWS:Dimensions>
-            <XOLTWS:NumberOfPieces>1</XOLTWS:NumberOfPieces>
-            <XOLTWS:PackagingType>
-               <XOLTWS:Code>BAG</XOLTWS:Code>
-               <XOLTWS:Description>BAG</XOLTWS:Description>
-            </XOLTWS:PackagingType>
-            <XOLTWS:FreightClass>50</XOLTWS:FreightClass>
-         </XOLTWS:Commodity>
-         <XOLTWS:ShipmentServiceOption>
-            <XOLTWS:WeekendPickupIndicator />
-         </XOLTWS:ShipmentServiceOption>
-         <XOLTWS:DensityEligibleIndicator />
-         <XOLTWS:AdjustedWeightIndicator />
-         <XOLTWS:HandlingUnitWeight>
-            <XOLTWS:Value>1</XOLTWS:Value>
-            <XOLTWS:UnitOfMeasurement>
-               <XOLTWS:Code>LB</XOLTWS:Code>
-            </XOLTWS:UnitOfMeasurement>
-         </XOLTWS:HandlingUnitWeight>
-         <XOLTWS:PickupRequest> 
-        	<XOLTWS:PickupDate>20180721</XOLTWS:PickupDate> 
-    	 </XOLTWS:PickupRequest>
-         <XOLTWS:TimeInTransitIndicator />
-         <XOLTWS:GFPOptions>
-            <XOLTWS:OnCallInformation>
-               <XOLTWS:OnCallPickupIndicator />
-            </XOLTWS:OnCallInformation>
-         </XOLTWS:GFPOptions>
-      </XOLTWS:FreightRateRequest>
-   </env:Body>
-</env:Envelope>
+QuoteRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0">
+    <tns:Header>
+        <upss:UPSSecurity>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
+        </upss:UPSSecurity>
+    </tns:Header>
+    <tns:Body>
+        <frt:FreightRateRequest>
+            <common:Request>
+                <common:RequestOption>1</common:RequestOption>
+                <common:TransactionReference>
+                    <common:TransactionIdentifier>TransactionIdentifier</common:TransactionIdentifier>
+                </common:TransactionReference>
+            </common:Request>
+            <frt:ShipFrom>
+                <frt:Address>
+                    <frt:AddressLine>Rue Fake</frt:AddressLine>
+                    <frt:City>Montreal</frt:City>
+                    <frt:PostalCode>H3N1S4</frt:PostalCode>
+                    <frt:CountryCode>CA</frt:CountryCode>
+                </frt:Address>
+            </frt:ShipFrom>
+            <frt:ShipTo>
+                <frt:Address>
+                    <frt:City>Las Vegas</frt:City>
+                    <frt:PostalCode>89109</frt:PostalCode>
+                    <frt:CountryCode>US</frt:CountryCode>
+                </frt:Address>
+            </frt:ShipTo>
+            <frt:PaymentInformation>
+                <frt:Payer>
+                    <frt:Name>CA</frt:Name>
+                    <frt:Address>
+                        <frt:AddressLine>Rue Fake</frt:AddressLine>
+                        <frt:City>Montreal</frt:City>
+                        <frt:PostalCode>H3N1S4</frt:PostalCode>
+                        <frt:CountryCode>CA</frt:CountryCode>
+                    </frt:Address>
+                    <frt:ShipperNumber>56GJE</frt:ShipperNumber>
+                </frt:Payer>
+                <frt:ShipmentBillingOption>
+                    <frt:Code>10</frt:Code>
+                </frt:ShipmentBillingOption>
+            </frt:PaymentInformation>
+            <frt:Service>
+                <frt:Code>309</frt:Code>
+                <frt:Description>UPS Ground Freight</frt:Description>
+            </frt:Service>
+            <frt:HandlingUnitOne>
+                <frt:Quantity>1</frt:Quantity>
+                <frt:Type>
+                    <frt:Code>SKD</frt:Code>
+                </frt:Type>
+            </frt:HandlingUnitOne>
+            <frt:Commodity>
+                <frt:Description>TV</frt:Description>
+                <frt:Weight>
+                    <frt:Value>4.0</frt:Value>
+                    <frt:UnitOfMeasurement>
+                        <frt:Code>LBS</frt:Code>
+                    </frt:UnitOfMeasurement>
+                </frt:Weight>
+                <frt:Dimensions>
+                    <frt:UnitOfMeasurement>
+                        <frt:Code>IN</frt:Code>
+                    </frt:UnitOfMeasurement>
+                    <frt:Length>10</frt:Length>
+                    <frt:Width>3</frt:Width>
+                    <frt:Height>3</frt:Height>
+                </frt:Dimensions>
+                <frt:NumberOfPieces>1</frt:NumberOfPieces>
+                <frt:PackagingType>
+                    <frt:Code>BAG</frt:Code>
+                    <frt:Description>BAG</frt:Description>
+                </frt:PackagingType>
+                <frt:FreightClass>50</frt:FreightClass>
+            </frt:Commodity>
+            <frt:ShipmentServiceOptions>
+                <frt:PickupOptions>
+                    <frt:WeekendPickupIndicator></frt:WeekendPickupIndicator>
+                </frt:PickupOptions>
+            </frt:ShipmentServiceOptions>
+            <frt:PickupRequest>
+                <frt:PickupDate>20180722</frt:PickupDate>
+            </frt:PickupRequest>
+            <frt:GFPOptions>
+                <frt:OnCallPickupIndicator></frt:OnCallPickupIndicator>
+            </frt:GFPOptions>
+            <frt:HandlingUnitWeight>
+                <frt:Value>1</frt:Value>
+                <frt:UnitOfMeasurement>
+                    <frt:Code>LB</frt:Code>
+                </frt:UnitOfMeasurement>
+            </frt:HandlingUnitWeight>
+            <frt:AdjustedWeightIndicator></frt:AdjustedWeightIndicator>
+            <frt:TimeInTransitIndicator></frt:TimeInTransitIndicator>
+            <frt:DensityEligibleIndicator></frt:DensityEligibleIndicator>
+        </frt:FreightRateRequest>
+    </tns:Body>
+</tns:Envelope>
 """
 
 QuoteResponseXml = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -267,7 +283,7 @@ QuoteResponseXml = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.or
                     <common:Description>User is not eligible for contract rates.</common:Description>
                 </common:Alert>
                 <common:TransactionReference>
-                    <common:TransactionIdentifier>ciewgst217pclkyNcmvNq6</common:TransactionIdentifier>
+                    <common:TransactionIdentifier>ciewgss117q1stRrcn9c3s</common:TransactionIdentifier>
                 </common:TransactionReference>
             </common:Response>
             <freightRate:Rate>
@@ -291,6 +307,18 @@ QuoteResponseXml = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.or
                     <freightRate:Value>70.00</freightRate:Value>
                     <freightRate:UnitOfMeasurement>
                         <freightRate:Code>%</freightRate:Code>
+                    </freightRate:UnitOfMeasurement>
+                </freightRate:Factor>
+            </freightRate:Rate>
+            <freightRate:Rate>
+                <freightRate:Type>
+                    <freightRate:Code>HOL_WE_PU_DEL</freightRate:Code>
+                    <freightRate:Description>HOL_WE_PU_DEL</freightRate:Description>
+                </freightRate:Type>
+                <freightRate:Factor>
+                    <freightRate:Value>480.00</freightRate:Value>
+                    <freightRate:UnitOfMeasurement>
+                        <freightRate:Code>USD</freightRate:Code>
                     </freightRate:UnitOfMeasurement>
                 </freightRate:Factor>
             </freightRate:Rate>
@@ -343,15 +371,15 @@ QuoteResponseXml = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.or
                 </freightRate:Factor>
             </freightRate:Rate>
             <freightRate:Commodity>
-                <freightRate:Description>Commodity description</freightRate:Description>
+                <freightRate:Description>TV</freightRate:Description>
                 <freightRate:Weight>
-                    <freightRate:Value>1.5</freightRate:Value>
+                    <freightRate:Value>4.0</freightRate:Value>
                     <freightRate:UnitOfMeasurement>
                         <freightRate:Code>LBS</freightRate:Code>
                     </freightRate:UnitOfMeasurement>
                 </freightRate:Weight>
                 <freightRate:AdjustedWeight>
-                    <freightRate:Value>1.5</freightRate:Value>
+                    <freightRate:Value>4.0</freightRate:Value>
                     <freightRate:UnitOfMeasurement>
                         <freightRate:Code>LBS</freightRate:Code>
                     </freightRate:UnitOfMeasurement>
@@ -359,10 +387,10 @@ QuoteResponseXml = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.or
             </freightRate:Commodity>
             <freightRate:TotalShipmentCharge>
                 <freightRate:CurrencyCode>USD</freightRate:CurrencyCode>
-                <freightRate:MonetaryValue>429.26</freightRate:MonetaryValue>
+                <freightRate:MonetaryValue>909.26</freightRate:MonetaryValue>
             </freightRate:TotalShipmentCharge>
             <freightRate:BillableShipmentWeight>
-                <freightRate:Value>1</freightRate:Value>
+                <freightRate:Value>4</freightRate:Value>
                 <freightRate:UnitOfMeasurement>
                     <freightRate:Code>LBS</freightRate:Code>
                 </freightRate:UnitOfMeasurement>
