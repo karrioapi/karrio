@@ -28,17 +28,11 @@ class TestUPSTracking(unittest.TestCase):
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedTrackingResponse))
 
-    def test_tracking_single_not_found_parsing(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingSingleNotFound))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedTrackingSingNotFound))
-
     def test_tracking_unknown_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(UnknownTrackResponse))
+            to_xml(InvalidTrackingNumberResponse))
         self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedUnknownTrackResponse))
+                         jsonify(ParsedInvalidTrackingNumberResponse))
 
 
 if __name__ == '__main__':
@@ -116,6 +110,14 @@ ParsedTrackingResponse = [
 ]
 
 ParsedInvalidTrackingNumberResponse = [
+  [], 
+  [
+    {
+      'carrier': 'UPS', 
+      'code': '151018', 
+      'message': 'Invalid tracking number'
+    }
+  ]
 ]
 
 
