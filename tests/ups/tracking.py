@@ -46,6 +46,11 @@ if __name__ == '__main__':
 
 
 ParsedAuthError = [
+  {
+    'carrier': 'UPS', 
+    'code': '250003', 
+    'message': 'Invalid Access License number'
+  }
 ]
 
 ParsedTrackingResponse = [
