@@ -54,11 +54,69 @@ ParsedAuthError = [
 ]
 
 ParsedTrackingResponse = [
+  [
+    {
+      'carrier': 'UPS', 
+      'events': 
+      [
+        {
+          'code': 'KB', 
+          'date': '20100830', 
+          'description': 'UPS INTERNAL ACTIVITY CODE', 
+          'location': 'BONN', 
+          'signatory': None, 
+          'time': '103900'
+        }, 
+        {
+          'code': 'DJ', 
+          'date': '20100830', 
+          'description': 'ADVERSE WEATHER CONDITIONS CAUSED THIS DELAY', 
+          'location': 'BONN', 
+          'signatory': None, 
+          'time': '103200'
+        }, 
+        {
+          'code': 'X', 
+          'date': '20100910', 
+          'description': "THE RECEIVER'S LOCATION WAS CLOSED ON THE 2ND DELIVERY ATTEMPT. A 3RD DELIVERY ATTEMPT WILL BE MADE", 
+          'location': 'ANYTOWN', 
+          'signatory': None, 
+          'time': '180300'
+        }, 
+        {
+          'code': 'FS', 
+          'date': '20100912', 
+          'description': 'DELIVERED', 
+          'location': 'ANYTOWN', 
+          'signatory': None, 
+          'time': '115700'
+        }, 
+        {
+          'code': 'PU', 
+          'date': '20100404', 
+          'description': 'PICKUP SCAN', 
+          'location': 'WEST CHESTER-MALVERN', 
+          'signatory': None, 
+          'time': '144000'
+        }, 
+        {
+          'code': 'KB', 
+          'date': '20100830', 
+          'description': 'UPS INTERNAL ACTIVITY CODE', 
+          'location': 'BONN', 
+          'signatory': None, 
+          'time': '131300'
+        }
+      ], 
+      'shipment_date': None, 
+      'tracking_number': '1Z12345E6205277936'
+    }
+  ], 
+  []
 ]
 
 ParsedInvalidTrackingNumberResponse = [
 ]
-
 
 
 AuthError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
