@@ -83,8 +83,8 @@ ParsedQuoteResponse = [
             'carrier': 'UPS', 
             'delivery_date': None, 
             'delivery_time': None, 
-            'discount': 0, 
-            'duties_and_taxes': 0, 
+            'discount': 776.36, 
+            'duties_and_taxes': 576.54, 
             'extra_charges': [
                 {
                     'name': 'DSCNT', 
@@ -101,10 +101,6 @@ ParsedQuoteResponse = [
                 {
                     'name': 'CA_BORDER', 
                     'value': 30.0
-                }, 
-                {
-                    'name': 'LND_GROSS', 
-                    'value': 1109.08
                 }
             ], 
             'pickup_date': None, 
