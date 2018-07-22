@@ -26,7 +26,6 @@ class TestFeDexQuote(unittest.TestCase):
         proxy.get_quotes(quote_req_xml_obj)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        print(xmlStr)
         self.assertEqual(strip(xmlStr), strip(
             QuoteRequestXml % str(timestamp.isoformat())))
 
