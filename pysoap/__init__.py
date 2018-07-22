@@ -11,7 +11,7 @@ def create_envelope(body_content, header_content = None) -> Envelope:
 
     return Envelope(Header=header, Body=body) 
 
-def clean_namespaces(envelopeStr: str, envelope_prefix: str, body_child_name: str, header_child_name: str = '', header_child_prefix: str = '', body_child_prefix: str = ''):
+def clean_namespaces(envelopeStr: str, envelope_prefix: str, body_child_name: str, header_child_name: str = 'UnspecifiedTag', header_child_prefix: str = '', body_child_prefix: str = ''):
     return envelopeStr.replace(
         '<%s%s' % (envelope_prefix, header_child_name), '<%s%s' % (header_child_prefix, header_child_name)
     ).replace(

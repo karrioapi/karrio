@@ -2,13 +2,12 @@
 
 SOAP Python Data Structure generated from [SOAP Envelope](http://schemas.xmlsoap.org/soap/envelope/) .xml file with [generateDS](http://www.davekuhlman.org/generateDS.html) library
 
-## You can play with it
+## Installation
 
-### Installation
-
-```shell
-  pip install -e git://github.com/OpenShip/py-soap.git#egg=py-soap
+```bash
+pip install -f https://git.io/purplship py-soap
 ```
+
 
 ```python
 from pysoap.envelope import Envelope, Body
