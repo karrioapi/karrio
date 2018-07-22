@@ -53,30 +53,3 @@ class UPSProxy(Proxy):
             method="POST"
         )
         return to_xml(result)
-
-
-
-
-
-
-def _create_envelope(body_content, header_content = None) -> Envelope:
-    body = Body()
-    header = None
-    if header_content is not None: 
-        header = Header()
-        header.add_anytypeobjs_(header_content)
-    body.add_anytypeobjs_(body_content)
-
-    return Envelope(
-        Header=header,
-        Body=body
-    ) 
-
-def _export_envolope(envelope, envelope_prefix, body_child_name, header_child_name = '', header_child_prefix = '', body_child_prefix = '', **args):
-    return export(
-        envelope, 
-        **args
-    ).replace('<%s%s' % (envelope_prefix, header_child_name), '<%s%s' % (header_child_prefix, header_child_name)
-    ).replace('</%s%s' % (envelope_prefix, header_child_name), '</%s%s' % (header_child_prefix, header_child_name)
-    ).replace('<%s%s' % (envelope_prefix, body_child_name), '<%s%s' % (body_child_prefix, body_child_name)
-    ).replace('</%s%s' % (envelope_prefix, body_child_name), '</%s%s' % (body_child_prefix, body_child_name))
