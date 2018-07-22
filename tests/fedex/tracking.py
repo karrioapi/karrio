@@ -96,41 +96,41 @@ TrackingAuthError = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap
 </SOAP-ENV:Envelope>
 '''
 
-TrackingRequestXml = '''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v14="http://fedex.com/ws/track/v14">
-   <soapenv:Body>
-      <v14:TrackRequest>
-         <v14:WebAuthenticationDetail>
-            <v14:UserCredential>
-               <v14:Key>user_key</v14:Key>
-               <v14:Password>password</v14:Password>
-            </v14:UserCredential>
-         </v14:WebAuthenticationDetail>
-         <v14:ClientDetail>
-            <v14:AccountNumber>2349857</v14:AccountNumber>
-            <v14:MeterNumber>1293587</v14:MeterNumber>
-         </v14:ClientDetail>
-         <v14:TransactionDetail>
-            <v14:CustomerTransactionId>Track By Number_v14</v14:CustomerTransactionId>
-            <v14:Localization>
-               <v14:LanguageCode>en</v14:LanguageCode>
-            </v14:Localization>
-         </v14:TransactionDetail>
-         <v14:Version>
-            <v14:ServiceId>trck</v14:ServiceId>
-            <v14:Major>14</v14:Major>
-            <v14:Intermediate>0</v14:Intermediate>
-            <v14:Minor>0</v14:Minor>
-         </v14:Version>
-         <v14:SelectionDetails>
-            <v14:CarrierCode>FDXE</v14:CarrierCode>
-            <v14:PackageIdentifier>
-               <v14:Type>TRACKING_NUMBER_OR_DOORTAG</v14:Type>
-               <v14:Value>794887075005</v14:Value>
-            </v14:PackageIdentifier>
-         </v14:SelectionDetails>
-      </v14:TrackRequest>
-   </soapenv:Body>
-</soapenv:Envelope>
+TrackingRequestXml = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14">
+    <tns:Body>
+        <ns:TrackRequest>
+            <ns:WebAuthenticationDetail>
+                <ns:UserCredential>
+                    <ns:Key>user_key</ns:Key>
+                    <ns:Password>password</ns:Password>
+                </ns:UserCredential>
+            </ns:WebAuthenticationDetail>
+            <ns:ClientDetail>
+                <ns:AccountNumber>2349857</ns:AccountNumber>
+                <ns:MeterNumber>1293587</ns:MeterNumber>
+            </ns:ClientDetail>
+            <ns:TransactionDetail>
+                <ns:CustomerTransactionId>Track By Number_v14</ns:CustomerTransactionId>
+                <ns:Localization>
+                    <ns:LanguageCode>en</ns:LanguageCode>
+                </ns:Localization>
+            </ns:TransactionDetail>
+            <ns:Version>
+                <ns:ServiceId>trck</ns:ServiceId>
+                <ns:Major>14</ns:Major>
+                <ns:Intermediate>0</ns:Intermediate>
+                <ns:Minor>0</ns:Minor>
+            </ns:Version>
+            <ns:SelectionDetails>
+                <ns:CarrierCode>FDXE</ns:CarrierCode>
+                <ns:PackageIdentifier>
+                    <ns:Type>TRACKING_NUMBER_OR_DOORTAG</ns:Type>
+                    <ns:Value>794887075005</ns:Value>
+                </ns:PackageIdentifier>
+            </ns:SelectionDetails>
+        </ns:TrackRequest>
+    </tns:Body>
+</tns:Envelope>
 '''
 
 TrackingResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
