@@ -10,15 +10,18 @@ class TestUPSQuote(unittest.TestCase):
 
     @patch("openship.mappers.ups.ups_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
-        shipper = {"address": {"postal_code":"H3N1S4", "country_code":"CA"}}
-        recipient = {"address": {"city":"Lome", "country_code":"TG"}}
-        shipment_details = {"packages": [{"id":"1", "height":3, "lenght":10, "width":3,"weight":4.0}]}
+        shipper = {
+            "address": {"postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]}
+        }
+        recipient = {"address": {"postal_code":"89109", "city":"Las Vegas", "country_code":"US"}}
+        shipment_details = {"packages": [{"id":"1", "height":3, "lenght":10, "width":3,"weight":4.0, "description":"TV"}]}
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment_details=shipment_details)
         quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
 
         proxy.get_quotes(quote_req_xml_obj)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+
         self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
 
     def test_parse_quote_response(self):
