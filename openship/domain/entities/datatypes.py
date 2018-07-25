@@ -17,7 +17,7 @@ class address_type(NamedTuple):
 class package_type(NamedTuple):
     width: float
     height: float
-    lenght: float
+    length: float
     weight: float
     id: str = None
     packaging_type: str = None
