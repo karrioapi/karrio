@@ -94,7 +94,7 @@ class FedexMapper(Mapper):
                     Value=p.weight
                 ),
                 Dimensions=Rate.Dimensions(
-                    Length=p.lenght, Width=p.width, Height=p.height, 
+                    Length=p.length, Width=p.width, Height=p.height, 
                     Units=payload.shipment_details.dimension_unit
                 )
             ))

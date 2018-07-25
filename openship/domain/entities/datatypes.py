@@ -15,10 +15,10 @@ class address_type(NamedTuple):
     address_lines: List[str] = []
 
 class package_type(NamedTuple):
-    width: float
-    height: float
-    lenght: float
     weight: float
+    width: float = None
+    height: float = None
+    length: float = None
     id: str = None
     packaging_type: str = None
     description: str = None

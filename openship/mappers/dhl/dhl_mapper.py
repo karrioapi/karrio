@@ -52,7 +52,7 @@ class DHLMapper(Mapper):
                 PieceID=p.id, 
                 PackageTypeCode=p.packaging_type, 
                 Height=p.height, Width=p.width,
-                Weight=p.weight, Depth=p.lenght
+                Weight=p.weight, Depth=p.length
             ))
 
         payment_country_code = "CA" if not payload.shipment_details.payment_country_code else payload.shipment_details.payment_country_code
