@@ -20,7 +20,9 @@ class TestCanadaPostQuote(unittest.TestCase):
         proxy.get_quotes(quote_req_xml_obj)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        reqUrl = http_mock.call_args[1]['url']
         self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
+        self.assertEqual(reqUrl, "%s/rs/ship/price" % (proxy.client.server_url))
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
