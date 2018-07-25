@@ -103,7 +103,7 @@ class UPSMapper(Mapper):
                         UnitOfMeasurement=Rate.UnitOfMeasurementType(Code="IN"),
                         Width=c.width,
                         Height=c.height,
-                        Length=c.lenght
+                        Length=c.length
                     ),
                     NumberOfPieces=len(payload.shipment_details.packages),
                     PackagingType=Rate.RateCodeDescriptionType(Code="BAG", Description="BAG"),

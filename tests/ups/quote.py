@@ -14,7 +14,7 @@ class TestUPSQuote(unittest.TestCase):
             "address": {"postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]}
         }
         recipient = {"address": {"postal_code":"89109", "city":"Las Vegas", "country_code":"US"}}
-        shipment_details = {"packages": [{"id":"1", "height":3, "lenght":10, "width":3,"weight":4.0, "description":"TV"}]}
+        shipment_details = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "description":"TV"}]}
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment_details=shipment_details)
         quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
 
