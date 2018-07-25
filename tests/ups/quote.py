@@ -4,6 +4,7 @@ from gds_helpers import to_xml, jsonify, export
 from openship.domain.entities import Quote
 from tests.ups.fixture import proxy
 from tests.utils import strip
+import time
 
 
 class TestUPSQuote(unittest.TestCase):
@@ -22,7 +23,7 @@ class TestUPSQuote(unittest.TestCase):
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
 
-        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
+        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml % time.strftime('%Y%m%d')))
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
@@ -263,7 +264,7 @@ QuoteRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 </frt:PickupOptions>
             </frt:ShipmentServiceOptions>
             <frt:PickupRequest>
-                <frt:PickupDate>20180722</frt:PickupDate>
+                <frt:PickupDate>%s</frt:PickupDate>
             </frt:PickupRequest>
             <frt:GFPOptions>
                 <frt:OnCallPickupIndicator></frt:OnCallPickupIndicator>
