@@ -15,8 +15,8 @@ class TestCanadaPostTracking(unittest.TestCase):
 
         proxy.get_trackings(tracking_req_xml_obj)
 
-        xmlStr = http_mock.call_args[1]['url']
-        self.assertEqual(strip(xmlStr), strip(TrackingRequestURL))
+        reqUrl = http_mock.call_args[1]['url']
+        self.assertEqual(reqUrl, TrackingRequestURL)
 
     def test_tracking_auth_error_parsing(self):
         parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
