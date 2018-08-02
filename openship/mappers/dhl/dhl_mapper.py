@@ -1,9 +1,9 @@
 from typing import List, Tuple
 from functools import reduce
 import time
-from ...domain import entities as E 
-from ...domain.mapper import Mapper
-from .dhl_client import DHLClient
+from openship.domain import entities as E 
+from openship.domain.mapper import Mapper
+from openship.mappers.dhl.dhl_client import DHLClient
 from pydhl import DCT_req_global as Req, DCT_Response_global as Res, tracking_request_known as Track, tracking_response as TrackRes
 from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
 
