@@ -1,10 +1,10 @@
 from typing import List, Tuple
 from functools import reduce
 import time
-from ...domain import entities as E
-from ...domain.mapper import Mapper
+from openship.domain import entities as E
+from openship.domain.mapper import Mapper
 
-from .caps_client import CanadaPostClient
+from openship.mappers.caps.caps_client import CanadaPostClient
 
 from pycaps import rating as Rate, track as Track, messages as Msg
 

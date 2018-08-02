@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import List, Tuple
 from functools import reduce
 from pyfedex import rate_v22 as Rate, track_service_v14 as Track
-from .fedex_client import FedexClient
-from ...domain.mapper import Mapper
-from ...domain import entities as E
+from openship.mappers.fedex.fedex_client import FedexClient
+from openship.domain.mapper import Mapper
+from openship.domain import entities as E
 from pyfedex.rate_v22 import WebAuthenticationCredential, WebAuthenticationDetail, ClientDetail
 
 class FedexMapper(Mapper):

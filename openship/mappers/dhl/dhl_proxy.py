@@ -1,8 +1,8 @@
 from io import StringIO
 from gds_helpers import export, to_xml, request as http
 from pydhl import DCT_Response_global as Response, DCT_req_global as Request, tracking_request_known as Track
-from .dhl_mapper import DHLMapper, DHLClient
-from ...domain.proxy import Proxy
+from openship.mappers.dhl.dhl_mapper import DHLMapper, DHLClient
+from openship.domain.proxy import Proxy
 
 class DHLProxy(Proxy):
 
