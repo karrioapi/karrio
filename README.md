@@ -14,7 +14,7 @@ Openship prevents you from reinventing the wheel and is easy to use:
 
 ```shell
 >>> from openship.mappers.dhl import  DHLClient, DHLProxy
->>> from openship.domain.entities Tracking
+>>> from openship.domain.entities import Tracking
 >>> client = DHLClient(
     "https://xmlpi-ea.dhl.com/XMLShippingServlet",
     "YOUR_DHL_SITE_ID",
