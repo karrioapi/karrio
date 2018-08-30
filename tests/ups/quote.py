@@ -12,17 +12,17 @@ class TestUPSQuote(unittest.TestCase):
     @patch("openship.mappers.ups.ups_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
         shipper = {
-            "address": {"postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]}
+            "postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]
         }
-        recipient = {"address": {"postal_code":"89109", "city":"Las Vegas", "country_code":"US"}}
-        shipment_details = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "description":"TV"}]}
-        payload = Quote.create(shipper=shipper, recipient=recipient, shipment_details=shipment_details)
+        recipient = {"postal_code":"89109", "city":"Las Vegas", "country_code":"US"}
+        shipment = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "description":"TV"}]}
+        payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
         quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
 
         proxy.get_quotes(quote_req_xml_obj)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-
+        
         self.assertEqual(strip(xmlStr), strip(QuoteRequestXml % time.strftime('%Y%m%d')))
 
     def test_parse_quote_response(self):
@@ -89,19 +89,23 @@ ParsedQuoteResponse = [
             'extra_charges': [
                 {
                     'name': 'DSCNT', 
-                    'value': 776.36
+                    'amount': 776.36,
+                    'currency': None
                 }, 
                 {
                     'name': 'HOL_WE_PU_DEL', 
-                    'value': 480.0
+                    'amount': 480.0,
+                    'currency': None
                 }, 
                 {
                     'name': '2', 
-                    'value': 66.54
+                    'amount': 66.54,
+                    'currency': None
                 }, 
                 {
                     'name': 'CA_BORDER', 
-                    'value': 30.0
+                    'amount': 30.0,
+                    'currency': None
                 }
             ], 
             'pickup_date': None, 

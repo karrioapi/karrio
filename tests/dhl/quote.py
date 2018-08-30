@@ -10,10 +10,10 @@ class TestDHLQuote(unittest.TestCase):
 
     @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
-        shipper = {"address": {"postal_code":"H3N1S4", "country_code":"CA"}}
-        recipient = {"address": {"city":"Lome", "country_code":"TG"}}
-        shipment_details = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0}]}
-        payload = Quote.create(shipper=shipper, recipient=recipient, shipment_details=shipment_details)
+        shipper = {"postal_code":"H3N1S4", "country_code":"CA"}
+        recipient = {"city":"Lome", "country_code":"TG"}
+        shipment = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0}], "is_document": True}
+        payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
         quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
 
         # remove MessageTime, Date and ReadyTime for testing purpose
@@ -91,7 +91,8 @@ ParsedQuoteResponse = [
             'extra_charges': [
                 {
                     'name': 'FUEL SURCHARGE', 
-                    'value': 12.7
+                    'amount': 12.7,
+                    'currency': None
                 }
             ], 
             'pickup_date': '2018-06-21', 

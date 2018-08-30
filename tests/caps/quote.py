@@ -10,11 +10,11 @@ class TestCanadaPostQuote(unittest.TestCase):
 
     @patch("openship.mappers.caps.caps_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
-        shipper = {"address": {"postal_code": "H8Z2Z3", "country_code": "CA"}}
-        recipient = {"address": {"postal_code": "H8Z2V4", "country_code": "CA"}}
-        shipment_details = {"packages": [{"weight": 4.0}]}
+        shipper = {"postal_code": "H8Z2Z3", "country_code": "CA"}
+        recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
+        shipment = {"packages": [{"weight": 4.0}]}
         payload = Quote.create(
-            shipper=shipper, recipient=recipient, shipment_details=shipment_details)
+            shipper=shipper, recipient=recipient, shipment=shipment)
         quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
 
         proxy.get_quotes(quote_req_xml_obj)
@@ -80,13 +80,14 @@ ParsedQuoteResponse = [
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
-                    'name': 
-                    'Automation discount', 
-                    'value': -0.29
+                    'name': 'Automation discount', 
+                    'amount': -0.29,
+                    'currency': None
                 }, 
                 {
                     'name': 'Fuel surcharge', 
-                    'value': 0.91
+                    'amount': 0.91,
+                    'currency': None
                 }
             ], 
             'pickup_date': None, 
@@ -105,11 +106,13 @@ ParsedQuoteResponse = [
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
-                    'value': -0.68
+                    'amount': -0.68,
+                    'currency': None
                 }, 
                 {
                     'name': 'Fuel surcharge', 
-                    'value': 3.24
+                    'amount': 3.24,
+                    'currency': None
                 }
             ], 
             'pickup_date': None, 
@@ -128,11 +131,13 @@ ParsedQuoteResponse = [
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
-                    'value': -0.29
+                    'amount': -0.29,
+                    'currency': None
                 }, 
                 {
                     'name': 'Fuel surcharge', 
-                    'value': 0.91
+                    'amount': 0.91,
+                    'currency': None
                 }
             ], 
             'pickup_date': None, 
@@ -151,11 +156,13 @@ ParsedQuoteResponse = [
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
-                    'value': -0.37
+                    'amount': -0.37,
+                    'currency': None
                 }, 
                 {
                     'name': 'Fuel surcharge', 
-                    'value': 1.75
+                    'amount': 1.75,
+                    'currency': None
                 }
             ], 
             'pickup_date': None, 
