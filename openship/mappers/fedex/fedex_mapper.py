@@ -24,78 +24,70 @@ class FedexMapper(Mapper):
         version = Rate.VersionId(ServiceId="crs", Major=22, Intermediate=0, Minor=0)
 
         shipper = Rate.Party(
-            Contact=None if not payload.shipper.contact else Rate.Contact(
-                CompanyName=payload.shipper.contact.company_name, 
-                PhoneNumber=payload.shipper.contact.phone_number
+            Contact=None if not payload.shipper.company_name and not payload.shipper.phone_number else Rate.Contact(
+                CompanyName=payload.shipper.company_name, 
+                PhoneNumber=payload.shipper.phone_number
             ),
             Address=Rate.Address(
-                City=payload.shipper.address.city,
-                StateOrProvinceCode=payload.shipper.address.state_or_province,
-                PostalCode=payload.shipper.address.postal_code,
-                CountryCode=payload.shipper.address.country_code
+                City=payload.shipper.city,
+                StateOrProvinceCode=payload.shipper.state_or_province,
+                PostalCode=payload.shipper.postal_code,
+                CountryCode=payload.shipper.country_code
             )
         )
-        for line in payload.shipper.address.address_lines:
+        for line in payload.shipper.address_lines:
             shipper.Address.StreetLines.append(line)
 
         recipient = Rate.Party(
-            Contact=None if not payload.recipient.contact else Rate.Contact(
-                CompanyName=payload.recipient.contact.company_name, 
-                PhoneNumber=payload.recipient.contact.phone_number
+            Contact=None if not payload.recipient.company_name and not payload.recipient.phone_number else Rate.Contact(
+                CompanyName=payload.recipient.company_name, 
+                PhoneNumber=payload.recipient.phone_number
             ),
             Address=Rate.Address(
-                City=payload.recipient.address.city,
-                StateOrProvinceCode=payload.recipient.address.state_or_province,
-                PostalCode=payload.recipient.address.postal_code,
-                CountryCode=payload.recipient.address.country_code
+                City=payload.recipient.city,
+                StateOrProvinceCode=payload.recipient.state_or_province,
+                PostalCode=payload.recipient.postal_code,
+                CountryCode=payload.recipient.country_code
             )
         )
-        for line in payload.recipient.address.address_lines:
+        for line in payload.recipient.address_lines:
             recipient.Address.StreetLines.append(line)
 
-        totalWeight = reduce(lambda r, p: r + p.weight, payload.shipment_details.packages, 0)
+        totalWeight = reduce(lambda r, p: r + p.weight, payload.shipment.packages, 0)
 
-        packaging_type = "YOUR_PACKAGING" if not payload.shipment_details.packaging_type else payload.shipment_details.packaging_type
+        packaging_type = "YOUR_PACKAGING" if not payload.shipment.packaging_type else payload.shipment.packaging_type
 
-        currency = "USD" if not payload.shipment_details.currency else payload.shipment_details.currency
-
-        payment_type = "SENDER" 
-        if payload.shipment_details.charges_payment and payload.shipment_details.charges_payment.type:
-            payment_type = payload.shipment_details.charges_payment.type
-
-        payment_account = self.client.account_number
-        if payload.shipment_details.charges_payment and payload.shipment_details.charges_payment.account_number:
-            payment_account = payload.shipment_details.charges_payment.account_number
+        currency = payload.shipment.currency or "USD" 
 
         shipment = Rate.RequestedShipment(
             ShipTimestamp=datetime.now(),
             PackagingType=packaging_type,
             TotalWeight=Rate.Weight(
-                Units=payload.shipment_details.weight_unit, 
+                Units=payload.shipment.weight_unit, 
                 Value=totalWeight
             ),
             PreferredCurrency=currency,
             Shipper=shipper,
             Recipient=recipient,
             ShippingChargesPayment=Rate.Payment(
-                PaymentType=payment_type,
+                PaymentType=payload.shipment.paid_by or "SENDER",
                 Payor=Rate.Payor(ResponsibleParty=Rate.Party(
-                    AccountNumber=payment_account
+                    AccountNumber=payload.shipment.payment_account_number or self.client.account_number
                 ))
             ),
-            PackageCount=len(payload.shipment_details.packages)
+            PackageCount=len(payload.shipment.packages)
         )
 
-        for p in payload.shipment_details.packages:
+        for p in payload.shipment.packages:
             shipment.RequestedPackageLineItems.append(Rate.RequestedPackageLineItem(
                 GroupPackageCount=1,
                 Weight=Rate.Weight(
-                    Units=payload.shipment_details.weight_unit, 
+                    Units=payload.shipment.weight_unit, 
                     Value=p.weight
                 ),
                 Dimensions=Rate.Dimensions(
                     Length=p.length, Width=p.width, Height=p.height, 
-                    Units=payload.shipment_details.dimension_unit
+                    Units=payload.shipment.dimension_unit
                 )
             ))
 
@@ -168,9 +160,9 @@ class FedexMapper(Mapper):
         if not detail.RatedShipmentDetails:
             return quotes
         shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
-        Discounts_ = map(lambda d: E.Charge(name=d.RateDiscountType, value=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
-        Surcharges_ = map(lambda s: E.Charge(name=s.SurchargeType, value=float(s.Amount.Amount)), shipmentDetail.Surcharges)
-        Taxes_ = map(lambda t: E.Charge(name=t.TaxType, value=float(t.Amount.Amount)), shipmentDetail.Taxes)
+        Discounts_ = map(lambda d: E.Charge(name=d.RateDiscountType, amount=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
+        Surcharges_ = map(lambda s: E.Charge(name=s.SurchargeType, amount=float(s.Amount.Amount)), shipmentDetail.Surcharges)
+        Taxes_ = map(lambda t: E.Charge(name=t.TaxType, amount=float(t.Amount.Amount)), shipmentDetail.Taxes)
         return quotes + [
             E.Quote.parse(
                 carrier=self.client.carrier_name, 

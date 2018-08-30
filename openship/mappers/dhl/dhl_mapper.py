@@ -33,21 +33,21 @@ class DHLMapper(Mapper):
         Request_.MetaData = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
 
         From_ = Req.DCTFrom(
-            CountryCode=payload.shipper.address.country_code, 
-            Postalcode=payload.shipper.address.postal_code,
-            City=payload.shipper.address.city,
-            Suburb=payload.shipper.address.state_or_province
+            CountryCode=payload.shipper.country_code, 
+            Postalcode=payload.shipper.postal_code,
+            City=payload.shipper.city,
+            Suburb=payload.shipper.state_or_province
         )
 
         To_ = Req.DCTTo(
-            CountryCode=payload.recipient.address.country_code, 
-            Postalcode=payload.recipient.address.postal_code,
-            City=payload.recipient.address.city,
-            Suburb=payload.recipient.address.state_or_province
+            CountryCode=payload.recipient.country_code, 
+            Postalcode=payload.recipient.postal_code,
+            City=payload.recipient.city,
+            Suburb=payload.recipient.state_or_province
         )
 
         Pieces = Req.PiecesType()
-        for p in payload.shipment_details.packages:
+        for p in payload.shipment.packages:
             Pieces.add_Piece(Req.PieceType(
                 PieceID=p.id, 
                 PackageTypeCode=p.packaging_type, 
@@ -55,17 +55,17 @@ class DHLMapper(Mapper):
                 Weight=p.weight, Depth=p.length
             ))
 
-        payment_country_code = "CA" if not payload.shipment_details.payment_country_code else payload.shipment_details.payment_country_code
+        payment_country_code = "CA" if not payload.shipment.payment_country_code else payload.shipment.payment_country_code
 
         BkgDetails_ = Req.BkgDetailsType(
             PaymentCountryCode=payment_country_code, 
             NetworkTypeCode="AL", 
-            WeightUnit=payload.shipment_details.weight_unit, 
-            DimensionUnit=payload.shipment_details.dimension_unit,
+            WeightUnit=payload.shipment.weight_unit, 
+            DimensionUnit=payload.shipment.dimension_unit,
             ReadyTime=time.strftime("PT%HH%MM"),
             Date=time.strftime("%Y-%m-%d"), 
             PaymentAccountNumber=self.client.account_number,
-            IsDutiable=payload.shipment_details.is_dutiable,
+            IsDutiable="N" if payload.shipment.is_document else "Y",
             Pieces=Pieces
         )
 
@@ -110,7 +110,7 @@ class DHLMapper(Mapper):
     def _extract_quote(self, quotes: List[E.quote_details], qtdshpNode) -> List[E.quote_details]:
         qtdshp = Res.QtdShpType()
         qtdshp.build(qtdshpNode)
-        ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
+        ExtraCharges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
         Discount_ = reduce(lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
         DutiesAndTaxes_ = reduce(lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
         return quotes + [
@@ -126,7 +126,7 @@ class DHLMapper(Mapper):
                 total_charge=float(qtdshp.ShippingCharge or 0),
                 duties_and_taxes=DutiesAndTaxes_,
                 discount=Discount_,
-                extra_charges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, value=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
+                extra_charges=list(map(lambda s: E.Charge(name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
             )
         ]
 
