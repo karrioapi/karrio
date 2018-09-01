@@ -7,11 +7,14 @@ class party(NamedTuple):
     tax_id: str = None
     person_name: str = None
     company_name: str = None
+    country_name: str = None
     country_code: str = None
     email_address: str = None
     phone_number: str = None
     state_or_province: str = None
+    state_or_province_code: str = None
     address_lines: List[str] = []
+    extra: Dict = {}
 
 class package_type(NamedTuple):
     weight: float
@@ -21,20 +24,22 @@ class package_type(NamedTuple):
     id: str = None
     packaging_type: str = None
     description: str = None
+    extra: Dict = {}
 
 class customs_type(NamedTuple):
     description: str = None
     terms_of_trade: str = None
-    paid_by: str = None
+    extra: Dict = {}
 
 class commodity_type(NamedTuple):
     code: str = None
     description: str = None
+    extra: Dict = {}
 
 class label_type(NamedTuple):
     format: str = None
     type: str = None
-    options: Dict = None
+    extra: Dict = None
 
 class quote_options(NamedTuple):
     packages: List[package_type]
@@ -51,6 +56,7 @@ class quote_options(NamedTuple):
     payment_account_number: str = None
     shipper_account_number: str = None
     services: List[str] = []
+    extra: Dict = {}
 
 class shipment_options(NamedTuple):
     packages: List[package_type]
@@ -59,13 +65,15 @@ class shipment_options(NamedTuple):
     packaging_type: str = None
     is_document: bool = False
     currency: str = None
+    date: str = None
     total_weight: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
     paid_by: str = None
     duty_paid_by: str = None
-    payment_country_code: str = None
     duty_payment_account: str = None
+    declared_value: float = None
+    payment_country_code: str = None
     payment_account_number: str = None
     shipper_account_number: str = None
     billing_account_number: str = None
@@ -74,6 +82,7 @@ class shipment_options(NamedTuple):
     references: List[str] = []
     commodities: List[commodity_type] = []
     label: label_type = None
+    extra: Dict = {}
 
 class quote_request(NamedTuple):
     shipper: party 
@@ -138,5 +147,5 @@ class tracking_details():
 
 
 class shipment_details():
-    def __init__(self): 
-        pass
+    def __init__(self, carrier: str): 
+        self.carrier = carrier
