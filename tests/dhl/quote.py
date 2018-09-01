@@ -271,11 +271,11 @@ QuoteResponseXml = """<?xml version="1.0" ?>
                 <DeliveryPostalLocAddDays>0</DeliveryPostalLocAddDays>
                 <DeliveryTime>PT23H59M</DeliveryTime>
                 <DimensionalWeight>0.647</DimensionalWeight>
-                <WeightUnit>LB</WeightUnit>
+                <WeightUnit>L</WeightUnit>
                 <PickupDayOfWeekNum>4</PickupDayOfWeekNum>
                 <DestinationDayOfWeekNum>2</DestinationDayOfWeekNum>
                 <QuotedWeight>4.</QuotedWeight>
-                <QuotedWeightUOM>LB</QuotedWeightUOM>
+                <QuotedWeightUOM>KG</QuotedWeightUOM>
                 <QtdShpExChrg>
                     <SpecialServiceType>FF</SpecialServiceType>
                     <LocalServiceType>FF</LocalServiceType>
@@ -345,7 +345,7 @@ QuoteResponseXml = """<?xml version="1.0" ?>
                 <PickupDayOfWeekNum>4</PickupDayOfWeekNum>
                 <DestinationDayOfWeekNum>2</DestinationDayOfWeekNum>
                 <QuotedWeight>4.</QuotedWeight>
-                <QuotedWeightUOM>LB</QuotedWeightUOM>
+                <QuotedWeightUOM>KG</QuotedWeightUOM>
                 <PricingDate>2018-06-21</PricingDate>
                 <ShippingCharge>213.469999999999999</ShippingCharge>
                 <TotalTaxAmount>0.</TotalTaxAmount>
