@@ -10,8 +10,8 @@ class TestDHLShipment(unittest.TestCase):
 
     @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
-        shipper = { 
-            "company_name": "shipper company privated limited 12", 
+        shipper = {
+            "company_name": "shipper company privated limited 12",
             "address_lines": ["238 850925434 Drive"],
             "city": "Scottsdale",
             "postal_code": "85260",
@@ -30,8 +30,8 @@ class TestDHLShipment(unittest.TestCase):
                 "Telex": "1245"
             }
         }
-        recipient = { 
-            "company_name": "IBM Bruse Pte Ltd", 
+        recipient = {
+            "company_name": "IBM Bruse Pte Ltd",
             "address_lines": ["9 Business Park Central 1", "3th Floor", "The IBM Place"],
             "city": "Brussels",
             "postal_code": "1060",
@@ -47,7 +47,7 @@ class TestDHLShipment(unittest.TestCase):
             }
         }
         shipment = {
-            "packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "packaging_type": "EE"}], 
+            "packages": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "EE"}],
             "is_document": False,
             "shipper_account_number": "123456789",
             "paid_by": "S",
@@ -55,10 +55,10 @@ class TestDHLShipment(unittest.TestCase):
             "duty_paid_by": "S",
             "duty_payment_account": "123456789",
             "declared_value": 200.00,
-            "label": { "type": "CIN", "format": "PDF", "extra": {"Image": b"SUkqAAgA"}  },
+            "label": {"type": "CIN", "format": "PDF", "extra": {"Image": b"SUkqAAgA"}},
             "services": ["WY"],
-            "commodities": [{ "code": "cc", "description": "cn" }],
-            "extra": { "EProcShip": "N", "GlobalProductCode": "P", "LocalProductCode": "P" },
+            "commodities": [{"code": "cc", "description": "cn"}],
+            "extra": {"EProcShip": "N", "GlobalProductCode": "P", "LocalProductCode": "P"},
             "customs": {
                 "terms_of_trade": "DAP",
                 "extra": {
@@ -71,7 +71,8 @@ class TestDHLShipment(unittest.TestCase):
                 }
             }
         }
-        payload = Shipment.create(shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = Shipment.create(
+            shipper=shipper, recipient=recipient, shipment=shipment)
         quote_req_xml_obj = proxy.mapper.create_shipment_request(payload)
 
         # remove MessageTime for testing purpose
@@ -80,19 +81,32 @@ class TestDHLShipment(unittest.TestCase):
         proxy.create_shipment(quote_req_xml_obj)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml % quote_req_xml_obj.ShipmentDetails.Date))
+        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml %
+                                              quote_req_xml_obj.ShipmentDetails.Date))
+
+    def test_parse_shipment_missing_args_error(self):
+        parsed_response = proxy.mapper.parse_quote_response(
+            to_xml(ShipmentMissingArgsError))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedShipmentMissingArgsError))
 
 
 if __name__ == '__main__':
     unittest.main()
 
 
-
-
-ParsedShipmentParsingError = [
+ParsedShipmentMissingArgsError = [
+    [],
+    [
+        {
+            'carrier': 'carrier_name',
+            'code': '152',
+            'message': 'Shipment Details segment Contents\n                    Conditional Required Error'
+        }
+    ]
 ]
 
-ParsedShipmentMissingArgsError = [
+ParsedShipmentParsingError = [
 ]
 
 ParsedShipmentResponse = [
@@ -102,7 +116,25 @@ ParsedShipmentResponse = [
 ShipmentParsingError = """
 """
 
-ShipmentMissingArgsError = """
+ShipmentMissingArgsError = """<?xml version="1.0" encoding="UTF-8"?>
+<res:ShipmentValidateErrorResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com ship-val-err-res.xsd'>
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2018-08-31T21:19:52+01:00</MessageTime>
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID>dollarog</SiteID>
+        </ServiceHeader>
+        <Status>
+            <ActionStatus/>
+            <Condition>
+                <ConditionCode>152</ConditionCode>
+                <ConditionData>Shipment Details segment Contents
+                    Conditional Required Error</ConditionData>
+            </Condition>
+        </Status>
+    </Response>
+</res:ShipmentValidateErrorResponse>
+<!-- ServiceInvocationId:20180831211951_7837_4526a967-d468-4741-a69e-88be23f892dc -->
 """
 
 ShipmentRequestXml = """<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.1">
