@@ -80,7 +80,7 @@ class TestDHLShipment(unittest.TestCase):
         proxy.create_shipment(quote_req_xml_obj)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml))
+        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml % quote_req_xml_obj.ShipmentDetails.Date))
 
 
 if __name__ == '__main__':
@@ -177,7 +177,7 @@ ShipmentRequestXml = """<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmln
         <WeightUnit>L</WeightUnit>
         <GlobalProductCode>P</GlobalProductCode>
         <LocalProductCode>P</LocalProductCode>
-        <Date>2018-09-01</Date>
+        <Date>%s</Date>
         <Contents></Contents>
         <DimensionUnit>I</DimensionUnit>
         <IsDutiable>Y</IsDutiable>
