@@ -6,7 +6,9 @@ from openship.domain.mapper import Mapper
 from openship.mappers.dhl.dhl_client import DHLClient
 from pydhl import DCT_req_global as Req, DCT_Response_global as Res, tracking_request_known as Track, tracking_response as TrackRes
 from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
-from pydhl import ship_val_global_req_61 as ShipReq
+from pydhl import ship_val_global_req_61 as ShipReq, ship_val_global_res_61 as ShiRes
+from gds_helpers import jsonify_xml, jsonify
+from lxml import etree
 
 class DHLMapper(Mapper):
     def __init__(self, client: DHLClient):
@@ -243,6 +245,11 @@ class DHLMapper(Mapper):
         trackings = reduce(self._extract_tracking, awbinfos, [])
         return (trackings, self.parse_error_response(response))
 
+    def parse_shipment_response(self, response) -> Tuple[E.shipment_details, List[E.Error]]:
+        AirwayBillNumber = response.xpath("//AirwayBillNumber")
+        shipment = self._extract_shipment(response) if len(AirwayBillNumber) == 1 else None
+        return (shipment, self.parse_error_response(response))
+
     """ Helpers functions """
 
     def _extract_error(self, errors: List[E.Error], conditionNode) -> List[E.Error]:
@@ -300,3 +307,20 @@ class DHLMapper(Mapper):
                 ), awbInfo.ShipmentInfo.ShipmentEvent))
             )
         ]
+
+    def _extract_shipment(self, shipmentResponseNode) -> E.shipment_details:
+        get_value = lambda query: query[0].text if len(query) > 0 else None
+        get = lambda key: get_value(shipmentResponseNode.xpath("//%s" % key))
+        plates = [p.text for p in shipmentResponseNode.xpath("//LicensePlateBarCode")]
+        barcodes = [child.text for child in shipmentResponseNode.xpath("//Barcodes")[0].getchildren()]
+        documents = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
+        reference = E.Reference(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
+        return E.Shipment.parse(
+            carrier=self.client.carrier_name,
+            tracking_number = get("AirwayBillNumber"),
+            shipment_date= get("ShipmentDate"),
+            service=get("ProductShortName"),
+            documents=documents,
+            reference=reference,
+            total_charge= E.Charge(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
+        )
