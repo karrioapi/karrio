@@ -57,13 +57,13 @@ Alternatively, you can grab the latest source code from [GitHub](https://github.
 ```shell
 git clone https://github.com/OpenShip/openship.git
 cd openship
-python setup.py install
+python install setup.py
 ```
 
 For released version (change '@version' at your convenience)
 
 ```shell
-pip install --process-dependency-links -e git+git://github.com/OpenShip/openship.git@v1.0-beta#egg=openship
+pip install --process-dependency-links -e git+git://github.com/OpenShip/openship.git@v1.0-beta.3#egg=openship
 ```
 
 ## Running the tests
@@ -81,6 +81,8 @@ OpenShip has usage and reference documentation at [doc.openship.xyz](https://doc
 - [generateDs-helpers](https://github.com/OpenShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation helpers
 - [py-dhl](https://github.com/OpenShip/py-fedex) - The DHL xml generated datatypes library
 - [py-fedex](https://github.com/OpenShip/py-dhl) - The FedEx xml generated datatypes library
+- [py-caps](https://github.com/OpenShip/py-caps) - The Canada Post xml generated datatypes library
+- [py-ups](https://github.com/OpenShip/py-ups) - The UPS xml generated datatypes library
 - [lxml](https://lxml.de/) - Processing XML and HTML with Python
 
 ## Contributing
