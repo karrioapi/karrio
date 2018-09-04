@@ -1,8 +1,8 @@
 from setuptools import setup
 
 setup(name='openship',
-      version='1.0-beta.3',
-      description='Shipping carriers mappers and proxies',
+      version='1.0-beta.4',
+      description='Shipping carriers integration with python',
       url='https://github.com/OpenShip/openship',
       author='DanH91',
       author_email='danielk.developer@gmail.com',

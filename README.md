@@ -83,6 +83,7 @@ OpenShip has usage and reference documentation at [doc.openship.xyz](https://doc
 - [py-fedex](https://github.com/OpenShip/py-dhl) - The FedEx xml generated datatypes library
 - [py-caps](https://github.com/OpenShip/py-caps) - The Canada Post xml generated datatypes library
 - [py-ups](https://github.com/OpenShip/py-ups) - The UPS xml generated datatypes library
+- [py-soap](https://github.com/OpenShip/py-soap) - The SOAP xml generated datatypes and utilities library
 - [lxml](https://lxml.de/) - Processing XML and HTML with Python
 
 ## Contributing
