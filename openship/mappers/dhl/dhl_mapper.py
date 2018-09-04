@@ -6,7 +6,7 @@ from openship.domain.mapper import Mapper
 from openship.mappers.dhl.dhl_client import DHLClient
 from pydhl import DCT_req_global as Req, DCT_Response_global as Res, tracking_request_known as Track, tracking_response as TrackRes
 from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
-from pydhl import ship_val_global_req_61 as ShipReq, ship_val_global_res_61 as ShiRes
+from pydhl import ship_val_global_req_61 as ShipReq
 from gds_helpers import jsonify_xml, jsonify
 from lxml import etree
 
