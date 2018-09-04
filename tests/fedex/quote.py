@@ -11,12 +11,12 @@ class TestFeDexQuote(unittest.TestCase):
 
     @patch("openship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
-        shipper = {"address": {"postal_code": "H3N1S4", "country_code": "CA"}}
-        recipient = {"address": {"city": "Lome", "country_code": "TG"}}
-        shipment_details = {"packages": [
+        shipper = {"postal_code": "H3N1S4", "country_code": "CA"}
+        recipient = {"city": "Lome", "country_code": "TG"}
+        shipment = {"packages": [
             {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}]}
         payload = Quote.create(
-            shipper=shipper, recipient=recipient, shipment_details=shipment_details)
+            shipper=shipper, recipient=recipient, shipment=shipment)
 
         quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
         timestamp = datetime.now()
@@ -59,7 +59,8 @@ ParsedQuoteResponse = [
             'extra_charges': [
                 {
                     'name': 'FUEL',
-                    'value': 9.22
+                    'amount': 9.22,
+                    'currency': None
                 }
             ],
             'pickup_date': None,
@@ -78,7 +79,8 @@ ParsedQuoteResponse = [
             'extra_charges': [
                 {
                     'name': 'FUEL',
-                    'value': 8.3
+                    'amount': 8.3,
+                    'currency': None
                 }
             ],
             'pickup_date': None,

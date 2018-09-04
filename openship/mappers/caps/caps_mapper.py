@@ -22,7 +22,7 @@ class CanadaPostMapper(Mapper):
     """ Interface functions """
 
     def create_quote_request(self, payload: E.quote_request) -> Rate.mailing_scenario:
-        package = payload.shipment_details.packages[0]
+        package = payload.shipment.packages[0]
         parcel = Rate.parcel_characteristicsType(
             weight=package.weight,
             dimensions=Rate.dimensionsType(
@@ -32,13 +32,13 @@ class CanadaPostMapper(Mapper):
             )
         )
         destinationPostalCode = Rate.domesticType(
-            postal_code=payload.recipient.address.postal_code)
+            postal_code=payload.recipient.postal_code)
         destination = Rate.destinationType(
             domestic=destinationPostalCode)
         return Rate.mailing_scenario(
             customer_number=self.client.customer_number,
             parcel_characteristics=parcel,
-            origin_postal_code=payload.shipper.address.postal_code,
+            origin_postal_code=payload.shipper.postal_code,
             destination=destination
         )
 
@@ -68,7 +68,7 @@ class CanadaPostMapper(Mapper):
     def _extract_quote(self, quotes: List[E.quote_details], price_quoteNode) -> List[E.quote_details]:
         price_quote = Rate.price_quoteType()
         price_quote.build(price_quoteNode)
-        discounts = [E.Charge(name=d.adjustment_name, value=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
+        discounts = [E.Charge(name=d.adjustment_name, amount=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
         return quotes + [
             E.Quote.parse(
                 carrier=self.client.carrier_name,
@@ -77,10 +77,11 @@ class CanadaPostMapper(Mapper):
                 service_type=price_quote.service_code,
                 base_charge=float(price_quote.price_details.base or 0),
                 total_charge=float(price_quote.price_details.due or 0),
-                discount=reduce(lambda sum, d: sum + d.value, discounts, 0),
+                discount=reduce(lambda sum, d: sum + d.amount, discounts, 0),
                 duties_and_taxes=float(price_quote.price_details.taxes.gst.valueOf_ + price_quote.price_details.taxes.pst.valueOf_ + price_quote.price_details.taxes.hst.valueOf_ or 0),
                 extra_charges=list(map(lambda a: E.Charge(
-                    name=a.adjustment_name, value=float(a.adjustment_cost or 0)), price_quote.price_details.adjustments.adjustment))
+                    name=a.adjustment_name, amount=float(a.adjustment_cost or 0)), price_quote.price_details.adjustments.adjustment)
+                )
             )
         ]
 

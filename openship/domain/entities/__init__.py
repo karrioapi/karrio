@@ -4,10 +4,12 @@ from .definitions import *
 class Quote():
     """ manage quotes operations """
 
+    @staticmethod
     def create(**args) -> quote_request:
         """ Create a quote request payload """
         return quote_request(**quote_request_type(**args)._asdict())
 
+    @staticmethod
     def parse(**args) -> quote_details:
         """ create a quote details data """
         return quote_details(**args)
@@ -15,27 +17,28 @@ class Quote():
 class Tracking():
     """ manage tracking operations """
 
+    @staticmethod
     def create(**args) -> quote_request:
         """ Create a tracking request payload """
         return tracking_request(**args)
 
+    @staticmethod
     def parse(**args) -> tracking_details:
         """ create a tracking details data """
         return tracking_details(**args)
 
-class Party():
-    """ manage party operations """
+class Shipment():
+    """ manage shipment operations """
 
-    def create(**args) -> party:
-        """ create a party request payload """
-        return party(**party_type(**args)._asdict())
-
-class ShipmentDetails():
-    """ manage shipment details operations """
-
-    def create(**args) -> shipment_details:
+    @staticmethod
+    def create(**args) -> shipment_request:
         """ Create a shipment details request payload """
-        return shipment_details(**shipment_details_type(**args)._asdict())
+        return shipment_request(**shipment_request_type(**args)._asdict())
+
+    @staticmethod
+    def parse(**args) -> shipment_details:
+        """ create a shipment details data """
+        return shipment_details(**args)
 
 
 

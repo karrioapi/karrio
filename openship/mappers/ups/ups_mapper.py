@@ -32,34 +32,34 @@ class UPSMapper(Mapper):
         Request_.add_RequestOption(1)
 
         ShipFrom_ = Rate.ShipFromType(
-            Name=None if not payload.shipper.contact else payload.shipper.contact.company_name,
+            Name=payload.shipper.company_name,
             Address=Rate.AddressType(
-                City=payload.shipper.address.city,
-                PostalCode=payload.shipper.address.postal_code,
-                CountryCode=payload.shipper.address.country_code
+                City=payload.shipper.city,
+                PostalCode=payload.shipper.postal_code,
+                CountryCode=payload.shipper.country_code
             ),
-            AttentionName=None if not payload.shipper.contact else payload.shipper.contact.person_name,
+            AttentionName=payload.shipper.person_name,
         )
 
-        for line in payload.shipper.address.address_lines:
+        for line in payload.shipper.address_lines:
             ShipFrom_.Address.add_AddressLine(line)
 
         ShipTo_ = Rate.ShipToType(
-            Name=None if not payload.recipient.contact else payload.recipient.contact.company_name,
+            Name=payload.recipient.company_name,
             Address=Rate.AddressType(
-                City=payload.recipient.address.city,
-                PostalCode=payload.recipient.address.postal_code,
-                CountryCode=payload.recipient.address.country_code
+                City=payload.recipient.city,
+                PostalCode=payload.recipient.postal_code,
+                CountryCode=payload.recipient.country_code
             ),
-            AttentionName=None if not payload.recipient.contact else payload.recipient.contact.person_name,
+            AttentionName=payload.recipient.person_name,
         )
 
-        for line in payload.recipient.address.address_lines:
+        for line in payload.recipient.address_lines:
             ShipTo_.Address.add_AddressLine(line)
 
         PaymentInformation_ = Rate.PaymentInformationType(
             Payer=Rate.PayerType(
-                Name=ShipFrom_.Address.CountryCode,
+                Name=payload.shipment.payment_country_code or payload.shipper.country_code,
                 Address=ShipFrom_.Address,
                 ShipperNumber=self.client.account_number
             ),
@@ -91,7 +91,7 @@ class UPSMapper(Mapper):
             TimeInTransitIndicator=""
         )
 
-        for c in payload.shipment_details.packages:
+        for c in payload.shipment.packages:
             FreightRateRequest_.add_Commodity(
                 Rate.CommodityType(
                     Description=c.description,
@@ -105,7 +105,7 @@ class UPSMapper(Mapper):
                         Height=c.height,
                         Length=c.length
                     ),
-                    NumberOfPieces=len(payload.shipment_details.packages),
+                    NumberOfPieces=len(payload.shipment.packages),
                     PackagingType=Rate.RateCodeDescriptionType(Code="BAG", Description="BAG"),
                     FreightClass=50
                 )
@@ -161,8 +161,8 @@ class UPSMapper(Mapper):
         detail.build(detailNode)
 
         total_charge = [r for r in detail.Rate if r.Type.Code == 'AFTR_DSCNT'][0]
-        Discounts_ = [E.Charge(name=r.Type.Code, value=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
-        Surcharges_ = [E.Charge(name=r.Type.Code, value=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
+        Discounts_ = [E.Charge(name=r.Type.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
+        Surcharges_ = [E.Charge(name=r.Type.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
         extra_charges = Discounts_ + Surcharges_
         return quotes + [
             E.Quote.parse(
@@ -171,8 +171,8 @@ class UPSMapper(Mapper):
                 service_type=detail.Service.Code,
                 base_charge=float(detail.TotalShipmentCharge.MonetaryValue),
                 total_charge=float(total_charge.Factor.Value or 0),
-                duties_and_taxes=reduce(lambda r, c: r + c.value, Surcharges_, 0),
-                discount=reduce(lambda r, c: r + c.value, Discounts_, 0),
+                duties_and_taxes=reduce(lambda r, c: r + c.amount, Surcharges_, 0),
+                discount=reduce(lambda r, c: r + c.amount, Discounts_, 0),
                 extra_charges=extra_charges
             )
         ]

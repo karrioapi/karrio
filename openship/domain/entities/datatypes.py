@@ -1,18 +1,20 @@
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Dict
 
-class contact_type(NamedTuple):
-    company_name: str = None
-    person_name: str = None
-    phone_number: str = None
-    email_address: str = None
-
-class address_type(NamedTuple):
-    country_code: str
-    state_or_province: str = None
-    country_name: str = None
+class party(NamedTuple):
     postal_code: str = None
     city: str = None
+    type: str = None
+    tax_id: str = None
+    person_name: str = None
+    company_name: str = None
+    country_name: str = None
+    country_code: str = None
+    email_address: str = None
+    phone_number: str = None
+    state_or_province: str = None
+    state_or_province_code: str = None
     address_lines: List[str] = []
+    extra: Dict = {}
 
 class package_type(NamedTuple):
     weight: float
@@ -22,37 +24,75 @@ class package_type(NamedTuple):
     id: str = None
     packaging_type: str = None
     description: str = None
+    extra: Dict = {}
 
-class charges_payment_type(NamedTuple):
-    type: str
-    account_number: str
+class customs_type(NamedTuple):
+    description: str = None
+    terms_of_trade: str = None
+    extra: Dict = {}
 
-class insurance_type(NamedTuple):
-    value: str
-    currency: str
+class commodity_type(NamedTuple):
+    code: str = None
+    description: str = None
+    extra: Dict = {}
 
-class party(NamedTuple):
-    address: address_type
-    contact: contact_type = None
+class label_type(NamedTuple):
+    format: str = None
+    type: str = None
+    extra: Dict = None
 
-
-class shipment_details(NamedTuple):
+class quote_options(NamedTuple):
     packages: List[package_type]
-    insurance: insurance_type = None 
-    charges_payment: charges_payment_type = None 
+    insured_amount: float = None
     number_of_packages: int = None
     packaging_type: str = None
-    is_dutiable: str = "N"
+    is_document: bool = False
     currency: str = None
     total_weight: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
+    paid_by: str = None
     payment_country_code: str = None
+    payment_account_number: str = None
+    shipper_account_number: str = None
+    services: List[str] = []
+    extra: Dict = {}
+
+class shipment_options(NamedTuple):
+    packages: List[package_type]
+    insured_amount: float = None
+    number_of_packages: int = None
+    packaging_type: str = None
+    is_document: bool = False
+    currency: str = None
+    date: str = None
+    total_weight: float = None
+    weight_unit: str = "LB"
+    dimension_unit: str = "IN"
+    paid_by: str = None
+    duty_paid_by: str = None
+    duty_payment_account: str = None
+    declared_value: float = None
+    payment_country_code: str = None
+    payment_account_number: str = None
+    shipper_account_number: str = None
+    billing_account_number: str = None
+    services: List[str] = []
+    customs: customs_type = None
+    references: List[str] = []
+    commodities: List[commodity_type] = []
+    label: label_type = None
+    extra: Dict = {}
 
 class quote_request(NamedTuple):
     shipper: party 
     recipient: party
-    shipment_details: shipment_details
+    shipment: quote_options
+
+class shipment_request(NamedTuple):
+    shipper: party 
+    recipient: party
+    shipment: shipment_options
 
 class tracking_request(NamedTuple):
     tracking_numbers: List[str]
@@ -63,9 +103,15 @@ class tracking_request(NamedTuple):
 ''' Generic response data types '''
 
 class Charge:
-    def __init__(self, name: str = None, value: str = None):
+    def __init__(self, name: str = None, amount: str = None, currency: str = None):
         self.name = name
+        self.amount = amount
+        self.currency = currency
+
+class Reference:
+    def __init__(self, value: str, type: str = None):
         self.value = value
+        self.type = type
 
 class TrackingEvent:
     def __init__(self, date: str, description: str, location: str, code: str, time: str = None, signatory: str = None):
@@ -103,3 +149,15 @@ class tracking_details():
         self.events = events
         self.shipment_date = shipment_date
         self.tracking_number = tracking_number
+
+
+class shipment_details():
+    def __init__(self, carrier: str, tracking_number: str, total_charge: Charge, shipment_date: str = None, 
+        service: str = None, documents: List[str] = [], reference: Reference = None): 
+        self.carrier = carrier
+        self.tracking_number = tracking_number
+        self.shipment_date = shipment_date
+        self.documents = documents
+        self.service = service
+        self.reference = reference
+        self.total_charge = total_charge
