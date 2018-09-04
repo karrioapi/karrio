@@ -309,6 +309,10 @@ class DHLMapper(Mapper):
         ]
 
     def _extract_shipment(self, shipmentResponseNode) -> E.shipment_details:
+        """
+            Shipment extraction is implemented using lxml queries instead of generated ShipmentResponse type
+            because the type construction fail during validation out of our control
+        """
         get_value = lambda query: query[0].text if len(query) > 0 else None
         get = lambda key: get_value(shipmentResponseNode.xpath("//%s" % key))
         plates = [p.text for p in shipmentResponseNode.xpath("//LicensePlateBarCode")]
