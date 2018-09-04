@@ -108,6 +108,11 @@ class Charge:
         self.amount = amount
         self.currency = currency
 
+class Reference:
+    def __init__(self, value: str, type: str = None):
+        self.value = value
+        self.type = type
+
 class TrackingEvent:
     def __init__(self, date: str, description: str, location: str, code: str, time: str = None, signatory: str = None):
         self.date = date
@@ -147,5 +152,12 @@ class tracking_details():
 
 
 class shipment_details():
-    def __init__(self, carrier: str): 
+    def __init__(self, carrier: str, tracking_number: str, total_charge: Charge, shipment_date: str = None, 
+        service: str = None, documents: List[str] = [], reference: Reference = None): 
         self.carrier = carrier
+        self.tracking_number = tracking_number
+        self.shipment_date = shipment_date
+        self.documents = documents
+        self.service = service
+        self.reference = reference
+        self.total_charge = total_charge
