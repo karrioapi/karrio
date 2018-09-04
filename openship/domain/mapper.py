@@ -26,6 +26,6 @@ class Mapper:
         """ Create carrier specific shipment creation request xml data from payload """
         raise Exception("Not Supported")
 
-    def parse_shipment_response(self, response) -> Tuple[E.tracking_details, List[E.Error]]:
+    def parse_shipment_response(self, response) -> Tuple[E.shipment_details, List[E.Error]]:
         """ Create united API shipment creation result from carrier xml response  """
         raise Exception("Not Supported")
