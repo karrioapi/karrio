@@ -69,9 +69,68 @@ class TestDHLPickup(unittest.TestCase):
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(CancelPURequestXML))
 
+    def test_parse_pickup_request_response(self):
+        parsed_response = proxy.mapper.parse_pickup_response(
+            to_xml(PickupResponseXML))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedPickupResponse))
+                                         
+    def test_parse_pickup_error_response(self):
+        parsed_response = proxy.mapper.parse_shipment_response(
+            to_xml(PickupErrorResponseXML))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedPickupErrorResponse))
 
 if __name__ == '__main__':
     unittest.main()
+
+ParsedPickupResponse = [
+    {
+        'carrier': 'carrier_name', 
+        'confirmation_number': '3674', 
+        'pickup_charge': None, 
+        'pickup_date': '2013-10-09', 
+        'ref_times': [
+            {
+                'name': 'ReadyByTime', 'value': '10:30'
+            }, 
+            {
+                'name': 'CallInTime', 'value': '08:30'
+            }
+        ]
+    }, 
+    []
+]
+
+ParsedPickupErrorResponse = [
+    None, 
+    [
+        {
+            'carrier': 'carrier_name', 
+            'code': 'PU012', 
+            'message': ' Pickup NOT scheduled.  Ready by time is passed the station cutoff time. For pickup assistance call customer service representative.'
+        }
+    ]
+]
+
+PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<res:PickupErrorResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com pickup-err-res.xsd'>
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2013-10-10T04:19:50+01:00</MessageTime>
+            <MessageReference>Esteemed Courier Service of DHL</MessageReference>
+            <SiteID>CustomerSiteID</SiteID>
+        </ServiceHeader>
+    <Status>
+        <ActionStatus>Error</ActionStatus>
+        <Condition>
+            <ConditionCode>PU012</ConditionCode>
+            <ConditionData> Pickup NOT scheduled.  Ready by time is passed the station cutoff time. For pickup assistance call customer service representative.</ConditionData>
+        </Condition>
+    </Status>    
+    </Response>
+</res:PickupErrorResponse>
+"""
 
 CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="1.">
 	<Request>
@@ -128,25 +187,6 @@ ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmln
 	</PickupContact>
 	<OriginSvcArea>KUL</OriginSvcArea>
 </req:ModifyPURequest>
-"""
-
-PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
-<res:PickupErrorResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com pickup-err-res.xsd'>
-    <Response>
-        <ServiceHeader>
-            <MessageTime>2013-10-10T04:19:50+01:00</MessageTime>
-            <MessageReference>Esteemed Courier Service of DHL</MessageReference>
-            <SiteID>CustomerSiteID</SiteID>
-        </ServiceHeader>
-    <Status>
-        <ActionStatus>Error</ActionStatus>
-        <Condition>
-            <ConditionCode>PU012</ConditionCode>
-            <ConditionData> Pickup NOT scheduled.  Ready by time is passed the station cutoff time. For pickup assistance call customer service representative.</ConditionData>
-        </Condition>
-    </Status>    
-    </Response>
-</res:PickupErrorResponse>
 """
 
 PickupResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
