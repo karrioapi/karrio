@@ -296,10 +296,15 @@ class DHLMapper(Mapper):
         trackings = reduce(self._extract_tracking, awbinfos, [])
         return (trackings, self.parse_error_response(response))
 
-    def parse_shipment_response(self, response) -> Tuple[E.ShipmentDetails, List[E.Error]]:
-        AirwayBillNumber = response.xpath("//AirwayBillNumber")
-        shipment = self._extract_shipment(response) if len(AirwayBillNumber) == 1 else None
-        return (shipment, self.parse_error_response(response))
+    def parse_shipment_response(self, response) -> Tuple[E.shipment_details, List[E.Error]]:
+        return (self._extract_shipment(response), self.parse_error_response(response))
+
+    def parse_pickup_response(self, response) -> Tuple[E.pickup_details, List[E.Error]]:
+        success = response.xpath('.//*[local-name() = $name]', name="ActionNote")[0].text == "Success"
+        return (
+            self._extract_pickup(response) if success else None, 
+            self.parse_error_response(response) if not success else []
+        )
 
     """ Helpers functions """
 
@@ -366,16 +371,37 @@ class DHLMapper(Mapper):
         """
         get_value = lambda query: query[0].text if len(query) > 0 else None
         get = lambda key: get_value(shipmentResponseNode.xpath("//%s" % key))
+        tracking_number = get("AirwayBillNumber")
+        if tracking_number == None:
+            return None
         plates = [p.text for p in shipmentResponseNode.xpath("//LicensePlateBarCode")]
         barcodes = [child.text for child in shipmentResponseNode.xpath("//Barcodes")[0].getchildren()]
         documents = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
         reference = E.ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
         return E.ShipmentDetails(
             carrier=self.client.carrier_name,
-            tracking_number = get("AirwayBillNumber"),
+            tracking_number=tracking_number,
             shipment_date= get("ShipmentDate"),
             service=get("ProductShortName"),
             documents=documents,
             reference=reference,
             total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
+        )
+
+    def _extract_pickup(self, pickupReplyNode) -> E.pickup_details:
+        pickup = PickupRes.BookPUResponse()
+        pickup.build(pickupReplyNode)
+        pickup_charge = None if pickup.PickupCharge is None else E.Charge(
+            name="Pickup Charge", amount=pickup.PickupCharge, currency=pickup.CurrencyCode
+        )
+        ref_times = (
+            ([] if pickup.ReadyByTime is None else [E.time_details(name="ReadyByTime", value=pickup.ReadyByTime)]) +
+            ([] if pickup.CallInTime is None else [E.time_details(name="CallInTime", value=pickup.CallInTime)])
+        )
+        return E.pickup_details(
+            carrier=self.client.carrier_name,
+            confirmation_number=pickup.ConfirmationNumber,
+            pickup_date=pickup.NextPickupDate,
+            pickup_charge=pickup_charge,
+            ref_times=ref_times
         )
