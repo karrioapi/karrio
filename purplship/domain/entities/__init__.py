@@ -25,3 +25,11 @@ class Shipment():
         """ Create a shipment details request payload """
         return shipment_request(**shipment_request_type(**args)._asdict())
 
+class Pickup():
+    """ manage pickup operations """
+
+    @staticmethod
+    def request(**args) -> pickup_request:
+        """ Create a pickup request payload """
+        return pickup_request(**args)
+

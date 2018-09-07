@@ -3,7 +3,8 @@ from unittest.mock import patch
 from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_20 import CancelPURequest
-from gds_helpers import to_xml
+from gds_helpers import to_xml, export
+from purplship.domain.entities import Pickup
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 import time
@@ -20,8 +21,35 @@ class TestDHLPickup(unittest.TestCase):
         self.CancelPURequest = CancelPURequest()
         self.CancelPURequest.build(to_xml(CancelPURequestXML))
 
+    def test_create_pickup_request(self):
+        payload = Pickup.request(**{
+            "date": "2013-10-19",
+            "account_number": "123456789",
+            "pieces": 2,
+            "weight": 20,
+            "weight_unit": "L",
+            "ready_time": "10:20:00",
+            "closing_time": "09:20:00",
+            "city": "Montreal",
+            "postal_code": "H8Z2Z3",
+            "person_name": "Subhayu",
+            "phone_number": "4801313131",
+            "region_code": "QC",
+            "country_code": "CA",
+            "email_address": "test@mail.com",
+            "instruction": "behind the front desk",
+            "address_lines": ["234 rue Hubert"],
+            "extra": { 
+                "RequestorContact": { "PersonName": "Rikhil", "Phone": "23162" }
+            }
+        })
+        PURequest_ = proxy.mapper.create_pickup_request(payload)
+        # remove MessageTime for testing purpose
+        PURequest_.Request.ServiceHeader.MessageTime = None
+        self.assertEqual(export(PURequest_), export(self.PURequest))
+
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
-    def test_create_pickup_request(self, http_mock):
+    def test_request_pickup(self, http_mock):
         proxy.request_pickup(self.PURequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
@@ -40,6 +68,7 @@ class TestDHLPickup(unittest.TestCase):
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(CancelPURequestXML))
+
 
 if __name__ == '__main__':
     unittest.main()
@@ -101,7 +130,52 @@ ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmln
 </req:ModifyPURequest>
 """
 
-PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req.xsd" schemaVersion="1.">
+PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<res:PickupErrorResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com pickup-err-res.xsd'>
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2013-10-10T04:19:50+01:00</MessageTime>
+            <MessageReference>Esteemed Courier Service of DHL</MessageReference>
+            <SiteID>CustomerSiteID</SiteID>
+        </ServiceHeader>
+    <Status>
+        <ActionStatus>Error</ActionStatus>
+        <Condition>
+            <ConditionCode>PU012</ConditionCode>
+            <ConditionData> Pickup NOT scheduled.  Ready by time is passed the station cutoff time. For pickup assistance call customer service representative.</ConditionData>
+        </Condition>
+    </Status>    
+    </Response>
+</res:PickupErrorResponse>
+"""
+
+PickupResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<res:BookPUResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com pickup-res.xsd'>
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2013-10-10T03:47:23+01:00</MessageTime>
+            <MessageReference>Esteemed Courier Service of DHL</MessageReference>
+            <SiteID>CustomerSiteID</SiteID>
+        </ServiceHeader>
+    </Response>
+    <RegionCode>AM</RegionCode>
+    <Note>
+        <ActionNote>Success</ActionNote>
+        <Condition>
+            <ConditionCode>PU021</ConditionCode>
+            <ConditionData> NOTICE!  Packages picked up after hours may
+                be inspected by a DHL Courier for FAA security purposes.</ConditionData>
+        </Condition>
+    </Note>
+    <ConfirmationNumber>3674</ConfirmationNumber>
+    <ReadyByTime>10:30</ReadyByTime>
+    <NextPickupDate>2013-10-09</NextPickupDate>
+    <CallInTime>08:30</CallInTime>
+    <OriginSvcArea>BEL</OriginSvcArea>
+</res:BookPUResponse>
+"""
+
+PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req.xsd" schemaVersion="1.0">
     <Request>
         <ServiceHeader>
             <MessageReference>1234567890123456789012345678901</MessageReference>
@@ -119,7 +193,11 @@ PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xs
         </RequestorContact>
     </Requestor>
     <Place>
+        <LocationType>B</LocationType>
+        <Address1>234 rue Hubert</Address1>
+        <PackageLocation></PackageLocation>
         <City>Montreal</City>
+        <StateCode>QC</StateCode>
         <CountryCode>CA</CountryCode>
         <PostalCode>H8Z2Z3</PostalCode>
     </Place>
