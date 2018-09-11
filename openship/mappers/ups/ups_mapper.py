@@ -161,8 +161,8 @@ class UPSMapper(Mapper):
         detail.build(detailNode)
 
         total_charge = [r for r in detail.Rate if r.Type.Code == 'AFTR_DSCNT'][0]
-        Discounts_ = [E.ChargeDetails(name=r.Type.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
-        Surcharges_ = [E.ChargeDetails(name=r.Type.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
+        Discounts_ = [E.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
+        Surcharges_ = [E.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
         extra_charges = Discounts_ + Surcharges_
         return quotes + [
             E.QuoteDetails(

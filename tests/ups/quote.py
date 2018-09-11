@@ -90,22 +90,22 @@ ParsedQuoteResponse = [
                 {
                     'name': 'DSCNT', 
                     'amount': 776.36,
-                    'currency': None
+                    'currency': 'USD'
                 }, 
                 {
                     'name': 'HOL_WE_PU_DEL', 
                     'amount': 480.0,
-                    'currency': None
+                    'currency': 'USD'
                 }, 
                 {
                     'name': '2', 
                     'amount': 66.54,
-                    'currency': None
+                    'currency': 'USD'
                 }, 
                 {
                     'name': 'CA_BORDER', 
                     'amount': 30.0,
-                    'currency': None
+                    'currency': 'USD'
                 }
             ], 
             'pickup_date': None, 
