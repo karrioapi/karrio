@@ -20,8 +20,8 @@ class TestDHLShipment(unittest.TestCase):
             "person_name": "Ms Lucian",
             "phone_number": "1 23 8613402",
             "email_address": "test@email.com",
-            "state_or_province": "Arizona",
-            "state_or_province_code": "AZ",
+            "region": "Arizona",
+            "region_code": "AZ",
             "extra": {
                 "ShipperID": "123456789",
                 "RegisteredAccount": "123456789",

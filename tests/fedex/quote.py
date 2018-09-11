@@ -52,8 +52,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 230.49,
             'carrier': 'carrier_name',
+            'currency': 'USD',
             'delivery_date': None,
-            'delivery_time': None,
             'discount': 0.0,
             'duties_and_taxes': 0.0,
             'extra_charges': [
@@ -72,8 +72,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 207.47,
             'carrier': 'carrier_name',
+            'currency': 'USD',
             'delivery_date': None,
-            'delivery_time': None,
             'discount': 0.0,
             'duties_and_taxes': 0.0,
             'extra_charges': [

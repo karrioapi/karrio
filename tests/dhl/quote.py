@@ -84,8 +84,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 195.32, 
             'carrier': 'carrier_name', 
+            'currency': 'CAD',
             'delivery_date': '2018-06-26 11:59:00', 
-            'delivery_time': 'PT23H59M', 
             'discount': 0, 
             'duties_and_taxes': 0, 
             'extra_charges': [
@@ -104,8 +104,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 213.47, 
             'carrier': 'carrier_name', 
+            'currency': 'CAD',
             'delivery_date': '2018-06-26 11:59:00', 
-            'delivery_time': 'PT23H59M', 
             'discount': 0, 
             'duties_and_taxes': 0, 
             'extra_charges': [], 
@@ -124,8 +124,8 @@ ParsedQuoteVolWeightHigher = [
         {
             'base_charge': 0.0, 
             'carrier': 'carrier_name', 
+            'currency': None,
             'delivery_date': '2017-11-13 11:59:00', 
-            'delivery_time': 'PT23H59M', 
             'discount': 0, 
             'duties_and_taxes': 0, 
             'extra_charges': [], 

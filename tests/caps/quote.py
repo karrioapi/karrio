@@ -73,21 +73,21 @@ ParsedQuoteResponse = [
     [
         {
             'base_charge': 9.59, 
-            'carrier': 'CanadaPost', 
+            'carrier': 'CanadaPost',
+            'currency': 'CAD',
             'delivery_date': '2011-10-24', 
-            'delivery_time': None, 
             'discount': 0.6200000000000001, 
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
                     'amount': -0.29,
-                    'currency': None
+                    'currency': 'CAD'
                 }, 
                 {
                     'name': 'Fuel surcharge', 
                     'amount': 0.91,
-                    'currency': None
+                    'currency': 'CAD'
                 }
             ], 
             'pickup_date': None, 
@@ -99,20 +99,20 @@ ParsedQuoteResponse = [
         {
             'base_charge': 22.64, 
             'carrier': 'CanadaPost', 
+            'currency': 'CAD',
             'delivery_date': '2011-10-21', 
-            'delivery_time': None, 
             'discount': 2.56, 
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
                     'amount': -0.68,
-                    'currency': None
+                    'currency': 'CAD'
                 }, 
                 {
                     'name': 'Fuel surcharge', 
                     'amount': 3.24,
-                    'currency': None
+                    'currency': 'CAD'
                 }
             ], 
             'pickup_date': None, 
@@ -124,20 +124,20 @@ ParsedQuoteResponse = [
         {
             'base_charge': 9.59, 
             'carrier': 'CanadaPost', 
+            'currency': 'CAD',
             'delivery_date': '2011-10-26', 
-            'delivery_time': None, 
             'discount': 0.6200000000000001, 
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
                     'amount': -0.29,
-                    'currency': None
+                    'currency': 'CAD'
                 }, 
                 {
                     'name': 'Fuel surcharge', 
                     'amount': 0.91,
-                    'currency': None
+                    'currency': 'CAD'
                 }
             ], 
             'pickup_date': None, 
@@ -149,20 +149,20 @@ ParsedQuoteResponse = [
         {
             'base_charge': 12.26, 
             'carrier': 'CanadaPost', 
-            'delivery_date': '2011-10-24', 
-            'delivery_time': None, 
+            'currency': 'CAD',
+            'delivery_date': '2011-10-24',
             'discount': 1.38, 
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
                     'amount': -0.37,
-                    'currency': None
+                    'currency': 'CAD'
                 }, 
                 {
                     'name': 'Fuel surcharge', 
                     'amount': 1.75,
-                    'currency': None
+                    'currency': 'CAD'
                 }
             ], 
             'pickup_date': None, 

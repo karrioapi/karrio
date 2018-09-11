@@ -82,8 +82,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 909.26, 
             'carrier': 'UPS', 
+            'currency': 'USD',
             'delivery_date': None, 
-            'delivery_time': None, 
             'discount': 776.36, 
             'duties_and_taxes': 576.54, 
             'extra_charges': [
