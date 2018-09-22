@@ -87,7 +87,7 @@ class UPSMapper(Mapper):
                 UnitOfMeasurement=Rate.UnitOfMeasurementType(Code="LB")
             ),
             PickupRequest=Rate.PickupRequestType(PickupDate=time.strftime('%Y%m%d')),
-            GFPOptions=Rate.OnCallInformationType(OnCallPickupIndicator=""),
+            GFPOptions=Rate.OnCallInformationType(),
             TimeInTransitIndicator=""
         )
 
