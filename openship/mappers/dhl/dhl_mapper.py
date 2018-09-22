@@ -54,7 +54,7 @@ class DHLMapper(Mapper):
         for p in payload.shipment.packages:
             Pieces.add_Piece(Req.PieceType(
                 PieceID=p.id,
-                PackageTypeCode=p.packaging_type,
+                PackageTypeCode=p.packaging_type or "BOX",
                 Height=p.height, Width=p.width,
                 Weight=p.weight, Depth=p.length
             ))
@@ -76,7 +76,7 @@ class DHLMapper(Mapper):
         GetQuote = Req.GetQuoteType(
             Request=Request_, From=From_, To=To_, BkgDetails=BkgDetails_)
 
-        return Req.DCTRequest(GetQuote=GetQuote)
+        return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
 
     def create_shipment_request(self, payload: E.shipment_request) ->ShipReq.ShipmentRequest:
         Request_ = self.init_request()
