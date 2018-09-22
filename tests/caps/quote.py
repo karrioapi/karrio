@@ -1,23 +1,31 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
+from pycaps.rating import mailing_scenario
 from openship.domain.entities import Quote
 from tests.caps.fixture import proxy
-from tests.utils import strip
+from tests.utils import strip, get_node_from_xml
 
 
 class TestCanadaPostQuote(unittest.TestCase):
+    def setUp(self):
+        self.mailing_scenario = mailing_scenario()
+        self.mailing_scenario.build(to_xml(QuoteRequestXml))
 
-    @patch("openship.mappers.caps.caps_proxy.http", return_value='<a></a>')
-    def test_create_quote_request(self, http_mock):
+    def test_create_quote_request(self):
         shipper = {"postal_code": "H8Z2Z3", "country_code": "CA"}
         recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
         shipment = {"packages": [{"weight": 4.0}]}
         payload = Quote.create(
             shipper=shipper, recipient=recipient, shipment=shipment)
-        quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
 
-        proxy.get_quotes(quote_req_xml_obj)
+        mailing_scenario_ = proxy.mapper.create_quote_request(payload)
+
+        self.assertEqual(export(mailing_scenario_), export(self.mailing_scenario))
+
+    @patch("openship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    def test_get_quotes(self, http_mock):
+        proxy.get_quotes(self.mailing_scenario)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         reqUrl = http_mock.call_args[1]['url']
