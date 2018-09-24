@@ -1,6 +1,6 @@
-# OpenShip
+# PurplShip
 
-[![Build Status](https://travis-ci.org/OpenShip/openship.svg?branch=master)](https://travis-ci.org/OpenShip/openship) [![codecov](https://codecov.io/gh/OpenShip/openship/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenShip/openship)
+[![Build Status](https://travis-ci.org/PurplShip/purplship.svg?branch=master)](https://travis-ci.org/PurplShip/purplship) [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
 
 Shipping carriers API integrations Library
 
@@ -13,8 +13,8 @@ Shipping carriers API integrations Library
 Openship prevents you from reinventing the wheel and is easy to use:
 
 ```shell
->>> from openship.mappers.dhl import  DHLClient, DHLProxy
->>> from openship.domain.entities import Tracking
+>>> from purplship.mappers.dhl import  DHLClient, DHLProxy
+>>> from purplship.domain.entities import Tracking
 >>> client = DHLClient(
     "https://xmlpi-ea.dhl.com/XMLShippingServlet",
     "YOUR_DHL_SITE_ID",
@@ -35,7 +35,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-OpenShip is compatible with Python 3 +
+PurplShip is compatible with Python 3 +
 
 ```shell
 $ Python --version
@@ -44,26 +44,26 @@ Python 3.6.5
 
 ### Installing
 
-OpenShip can be installed with [pip](https://pip.pypa.io/):
+PurplShip can be installed with [pip](https://pip.pypa.io/):
 
 For latest dev versions
 
 ```shell
-pip install --process-dependency-links -e git://github.com/OpenShip/openship.git#egg=openship
+pip install --process-dependency-links -e git://github.com/PurplShip/purplship.git#egg=purplship
 ```
 
-Alternatively, you can grab the latest source code from [GitHub](https://github.com/OpenShip/openship):
+Alternatively, you can grab the latest source code from [GitHub](https://github.com/PurplShip/purplship):
 
 ```shell
-git clone https://github.com/OpenShip/openship.git
-cd openship
+git clone https://github.com/PurplShip/purplship.git
+cd purplship
 python install setup.py
 ```
 
 For released version (change '@version' at your convenience)
 
 ```shell
-pip install --process-dependency-links -e git+git://github.com/OpenShip/openship.git@v1.0-beta.3#egg=openship
+pip install --process-dependency-links -e git+git://github.com/PurplShip/purplship.git@v1.0-beta.3#egg=purplship
 ```
 
 ## Running the tests
@@ -74,28 +74,28 @@ python -m unittest -v
 
 ## Documentation
 
-OpenShip has usage and reference documentation at [doc.openship.xyz](https://doc.openship.xyz).
+PurplShip has usage and reference documentation at [doc.purplship.com](https://doc.purplship.com).
 
 ## Built With
 
-- [generateDs-helpers](https://github.com/OpenShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation helpers
-- [py-dhl](https://github.com/OpenShip/py-fedex) - The DHL xml generated datatypes library
-- [py-fedex](https://github.com/OpenShip/py-dhl) - The FedEx xml generated datatypes library
-- [py-caps](https://github.com/OpenShip/py-caps) - The Canada Post xml generated datatypes library
-- [py-ups](https://github.com/OpenShip/py-ups) - The UPS xml generated datatypes library
-- [py-soap](https://github.com/OpenShip/py-soap) - The SOAP xml generated datatypes and utilities library
+- [generateDs-helpers](https://github.com/PurplShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation helpers
+- [py-dhl](https://github.com/PurplShip/py-fedex) - The DHL xml generated datatypes library
+- [py-fedex](https://github.com/PurplShip/py-dhl) - The FedEx xml generated datatypes library
+- [py-caps](https://github.com/PurplShip/py-caps) - The Canada Post xml generated datatypes library
+- [py-ups](https://github.com/PurplShip/py-ups) - The UPS xml generated datatypes library
+- [py-soap](https://github.com/PurplShip/py-soap) - The SOAP xml generated datatypes and utilities library
 - [lxml](https://lxml.de/) - Processing XML and HTML with Python
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/OpenShip/openship/blob/master/CODE_OF_CONDUCT.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://github.com/PurplShip/purplship/blob/master/CODE_OF_CONDUCT.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Authors
 
-- **Daniel K.** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [OpenShip](https://openship.xyz/)
+- **Daniel K.** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [PurplShip](https://purplship.com/)
 
-See also the list of [contributors](https://github.com/OpenShip/openship/blob/master/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/PurplShip/purplship/blob/master/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the LGPL License - see the [LICENSE.md](https://github.com/OpenShip/openship/blob/master/LICENSE) file for details
+This project is licensed under the LGPL License - see the [LICENSE.md](https://github.com/PurplShip/purplship/blob/master/LICENSE) file for details
