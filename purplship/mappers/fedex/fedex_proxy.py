@@ -2,9 +2,9 @@ from gds_helpers import to_xml, export, request as http
 from pyfedex import rate_v22 as Rate, track_service_v14 as Track
 from pysoap.envelope import Body, Envelope
 from pysoap import create_envelope, clean_namespaces
-from openship.domain.proxy import Proxy
-from openship.mappers.fedex.fedex_mapper import FedexMapper
-from openship.mappers.fedex.fedex_client import FedexClient
+from purplship.domain.proxy import Proxy
+from purplship.mappers.fedex.fedex_mapper import FedexMapper
+from purplship.mappers.fedex.fedex_client import FedexClient
 
 class FedexProxy(Proxy):
 

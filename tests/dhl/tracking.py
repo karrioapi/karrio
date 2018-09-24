@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from pydhl.tracking_request_known import KnownTrackingRequest
 from gds_helpers import to_xml, jsonify, export
-from openship.domain.entities import Tracking
+from purplship.domain.entities import Tracking
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
@@ -21,7 +21,7 @@ class TestDHLTracking(unittest.TestCase):
         KnownTrackingRequest_.Request.ServiceHeader.MessageTime = None
         self.assertEqual(export(KnownTrackingRequest_), export(self.KnownTrackingRequest))
 
-    @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_get_trackings(self, http_mock):
         proxy.get_trackings(self.KnownTrackingRequest)
 

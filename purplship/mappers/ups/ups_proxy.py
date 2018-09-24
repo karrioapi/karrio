@@ -2,9 +2,9 @@ from gds_helpers import to_xml, export, request as http
 from pyups import freight_rate as Rate, package_track as Track
 from pysoap.envelope import Body, Envelope, Header
 from pysoap import create_envelope, clean_namespaces
-from openship.domain.proxy import Proxy
-from openship.mappers.ups.ups_mapper import UPSMapper
-from openship.mappers.ups.ups_client import UPSClient
+from purplship.domain.proxy import Proxy
+from purplship.mappers.ups.ups_mapper import UPSMapper
+from purplship.mappers.ups.ups_client import UPSClient
 
 class UPSProxy(Proxy):
 

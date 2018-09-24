@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pyups.package_track import TrackRequest
-from openship.domain.entities import Tracking
+from purplship.domain.entities import Tracking
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
@@ -20,7 +20,7 @@ class TestUPSTracking(unittest.TestCase):
 
         self.assertEqual(export(TrackRequest_), export(self.TrackRequest))
 
-    @patch("openship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
     def test_get_trackings(self, http_mock):
         proxy.get_trackings(self.TrackRequest)
 

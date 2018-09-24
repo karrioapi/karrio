@@ -1,9 +1,9 @@
 import time
 from typing import List, Tuple
 from functools import reduce
-from openship.mappers.ups.ups_client import UPSClient
-from openship.domain.mapper import Mapper
-from openship.domain import entities as E
+from purplship.mappers.ups.ups_client import UPSClient
+from purplship.domain.mapper import Mapper
+from purplship.domain import entities as E
 from pyups import freight_rate as Rate, package_track as Track, UPSSecurity as Security, common as Common, error as Err
 
 class UPSMapper(Mapper):

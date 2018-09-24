@@ -3,7 +3,7 @@ from unittest.mock import patch
 from datetime import datetime
 from pyfedex.rate_v22 import RateRequest
 from gds_helpers import to_xml, jsonify, export
-from openship.domain.entities import Quote
+from purplship.domain.entities import Quote
 from tests.fedex.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
@@ -27,7 +27,7 @@ class TestFeDexQuote(unittest.TestCase):
         RateRequest_.RequestedShipment.ShipTimestamp = None
         self.assertEqual(export(RateRequest_), export(self.RateRequest))
 
-    @patch("openship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.RateRequest)
 

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
-from openship.domain.entities import Tracking
+from purplship.domain.entities import Tracking
 from tests.caps.fixture import proxy
 from tests.utils import strip
 
@@ -17,7 +17,7 @@ class TestCanadaPostTracking(unittest.TestCase):
 
         self.assertEqual(tracking_pin, self.pin)
 
-    @patch("openship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
     def test_get_trackings(self, http_mock):
         proxy.get_trackings(self.pin)
 

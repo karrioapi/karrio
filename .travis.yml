@@ -6,7 +6,7 @@ install:
   - pip install codecov
   - pip install . --process-dependency-links
 
-script: coverage run --include='openship/*' -m unittest -v
+script: coverage run --include='purplship/*' -m unittest -v
 
 after_success:
   - coverage report -m

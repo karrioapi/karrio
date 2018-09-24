@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pyups.freight_rate import FreightRateRequest
-from openship.domain.entities import Quote
+from purplship.domain.entities import Quote
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 import time
@@ -25,7 +25,7 @@ class TestUPSQuote(unittest.TestCase):
         
         self.assertEqual(export(RateRequest_), export(self.RateRequest))
 
-    @patch("openship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.RateRequest)
 

@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pycaps.rating import mailing_scenario
-from openship.domain.entities import Quote
+from purplship.domain.entities import Quote
 from tests.caps.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
@@ -23,7 +23,7 @@ class TestCanadaPostQuote(unittest.TestCase):
 
         self.assertEqual(export(mailing_scenario_), export(self.mailing_scenario))
 
-    @patch("openship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.mailing_scenario)
 

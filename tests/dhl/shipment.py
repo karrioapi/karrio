@@ -3,7 +3,7 @@ from unittest.mock import patch
 import time
 from gds_helpers import to_xml, jsonify, export
 from pydhl.ship_val_global_req_61 import ShipmentRequest
-from openship.domain.entities import Shipment
+from purplship.domain.entities import Shipment
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
@@ -86,7 +86,7 @@ class TestDHLShipment(unittest.TestCase):
 
         self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
 
-    @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_create_shipment(self, http_mock):
         proxy.create_shipment(self.ShipmentRequest)
 

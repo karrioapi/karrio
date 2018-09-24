@@ -1,4 +1,4 @@
-from openship.domain.client import Client
+from purplship.domain.client import Client
 
 class DHLClient(Client):
 

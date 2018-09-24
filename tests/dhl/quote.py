@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pydhl.DCT_req_global import DCTRequest
-from openship.domain.entities import Quote
+from purplship.domain.entities import Quote
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
@@ -26,7 +26,7 @@ class TestDHLQuote(unittest.TestCase):
         DCTRequest_.GetQuote.BkgDetails.ReadyTime = None
         self.assertEqual(export(DCTRequest_), export(self.DCTRequest))
 
-    @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.DCTRequest)
 
