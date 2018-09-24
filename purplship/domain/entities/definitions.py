@@ -1,6 +1,6 @@
 from collections import namedtuple
 from typing import List, Dict
-from openship.domain.entities.datatypes import package_type, commodity_type, customs_type, label_type, party
+from purplship.domain.entities.datatypes import package_type, commodity_type, customs_type, label_type, party
 
 ''' quote options Type definition '''
 class quote_options_type(namedtuple("quote_options_type", "packages insured_amount number_of_packages packaging_type is_document currency total_weight weight_unit dimension_unit paid_by payment_country_code payment_account_number shipper_account_number services extra")):

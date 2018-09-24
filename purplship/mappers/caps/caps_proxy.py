@@ -1,8 +1,8 @@
 from io import StringIO
 from gds_helpers import export, to_xml, request as http
-from openship.mappers.caps.caps_mapper import CanadaPostMapper, CanadaPostClient
+from purplship.mappers.caps.caps_mapper import CanadaPostMapper, CanadaPostClient
 from pycaps import rating as Rate, track as Track
-from openship.domain.proxy import Proxy
+from purplship.domain.proxy import Proxy
 from base64 import b64encode
 
 class CanadaPostProxy(Proxy):

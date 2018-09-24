@@ -1,4 +1,4 @@
-from openship.mappers.fedex import FedexClient, FedexProxy
+from purplship.mappers.fedex import FedexClient, FedexProxy
 
 proxy = FedexProxy(FedexClient(
   "https://wsbeta.fedex.com:443/web-services",

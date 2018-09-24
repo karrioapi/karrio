@@ -1,4 +1,4 @@
-from openship.mappers.dhl import DHLClient, DHLProxy
+from purplship.mappers.dhl import DHLClient, DHLProxy
 
 proxy = DHLProxy(DHLClient(
   "https://xmlpi-ea.dhl.com/XMLShippingServlet",

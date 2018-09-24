@@ -10,7 +10,7 @@ Shipping carriers API integrations Library
 - Use your developer credentials with negotiated rates
 - Tested
 
-Openship prevents you from reinventing the wheel and is easy to use:
+purplship prevents you from reinventing the wheel and is easy to use:
 
 ```shell
 >>> from purplship.mappers.dhl import  DHLClient, DHLProxy

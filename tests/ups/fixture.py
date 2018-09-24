@@ -1,4 +1,4 @@
-from openship.mappers.ups import UPSClient, UPSProxy
+from purplship.mappers.ups import UPSClient, UPSProxy
 
 proxy = UPSProxy(UPSClient(
   server_url="https://wwwcie.ups.com/webservices",

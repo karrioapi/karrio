@@ -1,14 +1,14 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
-from openship.domain.entities import Tracking
+from purplship.domain.entities import Tracking
 from tests.ups.fixture import proxy
 from tests.utils import strip
 
 
 class TestUPSTracking(unittest.TestCase):
 
-    @patch("openship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
     def test_create_tracking_request(self, http_mock):
         payload = Tracking.create(tracking_numbers=["1Z12345E6205277936"])
         tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)

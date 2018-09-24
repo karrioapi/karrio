@@ -1,14 +1,14 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
-from openship.domain.entities import Quote
+from purplship.domain.entities import Quote
 from tests.caps.fixture import proxy
 from tests.utils import strip
 
 
 class TestCanadaPostQuote(unittest.TestCase):
 
-    @patch("openship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
         shipper = {"postal_code": "H8Z2Z3", "country_code": "CA"}
         recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}

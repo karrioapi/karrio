@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
-from openship.domain.entities import Quote
+from purplship.domain.entities import Quote
 from tests.ups.fixture import proxy
 from tests.utils import strip
 import time
@@ -9,7 +9,7 @@ import time
 
 class TestUPSQuote(unittest.TestCase):
 
-    @patch("openship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
         shipper = {
             "postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]

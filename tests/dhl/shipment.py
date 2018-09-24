@@ -1,14 +1,14 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
-from openship.domain.entities import Shipment
+from purplship.domain.entities import Shipment
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
 
 class TestDHLShipment(unittest.TestCase):
 
-    @patch("openship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_create_quote_request(self, http_mock):
         shipper = {
             "company_name": "shipper company privated limited 12",
