@@ -14,6 +14,9 @@ class TestDHLPickup(unittest.TestCase):
         self.PURequest = BookPURequest()
         self.PURequest.build(to_xml(PickupRequestXML))
 
+        self.ModifyPURequest = ModifyPURequest()
+        self.ModifyPURequest.build(to_xml(ModifyPURequestXML))
+
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_create_pickup_request(self, http_mock):
         proxy.request_pickup(self.PURequest)
@@ -21,8 +24,53 @@ class TestDHLPickup(unittest.TestCase):
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(PickupRequestXML))
 
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    def test_modify_pickup_request(self, http_mock):
+        proxy.modify_pickup(self.ModifyPURequest)
+
+        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        self.assertEqual(strip(xmlStr), strip(ModifyPURequestXML))
+
 if __name__ == '__main__':
     unittest.main()
+
+ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="1.">
+    <Request>
+        <ServiceHeader>
+		<MessageTime>2013-08-03T09:30:47-05:00</MessageTime>
+		<MessageReference>1234567890123456789012345678901</MessageReference>
+		<SiteID>CustomerSiteID</SiteID>
+        <Password>customerPassword</Password>
+	</ServiceHeader>
+    </Request>
+    <RegionCode>AP</RegionCode>
+    <ConfirmationNumber>100094</ConfirmationNumber>
+    <Requestor>
+		<AccountType>D</AccountType>
+		<AccountNumber>123456789</AccountNumber>
+		<RequestorContact>
+			<PersonName>Rikhil Jain</PersonName>
+			<Phone>2342345322</Phone>
+		</RequestorContact>
+    </Requestor>
+	<Place>
+        <CompanyName>String</CompanyName>
+        <City>Kuala Lumpur</City>
+        <CountryCode>MY</CountryCode>
+	    <PostalCode>2516251</PostalCode>
+	</Place>
+	<Pickup>
+		<PickupDate>2013-08-05</PickupDate>
+		<ReadyByTime>08:20</ReadyByTime>
+		<CloseTime>10:20</CloseTime>
+	</Pickup>
+	<PickupContact>
+		<PersonName>Rikhil</PersonName>
+		<Phone>4801313131</Phone>
+	</PickupContact>
+	<OriginSvcArea>KUL</OriginSvcArea>
+</req:ModifyPURequest>
+"""
 
 PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req.xsd" schemaVersion="1.">
     <Request>
