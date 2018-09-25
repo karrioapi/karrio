@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import time
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml
 from pycaps.shipment import ShipmentType
 from purplship.domain.entities import Shipment
 from tests.caps.fixture import proxy
