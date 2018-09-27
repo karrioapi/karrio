@@ -63,7 +63,7 @@ python install setup.py
 For released version (change '@version' at your convenience)
 
 ```shell
-pip install --process-dependency-links -e git+git://github.com/PurplShip/purplship.git@v1.0-beta.3#egg=purplship
+pip install --process-dependency-links -e git+git://github.com/PurplShip/purplship.git@v1.0-beta.6#egg=purplship
 ```
 
 ## Running the tests
