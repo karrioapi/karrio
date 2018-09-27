@@ -4,7 +4,6 @@ from pysoap import create_envelope, clean_namespaces
 from purplship.domain.proxy import Proxy
 from purplship.mappers.ups.ups_mapper import UPSMapper
 from purplship.mappers.ups.ups_client import UPSClient
-from pyups import freight_rate as Rate, package_track as Track, freight_ship as Ship, freight_pickup as Pick
 from pyups.freight_rate import FreightRateRequest
 from pyups.package_track import TrackRequest
 from pyups.freight_ship import FreightShipRequest
