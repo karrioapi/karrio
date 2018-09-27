@@ -1,15 +1,19 @@
 import unittest
 from unittest.mock import patch
+import time
 from gds_helpers import to_xml, jsonify, export
+from pydhl.ship_val_global_req_61 import ShipmentRequest
 from purplship.domain.entities import Shipment
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
 
 class TestDHLShipment(unittest.TestCase):
+    def setUp(self):
+        self.ShipmentRequest = ShipmentRequest()
+        self.ShipmentRequest.build(to_xml(ShipmentRequestXml))
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
-    def test_create_quote_request(self, http_mock):
+    def test_create_shipment_request(self):
         shipper = {
             "company_name": "shipper company privated limited 12",
             "address_lines": ["238 850925434 Drive"],
@@ -20,8 +24,8 @@ class TestDHLShipment(unittest.TestCase):
             "person_name": "Ms Lucian",
             "phone_number": "1 23 8613402",
             "email_address": "test@email.com",
-            "state_or_province": "Arizona",
-            "state_or_province_code": "AZ",
+            "state": "Arizona",
+            "state_code": "AZ",
             "extra": {
                 "ShipperID": "123456789",
                 "RegisteredAccount": "123456789",
@@ -73,31 +77,35 @@ class TestDHLShipment(unittest.TestCase):
         }
         payload = Shipment.create(
             shipper=shipper, recipient=recipient, shipment=shipment)
-        quote_req_xml_obj = proxy.mapper.create_shipment_request(payload)
+        ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
 
-        # remove MessageTime for testing purpose
-        quote_req_xml_obj.Request.ServiceHeader.MessageTime = None
+        # remove MessageTime, Date and Image for testing purpose
+        ShipmentRequest_.Request.ServiceHeader.MessageTime = None
+        ShipmentRequest_.ShipmentDetails.Date = None
+        ShipmentRequest_.DocImages.DocImage[0].Image = None
 
-        proxy.create_shipment(quote_req_xml_obj)
+        self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
+
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    def test_create_shipment(self, http_mock):
+        proxy.create_shipment(self.ShipmentRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml %
-                                              quote_req_xml_obj.ShipmentDetails.Date))
+        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml))
                 
-    def test_parse_quote_parsing_error(self):
+    def test_quote_error_parsing(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentParsingError))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedShipmentParsingError))
 
-    def test_parse_shipment_missing_args_error(self):
+    def test_shipment_missing_args_error_parsing(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentMissingArgsError))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedShipmentMissingArgsError))
 
-
-    def test_parse_shipment_response(self):
+    def test_shipment_response_parsing(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentResponseXml))
         self.assertEqual(jsonify(parsed_response),
@@ -106,7 +114,6 @@ class TestDHLShipment(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
 
 ParsedShipmentMissingArgsError = [
     None,
@@ -206,7 +213,7 @@ ShipmentMissingArgsError = """<?xml version="1.0" encoding="UTF-8"?>
 <!-- ServiceInvocationId:20180831211951_7837_4526a967-d468-4741-a69e-88be23f892dc -->
 """
 
-ShipmentRequestXml = """<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.1">
+ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.1">
     <Request>
         <ServiceHeader>
             <MessageReference>1234567890123456789012345678901</MessageReference>
@@ -278,7 +285,6 @@ ShipmentRequestXml = """<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmln
         <WeightUnit>L</WeightUnit>
         <GlobalProductCode>P</GlobalProductCode>
         <LocalProductCode>P</LocalProductCode>
-        <Date>%s</Date>
         <Contents></Contents>
         <DimensionUnit>I</DimensionUnit>
         <IsDutiable>Y</IsDutiable>
@@ -311,7 +317,6 @@ ShipmentRequestXml = """<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmln
     <DocImages>
         <DocImage>
             <Type>CIN</Type>
-            <Image>b'U1VrcUFBZ0E='</Image>
             <ImageFormat>PDF</ImageFormat>
         </DocImage>
     </DocImages>

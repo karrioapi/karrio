@@ -40,21 +40,21 @@ class DHLMapper(Mapper):
             CountryCode=payload.shipper.country_code,
             Postalcode=payload.shipper.postal_code,
             City=payload.shipper.city,
-            Suburb=payload.shipper.state_or_province
+            Suburb=payload.shipper.state_code
         )
 
         To_ = Req.DCTTo(
             CountryCode=payload.recipient.country_code,
             Postalcode=payload.recipient.postal_code,
             City=payload.recipient.city,
-            Suburb=payload.recipient.state_or_province
+            Suburb=payload.recipient.state_code
         )
 
         Pieces = Req.PiecesType()
         for p in payload.shipment.packages:
             Pieces.add_Piece(Req.PieceType(
                 PieceID=p.id,
-                PackageTypeCode=p.packaging_type,
+                PackageTypeCode=p.packaging_type or "BOX",
                 Height=p.height, Width=p.width,
                 Weight=p.weight, Depth=p.length
             ))
@@ -76,7 +76,7 @@ class DHLMapper(Mapper):
         GetQuote = Req.GetQuoteType(
             Request=Request_, From=From_, To=To_, BkgDetails=BkgDetails_)
 
-        return Req.DCTRequest(GetQuote=GetQuote)
+        return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
 
     def create_shipment_request(self, payload: E.shipment_request) ->ShipReq.ShipmentRequest:
         Request_ = self.init_request()
@@ -96,8 +96,8 @@ class DHLMapper(Mapper):
             CountryCode=payload.recipient.country_code,
             City=payload.recipient.city,
             CountryName=payload.recipient.country_name,
-            Division=payload.recipient.state_or_province,
-            DivisionCode=payload.recipient.state_or_province_code
+            Division=payload.recipient.state,
+            DivisionCode=payload.recipient.state_code
         )
 
         if any([payload.recipient.person_name, payload.recipient.email_address]):
@@ -122,8 +122,8 @@ class DHLMapper(Mapper):
             CountryCode=payload.shipper.country_code,
             City=payload.shipper.city,
             CountryName=payload.shipper.country_name,
-            Division=payload.shipper.state_or_province,
-            DivisionCode=payload.shipper.state_or_province_code
+            Division=payload.shipper.state,
+            DivisionCode=payload.shipper.state_code
         )
 
         if any([payload.shipper.person_name, payload.shipper.email_address]):
@@ -234,18 +234,18 @@ class DHLMapper(Mapper):
             known_request.add_AWBNumber(tn)
         return known_request
 
-    def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+    def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         qtdshp_list = response.xpath(
             './/*[local-name() = $name]', name="QtdShp")
         quotes = reduce(self._extract_quote, qtdshp_list, [])
         return (quotes, self.parse_error_response(response))
 
-    def parse_tracking_response(self, response) -> Tuple[List[E.tracking_details], List[E.Error]]:
+    def parse_tracking_response(self, response) -> Tuple[List[E.TrackingDetails], List[E.Error]]:
         awbinfos = response.xpath('.//*[local-name() = $name]', name="AWBInfo")
         trackings = reduce(self._extract_tracking, awbinfos, [])
         return (trackings, self.parse_error_response(response))
 
-    def parse_shipment_response(self, response) -> Tuple[E.shipment_details, List[E.Error]]:
+    def parse_shipment_response(self, response) -> Tuple[E.ShipmentDetails, List[E.Error]]:
         AirwayBillNumber = response.xpath("//AirwayBillNumber")
         shipment = self._extract_shipment(response) if len(AirwayBillNumber) == 1 else None
         return (shipment, self.parse_error_response(response))
@@ -260,20 +260,20 @@ class DHLMapper(Mapper):
                     message=condition.ConditionData, carrier=self.client.carrier_name)
         ]
 
-    def _extract_quote(self, quotes: List[E.quote_details], qtdshpNode) -> List[E.quote_details]:
+    def _extract_quote(self, quotes: List[E.QuoteDetails], qtdshpNode) -> List[E.QuoteDetails]:
         qtdshp = Res.QtdShpType()
         qtdshp.build(qtdshpNode)
-        ExtraCharges = list(map(lambda s: E.Charge(
+        ExtraCharges = list(map(lambda s: E.ChargeDetails(
             name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
         Discount_ = reduce(
             lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
         DutiesAndTaxes_ = reduce(
             lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
         return quotes + [
-            E.Quote.parse(
+            E.QuoteDetails(
                 carrier=self.client.carrier_name,
+                currency=qtdshp.CurrencyCode,
                 delivery_date=str(qtdshp.DeliveryDate[0].DlvyDateTime),
-                delivery_time=str(qtdshp.DeliveryTime),
                 pickup_date=str(qtdshp.PickupDate),
                 pickup_time=str(qtdshp.PickupCutoffTime),
                 service_name=qtdshp.LocalProductName,
@@ -282,18 +282,18 @@ class DHLMapper(Mapper):
                 total_charge=float(qtdshp.ShippingCharge or 0),
                 duties_and_taxes=DutiesAndTaxes_,
                 discount=Discount_,
-                extra_charges=list(map(lambda s: E.Charge(
+                extra_charges=list(map(lambda s: E.ChargeDetails(
                     name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
             )
         ]
 
-    def _extract_tracking(self, trackings: List[E.tracking_details], awbInfoNode) -> List[E.tracking_details]:
+    def _extract_tracking(self, trackings: List[E.TrackingDetails], awbInfoNode) -> List[E.TrackingDetails]:
         awbInfo = TrackRes.AWBInfo()
         awbInfo.build(awbInfoNode)
         if awbInfo.ShipmentInfo == None:
             return trackings
         return trackings + [
-            E.Tracking.parse(
+            E.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=awbInfo.AWBNumber,
                 shipment_date=str(awbInfo.ShipmentInfo.ShipmentDate),
@@ -308,7 +308,7 @@ class DHLMapper(Mapper):
             )
         ]
 
-    def _extract_shipment(self, shipmentResponseNode) -> E.shipment_details:
+    def _extract_shipment(self, shipmentResponseNode) -> E.ShipmentDetails:
         """
             Shipment extraction is implemented using lxml queries instead of generated ShipmentResponse type
             because the type construction fail during validation out of our control
@@ -318,13 +318,13 @@ class DHLMapper(Mapper):
         plates = [p.text for p in shipmentResponseNode.xpath("//LicensePlateBarCode")]
         barcodes = [child.text for child in shipmentResponseNode.xpath("//Barcodes")[0].getchildren()]
         documents = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
-        reference = E.Reference(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
-        return E.Shipment.parse(
+        reference = E.ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
+        return E.ShipmentDetails(
             carrier=self.client.carrier_name,
             tracking_number = get("AirwayBillNumber"),
             shipment_date= get("ShipmentDate"),
             service=get("ProductShortName"),
             documents=documents,
             reference=reference,
-            total_charge= E.Charge(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
+            total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
         )

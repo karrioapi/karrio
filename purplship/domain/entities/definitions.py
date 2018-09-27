@@ -24,6 +24,7 @@ class quote_options_type(namedtuple("quote_options_type", "packages insured_amou
             extra
         )
 
+
 ''' shipment options Type definition '''
 class shipment_options_type(namedtuple("shipment_options_type", "packages insured_amount number_of_packages packaging_type is_document currency date total_weight weight_unit dimension_unit paid_by duty_paid_by payment_country_code duty_payment_account declared_value payment_account_number shipper_account_number billing_account_number services customs references commodities label, extra")):
     def __new__(cls, packages: List, insured_amount: float = None, number_of_packages: int = None, packaging_type: str = None, is_document: bool = False, currency: str = None, date: str = None, total_weight: float = None, weight_unit: str = "LB", dimension_unit: str = "IN", paid_by: str = None, duty_paid_by: str = None, payment_country_code: str = None, duty_payment_account: str = None, declared_value: float = None, payment_account_number: str = None, shipper_account_number: str = None, billing_account_number: str = None, services: List[str] = [], customs: Dict = None, references: List[str] = [], commodities: List[Dict] = [], label: Dict = None, extra: Dict = {}):

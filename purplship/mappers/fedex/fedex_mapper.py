@@ -18,7 +18,6 @@ class FedexMapper(Mapper):
 
 
 
-
     def create_quote_request(self, payload: E.quote_request) -> Rate.RateRequest:
         transactionDetail = Rate.TransactionDetail(CustomerTransactionId="FTC")
         version = Rate.VersionId(ServiceId="crs", Major=22, Intermediate=0, Minor=0)
@@ -30,7 +29,7 @@ class FedexMapper(Mapper):
             ),
             Address=Rate.Address(
                 City=payload.shipper.city,
-                StateOrProvinceCode=payload.shipper.state_or_province,
+                StateOrProvinceCode=payload.shipper.state_code,
                 PostalCode=payload.shipper.postal_code,
                 CountryCode=payload.shipper.country_code
             )
@@ -45,7 +44,7 @@ class FedexMapper(Mapper):
             ),
             Address=Rate.Address(
                 City=payload.recipient.city,
-                StateOrProvinceCode=payload.recipient.state_or_province,
+                StateOrProvinceCode=payload.recipient.state_code,
                 PostalCode=payload.recipient.postal_code,
                 CountryCode=payload.recipient.country_code
             )
@@ -130,13 +129,13 @@ class FedexMapper(Mapper):
         return reduce(self._extract_error, notifications, [])
 
 
-    def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+    def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         rate_replys = response.xpath('.//*[local-name() = $name]', name="RateReplyDetails")
         quotes = reduce(self._extract_quote, rate_replys, [])
         return (quotes, self.parse_error_response(response))
 
 
-    def parse_tracking_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+    def parse_tracking_response(self, response) -> Tuple[List[E.TrackingDetails], List[E.Error]]:
         track_details = response.xpath('.//*[local-name() = $name]', name="TrackDetails")
         trackings = reduce(self._extract_tracking, track_details, [])
         return (trackings, self.parse_error_response(response))
@@ -154,20 +153,21 @@ class FedexMapper(Mapper):
         ]
 
 
-    def _extract_quote(self, quotes: List[E.quote_details], detailNode) -> List[E.quote_details]: 
+    def _extract_quote(self, quotes: List[E.QuoteDetails], detailNode) -> List[E.QuoteDetails]: 
         detail = Rate.RateReplyDetail()
         detail.build(detailNode)
         if not detail.RatedShipmentDetails:
             return quotes
         shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
-        Discounts_ = map(lambda d: E.Charge(name=d.RateDiscountType, amount=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
-        Surcharges_ = map(lambda s: E.Charge(name=s.SurchargeType, amount=float(s.Amount.Amount)), shipmentDetail.Surcharges)
-        Taxes_ = map(lambda t: E.Charge(name=t.TaxType, amount=float(t.Amount.Amount)), shipmentDetail.Taxes)
+        Discounts_ = map(lambda d: E.ChargeDetails(name=d.RateDiscountType, amount=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
+        Surcharges_ = map(lambda s: E.ChargeDetails(name=s.SurchargeType, amount=float(s.Amount.Amount)), shipmentDetail.Surcharges)
+        Taxes_ = map(lambda t: E.ChargeDetails(name=t.TaxType, amount=float(t.Amount.Amount)), shipmentDetail.Taxes)
         return quotes + [
-            E.Quote.parse(
-                carrier=self.client.carrier_name, 
+            E.QuoteDetails(
+                carrier=self.client.carrier_name,
                 service_name=detail.ServiceType,
                 service_type=detail.ActualRateType,
+                currency=shipmentDetail.CurrencyExchangeRate.IntoCurrency,
                 base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
                 total_charge=float(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
                 duties_and_taxes=float(shipmentDetail.TotalTaxes.Amount),
@@ -177,13 +177,13 @@ class FedexMapper(Mapper):
         ]
 
 
-    def _extract_tracking(self, trackings: List[E.tracking_details], trackDetailNode) -> List[E.tracking_details]:
+    def _extract_tracking(self, trackings: List[E.TrackingDetails], trackDetailNode) -> List[E.TrackingDetails]:
         trackDetail = Track.TrackDetail()
         trackDetail.build(trackDetailNode)
         if trackDetail.Notification.Severity == 'ERROR':
             return trackings
         return trackings + [
-            E.Tracking.parse(
+            E.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=trackDetail.TrackingNumber,
                 shipment_date=str(trackDetail.StatusDetail.CreationTime),

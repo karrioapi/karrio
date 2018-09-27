@@ -1,27 +1,34 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
+from pydhl.DCT_req_global import DCTRequest
 from purplship.domain.entities import Quote
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
 
 class TestDHLQuote(unittest.TestCase):
+    def setUp(self):
+        self.DCTRequest = DCTRequest()
+        self.DCTRequest.build(to_xml(QuoteRequestXml))
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
-    def test_create_quote_request(self, http_mock):
+    def test_create_quote_request(self):
         shipper = {"postal_code":"H3N1S4", "country_code":"CA"}
         recipient = {"city":"Lome", "country_code":"TG"}
         shipment = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0}], "is_document": True}
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
-        quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
+
+        DCTRequest_ = proxy.mapper.create_quote_request(payload)
 
         # remove MessageTime, Date and ReadyTime for testing purpose
-        quote_req_xml_obj.GetQuote.Request.ServiceHeader.MessageTime = None
-        quote_req_xml_obj.GetQuote.BkgDetails.Date = None
-        quote_req_xml_obj.GetQuote.BkgDetails.ReadyTime = None
+        DCTRequest_.GetQuote.Request.ServiceHeader.MessageTime = None
+        DCTRequest_.GetQuote.BkgDetails.Date = None
+        DCTRequest_.GetQuote.BkgDetails.ReadyTime = None
+        self.assertEqual(export(DCTRequest_), export(self.DCTRequest))
 
-        proxy.get_quotes(quote_req_xml_obj)
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    def test_get_quotes(self, http_mock):
+        proxy.get_quotes(self.DCTRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
@@ -84,8 +91,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 195.32, 
             'carrier': 'carrier_name', 
+            'currency': 'CAD',
             'delivery_date': '2018-06-26 11:59:00', 
-            'delivery_time': 'PT23H59M', 
             'discount': 0, 
             'duties_and_taxes': 0, 
             'extra_charges': [
@@ -104,8 +111,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 213.47, 
             'carrier': 'carrier_name', 
+            'currency': 'CAD',
             'delivery_date': '2018-06-26 11:59:00', 
-            'delivery_time': 'PT23H59M', 
             'discount': 0, 
             'duties_and_taxes': 0, 
             'extra_charges': [], 
@@ -124,8 +131,8 @@ ParsedQuoteVolWeightHigher = [
         {
             'base_charge': 0.0, 
             'carrier': 'carrier_name', 
+            'currency': None,
             'delivery_date': '2017-11-13 11:59:00', 
-            'delivery_time': 'PT23H59M', 
             'discount': 0, 
             'duties_and_taxes': 0, 
             'extra_charges': [], 
@@ -189,7 +196,7 @@ QuoteMissingArgsError = """<?xml version="1.0" ?>
 </DCTResponse>
 """
 
-QuoteRequestXml = """<p:DCTRequest schemaVersion="1.0" xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd ">
+QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="1.">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -213,7 +220,6 @@ QuoteRequestXml = """<p:DCTRequest schemaVersion="1.0" xmlns:p="http://www.dhl.c
             <Pieces>
                 <Piece>
                     <PieceID>1</PieceID>
-                    <PackageTypeCode></PackageTypeCode>
                     <Height>3.</Height>
                     <Depth>10.</Depth>
                     <Width>3.</Width>

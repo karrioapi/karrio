@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch
+from pydhl.tracking_request_known import KnownTrackingRequest
 from gds_helpers import to_xml, jsonify, export
 from purplship.domain.entities import Tracking
 from tests.dhl.fixture import proxy
@@ -7,15 +8,22 @@ from tests.utils import strip
 
 
 class TestDHLTracking(unittest.TestCase):
+    def setUp(self):
+        self.KnownTrackingRequest = KnownTrackingRequest()
+        self.KnownTrackingRequest.build(to_xml(TrackingRequestXml))
+
+    def test_create_tracking_request(self):
+        payload = Tracking.create(tracking_numbers=["8346088391"])
+
+        KnownTrackingRequest_ = proxy.mapper.create_tracking_request(payload)
+
+        # remove MessageTime for testing purpose
+        KnownTrackingRequest_.Request.ServiceHeader.MessageTime = None
+        self.assertEqual(export(KnownTrackingRequest_), export(self.KnownTrackingRequest))
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
-    def test_create_tracking_request(self, http_mock):
-        payload = Tracking.create(tracking_numbers=["8346088391"])
-        tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
-        # remove MessageTime for testing purpose
-        tracking_req_xml_obj.Request.ServiceHeader.MessageTime = None
-
-        proxy.get_trackings(tracking_req_xml_obj)
+    def test_get_trackings(self, http_mock):
+        proxy.get_trackings(self.KnownTrackingRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))

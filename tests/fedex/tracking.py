@@ -1,22 +1,30 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, jsonify
+from pyfedex.track_service_v14 import TrackRequest
+from gds_helpers import to_xml, jsonify, export
 from purplship.domain.entities import Tracking
 from tests.fedex.fixture import proxy
-from tests.utils import strip
+from tests.utils import strip, get_node_from_xml
 
 
 class TestFeDexTracking(unittest.TestCase):
+    def setUp(self):
+        req_xml = get_node_from_xml(TrackingRequestXml, "TrackRequest")
+        self.TrackRequest = TrackRequest()
+        self.TrackRequest.build(req_xml)
+
+    def test_create_tracking_request(self):
+        payload = Tracking.create(tracking_numbers=["794887075005"])
+
+        TrackRequest_ = proxy.mapper.create_tracking_request(payload)
+
+        self.assertEqual(export(TrackRequest_), export(self.TrackRequest))
 
     @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
-    def test_create_tracking_request(self, http_mock):
-        payload = Tracking.create(tracking_numbers=["794887075005"])
-        tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
-
-        proxy.get_trackings(tracking_req_xml_obj)
+    def test_get_trackings(self, http_mock):
+        proxy.get_trackings(self.TrackRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
 
     def test_parse_tracking_response(self):

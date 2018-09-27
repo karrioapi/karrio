@@ -11,8 +11,11 @@ class party(NamedTuple):
     country_code: str = None
     email_address: str = None
     phone_number: str = None
-    state_or_province: str = None
-    state_or_province_code: str = None
+
+    """ state or province """
+    state: str = None
+    state_code: str = None
+
     address_lines: List[str] = []
     extra: Dict = {}
 
@@ -99,19 +102,63 @@ class tracking_request(NamedTuple):
     language_code: str = None
     level_of_details: str = None
 
+class pickup_request(NamedTuple):
+    date: str
+    account_number: str
+    pieces: float
+    weight: float
+    weight_unit: str
+    ready_time: str = None
+    closing_time: str = None
+    instruction: str = None
+    package_location: str = None
+
+    city: str = None
+    postal_code: str = None
+    person_name: str = None
+    company_name: str = None
+    phone_number: str = None
+    email_address: str = None
+    is_business: bool = True
+
+    """ state or province """
+    state: str = None
+    state_code: str = None
+
+    country_name: str = None
+    country_code: str = None
+    address_lines: List[str] = []
+    extra: Dict = {}   
+
+class pickup_modification_request(NamedTuple):
+    pass
+
+class pickup_cancellation_request(NamedTuple):
+    pass
 
 ''' Generic response data types '''
 
-class Charge:
+class Error():
+    def __init__(self, message: str = None, code: str = None, carrier: str = None):
+        self.message = message
+        self.code = code
+        self.carrier = carrier
+
+class ChargeDetails:
     def __init__(self, name: str = None, amount: str = None, currency: str = None):
         self.name = name
         self.amount = amount
         self.currency = currency
 
-class Reference:
+class ReferenceDetails:
     def __init__(self, value: str, type: str = None):
         self.value = value
         self.type = type
+
+class TimeDetails:
+    def __init__(self, value: str, name: str = None):
+        self.value = value
+        self.name = name
 
 class TrackingEvent:
     def __init__(self, date: str, description: str, location: str, code: str, time: str = None, signatory: str = None):
@@ -122,11 +169,11 @@ class TrackingEvent:
         self.code = code
         self.signatory = signatory
 
-class quote_details:
+class QuoteDetails:
     def __init__(self, carrier: str, service_name: str, service_type: str, 
-        base_charge: float, duties_and_taxes: float, total_charge: float, 
-        delivery_time: str = None, pickup_time: str = None, delivery_date: str = None, 
-        pickup_date: str = None, discount: float = None, extra_charges: List[Charge] = []):
+        base_charge: float, duties_and_taxes: float, total_charge: float, currency: str,
+        pickup_time: str = None, delivery_date: str = None, pickup_date: str = None, 
+        discount: float = None, extra_charges: List[ChargeDetails] = []):
 
         self.carrier = carrier
         self.service_name = service_name
@@ -134,26 +181,24 @@ class quote_details:
         self.base_charge = base_charge
         self.duties_and_taxes = duties_and_taxes
         self.total_charge = total_charge
+        self.currency = currency
         self.discount = discount
         self.extra_charges = extra_charges
 
-        self.delivery_time = delivery_time
         self.pickup_time = pickup_time
         self.delivery_date = delivery_date
         self.pickup_date = pickup_date
 
-
-class tracking_details():
+class TrackingDetails:
     def __init__(self, carrier: str, tracking_number: str, shipment_date: str = None, events: List[TrackingEvent] = []): 
         self.carrier = carrier
         self.events = events
         self.shipment_date = shipment_date
         self.tracking_number = tracking_number
 
-
-class shipment_details():
-    def __init__(self, carrier: str, tracking_number: str, total_charge: Charge, shipment_date: str = None, 
-        service: str = None, documents: List[str] = [], reference: Reference = None): 
+class ShipmentDetails:
+    def __init__(self, carrier: str, tracking_number: str, total_charge: ChargeDetails, shipment_date: str = None, 
+        service: str = None, documents: List[str] = [], reference: ReferenceDetails = None): 
         self.carrier = carrier
         self.tracking_number = tracking_number
         self.shipment_date = shipment_date
@@ -161,3 +206,15 @@ class shipment_details():
         self.service = service
         self.reference = reference
         self.total_charge = total_charge
+
+class PickupDetails:
+    def __init__(self, carrier: str, confirmation_number: str, pickup_date: str = None, 
+        pickup_charge: ChargeDetails = None, ref_times: List[TimeDetails] = None): 
+        self.carrier = carrier
+        self.confirmation_number = confirmation_number
+        self.pickup_date = pickup_date
+        self.pickup_charge = pickup_charge
+        self.ref_times = ref_times
+
+class PickupCancellationDetails:
+    pass

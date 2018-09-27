@@ -1,23 +1,31 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
+from pycaps.rating import mailing_scenario
 from purplship.domain.entities import Quote
 from tests.caps.fixture import proxy
-from tests.utils import strip
+from tests.utils import strip, get_node_from_xml
 
 
 class TestCanadaPostQuote(unittest.TestCase):
+    def setUp(self):
+        self.mailing_scenario = mailing_scenario()
+        self.mailing_scenario.build(to_xml(QuoteRequestXml))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
-    def test_create_quote_request(self, http_mock):
+    def test_create_quote_request(self):
         shipper = {"postal_code": "H8Z2Z3", "country_code": "CA"}
         recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
         shipment = {"packages": [{"weight": 4.0}]}
         payload = Quote.create(
             shipper=shipper, recipient=recipient, shipment=shipment)
-        quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
 
-        proxy.get_quotes(quote_req_xml_obj)
+        mailing_scenario_ = proxy.mapper.create_quote_request(payload)
+
+        self.assertEqual(export(mailing_scenario_), export(self.mailing_scenario))
+
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    def test_get_quotes(self, http_mock):
+        proxy.get_quotes(self.mailing_scenario)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         reqUrl = http_mock.call_args[1]['url']
@@ -73,21 +81,21 @@ ParsedQuoteResponse = [
     [
         {
             'base_charge': 9.59, 
-            'carrier': 'CanadaPost', 
+            'carrier': 'CanadaPost',
+            'currency': 'CAD',
             'delivery_date': '2011-10-24', 
-            'delivery_time': None, 
             'discount': 0.6200000000000001, 
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
                     'amount': -0.29,
-                    'currency': None
+                    'currency': 'CAD'
                 }, 
                 {
                     'name': 'Fuel surcharge', 
                     'amount': 0.91,
-                    'currency': None
+                    'currency': 'CAD'
                 }
             ], 
             'pickup_date': None, 
@@ -99,20 +107,20 @@ ParsedQuoteResponse = [
         {
             'base_charge': 22.64, 
             'carrier': 'CanadaPost', 
+            'currency': 'CAD',
             'delivery_date': '2011-10-21', 
-            'delivery_time': None, 
             'discount': 2.56, 
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
                     'amount': -0.68,
-                    'currency': None
+                    'currency': 'CAD'
                 }, 
                 {
                     'name': 'Fuel surcharge', 
                     'amount': 3.24,
-                    'currency': None
+                    'currency': 'CAD'
                 }
             ], 
             'pickup_date': None, 
@@ -124,20 +132,20 @@ ParsedQuoteResponse = [
         {
             'base_charge': 9.59, 
             'carrier': 'CanadaPost', 
+            'currency': 'CAD',
             'delivery_date': '2011-10-26', 
-            'delivery_time': None, 
             'discount': 0.6200000000000001, 
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
                     'amount': -0.29,
-                    'currency': None
+                    'currency': 'CAD'
                 }, 
                 {
                     'name': 'Fuel surcharge', 
                     'amount': 0.91,
-                    'currency': None
+                    'currency': 'CAD'
                 }
             ], 
             'pickup_date': None, 
@@ -149,20 +157,20 @@ ParsedQuoteResponse = [
         {
             'base_charge': 12.26, 
             'carrier': 'CanadaPost', 
-            'delivery_date': '2011-10-24', 
-            'delivery_time': None, 
+            'currency': 'CAD',
+            'delivery_date': '2011-10-24',
             'discount': 1.38, 
             'duties_and_taxes': 0.0, 
             'extra_charges': [
                 {
                     'name': 'Automation discount', 
                     'amount': -0.37,
-                    'currency': None
+                    'currency': 'CAD'
                 }, 
                 {
                     'name': 'Fuel surcharge', 
                     'amount': 1.75,
-                    'currency': None
+                    'currency': 'CAD'
                 }
             ], 
             'pickup_date': None, 

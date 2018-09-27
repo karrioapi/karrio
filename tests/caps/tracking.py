@@ -7,13 +7,19 @@ from tests.utils import strip
 
 
 class TestCanadaPostTracking(unittest.TestCase):
+    def setUp(self):
+        self.pin = "1Z12345E6205277936"
+
+    def test_create_tracking_request(self):
+        payload = Tracking.create(tracking_numbers=[self.pin])
+
+        tracking_pin = proxy.mapper.create_tracking_request(payload)
+
+        self.assertEqual(tracking_pin, self.pin)
 
     @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
-    def test_create_tracking_request(self, http_mock):
-        payload = Tracking.create(tracking_numbers=["1Z12345E6205277936"])
-        tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
-
-        proxy.get_trackings(tracking_req_xml_obj)
+    def test_get_trackings(self, http_mock):
+        proxy.get_trackings(self.pin)
 
         reqUrl = http_mock.call_args[1]['url']
         self.assertEqual(reqUrl, TrackingRequestURL)

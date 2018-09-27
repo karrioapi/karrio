@@ -87,7 +87,7 @@ class UPSMapper(Mapper):
                 UnitOfMeasurement=Rate.UnitOfMeasurementType(Code="LB")
             ),
             PickupRequest=Rate.PickupRequestType(PickupDate=time.strftime('%Y%m%d')),
-            GFPOptions=Rate.OnCallInformationType(OnCallPickupIndicator=""),
+            GFPOptions=Rate.OnCallInformationType(),
             TimeInTransitIndicator=""
         )
 
@@ -134,13 +134,13 @@ class UPSMapper(Mapper):
         return reduce(self._extract_error, notifications, [])
 
 
-    def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+    def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         rate_replys = response.xpath('.//*[local-name() = $name]', name="FreightRateResponse")
         quotes = reduce(self._extract_quote, rate_replys, [])
         return (quotes, self.parse_error_response(response))
 
 
-    def parse_tracking_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+    def parse_tracking_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         track_details = response.xpath('.//*[local-name() = $name]', name="Shipment")
         trackings = reduce(self._extract_tracking, track_details, [])
         return (trackings, self.parse_error_response(response))
@@ -156,17 +156,18 @@ class UPSMapper(Mapper):
         ]
 
 
-    def _extract_quote(self, quotes: List[E.quote_details], detailNode) -> List[E.quote_details]: 
+    def _extract_quote(self, quotes: List[E.QuoteDetails], detailNode) -> List[E.QuoteDetails]: 
         detail = Rate.FreightRateResponse()
         detail.build(detailNode)
 
         total_charge = [r for r in detail.Rate if r.Type.Code == 'AFTR_DSCNT'][0]
-        Discounts_ = [E.Charge(name=r.Type.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
-        Surcharges_ = [E.Charge(name=r.Type.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
+        Discounts_ = [E.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
+        Surcharges_ = [E.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
         extra_charges = Discounts_ + Surcharges_
         return quotes + [
-            E.Quote.parse(
+            E.QuoteDetails(
                 carrier=self.client.carrier_name, 
+                currency=detail.TotalShipmentCharge.CurrencyCode,
                 service_name=detail.Service.Description,
                 service_type=detail.Service.Code,
                 base_charge=float(detail.TotalShipmentCharge.MonetaryValue),
@@ -178,7 +179,7 @@ class UPSMapper(Mapper):
         ]
 
 
-    def _extract_tracking(self, trackings: List[E.tracking_details], shipmentNode) -> List[E.tracking_details]:
+    def _extract_tracking(self, trackings: List[E.TrackingDetails], shipmentNode) -> List[E.TrackingDetails]:
         trackDetail = Track.ShipmentType()
         trackDetail.build(shipmentNode)
         activityNodes = shipmentNode.xpath('.//*[local-name() = $name]', name="Activity")
@@ -188,7 +189,7 @@ class UPSMapper(Mapper):
             return activity 
         activities = map(buildActivity, activityNodes)
         return trackings + [
-            E.Tracking.parse(
+            E.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=trackDetail.InquiryNumber.Value,
                 events=list(map(lambda a: E.TrackingEvent(

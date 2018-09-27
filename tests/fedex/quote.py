@@ -1,16 +1,20 @@
 import unittest
 from unittest.mock import patch
 from datetime import datetime
-from gds_helpers import to_xml, jsonify
+from pyfedex.rate_v22 import RateRequest
+from gds_helpers import to_xml, jsonify, export
 from purplship.domain.entities import Quote
 from tests.fedex.fixture import proxy
-from tests.utils import strip
+from tests.utils import strip, get_node_from_xml
 
 
 class TestFeDexQuote(unittest.TestCase):
+    def setUp(self):
+        req_xml = get_node_from_xml(QuoteRequestXml, "RateRequest")
+        self.RateRequest = RateRequest()
+        self.RateRequest.build(req_xml)
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
-    def test_create_quote_request(self, http_mock):
+    def test_create_quote_request(self):
         shipper = {"postal_code": "H3N1S4", "country_code": "CA"}
         recipient = {"city": "Lome", "country_code": "TG"}
         shipment = {"packages": [
@@ -18,16 +22,17 @@ class TestFeDexQuote(unittest.TestCase):
         payload = Quote.create(
             shipper=shipper, recipient=recipient, shipment=shipment)
 
-        quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
-        timestamp = datetime.now()
-        # Hard coded for test purpose
-        quote_req_xml_obj.RequestedShipment.ShipTimestamp = timestamp
+        RateRequest_ = proxy.mapper.create_quote_request(payload)
+        # Remove timeStamp for testing
+        RateRequest_.RequestedShipment.ShipTimestamp = None
+        self.assertEqual(export(RateRequest_), export(self.RateRequest))
 
-        proxy.get_quotes(quote_req_xml_obj)
+    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
+    def test_get_quotes(self, http_mock):
+        proxy.get_quotes(self.RateRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(
-            QuoteRequestXml % str(timestamp.isoformat())))
+        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
@@ -52,8 +57,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 230.49,
             'carrier': 'carrier_name',
+            'currency': 'USD',
             'delivery_date': None,
-            'delivery_time': None,
             'discount': 0.0,
             'duties_and_taxes': 0.0,
             'extra_charges': [
@@ -72,8 +77,8 @@ ParsedQuoteResponse = [
         {
             'base_charge': 207.47,
             'carrier': 'carrier_name',
+            'currency': 'USD',
             'delivery_date': None,
-            'delivery_time': None,
             'discount': 0.0,
             'duties_and_taxes': 0.0,
             'extra_charges': [
@@ -130,7 +135,7 @@ QuoteErrorResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xml
 </SOAP-ENV:Envelope>
 '''
 
-QuoteRequestXml = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://fedex.com/ws/rate/v22">
+QuoteRequestXml = f'''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://fedex.com/ws/rate/v22">
     <tns:Body>
         <ns:RateRequest>
             <ns:WebAuthenticationDetail>
@@ -153,7 +158,6 @@ QuoteRequestXml = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 <ns:Minor>0</ns:Minor>
             </ns:Version>
             <ns:RequestedShipment>
-                <ns:ShipTimestamp>%s</ns:ShipTimestamp>
                 <ns:PackagingType>YOUR_PACKAGING</ns:PackagingType>
                 <ns:TotalWeight>
                     <ns:Units>LB</ns:Units>

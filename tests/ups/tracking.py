@@ -1,19 +1,28 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
+from pyups.package_track import TrackRequest
 from purplship.domain.entities import Tracking
 from tests.ups.fixture import proxy
-from tests.utils import strip
+from tests.utils import strip, get_node_from_xml
 
 
 class TestUPSTracking(unittest.TestCase):
+    def setUp(self):
+        tracking_request_xml = get_node_from_xml(TrackingRequestXml, "TrackRequest")
+        self.TrackRequest = TrackRequest()
+        self.TrackRequest.build(tracking_request_xml)
+
+    def test_create_tracking_request(self):
+        payload = Tracking.create(tracking_numbers=["1Z12345E6205277936"])
+
+        TrackRequest_ = proxy.mapper.create_tracking_request(payload)
+
+        self.assertEqual(export(TrackRequest_), export(self.TrackRequest))
 
     @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
-    def test_create_tracking_request(self, http_mock):
-        payload = Tracking.create(tracking_numbers=["1Z12345E6205277936"])
-        tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
-
-        proxy.get_trackings(tracking_req_xml_obj)
+    def test_get_trackings(self, http_mock):
+        proxy.get_trackings(self.TrackRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
@@ -22,7 +31,7 @@ class TestUPSTracking(unittest.TestCase):
         parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
         self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
 
-    def test_parse_tracking_response(self):
+    def test_tracking_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(TrackingResponseXml))
         self.assertEqual(jsonify(parsed_response),

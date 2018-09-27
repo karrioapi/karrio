@@ -45,12 +45,12 @@ class CanadaPostMapper(Mapper):
     def create_tracking_request(self, payload: E.tracking_request) -> str:
         return payload.tracking_numbers[0]
 
-    def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+    def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         price_quotes = response.xpath('.//*[local-name() = $name]', name="price-quote")
         quotes = reduce(self._extract_quote, price_quotes, [])
         return (quotes, self.parse_error_response(response))
 
-    def parse_tracking_response(self, response) -> Tuple[List[E.tracking_details], List[E.Error]]:
+    def parse_tracking_response(self, response) -> Tuple[List[E.TrackingDetails], List[E.Error]]:
         pin_summaries = response.xpath('.//*[local-name() = $name]', name="pin-summary")
         trackings = reduce(self._extract_tracking, pin_summaries, [])
         return (trackings, self.parse_error_response(response))
@@ -65,13 +65,14 @@ class CanadaPostMapper(Mapper):
                     message=message.description, carrier=self.client.carrier_name)
         ]
 
-    def _extract_quote(self, quotes: List[E.quote_details], price_quoteNode) -> List[E.quote_details]:
+    def _extract_quote(self, quotes: List[E.QuoteDetails], price_quoteNode) -> List[E.QuoteDetails]:
         price_quote = Rate.price_quoteType()
         price_quote.build(price_quoteNode)
-        discounts = [E.Charge(name=d.adjustment_name, amount=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
+        discounts = [E.ChargeDetails(name=d.adjustment_name, currency="CAD", amount=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
         return quotes + [
-            E.Quote.parse(
+            E.QuoteDetails(
                 carrier=self.client.carrier_name,
+                currency="CAD",
                 delivery_date=str(price_quote.service_standard.expected_delivery_date),
                 service_name=price_quote.service_name,
                 service_type=price_quote.service_code,
@@ -79,17 +80,17 @@ class CanadaPostMapper(Mapper):
                 total_charge=float(price_quote.price_details.due or 0),
                 discount=reduce(lambda sum, d: sum + d.amount, discounts, 0),
                 duties_and_taxes=float(price_quote.price_details.taxes.gst.valueOf_ + price_quote.price_details.taxes.pst.valueOf_ + price_quote.price_details.taxes.hst.valueOf_ or 0),
-                extra_charges=list(map(lambda a: E.Charge(
-                    name=a.adjustment_name, amount=float(a.adjustment_cost or 0)), price_quote.price_details.adjustments.adjustment)
+                extra_charges=list(map(lambda a: E.ChargeDetails(
+                    name=a.adjustment_name, currency="CAD", amount=float(a.adjustment_cost or 0)), price_quote.price_details.adjustments.adjustment)
                 )
             )
         ]
 
-    def _extract_tracking(self, trackings: List[E.tracking_details], pin_summaryNode) -> List[E.tracking_details]:
+    def _extract_tracking(self, trackings: List[E.TrackingDetails], pin_summaryNode) -> List[E.TrackingDetails]:
         pin_summary = Track.pin_summary()
         pin_summary.build(pin_summaryNode)
         return trackings + [
-            E.Tracking.parse(
+            E.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=pin_summary.pin,
                 shipment_date=str(pin_summary.mailed_on_date),

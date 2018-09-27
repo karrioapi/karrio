@@ -1,29 +1,36 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
+from pyups.freight_rate import FreightRateRequest
 from purplship.domain.entities import Quote
 from tests.ups.fixture import proxy
-from tests.utils import strip
+from tests.utils import strip, get_node_from_xml
 import time
 
-
 class TestUPSQuote(unittest.TestCase):
+    def setUp(self):
+        req_xml = get_node_from_xml(QuoteRequestXml, "FreightRateRequest")
+        self.RateRequest = FreightRateRequest()
+        self.RateRequest.build(req_xml)
 
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
-    def test_create_quote_request(self, http_mock):
+    def test_create_quote_request(self):
         shipper = {
             "postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]
         }
         recipient = {"postal_code":"89109", "city":"Las Vegas", "country_code":"US"}
         shipment = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "description":"TV"}]}
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
-        quote_req_xml_obj = proxy.mapper.create_quote_request(payload)
+        
+        RateRequest_ = proxy.mapper.create_quote_request(payload)
+        
+        self.assertEqual(export(RateRequest_), export(self.RateRequest))
 
-        proxy.get_quotes(quote_req_xml_obj)
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    def test_get_quotes(self, http_mock):
+        proxy.get_quotes(self.RateRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        
-        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml % time.strftime('%Y%m%d')))
+        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
@@ -31,7 +38,7 @@ class TestUPSQuote(unittest.TestCase):
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedQuoteResponse))
                 
-    def test_parse_quote_parsing_error(self):
+    def test_parse_quote_error(self):
         parsed_response = proxy.mapper.parse_quote_response(
             to_xml(QuoteParsingError))
         self.assertEqual(jsonify(parsed_response),
@@ -48,6 +55,8 @@ if __name__ == '__main__':
     unittest.main()
 
 
+
+today = time.strftime('%Y%m%d')
 
 
 ParsedQuoteParsingError = [
@@ -82,30 +91,30 @@ ParsedQuoteResponse = [
         {
             'base_charge': 909.26, 
             'carrier': 'UPS', 
+            'currency': 'USD',
             'delivery_date': None, 
-            'delivery_time': None, 
             'discount': 776.36, 
             'duties_and_taxes': 576.54, 
             'extra_charges': [
                 {
                     'name': 'DSCNT', 
                     'amount': 776.36,
-                    'currency': None
+                    'currency': 'USD'
                 }, 
                 {
                     'name': 'HOL_WE_PU_DEL', 
                     'amount': 480.0,
-                    'currency': None
+                    'currency': 'USD'
                 }, 
                 {
                     'name': '2', 
                     'amount': 66.54,
-                    'currency': None
+                    'currency': 'USD'
                 }, 
                 {
                     'name': 'CA_BORDER', 
                     'amount': 30.0,
-                    'currency': None
+                    'currency': 'USD'
                 }
             ], 
             'pickup_date': None, 
@@ -179,7 +188,7 @@ QuoteMissingArgsError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlso
 </soapenv:Envelope>
 """
 
-QuoteRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0">
+QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -268,11 +277,9 @@ QuoteRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 </frt:PickupOptions>
             </frt:ShipmentServiceOptions>
             <frt:PickupRequest>
-                <frt:PickupDate>%s</frt:PickupDate>
+                <frt:PickupDate>{today}</frt:PickupDate>
             </frt:PickupRequest>
-            <frt:GFPOptions>
-                <frt:OnCallPickupIndicator></frt:OnCallPickupIndicator>
-            </frt:GFPOptions>
+            <frt:GFPOptions/>
             <frt:HandlingUnitWeight>
                 <frt:Value>1</frt:Value>
                 <frt:UnitOfMeasurement>

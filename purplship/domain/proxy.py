@@ -16,3 +16,15 @@ class Proxy:
     def create_shipment(self, xmlObj):
         """ export xmlObj as xml string and request shipment creation from carrier  """
         raise Exception("Not Supported")
+
+    def request_pickup(self, xmlObj):
+        """ export xmlObj as xml string and request pickup from carrier  """
+        raise Exception("Not Supported")
+
+    def modify_pickup(self, xmlObj):
+        """ export xmlObj as xml string and request pickup modification from carrier  """
+        raise Exception("Not Supported")
+
+    def cancel_pickup(self, xmlObj):
+        """ export xmlObj as xml string and request pickup cancellation from carrier  """
+        raise Exception("Not Supported")

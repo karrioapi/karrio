@@ -1,5 +1,5 @@
 from gds_helpers import to_xml, export, request as http
-from pyfedex import rate_v22 as Rate, track_service_v14 as Track
+from pyfedex import rate_v22 as Rate, track_service_v14 as Track, ship_service_v21 as Ship, pickup_service_v15 as Pick
 from pysoap.envelope import Body, Envelope
 from pysoap import create_envelope, clean_namespaces
 from purplship.domain.proxy import Proxy
@@ -12,7 +12,7 @@ class FedexProxy(Proxy):
         self.client = client
         self.mapper = FedexMapper(client) if mapper is None else mapper
 
-    def get_quotes(self, RateRequest_: Rate.RateRequest):
+    def get_quotes(self, RateRequest_: Rate.RateRequest) -> 'XMLElement':
         envelopeStr = export( 
             create_envelope(body_content=RateRequest_),
             namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://fedex.com/ws/rate/v22"'
@@ -32,7 +32,7 @@ class FedexProxy(Proxy):
         )
         return to_xml(result)
 
-    def get_trackings(self, TrackRequest_: Track.TrackRequest):
+    def get_trackings(self, TrackRequest_: Track.TrackRequest) -> 'XMLElement':
         envelopeStr = export( 
             create_envelope(body_content=TrackRequest_),
             namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14"'
@@ -42,6 +42,63 @@ class FedexProxy(Proxy):
             envelope_prefix='tns:', 
             body_child_prefix='ns:',
             body_child_name='TrackRequest'
+        )
+        result = http(
+            url=self.client.server_url, 
+            data=bytearray(xmlStr, "utf-8"), 
+            headers={'Content-Type': 'application/xml'}, 
+            method="POST"
+        )
+        return to_xml(result)
+
+    def create_shipment(self, ShipmenRequest_: Ship.ProcessShipmentRequest) -> 'XMLElement':
+        envelopeStr = export( 
+            create_envelope(body_content=ShipmenRequest_),
+            namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/ship/v21"'
+        )
+        xmlStr = clean_namespaces(
+            envelopeStr, 
+            envelope_prefix='tns:', 
+            body_child_prefix='ns:',
+            body_child_name='ProcessShipmentRequest'
+        )
+        result = http(
+            url=self.client.server_url, 
+            data=bytearray(xmlStr, "utf-8"), 
+            headers={'Content-Type': 'application/xml'}, 
+            method="POST"
+        )
+        return to_xml(result)
+
+    def request_pickup(self, CreatePickupRequest_: Pick.CreatePickupRequest) -> 'XMLElement':
+        envelopeStr = export( 
+            create_envelope(body_content=CreatePickupRequest_),
+            namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/pickup/v15"'
+        )
+        xmlStr = clean_namespaces(
+            envelopeStr, 
+            envelope_prefix='tns:', 
+            body_child_prefix='ns:',
+            body_child_name='CreatePickupRequest'
+        )
+        result = http(
+            url=self.client.server_url, 
+            data=bytearray(xmlStr, "utf-8"), 
+            headers={'Content-Type': 'application/xml'}, 
+            method="POST"
+        )
+        return to_xml(result)
+
+    def cancel_pickup(self, CancelPickupRequest_: Pick.CancelPickupRequest) -> 'XMLElement':
+        envelopeStr = export( 
+            create_envelope(body_content=CancelPickupRequest_),
+            namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/pickup/v15"'
+        )
+        xmlStr = clean_namespaces(
+            envelopeStr, 
+            envelope_prefix='tns:', 
+            body_child_prefix='ns:',
+            body_child_name='CancelPickupRequest'
         )
         result = http(
             url=self.client.server_url, 
