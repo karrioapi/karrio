@@ -40,14 +40,14 @@ class DHLMapper(Mapper):
             CountryCode=payload.shipper.country_code,
             Postalcode=payload.shipper.postal_code,
             City=payload.shipper.city,
-            Suburb=payload.shipper.region_code
+            Suburb=payload.shipper.state_code
         )
 
         To_ = Req.DCTTo(
             CountryCode=payload.recipient.country_code,
             Postalcode=payload.recipient.postal_code,
             City=payload.recipient.city,
-            Suburb=payload.recipient.region_code
+            Suburb=payload.recipient.state_code
         )
 
         Pieces = Req.PiecesType()
@@ -96,8 +96,8 @@ class DHLMapper(Mapper):
             CountryCode=payload.recipient.country_code,
             City=payload.recipient.city,
             CountryName=payload.recipient.country_name,
-            Division=payload.recipient.region,
-            DivisionCode=payload.recipient.region_code
+            Division=payload.recipient.state,
+            DivisionCode=payload.recipient.state_code
         )
 
         if any([payload.recipient.person_name, payload.recipient.email_address]):
@@ -122,8 +122,8 @@ class DHLMapper(Mapper):
             CountryCode=payload.shipper.country_code,
             City=payload.shipper.city,
             CountryName=payload.shipper.country_name,
-            Division=payload.shipper.region,
-            DivisionCode=payload.shipper.region_code
+            Division=payload.shipper.state,
+            DivisionCode=payload.shipper.state_code
         )
 
         if any([payload.shipper.person_name, payload.shipper.email_address]):

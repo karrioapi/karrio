@@ -29,7 +29,7 @@ class FedexMapper(Mapper):
             ),
             Address=Rate.Address(
                 City=payload.shipper.city,
-                StateOrProvinceCode=payload.shipper.region_code,
+                StateOrProvinceCode=payload.shipper.state_code,
                 PostalCode=payload.shipper.postal_code,
                 CountryCode=payload.shipper.country_code
             )
@@ -44,7 +44,7 @@ class FedexMapper(Mapper):
             ),
             Address=Rate.Address(
                 City=payload.recipient.city,
-                StateOrProvinceCode=payload.recipient.region_code,
+                StateOrProvinceCode=payload.recipient.state_code,
                 PostalCode=payload.recipient.postal_code,
                 CountryCode=payload.recipient.country_code
             )

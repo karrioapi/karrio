@@ -13,8 +13,8 @@ class party(NamedTuple):
     phone_number: str = None
 
     """ state or province """
-    region: str = None
-    region_code: str = None
+    state: str = None
+    state_code: str = None
 
     address_lines: List[str] = []
     extra: Dict = {}
@@ -122,8 +122,8 @@ class pickup_request(NamedTuple):
     is_business: bool = True
 
     """ state or province """
-    region: str = None
-    region_code: str = None
+    state: str = None
+    state_code: str = None
 
     country_name: str = None
     country_code: str = None
