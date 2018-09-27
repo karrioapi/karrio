@@ -17,6 +17,9 @@ class TestDHLPickup(unittest.TestCase):
         self.ModifyPURequest = ModifyPURequest()
         self.ModifyPURequest.build(to_xml(ModifyPURequestXML))
 
+        self.CancelPURequest = CancelPURequest()
+        self.CancelPURequest.build(to_xml(CancelPURequestXML))
+
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_create_pickup_request(self, http_mock):
         proxy.request_pickup(self.PURequest)
@@ -31,8 +34,34 @@ class TestDHLPickup(unittest.TestCase):
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(ModifyPURequestXML))
 
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    def test_cancel_pickup_request(self, http_mock):
+        proxy.cancel_pickup(self.CancelPURequest)
+
+        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        self.assertEqual(strip(xmlStr), strip(CancelPURequestXML))
+
 if __name__ == '__main__':
     unittest.main()
+
+CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="1.">
+	<Request>
+        <ServiceHeader>
+			<MessageTime>2001-12-19T09:30:47-05:00</MessageTime>
+			<MessageReference>1234567890123456789012345678901</MessageReference>
+			<SiteID>CustomerSiteID</SiteID>
+            <Password>customerPassword</Password>
+		</ServiceHeader>
+    </Request>
+	<RegionCode>AM</RegionCode>
+	<ConfirmationNumber>743511</ConfirmationNumber>
+	<RequestorName>Rikhil</RequestorName>
+    <CountryCode>BR</CountryCode>
+	<Reason>001</Reason>
+	<PickupDate>2013-10-10</PickupDate>
+	<CancelTime>10:20</CancelTime>
+</req:CancelPURequest>
+"""
 
 ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="1.">
     <Request>
