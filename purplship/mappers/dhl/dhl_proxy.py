@@ -20,7 +20,7 @@ class DHLProxy(Proxy):
             DCTRequest_, 
             name_='p:DCTRequest', 
             namespacedef_='xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "'
-        )
+        ).replace('schemaVersion="1."', 'schemaVersion="1.0"')
 
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
