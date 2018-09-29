@@ -146,7 +146,7 @@ class FedexMapper(Mapper):
     def _extract_error(self, errors: List[E.Error], notificationNode) -> List[E.Error]:
         notification = Rate.Notification()
         notification.build(notificationNode)
-        if notification.Severity != 'ERROR':
+        if notification.Severity in ('SUCCESS', 'NOTE'):
             return errors
         return errors + [
             E.Error(code=notification.Code, message=notification.Message, carrier=self.client.carrier_name)
