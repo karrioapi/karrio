@@ -79,7 +79,9 @@ class CanadaPostMapper(Mapper):
                 base_charge=float(price_quote.price_details.base or 0),
                 total_charge=float(price_quote.price_details.due or 0),
                 discount=reduce(lambda sum, d: sum + d.amount, discounts, 0),
-                duties_and_taxes=float(price_quote.price_details.taxes.gst.valueOf_ + price_quote.price_details.taxes.pst.valueOf_ + price_quote.price_details.taxes.hst.valueOf_ or 0),
+                duties_and_taxes=float(price_quote.price_details.taxes.gst.valueOf_ or 0) + 
+                    float(price_quote.price_details.taxes.pst.valueOf_ or 0) + 
+                    float(price_quote.price_details.taxes.hst.valueOf_ or 0),
                 extra_charges=list(map(lambda a: E.ChargeDetails(
                     name=a.adjustment_name, currency="CAD", amount=float(a.adjustment_cost or 0)), price_quote.price_details.adjustments.adjustment)
                 )

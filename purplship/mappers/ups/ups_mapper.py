@@ -196,7 +196,7 @@ class UPSMapper(Mapper):
                     date=str(a.Date),
                     time=str(a.Time),
                     code=a.Status.Code if a.Status else None,
-                    location=a.ActivityLocation.Address.City if a.ActivityLocation else None,
+                    location=a.ActivityLocation.Address.City if a.ActivityLocation and a.ActivityLocation.Address else None,
                     description=a.Status.Description if a.Status else None
                 ), activities))
             )

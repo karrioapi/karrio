@@ -12,7 +12,7 @@ class CanadaPostProxy(Proxy):
         self.mapper = CanadaPostMapper(client) if mapper is None else mapper
 
         pair = "%s:%s" % (self.client.username, self.client.password)
-        self.authorization = b64encode(pair.encode("utf-8")) 
+        self.authorization = b64encode(pair.encode("utf-8")).decode('ascii')
 
     """ Proxy interface methods """
 
