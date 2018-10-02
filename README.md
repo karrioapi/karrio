@@ -60,10 +60,10 @@ cd purplship
 python install setup.py
 ```
 
-For released version (change '@version' at your convenience)
+For released version (specify a version if needed)
 
 ```shell
-pip install --process-dependency-links -e git+git://github.com/PurplShip/purplship.git@v1.0-beta.6#egg=purplship
+pip install -f https://git.io/fxTZ6 purplship
 ```
 
 ## Running the tests
