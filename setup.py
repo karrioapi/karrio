@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='purplship',
-      version='1.0-beta.6',
+      version='1.0-rc1',
       description='Shipping carriers integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -22,12 +22,7 @@ setup(name='purplship',
             'py-caps==1.0',
       ],
       dependency_links=[
-            'git+https://github.com/PurplShip/py-fedex.git@v1.1#egg=py-fedex-1.1',
-            'git+https://github.com/PurplShip/py-dhl.git@v1.2#egg=py-dhl-1.2',
-            'git+https://github.com/PurplShip/py-soap.git@v1.1#egg=py-soap-1.1',
-            'git+https://github.com/PurplShip/generateDs-helpers.git@v0.4.0#egg=gds-helpers-0.4.0',
-            'git+https://github.com/PurplShip/py-ups.git@v1.0#egg=py-ups-1.0',
-            'git+https://github.com/PurplShip/py-caps.git@v1.0#egg=py-caps-1.0',
+            'https://github.com/PurplShip/purplship/releases',
       ],
       classifiers=[
         "Programming Language :: Python :: 3",
