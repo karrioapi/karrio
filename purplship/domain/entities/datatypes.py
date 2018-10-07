@@ -21,9 +21,9 @@ class party(NamedTuple):
 
 class package_type(NamedTuple):
     weight: float
-    width: float = None
-    height: float = None
-    length: float = None
+    width: float 
+    height: float 
+    length: float
     id: str = None
     packaging_type: str = None
     description: str = None
