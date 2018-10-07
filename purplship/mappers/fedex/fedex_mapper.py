@@ -71,7 +71,7 @@ class FedexMapper(Mapper):
             ShippingChargesPayment=Rate.Payment(
                 PaymentType=payload.shipment.paid_by or "SENDER",
                 Payor=Rate.Payor(ResponsibleParty=Rate.Party(
-                    AccountNumber=payload.shipment.payment_account_number or self.client.account_number
+                    AccountNumber=payload.shipment.shipper_account_number or payload.shipment.payment_account_number or self.client.account_number
                 ))
             ),
             PackageCount=len(payload.shipment.packages)

@@ -61,7 +61,7 @@ class UPSMapper(Mapper):
             Payer=Rate.PayerType(
                 Name=payload.shipment.payment_country_code or payload.shipper.country_code,
                 Address=ShipFrom_.Address,
-                ShipperNumber=self.client.account_number
+                ShipperNumber=payload.shipment.shipper_account_number or payload.shipment.payment_account_number or self.client.account_number
             ),
             ShipmentBillingOption=Rate.RateCodeDescriptionType(
                 Code=10
