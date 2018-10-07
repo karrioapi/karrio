@@ -3,7 +3,7 @@ from unittest.mock import patch
 from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_20 import CancelPURequest
-from gds_helpers import to_xml, export
+from gds_helpers import to_xml, export, jsonify
 from purplship.domain.entities import Pickup
 from tests.dhl.fixture import proxy
 from tests.utils import strip
@@ -46,6 +46,11 @@ class TestDHLPickup(unittest.TestCase):
         PURequest_ = proxy.mapper.create_pickup_request(payload)
         # remove MessageTime for testing purpose
         PURequest_.Request.ServiceHeader.MessageTime = None
+        PURequest_.Place.LocationType = None
+        PURequest_.Place.Address1 = None
+        PURequest_.Place.PackageLocation = None
+        PURequest_.Place.StateCode = None
+
         self.assertEqual(export(PURequest_), export(self.PURequest))
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
@@ -132,7 +137,7 @@ PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </res:PickupErrorResponse>
 """
 
-CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="1.">
+CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="1.0">
 	<Request>
         <ServiceHeader>
 			<MessageTime>2001-12-19T09:30:47-05:00</MessageTime>
@@ -151,7 +156,7 @@ CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmln
 </req:CancelPURequest>
 """
 
-ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="1.">
+ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="1.0">
     <Request>
         <ServiceHeader>
 		<MessageTime>2013-08-03T09:30:47-05:00</MessageTime>
@@ -233,11 +238,7 @@ PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xs
         </RequestorContact>
     </Requestor>
     <Place>
-        <LocationType>B</LocationType>
-        <Address1>234 rue Hubert</Address1>
-        <PackageLocation></PackageLocation>
         <City>Montreal</City>
-        <StateCode>QC</StateCode>
         <CountryCode>CA</CountryCode>
         <PostalCode>H8Z2Z3</PostalCode>
     </Place>

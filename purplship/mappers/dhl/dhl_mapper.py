@@ -276,7 +276,7 @@ class DHLMapper(Mapper):
 
         return PickupBooking.BookPURequest(
             Request=self.init_request(),
-            schemaVersion="2.0",
+            schemaVersion="1.0",
             RegionCode=payload.extra.get('RegionCode') or "AM",
             Requestor=Requestor_,
             Place=Place_,
@@ -285,7 +285,7 @@ class DHLMapper(Mapper):
         )
 
 
-    def parse_quote_response(self, response) -> Tuple[List[E.quote_details], List[E.Error]]:
+    def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         qtdshp_list = response.xpath(
             './/*[local-name() = $name]', name="QtdShp")
         quotes = reduce(self._extract_quote, qtdshp_list, [])
@@ -296,10 +296,10 @@ class DHLMapper(Mapper):
         trackings = reduce(self._extract_tracking, awbinfos, [])
         return (trackings, self.parse_error_response(response))
 
-    def parse_shipment_response(self, response) -> Tuple[E.shipment_details, List[E.Error]]:
+    def parse_shipment_response(self, response) -> Tuple[E.ShipmentDetails, List[E.Error]]:
         return (self._extract_shipment(response), self.parse_error_response(response))
 
-    def parse_pickup_response(self, response) -> Tuple[E.pickup_details, List[E.Error]]:
+    def parse_pickup_response(self, response) -> Tuple[E.PickupDetails, List[E.Error]]:
         success = response.xpath('.//*[local-name() = $name]', name="ActionNote")[0].text == "Success"
         return (
             self._extract_pickup(response) if success else None, 
@@ -388,17 +388,17 @@ class DHLMapper(Mapper):
             total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
         )
 
-    def _extract_pickup(self, pickupReplyNode) -> E.pickup_details:
+    def _extract_pickup(self, pickupReplyNode) -> E.PickupDetails:
         pickup = PickupRes.BookPUResponse()
         pickup.build(pickupReplyNode)
-        pickup_charge = None if pickup.PickupCharge is None else E.Charge(
+        pickup_charge = None if pickup.PickupCharge is None else E.ChargeDetails(
             name="Pickup Charge", amount=pickup.PickupCharge, currency=pickup.CurrencyCode
         )
         ref_times = (
-            ([] if pickup.ReadyByTime is None else [E.time_details(name="ReadyByTime", value=pickup.ReadyByTime)]) +
-            ([] if pickup.CallInTime is None else [E.time_details(name="CallInTime", value=pickup.CallInTime)])
+            ([] if pickup.ReadyByTime is None else [E.TimeDetails(name="ReadyByTime", value=pickup.ReadyByTime)]) +
+            ([] if pickup.CallInTime is None else [E.TimeDetails(name="CallInTime", value=pickup.CallInTime)])
         )
-        return E.pickup_details(
+        return E.PickupDetails(
             carrier=self.client.carrier_name,
             confirmation_number=pickup.ConfirmationNumber,
             pickup_date=pickup.NextPickupDate,
