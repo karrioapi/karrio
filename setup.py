@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -12,7 +12,7 @@ setup(name='purplship',
       author='DanH91',
       author_email='danielk.developer@gmail.com',
       license='LGPL',
-      packages=['purplship'],
+      packages=find_packages(".", exclude=["tests"]),
       install_requires=[
             'py-fedex==1.1',
             'py-dhl==1.2',

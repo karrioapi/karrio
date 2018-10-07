@@ -56,11 +56,10 @@ Alternatively, you can grab the latest source code from [GitHub](https://github.
 
 ```shell
 git clone https://github.com/PurplShip/purplship.git
-cd purplship
-python install setup.py
+pip install --process-dependency-links -e purplship
 ```
 
-For released version (specify a version if needed)
+For released version (specify a purplship==version if needed)
 
 ```shell
 pip install -f https://git.io/fxTZ6 purplship
