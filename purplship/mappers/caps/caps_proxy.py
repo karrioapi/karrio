@@ -1,9 +1,12 @@
 from io import StringIO
-from gds_helpers import export, to_xml, request as http
+from typing import List
+from gds_helpers import export, to_xml, request as http, exec_parrallel, bundle_xml
 from purplship.mappers.caps.caps_mapper import CanadaPostMapper, CanadaPostClient
 from pycaps import rating as Rate, shipment as Ship, pickuprequest as Pick
 from purplship.domain.proxy import Proxy
 from base64 import b64encode
+
+from functools import reduce
 
 class CanadaPostProxy(Proxy):
 
@@ -35,11 +38,13 @@ class CanadaPostProxy(Proxy):
         )
         return to_xml(result)
 
-    def get_trackings(self, tracking_pin: str) -> "XMLElement":
+    def get_trackings(self, tracking_pins: List[str]) -> "XMLElement":
         """
-        get_trackings currently only get one tracking_pin
+        get_trackings make parrallel request for each pin
         """
-        return self._get_tracking(tracking_pin)
+        results = exec_parrallel(self._get_tracking, tracking_pins)
+
+        return to_xml(bundle_xml(xml_strings=results))
 
     def create_shipment(self, shipment: Ship.ShipmentType) -> "XMLElement":
         xmlStr = export(
@@ -115,4 +120,4 @@ class CanadaPostProxy(Proxy):
             }, 
             method="GET"
         )
-        return to_xml(result)
+        return result

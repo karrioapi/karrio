@@ -42,8 +42,8 @@ class CanadaPostMapper(Mapper):
             destination=destination
         )
 
-    def create_tracking_request(self, payload: E.tracking_request) -> str:
-        return payload.tracking_numbers[0]
+    def create_tracking_request(self, payload: E.tracking_request) -> List[str]:
+        return payload.tracking_numbers
 
     def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         price_quotes = response.xpath('.//*[local-name() = $name]', name="price-quote")
