@@ -4,11 +4,9 @@
 
 Shipping carriers API integrations Library
 
-- Integrate multiple carriers: DHL, FedEx and more with ease
+- Integrate multiple carriers: DHL, FedEx, UPS, Canada Post and more with ease
 - Use an intuitive, unified API across multiple carriers
-- Move fast by just reading the carrier API documentation
 - Use your developer credentials with negotiated rates
-- Tested
 
 PurplSHip prevents you from reinventing the wheel and is easy to use:
 
