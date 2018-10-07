@@ -101,6 +101,7 @@ class tracking_request(NamedTuple):
     tracking_numbers: List[str]
     language_code: str = None
     level_of_details: str = None
+    extra: Dict = {}
 
 class pickup_request(NamedTuple):
     date: str
