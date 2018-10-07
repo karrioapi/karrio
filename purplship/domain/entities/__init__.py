@@ -13,7 +13,7 @@ class Tracking():
     """ manage tracking operations """
 
     @staticmethod
-    def create(**args) -> quote_request:
+    def create(**args) -> tracking_request:
         """ Create a tracking request payload """
         return tracking_request(**args)
 
