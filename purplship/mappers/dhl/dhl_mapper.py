@@ -51,12 +51,12 @@ class DHLMapper(Mapper):
         )
 
         Pieces = Req.PiecesType()
-        for p in payload.shipment.packages:
+        for index, piece in enumerate(payload.shipment.packages):
             Pieces.add_Piece(Req.PieceType(
-                PieceID=p.id,
-                PackageTypeCode=p.packaging_type or "BOX",
-                Height=p.height, Width=p.width,
-                Weight=p.weight, Depth=p.length
+                PieceID=piece.id or str(index),
+                PackageTypeCode=piece.packaging_type or "BOX",
+                Height=piece.height, Width=piece.width,
+                Weight=piece.weight, Depth=piece.length
             ))
 
         payment_country_code = "CA" if not payload.shipment.payment_country_code else payload.shipment.payment_country_code

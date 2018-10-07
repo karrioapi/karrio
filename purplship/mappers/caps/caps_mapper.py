@@ -36,7 +36,7 @@ class CanadaPostMapper(Mapper):
         destination = Rate.destinationType(
             domestic=destinationPostalCode)
         return Rate.mailing_scenario(
-            customer_number=self.client.customer_number,
+            customer_number=payload.shipment.shipper_account_number or payload.shipment.payment_account_number or self.client.customer_number,
             parcel_characteristics=parcel,
             origin_postal_code=payload.shipper.postal_code,
             destination=destination

@@ -44,6 +44,9 @@ class UPSMapper(Mapper):
         for line in payload.shipper.address_lines:
             ShipFrom_.Address.add_AddressLine(line)
 
+        if len(payload.shipper.address_lines) == 0:
+            ShipFrom_.Address.add_AddressLine("...")
+
         ShipTo_ = Rate.ShipToType(
             Name=payload.recipient.company_name,
             Address=Rate.AddressType(
@@ -61,7 +64,7 @@ class UPSMapper(Mapper):
             Payer=Rate.PayerType(
                 Name=payload.shipment.payment_country_code or payload.shipper.country_code,
                 Address=ShipFrom_.Address,
-                ShipperNumber=self.client.account_number
+                ShipperNumber=payload.shipment.shipper_account_number or payload.shipment.payment_account_number or self.client.account_number
             ),
             ShipmentBillingOption=Rate.RateCodeDescriptionType(
                 Code=10
@@ -94,7 +97,7 @@ class UPSMapper(Mapper):
         for c in payload.shipment.packages:
             FreightRateRequest_.add_Commodity(
                 Rate.CommodityType(
-                    Description=c.description,
+                    Description=c.description or "...",
                     Weight=Rate.WeightType(
                         UnitOfMeasurement=Rate.UnitOfMeasurementType(Code="LBS"),
                         Value=c.weight

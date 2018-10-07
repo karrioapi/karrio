@@ -21,9 +21,9 @@ class party(NamedTuple):
 
 class package_type(NamedTuple):
     weight: float
-    width: float = None
-    height: float = None
-    length: float = None
+    width: float 
+    height: float 
+    length: float
     id: str = None
     packaging_type: str = None
     description: str = None
@@ -101,6 +101,7 @@ class tracking_request(NamedTuple):
     tracking_numbers: List[str]
     language_code: str = None
     level_of_details: str = None
+    extra: Dict = {}
 
 class pickup_request(NamedTuple):
     date: str
