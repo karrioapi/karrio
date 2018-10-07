@@ -61,26 +61,26 @@ class TestDHLPickup(unittest.TestCase):
         self.assertEqual(strip(xmlStr), strip(PickupRequestXML))
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
-    def test_modify_pickup_request(self, http_mock):
+    def test_modify_pickup(self, http_mock):
         proxy.modify_pickup(self.ModifyPURequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(ModifyPURequestXML))
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
-    def test_cancel_pickup_request(self, http_mock):
+    def test_cancel_pickup(self, http_mock):
         proxy.cancel_pickup(self.CancelPURequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(CancelPURequestXML))
 
-    def test_parse_pickup_request_response(self):
+    def test_parse_request_pickup_response(self):
         parsed_response = proxy.mapper.parse_pickup_response(
             to_xml(PickupResponseXML))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedPickupResponse))
                                          
-    def test_parse_pickup_error_response(self):
+    def test_parse_request_pickup_error(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(PickupErrorResponseXML))
         self.assertEqual(jsonify(parsed_response),
