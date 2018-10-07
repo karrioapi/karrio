@@ -1,4 +1,4 @@
-from gds_helpers import to_xml, export, request as http
+from gds_helpers import to_xml, export, request as http, bundle_xml, exec_parrallel
 from pysoap.envelope import Body, Envelope, Header
 from pysoap import create_envelope, clean_namespaces
 from purplship.domain.proxy import Proxy
@@ -43,31 +43,13 @@ class UPSProxy(Proxy):
         )
         return to_xml(result)
 
-    def get_trackings(self, TrackRequest_: TrackRequest) -> "XMLElement":
-        envelopeStr = export(
-            create_envelope(header_content=self.mapper.Security, body_content=TrackRequest_), 
-            namespacedef_='''
-                xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" 
-                xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
-                xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0" 
-                xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
-            '''.replace(' ', '').replace('\n', ' ')
-        )
-        xmlStr = clean_namespaces(
-            envelopeStr, 
-            envelope_prefix='tns:', 
-            header_child_prefix='upss:',
-            body_child_prefix='trk:',
-            header_child_name='UPSSecurity',
-            body_child_name='TrackRequest'
-        )
-        result = http(
-            url='%s/Track' % self.client.server_url, 
-            data=bytearray(xmlStr, "utf-8"), 
-            headers={'Content-Type': 'application/xml'}, 
-            method="POST"
-        )
-        return to_xml(result)
+    def get_trackings(self, TrackRequests_: TrackRequest) -> "XMLElement":
+        """
+        get_trackings make parrallel request for each TrackRequest
+        """
+        results = exec_parrallel(self._get_tracking, TrackRequests_)
+
+        return to_xml(bundle_xml(xml_strings=results))
 
     def create_shipment(self, FreightShipRequest_: FreightShipRequest) -> "XMLElement":
         envelopeStr = export(
@@ -158,3 +140,32 @@ class UPSProxy(Proxy):
             method="POST"
         )
         return to_xml(result)
+
+
+    """ Private functions """
+
+    def _get_tracking(self, TrackRequest_: TrackRequest):
+        envelopeStr = export(
+            create_envelope(header_content=self.mapper.Security, body_content=TrackRequest_), 
+            namespacedef_='''
+                xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" 
+                xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
+                xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0" 
+                xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
+            '''.replace(' ', '').replace('\n', ' ')
+        )
+        xmlStr = clean_namespaces(
+            envelopeStr, 
+            envelope_prefix='tns:', 
+            header_child_prefix='upss:',
+            body_child_prefix='trk:',
+            header_child_name='UPSSecurity',
+            body_child_name='TrackRequest'
+        )
+        result = http(
+            url='%s/Track' % self.client.server_url, 
+            data=bytearray(xmlStr, "utf-8"), 
+            headers={'Content-Type': 'application/xml'}, 
+            method="POST"
+        )
+        return result

@@ -114,7 +114,7 @@ class UPSMapper(Mapper):
         return FreightRateRequest_
 
 
-    def create_tracking_request(self, payload: E.tracking_request) -> Track.TrackRequest:    
+    def create_tracking_request(self, payload: E.tracking_request) -> List[Track.TrackRequest]:    
         Request_ = Common.RequestType(
             TransactionReference=Common.TransactionReferenceType(
                 TransactionIdentifier="TransactionIdentifier"
@@ -123,10 +123,12 @@ class UPSMapper(Mapper):
 
         Request_.add_RequestOption(1)
 
-        return Track.TrackRequest(
+        TrackRequests_ = [Track.TrackRequest(
             Request=Request_,
-            InquiryNumber=payload.tracking_numbers[0]
-        )
+            InquiryNumber=number
+        ) for number in payload.tracking_numbers]
+
+        return TrackRequests_
 
 
     def parse_error_response(self, response) -> List[E.Error]:

@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='purplship',
-      version='1.0-rc1',
+      version='1.0-rc2',
       description='Shipping carriers integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -17,7 +17,7 @@ setup(name='purplship',
             'py-fedex==1.1',
             'py-dhl==1.2',
             'py-soap==1.1',
-            'gds-helpers==0.4.0',
+            'gds-helpers==0.5.0',
             'py-ups==1.0',
             'py-caps==1.0',
       ],
