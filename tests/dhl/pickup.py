@@ -35,7 +35,7 @@ class TestDHLPickup(unittest.TestCase):
             export(self.PURequest).replace("dhlPickup:", "")
         )
 
-    def test_modify_pickup_request(self):
+    def test_create_modify_pickup_request(self):
         payload = Pickup.request(**modification_data)
         ModifyPURequest_ = proxy.mapper.modify_pickup_request(payload)
         # remove MessageTime for testing purpose
@@ -47,6 +47,17 @@ class TestDHLPickup(unittest.TestCase):
         self.assertEqual(
             export(ModifyPURequest_).replace("dhlPickup:", ""), 
             export(self.ModifyPURequest).replace("dhlPickup:", "")
+        )
+
+    def test_create_pickup_cancellation_request(self):
+        payload = Pickup.cancellation(**cancellation_data)
+        CancelPURequest_ = proxy.mapper.create_pickup_cancellation_request(payload)
+        # remove MessageTime for testing purpose
+        CancelPURequest_.Request.ServiceHeader.MessageTime = None
+        CancelPURequest_.CancelTime = None
+        self.assertEqual(
+            export(CancelPURequest_).replace("dhlPickup:", ""), 
+            export(self.CancelPURequest).replace("dhlPickup:", "")
         )
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
@@ -125,6 +136,16 @@ modification_data = {
     }
 }
 
+cancellation_data = {
+    "confirmation_number": "743511",
+    "person_name": "Rikhil",
+    "pickup_date": "2013-10-10",
+    "country_code": "BR",
+    "extra": {
+        "Reason": "001"
+    }
+}
+
 ParsedPickupResponse = [
     {
         'carrier': 'carrier_name', 
@@ -173,14 +194,13 @@ PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </res:PickupErrorResponse>
 """
 
-CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="1.0">
+CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="2.0">
 	<Request>
         <ServiceHeader>
-			<MessageTime>2001-12-19T09:30:47-05:00</MessageTime>
-			<MessageReference>1234567890123456789012345678901</MessageReference>
-			<SiteID>CustomerSiteID</SiteID>
-            <Password>customerPassword</Password>
-		</ServiceHeader>
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID>site_id</SiteID>
+            <Password>password</Password>
+	    </ServiceHeader>
     </Request>
 	<RegionCode>AM</RegionCode>
 	<ConfirmationNumber>743511</ConfirmationNumber>
@@ -188,7 +208,6 @@ CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmln
     <CountryCode>BR</CountryCode>
 	<Reason>001</Reason>
 	<PickupDate>2013-10-10</PickupDate>
-	<CancelTime>10:20</CancelTime>
 </req:CancelPURequest>
 """
 
