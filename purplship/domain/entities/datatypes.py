@@ -106,9 +106,9 @@ class tracking_request(NamedTuple):
 class pickup_request(NamedTuple):
     date: str
     account_number: str
-    pieces: float
-    weight: float
-    weight_unit: str
+    weight: float = None
+    weight_unit: str = None
+    pieces: float = None
     ready_time: str = None
     closing_time: str = None
     instruction: str = None
@@ -128,11 +128,12 @@ class pickup_request(NamedTuple):
 
     country_name: str = None
     country_code: str = None
+
+    """ required for pickup modification """
+    confirmation_number: str = None
+
     address_lines: List[str] = []
     extra: Dict = {}   
-
-class pickup_modification_request(NamedTuple):
-    pass
 
 class pickup_cancellation_request(NamedTuple):
     pass
