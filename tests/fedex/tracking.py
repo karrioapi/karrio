@@ -9,7 +9,7 @@ from tests.utils import strip, get_node_from_xml
 
 class TestFeDexTracking(unittest.TestCase):
     def setUp(self):
-        req_xml = get_node_from_xml(TrackingRequestXml, "TrackRequest")
+        req_xml = get_node_from_xml(TrackingRequestXML, "TrackRequest")
         self.TrackRequest = TrackRequest()
         self.TrackRequest.build(req_xml)
 
@@ -25,20 +25,26 @@ class TestFeDexTracking(unittest.TestCase):
         proxy.get_trackings(self.TrackRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
+        self.assertEqual(strip(xmlStr), strip(TrackingRequestXML))
 
     def test_parse_tracking_response(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingResponseXml))
+            to_xml(TrackingResponseXML))
 
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedTrackingResponse))
 
     def test_tracking_auth_error_parsing(self):
         parsed_response = proxy.mapper.parse_error_response(
-            to_xml(TrackingAuthError))
+            to_xml(TrackingAuthErrorXML))
 
         self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
+
+    def test_parse_error_tracking_response(self):
+        parsed_response = proxy.mapper.parse_tracking_response(
+            to_xml(TrackingErrorResponseXML))
+
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponseError))
 
 
 if __name__ == '__main__':
@@ -74,8 +80,97 @@ ParsedTrackingResponse = [
     []
 ]
 
+ParsedTrackingResponseError = [
+    [],
+    [
+        {
+            'carrier': 'carrier_name',
+            'code': '6035',
+            'message': 'Invalid tracking numbers.   Please check the following numbers '
+               'and resubmit.'
+        }
+    ]
+]
 
-TrackingAuthError = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+TrackingErrorResponseXML = '''<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header />
+   <SOAP-ENV:Body>
+      <TrackReply xmlns="http://fedex.com/ws/track/v14">
+         <HighestSeverity>SUCCESS</HighestSeverity>
+         <Notifications>
+            <Severity>SUCCESS</Severity>
+            <Source>trck</Source>
+            <Code>0</Code>
+            <Message>Request was successfully processed.</Message>
+            <LocalizedMessage>Request was successfully processed.</LocalizedMessage>
+         </Notifications>
+         <TransactionDetail>
+            <CustomerTransactionId>Track By Number_v14</CustomerTransactionId>
+            <Localization>
+               <LanguageCode>en</LanguageCode>
+            </Localization>
+         </TransactionDetail>
+         <Version>
+            <ServiceId>trck</ServiceId>
+            <Major>14</Major>
+            <Intermediate>0</Intermediate>
+            <Minor>0</Minor>
+         </Version>
+         <CompletedTrackDetails>
+            <HighestSeverity>SUCCESS</HighestSeverity>
+            <Notifications>
+               <Severity>SUCCESS</Severity>
+               <Source>trck</Source>
+               <Code>0</Code>
+               <Message>Request was successfully processed.</Message>
+               <LocalizedMessage>Request was successfully processed.</LocalizedMessage>
+            </Notifications>
+            <DuplicateWaybill>false</DuplicateWaybill>
+            <MoreData>false</MoreData>
+            <TrackDetailsCount>0</TrackDetailsCount>
+            <TrackDetails>
+               <Notification>
+                  <Severity>ERROR</Severity>
+                  <Source>trck</Source>
+                  <Code>6035</Code>
+                  <Message>Invalid tracking numbers.   Please check the following numbers and resubmit.</Message>
+                  <LocalizedMessage>Invalid tracking numbers.   Please check the following numbers and resubmit.</LocalizedMessage>
+               </Notification>
+               <TrackingNumber>1Z12345E1305277940</TrackingNumber>
+               <StatusDetail>
+                  <Location>
+                     <Residential>false</Residential>
+                  </Location>
+               </StatusDetail>
+               <PackageSequenceNumber>0</PackageSequenceNumber>
+               <PackageCount>0</PackageCount>
+               <DeliveryAttempts>0</DeliveryAttempts>
+               <TotalUniqueAddressCountInConsolidation>0</TotalUniqueAddressCountInConsolidation>
+               <DeliveryOptionEligibilityDetails>
+                  <Option>INDIRECT_SIGNATURE_RELEASE</Option>
+                  <Eligibility>INELIGIBLE</Eligibility>
+               </DeliveryOptionEligibilityDetails>
+               <DeliveryOptionEligibilityDetails>
+                  <Option>REDIRECT_TO_HOLD_AT_LOCATION</Option>
+                  <Eligibility>INELIGIBLE</Eligibility>
+               </DeliveryOptionEligibilityDetails>
+               <DeliveryOptionEligibilityDetails>
+                  <Option>REROUTE</Option>
+                  <Eligibility>INELIGIBLE</Eligibility>
+               </DeliveryOptionEligibilityDetails>
+               <DeliveryOptionEligibilityDetails>
+                  <Option>RESCHEDULE</Option>
+                  <Eligibility>INELIGIBLE</Eligibility>
+               </DeliveryOptionEligibilityDetails>
+            </TrackDetails>
+         </CompletedTrackDetails>
+      </TrackReply>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+'''
+
+TrackingAuthErrorXML = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header/>
     <SOAP-ENV:Body>
         <v14:TrackReply xmlns:v14="http://fedex.com/ws/track/v14">
@@ -104,7 +199,7 @@ TrackingAuthError = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap
 </SOAP-ENV:Envelope>
 '''
 
-TrackingRequestXml = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14">
+TrackingRequestXML = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14">
     <tns:Body>
         <ns:TrackRequest>
             <ns:WebAuthenticationDetail>
@@ -141,7 +236,7 @@ TrackingRequestXml = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
 </tns:Envelope>
 '''
 
-TrackingResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+TrackingResponseXML = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Header/>
    <SOAP-ENV:Body>
       <TrackReply xmlns="http://fedex.com/ws/track/v14">

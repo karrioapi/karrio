@@ -125,7 +125,11 @@ class FedexMapper(Mapper):
 
 
     def parse_error_response(self, response) -> List[E.Error]:
-        notifications = response.xpath('.//*[local-name() = $name]', name="Notifications")
+        notifications = response.xpath(
+            './/*[local-name() = $name]', name="Notifications"
+        ) + response.xpath(
+            './/*[local-name() = $name]', name="Notification"
+        )
         return reduce(self._extract_error, notifications, [])
 
 
