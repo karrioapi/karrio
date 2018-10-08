@@ -93,7 +93,7 @@ class TestDHLShipment(unittest.TestCase):
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml))
                 
-    def test_quote_error_parsing(self):
+    def test_parse_shipment_error(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentParsingError))
         self.assertEqual(jsonify(parsed_response),
@@ -105,7 +105,7 @@ class TestDHLShipment(unittest.TestCase):
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedShipmentMissingArgsError))
 
-    def test_shipment_response_parsing(self):
+    def test_parse_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentResponseXml))
         self.assertEqual(jsonify(parsed_response),

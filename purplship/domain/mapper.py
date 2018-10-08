@@ -34,7 +34,7 @@ class Mapper:
         """ Create carrier specific pickup request xml data from payload """
         raise Exception("Not Supported")
 
-    def modify_pickup_request(self, payload: E.pickup_modification_request):
+    def modify_pickup_request(self, payload: E.pickup_request):
         """ Create carrier specific pickup modification request xml data from payload """
         raise Exception("Not Supported")
 
@@ -46,6 +46,6 @@ class Mapper:
         """ Create carrier specific pickup cancellation request xml data from payload """
         raise Exception("Not Supported")
 
-    def parse_pickup_cancellation_response(self, response) -> Tuple[E.PickupCancellationDetails, List[E.Error]]:
+    def parse_pickup_cancellation_response(self, response) -> Tuple[dict, List[E.Error]]:
         """ Create united API pickup cancellation result from carrier xml response  """
         raise Exception("Not Supported")

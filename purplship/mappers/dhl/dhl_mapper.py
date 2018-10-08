@@ -1,4 +1,4 @@
-from typing import List, Tuple, TypeVar
+from typing import List, Tuple, TypeVar, Union
 from functools import reduce
 import time
 from purplship.domain import entities as E
@@ -9,6 +9,12 @@ from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
 from pydhl import ship_val_global_req_61 as ShipReq
 from gds_helpers import jsonify_xml, jsonify
 from lxml import etree
+from pydhl.book_pickup_global_req_20 import BookPURequest
+from pydhl.modify_pickup_global_req_20 import ModifyPURequest
+from pydhl.cancel_pickup_global_req_20 import CancelPURequest
+from pydhl.book_pickup_global_res_20 import BookPUResponse
+from pydhl.modify_pickup_global_res_20 import ModifyPUResponse
+from pydhl import pickupdatatypes_global_20 as PickpuDataTypes
 
 class DHLMapper(Mapper):
     def __init__(self, client: DHLClient):
@@ -234,6 +240,47 @@ class DHLMapper(Mapper):
             known_request.add_AWBNumber(tn)
         return known_request
 
+    def create_pickup_request(self, payload: E.pickup_request) -> BookPURequest:
+        Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(payload)
+
+        return BookPURequest(
+            Request=self.init_request(),
+            schemaVersion="1.0",
+            RegionCode=payload.extra.get('RegionCode') or "AM",
+            Requestor=Requestor_,
+            Place=Place_,
+            PickupContact=PickupContact_,
+            Pickup=Pickup_
+        )
+
+    def modify_pickup_request(self, payload: E.pickup_request) -> ModifyPURequest:
+        Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(payload)
+
+        return ModifyPURequest(
+            Request=self.init_request(),
+            schemaVersion="1.0",
+            RegionCode=payload.extra.get('RegionCode') or "AM",
+            ConfirmationNumber=payload.confirmation_number,
+            Requestor=Requestor_,
+            Place=Place_,
+            PickupContact=PickupContact_,
+            Pickup=Pickup_,
+            OriginSvcArea=payload.extra.get('OriginSvcArea')
+        )
+
+    def create_pickup_cancellation_request(self, payload: E.pickup_cancellation_request) -> CancelPURequest:
+        return CancelPURequest(
+            Request=self.init_request(),
+            schemaVersion="2.0",
+            RegionCode=payload.extra.get('RegionCode') or "AM",
+            ConfirmationNumber=payload.confirmation_number,
+            RequestorName=payload.person_name,
+            CountryCode=payload.country_code,
+            Reason=payload.extra.get('Reason') or "006",
+            PickupDate=payload.pickup_date,
+            CancelTime=time.strftime('%H:%M')
+        )
+
     def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         qtdshp_list = response.xpath(
             './/*[local-name() = $name]', name="QtdShp")
@@ -246,9 +293,30 @@ class DHLMapper(Mapper):
         return (trackings, self.parse_error_response(response))
 
     def parse_shipment_response(self, response) -> Tuple[E.ShipmentDetails, List[E.Error]]:
-        AirwayBillNumber = response.xpath("//AirwayBillNumber")
-        shipment = self._extract_shipment(response) if len(AirwayBillNumber) == 1 else None
-        return (shipment, self.parse_error_response(response))
+        return (self._extract_shipment(response), self.parse_error_response(response))
+
+    def parse_pickup_response(self, response) -> Tuple[E.PickupDetails, List[E.Error]]:
+        ConfirmationNumbers = response.xpath('.//*[local-name() = $name]', name="ConfirmationNumber")
+        success = len(ConfirmationNumbers) > 0
+        if success:
+            pickup = BookPUResponse() if 'BookPUResponse' in response.tag else ModifyPUResponse()
+            pickup.build(response)
+        return (
+            self._extract_pickup(pickup) if success else None, 
+            self.parse_error_response(response) if not success else []
+        )
+
+    def parse_pickup_cancellation_response(self, response) -> Tuple[dict, List[E.Error]]:
+        ConfirmationNumbers = response.xpath('.//*[local-name() = $name]', name="ConfirmationNumber")
+        success = len(ConfirmationNumbers) > 0
+        if success:
+            cancellation = dict(
+                confirmation_number=response.xpath('.//*[local-name() = $name]', name="ConfirmationNumber")[0].text
+            )
+        return (
+            cancellation if success else None,
+            self.parse_error_response(response) if not success else []
+        )
 
     """ Helpers functions """
 
@@ -315,16 +383,88 @@ class DHLMapper(Mapper):
         """
         get_value = lambda query: query[0].text if len(query) > 0 else None
         get = lambda key: get_value(shipmentResponseNode.xpath("//%s" % key))
+        tracking_number = get("AirwayBillNumber")
+        if tracking_number == None:
+            return None
         plates = [p.text for p in shipmentResponseNode.xpath("//LicensePlateBarCode")]
         barcodes = [child.text for child in shipmentResponseNode.xpath("//Barcodes")[0].getchildren()]
         documents = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
         reference = E.ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
         return E.ShipmentDetails(
             carrier=self.client.carrier_name,
-            tracking_number = get("AirwayBillNumber"),
+            tracking_number=tracking_number,
             shipment_date= get("ShipmentDate"),
             service=get("ProductShortName"),
             documents=documents,
             reference=reference,
             total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
         )
+
+    def _extract_pickup(self, pickup: Union[BookPUResponse, ModifyPURequest]) -> E.PickupDetails:
+        pickup_charge = None if pickup.PickupCharge is None else E.ChargeDetails(
+            name="Pickup Charge", amount=pickup.PickupCharge, currency=pickup.CurrencyCode
+        )
+        ref_times = (
+            ([] if pickup.ReadyByTime is None else [E.TimeDetails(name="ReadyByTime", value=pickup.ReadyByTime)]) +
+            ([] if pickup.CallInTime is None else [E.TimeDetails(name="CallInTime", value=pickup.CallInTime)])
+        )
+        return E.PickupDetails(
+            carrier=self.client.carrier_name,
+            confirmation_number=pickup.ConfirmationNumber,
+            pickup_date=pickup.NextPickupDate,
+            pickup_charge=pickup_charge,
+            ref_times=ref_times
+        )
+
+
+    """ Private functions """
+
+    def _create_pickup_request(self, payload: E.pickup_request) -> Tuple[
+            PickpuDataTypes.Requestor,
+            PickpuDataTypes.Place,
+            PickpuDataTypes.Contact,
+            PickpuDataTypes.Pickup
+        ]:
+        RequestorContact_ = None if "RequestorContact" not in payload.extra else PickpuDataTypes.RequestorContact(
+            PersonName=payload.extra.get("RequestorContact").get("PersonName"),
+            Phone=payload.extra.get("RequestorContact").get("Phone"),
+            PhoneExtension=payload.extra.get("RequestorContact").get("PhoneExtension")
+        )
+
+        Requestor_ = PickpuDataTypes.Requestor(
+            AccountNumber=payload.account_number,
+            AccountType=payload.extra.get("AccountType") or "D",
+            RequestorContact=RequestorContact_,
+            CompanyName=payload.extra.get("CompanyName")
+        )
+
+        Place_ = PickpuDataTypes.Place(
+            City=payload.city,
+            StateCode=payload.state_code,
+            PostalCode=payload.postal_code,
+            CompanyName=payload.company_name,
+            CountryCode=payload.country_code,
+            PackageLocation=payload.package_location or "",
+            LocationType="B" if payload.is_business else "R",
+            Address1=payload.address_lines[0] if len(payload.address_lines) > 0 else None,
+            Address2=payload.address_lines[1] if len(payload.address_lines) > 1 else None
+        )
+
+        PickupContact_ = PickpuDataTypes.Contact(
+            PersonName=payload.person_name,
+            Phone=payload.phone_number
+        )
+
+        weight_ = PickpuDataTypes.WeightSeg(Weight=payload.weight, WeightUnit=payload.weight_unit) if any([payload.weight, payload.weight_unit]) else None
+
+        Pickup_ = PickpuDataTypes.Pickup(
+            Pieces=payload.pieces,
+            PickupDate=payload.date,
+            ReadyByTime=payload.ready_time,
+            CloseTime=payload.closing_time,
+            SpecialInstructions=payload.instruction,
+            RemotePickupFlag=payload.extra.get("RemotePickupFlag"),
+            weight=weight_
+        )
+
+        return Requestor_, Place_, PickupContact_, Pickup_
