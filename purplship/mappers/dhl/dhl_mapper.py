@@ -1,4 +1,4 @@
-from typing import List, Tuple, TypeVar
+from typing import List, Tuple, TypeVar, Union
 from functools import reduce
 import time
 from purplship.domain import entities as E
@@ -6,12 +6,14 @@ from purplship.domain.mapper import Mapper
 from purplship.mappers.dhl.dhl_client import DHLClient
 from pydhl import DCT_req_global as Req, DCT_Response_global as Res, tracking_request_known as Track, tracking_response as TrackRes
 from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
-from pydhl import ship_val_global_req_61 as ShipReq, book_pickup_global_res_20 as PickupRes
+from pydhl import ship_val_global_req_61 as ShipReq
 from gds_helpers import jsonify_xml, jsonify
 from lxml import etree
 from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_20 import CancelPURequest
+from pydhl.book_pickup_global_res_20 import BookPUResponse
+from pydhl.modify_pickup_global_res_20 import ModifyPUResponse
 from pydhl import pickupdatatypes_global_20 as PickpuDataTypes
 
 class DHLMapper(Mapper):
@@ -294,9 +296,25 @@ class DHLMapper(Mapper):
         return (self._extract_shipment(response), self.parse_error_response(response))
 
     def parse_pickup_response(self, response) -> Tuple[E.PickupDetails, List[E.Error]]:
-        success = response.xpath('.//*[local-name() = $name]', name="ActionNote")[0].text == "Success"
+        ConfirmationNumbers = response.xpath('.//*[local-name() = $name]', name="ConfirmationNumber")
+        success = len(ConfirmationNumbers) > 0
+        if success:
+            pickup = BookPUResponse() if 'BookPUResponse' in response.tag else ModifyPUResponse()
+            pickup.build(response)
         return (
-            self._extract_pickup(response) if success else None, 
+            self._extract_pickup(pickup) if success else None, 
+            self.parse_error_response(response) if not success else []
+        )
+
+    def parse_pickup_cancellation_response(self, response) -> Tuple[dict, List[E.Error]]:
+        ConfirmationNumbers = response.xpath('.//*[local-name() = $name]', name="ConfirmationNumber")
+        success = len(ConfirmationNumbers) > 0
+        if success:
+            cancellation = dict(
+                confirmation_number=response.xpath('.//*[local-name() = $name]', name="ConfirmationNumber")[0].text
+            )
+        return (
+            cancellation if success else None,
             self.parse_error_response(response) if not success else []
         )
 
@@ -382,9 +400,7 @@ class DHLMapper(Mapper):
             total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
         )
 
-    def _extract_pickup(self, pickupReplyNode) -> E.PickupDetails:
-        pickup = PickupRes.BookPUResponse()
-        pickup.build(pickupReplyNode)
+    def _extract_pickup(self, pickup: Union[BookPUResponse, ModifyPURequest]) -> E.PickupDetails:
         pickup_charge = None if pickup.PickupCharge is None else E.ChargeDetails(
             name="Pickup Charge", amount=pickup.PickupCharge, currency=pickup.CurrencyCode
         )

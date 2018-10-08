@@ -221,6 +221,3 @@ class PickupDetails:
         self.pickup_date = pickup_date
         self.pickup_charge = pickup_charge
         self.ref_times = ref_times
-
-class PickupCancellationDetails:
-    pass
