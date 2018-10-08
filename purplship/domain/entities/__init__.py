@@ -1,7 +1,7 @@
 from .datatypes import *
 from .definitions import *
 
-class Quote():
+class Quote:
     """ manage quotes operations """
 
     @staticmethod
@@ -9,7 +9,7 @@ class Quote():
         """ Create a quote request payload """
         return quote_request(**quote_request_type(**args)._asdict())
 
-class Tracking():
+class Tracking:
     """ manage tracking operations """
 
     @staticmethod
@@ -17,7 +17,7 @@ class Tracking():
         """ Create a tracking request payload """
         return tracking_request(**args)
 
-class Shipment():
+class Shipment:
     """ manage shipment operations """
 
     @staticmethod
@@ -25,7 +25,7 @@ class Shipment():
         """ Create a shipment details request payload """
         return shipment_request(**shipment_request_type(**args)._asdict())
 
-class Pickup():
+class Pickup:
     """ manage pickup operations """
 
     @staticmethod
