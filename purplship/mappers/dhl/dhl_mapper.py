@@ -11,6 +11,7 @@ from gds_helpers import jsonify_xml, jsonify
 from lxml import etree
 from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
+from pydhl.cancel_pickup_global_req_20 import CancelPURequest
 from pydhl import pickupdatatypes_global_20 as PickpuDataTypes
 
 class DHLMapper(Mapper):
@@ -263,6 +264,19 @@ class DHLMapper(Mapper):
             PickupContact=PickupContact_,
             Pickup=Pickup_,
             OriginSvcArea=payload.extra.get('OriginSvcArea')
+        )
+
+    def create_pickup_cancellation_request(self, payload: E.pickup_cancellation_request) -> CancelPURequest:
+        return CancelPURequest(
+            Request=self.init_request(),
+            schemaVersion="2.0",
+            RegionCode=payload.extra.get('RegionCode') or "AM",
+            ConfirmationNumber=payload.confirmation_number,
+            RequestorName=payload.person_name,
+            CountryCode=payload.country_code,
+            Reason=payload.extra.get('Reason') or "006",
+            PickupDate=payload.pickup_date,
+            CancelTime=time.strftime('%H:%M')
         )
 
     def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
