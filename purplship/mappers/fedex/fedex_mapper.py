@@ -167,7 +167,7 @@ class FedexMapper(Mapper):
                 carrier=self.client.carrier_name,
                 service_name=detail.ServiceType,
                 service_type=detail.ActualRateType,
-                currency=shipmentDetail.CurrencyExchangeRate.IntoCurrency,
+                currency=shipmentDetail.CurrencyExchangeRate.IntoCurrency if shipmentDetail.CurrencyExchangeRate else None,
                 base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
                 total_charge=float(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
                 duties_and_taxes=float(shipmentDetail.TotalTaxes.Amount),
