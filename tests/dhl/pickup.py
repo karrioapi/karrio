@@ -86,6 +86,18 @@ class TestDHLPickup(unittest.TestCase):
             to_xml(PickupResponseXML))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedPickupResponse))
+    
+    def test_parse_modify_pickup_response(self):
+        parsed_response = proxy.mapper.parse_pickup_response(
+            to_xml(ModifyPURequestXML))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedModifyPUResponse))
+                
+    def test_parse_cancellation_pickup_response(self):
+        parsed_response = proxy.mapper.parse_pickup_cancellation_response(
+            to_xml(CancelPUResponseXML))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedCancelPUResponse))
                                          
     def test_parse_request_pickup_error(self):
         parsed_response = proxy.mapper.parse_shipment_response(
@@ -164,6 +176,24 @@ ParsedPickupResponse = [
     []
 ]
 
+ParsedModifyPUResponse = [
+    {
+        'carrier': 'carrier_name',
+        'confirmation_number': 100094,
+        'pickup_charge': None,
+        'pickup_date': None,
+        'ref_times': []
+    },
+    []
+]
+
+ParsedCancelPUResponse = [
+    {
+        "confirmation_number": "100129"
+    }, 
+    []
+]
+
 ParsedPickupErrorResponse = [
     None, 
     [
@@ -211,6 +241,24 @@ CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmln
 </req:CancelPURequest>
 """
 
+CancelPUResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<res:CancelPUResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com pickup-res.xsd'>
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2013-08-05T18:24:33+01:00</MessageTime>
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID>CustomerSiteID</SiteID>
+        </ServiceHeader>
+    </Response>
+	<RegionCode>EU</RegionCode>
+    <Note>
+        <ActionNote>Success</ActionNote>
+    </Note>
+    <ConfirmationNumber>100129</ConfirmationNumber>
+    <OriginSvcArea>GB</OriginSvcArea>
+</res:CancelPUResponse>
+"""
+
 ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="1.0">
     <Request>
         <ServiceHeader>
@@ -245,6 +293,26 @@ ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmln
 	</PickupContact>
 	<OriginSvcArea>KUL</OriginSvcArea>
 </req:ModifyPURequest>
+"""
+
+ModifyPUResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<res:ModifyPUResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com pickup-res.xsd'>
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2013-07-22T15:00:41+01:00</MessageTime>
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID>CustomerSiteID</SiteID>
+        </ServiceHeader>
+    </Response>
+	<RegionCode>AM</RegionCode>
+    <Note>
+        <ActionNote>Success</ActionNote>
+    </Note>
+    <ConfirmationNumber>100629</ConfirmationNumber>
+    <NextPickupDate>2013-07-22</NextPickupDate>
+    <CurrencyCode>USD</CurrencyCode>
+    <OriginSvcArea>JCC</OriginSvcArea>
+</res:ModifyPUResponse>
 """
 
 PickupResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
