@@ -6,9 +6,12 @@ from purplship.domain.mapper import Mapper
 from purplship.mappers.dhl.dhl_client import DHLClient
 from pydhl import DCT_req_global as Req, DCT_Response_global as Res, tracking_request_known as Track, tracking_response as TrackRes
 from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
-from pydhl import ship_val_global_req_61 as ShipReq, pickupdatatypes_global_20 as Pick, book_pickup_global_req_20 as PickupBooking, book_pickup_global_res_20 as PickupRes
+from pydhl import ship_val_global_req_61 as ShipReq, book_pickup_global_res_20 as PickupRes
 from gds_helpers import jsonify_xml, jsonify
 from lxml import etree
+from pydhl.book_pickup_global_req_20 import BookPURequest
+from pydhl.modify_pickup_global_req_20 import ModifyPURequest
+from pydhl import pickupdatatypes_global_20 as PickpuDataTypes
 
 class DHLMapper(Mapper):
     def __init__(self, client: DHLClient):
@@ -234,47 +237,10 @@ class DHLMapper(Mapper):
             known_request.add_AWBNumber(tn)
         return known_request
 
-    def create_pickup_request(self, payload: E.pickup_request) -> PickupBooking.BookPURequest:
-        RequestorContact_ = None if "RequestorContact" not in payload.extra else Pick.RequestorContact(
-            PersonName=payload.extra.get("RequestorContact").get("PersonName"),
-            Phone=payload.extra.get("RequestorContact").get("Phone"),
-            PhoneExtension=payload.extra.get("RequestorContact").get("PhoneExtension")
-        )
+    def create_pickup_request(self, payload: E.pickup_request) -> BookPURequest:
+        Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(payload)
 
-        Requestor_ = Pick.Requestor(
-            AccountNumber=payload.account_number,
-            AccountType=payload.extra.get("AccountType") or "D",
-            RequestorContact=RequestorContact_
-        )
-
-        Place_ = Pick.Place(
-            City=payload.city,
-            StateCode=payload.region_code,
-            PostalCode=payload.postal_code,
-            CompanyName=payload.company_name,
-            CountryCode=payload.country_code,
-            PackageLocation=payload.package_location or "",
-            LocationType="B" if payload.is_business else "R",
-            Address1=payload.address_lines[0] if len(payload.address_lines) > 0 else None,
-            Address2=payload.address_lines[1] if len(payload.address_lines) > 1 else None
-        )
-
-        PickupContact_ = Pick.Contact(
-            PersonName=payload.person_name,
-            Phone=payload.phone_number
-        )
-
-        Pickup_ = Pick.Pickup(
-            Pieces=payload.pieces,
-            PickupDate=payload.date,
-            ReadyByTime=payload.ready_time,
-            CloseTime=payload.closing_time,
-            SpecialInstructions=payload.instruction,
-            RemotePickupFlag=payload.extra.get("RemotePickupFlag"),
-            weight=PickupBooking.WeightSeg(Weight=payload.weight, WeightUnit=payload.weight_unit)
-        )
-
-        return PickupBooking.BookPURequest(
+        return BookPURequest(
             Request=self.init_request(),
             schemaVersion="1.0",
             RegionCode=payload.extra.get('RegionCode') or "AM",
@@ -284,6 +250,20 @@ class DHLMapper(Mapper):
             Pickup=Pickup_
         )
 
+    def modify_pickup_request(self, payload: E.pickup_request) -> ModifyPURequest:
+        Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(payload)
+
+        return ModifyPURequest(
+            Request=self.init_request(),
+            schemaVersion="1.0",
+            RegionCode=payload.extra.get('RegionCode') or "AM",
+            ConfirmationNumber=payload.confirmation_number,
+            Requestor=Requestor_,
+            Place=Place_,
+            PickupContact=PickupContact_,
+            Pickup=Pickup_,
+            OriginSvcArea=payload.extra.get('OriginSvcArea')
+        )
 
     def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         qtdshp_list = response.xpath(
@@ -405,3 +385,56 @@ class DHLMapper(Mapper):
             pickup_charge=pickup_charge,
             ref_times=ref_times
         )
+
+
+    """ Private functions """
+
+    def _create_pickup_request(self, payload: E.pickup_request) -> Tuple[
+            PickpuDataTypes.Requestor,
+            PickpuDataTypes.Place,
+            PickpuDataTypes.Contact,
+            PickpuDataTypes.Pickup
+        ]:
+        RequestorContact_ = None if "RequestorContact" not in payload.extra else PickpuDataTypes.RequestorContact(
+            PersonName=payload.extra.get("RequestorContact").get("PersonName"),
+            Phone=payload.extra.get("RequestorContact").get("Phone"),
+            PhoneExtension=payload.extra.get("RequestorContact").get("PhoneExtension")
+        )
+
+        Requestor_ = PickpuDataTypes.Requestor(
+            AccountNumber=payload.account_number,
+            AccountType=payload.extra.get("AccountType") or "D",
+            RequestorContact=RequestorContact_,
+            CompanyName=payload.extra.get("CompanyName")
+        )
+
+        Place_ = PickpuDataTypes.Place(
+            City=payload.city,
+            StateCode=payload.state_code,
+            PostalCode=payload.postal_code,
+            CompanyName=payload.company_name,
+            CountryCode=payload.country_code,
+            PackageLocation=payload.package_location or "",
+            LocationType="B" if payload.is_business else "R",
+            Address1=payload.address_lines[0] if len(payload.address_lines) > 0 else None,
+            Address2=payload.address_lines[1] if len(payload.address_lines) > 1 else None
+        )
+
+        PickupContact_ = PickpuDataTypes.Contact(
+            PersonName=payload.person_name,
+            Phone=payload.phone_number
+        )
+
+        weight_ = PickpuDataTypes.WeightSeg(Weight=payload.weight, WeightUnit=payload.weight_unit) if any([payload.weight, payload.weight_unit]) else None
+
+        Pickup_ = PickpuDataTypes.Pickup(
+            Pieces=payload.pieces,
+            PickupDate=payload.date,
+            ReadyByTime=payload.ready_time,
+            CloseTime=payload.closing_time,
+            SpecialInstructions=payload.instruction,
+            RemotePickupFlag=payload.extra.get("RemotePickupFlag"),
+            weight=weight_
+        )
+
+        return Requestor_, Place_, PickupContact_, Pickup_
