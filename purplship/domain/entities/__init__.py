@@ -33,3 +33,8 @@ class Pickup:
         """ Create a pickup request payload """
         return pickup_request(**args)
 
+    @staticmethod
+    def cancellation(**args) -> pickup_cancellation_request:
+        """ Create a pickup cancel request payload """
+        return pickup_cancellation_request(**args)
+

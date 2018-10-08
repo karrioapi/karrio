@@ -136,7 +136,11 @@ class pickup_request(NamedTuple):
     extra: Dict = {}   
 
 class pickup_cancellation_request(NamedTuple):
-    pass
+    pickup_date: str
+    confirmation_number: str
+    person_name: str = None
+    country_code: str = None
+    extra: Dict = {}   
 
 ''' Generic response data types '''
 
