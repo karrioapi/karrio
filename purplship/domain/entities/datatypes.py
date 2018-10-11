@@ -42,7 +42,7 @@ class commodity_type(NamedTuple):
 class label_type(NamedTuple):
     format: str = None
     type: str = None
-    extra: Dict = None
+    extra: Dict = {}
 
 class quote_options(NamedTuple):
     packages: List[package_type]
