@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import time
-from gds_helpers import to_xml
+from gds_helpers import to_xml, export
 from pycaps.shipment import ShipmentType
 from pycaps.ncshipment import NonContractShipmentType
 from purplship.domain.entities import Shipment
@@ -16,6 +16,18 @@ class TestShipment(unittest.TestCase):
 
         self.NCShipment = NonContractShipmentType()
         self.NCShipment.build(to_xml(NCShipmentRequestXML))
+
+    def test_create_shipment_request(self):
+        payload = Shipment.create(**shipment_data)
+        Shipment_ = proxy.mapper.create_shipment_request(payload)
+        self.assertEqual(export(Shipment_), export(self.Shipment))
+
+    def test_create_ncshipment_request(self):
+        payload = Shipment.create(**ncshipment_data)
+        NCShipment_ = proxy.mapper.create_shipment_request(payload)
+        # removed for testing purpose
+        NCShipment_.delivery_spec.parcel_characteristics.document = None
+        self.assertEqual(export(NCShipment_), export(self.NCShipment))
 
     @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
     def test_create_shipment(self, http_mock):
@@ -36,6 +48,7 @@ if __name__ == '__main__':
     unittest.main()
 
 ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
+   <customer-request-id>123456789</customer-request-id>
    <cpc-pickup-indicator>true</cpc-pickup-indicator>
    <requested-shipping-point>K2B8J6</requested-shipping-point>
    <delivery-spec>
@@ -143,3 +156,84 @@ NCShipmentRequestXML = """<non-contract-shipment xmlns="http://www.canadapost.ca
    </delivery-spec>
 </non-contract-shipment>
 """
+
+shipment_data = {
+    "shipper": {
+        "company_name": "CGI",
+        "address_lines": ["502 MAIN ST N"],
+        "city": "MONTREAL",
+        "postal_code": "H2B1A0",
+        "country_code": "CA",
+        "person_name": "Bob",
+        "phone_number": "1 (450) 823-8432",
+        "state_code": "QC"
+    },
+    "recipient": {
+        "company_name": "CGI",
+        "address_lines": ["23 jardin private"],
+        "city": "Ottawa",
+        "postal_code": "K1K4T3",
+        "country_code": "CA",
+        "person_name": "Jain",
+        "state_code": "ON"
+    },
+    "shipment": {
+        "packages": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
+        "shipper_account_number": "123456789",
+        "label": {"format": "8.5x11"},
+        "services": ["DOM.EP"],
+        "extra": {
+            "cpc-pickup-indicator": True,
+            "requested-shipping-point": "K2B8J6", 
+            "mailing-tube": False,
+            "options": [{"option-code": "DC" }],
+            "notification": {
+                "email": "john.doe@yahoo.com",
+                "on-shipment": True,
+                "on-exception": False,
+                "on-delivery": True
+            },
+            "preferences": {
+                "show-packing-instructions": True,
+                "show-postage-rate": False,
+                "show-insured-value": True
+            },
+            "settlement-info": {
+                "contract-id": "0040662505",
+                "intended-method-of-payment": "Account"
+            }
+        }
+    }
+}
+
+ncshipment_data = {
+    "shipper": {
+        "company_name": "Canada Post Corporation",
+        "address_lines": ["2701 Riverside Drive"],
+        "city": "Ottawa",
+        "postal_code": "K1A0B1",
+        "phone_number": "555-555-5555",
+        "state_code": "ON"
+    },
+    "recipient": {
+        "company_name": "Consumer",
+        "address_lines": ["2701 Receiver Drive"],
+        "city": "Ottawa",
+        "postal_code": "K1A0B1",
+        "country_code": "CA",
+        "person_name": "John Doe",
+        "state_code": "ON"
+    },
+    "shipment": {
+        "packages": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
+        "shipper_account_number": "123456789",
+        "services": ["DOM.EP"],
+        "extra": {
+            "requested-shipping-point": "J8R1A2", 
+            "options": [{"option-code": "DC" }],
+            "preferences": {
+                "show-packing-instructions": True
+            }
+        }
+    }
+}
