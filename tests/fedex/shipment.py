@@ -13,6 +13,11 @@ class TestFedExShipment(unittest.TestCase):
         self.ShipmentRequest = ProcessShipmentRequest()
         self.ShipmentRequest.build(get_node_from_xml(ShipmentRequestXml, 'ProcessShipmentRequest'))
 
+    # def test_create_shipment_request(self):
+    #     payload = Shipment.create(**shipment_data)
+    #     ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
+    #     self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
+
     @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
     def test_create_shipment(self, http_mock):
         proxy.create_shipment(self.ShipmentRequest)
@@ -28,18 +33,14 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
     <tns:Body>
         <ns:ProcessShipmentRequest>
             <ns:WebAuthenticationDetail>
-                <ns:ParentCredential>
-                    <ns:Key>INPUT YOUR INFORMATION</ns:Key>
-                    <ns:Password>INPUT YOUR INFORMATION</ns:Password>
-                </ns:ParentCredential>
                 <ns:UserCredential>
-                    <ns:Key>INPUT YOUR INFORMATION</ns:Key>
-                    <ns:Password>INPUT YOUR INFORMATION</ns:Password>
+                    <ns:Key>user_key</ns:Key>
+                    <ns:Password>password</ns:Password>
                 </ns:UserCredential>
             </ns:WebAuthenticationDetail>
             <ns:ClientDetail>
-                <ns:AccountNumber>Input Your Information</ns:AccountNumber>
-                <ns:MeterNumber>Input Your Information</ns:MeterNumber>
+                <ns:AccountNumber>2349857</ns:AccountNumber>
+                <ns:MeterNumber>1293587</ns:MeterNumber>
             </ns:ClientDetail>
             <ns:TransactionDetail>
                 <ns:CustomerTransactionId>IE_v18_Ship</ns:CustomerTransactionId>
@@ -51,7 +52,6 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                 <ns:Minor>0</ns:Minor>
             </ns:Version>
             <ns:RequestedShipment>
-                <ns:ShipTimestamp>2016-12-12T12:34:56-06:00</ns:ShipTimestamp>
                 <ns:DropoffType>REGULAR_PICKUP</ns:DropoffType>
                 <ns:ServiceType>INTERNATIONAL_PRIORITY</ns:ServiceType>
                 <ns:PackagingType>YOUR_PACKAGING</ns:PackagingType>
@@ -88,7 +88,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                     </ns:Address>
                 </ns:Recipient>
                 <ns:ShippingChargesPayment>
-                    <ns:PaymentType>SENDER</ns:PaymentType>
+                    <ns:PaymentType>THIRD_PARTY</ns:PaymentType>
                     <ns:Payor>
                         <ns:ResponsibleParty>
                             <ns:AccountNumber>Input Your Information</ns:AccountNumber>
@@ -192,3 +192,47 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
     </tns:Body>
 </tns:Envelope>
 """
+
+shipment_data = {
+    "shipper": {
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "Input Your Information",
+        "email_address": "Input Your Information",
+        "address_lines": ["Input Your Information", "Input Your Information"],
+        "city": "MEMPHIS",
+        "state": "TN",
+        "postal_code": "38117",
+        "country_code": "US"
+    },
+    "recipient": {
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "Input Your Information",
+        "email_address": "Input Your Information",
+        "address_lines": ["Input Your Information", "Input Your Information"],
+        "city": "RICHMOND",
+        "state": "BC",
+        "postal_code": "V7C4v7",
+        "country_code": "CA"
+    },
+    "shipment": {
+        "paid_by": "THIRD_PARTY",
+        "packaging_type": "YOUR_PACKAGING",
+        "services": ["INTERNATIONAL_PRIORITY"],
+        "billing_account_number": "Input Your Information",
+        "extra": {
+            "Payor": {
+                "person_name": "Input Your Information",
+                "extra": {
+                    "ContactId": "12345",
+                    "Tins": {
+                        "TinType": "BUSINESS_STATE",
+                        "Number": "213456"
+                    }
+                }
+            },
+            "DropoffType": "REGULAR_PICKUP"
+        }
+    }
+}

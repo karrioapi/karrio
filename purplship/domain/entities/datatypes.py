@@ -76,6 +76,7 @@ class shipment_options(NamedTuple):
     duty_paid_by: str = None
     duty_payment_account: str = None
     declared_value: float = None
+    payment_type: str = None
     payment_country_code: str = None
     payment_account_number: str = None
     shipper_account_number: str = None
