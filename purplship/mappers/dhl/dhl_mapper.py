@@ -1,6 +1,7 @@
 from typing import List, Tuple, TypeVar, Union
 from functools import reduce
 import time
+from base64 import b64decode
 from purplship.domain import entities as E
 from purplship.domain.mapper import Mapper
 from purplship.mappers.dhl.dhl_client import DHLClient
@@ -211,16 +212,17 @@ class DHLMapper(Mapper):
             DoorTo=payload.shipment.extra.get('DoorTo'),
             GlobalProductCode=payload.shipment.extra.get('GlobalProductCode'),
             LocalProductCode=payload.shipment.extra.get('LocalProductCode'),
-            Contents=payload.shipment.extra.get('Contents') or ""
+            Contents=payload.shipment.extra.get('Contents') or "..."
         )
 
         ShipmentRequest_ = ShipReq.ShipmentRequest(
             schemaVersion="6.1",
             Request=Request_,
-            RegionCode="AM",
-            RequestedPickupTime="Y",
-            LanguageCode="en",
-            PiecesEnabled="Y",
+            RegionCode=payload.shipment.extra.get('RegionCode') or "AM",
+            RequestedPickupTime=payload.shipment.extra.get('RequestedPickupTime') or "Y",
+            LanguageCode=payload.shipment.extra.get('LanguageCode') or "en",
+            PiecesEnabled=payload.shipment.extra.get('PiecesEnabled') or "Y",
+            NewShipper=payload.shipment.extra.get('NewShipper'),
             Billing=Billing_,
             Consignee=Consignee_,
             Shipper=Shipper_,
@@ -230,10 +232,13 @@ class DHLMapper(Mapper):
 
         if payload.shipment.label is not None:
             DocImages_ = ShipReq.DocImages()
+            Image_ = None if 'Image' not in payload.shipment.label.extra else b64decode(
+                payload.shipment.label.extra.get('Image') + '=' * (-len(payload.shipment.label.extra.get('Image')) % 4)
+            )
             DocImages_.add_DocImage(ShipReq.DocImage(
                 Type=payload.shipment.label.type,
                 ImageFormat=payload.shipment.label.format,
-                Image=payload.shipment.label.extra.get('Image')
+                Image=Image_
             ))
             ShipmentRequest_.DocImages = DocImages_
 

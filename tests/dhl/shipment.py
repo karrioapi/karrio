@@ -59,7 +59,13 @@ class TestDHLShipment(unittest.TestCase):
             "duty_paid_by": "S",
             "duty_payment_account": "123456789",
             "declared_value": 200.00,
-            "label": {"type": "CIN", "format": "PDF", "extra": {"Image": b"SUkqAAgA"}},
+            "label": {
+                "type": "CIN", 
+                "format": "PDF", 
+                "extra": {
+                    "Image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
+                }
+            },
             "services": ["WY"],
             "commodities": [{"code": "cc", "description": "cn"}],
             "extra": {"EProcShip": "N", "GlobalProductCode": "P", "LocalProductCode": "P"},
@@ -79,10 +85,9 @@ class TestDHLShipment(unittest.TestCase):
             shipper=shipper, recipient=recipient, shipment=shipment)
         ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
 
-        # remove MessageTime, Date and Image for testing purpose
+        # remove MessageTime, Date for testing purpose
         ShipmentRequest_.Request.ServiceHeader.MessageTime = None
         ShipmentRequest_.ShipmentDetails.Date = None
-        ShipmentRequest_.DocImages.DocImage[0].Image = None
 
         self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
 
@@ -285,7 +290,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <WeightUnit>L</WeightUnit>
         <GlobalProductCode>P</GlobalProductCode>
         <LocalProductCode>P</LocalProductCode>
-        <Contents></Contents>
+        <Contents>...</Contents>
         <DimensionUnit>I</DimensionUnit>
         <IsDutiable>Y</IsDutiable>
         <CurrencyCode>USD</CurrencyCode>
@@ -317,6 +322,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     <DocImages>
         <DocImage>
             <Type>CIN</Type>
+            <Image>dataimage/gifbase64R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADg==</Image>
             <ImageFormat>PDF</ImageFormat>
         </DocImage>
     </DocImages>

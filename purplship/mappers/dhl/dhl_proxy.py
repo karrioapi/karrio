@@ -40,7 +40,7 @@ class DHLProxy(Proxy):
             ShipmentRequest_, 
             name_='req:ShipmentRequest',
             namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.1"'
-        )
+        ).replace("<Image>b'", "<Image>").replace("'</Image>", "</Image>")
 
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
