@@ -8,6 +8,7 @@ from purplship.domain.entities import Pickup
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 import time
+from purplship.mappers.dhl.dhl_proxy import _reformat_time
 
 
 class TestDHLPickup(unittest.TestCase):
@@ -65,14 +66,28 @@ class TestDHLPickup(unittest.TestCase):
         proxy.request_pickup(self.PURequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(PickupRequestXML))
+        self.assertEqual(
+            strip(xmlStr), 
+            _reformat_time(
+                'CloseTime', _reformat_time(
+                    'ReadyByTime', strip(PickupRequestXML)
+                )
+            )
+        )
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_modify_pickup(self, http_mock):
         proxy.modify_pickup(self.ModifyPURequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(ModifyPURequestXML))
+        self.assertEqual(
+            strip(xmlStr), 
+            _reformat_time(
+                'CloseTime', _reformat_time(
+                    'ReadyByTime', strip(ModifyPURequestXML)
+                )
+            )
+        )
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
     def test_cancel_pickup(self, http_mock):
