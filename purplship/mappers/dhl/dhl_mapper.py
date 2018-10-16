@@ -483,7 +483,7 @@ class DHLMapper(Mapper):
             PostalCode=payload.postal_code,
             CompanyName=payload.company_name,
             CountryCode=payload.country_code,
-            PackageLocation=payload.package_location or "",
+            PackageLocation=payload.package_location or "...",
             LocationType="B" if payload.is_business else "R",
             Address1=payload.address_lines[0] if len(payload.address_lines) > 0 else None,
             Address2=payload.address_lines[1] if len(payload.address_lines) > 1 else None
