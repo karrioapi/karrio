@@ -80,7 +80,6 @@ class shipment_options(NamedTuple):
     payment_country_code: str = None
     payment_account_number: str = None
     shipper_account_number: str = None
-    billing_account_number: str = None
     services: List[str] = []
     customs: customs_type = None
     references: List[str] = []
