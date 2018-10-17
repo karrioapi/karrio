@@ -40,7 +40,7 @@ class DHLProxy(Proxy):
             ShipmentRequest_, 
             name_='req:ShipmentRequest',
             namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.1"'
-        )
+        ).replace("<Image>b'", "<Image>").replace("'</Image>", "</Image>")
 
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
@@ -52,6 +52,8 @@ class DHLProxy(Proxy):
             namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req.xsd"'
         ).replace("dhlPickup:", ""
         ).replace('schemaVersion="1."', 'schemaVersion="1.0"')
+        
+        xmlElt = _reformat_time('CloseTime', _reformat_time('ReadyByTime', xmlElt))
 
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
@@ -63,6 +65,8 @@ class DHLProxy(Proxy):
             namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd"'
         ).replace("dhlPickup:", ""
         ).replace('schemaVersion="1."', 'schemaVersion="1.0"')
+        
+        xmlElt = _reformat_time('CloseTime', _reformat_time('ReadyByTime', xmlElt))
 
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
@@ -76,3 +80,13 @@ class DHLProxy(Proxy):
         
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
+        
+
+def _reformat_time(tag: str, xmlStr: str) -> str:
+    """
+    Change time format from 00:00:00 to 00:00
+    """
+    parts = xmlStr.split(tag)
+    subs = parts[1].split(':')
+    return f"{parts[0]}{tag}{subs[0]}:{subs[1]}</{tag}{parts[2]}"
+

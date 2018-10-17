@@ -42,7 +42,7 @@ class commodity_type(NamedTuple):
 class label_type(NamedTuple):
     format: str = None
     type: str = None
-    extra: Dict = None
+    extra: Dict = {}
 
 class quote_options(NamedTuple):
     packages: List[package_type]
@@ -76,10 +76,10 @@ class shipment_options(NamedTuple):
     duty_paid_by: str = None
     duty_payment_account: str = None
     declared_value: float = None
+    payment_type: str = None
     payment_country_code: str = None
     payment_account_number: str = None
     shipper_account_number: str = None
-    billing_account_number: str = None
     services: List[str] = []
     customs: customs_type = None
     references: List[str] = []

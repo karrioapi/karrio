@@ -1,6 +1,7 @@
 from typing import List, Tuple, TypeVar, Union
 from functools import reduce
 import time
+from base64 import b64decode
 from purplship.domain import entities as E
 from purplship.domain.mapper import Mapper
 from purplship.mappers.dhl.dhl_client import DHLClient
@@ -69,18 +70,52 @@ class DHLMapper(Mapper):
 
         BkgDetails_ = Req.BkgDetailsType(
             PaymentCountryCode=payment_country_code,
-            NetworkTypeCode="AL",
+            NetworkTypeCode=payload.shipment.extra.get('NetworkTypeCode') or "AL",
             WeightUnit=payload.shipment.weight_unit or "LB",
             DimensionUnit=payload.shipment.dimension_unit or "IN",
             ReadyTime=time.strftime("PT%HH%MM"),
             Date=time.strftime("%Y-%m-%d"),
-            PaymentAccountNumber=self.client.account_number,
             IsDutiable="N" if payload.shipment.is_document else "Y",
-            Pieces=Pieces
+            Pieces=Pieces,
+            NumberOfPieces=payload.shipment.number_of_packages,
+            ShipmentWeight=payload.shipment.total_weight,
+            Volume=payload.shipment.extra.get('Volume'),
+            PaymentAccountNumber=payload.shipment.payment_account_number or self.client.account_number,
+            InsuredCurrency=payload.shipment.currency,
+            PaymentType=payload.shipment.extra.get('PaymentType'),
+            AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime')
         )
 
         GetQuote = Req.GetQuoteType(
-            Request=Request_, From=From_, To=To_, BkgDetails=BkgDetails_)
+            Request=Request_, 
+            From=From_, 
+            To=To_, 
+            BkgDetails=BkgDetails_
+        )
+
+        if not payload.shipment.is_document:
+            GetQuote.Dutiable = Req.Dutiable(
+                DeclaredValue=payload.shipment.insured_amount,
+                DeclaredCurrency=payload.shipment.currency,
+                ScheduleB=payload.shipment.extra.get('ScheduleB'),
+                ExportLicense=payload.shipment.extra.get('ExportLicense'),
+                ShipperEIN=payload.shipment.extra.get('ShipperEIN'),
+                ShipperIDType=payload.shipment.extra.get('ShipperIDType'),
+                ConsigneeIDType=payload.shipment.extra.get('ConsigneeIDType'),
+                ImportLicense=payload.shipment.extra.get('ImportLicense'),
+                ConsigneeEIN=payload.shipment.extra.get('ConsigneeEIN'),
+                TermsOfTrade=payload.shipment.extra.get('TermsOfTrade'),
+                CommerceLicensed=payload.shipment.extra.get('CommerceLicensed'),
+            )
+
+            if 'Filing' in payload.shipment.extra:
+                filing = payload.shipment.extra.get('Filing')
+                GetQuote.Dutiable.Filing = Req.Filing(
+                    FilingType=filing.get('FilingType'),
+                    FTSR=filing.get('FTSR'),
+                    ITN=filing.get('ITN'),
+                    AES4EIN=filing.get('AES4EIN')
+                )
 
         return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
 
@@ -177,16 +212,17 @@ class DHLMapper(Mapper):
             DoorTo=payload.shipment.extra.get('DoorTo'),
             GlobalProductCode=payload.shipment.extra.get('GlobalProductCode'),
             LocalProductCode=payload.shipment.extra.get('LocalProductCode'),
-            Contents=payload.shipment.extra.get('Contents') or ""
+            Contents=payload.shipment.extra.get('Contents') or "..."
         )
 
         ShipmentRequest_ = ShipReq.ShipmentRequest(
             schemaVersion="6.1",
             Request=Request_,
-            RegionCode="AM",
-            RequestedPickupTime="Y",
-            LanguageCode="en",
-            PiecesEnabled="Y",
+            RegionCode=payload.shipment.extra.get('RegionCode') or "AM",
+            RequestedPickupTime=payload.shipment.extra.get('RequestedPickupTime') or "Y",
+            LanguageCode=payload.shipment.extra.get('LanguageCode') or "en",
+            PiecesEnabled=payload.shipment.extra.get('PiecesEnabled') or "Y",
+            NewShipper=payload.shipment.extra.get('NewShipper'),
             Billing=Billing_,
             Consignee=Consignee_,
             Shipper=Shipper_,
@@ -196,10 +232,13 @@ class DHLMapper(Mapper):
 
         if payload.shipment.label is not None:
             DocImages_ = ShipReq.DocImages()
+            Image_ = None if 'Image' not in payload.shipment.label.extra else b64decode(
+                payload.shipment.label.extra.get('Image') + '=' * (-len(payload.shipment.label.extra.get('Image')) % 4)
+            )
             DocImages_.add_DocImage(ShipReq.DocImage(
                 Type=payload.shipment.label.type,
                 ImageFormat=payload.shipment.label.format,
-                Image=payload.shipment.label.extra.get('Image')
+                Image=Image_
             ))
             ShipmentRequest_.DocImages = DocImages_
 
@@ -444,7 +483,7 @@ class DHLMapper(Mapper):
             PostalCode=payload.postal_code,
             CompanyName=payload.company_name,
             CountryCode=payload.country_code,
-            PackageLocation=payload.package_location or "",
+            PackageLocation=payload.package_location or "...",
             LocationType="B" if payload.is_business else "R",
             Address1=payload.address_lines[0] if len(payload.address_lines) > 0 else None,
             Address2=payload.address_lines[1] if len(payload.address_lines) > 1 else None

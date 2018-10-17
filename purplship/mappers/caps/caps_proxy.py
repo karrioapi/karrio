@@ -1,10 +1,12 @@
 from io import StringIO
-from typing import List
+from typing import List, Union
 from gds_helpers import export, to_xml, request as http, exec_parrallel, bundle_xml
 from purplship.mappers.caps.caps_mapper import CanadaPostMapper, CanadaPostClient
-from pycaps import rating as Rate, shipment as Ship, pickuprequest as Pick
+from pycaps import rating as Rate, pickuprequest as Pick
 from purplship.domain.proxy import Proxy
 from base64 import b64encode
+from pycaps.shipment import ShipmentType
+from pycaps.ncshipment import NonContractShipmentType
 
 from functools import reduce
 
@@ -46,20 +48,32 @@ class CanadaPostProxy(Proxy):
 
         return to_xml(bundle_xml(xml_strings=results))
 
-    def create_shipment(self, shipment: Ship.ShipmentType) -> "XMLElement":
+    def create_shipment(self, shipment: Union[NonContractShipmentType, ShipmentType]) -> "XMLElement":
+        is_non_contract = isinstance(shipment, NonContractShipmentType) 
+
+        if is_non_contract:
+            req_type = 'application/vnd.cpc.ncshipment-v4+xml'
+            namespace = 'xmlns="http://www.canadapost.ca/ws/ncshipment-v4"'
+            name = 'non-contract-shipment'
+            url_ = f"{self.client.server_url}/rs/{self.client.customer_number}/ncshipment"
+        else:
+            req_type = 'application/vnd.cpc.shipment-v8+xml'
+            namespace = 'xmlns="http://www.canadapost.ca/ws/shipment-v8"'
+            name = 'shipment'
+            url_ = f"{self.client.server_url}/rs/{self.client.customer_number}/{shipment.customer_request_id}/shipment"
+
         xmlStr = export(
             shipment, 
-            name_='shipment',
-            namespacedef_='xmlns="http://www.canadapost.ca/ws/shipment-v8"'
+            name_=name,
+            namespacedef_=namespace
         )
-        mail_on_behalf = self.client.customer_number
 
         result = http(
-            url="%s/rs/%s/%s/shipment" % (self.client.server_url, self.client.customer_number, mail_on_behalf), 
+            url=url_, 
             data=bytearray(xmlStr, "utf-8"), 
             headers={
-                'Content-Type': 'application/vnd.cpc.shipment-v8+xml',
-                'Accept': 'application/vnd.cpc.shipment-v8+xml',
+                'Content-Type': req_type,
+                'Accept': req_type,
                 'Authorization': "Basic %s" % self.authorization,
                 'Accept-language': 'en-CA'
             }, 
