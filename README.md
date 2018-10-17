@@ -89,7 +89,7 @@ Please read [CONTRIBUTING.md](https://github.com/PurplShip/purplship/blob/master
 
 ## Authors
 
-- **Daniel K.** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [PurplShip](https://purplship.com/)
+- **Daniel K.** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [PurplShip](https://purplship.com/open-source)
 
 See also the list of [contributors](https://github.com/PurplShip/purplship/blob/master/contributors) who participated in this project.
 
