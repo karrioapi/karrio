@@ -29,21 +29,68 @@ class TestUPSShipment(unittest.TestCase):
         proxy.create_shipment(self.ShipmentRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml))
+        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXML))
+
+    def test_parse_freight_shipment_response(self):
+        parsed_response = proxy.mapper.parse_shipment_response(
+            to_xml(FreightShipmentResponseXML))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedFreightShipmentResponse))
+                         
+    def test_parse_shipment_response(self):
+        parsed_response = proxy.mapper.parse_shipment_response(
+            to_xml(ShipmentResponseXML))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedShipmentResponse))
 
 
 if __name__ == '__main__':
     unittest.main()
 
 
-ParsedFreightShipmentResponse = []
+ParsedFreightShipmentResponse = [
+    {
+        'carrier': 'UPS', 
+        'charges': [
+            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': 'DSCNT'}, 
+            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': 'DSCNT_RATE'}, 
+            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': '2'}, 
+            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': 'LND_GROSS'}, 
+            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': 'AFTR_DSCNT'}
+        ], 
+        'documents': [], 
+        'reference': {'type': 'CustomerContext', 'value': 'Your Customer Context'}, 
+        'services': ['Service code'], 
+        'shipment_date': None, 
+        'total_charge': {'amount': 'MonetaryValue', 'currency': 'CurrencyCode', 'name': 'Shipment charge'}, 
+        'tracking_numbers': ['Shipment Number']
+    }, 
+    []
+]
+
+ParsedShipmentResponse = [
+    {
+        'carrier': 'UPS', 
+        'charges': [
+            {'amount': '88.12', 'currency': 'USD', 'name': None}, 
+            {'amount': '0.00', 'currency': 'USD', 'name': None}
+        ], 
+        'documents': ['R0lGODdheAUgA+cAAAAAAAEBAQIC (Truncated)'], 
+        'reference': {'type': 'CustomerContext', 'value': 'Your Customer Context'}, 
+        'services': None, 
+        'shipment_date': None, 
+        'total_charge': {'amount': '70.00', 'currency': 'USD', 'name': 'Shipment charge'}, 
+        'tracking_numbers': ['1ZWA82900191640782']
+    }, 
+    []
+]
 
 
 FreightShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
     <soapenv:Header />
     <soapenv:Body>
-        <ship:ShipmentResponse xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0">
+        <freightShip:FreightShipResponse xmlns:freightShip="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0">
             <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
                 <common:ResponseStatus>
                     <common:Code>1</common:Code>
@@ -53,46 +100,89 @@ FreightShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
             </common:Response>
-            <ship:ShipmentResults>
-                <ship:ShipmentCharges>
-                    <ship:TransportationCharges>
-                        <ship:CurrencyCode>USD</ship:CurrencyCode>
-                        <ship:MonetaryValue>88.12</ship:MonetaryValue>
-                    </ship:TransportationCharges>
-                    <ship:ServiceOptionsCharges>
-                        <ship:CurrencyCode>USD</ship:CurrencyCode>
-                        <ship:MonetaryValue>0.00</ship:MonetaryValue>
-                    </ship:ServiceOptionsCharges>
-                    <ship:TotalCharges>
-                        <ship:CurrencyCode>USD</ship:CurrencyCode>
-                        <ship:MonetaryValue>88.12</ship:MonetaryValue>
-                    </ship:TotalCharges>
-                </ship:ShipmentCharges>
-                <ship:BillingWeight>
-                    <ship:UnitOfMeasurement>
-                        <ship:Code>LBS</ship:Code>
-                        <ship:Description>Pounds</ship:Description>
-                    </ship:UnitOfMeasurement>
-                    <ship:Weight>10.0</ship:Weight>
-                </ship:BillingWeight>
-                <ship:ShipmentIdentificationNumber>1ZWA82900191640782</ship:ShipmentIdentificationNumber>
-                <ship:PackageResults>
-                    <ship:TrackingNumber>1ZWA82900191640782</ship:TrackingNumber>
-                    <ship:ServiceOptionsCharges>
-                        <ship:CurrencyCode>USD</ship:CurrencyCode>
-                        <ship:MonetaryValue>0.00</ship:MonetaryValue>
-                    </ship:ServiceOptionsCharges>
-                    <ship:ShippingLabel>
-                        <ship:ImageFormat>
-                            <ship:Code>GIF</ship:Code>
-                            <ship:Description>GIF</ship:Description>
-                        </ship:ImageFormat>
-                        <ship:GraphicImage>R0lGODdheAUgA+c(Truncated)</ship:GraphicImage>
-                        <ship:HTMLImage>PCFET0NUWVBFIEhUTUwgUFVCTElDICI(Truncated)</ship:HTMLImage>
-                    </ship:ShippingLabel>
-                </ship:PackageResults>
-            </ship:ShipmentResults>
-        </ship:ShipmentResponse>
+            <freightShip:ShipmentResults>
+                <freightShip:OriginServiceCenterCode>OriginServiceCenterCode</freightShip:OriginServiceCenterCode>
+                <freightShip:ShipmentNumber>Shipment Number</freightShip:ShipmentNumber>
+                <freightShip:BOLID>BOLID</freightShip:BOLID>
+                <freightShip:GuaranteedIndicator />
+                <freightShip:Rate>
+                    <freightShip:Type>
+                        <freightShip:Code>DSCNT</freightShip:Code>
+                        <freightShip:Description>DSCNT</freightShip:Description>
+                    </freightShip:Type>
+                    <freightShip:Factor>
+                        <freightShip:Value>Value</freightShip:Value>
+                        <freightShip:UnitOfMeasurement>
+                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
+                        </freightShip:UnitOfMeasurement>
+                    </freightShip:Factor>
+                </freightShip:Rate>
+                <freightShip:Rate>
+                    <freightShip:Type>
+                        <freightShip:Code>DSCNT_RATE</freightShip:Code>
+                        <freightShip:Description>DSCNT_RATE</freightShip:Description>
+                    </freightShip:Type>
+                    <freightShip:Factor>
+                        <freightShip:Value>Value</freightShip:Value>
+                        <freightShip:UnitOfMeasurement>
+                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
+                        </freightShip:UnitOfMeasurement>
+                    </freightShip:Factor>
+                </freightShip:Rate>
+                <freightShip:Rate>
+                    <freightShip:Type>
+                        <freightShip:Code>2</freightShip:Code>
+                        <freightShip:Description>2</freightShip:Description>
+                    </freightShip:Type>
+                    <freightShip:Factor>
+                        <freightShip:Value>Value</freightShip:Value>
+                        <freightShip:UnitOfMeasurement>
+                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
+                        </freightShip:UnitOfMeasurement>
+                    </freightShip:Factor>
+                </freightShip:Rate>
+                <freightShip:Rate>
+                    <freightShip:Type>
+                        <freightShip:Code>LND_GROSS</freightShip:Code>
+                        <freightShip:Description>LND_GROSS</freightShip:Description>
+                    </freightShip:Type>
+                    <freightShip:Factor>
+                        <freightShip:Value>Value</freightShip:Value>
+                        <freightShip:UnitOfMeasurement>
+                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
+                        </freightShip:UnitOfMeasurement>
+                    </freightShip:Factor>
+                </freightShip:Rate>
+                <freightShip:Rate>
+                    <freightShip:Type>
+                        <freightShip:Code>AFTR_DSCNT</freightShip:Code>
+                        <freightShip:Description>AFTR_DSCNT</freightShip:Description>
+                    </freightShip:Type>
+                    <freightShip:Factor>
+                        <freightShip:Value>Value</freightShip:Value>
+                        <freightShip:UnitOfMeasurement>
+                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
+                        </freightShip:UnitOfMeasurement>
+                    </freightShip:Factor>
+                </freightShip:Rate>
+                <freightShip:TotalShipmentCharge>
+                    <freightShip:CurrencyCode>CurrencyCode</freightShip:CurrencyCode>
+                    <freightShip:MonetaryValue>MonetaryValue</freightShip:MonetaryValue>
+                </freightShip:TotalShipmentCharge>
+                <freightShip:BillableShipmentWeight>
+                    <freightShip:UnitOfMeasurement>
+                        <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
+                    </freightShip:UnitOfMeasurement>
+                    <freightShip:Value>BillableShipmentWeight</freightShip:Value>
+                </freightShip:BillableShipmentWeight>
+                <freightShip:Service>
+                    <freightShip:Code>Service code</freightShip:Code>
+                </freightShip:Service>
+                <freightShip:TimeInTransit>
+                    <freightShip:DaysInTransit>DaysInTransit</freightShip:DaysInTransit>
+                </freightShip:TimeInTransit>
+            </freightShip:ShipmentResults>
+        </freightShip:FreightShipResponse>
     </soapenv:Body>
 </soapenv:Envelope>
 """
@@ -200,7 +290,7 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
     <soapenv:Header />
     <soapenv:Body>
-        <freightShip:FreightShipResponse xmlns:freightShip="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0">
+        <ship:ShipmentResponse xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0">
             <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
                 <common:ResponseStatus>
                     <common:Code>1</common:Code>
@@ -210,89 +300,52 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
             </common:Response>
-            <freightShip:ShipmentResults>
-                <freightShip:OriginServiceCenterCode>OriginServiceCenterCode</freightShip:OriginServiceCenterCode>
-                <freightShip:ShipmentNumber>Shipment Number</freightShip:ShipmentNumber>
-                <freightShip:BOLID>BOLID</freightShip:BOLID>
-                <freightShip:GuaranteedIndicator />
-                <freightShip:Rate>
-                    <freightShip:Type>
-                        <freightShip:Code>DSCNT</freightShip:Code>
-                        <freightShip:Description>DSCNT</freightShip:Description>
-                    </freightShip:Type>
-                    <freightShip:Factor>
-                        <freightShip:Value>Value</freightShip:Value>
-                        <freightShip:UnitOfMeasurement>
-                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
-                        </freightShip:UnitOfMeasurement>
-                    </freightShip:Factor>
-                </freightShip:Rate>
-                <freightShip:Rate>
-                    <freightShip:Type>
-                        <freightShip:Code>DSCNT_RATE</freightShip:Code>
-                        <freightShip:Description>DSCNT_RATE</freightShip:Description>
-                    </freightShip:Type>
-                    <freightShip:Factor>
-                        <freightShip:Value>Value</freightShip:Value>
-                        <freightShip:UnitOfMeasurement>
-                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
-                        </freightShip:UnitOfMeasurement>
-                    </freightShip:Factor>
-                </freightShip:Rate>
-                <freightShip:Rate>
-                    <freightShip:Type>
-                        <freightShip:Code>2</freightShip:Code>
-                        <freightShip:Description>2</freightShip:Description>
-                    </freightShip:Type>
-                    <freightShip:Factor>
-                        <freightShip:Value>Value</freightShip:Value>
-                        <freightShip:UnitOfMeasurement>
-                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
-                        </freightShip:UnitOfMeasurement>
-                    </freightShip:Factor>
-                </freightShip:Rate>
-                <freightShip:Rate>
-                    <freightShip:Type>
-                        <freightShip:Code>LND_GROSS</freightShip:Code>
-                        <freightShip:Description>LND_GROSS</freightShip:Description>
-                    </freightShip:Type>
-                    <freightShip:Factor>
-                        <freightShip:Value>Value</freightShip:Value>
-                        <freightShip:UnitOfMeasurement>
-                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
-                        </freightShip:UnitOfMeasurement>
-                    </freightShip:Factor>
-                </freightShip:Rate>
-                <freightShip:Rate>
-                    <freightShip:Type>
-                        <freightShip:Code>AFTR_DSCNT</freightShip:Code>
-                        <freightShip:Description>AFTR_DSCNT</freightShip:Description>
-                    </freightShip:Type>
-                    <freightShip:Factor>
-                        <freightShip:Value>Value</freightShip:Value>
-                        <freightShip:UnitOfMeasurement>
-                            <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
-                        </freightShip:UnitOfMeasurement>
-                    </freightShip:Factor>
-                </freightShip:Rate>
-                <freightShip:TotalShipmentCharge>
-                    <freightShip:CurrencyCode>CurrencyCode</freightShip:CurrencyCode>
-                    <freightShip:MonetaryValue>MonetaryValue</freightShip:MonetaryValue>
-                </freightShip:TotalShipmentCharge>
-                <freightShip:BillableShipmentWeight>
-                    <freightShip:UnitOfMeasurement>
-                        <freightShip:Code>UnitOfMeasurement code</freightShip:Code>
-                    </freightShip:UnitOfMeasurement>
-                    <freightShip:Value>BillableShipmentWeight</freightShip:Value>
-                </freightShip:BillableShipmentWeight>
-                <freightShip:Service>
-                    <freightShip:Code>Service code</freightShip:Code>
-                </freightShip:Service>
-                <freightShip:TimeInTransit>
-                    <freightShip:DaysInTransit>DaysInTransit</freightShip:DaysInTransit>
-                </freightShip:TimeInTransit>
-            </freightShip:ShipmentResults>
-        </freightShip:FreightShipResponse>
+            <ship:ShipmentResults>
+                <ship:ShipmentCharges>
+                    <ship:TransportationCharges>
+                        <ship:CurrencyCode>USD</ship:CurrencyCode>
+                        <ship:MonetaryValue>88.12</ship:MonetaryValue>
+                    </ship:TransportationCharges>
+                    <ship:ServiceOptionsCharges>
+                        <ship:CurrencyCode>USD</ship:CurrencyCode>
+                        <ship:MonetaryValue>0.00</ship:MonetaryValue>
+                    </ship:ServiceOptionsCharges>
+                    <ship:TotalCharges>
+                        <ship:CurrencyCode>USD</ship:CurrencyCode>
+                        <ship:MonetaryValue>88.12</ship:MonetaryValue>
+                    </ship:TotalCharges>
+                </ship:ShipmentCharges>
+                <ship:NegotiatedRateCharges>
+                    <ship:TotalCharge>
+                        <ship:CurrencyCode>USD</ship:CurrencyCode>
+                        <ship:MonetaryValue>70.00</ship:MonetaryValue>
+                    </ship:TotalCharge>
+                </ship:NegotiatedRateCharges>
+                <ship:BillingWeight>
+                    <ship:UnitOfMeasurement>
+                        <ship:Code>LBS</ship:Code>
+                        <ship:Description>Pounds</ship:Description>
+                    </ship:UnitOfMeasurement>
+                    <ship:Weight>10.0</ship:Weight>
+                </ship:BillingWeight>
+                <ship:ShipmentIdentificationNumber>1ZWA82900191640782</ship:ShipmentIdentificationNumber>
+                <ship:PackageResults>
+                    <ship:TrackingNumber>1ZWA82900191640782</ship:TrackingNumber>
+                    <ship:ServiceOptionsCharges>
+                        <ship:CurrencyCode>USD</ship:CurrencyCode>
+                        <ship:MonetaryValue>0.00</ship:MonetaryValue>
+                    </ship:ServiceOptionsCharges>
+                    <ship:ShippingLabel>
+                        <ship:ImageFormat>
+                            <ship:Code>GIF</ship:Code>
+                            <ship:Description>GIF</ship:Description>
+                        </ship:ImageFormat>
+                        <ship:GraphicImage>R0lGODdheAUgA+cAAAAAAAEBAQIC (Truncated)</ship:GraphicImage>
+                        <ship:HTMLImage>PCFET0NUWVBFIEhUTUwgUFVCTElD(Truncated)</ship:HTMLImage>
+                    </ship:ShippingLabel>
+                </ship:PackageResults>
+            </ship:ShipmentResults>
+        </ship:ShipmentResponse>
     </soapenv:Body>
 </soapenv:Envelope>
 """
