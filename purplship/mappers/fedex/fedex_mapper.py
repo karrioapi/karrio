@@ -52,7 +52,7 @@ class FedexMapper(Mapper):
         for line in payload.recipient.address_lines:
             recipient.Address.StreetLines.append(line)
 
-        totalWeight = reduce(lambda r, p: r + p.weight, payload.shipment.packages, 0)
+        totalWeight = payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.packages, 0)
 
         packaging_type = payload.shipment.packaging_type or "YOUR_PACKAGING" 
 
@@ -124,14 +124,24 @@ class FedexMapper(Mapper):
 
 
     def create_shipment_request(self, payload: E.shipment_request) -> Ship.ProcessShipmentRequest:
-        ShipmentAuthorizationDetail_ = Ship.ShipmentAuthorizationDetail(
-            AccountNumber=payload.shipment.shipper_account_number or payload.shipment.shipper_account_number or self.client.account_number
+        ShipmentAuthorizationDetail_ = None if not payload.shipment.shipper_account_number else Ship.ShipmentAuthorizationDetail(
+            AccountNumber=payload.shipment.shipper_account_number
         )
 
         def _create_party(data: E.party, account_number: str) -> Ship.Party:
             Party_ = Ship.Party(
                 AccountNumber=account_number,
-                Tins=data.extra.get('Tins'),
+                Tins=_optional(
+                    data.extra.get('Tins'), ('Tins' in data.extra),
+                    lambda tins: [ Ship.TaxpayerIdentification(
+                            TinType=tin.get('TinType'),
+                            Number=tin.get('Number'),
+                            Usage=tin.get('Usage'),
+                            EffectiveDate=tin.get('EffectiveDate'),
+                            ExpirationDate=tin.get('ExpirationDate')
+                        ) for tin in tins
+                    ]
+                ),
                 Address=Ship.Address(
                     StreetLines=data.address_lines,
                     City=data.city,
@@ -142,7 +152,13 @@ class FedexMapper(Mapper):
                     CountryName=data.country_name,
                     Residential=data.extra.get('Residential'),
                     GeographicCoordinates=data.extra.get('GeographicCoordinates')
-                ),
+                ) if any([
+                    data.address_lines,
+                    data.city,
+                    data.postal_code,
+                    data.country_code,
+                    data.country_name
+                ]) else None,
             )
 
             if any([
@@ -207,8 +223,11 @@ class FedexMapper(Mapper):
             ShipTimestamp=datetime.now(),
             DropoffType=payload.shipment.extra.get("DropoffType") or "REGULAR_PICKUP",
             ServiceType=payload.shipment.extra.get("ServiceType") or "INTERNATIONAL_PRIORITY",
-            PackagingType=payload.shipment.extra.get("PackagingType"),
-            TotalWeight=payload.shipment.total_weight or reduce(lambda t, p: t + p.weight, payload.shipment.packages,0),
+            PackagingType=payload.shipment.packaging_type,
+            TotalWeight=None if not payload.shipment.total_weight else Ship.Weight(
+                Units=payload.shipment.weight_unit, 
+                Value=payload.shipment.total_weight
+            ),
             TotalInsuredValue=payload.shipment.insured_amount,
             PreferredCurrency=payload.shipment.currency or "USD",
             ShipmentAuthorizationDetail=ShipmentAuthorizationDetail_,
@@ -216,17 +235,145 @@ class FedexMapper(Mapper):
             Recipient=Recipient_,
             RecipientLocationNumber=payload.shipment.extra.get("RecipientLocationNumber"),
             Origin=payload.shipment.extra.get("Origin"),
-            SoldTo=payload.shipment.paid_by,
+            # SoldTo=payload.shipment.paid_by,
+            SpecialServicesRequested=_optional(
+                payload.shipment.extra.get('SpecialServicesRequested'), ('SpecialServicesRequested' in payload.shipment.extra),
+                lambda svc: Ship.ShipmentSpecialServicesRequested(
+                        SpecialServiceTypes=_optional(
+                            svc.get('SpecialServiceTypes'), ('SpecialServiceTypes' in svc),
+                            lambda types: [t for t in types] or None
+                        ),
+                        CodDetail=_optional(
+                            svc.get('CodDetail'), ('CodDetail' in svc),
+                            lambda detail: Ship.CodDetail(
+                                CodCollectionAmount=detail.get('CodCollectionAmount'),
+                                AddTransportationChargesDetail=_optional(
+                                    detail.get('AddTransportationChargesDetail'), ('AddTransportationChargesDetail' in detail), 
+                                    lambda transport: Ship.CodAddTransportationChargesDetail(
+                                        RateTypeBasis=transport.get('RateTypeBasis'),
+                                        ChargeBasis=transport.get('ChargeBasis'),
+                                        ChargeBasisLevel=transport.get('ChargeBasisLevel')
+                                    )
+                                ),
+                                CollectionType=detail.get('CollectionType'),
+                                # CodRecipient=detail.get('CodRecipient'),
+                                FinancialInstitutionContactAndAddress=detail.get('FinancialInstitutionContactAndAddress'),
+                                RemitToName=detail.get('RemitToName'), 
+                                ReferenceIndicator=detail.get('ReferenceIndicator'),
+                                ReturnTrackingId=detail.get('ReturnTrackingId')
+                            )
+                        ),
+                        # DeliveryOnInvoiceAcceptanceDetail=,
+                        # HoldAtLocationDetail=,
+                        # EventNotificationDetail=,
+                        # ReturnShipmentDetail=,
+                        # PendingShipmentDetail=,
+                        # InternationalControlledExportDetail=,
+                        InternationalTrafficInArmsRegulationsDetail=_optional(
+                            svc.get('InternationalTrafficInArmsRegulationsDetail'), ('InternationalTrafficInArmsRegulationsDetail' in svc),
+                            lambda detail: Ship.InternationalTrafficInArmsRegulationsDetail(
+                                LicenseOrExemptionNumber=detail.get('LicenseOrExemptionNumber')
+                            )
+                        ),
+                        # ShipmentDryIceDetail=,
+                        # HomeDeliveryPremiumDetail=,
+                        # FreightGuaranteeDetail=,
+                        # EtdDetail=,
+                        # CustomDeliveryWindowDetail=
+                    ) 
+            ),
             FreightShipmentDetail=FreightShipmentDetail_,
             DeliveryInstructions=payload.shipment.extra.get("DeliveryInstructions"),
             BlockInsightVisibility=payload.shipment.extra.get("BlockInsightVisibility"),
-            RateRequestTypes=payload.shipment.extra.get('RateRequestTypes') or 'LIST',
+            RateRequestTypes=payload.shipment.extra.get('RateRequestTypes') or ['LIST'],
             EdtRequestType=payload.shipment.extra.get('EdtRequestType'),
             MasterTrackingId=payload.shipment.extra.get('MasterTrackingId'),
             PackageCount=len(payload.shipment.packages),
-            # ShippingDocumentSpecification=,           TODO: Implement this when required 
             # ConfigurationData=,                       TODO: Implement this when required
         )
+
+        if 'ShippingDocumentSpecification' in payload.shipment.extra:
+            SDocSpec = payload.shipment.extra.get("ShippingDocumentSpecification")
+            RequestedShipment_.ShippingChargesPayment = Ship.ShippingDocumentSpecification(
+                ShippingDocumentTypes=SDocSpec.get("ShippingDocumentTypes"),
+                CertificateOfOrigin=SDocSpec.get("CertificateOfOrigin"),
+                CustomPackageDocumentDetail=SDocSpec.get('CustomPackageDocumentDetail'),
+                CustomShipmentDocumentDetail=SDocSpec.get('CustomShipmentDocumentDetail'),
+                ExportDeclarationDetail=_optional(
+                    SDocSpec.get('ExportDeclarationDetail'), ('ExportDeclarationDetail' in SDocSpec),
+                    lambda detail : Ship.ExportDeclarationDetail(
+                        DocumentFormat=detail.get('DocumentFormat'),
+                        CustomerImageUsages=[Ship.CustomerImageUsage(
+                            Type=c.get('Type'),
+                            Id=c.get('Id')
+                        ) for c in detail.get('CustomerImageUsages')] or None
+                    )
+                ),
+                GeneralAgencyAgreementDetail=_optional(
+                    SDocSpec.get('GeneralAgencyAgreementDetail'), ('GeneralAgencyAgreementDetail' in SDocSpec),
+                    lambda detail : Ship.GeneralAgencyAgreementDetail(
+                        Format=detail.get('Format')
+                    )
+                ),
+                NaftaCertificateOfOriginDetail=_optional(
+                    SDocSpec.get('NaftaCertificateOfOriginDetail'), ('NaftaCertificateOfOriginDetail' in SDocSpec),
+                    lambda spec : Ship.NaftaCertificateOfOriginDetail(
+                        Format=spec.get('Format'),
+                        BlanketPeriod=spec.get('BlanketPeriod'),
+                        ImporterSpecification=spec.get('ImporterSpecification'),
+                        SignatureContact=spec.get('SignatureContact'),
+                        ProducerSpecification=spec.get('ProducerSpecification'),
+                        Producers=[Ship.NaftaProducer(
+                            Id=p.get('Id'),
+                            Producer=p.get('Producer')
+                        ) for p in spec.get('Producers')] or None,
+                        CustomerImageUsages=[Ship.CustomerImageUsage(
+                            Type=c.get('Type'),
+                            Id=c.get('Id')
+                        ) for c in spec.get('CustomerImageUsages')] or None
+                    )
+                ),
+                Op900Detail=_optional(
+                    SDocSpec.get('Op900Detail'), ('Op900Detail' in SDocSpec),
+                    lambda spec: Ship.Op900Detail(
+                        Format=spec.get('Format'),
+                        Reference=spec.get('Reference'),
+                        CustomerImageUsages=[Ship.CustomerImageUsage(
+                            Type=c.get('Type'),
+                            Id=c.get('Id')
+                        ) for c in spec.get('CustomerImageUsages')] or None,
+                        SignatureName=spec.get('SignatureName')
+                    )
+                ),
+                DangerousGoodsShippersDeclarationDetail=_optional(
+                    SDocSpec.get('DangerousGoodsShippersDeclarationDetail'), ('DangerousGoodsShippersDeclarationDetail' in SDocSpec),
+                    lambda detail : Ship.DangerousGoodsShippersDeclarationDetail(
+                        Format=detail.get('Format'),
+                        CustomerImageUsages=[Ship.CustomerImageUsage(
+                            Type=c.get('Type'),
+                            Id=c.get('Id')
+                        ) for c in detail.get('CustomerImageUsages')] or None,
+                    )
+                ),
+                FreightAddressLabelDetail=_optional(
+                    SDocSpec.get('FreightAddressLabelDetail'), ('FreightAddressLabelDetail' in SDocSpec),
+                    lambda detail : Ship.FreightAddressLabelDetail(
+                        Format=detail.get("Format"),
+                        Copies=detail.get("Copies"), 
+                        StartingPosition=detail.get("StartingPosition"),
+                        DocTabContent=detail.get("DocTabContent"),
+                        CustomContentPosition=detail.get("CustomContentPosition"),
+                        CustomContent=detail.get("CustomContent")
+                    )
+                ),
+                ReturnInstructionsDetail=_optional(
+                    SDocSpec.get('ReturnInstructionsDetail'), ('ReturnInstructionsDetail' in SDocSpec),
+                    lambda detail : Ship.ReturnInstructionsDetail(
+                        Format=detail.get('Format'),
+                        CustomText=detail.get('CustomText')
+                    )
+                ),
+            )
 
         for id, pkg in enumerate(payload.shipment.packages):
             RequestedShipment_.RequestedPackageLineItems.append(
@@ -249,7 +396,10 @@ class FedexMapper(Mapper):
                     PhysicalPackaging=pkg.extra.get("PhysicalPackaging"),
                     ItemDescription=pkg.description,
                     ItemDescriptionForClearance=pkg.extra.get("ItemDescriptionForClearance"),
-                    CustomerReferences=pkg.extra.get("CustomerReferences"),
+                    CustomerReferences=[Ship.CustomerReference(
+                        CustomerReferenceType=r.get('CustomerReferenceType'),
+                        Value=r.get('Value')
+                    ) for r in pkg.extra.get('CustomerReferences')] or None,
                     SpecialServicesRequested=pkg.extra.get("SpecialServicesRequested"),
                     ContentRecords=pkg.extra.get("ContentRecords")
                 )
@@ -257,7 +407,7 @@ class FedexMapper(Mapper):
 
         if 'Payor' in payload.shipment.extra or payload.shipment.paid_by is not None:
             if payload.shipment.paid_by == 'THIRD_PARTY':
-                ResponsibleParty_ = _create_party(E.party(**payload.shipment.extra('Payor')), payload.shipment.billing_account_number)  
+                ResponsibleParty_ = _create_party(E.party(**payload.shipment.extra.get('Payor')), payload.shipment.billing_account_number)  
             else:
                 ResponsibleParty_ = Shipper_
             RequestedShipment_.ShippingChargesPayment=Ship.Payment(
@@ -307,7 +457,12 @@ class FedexMapper(Mapper):
                 CustomsOptions=payload.shipment.customs.extra.get("CustomsOptions"),
                 ImporterOfRecord=payload.shipment.customs.extra.get("ImporterOfRecord"),
                 RecipientCustomsId=payload.shipment.customs.extra.get('RecipientCustomsId'),
-                DutiesPayment=payload.shipment.duty_payment_account,
+                # DutiesPayment=_optional(
+                #     payload.shipment.customs, any([
+                #         payload.shipment.duty_paid_by,
+                #         payload.shipment.extra.get('Payor')
+                #     ])
+                # ),
                 DocumentContent=payload.shipment.customs.description,
                 CustomsValue=payload.shipment.customs.extra.get('CustomsValue'),
                 FreightOnValue=payload.shipment.customs.extra.get('FreightOnValue'),
@@ -350,25 +505,6 @@ class FedexMapper(Mapper):
                 PackingListEnclosed=payload.shipment.extra.get("ExpressFreightDetail").get("PackingListEnclosed"),
                 ShippersLoadAndCount=payload.shipment.extra.get("ExpressFreightDetail").get("ShippersLoadAndCount"),
                 BookingConfirmationNumber=payload.shipment.extra.get("ExpressFreightDetail").get("BookingConfirmationNumber")
-            )
-
-        if 'SpecialServicesRequested' in payload.shipment.extra:
-
-            RequestedShipment_.SpecialServicesRequested = Ship.ShipmentSpecialServicesRequested(
-                # SpecialServiceTypes=,
-                # CodDetail=,
-                # DeliveryOnInvoiceAcceptanceDetail=,
-                # HoldAtLocationDetail=,
-                # EventNotificationDetail=,
-                # ReturnShipmentDetail=,
-                # PendingShipmentDetail=,
-                # InternationalControlledExportDetail=,
-                # InternationalTrafficInArmsRegulationsDetail=,
-                # ShipmentDryIceDetail=,
-                # HomeDeliveryPremiumDetail=,
-                # FreightGuaranteeDetail=,
-                # EtdDetail=,
-                # CustomDeliveryWindowDetail=
             )
 
         if 'ManifestDetail' in payload.shipment.extra:
@@ -461,3 +597,9 @@ class FedexMapper(Mapper):
                 ), trackDetail.Events))
             )
         ]
+
+
+def _optional(parent: 'S', condition: bool, instanciate: 'lambda', fallback: 'T' = None) -> 'Q':
+    """
+    """
+    return instanciate(parent) if condition else fallback

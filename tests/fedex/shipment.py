@@ -13,10 +13,12 @@ class TestFedExShipment(unittest.TestCase):
         self.ShipmentRequest = ProcessShipmentRequest()
         self.ShipmentRequest.build(get_node_from_xml(ShipmentRequestXml, 'ProcessShipmentRequest'))
 
-    # def test_create_shipment_request(self):
-    #     payload = Shipment.create(**shipment_data)
-    #     ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
-    #     self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
+    def test_create_shipment_request(self):
+        payload = Shipment.create(**shipment_data)
+        ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
+        ShipmentRequest_.RequestedShipment.ShipTimestamp = None
+        print(export(ShipmentRequest_))
+        self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
 
     @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
     def test_create_shipment(self, http_mock):
@@ -55,6 +57,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                 <ns:DropoffType>REGULAR_PICKUP</ns:DropoffType>
                 <ns:ServiceType>INTERNATIONAL_PRIORITY</ns:ServiceType>
                 <ns:PackagingType>YOUR_PACKAGING</ns:PackagingType>
+                <ns:PreferredCurrency>USD</ns:PreferredCurrency>
                 <ns:Shipper>
                     <ns:Contact>
                         <ns:PersonName>Input Your Information</ns:PersonName>
@@ -201,7 +204,7 @@ shipment_data = {
         "email_address": "Input Your Information",
         "address_lines": ["Input Your Information", "Input Your Information"],
         "city": "MEMPHIS",
-        "state": "TN",
+        "state_code": "TN",
         "postal_code": "38117",
         "country_code": "US"
     },
@@ -212,27 +215,101 @@ shipment_data = {
         "email_address": "Input Your Information",
         "address_lines": ["Input Your Information", "Input Your Information"],
         "city": "RICHMOND",
-        "state": "BC",
+        "state_code": "BC",
         "postal_code": "V7C4v7",
         "country_code": "CA"
     },
     "shipment": {
+        "number_of_packages": 1,
         "paid_by": "THIRD_PARTY",
         "packaging_type": "YOUR_PACKAGING",
         "services": ["INTERNATIONAL_PRIORITY"],
         "billing_account_number": "Input Your Information",
+        "duty_paid_by": "SENDER",
+        "declared_value": "100.",
+        "currency": "USD",
+        "weight_unit": "LB",
+        "dimension_unit": "IN",
+        "packages": [
+            {
+                "id": "1",
+                "weight": 20.0,
+                "length": 12,
+                "width": 12,
+                "height": 12,
+                "extra": {
+                    "CustomerReferences": [
+                        {
+                            "CustomerReferenceType": "CUSTOMER_REFERENCE",
+                            "Value": "TC001_01_PT1_ST01_PK01_SNDUS_RCPCA_POS"
+                        }
+                    ]
+                }
+            }
+        ],
+        "label": {
+            "format": "COMMON2D",
+            "type": "PNG",
+            "extra": {
+                "LabelStockType": "PAPER_7X4.75"
+            }
+        },
+        "commodities": [
+            {
+                "description": "ABCD",
+                "extra": {
+                    "NumberOfPieces": 1,
+                    "CountryOfManufacture": "US",
+                    "QuantityUnits": "cm",
+                    "Quantity": 1.0,
+                    "Weight": {
+                        "Unit": "LB",
+                        "Value": "1."
+                    },
+                    "UnitPrice": {
+                        "Currency": "USD",
+                        "Amount": 1.0
+                    },
+                    "CustomsVallue": {
+                        "Currency": "USD",
+                        "Amount": 100.0
+                    }
+                }
+            }
+        ],
         "extra": {
             "Payor": {
                 "person_name": "Input Your Information",
                 "extra": {
                     "ContactId": "12345",
-                    "Tins": {
-                        "TinType": "BUSINESS_STATE",
-                        "Number": "213456"
-                    }
+                    "Tins": [
+                        {
+                            "TinType": "BUSINESS_STATE",
+                            "Number": "213456"
+                        }
+                    ]
                 }
             },
-            "DropoffType": "REGULAR_PICKUP"
+            "ExportDetail": {
+                "ExportComplianceStatement": "30.37(f)"
+            },
+            "DropoffType": "REGULAR_PICKUP",
+            "SpecialServicesRequested": {
+                "SpecialServiceTypes": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
+                "InternationalTrafficInArmsRegulationsDetail": {
+                    "LicenseOrExemptionNumber": 12345
+                }
+            },
+            "ShippingDocumentSpecification": {
+                "ShippingDocumentTypes": "COMMERCIAL_INVOICE",
+                "CommercialInvoiceDetail": {
+                    "Format": {
+                        "ImageType": "PDF",
+                        "StockType": "PAPER_LETTER",
+                        "ProvideInstructions": True
+                    }
+                }
+            }
         }
     }
 }
