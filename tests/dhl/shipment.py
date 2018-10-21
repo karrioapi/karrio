@@ -160,7 +160,7 @@ ParsedShipmentResponse =  [
         'services': ['EXPRESS WORLDWIDE', 'DUTIES & TAXES PAID ', 'PAPERLESS TRADE ', 'C', 'DTP', 'PLT'], 
         'shipment_date': '2017-11-10', 
         'total_charge': {'amount': '155.160', 'currency': 'USD', 'name': 'Shipment charge'}, 
-        'tracking_number': '0044650491'
+        'tracking_numbers': ['0044650491']
     }, 
     []
 ]

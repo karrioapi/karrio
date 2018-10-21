@@ -75,7 +75,7 @@ NCParsedShipmentResponse = [
         'services': ['DOM.EP', 'DC'], 
         'shipment_date': '2012-03-14', 
         'total_charge': {'amount': '21.99', 'currency': 'CAD', 'name': 'Shipment charge'}, 
-        'tracking_number': '12345678901234'
+        'tracking_numbers': ['12345678901234']
     }, 
     []
 ]
@@ -98,7 +98,7 @@ ParsedShipmentResponse = [
         'services': ['DOM.EP', 'DC', 'UP'], 
         'shipment_date': '2011-10-07', 
         'total_charge': {'amount': '19.88', 'currency': 'CAD', 'name': 'Shipment charge'}, 
-        'tracking_number': '12345'
+        'tracking_numbers': ['12345']
     }, 
     []
 ]

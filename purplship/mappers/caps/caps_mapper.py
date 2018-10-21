@@ -137,7 +137,7 @@ class CanadaPostMapper(Mapper):
 
         return E.ShipmentDetails(
             carrier=self.client.carrier_name,
-            tracking_number=info.tracking_pin,
+            tracking_numbers=[info.tracking_pin],
             total_charge=E.ChargeDetails(
                 name="Shipment charge",
                 amount=data.cc_receipt_details.charge_amount if is_non_contract else data.due_amount,

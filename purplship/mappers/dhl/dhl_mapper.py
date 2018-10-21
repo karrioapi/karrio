@@ -432,7 +432,7 @@ class DHLMapper(Mapper):
         currency_ = get("CurrencyCode")
         return E.ShipmentDetails(
             carrier=self.client.carrier_name,
-            tracking_number=tracking_number,
+            tracking_numbers=[tracking_number],
             shipment_date= get("ShipmentDate"),
             services=(
                 [get("ProductShortName")] +

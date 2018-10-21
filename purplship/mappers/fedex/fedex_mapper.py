@@ -7,6 +7,7 @@ from purplship.mappers.fedex.fedex_client import FedexClient
 from purplship.domain.mapper import Mapper
 from purplship.domain import entities as E
 from pyfedex.rate_v22 import WebAuthenticationCredential, WebAuthenticationDetail, ClientDetail
+from base64 import b64encode
 
 class FedexMapper(Mapper):
     def __init__(self, client: FedexClient):
@@ -386,7 +387,7 @@ class FedexMapper(Mapper):
 
 
 
-    def parse_error_response(self, response) -> List[E.Error]:
+    def parse_error_response(self, response: 'XMLElement') -> List[E.Error]:
         notifications = response.xpath(
             './/*[local-name() = $name]', name="Notifications"
         ) + response.xpath(
@@ -395,21 +396,25 @@ class FedexMapper(Mapper):
         return reduce(self._extract_error, notifications, [])
 
 
-    def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_quote_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         rate_replys = response.xpath('.//*[local-name() = $name]', name="RateReplyDetails")
         quotes = reduce(self._extract_quote, rate_replys, [])
         return (quotes, self.parse_error_response(response))
 
 
-    def parse_tracking_response(self, response) -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_tracking_response(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
         track_details = response.xpath('.//*[local-name() = $name]', name="TrackDetails")
         trackings = reduce(self._extract_tracking, track_details, [])
         return (trackings, self.parse_error_response(response))
 
 
+    def parse_shipment_response(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+        details = response.xpath('.//*[local-name() = $name]', name="CompletedShipmentDetail")
+        shipment = self._extract_shipment(details[0]) if len(details) > 0 else None
+        return (shipment, self.parse_error_response(response))
 
 
-    def _extract_error(self, errors: List[E.Error], notificationNode) -> List[E.Error]:
+    def _extract_error(self, errors: List[E.Error], notificationNode: 'XMLElement') -> List[E.Error]:
         notification = Rate.Notification()
         notification.build(notificationNode)
         if notification.Severity in ('SUCCESS', 'NOTE'):
@@ -419,7 +424,7 @@ class FedexMapper(Mapper):
         ]
 
 
-    def _extract_quote(self, quotes: List[E.QuoteDetails], detailNode) -> List[E.QuoteDetails]: 
+    def _extract_quote(self, quotes: List[E.QuoteDetails], detailNode: 'XMLElement') -> List[E.QuoteDetails]: 
         detail = Rate.RateReplyDetail()
         detail.build(detailNode)
         if not detail.RatedShipmentDetails:
@@ -443,7 +448,7 @@ class FedexMapper(Mapper):
         ]
 
 
-    def _extract_tracking(self, trackings: List[E.TrackingDetails], trackDetailNode) -> List[E.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[E.TrackingDetails], trackDetailNode: 'XMLElement') -> List[E.TrackingDetails]:
         trackDetail = Track.TrackDetail()
         trackDetail.build(trackDetailNode)
         if trackDetail.Notification.Severity == 'ERROR':
@@ -461,3 +466,54 @@ class FedexMapper(Mapper):
                 ), trackDetail.Events))
             )
         ]
+
+
+    def _extract_shipment(self, shipmentDetailNode: 'XMLElement') -> E.ShipmentDetails:
+        detail = Ship.CompletedShipmentDetail()
+        detail.build(shipmentDetailNode)
+
+        def get_rateDetail() -> Ship.ShipmentRateDetail:
+            return detail.ShipmentRating.ShipmentRateDetails[0]
+
+        def get_packages() -> List[Ship.CompletedPackageDetail]:
+            return detail.CompletedPackageDetails
+
+        shipment = get_rateDetail()
+        packages = get_packages()
+
+        return E.ShipmentDetails(
+            carrier=self.client.carrier_name,
+            tracking_numbers=reduce(
+                lambda ids, pkg: ids + [id.TrackingNumber for id in pkg.TrackingIds], packages, []
+            ),
+            total_charge=E.ChargeDetails(
+                name="Shipment charge",
+                amount=shipment.TotalNetChargeWithDutiesAndTaxes.Amount,
+                currency=shipment.TotalNetChargeWithDutiesAndTaxes.Currency
+            ),
+            charges=[E.ChargeDetails(
+                    name="base_charge",
+                    amount=shipment.TotalBaseCharge.Amount,
+                    currency=shipment.TotalBaseCharge.Currency
+            ), E.ChargeDetails(
+                    name="discount",
+                    amount=detail.ShipmentRating.EffectiveNetDiscount.Amount,
+                    currency=detail.ShipmentRating.EffectiveNetDiscount.Currency
+            )] + 
+            [E.ChargeDetails(
+                    name=surcharge.SurchargeType,
+                    amount=surcharge.Amount.Amount,
+                    currency=surcharge.Amount.Currency
+            ) for surcharge in shipment.Surcharges] + 
+            [E.ChargeDetails(
+                    name=fee.Type,
+                    amount=fee.Amount.Amount,
+                    currency=fee.Amount.Currency
+            ) for fee in shipment.AncillaryFeesAndTaxes],
+            services=[
+                detail.ServiceTypeDescription
+            ],
+            documents=reduce(
+               lambda labels, pkg: labels + [str(b64encode(part.Image), 'utf-8') for part in pkg.Label.Parts], packages, []
+            )
+        )
