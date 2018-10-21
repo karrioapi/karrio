@@ -150,7 +150,7 @@ class CanadaPostProxy(Proxy):
                     ('Accept', link.get('media-type')),
                     ('Authorization', "Basic %s" % self.authorization),
                     ('Accept-language', 'en-CA')
-                ] + [('Content-Type', link.get('media-type'))] if is_ncdetails else []
+                ] + ([('Content-Type', link.get('media-type'))] if is_ncdetails else [])
             )), 
             ("method", "POST" if is_ncdetails else "GET")
         ])

@@ -79,8 +79,19 @@ class TestShipment(unittest.TestCase):
             link = xml_tostring(get_info_mock.call_args[0][0])
             self.assertEqual(
                 strip(link), 
-                strip("""<link rel="price" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/price" media-type="application/vnd.cpc.shipment-v8+xml" />""")
+                strip(ShipmentPriceLinkXML)
             )
+
+
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    def test_get_info(self, http_mock):
+        proxy._get_info(to_xml(ShipmentPriceLinkXML))
+        
+        args = http_mock.call_args[1]
+        self.assertEqual(
+            jsonify(args), 
+            GetInfoRequestArgs
+        )
 
 if __name__ == '__main__':
     unittest.main()
@@ -130,6 +141,20 @@ ParsedShipmentResponse = [
     []
 ]
 
+GetInfoRequestArgs =  {
+    'url': 'https://XX/rs/111111111/2222222222/shipment/347881315405043891/price', 
+    'headers': {
+        'Accept': 'application/vnd.cpc.shipment-v8+xml', 
+        'Authorization': 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 
+        'Accept-language': 'en-CA'
+    }, 
+    'method': 'GET'
+}
+
+
+ShipmentPriceLinkXML = """
+<link rel="price" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/price" media-type="application/vnd.cpc.shipment-v8+xml" />
+"""
 
 ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
    <customer-request-id>123456789</customer-request-id>
