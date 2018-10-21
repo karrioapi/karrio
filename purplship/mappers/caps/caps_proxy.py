@@ -62,11 +62,7 @@ class CanadaPostProxy(Proxy):
             name = 'shipment'
             url_ = f"{self.client.server_url}/rs/{self.client.customer_number}/{shipment.customer_request_id}/shipment"
 
-        xmlStr = export(
-            shipment, 
-            name_=name,
-            namespacedef_=namespace
-        )
+        xmlStr = export(shipment, name_=name, namespacedef_=namespace)
 
         result = http(
             url=url_, 
@@ -79,7 +75,18 @@ class CanadaPostProxy(Proxy):
             }, 
             method="POST"
         )
-        return to_xml(result)
+
+        response = to_xml(result)
+
+        if any([s.text == 'create' for s in response.xpath('.//*[local-name() = $name]', name="shipment-status")]):
+            results = exec_parrallel(self._get_info, [
+                link for link in response.xpath('.//*[local-name() = $name]', name="link") if link.get('rel') in [
+                    'price', 'receipt'
+                ]
+            ])
+            return to_xml(bundle_xml(xml_strings=[result] + results))
+        
+        return response
 
     def request_pickup(self, pickup_request_details: Pick.PickupRequestDetailsType, method: str = "POST") -> "XMLElement":
         xmlStr = export(
@@ -135,3 +142,19 @@ class CanadaPostProxy(Proxy):
             method="GET"
         )
         return result
+
+    def _get_info(self, link: 'XMLElement') -> str:
+        href = link.get('href')
+        is_ncdetails = all([(key in href) for key in ['details', 'ncshipment']])
+        args = dict([
+            ("url", href),
+            ("headers", dict([
+                    ('Accept', link.get('media-type')),
+                    ('Authorization', "Basic %s" % self.authorization),
+                    ('Accept-language', 'en-CA')
+                ] + [('Content-Type', link.get('media-type'))] if is_ncdetails else []
+            )), 
+            ("method", "POST" if is_ncdetails else "GET")
+        ])
+        return http(**args)
+

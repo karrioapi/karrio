@@ -429,14 +429,22 @@ class DHLMapper(Mapper):
         barcodes = [child.text for child in shipmentResponseNode.xpath("//Barcodes")[0].getchildren()]
         documents = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
         reference = E.ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
+        currency_ = get("CurrencyCode")
         return E.ShipmentDetails(
             carrier=self.client.carrier_name,
             tracking_number=tracking_number,
             shipment_date= get("ShipmentDate"),
-            service=get("ProductShortName"),
+            services=(
+                [get("ProductShortName")] +
+                [service.text for service in shipmentResponseNode.xpath("//SpecialServiceDesc")] +
+                [service.text for service in shipmentResponseNode.xpath("//InternalServiceCode")]
+            ),
+            charges=[
+                E.ChargeDetails(name="PackageCharge", amount=float(get("PackageCharge")), currency=currency_) 
+            ],
             documents=documents,
             reference=reference,
-            total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
+            total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=currency_)
         )
 
     def _extract_pickup(self, pickup: Union[BookPUResponse, ModifyPURequest]) -> E.PickupDetails:

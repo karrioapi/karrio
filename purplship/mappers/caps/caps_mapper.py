@@ -53,20 +53,25 @@ class CanadaPostMapper(Mapper):
         return shipment
 
 
+    """ Mapper Interface parsing methods """
 
-    def parse_quote_response(self, response) -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_quote_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
         price_quotes = response.xpath('.//*[local-name() = $name]', name="price-quote")
         quotes = reduce(self._extract_quote, price_quotes, [])
         return (quotes, self.parse_error_response(response))
 
-    def parse_tracking_response(self, response) -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_tracking_response(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
         pin_summaries = response.xpath('.//*[local-name() = $name]', name="pin-summary")
         trackings = reduce(self._extract_tracking, pin_summaries, [])
         return (trackings, self.parse_error_response(response))
 
+    def parse_shipment_response(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+        shipment = self._extract_shipment(response) if len(response.xpath('.//*[local-name() = $name]', name="shipment-id")) > 0 else None
+        return (shipment, self.parse_error_response(response))
+
     """ Helpers functions """
 
-    def _extract_error(self, errors: List[E.Error], messageNode) -> List[E.Error]:
+    def _extract_error(self, errors: List[E.Error], messageNode: 'XMLElement') -> List[E.Error]:
         message = Msg.messageType()
         message.build(messageNode)
         return errors + [
@@ -74,7 +79,7 @@ class CanadaPostMapper(Mapper):
                     message=message.description, carrier=self.client.carrier_name)
         ]
 
-    def _extract_quote(self, quotes: List[E.QuoteDetails], price_quoteNode) -> List[E.QuoteDetails]:
+    def _extract_quote(self, quotes: List[E.QuoteDetails], price_quoteNode: 'XMLElement') -> List[E.QuoteDetails]:
         price_quote = Rate.price_quoteType()
         price_quote.build(price_quoteNode)
         discounts = [E.ChargeDetails(name=d.adjustment_name, currency="CAD", amount=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
@@ -97,7 +102,7 @@ class CanadaPostMapper(Mapper):
             )
         ]
 
-    def _extract_tracking(self, trackings: List[E.TrackingDetails], pin_summaryNode) -> List[E.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[E.TrackingDetails], pin_summaryNode: 'XMLElement') -> List[E.TrackingDetails]:
         pin_summary = Track.pin_summary()
         pin_summary.build(pin_summaryNode)
         return trackings + [
@@ -114,6 +119,64 @@ class CanadaPostMapper(Mapper):
                 )]
             )
         ]
+
+    def _extract_shipment(self, response: 'XMLElement') -> E.ShipmentDetails:
+        is_non_contract = len(response.xpath('.//*[local-name() = $name]', name="non-contract-shipment-info")) > 0
+        info = NCShipment.NonContractShipmentInfoType() if is_non_contract else Shipment.ShipmentInfoType()
+        data = NCShipment.NonContractShipmentReceiptType() if is_non_contract else Shipment.ShipmentPriceType()
+        
+        info.build(response.xpath(
+            './/*[local-name() = $name]', 
+            name=("non-contract-shipment-info" if is_non_contract else "shipment-info")
+        )[0])
+        data.build(response.xpath(
+            './/*[local-name() = $name]', 
+            name=("non-contract-shipment-receipt" if is_non_contract else "shipment-price")
+        )[0])
+        currency_ = data.cc_receipt_details.currency if is_non_contract else "CAD" 
+
+        return E.ShipmentDetails(
+            carrier=self.client.carrier_name,
+            tracking_number=info.tracking_pin,
+            total_charge=E.ChargeDetails(
+                name="Shipment charge",
+                amount=data.cc_receipt_details.charge_amount if is_non_contract else data.due_amount,
+                currency=currency_
+            ),
+            charges=(
+                [
+                    E.ChargeDetails(name="base-amount", amount=data.base_amount, currency=currency_),
+                    E.ChargeDetails(name="gst-amount", amount=data.gst_amount, currency=currency_),
+                    E.ChargeDetails(name="pst-amount", amount=data.pst_amount, currency=currency_),
+                    E.ChargeDetails(name="hst-amount", amount=data.hst_amount, currency=currency_),
+                ] + [ 
+                    E.ChargeDetails(
+                        name=adjustment.adjustment_code, 
+                        amount=adjustment.adjustment_amount, 
+                        currency=currency_
+                    ) for adjustment in data.adjustments.get_adjustment()
+                ] + [ 
+                    E.ChargeDetails(
+                        name=option.option_code, 
+                        amount=option.option_price, 
+                        currency=currency_
+                    ) for option in data.priced_options.get_priced_option()
+                ]
+            ),
+            shipment_date=data.service_standard.expected_delivery_date,
+            services=(
+                [data.service_code] +
+                [option.option_code for option in data.priced_options.get_priced_option()]
+            ),
+            documents=[
+                link.get('href') for link in response.xpath('.//*[local-name() = $name]', name="link") if link.get('rel') == 'label'
+            ],
+            reference=E.ReferenceDetails(
+                value=info.shipment_id,
+                type="Shipment Id"
+            )
+        )
+
 
     """ Private functions """
 

@@ -231,15 +231,16 @@ class TrackingDetails:
         self.tracking_number = tracking_number
 
 class ShipmentDetails:
-    def __init__(self, carrier: str, tracking_number: str, total_charge: ChargeDetails, shipment_date: str = None, 
-        service: str = None, documents: List[str] = [], reference: ReferenceDetails = None): 
+    def __init__(self, carrier: str, tracking_number: str, total_charge: ChargeDetails, charges: List[ChargeDetails], shipment_date: str = None, 
+        services: List[str] = None, documents: List[str] = [], reference: ReferenceDetails = None): 
         self.carrier = carrier
         self.tracking_number = tracking_number
         self.shipment_date = shipment_date
         self.documents = documents
-        self.service = service
+        self.services = services
         self.reference = reference
         self.total_charge = total_charge
+        self.charges = charges
 
 class PickupDetails:
     def __init__(self, carrier: str, confirmation_number: str, pickup_date: str = None, 
