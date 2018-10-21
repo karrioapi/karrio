@@ -1,13 +1,28 @@
 import unittest
 from unittest.mock import patch
 import time
-from gds_helpers import to_xml, export, jsonify
+from gds_helpers import to_xml, export, jsonify, xml_tostring
 from pycaps.shipment import ShipmentType
 from pycaps.ncshipment import NonContractShipmentType
 from purplship.domain.entities import Shipment
+from purplship.mappers.caps import CanadaPostProxy
 from tests.caps.fixture import proxy
 from tests.utils import strip
 
+
+MockedShipmentResponseXML = """<shipment-info>
+    <shipment-id>347881315405043891</shipment-id>
+    <shipment-status>created</shipment-status>
+    <tracking-pin>12345</tracking-pin>
+    <links>
+        <link rel="self" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891" media-type="application/vnd.cpc.shipment-v8+xml" />
+        <link rel="details" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/details" media-type="application/vnd.cpc.shipment-v8+xml" />
+        <link rel="group" href="https://XX/rs/111111111/2222222222/shipment?groupid=bobo" media-type="application/vnd.cpc.shipment-v8+xml" />
+        <link rel="price" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/price" media-type="application/vnd.cpc.shipment-v8+xml" />
+        <link rel="label" href="https://XX/rs/artifact/11111111/5555555/0" media-type="application/pdf" index="0" />
+    </links>
+</shipment-info>
+"""
 
 class TestShipment(unittest.TestCase):
     def setUp(self):
@@ -54,6 +69,18 @@ class TestShipment(unittest.TestCase):
             to_xml(NCShipmentResponseXML))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(NCParsedShipmentResponse))
+
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value=MockedShipmentResponseXML)
+    def test_get_info_calls(self, http_mock):
+        with patch.object(CanadaPostProxy, '_get_info', return_value='<a></a>') as get_info_mock:
+            proxy_ = CanadaPostProxy(proxy.client)
+            proxy_.create_shipment(self.NCShipment)
+
+            link = xml_tostring(get_info_mock.call_args[0][0])
+            self.assertEqual(
+                strip(link), 
+                strip("""<link rel="price" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/price" media-type="application/vnd.cpc.shipment-v8+xml" />""")
+            )
 
 if __name__ == '__main__':
     unittest.main()

@@ -77,15 +77,13 @@ class CanadaPostProxy(Proxy):
         )
 
         response = to_xml(result)
+        links = response.xpath('.//*[local-name() = $name]', name="link")
 
-        if any([s.text == 'create' for s in response.xpath('.//*[local-name() = $name]', name="shipment-status")]):
+        if len(links) > 0:
             results = exec_parrallel(self._get_info, [
-                link for link in response.xpath('.//*[local-name() = $name]', name="link") if link.get('rel') in [
-                    'price', 'receipt'
-                ]
+                link for link in links if link.get('rel') in ['price', 'receipt']
             ])
             return to_xml(bundle_xml(xml_strings=[result] + results))
-        
         return response
 
     def request_pickup(self, pickup_request_details: Pick.PickupRequestDetailsType, method: str = "POST") -> "XMLElement":
