@@ -181,7 +181,7 @@ shipment_data = {
         "packages": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
         "shipper_account_number": "123456789",
         "label": {"format": "8.5x11"},
-        "services": ["DOM.EP"],
+        "services": [{ "type": "DOM.EP"}],
         "extra": {
             "cpc-pickup-indicator": True,
             "requested-shipping-point": "K2B8J6", 
@@ -227,7 +227,7 @@ ncshipment_data = {
     "shipment": {
         "packages": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
         "shipper_account_number": "123456789",
-        "services": ["DOM.EP"],
+        "services": [{ "type": "DOM.EP"}],
         "extra": {
             "requested-shipping-point": "J8R1A2", 
             "options": [{"option-code": "DC" }],

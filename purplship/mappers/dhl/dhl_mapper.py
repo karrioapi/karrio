@@ -256,7 +256,7 @@ class DHLMapper(Mapper):
             )
 
         [ShipmentRequest_.add_SpecialService(
-            ShipReq.SpecialService(SpecialServiceType=service)
+            ShipReq.SpecialService(SpecialServiceType=service.type)
         ) for service in payload.shipment.services]
 
         [ShipmentRequest_.add_Commodity(

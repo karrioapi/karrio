@@ -1,5 +1,5 @@
 from .datatypes import *
-from .definitions import *
+from .factories import *
 
 class Quote:
     """ manage quotes operations """
