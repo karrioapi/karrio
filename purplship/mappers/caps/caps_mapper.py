@@ -25,23 +25,51 @@ class CanadaPostMapper(Mapper):
 
     def create_quote_request(self, payload: E.quote_request) -> Rate.mailing_scenario:
         package = payload.shipment.packages[0]
-        parcel = Rate.parcel_characteristicsType(
-            weight=payload.shipment.total_weight or package.weight,
-            dimensions=Rate.dimensionsType(
-                length=package.length,
-                width=package.width,
-                height=package.height
-            )
-        )
-        destinationPostalCode = Rate.domesticType(
-            postal_code=payload.recipient.postal_code)
-        destination = Rate.destinationType(
-            domestic=destinationPostalCode)
+        
+        if len(payload.shipment.services) > 0:
+            services = Rate.servicesType()
+            for code in payload.shipment.services:
+                services.add_service_code(code)
+
+        if 'options' in payload.shipment.extra:
+            options = Rate.optionsType()
+            for option in payload.shipment.extra.get('options'):
+                options.add_option(Rate.optionType(
+                    option_amount=option.get('option-amount'),
+                    option_code=option.get('option-code')
+                ))
+
         return Rate.mailing_scenario(
             customer_number=payload.shipment.shipper_account_number or payload.shipment.payment_account_number or self.client.customer_number,
-            parcel_characteristics=parcel,
+            contract_id=payload.shipment.extra.get('contract-id'),
+            promo_code=payload.shipment.extra.get('promo-code'),
+            quote_type=payload.shipment.extra.get('quote-type'),
+            expected_mailing_date=payload.shipment.extra.get('expected-mailing-date'),
+            options=options if ('options' in payload.shipment.extra) else None,
+            parcel_characteristics=Rate.parcel_characteristicsType(
+                weight=payload.shipment.total_weight or package.weight,
+                dimensions=Rate.dimensionsType(
+                    length=package.length,
+                    width=package.width,
+                    height=package.height
+                ),
+                unpackaged=payload.shipment.extra.get('unpackaged'),
+                mailing_tube=payload.shipment.extra.get('mailing-tube'),
+                oversized=payload.shipment.extra.get('oversized')
+            ),
+            services=services if (len(payload.shipment.services) > 0) else None,
             origin_postal_code=payload.shipper.postal_code,
-            destination=destination
+            destination=Rate.destinationType(
+                domestic=Rate.domesticType(
+                    postal_code=payload.recipient.postal_code
+                ) if (payload.recipient.country_code == 'CA') else None,
+                united_states=Rate.united_statesType(
+                    zip_code=payload.recipient.postal_code
+                ) if (payload.recipient.country_code == 'US') else None,
+                international=Rate.internationalType(
+                    country_code=payload.shipment.country_code
+                ) if (payload.recipient.country_code not in ['US', 'CA']) else None
+            )
         )
 
     def create_tracking_request(self, payload: E.tracking_request) -> List[str]:
