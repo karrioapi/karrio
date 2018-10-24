@@ -64,7 +64,6 @@ class service_type(NamedTuple):
     type: str = None
     extra: Dict = {}
 
-
 class quote_options(NamedTuple):
     packages: List[package_type]
     insured_amount: float = None

@@ -444,7 +444,7 @@ ncshipment_data = {
     "shipment": {
         "packages": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
         "shipper_account_number": "123456789",
-        "services": [{ "type": "DOM.EP"}],
+        "services": [{ "type": "DOM.EP" }],
         "extra": {
             "requested-shipping-point": "J8R1A2", 
             "options": [{"option-code": "DC" }],
