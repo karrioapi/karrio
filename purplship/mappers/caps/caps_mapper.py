@@ -29,7 +29,7 @@ class CanadaPostMapper(Mapper):
         if len(payload.shipment.services) > 0:
             services = Rate.servicesType()
             for code in payload.shipment.services:
-                services.add_service_code(code)
+                services.add_service_code(code.type)
 
         if 'options' in payload.shipment.extra:
             options = Rate.optionsType()
