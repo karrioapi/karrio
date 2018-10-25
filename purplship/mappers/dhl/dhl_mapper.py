@@ -82,7 +82,8 @@ class DHLMapper(Mapper):
             ShipmentWeight=payload.shipment.total_weight,
             Volume=payload.shipment.extra.get('Volume'),
             PaymentAccountNumber=payload.shipment.payment_account_number or self.client.account_number,
-            InsuredCurrency=payload.shipment.currency,
+            InsuredCurrency=payload.shipment.currency or "USD",
+            InsuredValue=payload.shipment.insured_amount,
             PaymentType=payload.shipment.extra.get('PaymentType'),
             AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
         )
@@ -95,7 +96,7 @@ class DHLMapper(Mapper):
 
         if payload.shipment.insured_amount is not None:
             BkgDetails_.QtdShp[0].add_QtdShpExChrg(
-                QtdShpExChrg=Req.QtdShpExChrgType(SpecialServiceType="II")
+                Req.QtdShpExChrgType(SpecialServiceType="II")
             )
 
         GetQuote = Req.GetQuoteType(
@@ -107,7 +108,7 @@ class DHLMapper(Mapper):
 
         if not payload.shipment.is_document:
             BkgDetails_.QtdShp[0].add_QtdShpExChrg(
-                QtdShpExChrg=Req.QtdShpExChrgType(SpecialServiceType="DD")
+                Req.QtdShpExChrgType(SpecialServiceType="DD")
             )
 
             GetQuote.Dutiable = Req.Dutiable(
