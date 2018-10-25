@@ -5,6 +5,7 @@ from purplship.mappers.ups.ups_client import UPSClient
 from purplship.domain.mapper import Mapper
 from purplship.domain import entities as E
 from pyups import freight_rate as Rate, package_track as Track, UPSSecurity as Security, common as Common, error as Err
+from pyups import freight_ship as FShip, package_ship as PShip
 
 class UPSMapper(Mapper):
     def __init__(self, client: UPSClient):
@@ -151,9 +152,15 @@ class UPSMapper(Mapper):
         return (trackings, self.parse_error_response(response))
 
 
+    def parse_shipment_response(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+        details = response.xpath('.//*[local-name() = $name]', name="FreightShipResponse") + response.xpath('.//*[local-name() = $name]', name="ShipmentResponse")
+        shipment = self._extract_shipment(details[0]) if len(details) > 0 else None
+        return (shipment, self.parse_error_response(response))
 
 
-    def _extract_error(self, errors: List[E.Error], errorNode) -> List[E.Error]:
+
+
+    def _extract_error(self, errors: List[E.Error], errorNode: 'XMLElement') -> List[E.Error]:
         error = Err.CodeType()
         error.build(errorNode)
         return errors + [
@@ -161,7 +168,7 @@ class UPSMapper(Mapper):
         ]
 
 
-    def _extract_quote(self, quotes: List[E.QuoteDetails], detailNode) -> List[E.QuoteDetails]: 
+    def _extract_quote(self, quotes: List[E.QuoteDetails], detailNode: 'XMLElement') -> List[E.QuoteDetails]: 
         detail = Rate.FreightRateResponse()
         detail.build(detailNode)
 
@@ -184,7 +191,7 @@ class UPSMapper(Mapper):
         ]
 
 
-    def _extract_tracking(self, trackings: List[E.TrackingDetails], shipmentNode) -> List[E.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[E.TrackingDetails], shipmentNode: 'XMLElement') -> List[E.TrackingDetails]:
         trackDetail = Track.ShipmentType()
         trackDetail.build(shipmentNode)
         activityNodes = shipmentNode.xpath('.//*[local-name() = $name]', name="Activity")
@@ -206,3 +213,80 @@ class UPSMapper(Mapper):
                 ), activities))
             )
         ]
+
+
+    def _extract_shipment(self, shipmentNode: 'XMLElement') -> E.ShipmentDetails:
+        is_freight = 'FreightShipResponse' in shipmentNode.tag
+
+        return self._extract_freight_shipment(shipmentNode) if is_freight else self._extract_package_shipment(shipmentNode)
+
+
+
+
+    def _extract_freight_shipment(self, shipmentNode: 'XMLElement') -> E.ShipmentDetails:
+        shipmentResponse = FShip.FreightShipResponse()
+        shipmentResponse.build(shipmentNode)
+        shipment = shipmentResponse.ShipmentResults
+            
+        return E.ShipmentDetails(
+            carrier=self.client.carrier_name,
+            tracking_numbers=[shipment.ShipmentNumber],
+            total_charge=E.ChargeDetails(
+                name="Shipment charge", 
+                amount=shipment.TotalShipmentCharge.MonetaryValue,
+                currency=shipment.TotalShipmentCharge.CurrencyCode
+            ),
+            charges=[
+                E.ChargeDetails(
+                    name=rate.Type.Code,
+                    amount=rate.Factor.Value,
+                    currency=rate.Factor.UnitOfMeasurement.Code
+                ) for rate in shipment.Rate
+            ],
+            # shipment_date=,
+            services=[shipment.Service.Code],
+            documents=[image.GraphicImage for image in (shipment.Documents or [])],
+            reference=E.ReferenceDetails(
+                value=shipmentResponse.Response.TransactionReference.CustomerContext,
+                type="CustomerContext"
+            )
+        )
+
+    def _extract_package_shipment(self, shipmentNode: 'XMLElement') -> E.ShipmentDetails:
+        shipmentResponse = PShip.ShipmentResponse()
+        shipmentResponse.build(shipmentNode)
+        shipment = shipmentResponse.ShipmentResults
+
+        if not shipment.NegotiatedRateCharges.TotalChargesWithTaxes and not shipment.NegotiatedRateCharges.TotalCharge:
+            total_charge = shipment.ShipmentCharges.TotalChargesWithTaxes or shipment.ShipmentCharges.TotalCharges
+        else:
+            total_charge = shipment.NegotiatedRateCharges.TotalChargesWithTaxes or shipment.NegotiatedRateCharges.TotalCharge
+
+        return E.ShipmentDetails(
+            carrier=self.client.carrier_name,
+            tracking_numbers=[pkg.TrackingNumber for pkg in shipment.PackageResults],
+            total_charge=E.ChargeDetails(
+                name="Shipment charge", 
+                amount=total_charge.MonetaryValue,
+                currency=total_charge.CurrencyCode
+            ),
+            charges=[
+                E.ChargeDetails(
+                    name=charge.Code,
+                    amount=charge.MonetaryValue,
+                    currency=charge.CurrencyCode
+                ) for charge in [
+                    shipment.ShipmentCharges.TransportationCharges,
+                    shipment.ShipmentCharges.ServiceOptionsCharges,
+                    shipment.ShipmentCharges.BaseServiceCharge
+                ] if charge is not None
+            ],
+            documents=[
+                pkg.ShippingLabel.GraphicImage for pkg in (shipment.PackageResults or [])
+            ],
+            reference=E.ReferenceDetails(
+                value=shipmentResponse.Response.TransactionReference.CustomerContext,
+                type="CustomerContext"
+            )
+        )
+

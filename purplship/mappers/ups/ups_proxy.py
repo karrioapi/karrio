@@ -1,3 +1,4 @@
+from typing import Union
 from gds_helpers import to_xml, export, request as http, bundle_xml, exec_parrallel
 from pysoap.envelope import Body, Envelope, Header
 from pysoap import create_envelope, clean_namespaces
@@ -7,6 +8,7 @@ from purplship.mappers.ups.ups_client import UPSClient
 from pyups.freight_rate import FreightRateRequest
 from pyups.package_track import TrackRequest
 from pyups.freight_ship import FreightShipRequest
+from pyups.package_ship import ShipmentRequest
 from pyups.freight_pickup import FreightPickupRequest, FreightCancelPickupRequest
 
 class UPSProxy(Proxy):
@@ -51,10 +53,14 @@ class UPSProxy(Proxy):
 
         return to_xml(bundle_xml(xml_strings=results))
 
-    def create_shipment(self, FreightShipRequest_: FreightShipRequest) -> "XMLElement":
-        envelopeStr = export(
-            create_envelope(header_content=self.mapper.Security, body_content=FreightShipRequest_),
-            namespacedef_='''
+    def create_shipment(self, ShipRequest_: Union[FreightShipRequest, ShipmentRequest]) -> "XMLElement":
+        is_freight = isinstance(ShipRequest_, FreightShipRequest)
+
+        if is_freight:
+            url_ = f"{self.client.server_url}/FreightShip"
+            body_child_name_ = "FreightShipRequest"
+            body_child_prefix_ = 'fsp:'
+            namespace_ = '''
                 xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" 
                 xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" 
                 xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
@@ -63,17 +69,35 @@ class UPSProxy(Proxy):
                 xmlns:fsp="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0" 
                 xmlns:IF="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0"
             '''.replace(' ', '').replace('\n', ' ')
+        else:
+            url_ = f"{self.client.server_url}/Ship"
+            body_child_name_ = "Shipment"
+            body_child_prefix_ = 'ship:'
+            namespace_ = '''
+                xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
+                xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" 
+                xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" 
+                xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" 
+                xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"
+            '''.replace(' ', '').replace('\n', ' ')
+            
+        envelopeStr = export(
+            create_envelope(header_content=self.mapper.Security, body_content=ShipRequest_),
+            namespacedef_=namespace_
         )
         xmlStr = clean_namespaces(
             envelopeStr, 
             envelope_prefix='tns:', 
             header_child_prefix='upss:',
-            body_child_prefix='fsp:',
+            body_child_prefix=body_child_prefix_,
             header_child_name='UPSSecurity',
-            body_child_name='FreightShipRequest'
+            body_child_name=body_child_name_
         )
         result = http(
-            url='%s/FreightShip' % self.client.server_url, 
+            url=url_, 
             data=bytearray(xmlStr, "utf-8"), 
             headers={'Content-Type': 'application/xml'}, 
             method="POST"
