@@ -257,7 +257,7 @@ class UPSMapper(Mapper):
         shipmentResponse.build(shipmentNode)
         shipment = shipmentResponse.ShipmentResults
 
-        if not shipment.NegotiatedRateCharges.TotalChargesWithTaxes and not shipment.NegotiatedRateCharges.TotalCharge:
+        if not shipment.NegotiatedRateCharges:
             total_charge = shipment.ShipmentCharges.TotalChargesWithTaxes or shipment.ShipmentCharges.TotalCharges
         else:
             total_charge = shipment.NegotiatedRateCharges.TotalChargesWithTaxes or shipment.NegotiatedRateCharges.TotalCharge

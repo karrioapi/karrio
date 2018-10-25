@@ -39,6 +39,12 @@ class TestUPSShipment(unittest.TestCase):
                          
     def test_parse_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
+            to_xml(NegotiatedShipmentResponseXML))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(NegotiatedParsedShipmentResponse))
+                         
+    def test_parse_publish_rate_shipment_response(self):
+        parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentResponseXML))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedShipmentResponse))
@@ -68,7 +74,7 @@ ParsedFreightShipmentResponse = [
     []
 ]
 
-ParsedShipmentResponse = [
+NegotiatedParsedShipmentResponse = [
     {
         'carrier': 'UPS', 
         'charges': [
@@ -81,6 +87,22 @@ ParsedShipmentResponse = [
         'shipment_date': None, 
         'total_charge': {'amount': '70.00', 'currency': 'USD', 'name': 'Shipment charge'}, 
         'tracking_numbers': ['1ZWA82900191640782']
+    }, 
+    []
+]
+
+ParsedShipmentResponse = [
+    {
+        'carrier': 'UPS', 
+        'charges': [
+            {'amount': '88.12', 'currency': 'USD', 'name': None}, 
+            {'amount': '0.00', 'currency': 'USD', 'name': None}], 
+            'documents': ['R0lGODdheAUgA+c(Truncated)'], 
+            'reference': {'type': 'CustomerContext', 'value': 'Your Customer Context'}, 
+            'services': None, 
+            'shipment_date': None, 
+            'total_charge': {'amount': '88.12', 'currency': 'USD', 'name': 'Shipment charge'}, 
+            'tracking_numbers': ['1ZWA82900191640782']
     }, 
     []
 ]
@@ -286,7 +308,7 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
 </tns:Envelope>
 """
 
-ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+NegotiatedShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
     <soapenv:Header />
     <soapenv:Body>
@@ -347,6 +369,64 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
             </ship:ShipmentResults>
         </ship:ShipmentResponse>
     </soapenv:Body>
+</soapenv:Envelope>
+"""
+
+ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header />
+   <soapenv:Body>
+      <ship:ShipmentResponse xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0">
+         <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
+            <common:ResponseStatus>
+               <common:Code>1</common:Code>
+               <common:Description>Success</common:Description>
+            </common:ResponseStatus>
+            <common:TransactionReference>
+               <common:CustomerContext>Your Customer Context</common:CustomerContext>
+            </common:TransactionReference>
+         </common:Response>
+         <ship:ShipmentResults>
+            <ship:ShipmentCharges>
+               <ship:TransportationCharges>
+                  <ship:CurrencyCode>USD</ship:CurrencyCode>
+                  <ship:MonetaryValue>88.12</ship:MonetaryValue>
+               </ship:TransportationCharges>
+               <ship:ServiceOptionsCharges>
+                  <ship:CurrencyCode>USD</ship:CurrencyCode>
+                  <ship:MonetaryValue>0.00</ship:MonetaryValue>
+               </ship:ServiceOptionsCharges>
+               <ship:TotalCharges>
+                  <ship:CurrencyCode>USD</ship:CurrencyCode>
+                  <ship:MonetaryValue>88.12</ship:MonetaryValue>
+               </ship:TotalCharges>
+            </ship:ShipmentCharges>
+            <ship:BillingWeight>
+               <ship:UnitOfMeasurement>
+                  <ship:Code>LBS</ship:Code>
+                  <ship:Description>Pounds</ship:Description>
+               </ship:UnitOfMeasurement>
+               <ship:Weight>10.0</ship:Weight>
+            </ship:BillingWeight>
+            <ship:ShipmentIdentificationNumber>1ZWA82900191640782</ship:ShipmentIdentificationNumber>
+            <ship:PackageResults>
+               <ship:TrackingNumber>1ZWA82900191640782</ship:TrackingNumber>
+               <ship:ServiceOptionsCharges>
+                  <ship:CurrencyCode>USD</ship:CurrencyCode>
+                  <ship:MonetaryValue>0.00</ship:MonetaryValue>
+               </ship:ServiceOptionsCharges>
+               <ship:ShippingLabel>
+                  <ship:ImageFormat>
+                     <ship:Code>GIF</ship:Code>
+                     <ship:Description>GIF</ship:Description>
+                  </ship:ImageFormat>
+                  <ship:GraphicImage>R0lGODdheAUgA+c(Truncated)</ship:GraphicImage>
+                  <ship:HTMLImage>PCFET0NUWVBFIEhUTUwgUFVCTElDICI(Truncated)</ship:HTMLImage>
+               </ship:ShippingLabel>
+            </ship:PackageResults>
+         </ship:ShipmentResults>
+      </ship:ShipmentResponse>
+   </soapenv:Body>
 </soapenv:Envelope>
 """
 
