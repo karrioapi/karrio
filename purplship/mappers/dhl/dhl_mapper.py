@@ -58,10 +58,11 @@ class DHLMapper(Mapper):
         )
 
         Pieces = Req.PiecesType()
+        default_packaging_type = "FLY" if payload.shipment.is_document else "BOX"
         for index, piece in enumerate(payload.shipment.packages):
             Pieces.add_Piece(Req.PieceType(
                 PieceID=piece.id or str(index),
-                PackageTypeCode=piece.packaging_type or "BOX",
+                PackageTypeCode=piece.packaging_type or default_packaging_type,
                 Height=piece.height, Width=piece.width,
                 Weight=piece.weight, Depth=piece.length
             ))
@@ -83,8 +84,19 @@ class DHLMapper(Mapper):
             PaymentAccountNumber=payload.shipment.payment_account_number or self.client.account_number,
             InsuredCurrency=payload.shipment.currency,
             PaymentType=payload.shipment.extra.get('PaymentType'),
-            AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime')
+            AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
         )
+
+        product_code = "P" if payload.shipment.is_document else "D"
+        BkgDetails_.add_QtdShp(Req.QtdShpType(
+            GlobalProductCode=product_code,
+            LocalProductCode=product_code
+        ))
+
+        if payload.shipment.insured_amount is not None:
+            BkgDetails_.QtdShp[0].add_QtdShpExChrg(
+                QtdShpExChrg=Req.QtdShpExChrgType(SpecialServiceType="II")
+            )
 
         GetQuote = Req.GetQuoteType(
             Request=Request_, 
@@ -94,6 +106,10 @@ class DHLMapper(Mapper):
         )
 
         if not payload.shipment.is_document:
+            BkgDetails_.QtdShp[0].add_QtdShpExChrg(
+                QtdShpExChrg=Req.QtdShpExChrgType(SpecialServiceType="DD")
+            )
+
             GetQuote.Dutiable = Req.Dutiable(
                 DeclaredValue=payload.shipment.insured_amount,
                 DeclaredCurrency=payload.shipment.currency,

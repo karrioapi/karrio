@@ -220,6 +220,7 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
             <Pieces>
                 <Piece>
                     <PieceID>1</PieceID>
+                    <PackageTypeCode>FLY</PackageTypeCode>
                     <Height>3.</Height>
                     <Depth>10.</Depth>
                     <Width>3.</Width>
@@ -229,6 +230,10 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
             <PaymentAccountNumber>1203598305</PaymentAccountNumber>
             <IsDutiable>N</IsDutiable>
             <NetworkTypeCode>AL</NetworkTypeCode>
+            <QtdShp>
+                <GlobalProductCode>P</GlobalProductCode>
+                <LocalProductCode>P</LocalProductCode>
+            </QtdShp>
         </BkgDetails>
         <To>
             <CountryCode>TG</CountryCode>
