@@ -26,6 +26,7 @@ class TestDHLShipment(unittest.TestCase):
             "email_address": "test@email.com",
             "state": "Arizona",
             "state_code": "AZ",
+            "account_number": "123456789",
             "extra": {
                 "ShipperID": "123456789",
                 "RegisteredAccount": "123456789",
@@ -53,7 +54,6 @@ class TestDHLShipment(unittest.TestCase):
         shipment = {
             "packages": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "EE"}],
             "is_document": False,
-            "shipper_account_number": "123456789",
             "paid_by": "S",
             "payment_account_number": "123456789",
             "duty_paid_by": "S",

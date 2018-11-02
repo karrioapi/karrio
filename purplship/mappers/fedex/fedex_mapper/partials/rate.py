@@ -58,7 +58,7 @@ class FedexMapperPartial(FedexMapperBase):
                 PreferredCurrency=payload.shipment.currency,
                 ShipmentAuthorizationDetail=None,
                 Shipper=Party(
-                    AccountNumber=payload.shipment.shipper_account_number,
+                    AccountNumber=payload.shipper.account_number,
                     Tins=None,
                     Contact=Contact(
                         ContactId=None,

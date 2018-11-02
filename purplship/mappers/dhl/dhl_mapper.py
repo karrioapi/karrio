@@ -139,7 +139,7 @@ class DHLMapper(Mapper):
         Request_.MetaData = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
 
         Billing_ = ShipReq.Billing(
-            ShipperAccountNumber=payload.shipment.shipper_account_number or self.client.account_number,
+            ShipperAccountNumber=payload.shipper.account_number or self.client.account_number,
             BillingAccountNumber=payload.shipment.payment_account_number,
             ShippingPaymentType=payload.shipment.paid_by,
             DutyAccountNumber=payload.shipment.duty_payment_account,

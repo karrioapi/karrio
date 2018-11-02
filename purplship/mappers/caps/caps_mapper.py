@@ -40,7 +40,7 @@ class CanadaPostMapper(Mapper):
                 ))
 
         return Rate.mailing_scenario(
-            customer_number=payload.shipment.shipper_account_number or payload.shipment.payment_account_number or self.client.customer_number,
+            customer_number=payload.shipper.account_number or payload.shipment.payment_account_number or self.client.customer_number,
             contract_id=payload.shipment.extra.get('contract-id'),
             promo_code=payload.shipment.extra.get('promo-code'),
             quote_type=payload.shipment.extra.get('quote-type'),
@@ -235,7 +235,7 @@ class CanadaPostMapper(Mapper):
             )
 
         shipment_ = Shipment.ShipmentType(
-            customer_request_id=payload.shipment.shipper_account_number or payload.shipment.payment_account_number or self.client.customer_number,
+            customer_request_id=payload.shipper.account_number or payload.shipment.payment_account_number or self.client.customer_number,
             quickship_label_requested=payload.shipment.extra.get('quickship-label-requested'),
             cpc_pickup_indicator=payload.shipment.extra.get('cpc-pickup-indicator'),
             requested_shipping_point=payload.shipment.extra.get('requested-shipping-point'),

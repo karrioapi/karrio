@@ -5,6 +5,7 @@ class party(NamedTuple):
     city: str = None
     type: str = None
     tax_id: str = None
+    account_number: str = None
     person_name: str = None
     company_name: str = None
     country_name: str = None
@@ -78,7 +79,6 @@ class shipment_options(NamedTuple):
     duty_payment_account: str = None
     payment_country_code: str = None
     payment_account_number: str = None
-    shipper_account_number: str = None
 
     ship_date: str = None
     customs: customs_type = None
