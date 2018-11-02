@@ -13,12 +13,11 @@ class TestFedExShipment(unittest.TestCase):
         self.ShipmentRequest = ProcessShipmentRequest()
         self.ShipmentRequest.build(get_node_from_xml(ShipmentRequestXml, 'ProcessShipmentRequest'))
 
-    # def test_create_shipment_request(self):
-    #     payload = Shipment.create(**shipment_data)
-    #     ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
-    #     ShipmentRequest_.RequestedShipment.ShipTimestamp = None
-    #     print(export(ShipmentRequest_))
-    #     self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
+    def test_create_shipment_request(self):
+        payload = Shipment.create(**shipment_data)
+        ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
+        ShipmentRequest_.RequestedShipment.ShipTimestamp = None
+        self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
 
     @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
     def test_create_shipment(self, http_mock):
@@ -566,6 +565,10 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                 <ns:DropoffType>REGULAR_PICKUP</ns:DropoffType>
                 <ns:ServiceType>INTERNATIONAL_PRIORITY</ns:ServiceType>
                 <ns:PackagingType>YOUR_PACKAGING</ns:PackagingType>
+                <ns:TotalWeight>
+                    <ns:Units>LB</ns:Units>
+                    <ns:Value>20.</ns:Value>
+                </ns:TotalWeight>
                 <ns:PreferredCurrency>USD</ns:PreferredCurrency>
                 <ns:Shipper>
                     <ns:Contact>
@@ -621,66 +624,13 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                         <ns:LicenseOrExemptionNumber>12345</ns:LicenseOrExemptionNumber>
                     </ns:InternationalTrafficInArmsRegulationsDetail>
                 </ns:SpecialServicesRequested>
-                <ns:CustomsClearanceDetail>
-                    <ns:DutiesPayment>
-                        <ns:PaymentType>SENDER</ns:PaymentType>
-                        <ns:Payor>
-                            <ns:ResponsibleParty>
-                                <ns:AccountNumber>Input Your Information</ns:AccountNumber>
-                                <ns:Tins>
-                                    <ns:TinType>BUSINESS_STATE</ns:TinType>
-                                    <ns:Number>213456</ns:Number>
-                                </ns:Tins>
-                                <ns:Contact>
-                                    <ns:ContactId>12345</ns:ContactId>
-                                    <ns:PersonName>Input Your Information</ns:PersonName>
-                                </ns:Contact>
-                            </ns:ResponsibleParty>
-                        </ns:Payor>
-                    </ns:DutiesPayment>
-                    <ns:CustomsValue>
-                        <ns:Currency>USD</ns:Currency>
-                        <ns:Amount>100.</ns:Amount>
-                    </ns:CustomsValue>
-                    <ns:Commodities>
-                        <ns:NumberOfPieces>1</ns:NumberOfPieces>
-                        <ns:Description>ABCD</ns:Description>
-                        <ns:CountryOfManufacture>US</ns:CountryOfManufacture>
-                        <ns:Weight>
-                            <ns:Units>LB</ns:Units>
-                            <ns:Value>1.</ns:Value>
-                        </ns:Weight>
-                        <ns:Quantity>1.</ns:Quantity>
-                        <ns:QuantityUnits>cm</ns:QuantityUnits>
-                        <ns:UnitPrice>
-                            <ns:Currency>USD</ns:Currency>
-                            <ns:Amount>1.</ns:Amount>
-                        </ns:UnitPrice>
-                        <ns:CustomsValue>
-                            <ns:Currency>USD</ns:Currency>
-                            <ns:Amount>100.</ns:Amount>
-                        </ns:CustomsValue>
-                    </ns:Commodities>
-                    <ns:ExportDetail>
-                        <ns:ExportComplianceStatement>30.37(f)</ns:ExportComplianceStatement>
-                    </ns:ExportDetail>
-                </ns:CustomsClearanceDetail>
                 <ns:LabelSpecification>
                     <ns:LabelFormatType>COMMON2D</ns:LabelFormatType>
                     <ns:ImageType>PNG</ns:ImageType>
                     <ns:LabelStockType>PAPER_7X4.75</ns:LabelStockType>
                 </ns:LabelSpecification>
-                <ns:ShippingDocumentSpecification>
-                    <ns:ShippingDocumentTypes>COMMERCIAL_INVOICE</ns:ShippingDocumentTypes>
-                    <ns:CommercialInvoiceDetail>
-                        <ns:Format>
-                            <ns:ImageType>PDF</ns:ImageType>
-                            <ns:StockType>PAPER_LETTER</ns:StockType>
-                            <ns:ProvideInstructions>true</ns:ProvideInstructions>
-                        </ns:Format>
-                    </ns:CommercialInvoiceDetail>
-                </ns:ShippingDocumentSpecification>
                 <ns:RateRequestTypes>LIST</ns:RateRequestTypes>
+                <ns:RateRequestTypes>PREFERRED</ns:RateRequestTypes>
                 <ns:PackageCount>1</ns:PackageCount>
                 <ns:RequestedPackageLineItems>
                     <ns:SequenceNumber>1</ns:SequenceNumber>
@@ -732,13 +682,13 @@ shipment_data = {
         "number_of_packages": 1,
         "paid_by": "THIRD_PARTY",
         "packaging_type": "YOUR_PACKAGING",
-        "services": [{ "type": "INTERNATIONAL_PRIORITY"}],
-        "billing_account_number": "Input Your Information",
+        "payment_account_number": "Input Your Information",
         "duty_paid_by": "SENDER",
         "declared_value": "100.",
         "currency": "USD",
         "weight_unit": "LB",
         "dimension_unit": "IN",
+        "services": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
         "packages": [
             {
                 "id": "1",
@@ -779,7 +729,7 @@ shipment_data = {
                         "Currency": "USD",
                         "Amount": 1.0
                     },
-                    "CustomsVallue": {
+                    "CustomsValue": {
                         "Currency": "USD",
                         "Amount": 100.0
                     }
@@ -787,36 +737,28 @@ shipment_data = {
             }
         ],
         "extra": {
+            "ServiceType": "INTERNATIONAL_PRIORITY",
+            "DropoffType": "REGULAR_PICKUP",
             "Payor": {
-                "person_name": "Input Your Information",
-                "extra": {
-                    "ContactId": "12345",
-                    "Tins": [
-                        {
-                            "TinType": "BUSINESS_STATE",
-                            "Number": "213456"
-                        }
-                    ]
+                "ResponsibleParty": {
+                    "person_name": "Input Your Information",
+                    "extra": {
+                        "ContactId": "12345",
+                        "Tins": [
+                            {
+                                "TinType": "BUSINESS_STATE",
+                                "Number": "213456"
+                            }
+                        ]
+                    }
                 }
             },
             "ExportDetail": {
                 "ExportComplianceStatement": "30.37(f)"
             },
-            "DropoffType": "REGULAR_PICKUP",
             "SpecialServicesRequested": {
-                "SpecialServiceTypes": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
                 "InternationalTrafficInArmsRegulationsDetail": {
                     "LicenseOrExemptionNumber": 12345
-                }
-            },
-            "ShippingDocumentSpecification": {
-                "ShippingDocumentTypes": "COMMERCIAL_INVOICE",
-                "CommercialInvoiceDetail": {
-                    "Format": {
-                        "ImageType": "PDF",
-                        "StockType": "PAPER_LETTER",
-                        "ProvideInstructions": True
-                    }
                 }
             }
         }
