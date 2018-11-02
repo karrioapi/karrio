@@ -60,25 +60,6 @@ class invoice_type(NamedTuple):
     copies: int = None
     extra: Dict = {}
 
-class quote_options(NamedTuple):
-    packages: List[package_type]
-    insured_amount: float = None
-    number_of_packages: int = None
-    packaging_type: str = None
-    is_document: bool = False
-    total_weight: float = None
-    weight_unit: str = "LB"
-    dimension_unit: str = "IN"
-    currency: str = None
-    paid_by: str = None
-    declared_value: float = None
-    duty_paid_by: str = None
-    payment_country_code: str = None
-    payment_account_number: str = None
-    shipper_account_number: str = None
-    services: List[str] = []
-    extra: Dict = {}
-
 class shipment_options(NamedTuple):
     packages: List[package_type]
     insured_amount: float = None
@@ -109,11 +90,6 @@ class shipment_options(NamedTuple):
 
     label: label_type = None
     extra: Dict = {}
-
-class quote_request(NamedTuple):
-    shipper: party 
-    recipient: party
-    shipment: quote_options
 
 class shipment_request(NamedTuple):
     shipper: party 

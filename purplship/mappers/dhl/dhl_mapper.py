@@ -39,7 +39,7 @@ class DHLMapper(Mapper):
 
     """ Interface functions """
 
-    def create_quote_request(self, payload: E.quote_request) -> Req.DCTRequest:
+    def create_quote_request(self, payload: E.shipment_request) -> Req.DCTRequest:
         Request_ = self.init_request()
         Request_.MetaData = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
 

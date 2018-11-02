@@ -6,7 +6,7 @@ class Mapper:
     """ Unitied API to carrier API Mapper (Interface) """
     client: Client
 
-    def create_quote_request(self, payload: E.quote_request):
+    def create_quote_request(self, payload: E.shipment_request):
         """ Create carrier specific quote request xml data from payload """
         raise Exception("Not Supported")
 

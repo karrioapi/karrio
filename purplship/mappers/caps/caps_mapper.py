@@ -23,7 +23,7 @@ class CanadaPostMapper(Mapper):
 
     """ Interface functions """
 
-    def create_quote_request(self, payload: E.quote_request) -> Rate.mailing_scenario:
+    def create_quote_request(self, payload: E.shipment_request) -> Rate.mailing_scenario:
         package = payload.shipment.packages[0]
         
         if len(payload.shipment.services) > 0:

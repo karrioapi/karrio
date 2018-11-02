@@ -23,7 +23,7 @@ class UPSMapper(Mapper):
 
 
 
-    def create_quote_request(self, payload: E.quote_request) -> Rate.FreightRateRequest:
+    def create_quote_request(self, payload: E.shipment_request) -> Rate.FreightRateRequest:
         Request_ = Common.RequestType(
             TransactionReference=Common.TransactionReferenceType(
                 TransactionIdentifier="TransactionIdentifier"
