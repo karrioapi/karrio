@@ -60,10 +60,6 @@ class invoice_type(NamedTuple):
     copies: int = None
     extra: Dict = {}
 
-class service_type(NamedTuple):
-    type: str = None
-    extra: Dict = {}
-
 class quote_options(NamedTuple):
     packages: List[package_type]
     insured_amount: float = None
@@ -80,7 +76,7 @@ class quote_options(NamedTuple):
     payment_country_code: str = None
     payment_account_number: str = None
     shipper_account_number: str = None
-    services: List[service_type] = []
+    services: List[str] = []
     extra: Dict = {}
 
 class shipment_options(NamedTuple):
@@ -108,7 +104,7 @@ class shipment_options(NamedTuple):
     invoice: invoice_type = None
     
     references: List[str] = []
-    services: List[service_type] = []
+    services: List[str] = []
     commodities: List[commodity_type] = []
 
     label: label_type = None

@@ -17,7 +17,7 @@ class TestCanadaPostQuote(unittest.TestCase):
         recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
         shipment = {
             "packages": [{"height":3, "length":10, "width":3,"weight": 4.0}],
-            "services": [{ "type": "DOM.EP" }],
+            "services": ["DOM.EP"],
             "extra": { "options": []}
         }
         payload = Quote.create(
