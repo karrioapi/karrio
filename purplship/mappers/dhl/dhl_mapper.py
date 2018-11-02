@@ -99,20 +99,18 @@ class DHLMapper(Mapper):
                 Req.QtdShpExChrgType(SpecialServiceType="II")
             )
 
-        GetQuote = Req.GetQuoteType(
-            Request=Request_, 
-            From=From_, 
-            To=To_, 
-            BkgDetails=BkgDetails_
-        )
-
         if not payload.shipment.is_document:
             BkgDetails_.QtdShp[0].add_QtdShpExChrg(
                 Req.QtdShpExChrgType(SpecialServiceType="DD")
             )
 
-            GetQuote.Dutiable = Req.Dutiable(
-                DeclaredValue=payload.shipment.insured_amount,
+        GetQuote = Req.GetQuoteType(
+            Request=Request_, 
+            From=From_, 
+            To=To_, 
+            BkgDetails=BkgDetails_,
+            Dutiable=Req.Dutiable(
+                DeclaredValue=payload.shipment.declared_value,
                 DeclaredCurrency=payload.shipment.currency,
                 ScheduleB=payload.shipment.extra.get('ScheduleB'),
                 ExportLicense=payload.shipment.extra.get('ExportLicense'),
@@ -123,16 +121,16 @@ class DHLMapper(Mapper):
                 ConsigneeEIN=payload.shipment.extra.get('ConsigneeEIN'),
                 TermsOfTrade=payload.shipment.extra.get('TermsOfTrade'),
                 CommerceLicensed=payload.shipment.extra.get('CommerceLicensed'),
-            )
-
-            if 'Filing' in payload.shipment.extra:
-                filing = payload.shipment.extra.get('Filing')
-                GetQuote.Dutiable.Filing = Req.Filing(
-                    FilingType=filing.get('FilingType'),
-                    FTSR=filing.get('FTSR'),
-                    ITN=filing.get('ITN'),
-                    AES4EIN=filing.get('AES4EIN')
-                )
+                Filing=(lambda filing:
+                    Req.Filing(
+                        FilingType=filing.get('FilingType'),
+                        FTSR=filing.get('FTSR'),
+                        ITN=filing.get('ITN'),
+                        AES4EIN=filing.get('AES4EIN')
+                    )
+                )(payload.shipment.extra.get('Filing')) if 'Filing' in payload.shipment.extra else None
+            ) if payload.shipment.declared_value is not None else None
+        )
 
         return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
 

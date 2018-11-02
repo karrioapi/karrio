@@ -18,8 +18,10 @@ class TestDHLQuote(unittest.TestCase):
         shipment = {
             "currency": "CAD",
             "insured_amount": 75,
-            "packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0}], 
-            "is_document": True
+            "packages": [
+                {"id":"1", "height":3, "length":10, "width":3,"weight":4.0 }
+            ], 
+            "is_document": False
         }
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
 
@@ -29,7 +31,6 @@ class TestDHLQuote(unittest.TestCase):
         DCTRequest_.GetQuote.Request.ServiceHeader.MessageTime = None
         DCTRequest_.GetQuote.BkgDetails.Date = None
         DCTRequest_.GetQuote.BkgDetails.ReadyTime = None
-        
         self.assertEqual(export(DCTRequest_), export(self.DCTRequest))
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
@@ -226,7 +227,6 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
             <Pieces>
                 <Piece>
                     <PieceID>1</PieceID>
-                    <PackageTypeCode>FLY</PackageTypeCode>
                     <Height>3.</Height>
                     <Depth>10.</Depth>
                     <Width>3.</Width>
@@ -234,13 +234,16 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
                 </Piece>
             </Pieces>
             <PaymentAccountNumber>1203598305</PaymentAccountNumber>
-            <IsDutiable>N</IsDutiable>
+            <IsDutiable>Y</IsDutiable>
             <NetworkTypeCode>AL</NetworkTypeCode>
             <QtdShp>
-                <GlobalProductCode>P</GlobalProductCode>
-                <LocalProductCode>P</LocalProductCode>
+                <GlobalProductCode>D</GlobalProductCode>
+                <LocalProductCode>D</LocalProductCode>
                 <QtdShpExChrg>
                     <SpecialServiceType>II</SpecialServiceType>
+                </QtdShpExChrg>
+                <QtdShpExChrg>
+                    <SpecialServiceType>DD</SpecialServiceType>
                 </QtdShpExChrg>
             </QtdShp>
             <InsuredValue>75.</InsuredValue>
