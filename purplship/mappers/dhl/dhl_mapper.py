@@ -58,10 +58,11 @@ class DHLMapper(Mapper):
         )
 
         Pieces = Req.PiecesType()
+        default_packaging_type = "FLY" if payload.shipment.is_document else "BOX"
         for index, piece in enumerate(payload.shipment.packages):
             Pieces.add_Piece(Req.PieceType(
                 PieceID=piece.id or str(index),
-                PackageTypeCode=piece.packaging_type or "BOX",
+                PackageTypeCode=piece.packaging_type or default_packaging_type,
                 Height=piece.height, Width=piece.width,
                 Weight=piece.weight, Depth=piece.length
             ))
@@ -81,21 +82,35 @@ class DHLMapper(Mapper):
             ShipmentWeight=payload.shipment.total_weight,
             Volume=payload.shipment.extra.get('Volume'),
             PaymentAccountNumber=payload.shipment.payment_account_number or self.client.account_number,
-            InsuredCurrency=payload.shipment.currency,
+            InsuredCurrency=payload.shipment.currency or "USD",
+            InsuredValue=payload.shipment.insured_amount,
             PaymentType=payload.shipment.extra.get('PaymentType'),
-            AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime')
+            AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
         )
+
+        product_code = "P" if payload.shipment.is_document else "D"
+        BkgDetails_.add_QtdShp(Req.QtdShpType(
+            GlobalProductCode=product_code,
+            LocalProductCode=product_code
+        ))
+
+        if payload.shipment.insured_amount is not None:
+            BkgDetails_.QtdShp[0].add_QtdShpExChrg(
+                Req.QtdShpExChrgType(SpecialServiceType="II")
+            )
+
+        if not payload.shipment.is_document:
+            BkgDetails_.QtdShp[0].add_QtdShpExChrg(
+                Req.QtdShpExChrgType(SpecialServiceType="DD")
+            )
 
         GetQuote = Req.GetQuoteType(
             Request=Request_, 
             From=From_, 
             To=To_, 
-            BkgDetails=BkgDetails_
-        )
-
-        if not payload.shipment.is_document:
-            GetQuote.Dutiable = Req.Dutiable(
-                DeclaredValue=payload.shipment.insured_amount,
+            BkgDetails=BkgDetails_,
+            Dutiable=Req.Dutiable(
+                DeclaredValue=payload.shipment.declared_value,
                 DeclaredCurrency=payload.shipment.currency,
                 ScheduleB=payload.shipment.extra.get('ScheduleB'),
                 ExportLicense=payload.shipment.extra.get('ExportLicense'),
@@ -106,16 +121,16 @@ class DHLMapper(Mapper):
                 ConsigneeEIN=payload.shipment.extra.get('ConsigneeEIN'),
                 TermsOfTrade=payload.shipment.extra.get('TermsOfTrade'),
                 CommerceLicensed=payload.shipment.extra.get('CommerceLicensed'),
-            )
-
-            if 'Filing' in payload.shipment.extra:
-                filing = payload.shipment.extra.get('Filing')
-                GetQuote.Dutiable.Filing = Req.Filing(
-                    FilingType=filing.get('FilingType'),
-                    FTSR=filing.get('FTSR'),
-                    ITN=filing.get('ITN'),
-                    AES4EIN=filing.get('AES4EIN')
-                )
+                Filing=(lambda filing:
+                    Req.Filing(
+                        FilingType=filing.get('FilingType'),
+                        FTSR=filing.get('FTSR'),
+                        ITN=filing.get('ITN'),
+                        AES4EIN=filing.get('AES4EIN')
+                    )
+                )(payload.shipment.extra.get('Filing')) if 'Filing' in payload.shipment.extra else None
+            ) if payload.shipment.declared_value is not None else None
+        )
 
         return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
 
@@ -429,14 +444,22 @@ class DHLMapper(Mapper):
         barcodes = [child.text for child in shipmentResponseNode.xpath("//Barcodes")[0].getchildren()]
         documents = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
         reference = E.ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
+        currency_ = get("CurrencyCode")
         return E.ShipmentDetails(
             carrier=self.client.carrier_name,
-            tracking_number=tracking_number,
+            tracking_numbers=[tracking_number],
             shipment_date= get("ShipmentDate"),
-            service=get("ProductShortName"),
+            services=(
+                [get("ProductShortName")] +
+                [service.text for service in shipmentResponseNode.xpath("//SpecialServiceDesc")] +
+                [service.text for service in shipmentResponseNode.xpath("//InternalServiceCode")]
+            ),
+            charges=[
+                E.ChargeDetails(name="PackageCharge", amount=float(get("PackageCharge")), currency=currency_) 
+            ],
             documents=documents,
             reference=reference,
-            total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=get("CurrencyCode"))
+            total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=currency_)
         )
 
     def _extract_pickup(self, pickup: Union[BookPUResponse, ModifyPURequest]) -> E.PickupDetails:

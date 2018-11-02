@@ -15,7 +15,14 @@ class TestDHLQuote(unittest.TestCase):
     def test_create_quote_request(self):
         shipper = {"postal_code":"H3N1S4", "country_code":"CA"}
         recipient = {"city":"Lome", "country_code":"TG"}
-        shipment = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0}], "is_document": True}
+        shipment = {
+            "currency": "CAD",
+            "insured_amount": 75,
+            "packages": [
+                {"id":"1", "height":3, "length":10, "width":3,"weight":4.0 }
+            ], 
+            "is_document": False
+        }
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
 
         DCTRequest_ = proxy.mapper.create_quote_request(payload)
@@ -227,8 +234,20 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
                 </Piece>
             </Pieces>
             <PaymentAccountNumber>1203598305</PaymentAccountNumber>
-            <IsDutiable>N</IsDutiable>
+            <IsDutiable>Y</IsDutiable>
             <NetworkTypeCode>AL</NetworkTypeCode>
+            <QtdShp>
+                <GlobalProductCode>D</GlobalProductCode>
+                <LocalProductCode>D</LocalProductCode>
+                <QtdShpExChrg>
+                    <SpecialServiceType>II</SpecialServiceType>
+                </QtdShpExChrg>
+                <QtdShpExChrg>
+                    <SpecialServiceType>DD</SpecialServiceType>
+                </QtdShpExChrg>
+            </QtdShp>
+            <InsuredValue>75.</InsuredValue>
+            <InsuredCurrency>CAD</InsuredCurrency>
         </BkgDetails>
         <To>
             <CountryCode>TG</CountryCode>

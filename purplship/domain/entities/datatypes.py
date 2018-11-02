@@ -21,17 +21,26 @@ class party(NamedTuple):
 
 class package_type(NamedTuple):
     weight: float
-    width: float = None
-    height: float = None
-    length: float = None
     id: str = None
+    width: float = 1
+    height: float = 1
+    length: float = 1
     packaging_type: str = None
     description: str = None
+    quantity: int = 1
+    sku: str = None
+    value_amount: float = None
+    value_currency: str = None
+    origin_country: str = None
     extra: Dict = {}
 
 class customs_type(NamedTuple):
+    no_eei: str = None
+    aes: str = None
     description: str = None
     terms_of_trade: str = None
+    items: List[package_type] = []
+    commercial_invoice: bool = False
     extra: Dict = {}
 
 class commodity_type(NamedTuple):
@@ -44,17 +53,26 @@ class label_type(NamedTuple):
     type: str = None
     extra: Dict = {}
 
+class invoice_type(NamedTuple):
+    date: str
+    identifier: str = None
+    type: str = None
+    copies: int = None
+    extra: Dict = {}
+
 class quote_options(NamedTuple):
     packages: List[package_type]
     insured_amount: float = None
     number_of_packages: int = None
     packaging_type: str = None
     is_document: bool = False
-    currency: str = None
     total_weight: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
+    currency: str = None
     paid_by: str = None
+    declared_value: float = None
+    duty_paid_by: str = None
     payment_country_code: str = None
     payment_account_number: str = None
     shipper_account_number: str = None
@@ -67,23 +85,28 @@ class shipment_options(NamedTuple):
     number_of_packages: int = None
     packaging_type: str = None
     is_document: bool = False
-    currency: str = None
-    date: str = None
     total_weight: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
+
+    currency: str = None
     paid_by: str = None
-    duty_paid_by: str = None
-    duty_payment_account: str = None
     declared_value: float = None
     payment_type: str = None
+    duty_paid_by: str = None
+    duty_payment_account: str = None
     payment_country_code: str = None
     payment_account_number: str = None
     shipper_account_number: str = None
-    services: List[str] = []
+
+    ship_date: str = None
     customs: customs_type = None
+    invoice: invoice_type = None
+    
     references: List[str] = []
+    services: List[str] = []
     commodities: List[commodity_type] = []
+
     label: label_type = None
     extra: Dict = {}
 
@@ -203,15 +226,16 @@ class TrackingDetails:
         self.tracking_number = tracking_number
 
 class ShipmentDetails:
-    def __init__(self, carrier: str, tracking_number: str, total_charge: ChargeDetails, shipment_date: str = None, 
-        service: str = None, documents: List[str] = [], reference: ReferenceDetails = None): 
+    def __init__(self, carrier: str, tracking_numbers: List[str], total_charge: ChargeDetails, charges: List[ChargeDetails], shipment_date: str = None, 
+        services: List[str] = None, documents: List[str] = [], reference: ReferenceDetails = None): 
         self.carrier = carrier
-        self.tracking_number = tracking_number
+        self.tracking_numbers = tracking_numbers
         self.shipment_date = shipment_date
         self.documents = documents
-        self.service = service
+        self.services = services
         self.reference = reference
         self.total_charge = total_charge
+        self.charges = charges
 
 class PickupDetails:
     def __init__(self, carrier: str, confirmation_number: str, pickup_date: str = None, 

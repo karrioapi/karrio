@@ -145,6 +145,9 @@ ParsedShipmentParsingError = [
 ParsedShipmentResponse =  [
     {
         'carrier': 'carrier_name', 
+        'charges': [
+            {'amount': 124.69, 'currency': 'USD', 'name': 'PackageCharge'}
+        ], 
         'documents': [
             'iVBORw0KGgoAAAANSUhEUgAAAYwAAABeAQMAAAAKdrGZAAAABlBMVEX///8AAABVwtN+AAAAaklEQVR42mNkYGBIyL8w5a9P7YJXKU8ZgkU2V81cNmWt5IIokaMMX40+N6zsivI+93bZRDMx13vzlRYwMDAxkAxGtYxqGdUyqmVUy6iWUS2jWka1jGoZ1TKqZVTLqJZRLaNaRrWMaiEVAAB3uBe8nSip8QAAAABJRU5ErkJggg==', 
             'iVBORw0KGgoAAAANSUhEUgAAAZYAAABeAQMAAAA6+qC4AAAABlBMVEX///8AAABVwtN+AAAAZ0lEQVR42u3LIRJAUBRA0Ufwk6IY0eqMLBnBS/yi6Gb8XdiBPRBoZE1iDZpwTz+eiJRhNey2qNNZjUZnMMaLmzVR6W5TNfGaNe46Wp3kybfeivjyHYfD4XA4HA6Hw+FwOBwOh/On8wLTGBe8mbtkhgAAAABJRU5ErkJggg==', 
@@ -153,18 +156,11 @@ ParsedShipmentResponse =  [
             'iVBORw0KGgoAAAANSUhEUgAAARgAAAAkAQMAAABoj7etAAAABlBMVEX///8AAABVwtN+AAAAPElEQVR42mNkYGBIyL8wZcutGwyvUp4yBMtriM295XDlxCm29MRU31ufpRgYmBgIg1E1o2pG1YyqGepqAKFJD0hDGoJfAAAAAElFTkSuQmCC', 
             'iVBORw0KGgoAAAANSUhEUgAAAawAAABeAQMAAABFK7JJAAAABlBMVEX///8AAABVwtN+AAAAaUlEQVR42u3LoRVAUACG0Z/gKLKjOK+YhRlMIOko7xUDSBqSUQyhaFYgsYMkfLdfT1ITdUdcL+PtNpuEqYrJJjZ3g06XXZ7Rs1cKZil2TV+ubW4kX5/QaDQajUaj0Wg0Go1Go9FotH+3F1GxE7xDV+SvAAAAAElFTkSuQmCC'
         ], 
-        'reference': {
-            'type': 'St', 
-            'value': 'reference'
-        }, 
-        'service': 'EXPRESS WORLDWIDE', 
+        'reference': {'type': 'St', 'value': 'reference'}, 
+        'services': ['EXPRESS WORLDWIDE', 'DUTIES & TAXES PAID ', 'PAPERLESS TRADE ', 'C', 'DTP', 'PLT'], 
         'shipment_date': '2017-11-10', 
-        'total_charge': {
-            'amount': '155.160', 
-            'currency': 'USD', 
-            'name': 'Shipment charge'
-        }, 
-        'tracking_number': '0044650491'
+        'total_charge': {'amount': '155.160', 'currency': 'USD', 'name': 'Shipment charge'}, 
+        'tracking_numbers': ['0044650491']
     }, 
     []
 ]

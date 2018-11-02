@@ -17,8 +17,11 @@ class TestFeDexQuote(unittest.TestCase):
     def test_create_quote_request(self):
         shipper = {"postal_code": "H3N1S4", "country_code": "CA"}
         recipient = {"city": "Lome", "country_code": "TG"}
-        shipment = {"packages": [
-            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}]}
+        shipment = {
+            "currency": "USD",
+            "payment_account_number": "2349857",
+            "packages": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}]
+        }
         payload = Quote.create(
             shipper=shipper, recipient=recipient, shipment=shipment)
 
@@ -185,6 +188,7 @@ QuoteRequestXml = f'''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/e
                     </ns:Payor>
                 </ns:ShippingChargesPayment>
                 <ns:RateRequestTypes>LIST</ns:RateRequestTypes>
+                <ns:RateRequestTypes>PREFERRED</ns:RateRequestTypes>
                 <ns:PackageCount>1</ns:PackageCount>
                 <ns:RequestedPackageLineItems>
                     <ns:GroupPackageCount>1</ns:GroupPackageCount>
