@@ -396,7 +396,7 @@ shipment_data = {
         "state_code": "ON"
     },
     "shipment": {
-        "packages": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
+        "items": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
         "label": {"format": "8.5x11"},
         "services": ["DOM.EP"],
         "extra": {
@@ -443,7 +443,7 @@ ncshipment_data = {
         "state_code": "ON"
     },
     "shipment": {
-        "packages": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
+        "items": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
         "services": ["DOM.EP"],
         "extra": {
             "requested-shipping-point": "J8R1A2", 

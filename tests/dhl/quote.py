@@ -18,7 +18,7 @@ class TestDHLQuote(unittest.TestCase):
         shipment = {
             "currency": "CAD",
             "insured_amount": 75,
-            "packages": [
+            "items": [
                 {"id":"1", "height":3, "length":10, "width":3,"weight":4.0 }
             ], 
             "is_document": False

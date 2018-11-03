@@ -35,7 +35,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
 
     def create_mailing_scenario(self, payload: E.shipment_request) -> mailing_scenario:
-        package = payload.shipment.packages[0]
+        package = payload.shipment.items[0]
         
         if len(payload.shipment.services) > 0:
             services = servicesType()

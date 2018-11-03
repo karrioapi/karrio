@@ -20,7 +20,7 @@ class TestFeDexQuote(unittest.TestCase):
         shipment = {
             "currency": "USD",
             "payment_account_number": "2349857",
-            "packages": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}]
+            "items": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}]
         }
         payload = Quote.create(
             shipper=shipper, recipient=recipient, shipment=shipment)

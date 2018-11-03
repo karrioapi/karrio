@@ -52,7 +52,7 @@ class FedexMapperPartial(FedexMapperBase):
                 VariationOptions=None,
                 TotalWeight=Weight(
                     Units=payload.shipment.weight_unit,
-                    Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.packages, 0)
+                    Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.items, 0)
                 ),
                 TotalInsuredValue=payload.shipment.insured_amount,
                 PreferredCurrency=payload.shipment.currency,
@@ -165,7 +165,7 @@ class FedexMapperPartial(FedexMapperBase):
                     ([] if not payload.shipment.currency else ["PREFERRED"])
                 ),
                 EdtRequestType=payload.shipment.extra.get('EdtRequestType'),
-                PackageCount=len(payload.shipment.packages),
+                PackageCount=len(payload.shipment.items),
                 ShipmentOnlyFields=None,
                 ConfigurationData=None,
                 RequestedPackageLineItems=[
@@ -191,7 +191,7 @@ class FedexMapperPartial(FedexMapperBase):
                         CustomerReferences=None,
                         SpecialServicesRequested=None,
                         ContentRecords=None
-                    ) for index, pkg in enumerate(payload.shipment.packages)
+                    ) for index, pkg in enumerate(payload.shipment.items)
                 ],
             )
         )

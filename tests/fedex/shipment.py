@@ -679,7 +679,7 @@ shipment_data = {
         "country_code": "CA"
     },
     "shipment": {
-        "number_of_packages": 1,
+        "total_items": 1,
         "paid_by": "THIRD_PARTY",
         "packaging_type": "YOUR_PACKAGING",
         "payment_account_number": "Input Your Information",
@@ -689,34 +689,21 @@ shipment_data = {
         "weight_unit": "LB",
         "dimension_unit": "IN",
         "services": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
-        "packages": [
+        "items": [
             {
                 "id": "1",
                 "weight": 20.0,
                 "length": 12,
                 "width": 12,
                 "height": 12,
+                "description": "ABCD",
                 "extra": {
                     "CustomerReferences": [
                         {
                             "CustomerReferenceType": "CUSTOMER_REFERENCE",
                             "Value": "TC001_01_PT1_ST01_PK01_SNDUS_RCPCA_POS"
                         }
-                    ]
-                }
-            }
-        ],
-        "label": {
-            "format": "COMMON2D",
-            "type": "PNG",
-            "extra": {
-                "LabelStockType": "PAPER_7X4.75"
-            }
-        },
-        "commodities": [
-            {
-                "description": "ABCD",
-                "extra": {
+                    ],
                     "NumberOfPieces": 1,
                     "CountryOfManufacture": "US",
                     "QuantityUnits": "cm",
@@ -736,6 +723,13 @@ shipment_data = {
                 }
             }
         ],
+        "label": {
+            "format": "COMMON2D",
+            "type": "PNG",
+            "extra": {
+                "LabelStockType": "PAPER_7X4.75"
+            }
+        },
         "extra": {
             "ServiceType": "INTERNATIONAL_PRIORITY",
             "DropoffType": "REGULAR_PICKUP",

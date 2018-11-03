@@ -18,16 +18,16 @@ class FedexMapperPartial(FedexMapperBase):
         def get_rateDetail() -> ShipmentRateDetail:
             return detail.ShipmentRating.ShipmentRateDetails[0]
 
-        def get_packages() -> List[CompletedPackageDetail]:
+        def get_items() -> List[CompletedPackageDetail]:
             return detail.CompletedPackageDetails
 
         shipment = get_rateDetail()
-        packages = get_packages()
+        items = get_items()
 
         return E.ShipmentDetails(
             carrier=self.client.carrier_name,
             tracking_numbers=reduce(
-                lambda ids, pkg: ids + [id.TrackingNumber for id in pkg.TrackingIds], packages, []
+                lambda ids, pkg: ids + [id.TrackingNumber for id in pkg.TrackingIds], items, []
             ),
             total_charge=E.ChargeDetails(
                 name="Shipment charge",
@@ -57,7 +57,7 @@ class FedexMapperPartial(FedexMapperBase):
                 detail.ServiceTypeDescription
             ],
             documents=reduce(
-               lambda labels, pkg: labels + [str(b64encode(part.Image), 'utf-8') for part in pkg.Label.Parts], packages, []
+               lambda labels, pkg: labels + [str(b64encode(part.Image), 'utf-8') for part in pkg.Label.Parts], items, []
             )
         )
 
@@ -75,7 +75,7 @@ class FedexMapperPartial(FedexMapperBase):
                 ManifestDetail=None,
                 TotalWeight=Weight(
                     Units=payload.shipment.weight_unit,
-                    Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.packages, 0)
+                    Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.items, 0)
                 ),
                 TotalInsuredValue=payload.shipment.insured_amount,
                 PreferredCurrency=payload.shipment.currency,
@@ -232,7 +232,7 @@ class FedexMapperPartial(FedexMapperBase):
                 ),
                 EdtRequestType=payload.shipment.extra.get('EdtRequestType'),
                 MasterTrackingId=None,
-                PackageCount=len(payload.shipment.packages),
+                PackageCount=len(payload.shipment.items),
                 ConfigurationData=None,
                 RequestedPackageLineItems=[
                     RequestedPackageLineItem(
@@ -252,7 +252,7 @@ class FedexMapperPartial(FedexMapperBase):
                             Units=payload.shipment.dimension_unit
                         ),
                         PhysicalPackaging=None,
-                        ItemDescription=pkg.description,
+                        ItemDescription=pkg.content,
                         ItemDescriptionForClearance=None,
                         CustomerReferences=[
                             CustomerReference(
@@ -262,7 +262,7 @@ class FedexMapperPartial(FedexMapperBase):
                         ] if 'CustomerReferences' in pkg.extra else None,
                         SpecialServicesRequested=None,
                         ContentRecords=None
-                    ) for index, pkg in enumerate(payload.shipment.packages)
+                    ) for index, pkg in enumerate(payload.shipment.items)
                 ]
             ),
         )

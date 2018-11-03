@@ -204,7 +204,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             )
         )
 
-        package = payload.shipment.packages[0]
+        package = payload.shipment.items[0]
         parcel_characteristics_ = Package.ParcelCharacteristicsType(
             weight=payload.shipment.total_weight or package.weight,
             dimensions=Package.dimensionsType(

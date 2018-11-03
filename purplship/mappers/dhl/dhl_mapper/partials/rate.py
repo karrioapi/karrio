@@ -65,7 +65,7 @@ class DHLMapperPartial(DHLMapperBase):
 
         Pieces = Req.PiecesType()
         default_packaging_type = "FLY" if payload.shipment.is_document else "BOX"
-        for index, piece in enumerate(payload.shipment.packages):
+        for index, piece in enumerate(payload.shipment.items):
             Pieces.add_Piece(Req.PieceType(
                 PieceID=piece.id or str(index),
                 PackageTypeCode=piece.packaging_type or default_packaging_type,
@@ -84,7 +84,7 @@ class DHLMapperPartial(DHLMapperBase):
             Date=time.strftime("%Y-%m-%d"),
             IsDutiable="N" if payload.shipment.is_document else "Y",
             Pieces=Pieces,
-            NumberOfPieces=payload.shipment.number_of_packages,
+            NumberOfPieces=payload.shipment.total_items,
             ShipmentWeight=payload.shipment.total_weight,
             Volume=payload.shipment.extra.get('Volume'),
             PaymentAccountNumber=payload.shipment.payment_account_number or self.client.account_number,

@@ -110,7 +110,7 @@ class DHLMapperPartial(DHLMapperBase):
          for line in payload.shipper.address_lines]
 
         Pieces_ = ShipReq.Pieces()
-        for p in payload.shipment.packages:
+        for p in payload.shipment.items:
             Pieces_.add_Piece(ShipReq.Piece(
                 PieceID=p.id,
                 PackageType=p.packaging_type,
@@ -119,17 +119,17 @@ class DHLMapperPartial(DHLMapperBase):
                 Height=p.height,
                 Width=p.width,
                 Depth=p.length,
-                PieceContents=p.description
+                PieceContents=p.content
             ))
 
         """ 
             Get PackageType from extra when implementing multi carrier,
-            Get weight from total_weight if specified otherwise calculated from packages weight sum
+            Get weight from total_weight if specified otherwise calculated from items weight sum
         """
         ShipmentDetails_ = ShipReq.ShipmentDetails(
-            NumberOfPieces=len(payload.shipment.packages),
+            NumberOfPieces=len(payload.shipment.items),
             Pieces=Pieces_,
-            Weight=payload.shipment.total_weight or sum([p.weight for p in payload.shipment.packages]),
+            Weight=payload.shipment.total_weight or sum([p.weight for p in payload.shipment.items]),
             CurrencyCode=payload.shipment.currency or "USD",
             WeightUnit=(payload.shipment.weight_unit or "LB")[0],
             DimensionUnit=(payload.shipment.dimension_unit or "IN")[0],
@@ -189,7 +189,7 @@ class DHLMapperPartial(DHLMapperBase):
 
         [ShipmentRequest_.add_Commodity(
             ShipReq.Commodity(CommodityCode=c.code, CommodityName=c.description)
-        ) for c in payload.shipment.commodities]
+        ) for c in payload.shipment.items]
 
         [ShipmentRequest_.add_Reference(
             ShipReq.Reference(ReferenceID=r)
