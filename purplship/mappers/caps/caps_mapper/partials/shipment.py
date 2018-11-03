@@ -1,152 +1,22 @@
-from typing import List, Tuple, Union
-from functools import reduce
-import time
-from purplship.domain import entities as E
-from purplship.domain.mapper import Mapper
-
-from purplship.mappers.caps.caps_client import CanadaPostClient
-
-from pycaps import rating as Rate, track as Track, messages as Msg
-from pycaps import shipment as Shipment
-from pycaps import ncshipment as NCShipment
+from pycaps import shipment as Shipment, ncshipment as NCShipment
+from base64 import b64encode
+from datetime import datetime
+from .interface import reduce, Tuple, List, Union, E, CanadaPostMapperBase
 
 
-class CanadaPostMapper(Mapper):
-    def __init__(self, client: CanadaPostClient):
-        self.client = client
+class CanadaPostMapperPartial(CanadaPostMapperBase):
 
-    """ Shared functions """
+    def parse_shipment_info(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+        shipment = self._extract_shipment(response) if len(response.xpath('.//*[local-name() = $name]', name="shipment-id")) > 0 else None
+        return (shipment, self.parse_error_response(response))
 
-    def parse_error_response(self, response) -> List[E.Error]:
-        messages = response.xpath('.//*[local-name() = $name]', name="message")
-        return reduce(self._extract_error, messages, [])
-
-    """ Interface functions """
-
-    def create_quote_request(self, payload: E.shipment_request) -> Rate.mailing_scenario:
-        package = payload.shipment.packages[0]
-        
-        if len(payload.shipment.services) > 0:
-            services = Rate.servicesType()
-            for code in payload.shipment.services:
-                services.add_service_code(code)
-
-        if 'options' in payload.shipment.extra:
-            options = Rate.optionsType()
-            for option in payload.shipment.extra.get('options'):
-                options.add_option(Rate.optionType(
-                    option_amount=option.get('option-amount'),
-                    option_code=option.get('option-code')
-                ))
-
-        return Rate.mailing_scenario(
-            customer_number=payload.shipper.account_number or payload.shipment.payment_account_number or self.client.customer_number,
-            contract_id=payload.shipment.extra.get('contract-id'),
-            promo_code=payload.shipment.extra.get('promo-code'),
-            quote_type=payload.shipment.extra.get('quote-type'),
-            expected_mailing_date=payload.shipment.extra.get('expected-mailing-date'),
-            options=options if ('options' in payload.shipment.extra) else None,
-            parcel_characteristics=Rate.parcel_characteristicsType(
-                weight=payload.shipment.total_weight or package.weight,
-                dimensions=Rate.dimensionsType(
-                    length=package.length,
-                    width=package.width,
-                    height=package.height
-                ),
-                unpackaged=payload.shipment.extra.get('unpackaged'),
-                mailing_tube=payload.shipment.extra.get('mailing-tube'),
-                oversized=payload.shipment.extra.get('oversized')
-            ),
-            services=services if (len(payload.shipment.services) > 0) else None,
-            origin_postal_code=payload.shipper.postal_code,
-            destination=Rate.destinationType(
-                domestic=Rate.domesticType(
-                    postal_code=payload.recipient.postal_code
-                ) if (payload.recipient.country_code == 'CA') else None,
-                united_states=Rate.united_statesType(
-                    zip_code=payload.recipient.postal_code
-                ) if (payload.recipient.country_code == 'US') else None,
-                international=Rate.internationalType(
-                    country_code=payload.shipment.country_code
-                ) if (payload.recipient.country_code not in ['US', 'CA']) else None
-            )
-        )
-
-    def create_tracking_request(self, payload: E.tracking_request) -> List[str]:
-        return payload.tracking_numbers
-
-    def create_shipment_request(self, payload: E.shipment_request) -> Union[Shipment.ShipmentType, NCShipment.NonContractShipmentType]:
+    def create_shipment(self, payload: E.shipment_request) -> Union[Shipment.ShipmentType, NCShipment.NonContractShipmentType]:
         is_non_contract = payload.shipment.extra.get('settlement-info') is None
         shipment = self._create_ncshipment(payload) if is_non_contract else self._create_shipment(payload)
         return shipment
 
 
-    """ Mapper Interface parsing methods """
-
-    def parse_quote_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
-        price_quotes = response.xpath('.//*[local-name() = $name]', name="price-quote")
-        quotes = reduce(self._extract_quote, price_quotes, [])
-        return (quotes, self.parse_error_response(response))
-
-    def parse_tracking_response(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
-        pin_summaries = response.xpath('.//*[local-name() = $name]', name="pin-summary")
-        trackings = reduce(self._extract_tracking, pin_summaries, [])
-        return (trackings, self.parse_error_response(response))
-
-    def parse_shipment_response(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
-        shipment = self._extract_shipment(response) if len(response.xpath('.//*[local-name() = $name]', name="shipment-id")) > 0 else None
-        return (shipment, self.parse_error_response(response))
-
-    """ Helpers functions """
-
-    def _extract_error(self, errors: List[E.Error], messageNode: 'XMLElement') -> List[E.Error]:
-        message = Msg.messageType()
-        message.build(messageNode)
-        return errors + [
-            E.Error(code=message.code,
-                    message=message.description, carrier=self.client.carrier_name)
-        ]
-
-    def _extract_quote(self, quotes: List[E.QuoteDetails], price_quoteNode: 'XMLElement') -> List[E.QuoteDetails]:
-        price_quote = Rate.price_quoteType()
-        price_quote.build(price_quoteNode)
-        discounts = [E.ChargeDetails(name=d.adjustment_name, currency="CAD", amount=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
-        return quotes + [
-            E.QuoteDetails(
-                carrier=self.client.carrier_name,
-                currency="CAD",
-                delivery_date=str(price_quote.service_standard.expected_delivery_date),
-                service_name=price_quote.service_name,
-                service_type=price_quote.service_code,
-                base_charge=float(price_quote.price_details.base or 0),
-                total_charge=float(price_quote.price_details.due or 0),
-                discount=reduce(lambda sum, d: sum + d.amount, discounts, 0),
-                duties_and_taxes=float(price_quote.price_details.taxes.gst.valueOf_ or 0) + 
-                    float(price_quote.price_details.taxes.pst.valueOf_ or 0) + 
-                    float(price_quote.price_details.taxes.hst.valueOf_ or 0),
-                extra_charges=list(map(lambda a: E.ChargeDetails(
-                    name=a.adjustment_name, currency="CAD", amount=float(a.adjustment_cost or 0)), price_quote.price_details.adjustments.adjustment)
-                )
-            )
-        ]
-
-    def _extract_tracking(self, trackings: List[E.TrackingDetails], pin_summaryNode: 'XMLElement') -> List[E.TrackingDetails]:
-        pin_summary = Track.pin_summary()
-        pin_summary.build(pin_summaryNode)
-        return trackings + [
-            E.TrackingDetails(
-                carrier=self.client.carrier_name,
-                tracking_number=pin_summary.pin,
-                shipment_date=str(pin_summary.mailed_on_date),
-                events=[E.TrackingEvent(
-                    date=str(pin_summary.event_date_time),
-                    signatory=pin_summary.signatory_name,
-                    code=pin_summary.event_type,
-                    location=pin_summary.event_location,
-                    description=pin_summary.event_description
-                )]
-            )
-        ]
+    """ Private functions """
 
     def _extract_shipment(self, response: 'XMLElement') -> E.ShipmentDetails:
         is_non_contract = len(response.xpath('.//*[local-name() = $name]', name="non-contract-shipment-info")) > 0
@@ -204,9 +74,6 @@ class CanadaPostMapper(Mapper):
                 type="Shipment Id"
             )
         )
-
-
-    """ Private functions """
 
     def _create_shipment(self, payload: E.shipment_request) -> Shipment.ShipmentType:
         def _initialise_delivery_spec() -> Shipment.DeliverySpecType:            
@@ -426,3 +293,4 @@ def _has_any(dictionary: dict, keys: List[str]) -> bool:
     Return True if at least one key of the list is contained by the dictionary
     """
     return any([k for k in keys if k in dictionary])
+

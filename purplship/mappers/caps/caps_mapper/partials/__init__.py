@@ -1,0 +1,3 @@
+from .rate import CanadaPostMapperPartial as CanadaPostRateMapperPartial
+from .track import CanadaPostMapperPartial as CanadaPostTrackMapperPartial
+from .shipment import CanadaPostMapperPartial as CanadaPostShipmentMapperPartial

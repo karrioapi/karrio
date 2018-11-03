@@ -1,3 +1,3 @@
-from .caps_client import CanadaPostClient
-from .caps_mapper import CanadaPostMapper
-from .caps_proxy import CanadaPostProxy
+from purplship.mappers.caps.caps_client import CanadaPostClient
+from purplship.mappers.caps.caps_mapper import CanadaPostMapper
+from purplship.mappers.caps.caps_proxy import CanadaPostProxy
