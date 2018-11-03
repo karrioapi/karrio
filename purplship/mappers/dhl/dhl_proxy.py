@@ -1,6 +1,7 @@
 from io import StringIO
 from gds_helpers import export, to_xml, request as http
-from purplship.mappers.dhl.dhl_mapper import DHLMapper, DHLClient
+from purplship.mappers.dhl.dhl_mapper import DHLMapper
+from purplship.mappers.dhl.dhl_client import DHLClient
 from purplship.domain.proxy import Proxy
 from pydhl.DCT_req_global import DCTRequest
 from pydhl.tracking_request_known import KnownTrackingRequest

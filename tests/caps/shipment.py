@@ -383,7 +383,8 @@ shipment_data = {
         "country_code": "CA",
         "person_name": "Bob",
         "phone_number": "1 (450) 823-8432",
-        "state_code": "QC"
+        "state_code": "QC",
+        "account_number": "123456789",
     },
     "recipient": {
         "company_name": "CGI",
@@ -396,7 +397,6 @@ shipment_data = {
     },
     "shipment": {
         "packages": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
-        "shipper_account_number": "123456789",
         "label": {"format": "8.5x11"},
         "services": ["DOM.EP"],
         "extra": {
@@ -430,6 +430,7 @@ ncshipment_data = {
         "city": "Ottawa",
         "postal_code": "K1A0B1",
         "phone_number": "555-555-5555",
+        "account_number": "123456789",
         "state_code": "ON"
     },
     "recipient": {
@@ -443,7 +444,6 @@ ncshipment_data = {
     },
     "shipment": {
         "packages": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
-        "shipper_account_number": "123456789",
         "services": ["DOM.EP"],
         "extra": {
             "requested-shipping-point": "J8R1A2", 

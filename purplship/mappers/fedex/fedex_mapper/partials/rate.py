@@ -34,7 +34,7 @@ class FedexMapperPartial(FedexMapperBase):
         ]
 
 
-    def create_rate_request(self, payload: E.quote_request) -> RateRequest:
+    def create_rate_request(self, payload: E.shipment_request) -> RateRequest:
         return RateRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
             ClientDetail=self.clientDetail,
@@ -58,7 +58,7 @@ class FedexMapperPartial(FedexMapperBase):
                 PreferredCurrency=payload.shipment.currency,
                 ShipmentAuthorizationDetail=None,
                 Shipper=Party(
-                    AccountNumber=payload.shipment.shipper_account_number,
+                    AccountNumber=payload.shipper.account_number,
                     Tins=None,
                     Contact=Contact(
                         ContactId=None,

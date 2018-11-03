@@ -24,7 +24,7 @@ class FedexMapper(
         FedexShipmentMapperPartial
     ):        
 
-    def create_quote_request(self, payload: E.quote_request) -> RateRequest:
+    def create_quote_request(self, payload: E.shipment_request) -> RateRequest:
         return self.create_rate_request(payload)
 
     def create_tracking_request(self, payload: E.tracking_request) -> TrackRequest:

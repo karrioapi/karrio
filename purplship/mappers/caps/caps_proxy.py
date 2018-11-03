@@ -1,7 +1,8 @@
 from io import StringIO
 from typing import List, Union
 from gds_helpers import export, to_xml, request as http, exec_parrallel, bundle_xml
-from purplship.mappers.caps.caps_mapper import CanadaPostMapper, CanadaPostClient
+from purplship.mappers.caps.caps_mapper import CanadaPostMapper
+from purplship.mappers.caps.caps_client import CanadaPostClient
 from pycaps import rating as Rate, pickuprequest as Pick
 from purplship.domain.proxy import Proxy
 from base64 import b64encode
