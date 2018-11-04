@@ -18,7 +18,7 @@ class TestUPSQuote(unittest.TestCase):
             "postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]
         }
         recipient = {"postal_code":"89109", "city":"Las Vegas", "country_code":"US"}
-        shipment = {"packages": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "description":"TV"}]}
+        shipment = {"items": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "description":"TV"}]}
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
         
         RateRequest_ = proxy.mapper.create_quote_request(payload)

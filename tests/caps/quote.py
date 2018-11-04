@@ -16,7 +16,7 @@ class TestCanadaPostQuote(unittest.TestCase):
         shipper = {"postal_code": "H8Z2Z3", "country_code": "CA"}
         recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
         shipment = {
-            "packages": [{"height":3, "length":10, "width":3,"weight": 4.0}],
+            "items": [{"height":3, "length":10, "width":3,"weight": 4.0}],
             "services": ["DOM.EP"],
             "extra": { "options": []}
         }

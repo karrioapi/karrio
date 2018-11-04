@@ -52,7 +52,9 @@ class TestDHLShipment(unittest.TestCase):
             }
         }
         shipment = {
-            "packages": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "EE"}],
+            "items": [
+                {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "EE", "code": "cc", "description": "cn"}
+            ],
             "is_document": False,
             "paid_by": "S",
             "payment_account_number": "123456789",
@@ -67,7 +69,6 @@ class TestDHLShipment(unittest.TestCase):
                 }
             },
             "services": ["WY"],
-            "commodities": [{"code": "cc", "description": "cn"}],
             "extra": {"EProcShip": "N", "GlobalProductCode": "P", "LocalProductCode": "P"},
             "customs": {
                 "terms_of_trade": "DAP",

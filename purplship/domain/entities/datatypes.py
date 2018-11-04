@@ -20,16 +20,22 @@ class party(NamedTuple):
     address_lines: List[str] = []
     extra: Dict = {}
 
-class package_type(NamedTuple):
+class item_type(NamedTuple):
+    """
+        item type is a package of commodity
+    """
+
     weight: float
     id: str = None
-    width: float = 1
-    height: float = 1
-    length: float = 1
+    width: float = None
+    height: float = None
+    length: float = None
     packaging_type: str = None
     description: str = None
+    content: str = None
     quantity: int = 1
     sku: str = None
+    code: str = None
     value_amount: float = None
     value_currency: str = None
     origin_country: str = None
@@ -40,14 +46,10 @@ class customs_type(NamedTuple):
     aes: str = None
     description: str = None
     terms_of_trade: str = None
-    items: List[package_type] = []
+    items: List[item_type] = []
     commercial_invoice: bool = False
     extra: Dict = {}
 
-class commodity_type(NamedTuple):
-    code: str = None
-    description: str = None
-    extra: Dict = {}
 
 class label_type(NamedTuple):
     format: str = None
@@ -62,9 +64,12 @@ class invoice_type(NamedTuple):
     extra: Dict = {}
 
 class shipment_options(NamedTuple):
-    packages: List[package_type]
+
+    """ packages or commodities """
+    items: List[item_type]
+
     insured_amount: float = None
-    number_of_packages: int = None
+    total_items: int = None
     packaging_type: str = None
     is_document: bool = False
     total_weight: float = None
@@ -86,7 +91,6 @@ class shipment_options(NamedTuple):
     
     references: List[str] = []
     services: List[str] = []
-    commodities: List[commodity_type] = []
 
     label: label_type = None
     extra: Dict = {}

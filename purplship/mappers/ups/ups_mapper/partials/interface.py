@@ -6,7 +6,9 @@ from pyups import (
     freight_rate as Rate, 
     package_track as Track, 
     UPSSecurity as Security, 
-    error as Err
+    error as Err,
+    freight_ship as FShip,
+    package_ship as PShip
 )
 
 
@@ -22,6 +24,12 @@ class UPSCapabilities:
 
     def create_track_request(self, payload: E.tracking_request) -> List[Track.TrackRequest]:
         pass  
+
+    def create_freight_ship_request(self, payload: E.shipment_request) -> FShip.FreightShipRequest:
+        pass
+
+    def create_package_ship_request(self, payload: E.shipment_request) -> PShip.ShipmentRequest:
+        pass
         
 
     """ Replys """ 

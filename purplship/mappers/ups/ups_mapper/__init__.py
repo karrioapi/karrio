@@ -5,7 +5,9 @@ from pyups import (
     freight_rate as Rate, 
     package_track as Track, 
     UPSSecurity as Security, 
-    error as Err
+    error as Err,
+    freight_ship as FShip,
+    package_ship as PShip
 )
 from .partials import (
     UPSRateMapperPartial, 
@@ -27,6 +29,11 @@ class UPSMapper(
     def create_tracking_request(self, payload: E.tracking_request) -> List[Track.TrackRequest]:
         return self.create_track_request(payload)
 
+    def create_shipment_request(self, payload: E.shipment_request) -> Union[FShip.FreightShipRequest, PShip.ShipmentRequest]:
+        is_freight = payload.shipment.extra.get('is_freight')
+        return (
+            self.create_freight_ship_request if is_freight else self.create_package_ship_request
+        )(payload)
 
 
     def parse_quote_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:

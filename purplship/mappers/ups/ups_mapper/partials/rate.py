@@ -107,7 +107,7 @@ class UPSMapperPartial(UPSMapperBase):
             TimeInTransitIndicator=""
         )
 
-        for c in payload.shipment.packages:
+        for c in payload.shipment.items:
             FreightRateRequest_.add_Commodity(
                 Rate.CommodityType(
                     Description=c.description or "...",
@@ -121,7 +121,7 @@ class UPSMapperPartial(UPSMapperBase):
                         Height=c.height,
                         Length=c.length
                     ),
-                    NumberOfPieces=len(payload.shipment.packages),
+                    NumberOfPieces=len(payload.shipment.items),
                     PackagingType=Rate.RateCodeDescriptionType(Code="BAG", Description="BAG"),
                     FreightClass=50
                 )
