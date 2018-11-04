@@ -17,6 +17,16 @@ class TestUPSShipment(unittest.TestCase):
         self.ShipmentRequest = ShipmentRequest()
         self.ShipmentRequest.build(get_node_from_xml(ShipmentRequestXML, 'ShipmentRequest'))
 
+    def test_create_freight_shipment_request(self):
+        payload = Shipment.create(**freight_shipment_data)
+        Shipment_ = proxy.mapper.create_shipment_request(payload)
+        self.assertEqual(export(Shipment_), export(self.FreightShipRequest))
+
+    def test_create_package_shipment_request(self):
+        payload = Shipment.create(**package_shipment_data)
+        Shipment_ = proxy.mapper.create_shipment_request(payload)
+        self.assertEqual(export(Shipment_), export(self.ShipmentRequest))
+
     @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
     def test_create_freight_shipment(self, http_mock):
         proxy.create_shipment(self.FreightShipRequest)
@@ -225,7 +235,6 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
       <fsp:FreightShipRequest>
          <common:Request>
             <common:RequestOption>1</common:RequestOption>
-            <common:SubVersion>SubVersion</common:SubVersion>
             <common:TransactionReference>
                <common:CustomerContext>Your Customer Context</common:CustomerContext>
             </common:TransactionReference>
@@ -292,16 +301,14 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
                   <fsp:UnitOfMeasurement>
                      <fsp:Code>UnitOfMeasurement code</fsp:Code>
                   </fsp:UnitOfMeasurement>
-                  <fsp:Value>Weight</fsp:Value>
+                  <fsp:Value>100</fsp:Value>
                </fsp:Weight>
-               <fsp:NumberOfPieces>NumberOfPieces</fsp:NumberOfPieces>
+               <fsp:NumberOfPieces>1</fsp:NumberOfPieces>
                <fsp:PackagingType>
                   <fsp:Code>PackagingType code</fsp:Code>
                </fsp:PackagingType>
                <fsp:FreightClass>FreightClass</fsp:FreightClass>
             </fsp:Commodity>
-            <fsp:TimeInTransitIndicator></fsp:TimeInTransitIndicator>
-            <fsp:DensityEligibleIndicator></fsp:DensityEligibleIndicator>
          </fsp:Shipment>
       </fsp:FreightShipRequest>
    </tns:Body>
@@ -509,18 +516,15 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soa
                 </ship:PaymentInformation>
                 <ship:Service>
                     <ship:Code>01</ship:Code>
-                    <ship:Description>Express</ship:Description>
                 </ship:Service>
                 <ship:Package>
                     <ship:Description>Description</ship:Description>
                     <ship:Packaging>
                         <ship:Code>02</ship:Code>
-                        <ship:Description>Description</ship:Description>
                     </ship:Packaging>
                     <ship:Dimensions>
                         <ship:UnitOfMeasurement>
                             <ship:Code>IN</ship:Code>
-                            <ship:Description>Inches</ship:Description>
                         </ship:UnitOfMeasurement>
                         <ship:Length>7</ship:Length>
                         <ship:Width>5</ship:Width>
@@ -529,7 +533,6 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soa
                     <ship:PackageWeight>
                         <ship:UnitOfMeasurement>
                             <ship:Code>LBS</ship:Code>
-                            <ship:Description>Pounds</ship:Description>
                         </ship:UnitOfMeasurement>
                         <ship:Weight>10</ship:Weight>
                     </ship:PackageWeight>
@@ -546,3 +549,138 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soa
     </tns:Body>
 </tns:Envelope>
 """
+
+
+freight_shipment_data = {
+    "shipper": {
+        "company_name": "Ship From Name",
+        "address_lines": ["Address Line"],
+        "city": "City",
+        "state_code": "StateProvinceCode",
+        "postal_code": "PostalCode",
+        "country_code": "CountryCode",
+        "person_name": "Attention Name",
+        "phone_number": "Shipper Phone number",
+        "account_number": "Your Shipper Number"
+    },
+    "recipient": {
+        "company_name": "Ship To Name",
+        "address_lines": ["Address Line"],
+        "city": "City",
+        "state_code": "StateProvinceCode",
+        "postal_code": "PostalCode",
+        "country_code": "CountryCode",
+        "person_name": "Attention Name"
+    },
+    "shipment": {
+        "services": ["Service code"],
+        "weight_unit": "UnitOfMeasurement code", 
+        "references": ["Your Customer Context"],
+        "items": [
+            {
+                "description": "Commodity Description",
+                "weight": 100,
+                "packaging_type": "PackagingType code",
+                "extra": {
+                    "NumberOfPieces": 1,
+                    "FreightClass": "FreightClass"
+                }
+            }
+        ],
+        "extra": {
+            "is_freight": True,
+            "Payer": {
+                "company_name": "Payer Name",
+                "address_lines": ["Address Line"],
+                "city": "City",
+                "state_code": "StateProvinceCode",
+                "postal_code": "PostalCode",
+                "country_code": "CountryCode",
+                "person_name": "Attention Name",
+                "phone_number": "Phone Number",
+                "account_number": "Payer Shipper Number"
+            },
+            "ShipmentBillingOption": {
+                "Code": "ShipmentBillingOption"
+            },
+            "HandlingUnitOne": {
+                "Quantity": "HandlingUnitOne quantity",
+                "Type": {
+                    "Code": "HandlingUnitOne type"
+                }
+            }
+        }
+    }
+}
+
+package_shipment_data = {
+    "shipper": {
+        "company_name": "Shipper Name",
+        "person_name": "Shipper Attn Name",
+        "tax_id": "123456",
+        "phone_number": "1234567890",
+        "account_number": "Your Shipper Number",
+        "address_lines": ["Address Line"],
+        "city": "City",
+        "state_code": "StateProvinceCode",
+        "postal_code": "PostalCode",
+        "country_code": "CountryCode",
+        "extra": {
+            "Extension": "1",
+            "FaxNumber": "1234567890"
+        }
+    },
+    "recipient": {
+        "company_name": "Ship To Name",
+        "person_name": "Ship To Attn Name",
+        "phone_number": "1234567890",
+        "address_lines": ["Address Line"],
+        "city": "City",
+        "state_code": "StateProvinceCode",
+        "postal_code": "PostalCode",
+        "country_code": "CountryCode"
+    },
+    "shipment": {
+        "references": ["Your Customer Context"],
+        "services": ["01"],
+        "dimension_unit": "IN",
+        "weight_unit": "LB",
+        "paid_by": "SENDER",
+        "payment_account_number": "Your Account Number",
+        "items": [
+            {
+                "description": "Description",
+                "packaging_type": "02",
+                "length": 7,
+                "width": 5,
+                "height": 2,
+                "weight": 10
+            }
+        ],
+        "label": {
+            "format": "GIF",
+            "extra": {
+                "HTTPUserAgent": "Mozilla/4.5"
+            }
+        },
+        "extra": {
+            "Description": "Description",
+            "ShipFrom": {
+                "company_name": "Ship From Name",
+                "person_name": "Ship From Attn Name",
+                "phone_number": "1234567890",
+                "address_lines": ["Address Line"],
+                "city": "City",
+                "state_code": "StateProvinceCode",
+                "postal_code": "PostalCode",
+                "country_code": "CountryCode",
+                "extra": {
+                    "FaxNumber": "1234567890"
+                }
+            },
+            "ShipmentCharge": {
+                "Type": "01"
+            }
+        }
+    }
+}

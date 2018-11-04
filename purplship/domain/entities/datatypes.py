@@ -27,9 +27,9 @@ class item_type(NamedTuple):
 
     weight: float
     id: str = None
-    width: float = 1
-    height: float = 1
-    length: float = 1
+    width: float = None
+    height: float = None
+    length: float = None
     packaging_type: str = None
     description: str = None
     content: str = None
