@@ -79,6 +79,7 @@ class shipment_options(NamedTuple):
     currency: str = None
     paid_by: str = None
     declared_value: float = None
+    service_type: str = None
     payment_type: str = None
     duty_paid_by: str = None
     duty_payment_account: str = None
