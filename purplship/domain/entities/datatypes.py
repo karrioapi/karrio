@@ -91,7 +91,7 @@ class shipment_options(NamedTuple):
     invoice: invoice_type = None
     
     references: List[str] = []
-    services: List[str] = []
+    extra_services: List[str] = []
 
     label: label_type = None
     extra: Dict = {}

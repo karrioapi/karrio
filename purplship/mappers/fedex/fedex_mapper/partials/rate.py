@@ -126,7 +126,7 @@ class FedexMapperPartial(FedexMapperBase):
                     )
                 ) if any((payload.shipment.paid_by, payload.shipment.payment_account_number)) else None,
                 SpecialServicesRequested=ShipmentSpecialServicesRequested(
-                    SpecialServiceTypes=payload.shipment.services,
+                    SpecialServiceTypes=payload.shipment.extra_services,
                     CodDetail=None,
                     DeliveryOnInvoiceAcceptanceDetail=None,
                     HoldAtLocationDetail=None,
@@ -141,7 +141,7 @@ class FedexMapperPartial(FedexMapperBase):
                     FreightGuaranteeDetail=None,
                     EtdDetail=None,
                     CustomDeliveryWindowDetail=None
-                ) if len(payload.shipment.services) > 0 else None,
+                ) if len(payload.shipment.extra_services) > 0 else None,
                 ExpressFreightDetail=None,
                 FreightShipmentDetail=None,
                 DeliveryInstructions=None,
