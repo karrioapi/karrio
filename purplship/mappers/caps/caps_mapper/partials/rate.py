@@ -36,10 +36,11 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
     def create_mailing_scenario(self, payload: E.shipment_request) -> mailing_scenario:
         package = payload.shipment.items[0]
+        requested_services = payload.shipment.extra_services + [payload.shipment.service_type]
         
-        if len(payload.shipment.services) > 0:
+        if len(requested_services) > 0:
             services = servicesType()
-            for code in payload.shipment.services:
+            for code in requested_services:
                 services.add_service_code(code)
 
         if 'options' in payload.shipment.extra:
@@ -68,7 +69,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 mailing_tube=payload.shipment.extra.get('mailing-tube'),
                 oversized=payload.shipment.extra.get('oversized')
             ),
-            services=services if (len(payload.shipment.services) > 0) else None,
+            services=services if (len(requested_services) > 0) else None,
             origin_postal_code=payload.shipper.postal_code,
             destination=destinationType(
                 domestic=domesticType(

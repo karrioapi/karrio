@@ -398,7 +398,7 @@ shipment_data = {
     "shipment": {
         "items": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
         "label": {"format": "8.5x11"},
-        "services": ["DOM.EP"],
+        "service_type": "DOM.EP",
         "extra": {
             "cpc-pickup-indicator": True,
             "requested-shipping-point": "K2B8J6", 
@@ -444,7 +444,7 @@ ncshipment_data = {
     },
     "shipment": {
         "items": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
-        "services": ["DOM.EP"],
+        "service_type": "DOM.EP",
         "extra": {
             "requested-shipping-point": "J8R1A2", 
             "options": [{"option-code": "DC" }],

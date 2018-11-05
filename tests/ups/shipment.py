@@ -573,7 +573,7 @@ freight_shipment_data = {
         "person_name": "Attention Name"
     },
     "shipment": {
-        "services": ["Service code"],
+        "service_type": "Service code",
         "weight_unit": "UnitOfMeasurement code", 
         "references": ["Your Customer Context"],
         "items": [
@@ -642,7 +642,7 @@ package_shipment_data = {
     },
     "shipment": {
         "references": ["Your Customer Context"],
-        "services": ["01"],
+        "service_type": "01",
         "dimension_unit": "IN",
         "weight_unit": "LB",
         "paid_by": "SENDER",

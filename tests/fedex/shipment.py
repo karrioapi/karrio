@@ -688,7 +688,7 @@ shipment_data = {
         "currency": "USD",
         "weight_unit": "LB",
         "dimension_unit": "IN",
-        "services": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
+        "extra_services": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
         "items": [
             {
                 "id": "1",

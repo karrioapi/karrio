@@ -217,7 +217,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         )
 
         delivery_spec_ = Package.DeliverySpecType(
-            service_code=payload.shipment.services[0] if len(payload.shipment.services) > 0 else None,
+            service_code=payload.shipment.service_type,
             sender=sender_,
             destination=destination_,
             parcel_characteristics=parcel_characteristics_,

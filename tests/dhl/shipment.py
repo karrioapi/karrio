@@ -68,7 +68,7 @@ class TestDHLShipment(unittest.TestCase):
                     "Image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
                 }
             },
-            "services": ["WY"],
+            "service_type": "WY",
             "extra": {"EProcShip": "N", "GlobalProductCode": "P", "LocalProductCode": "P"},
             "customs": {
                 "terms_of_trade": "DAP",
