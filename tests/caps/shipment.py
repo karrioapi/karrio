@@ -4,7 +4,7 @@ import time
 from gds_helpers import to_xml, export, jsonify, xml_tostring
 from pycaps.shipment import ShipmentType
 from pycaps.ncshipment import NonContractShipmentType
-from purplship.domain.entities import Shipment
+from purplship.domain.Types import Shipment
 from purplship.mappers.caps import CanadaPostProxy
 from tests.caps.fixture import proxy
 from tests.utils import strip

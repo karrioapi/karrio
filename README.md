@@ -12,7 +12,7 @@ PurplSHip prevents you from reinventing the wheel and is easy to use:
 
 ```shell
 >>> from purplship.mappers.dhl import  DHLClient, DHLProxy
->>> from purplship.domain.entities import Tracking
+>>> from purplship.domain.Types import Tracking
 >>> client = DHLClient(
     "https://xmlpi-ea.dhl.com/XMLShippingServlet",
     "YOUR_DHL_SITE_ID",

@@ -7,30 +7,30 @@ from pydhl import (
     DCTRequestdatatypes_global as ReqType
 )
 from .interface import (
-    reduce, Tuple, List, E, 
+    reduce, Tuple, List, T, 
     DHLMapperBase
 )
 
 
 class DHLMapperPartial(DHLMapperBase):
     
-    def parse_dct_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_dct_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         qtdshp_list = response.xpath(
             './/*[local-name() = $name]', name="QtdShp")
         quotes = reduce(self._extract_quote, qtdshp_list, [])
         return (quotes, self.parse_error_response(response))
 
-    def _extract_quote(self, quotes: List[E.QuoteDetails], qtdshpNode: 'XMLElement') -> List[E.QuoteDetails]:
+    def _extract_quote(self, quotes: List[T.QuoteDetails], qtdshpNode: 'XMLElement') -> List[T.QuoteDetails]:
         qtdshp = Res.QtdShpType()
         qtdshp.build(qtdshpNode)
-        ExtraCharges = list(map(lambda s: E.ChargeDetails(
+        ExtraCharges = list(map(lambda s: T.ChargeDetails(
             name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
         Discount_ = reduce(
             lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
         DutiesAndTaxes_ = reduce(
             lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
         return quotes + [
-            E.QuoteDetails(
+            T.QuoteDetails(
                 carrier=self.client.carrier_name,
                 currency=qtdshp.CurrencyCode,
                 delivery_date=str(qtdshp.DeliveryDate[0].DlvyDateTime),
@@ -42,12 +42,12 @@ class DHLMapperPartial(DHLMapperBase):
                 total_charge=float(qtdshp.ShippingCharge or 0),
                 duties_and_taxes=DutiesAndTaxes_,
                 discount=Discount_,
-                extra_charges=list(map(lambda s: E.ChargeDetails(
+                extra_charges=list(map(lambda s: T.ChargeDetails(
                     name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
             )
         ]
 
-    def create_dct_request(self, payload: E.shipment_request) -> Req.DCTRequest:
+    def create_dct_request(self, payload: T.shipment_request) -> Req.DCTRequest:
         service_type = payload.shipment.service_type
         is_dutiable = payload.shipment.declared_value != None
         extra_services = (

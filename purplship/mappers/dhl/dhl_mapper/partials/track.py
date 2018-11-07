@@ -2,27 +2,27 @@ from pydhl import (
     tracking_request_known as Track,
     tracking_response as TrackRes
 )
-from .interface import reduce, Tuple, List, E, DHLMapperBase
+from .interface import reduce, Tuple, List, T, DHLMapperBase
 
 
 class DHLMapperPartial(DHLMapperBase):
 
-    def parse_dhltracking_response(self, response) -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_dhltracking_response(self, response) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         awbinfos = response.xpath('.//*[local-name() = $name]', name="AWBInfo")
         trackings = reduce(self._extract_tracking, awbinfos, [])
         return (trackings, self.parse_error_response(response))
 
-    def _extract_tracking(self, trackings: List[E.TrackingDetails], awbInfoNode: 'XMLElement') -> List[E.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[T.TrackingDetails], awbInfoNode: 'XMLElement') -> List[T.TrackingDetails]:
         awbInfo = TrackRes.AWBInfo()
         awbInfo.build(awbInfoNode)
         if awbInfo.ShipmentInfo == None:
             return trackings
         return trackings + [
-            E.TrackingDetails(
+            T.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=awbInfo.AWBNumber,
                 shipment_date=str(awbInfo.ShipmentInfo.ShipmentDate),
-                events=list(map(lambda e: E.TrackingEvent(
+                events=list(map(lambda e: T.TrackingEvent(
                     date=str(e.Date),
                     time=str(e.Time),
                     signatory=e.Signatory,
@@ -33,7 +33,7 @@ class DHLMapperPartial(DHLMapperBase):
             )
         ]
 
-    def create_dhltracking_request(self, payload: E.tracking_request) -> Track.KnownTrackingRequest:
+    def create_dhltracking_request(self, payload: T.tracking_request) -> Track.KnownTrackingRequest:
         known_request = Track.KnownTrackingRequest(
             Request=self.init_request(),
             LanguageCode=payload.language_code or "en",

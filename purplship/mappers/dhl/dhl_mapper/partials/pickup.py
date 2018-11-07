@@ -6,13 +6,13 @@ from pydhl.book_pickup_global_res_20 import BookPUResponse
 from pydhl.modify_pickup_global_res_20 import ModifyPUResponse
 from pydhl import pickupdatatypes_global_20 as PickpuDataTypes
 
-from .interface import reduce, Union, Tuple, List, E, DHLMapperBase
+from .interface import reduce, Union, Tuple, List, T, DHLMapperBase
 
 
 class DHLMapperPartial(DHLMapperBase):
 
     
-    def parse_book_puresponse(self, response) -> Tuple[E.PickupDetails, List[E.Error]]:
+    def parse_book_puresponse(self, response) -> Tuple[T.PickupDetails, List[T.Error]]:
         ConfirmationNumbers = response.xpath('.//*[local-name() = $name]', name="ConfirmationNumber")
         success = len(ConfirmationNumbers) > 0
         if success:
@@ -23,7 +23,7 @@ class DHLMapperPartial(DHLMapperBase):
             self.parse_error_response(response) if not success else []
         )
 
-    def parse_cancel_puresponse(self, response) -> Tuple[dict, List[E.Error]]:
+    def parse_cancel_puresponse(self, response) -> Tuple[dict, List[T.Error]]:
         ConfirmationNumbers = response.xpath('.//*[local-name() = $name]', name="ConfirmationNumber")
         success = len(ConfirmationNumbers) > 0
         if success:
@@ -37,10 +37,10 @@ class DHLMapperPartial(DHLMapperBase):
 
 
 
-    def create_tracking_pins(self, payload: E.tracking_request) -> List[str]:
+    def create_tracking_pins(self, payload: T.tracking_request) -> List[str]:
         return payload.tracking_numbers
 
-    def create_book_purequest(self, payload: E.pickup_request) -> BookPURequest:
+    def create_book_purequest(self, payload: T.pickup_request) -> BookPURequest:
         Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(payload)
 
         return BookPURequest(
@@ -53,7 +53,7 @@ class DHLMapperPartial(DHLMapperBase):
             Pickup=Pickup_
         )
 
-    def create_modify_purequest(self, payload: E.pickup_request) -> ModifyPURequest:
+    def create_modify_purequest(self, payload: T.pickup_request) -> ModifyPURequest:
         Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(payload)
 
         return ModifyPURequest(
@@ -68,7 +68,7 @@ class DHLMapperPartial(DHLMapperBase):
             OriginSvcArea=payload.extra.get('OriginSvcArea')
         )
 
-    def create_cancel_purequest(self, payload: E.pickup_cancellation_request) -> CancelPURequest:
+    def create_cancel_purequest(self, payload: T.pickup_cancellation_request) -> CancelPURequest:
         return CancelPURequest(
             Request=self.init_request(),
             schemaVersion="2.0",
@@ -83,15 +83,15 @@ class DHLMapperPartial(DHLMapperBase):
 
     """ Private functions """
 
-    def _extract_pickup(self, pickup: Union[BookPUResponse, ModifyPURequest]) -> E.PickupDetails:
-        pickup_charge = None if pickup.PickupCharge is None else E.ChargeDetails(
+    def _extract_pickup(self, pickup: Union[BookPUResponse, ModifyPURequest]) -> T.PickupDetails:
+        pickup_charge = None if pickup.PickupCharge is None else T.ChargeDetails(
             name="Pickup Charge", amount=pickup.PickupCharge, currency=pickup.CurrencyCode
         )
         ref_times = (
-            ([] if pickup.ReadyByTime is None else [E.TimeDetails(name="ReadyByTime", value=pickup.ReadyByTime)]) +
-            ([] if pickup.CallInTime is None else [E.TimeDetails(name="CallInTime", value=pickup.CallInTime)])
+            ([] if pickup.ReadyByTime is None else [T.TimeDetails(name="ReadyByTime", value=pickup.ReadyByTime)]) +
+            ([] if pickup.CallInTime is None else [T.TimeDetails(name="CallInTime", value=pickup.CallInTime)])
         )
-        return E.PickupDetails(
+        return T.PickupDetails(
             carrier=self.client.carrier_name,
             confirmation_number=pickup.ConfirmationNumber,
             pickup_date=pickup.NextPickupDate,
@@ -99,7 +99,7 @@ class DHLMapperPartial(DHLMapperBase):
             ref_times=ref_times
         )
 
-    def _create_pickup_request(self, payload: E.pickup_request) -> Tuple[
+    def _create_pickup_request(self, payload: T.pickup_request) -> Tuple[
             PickpuDataTypes.Requestor,
             PickpuDataTypes.Place,
             PickpuDataTypes.Contact,

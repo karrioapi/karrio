@@ -1,26 +1,26 @@
 from pyfedex.rate_v22 import *
 from datetime import datetime
-from .interface import reduce, Tuple, List, E, FedexMapperBase
+from .interface import reduce, Tuple, List, T, FedexMapperBase
 
 
 class FedexMapperPartial(FedexMapperBase):
     
-    def parse_rate_reply(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_rate_reply(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         rate_replys = response.xpath('.//*[local-name() = $name]', name="RateReplyDetails")
         quotes = reduce(self._extract_quote, rate_replys, [])
         return (quotes, self.parse_error_response(response))
 
-    def _extract_quote(self, quotes: List[E.QuoteDetails], detailNode: 'XMLElement') -> List[E.QuoteDetails]: 
+    def _extract_quote(self, quotes: List[T.QuoteDetails], detailNode: 'XMLElement') -> List[T.QuoteDetails]: 
         detail = RateReplyDetail()
         detail.build(detailNode)
         if not detail.RatedShipmentDetails:
             return quotes
         shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
-        Discounts_ = map(lambda d: E.ChargeDetails(name=d.RateDiscountType, amount=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
-        Surcharges_ = map(lambda s: E.ChargeDetails(name=s.SurchargeType, amount=float(s.Amount.Amount)), shipmentDetail.Surcharges)
-        Taxes_ = map(lambda t: E.ChargeDetails(name=t.TaxType, amount=float(t.Amount.Amount)), shipmentDetail.Taxes)
+        Discounts_ = map(lambda d: T.ChargeDetails(name=d.RateDiscountType, amount=float(d.Amount.Amount)), shipmentDetail.FreightDiscounts)
+        Surcharges_ = map(lambda s: T.ChargeDetails(name=s.SurchargeType, amount=float(s.Amount.Amount)), shipmentDetail.Surcharges)
+        Taxes_ = map(lambda t: T.ChargeDetails(name=t.TaxType, amount=float(t.Amount.Amount)), shipmentDetail.Taxes)
         return quotes + [
-            E.QuoteDetails(
+            T.QuoteDetails(
                 carrier=self.client.carrier_name,
                 service_name=detail.ServiceType,
                 service_type=detail.ActualRateType,
@@ -34,7 +34,7 @@ class FedexMapperPartial(FedexMapperBase):
         ]
 
 
-    def create_rate_request(self, payload: E.shipment_request) -> RateRequest:
+    def create_rate_request(self, payload: T.shipment_request) -> RateRequest:
         return RateRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
             ClientDetail=self.clientDetail,

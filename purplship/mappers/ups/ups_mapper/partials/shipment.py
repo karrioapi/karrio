@@ -3,26 +3,26 @@ from pyups import (
     package_ship as PShip,
     common as Common
 ) 
-from .interface import reduce, Tuple, List, Union, E, UPSMapperBase
+from .interface import reduce, Tuple, List, Union, T, UPSMapperBase
 
 
 class UPSMapperPartial(UPSMapperBase):
 
-    def parse_freight_shipment_response(self, shipmentNode: 'XMLElement') -> E.ShipmentDetails:
+    def parse_freight_shipment_response(self, shipmentNode: 'XMLElement') -> T.ShipmentDetails:
         shipmentResponse = FShip.FreightShipResponse()
         shipmentResponse.build(shipmentNode)
         shipment = shipmentResponse.ShipmentResults
             
-        return E.ShipmentDetails(
+        return T.ShipmentDetails(
             carrier=self.client.carrier_name,
             tracking_numbers=[shipment.ShipmentNumber],
-            total_charge=E.ChargeDetails(
+            total_charge=T.ChargeDetails(
                 name="Shipment charge", 
                 amount=shipment.TotalShipmentCharge.MonetaryValue,
                 currency=shipment.TotalShipmentCharge.CurrencyCode
             ),
             charges=[
-                E.ChargeDetails(
+                T.ChargeDetails(
                     name=rate.Type.Code,
                     amount=rate.Factor.Value,
                     currency=rate.Factor.UnitOfMeasurement.Code
@@ -31,13 +31,13 @@ class UPSMapperPartial(UPSMapperBase):
             # shipment_date=,
             services=[shipment.Service.Code],
             documents=[image.GraphicImage for image in (shipment.Documents or [])],
-            reference=E.ReferenceDetails(
+            reference=T.ReferenceDetails(
                 value=shipmentResponse.Response.TransactionReference.CustomerContext,
                 type="CustomerContext"
             )
         )
 
-    def parse_package_shipment_response(self, shipmentNode: 'XMLElement') -> E.ShipmentDetails:
+    def parse_package_shipment_response(self, shipmentNode: 'XMLElement') -> T.ShipmentDetails:
         shipmentResponse = PShip.ShipmentResponse()
         shipmentResponse.build(shipmentNode)
         shipment = shipmentResponse.ShipmentResults
@@ -47,16 +47,16 @@ class UPSMapperPartial(UPSMapperBase):
         else:
             total_charge = shipment.NegotiatedRateCharges.TotalChargesWithTaxes or shipment.NegotiatedRateCharges.TotalCharge
 
-        return E.ShipmentDetails(
+        return T.ShipmentDetails(
             carrier=self.client.carrier_name,
             tracking_numbers=[pkg.TrackingNumber for pkg in shipment.PackageResults],
-            total_charge=E.ChargeDetails(
+            total_charge=T.ChargeDetails(
                 name="Shipment charge", 
                 amount=total_charge.MonetaryValue,
                 currency=total_charge.CurrencyCode
             ),
             charges=[
-                E.ChargeDetails(
+                T.ChargeDetails(
                     name=charge.Code,
                     amount=charge.MonetaryValue,
                     currency=charge.CurrencyCode
@@ -69,15 +69,15 @@ class UPSMapperPartial(UPSMapperBase):
             documents=[
                 pkg.ShippingLabel.GraphicImage for pkg in (shipment.PackageResults or [])
             ],
-            reference=E.ReferenceDetails(
+            reference=T.ReferenceDetails(
                 value=shipmentResponse.Response.TransactionReference.CustomerContext,
                 type="CustomerContext"
             )
         )
 
 
-    def create_freight_ship_request(self, payload: E.shipment_request) -> FShip.FreightShipRequest:
-        payer = E.party(**payload.shipment.extra.get('Payer')) if 'Payer' else None
+    def create_freight_ship_request(self, payload: T.shipment_request) -> FShip.FreightShipRequest:
+        payer = T.party(**payload.shipment.extra.get('Payer')) if 'Payer' else None
         return FShip.FreightShipRequest(
             Request=Common.RequestType(
                 RequestOption=payload.shipment.extra.get('RequestOption') or "1",
@@ -232,7 +232,7 @@ class UPSMapperPartial(UPSMapperBase):
             )
         )
 
-    def create_package_ship_request(self, payload: E.shipment_request) -> PShip.ShipmentRequest:
+    def create_package_ship_request(self, payload: T.shipment_request) -> PShip.ShipmentRequest:
         return PShip.ShipmentRequest(
             Request=Common.RequestType(
                 RequestOption=payload.shipment.extra.get('RequestOption') or ["validate"],
@@ -301,7 +301,7 @@ class UPSMapperPartial(UPSMapperBase):
                             CountryCode=alternate.country_code
                         )
                     )
-                )(E.party(payload.shipment.extra.get('AlternateDeliveryAddress'))) if 'AlternateDeliveryAddress' in payload.shipment.extra else None,
+                )(T.party(payload.shipment.extra.get('AlternateDeliveryAddress'))) if 'AlternateDeliveryAddress' in payload.shipment.extra else None,
                 ShipFrom=(lambda shipFrom:
                     PShip.ShipFromType(
                         Name=shipFrom.company_name,
@@ -323,7 +323,7 @@ class UPSMapperPartial(UPSMapperBase):
                             CountryCode=shipFrom.country_code
                         )
                     )
-                )(E.party(**payload.shipment.extra.get('ShipFrom'))) if 'ShipFrom' in payload.shipment.extra else None,
+                )(T.party(**payload.shipment.extra.get('ShipFrom'))) if 'ShipFrom' in payload.shipment.extra else None,
                 PaymentInformation=PShip.PaymentInfoType(
                     ShipmentCharge=[
                         PShip.ShipmentChargeType(
@@ -344,7 +344,7 @@ class UPSMapperPartial(UPSMapperBase):
                                                 PostalCode=address.postal_code,
                                                 CountryCode=address.country_code
                                             )
-                                        )(E.party(**card.get('Address'))) if 'Address' in card else None
+                                        )(T.party(**card.get('Address'))) if 'Address' in card else None
                                     )
                                 )(payload.shipment.extra.get('CreditCard')) if 'CreditCard' in payload.shipment.extra else None,
                                 AlternatePaymentMethod=payload.shipment.payment_type

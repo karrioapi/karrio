@@ -6,16 +6,16 @@ from pydhl import (
     ship_val_global_res_61 as ShipRes
 )
 from .interface import (
-    reduce, Tuple, List, Union, E, DHLMapperBase
+    reduce, Tuple, List, Union, T, DHLMapperBase
 )
 
 
 class DHLMapperPartial(DHLMapperBase):
 
-    def parse_dhlshipment_respone(self, response) -> Tuple[E.ShipmentDetails, List[E.Error]]:
+    def parse_dhlshipment_respone(self, response) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         return (self._extract_shipment(response), self.parse_error_response(response))
 
-    def _extract_shipment(self, shipmentResponseNode) -> E.ShipmentDetails:
+    def _extract_shipment(self, shipmentResponseNode) -> T.ShipmentDetails:
         """
             Shipment extraction is implemented using lxml queries instead of generated ShipmentResponse type
             because the type construction fail during validation out of our control
@@ -28,9 +28,9 @@ class DHLMapperPartial(DHLMapperBase):
         plates = [p.text for p in shipmentResponseNode.xpath("//LicensePlateBarCode")]
         barcodes = [child.text for child in shipmentResponseNode.xpath("//Barcodes")[0].getchildren()]
         documents = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
-        reference = E.ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
+        reference = T.ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
         currency_ = get("CurrencyCode")
-        return E.ShipmentDetails(
+        return T.ShipmentDetails(
             carrier=self.client.carrier_name,
             tracking_numbers=[tracking_number],
             shipment_date= get("ShipmentDate"),
@@ -40,14 +40,14 @@ class DHLMapperPartial(DHLMapperBase):
                 [service.text for service in shipmentResponseNode.xpath("//InternalServiceCode")]
             ),
             charges=[
-                E.ChargeDetails(name="PackageCharge", amount=float(get("PackageCharge")), currency=currency_) 
+                T.ChargeDetails(name="PackageCharge", amount=float(get("PackageCharge")), currency=currency_) 
             ],
             documents=documents,
             reference=reference,
-            total_charge= E.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=currency_)
+            total_charge= T.ChargeDetails(name="Shipment charge", amount=get("ShippingCharge"), currency=currency_)
         )
 
-    def create_dhlshipment_request(self, payload: E.shipment_request) -> ShipReq.ShipmentRequest:
+    def create_dhlshipment_request(self, payload: T.shipment_request) -> ShipReq.ShipmentRequest:
         Request_ = self.init_request()
         Request_.MetaData = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
 

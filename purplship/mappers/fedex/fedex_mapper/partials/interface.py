@@ -1,7 +1,7 @@
 from typing import Tuple, List
 from functools import reduce
 from purplship.mappers.fedex import FedexClient
-from purplship.domain import entities as E
+from purplship.domain import Types as T
 from pyfedex.track_service_v14 import TrackRequest
 from pyfedex.ship_service_v21 import ProcessShipmentRequest
 from pyfedex.rate_v22 import (
@@ -20,25 +20,25 @@ class FedexCapabilities:
 
     """ Requests """ 
 
-    def create_rate_request(self, payload: E.shipment_request) -> RateRequest:
+    def create_rate_request(self, payload: T.shipment_request) -> RateRequest:
         pass
 
-    def create_track_request(self, payload: E.tracking_request) -> TrackRequest:
+    def create_track_request(self, payload: T.tracking_request) -> TrackRequest:
         pass
 
-    def create_process_shipment_request(self, payload: E.shipment_request) -> ProcessShipmentRequest:
+    def create_process_shipment_request(self, payload: T.shipment_request) -> ProcessShipmentRequest:
         pass    
         
 
     """ Replys """ 
     
-    def parse_rate_reply(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_rate_reply(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
-    def parse_track_reply(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_track_reply(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pass
 
-    def parse_process_shipment_reply(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+    def parse_process_shipment_reply(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
         pass
 
 
@@ -53,7 +53,7 @@ class FedexMapperBase(FedexCapabilities):
         self.webAuthenticationDetail = WebAuthenticationDetail(UserCredential=userCredential)
         self.clientDetail = ClientDetail(AccountNumber=client.account_number, MeterNumber=client.meter_number)    
 
-    def parse_error_response(self, response: 'XMLElement') -> List[E.Error]:
+    def parse_error_response(self, response: 'XMLElement') -> List[T.Error]:
         notifications = response.xpath(
             './/*[local-name() = $name]', name="Notifications"
         ) + response.xpath(
@@ -61,11 +61,11 @@ class FedexMapperBase(FedexCapabilities):
         )
         return reduce(self._extract_error, notifications, [])
 
-    def _extract_error(self, errors: List[E.Error], notificationNode: 'XMLElement') -> List[E.Error]:
+    def _extract_error(self, errors: List[T.Error], notificationNode: 'XMLElement') -> List[T.Error]:
         notification = Notification()
         notification.build(notificationNode)
         if notification.Severity in ('SUCCESS', 'NOTE'):
             return errors
         return errors + [
-            E.Error(code=notification.Code, message=notification.Message, carrier=self.client.carrier_name)
+            T.Error(code=notification.Code, message=notification.Message, carrier=self.client.carrier_name)
         ]

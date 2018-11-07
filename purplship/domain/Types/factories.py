@@ -1,6 +1,6 @@
 from collections import namedtuple
 from typing import List, Dict
-from purplship.domain.entities.datatypes import item_type, label_type, party, invoice_type
+from purplship.domain.Types.datatypes import item_type, label_type, party, invoice_type
 
 ''' customs Type definition '''
 class customs_details_type(namedtuple("customs_details_type", "no_eei aes description terms_of_trade items commercial_invoice extra")):

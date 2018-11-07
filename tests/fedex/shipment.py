@@ -3,7 +3,7 @@ from unittest.mock import patch
 import time
 from gds_helpers import to_xml, jsonify, export
 from pyfedex.ship_service_v21 import ProcessShipmentRequest
-from purplship.domain.entities import Shipment
+from purplship.domain.Types import Shipment
 from tests.fedex.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 

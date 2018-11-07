@@ -3,26 +3,26 @@ from pyups import (
     freight_rate as Rate,
     common as Common
 )
-from .interface import reduce, Tuple, List, E, UPSMapperBase
+from .interface import reduce, Tuple, List, T, UPSMapperBase
 
 
 class UPSMapperPartial(UPSMapperBase):
     
-    def parse_freight_rate_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_freight_rate_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         rate_replys = response.xpath('.//*[local-name() = $name]', name="FreightRateResponse")
         quotes = reduce(self._extract_quote, rate_replys, [])
         return (quotes, self.parse_error_response(response))
 
-    def _extract_quote(self, quotes: List[E.QuoteDetails], detailNode: 'XMLElement') -> List[E.QuoteDetails]: 
+    def _extract_quote(self, quotes: List[T.QuoteDetails], detailNode: 'XMLElement') -> List[T.QuoteDetails]: 
         detail = Rate.FreightRateResponse()
         detail.build(detailNode)
 
         total_charge = [r for r in detail.Rate if r.Type.Code == 'AFTR_DSCNT'][0]
-        Discounts_ = [E.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
-        Surcharges_ = [E.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
+        Discounts_ = [T.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
+        Surcharges_ = [T.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
         extra_charges = Discounts_ + Surcharges_
         return quotes + [
-            E.QuoteDetails(
+            T.QuoteDetails(
                 carrier=self.client.carrier_name, 
                 currency=detail.TotalShipmentCharge.CurrencyCode,
                 service_name=detail.Service.Description,
@@ -35,7 +35,7 @@ class UPSMapperPartial(UPSMapperBase):
             )
         ]
 
-    def create_freight_rate_request(self, payload: E.shipment_request) -> Rate.FreightRateRequest:
+    def create_freight_rate_request(self, payload: T.shipment_request) -> Rate.FreightRateRequest:
         Request_ = Common.RequestType(
             TransactionReference=Common.TransactionReferenceType(
                 TransactionIdentifier="TransactionIdentifier"

@@ -2,7 +2,7 @@ import time
 from typing import Tuple, List, Union
 from functools import reduce
 from purplship.mappers.dhl import DHLClient
-from purplship.domain import entities as E
+from purplship.domain import Types as T
 from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
 from pydhl import (
     DCT_req_global as Req,
@@ -26,39 +26,39 @@ class DHLCapabilities:
 
     """ Requests """
 
-    def create_dct_request(self, payload: E.shipment_request) -> Req.DCTRequest:
+    def create_dct_request(self, payload: T.shipment_request) -> Req.DCTRequest:
         pass
 
-    def create_dhltracking_request(self, payload: E.tracking_request) -> Track.KnownTrackingRequest:
+    def create_dhltracking_request(self, payload: T.tracking_request) -> Track.KnownTrackingRequest:
         pass
 
-    def create_dhlshipment_request(self, payload: E.shipment_request) -> ShipReq.ShipmentRequest:
+    def create_dhlshipment_request(self, payload: T.shipment_request) -> ShipReq.ShipmentRequest:
         pass    
 
-    def create_book_purequest(self, payload: E.pickup_request) -> BookPUReq.BookPURequest:
+    def create_book_purequest(self, payload: T.pickup_request) -> BookPUReq.BookPURequest:
         pass
         
-    def create_modify_purequest(self, payload: E.pickup_request) -> ModifPUReq.ModifyPURequest:
+    def create_modify_purequest(self, payload: T.pickup_request) -> ModifPUReq.ModifyPURequest:
         pass
 
-    def create_cancel_purequest(self, payload: E.pickup_cancellation_request) -> CancelPUReq.CancelPURequest:
+    def create_cancel_purequest(self, payload: T.pickup_cancellation_request) -> CancelPUReq.CancelPURequest:
         pass
 
     """ Response """ 
     
-    def parse_dct_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_dct_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
-    def parse_dhltracking_response(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_dhltracking_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pass
 
-    def parse_dhlshipment_respone(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+    def parse_dhlshipment_respone(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
         pass
 
-    def parse_book_puresponse(self, response: 'XMLElement') -> Tuple[E.PickupDetails, List[E.Error]]:
+    def parse_book_puresponse(self, response: 'XMLElement') -> Tuple[T.PickupDetails, List[T.Error]]:
         pass
 
-    def parse_cancel_puresponse(self, response: 'XMLElement') -> Tuple[dict, List[E.Error]]:
+    def parse_cancel_puresponse(self, response: 'XMLElement') -> Tuple[dict, List[T.Error]]:
         pass
 
 
@@ -78,15 +78,15 @@ class DHLMapperBase(DHLCapabilities):
         )
         return Request(ServiceHeader=ServiceHeader_)
 
-    def parse_error_response(self, response) -> List[E.Error]:
+    def parse_error_response(self, response) -> List[T.Error]:
         conditions = response.xpath(
             './/*[local-name() = $name]', name="Condition")
         return reduce(self._extract_error, conditions, [])
 
-    def _extract_error(self, errors: List[E.Error], conditionNode: 'XMLElement') -> List[E.Error]:
+    def _extract_error(self, errors: List[T.Error], conditionNode: 'XMLElement') -> List[T.Error]:
         condition = Res.ConditionType()
         condition.build(conditionNode)
         return errors + [
-            E.Error(code=condition.ConditionCode,
+            T.Error(code=condition.ConditionCode,
                     message=condition.ConditionData, carrier=self.client.carrier_name)
         ]
