@@ -2,7 +2,9 @@ import time
 from pydhl.datatypes_global_v61 import MetaData
 from pydhl import (
     DCT_req_global as Req,
-    DCT_Response_global as Res
+    DCT_Response_global as Res,
+    datatypes_global_v61 as GType,
+    DCTRequestdatatypes_global as ReqType
 )
 from .interface import (
     reduce, Tuple, List, E, 
@@ -46,97 +48,81 @@ class DHLMapperPartial(DHLMapperBase):
         ]
 
     def create_dct_request(self, payload: E.shipment_request) -> Req.DCTRequest:
-        Request_ = self.init_request()
-        Request_.MetaData = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
-
-        From_ = Req.DCTFrom(
-            CountryCode=payload.shipper.country_code,
-            Postalcode=payload.shipper.postal_code,
-            City=payload.shipper.city,
-            Suburb=payload.shipper.state_code
+        service_type = payload.shipment.service_type
+        is_dutiable = payload.shipment.declared_value != None
+        extra_services = (
+            payload.shipment.extra_services +
+            ([] if not payload.shipment.insured_amount else ["II"]) +
+            ([] if not is_dutiable or "DD" in payload.shipment.extra_services else ["DD"])
         )
 
-        To_ = Req.DCTTo(
-            CountryCode=payload.recipient.country_code,
-            Postalcode=payload.recipient.postal_code,
-            City=payload.recipient.city,
-            Suburb=payload.recipient.state_code
-        )
+        if payload.shipment.is_document:
+            service_type = "D"
 
-        Pieces = Req.PiecesType()
         default_packaging_type = "FLY" if payload.shipment.is_document else "BOX"
-        for index, piece in enumerate(payload.shipment.items):
-            Pieces.add_Piece(Req.PieceType(
-                PieceID=piece.id or str(index),
-                PackageTypeCode=piece.packaging_type or default_packaging_type,
-                Height=piece.height, Width=piece.width,
-                Weight=piece.weight, Depth=piece.length
-            ))
-
-        payment_country_code = "CA" if not payload.shipment.payment_country_code else payload.shipment.payment_country_code
-
-        BkgDetails_ = Req.BkgDetailsType(
-            PaymentCountryCode=payment_country_code,
-            NetworkTypeCode=payload.shipment.extra.get('NetworkTypeCode') or "AL",
-            WeightUnit=payload.shipment.weight_unit or "LB",
-            DimensionUnit=payload.shipment.dimension_unit or "IN",
-            ReadyTime=time.strftime("PT%HH%MM"),
-            Date=time.strftime("%Y-%m-%d"),
-            IsDutiable="N" if payload.shipment.is_document else "Y",
-            Pieces=Pieces,
-            NumberOfPieces=payload.shipment.total_items,
-            ShipmentWeight=payload.shipment.total_weight,
-            Volume=payload.shipment.extra.get('Volume'),
-            PaymentAccountNumber=payload.shipment.payment_account_number or self.client.account_number,
-            InsuredCurrency=payload.shipment.currency or "USD",
-            InsuredValue=payload.shipment.insured_amount,
-            PaymentType=payload.shipment.extra.get('PaymentType'),
-            AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
-        )
-
-        product_code = "P" if payload.shipment.is_document else "D"
-        BkgDetails_.add_QtdShp(Req.QtdShpType(
-            GlobalProductCode=product_code,
-            LocalProductCode=product_code
-        ))
-
-        if payload.shipment.insured_amount is not None:
-            BkgDetails_.QtdShp[0].add_QtdShpExChrg(
-                Req.QtdShpExChrgType(SpecialServiceType="II")
-            )
-
-        if not payload.shipment.is_document:
-            BkgDetails_.QtdShp[0].add_QtdShpExChrg(
-                Req.QtdShpExChrgType(SpecialServiceType="DD")
-            )
 
         GetQuote = Req.GetQuoteType(
-            Request=Request_, 
-            From=From_, 
-            To=To_, 
-            BkgDetails=BkgDetails_,
-            Dutiable=Req.Dutiable(
-                DeclaredValue=payload.shipment.declared_value,
-                DeclaredCurrency=payload.shipment.currency,
-                ScheduleB=payload.shipment.extra.get('ScheduleB'),
-                ExportLicense=payload.shipment.extra.get('ExportLicense'),
-                ShipperEIN=payload.shipment.extra.get('ShipperEIN'),
-                ShipperIDType=payload.shipment.extra.get('ShipperIDType'),
-                ConsigneeIDType=payload.shipment.extra.get('ConsigneeIDType'),
-                ImportLicense=payload.shipment.extra.get('ImportLicense'),
-                ConsigneeEIN=payload.shipment.extra.get('ConsigneeEIN'),
-                TermsOfTrade=payload.shipment.extra.get('TermsOfTrade'),
-                CommerceLicensed=payload.shipment.extra.get('CommerceLicensed'),
-                Filing=(lambda filing:
-                    Req.Filing(
-                        FilingType=filing.get('FilingType'),
-                        FTSR=filing.get('FTSR'),
-                        ITN=filing.get('ITN'),
-                        AES4EIN=filing.get('AES4EIN')
+            Request=self.init_request(), 
+            From=Req.DCTFrom(
+                CountryCode=payload.shipper.country_code,
+                Postalcode=payload.shipper.postal_code,
+                City=payload.shipper.city,
+                Suburb=payload.shipper.state_code
+            ), 
+            To=Req.DCTTo(
+                CountryCode=payload.recipient.country_code,
+                Postalcode=payload.recipient.postal_code,
+                City=payload.recipient.city,
+                Suburb=payload.recipient.state_code
+            ), 
+            BkgDetails=ReqType.BkgDetailsType(
+                PaymentCountryCode=payload.shipment.payment_country_code or "CA",
+                NetworkTypeCode=payload.shipment.extra.get('NetworkTypeCode') or "AL",
+                WeightUnit=payload.shipment.weight_unit or "LB",
+                DimensionUnit=payload.shipment.dimension_unit or "IN",
+                ReadyTime=time.strftime("PT%HH%MM"),
+                Date=time.strftime("%Y-%m-%d"),
+                IsDutiable="Y" if is_dutiable else "N",
+                Pieces=(lambda pieces: 
+                    (
+                        pieces,
+                        [
+                            pieces.add_Piece(ReqType.PieceType(
+                                PieceID=piece.id or str(index),
+                                PackageTypeCode=piece.packaging_type or default_packaging_type,
+                                Height=piece.height, Width=piece.width,
+                                Weight=piece.weight, Depth=piece.length
+                            )) for index, piece in enumerate(payload.shipment.items)
+                        ]
+                    )[0]
+                )(ReqType.PiecesType()),
+                NumberOfPieces=payload.shipment.total_items,
+                ShipmentWeight=payload.shipment.total_weight,
+                Volume=payload.shipment.extra.get('Volume'),
+                PaymentAccountNumber=payload.shipment.payment_account_number,
+                InsuredCurrency=(payload.shipment.currency or "USD") if "II" in extra_services else None,
+                InsuredValue=payload.shipment.insured_amount,
+                PaymentType=payload.shipment.payment_type,
+                AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
+                QtdShp=[
+                    ReqType.QtdShpType(
+                        GlobalProductCode=service_type,
+                        LocalProductCode=service_type,
+                        QtdShpExChrg=[
+                            ReqType.QtdShpExChrgType(
+                                SpecialServiceType=svc,
+                                LocalSpecialServiceType=None
+                            ) for svc in extra_services
+                        ]
                     )
-                )(payload.shipment.extra.get('Filing')) if 'Filing' in payload.shipment.extra else None
-            ) if payload.shipment.declared_value is not None else None
+                ] if service_type is not None or len(extra_services) > 0 else None
+            ),
+            Dutiable=ReqType.DCTDutiable(
+                DeclaredCurrency=payload.shipment.currency or "USD",
+                DeclaredValue=payload.shipment.declared_value or 0
+            ) if is_dutiable else None
         )
+        GetQuote.Request.MetaData = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
 
         return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
 
