@@ -1,25 +1,25 @@
 from pyfedex.track_service_v14 import *
-from .interface import reduce, Tuple, List, E, FedexMapperBase
+from .interface import reduce, Tuple, List, T, FedexMapperBase
 
 
 class FedexMapperPartial(FedexMapperBase):
 
-    def parse_track_reply(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_track_reply(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         track_details = response.xpath('.//*[local-name() = $name]', name="TrackDetails")
         trackings = reduce(self._extract_tracking, track_details, [])
         return (trackings, self.parse_error_response(response))
 
-    def _extract_tracking(self, trackings: List[E.TrackingDetails], trackDetailNode: 'XMLElement') -> List[E.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[T.TrackingDetails], trackDetailNode: 'XMLElement') -> List[T.TrackingDetails]:
         trackDetail = TrackDetail()
         trackDetail.build(trackDetailNode)
         if trackDetail.Notification.Severity == 'ERROR':
             return trackings
         return trackings + [
-            E.TrackingDetails(
+            T.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=trackDetail.TrackingNumber,
                 shipment_date=str(trackDetail.StatusDetail.CreationTime),
-                events=list(map(lambda e: E.TrackingEvent(
+                events=list(map(lambda e: T.TrackingEvent(
                     date=str(e.Timestamp),
                     code=e.EventType,
                     location=e.ArrivalLocation,
@@ -28,7 +28,7 @@ class FedexMapperPartial(FedexMapperBase):
             )
         ]
 
-    def create_track_request(self, payload: E.tracking_request) -> TrackRequest:
+    def create_track_request(self, payload: T.tracking_request) -> TrackRequest:
         return TrackRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
             ClientDetail=self.clientDetail,

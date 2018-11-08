@@ -4,7 +4,7 @@ import time
 from gds_helpers import to_xml, jsonify, export
 from pyups.freight_ship import FreightShipRequest
 from pyups.package_ship import ShipmentRequest
-from purplship.domain.entities import Shipment
+from purplship.domain.Types import Shipment
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 

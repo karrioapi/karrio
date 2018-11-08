@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pycaps.rating import mailing_scenario
-from purplship.domain.entities import Quote
+from purplship.domain.Types import Quote
 from tests.caps.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 

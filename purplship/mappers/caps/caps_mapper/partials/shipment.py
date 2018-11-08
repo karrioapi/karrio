@@ -1,16 +1,16 @@
 from pycaps import shipment as Shipment, ncshipment as NCShipment
 from base64 import b64encode
 from datetime import datetime
-from .interface import reduce, Tuple, List, Union, E, CanadaPostMapperBase
+from .interface import reduce, Tuple, List, Union, T, CanadaPostMapperBase
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
 
-    def parse_shipment_info(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+    def parse_shipment_info(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
         shipment = self._extract_shipment(response) if len(response.xpath('.//*[local-name() = $name]', name="shipment-id")) > 0 else None
         return (shipment, self.parse_error_response(response))
 
-    def create_shipment(self, payload: E.shipment_request) -> Union[Shipment.ShipmentType, NCShipment.NonContractShipmentType]:
+    def create_shipment(self, payload: T.shipment_request) -> Union[Shipment.ShipmentType, NCShipment.NonContractShipmentType]:
         is_non_contract = payload.shipment.extra.get('settlement-info') is None
         shipment = self._create_ncshipment(payload) if is_non_contract else self._create_shipment(payload)
         return shipment
@@ -18,7 +18,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
     """ Private functions """
 
-    def _extract_shipment(self, response: 'XMLElement') -> E.ShipmentDetails:
+    def _extract_shipment(self, response: 'XMLElement') -> T.ShipmentDetails:
         is_non_contract = len(response.xpath('.//*[local-name() = $name]', name="non-contract-shipment-info")) > 0
         info = NCShipment.NonContractShipmentInfoType() if is_non_contract else Shipment.ShipmentInfoType()
         data = NCShipment.NonContractShipmentReceiptType() if is_non_contract else Shipment.ShipmentPriceType()
@@ -33,28 +33,28 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         )[0])
         currency_ = data.cc_receipt_details.currency if is_non_contract else "CAD" 
 
-        return E.ShipmentDetails(
+        return T.ShipmentDetails(
             carrier=self.client.carrier_name,
             tracking_numbers=[info.tracking_pin],
-            total_charge=E.ChargeDetails(
+            total_charge=T.ChargeDetails(
                 name="Shipment charge",
                 amount=data.cc_receipt_details.charge_amount if is_non_contract else data.due_amount,
                 currency=currency_
             ),
             charges=(
                 [
-                    E.ChargeDetails(name="base-amount", amount=data.base_amount, currency=currency_),
-                    E.ChargeDetails(name="gst-amount", amount=data.gst_amount, currency=currency_),
-                    E.ChargeDetails(name="pst-amount", amount=data.pst_amount, currency=currency_),
-                    E.ChargeDetails(name="hst-amount", amount=data.hst_amount, currency=currency_),
+                    T.ChargeDetails(name="base-amount", amount=data.base_amount, currency=currency_),
+                    T.ChargeDetails(name="gst-amount", amount=data.gst_amount, currency=currency_),
+                    T.ChargeDetails(name="pst-amount", amount=data.pst_amount, currency=currency_),
+                    T.ChargeDetails(name="hst-amount", amount=data.hst_amount, currency=currency_),
                 ] + [ 
-                    E.ChargeDetails(
+                    T.ChargeDetails(
                         name=adjustment.adjustment_code, 
                         amount=adjustment.adjustment_amount, 
                         currency=currency_
                     ) for adjustment in data.adjustments.get_adjustment()
                 ] + [ 
-                    E.ChargeDetails(
+                    T.ChargeDetails(
                         name=option.option_code, 
                         amount=option.option_price, 
                         currency=currency_
@@ -69,13 +69,13 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             documents=[
                 link.get('href') for link in response.xpath('.//*[local-name() = $name]', name="link") if link.get('rel') == 'label'
             ],
-            reference=E.ReferenceDetails(
+            reference=T.ReferenceDetails(
                 value=info.shipment_id,
                 type="Shipment Id"
             )
         )
 
-    def _create_shipment(self, payload: E.shipment_request) -> Shipment.ShipmentType:
+    def _create_shipment(self, payload: T.shipment_request) -> Shipment.ShipmentType:
         def _initialise_delivery_spec() -> Shipment.DeliverySpecType:            
             """
             This function is define to ensure type casting
@@ -150,7 +150,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
         return shipment_
 
-    def _create_ncshipment(self, payload: E.shipment_request) -> NCShipment.NonContractShipmentType:
+    def _create_ncshipment(self, payload: T.shipment_request) -> NCShipment.NonContractShipmentType:
         def _initialise_delivery_spec() -> NCShipment.DeliverySpecType:
             """
             This function is define to ensure type casting
@@ -172,7 +172,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             delivery_spec=delivery_spec_
         ) 
 
-    def _initialise_delivery_spec(self, payload: E.shipment_request, is_non_contract: bool = True) -> Union[Shipment.DeliverySpecType, NCShipment.DeliverySpecType]:
+    def _initialise_delivery_spec(self, payload: T.shipment_request, is_non_contract: bool = True) -> Union[Shipment.DeliverySpecType, NCShipment.DeliverySpecType]:
         Package = NCShipment if is_non_contract else Shipment
         
         sender_ = Package.SenderType(

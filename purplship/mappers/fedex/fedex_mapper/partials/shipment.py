@@ -1,17 +1,17 @@
 from pyfedex.ship_service_v21 import *
 from base64 import b64encode
 from datetime import datetime
-from .interface import reduce, Tuple, List, E, FedexMapperBase
+from .interface import reduce, Tuple, List, T, FedexMapperBase
 
 
 class FedexMapperPartial(FedexMapperBase):
 
-    def parse_process_shipment_reply(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+    def parse_process_shipment_reply(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
         details = response.xpath('.//*[local-name() = $name]', name="CompletedShipmentDetail")
         shipment = self._extract_shipment(details[0]) if len(details) > 0 else None
         return (shipment, self.parse_error_response(response))
 
-    def _extract_shipment(self, shipmentDetailNode: 'XMLElement') -> E.ShipmentDetails:
+    def _extract_shipment(self, shipmentDetailNode: 'XMLElement') -> T.ShipmentDetails:
         detail = CompletedShipmentDetail()
         detail.build(shipmentDetailNode)
 
@@ -24,31 +24,31 @@ class FedexMapperPartial(FedexMapperBase):
         shipment = get_rateDetail()
         items = get_items()
 
-        return E.ShipmentDetails(
+        return T.ShipmentDetails(
             carrier=self.client.carrier_name,
             tracking_numbers=reduce(
                 lambda ids, pkg: ids + [id.TrackingNumber for id in pkg.TrackingIds], items, []
             ),
-            total_charge=E.ChargeDetails(
+            total_charge=T.ChargeDetails(
                 name="Shipment charge",
                 amount=shipment.TotalNetChargeWithDutiesAndTaxes.Amount,
                 currency=shipment.TotalNetChargeWithDutiesAndTaxes.Currency
             ),
-            charges=[E.ChargeDetails(
+            charges=[T.ChargeDetails(
                     name="base_charge",
                     amount=shipment.TotalBaseCharge.Amount,
                     currency=shipment.TotalBaseCharge.Currency
-            ), E.ChargeDetails(
+            ), T.ChargeDetails(
                     name="discount",
                     amount=detail.ShipmentRating.EffectiveNetDiscount.Amount,
                     currency=detail.ShipmentRating.EffectiveNetDiscount.Currency
             )] + 
-            [E.ChargeDetails(
+            [T.ChargeDetails(
                     name=surcharge.SurchargeType,
                     amount=surcharge.Amount.Amount,
                     currency=surcharge.Amount.Currency
             ) for surcharge in shipment.Surcharges] + 
-            [E.ChargeDetails(
+            [T.ChargeDetails(
                     name=fee.Type,
                     amount=fee.Amount.Amount,
                     currency=fee.Amount.Currency
@@ -61,7 +61,7 @@ class FedexMapperPartial(FedexMapperBase):
             )
         )
 
-    def create_process_shipment_request(self, payload: E.shipment_request) -> ProcessShipmentRequest:
+    def create_process_shipment_request(self, payload: T.shipment_request) -> ProcessShipmentRequest:
         return ProcessShipmentRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
             ClientDetail=self.clientDetail,
@@ -175,7 +175,7 @@ class FedexMapperPartial(FedexMapperBase):
                                 GeographicCoordinates=None
                             ) if any((payor.country_code, payor.country_name, payor.address_lines, payor.city, payor.state_code, payor.postal_code)) else None
                         )) if payload.shipment.payment_account_number is not None else None
-                    )(E.party(
+                    )(T.party(
                         **payload.shipment.extra.get('Payor').get('ResponsibleParty')
                     )) if 'Payor' in payload.shipment.extra else None
                 ) if any((payload.shipment.paid_by, payload.shipment.payment_account_number)) else None,

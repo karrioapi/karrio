@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pydhl.DCT_req_global import DCTRequest
-from purplship.domain.entities import Quote
+from purplship.domain.Types import Quote
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
@@ -16,8 +16,10 @@ class TestDHLQuote(unittest.TestCase):
         shipper = {"postal_code":"H3N1S4", "country_code":"CA"}
         recipient = {"city":"Lome", "country_code":"TG"}
         shipment = {
+            "service_type": "D",
             "currency": "CAD",
             "insured_amount": 75,
+            "declared_value": 100,
             "items": [
                 {"id":"1", "height":3, "length":10, "width":3,"weight":4.0 }
             ], 
@@ -233,7 +235,6 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
                     <Weight>4.</Weight>
                 </Piece>
             </Pieces>
-            <PaymentAccountNumber>1203598305</PaymentAccountNumber>
             <IsDutiable>Y</IsDutiable>
             <NetworkTypeCode>AL</NetworkTypeCode>
             <QtdShp>
@@ -253,6 +254,10 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
             <CountryCode>TG</CountryCode>
             <City>Lome</City>
         </To>
+        <Dutiable>
+            <DeclaredCurrency>CAD</DeclaredCurrency>
+            <DeclaredValue>100.</DeclaredValue>
+        </Dutiable>
     </GetQuote>
 </p:DCTRequest>
 """

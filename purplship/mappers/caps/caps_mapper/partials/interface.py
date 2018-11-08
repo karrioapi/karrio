@@ -1,7 +1,7 @@
 from typing import Tuple, List, Union
 from functools import reduce
 from purplship.mappers.caps import CanadaPostClient
-from purplship.domain import entities as E
+from purplship.domain import Types as T
 from pycaps.rating import mailing_scenario
 from pycaps.shipment import ShipmentType
 from pycaps.ncshipment import NonContractShipmentType
@@ -15,25 +15,25 @@ class CanadaPostCapabilities:
 
     """ Requests """
 
-    def create_mailing_scenario(self, payload: E.shipment_request) -> mailing_scenario:
+    def create_mailing_scenario(self, payload: T.shipment_request) -> mailing_scenario:
         pass
 
-    def create_tracking_pins(self, payload: E.tracking_request) -> List[str]:
+    def create_tracking_pins(self, payload: T.tracking_request) -> List[str]:
         pass
 
-    def create_shipment(self, payload: E.shipment_request) -> Union[ShipmentType, NonContractShipmentType]:
+    def create_shipment(self, payload: T.shipment_request) -> Union[ShipmentType, NonContractShipmentType]:
         pass    
         
 
     """ Replys """ 
     
-    def parse_price_quotes(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_price_quotes(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
-    def parse_tracking_summary(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_tracking_summary(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pass
 
-    def parse_shipment_info(self, response: 'XMLElement') -> Tuple[E.ShipmentDetails, List[E.Error]]:
+    def parse_shipment_info(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
         pass
 
 
@@ -44,14 +44,14 @@ class CanadaPostMapperBase(CanadaPostCapabilities):
     def __init__(self, client: CanadaPostClient):
         self.client = client  
 
-    def parse_error_response(self, response: 'XMLElement') -> List[E.Error]:
+    def parse_error_response(self, response: 'XMLElement') -> List[T.Error]:
         messages = response.xpath('.//*[local-name() = $name]', name="message")
         return reduce(self._extract_error, messages, [])
 
-    def _extract_error(self, errors: List[E.Error], messageNode: 'XMLElement') -> List[E.Error]:
+    def _extract_error(self, errors: List[T.Error], messageNode: 'XMLElement') -> List[T.Error]:
         message = messageType()
         message.build(messageNode)
         return errors + [
-            E.Error(code=message.code,
+            T.Error(code=message.code,
                     message=message.description, carrier=self.client.carrier_name)
         ]

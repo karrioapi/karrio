@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from pydhl.tracking_request_known import KnownTrackingRequest
 from gds_helpers import to_xml, jsonify, export
-from purplship.domain.entities import Tracking
+from purplship.domain.Types import Tracking
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 

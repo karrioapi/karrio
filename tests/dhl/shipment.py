@@ -3,7 +3,7 @@ from unittest.mock import patch
 import time
 from gds_helpers import to_xml, jsonify, export
 from pydhl.ship_val_global_req_61 import ShipmentRequest
-from purplship.domain.entities import Shipment
+from purplship.domain.Types import Shipment
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
@@ -14,76 +14,7 @@ class TestDHLShipment(unittest.TestCase):
         self.ShipmentRequest.build(to_xml(ShipmentRequestXml))
 
     def test_create_shipment_request(self):
-        shipper = {
-            "company_name": "shipper company privated limited 12",
-            "address_lines": ["238 850925434 Drive"],
-            "city": "Scottsdale",
-            "postal_code": "85260",
-            "country_code": "US",
-            "country_name": "United States of America",
-            "person_name": "Ms Lucian",
-            "phone_number": "1 23 8613402",
-            "email_address": "test@email.com",
-            "state": "Arizona",
-            "state_code": "AZ",
-            "account_number": "123456789",
-            "extra": {
-                "ShipperID": "123456789",
-                "RegisteredAccount": "123456789",
-                "PhoneExtension": "3403",
-                "FaxNumber": "1 905 8613411",
-                "Telex": "1245"
-            }
-        }
-        recipient = {
-            "company_name": "IBM Bruse Pte Ltd",
-            "address_lines": ["9 Business Park Central 1", "3th Floor", "The IBM Place"],
-            "city": "Brussels",
-            "postal_code": "1060",
-            "country_code": "BE",
-            "country_name": "Belgium",
-            "person_name": "Mrs Orlander",
-            "phone_number": "506-851-2271",
-            "email_address": "c_orlander@gc.ca",
-            "extra": {
-                "PhoneExtension": "7862",
-                "FaxNumber": "506-851-7403",
-                "Telex": "506-851-7121"
-            }
-        }
-        shipment = {
-            "items": [
-                {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "EE", "code": "cc", "description": "cn"}
-            ],
-            "is_document": False,
-            "paid_by": "S",
-            "payment_account_number": "123456789",
-            "duty_paid_by": "S",
-            "duty_payment_account": "123456789",
-            "declared_value": 200.00,
-            "label": {
-                "type": "CIN", 
-                "format": "PDF", 
-                "extra": {
-                    "Image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
-                }
-            },
-            "service_type": "WY",
-            "extra": {"EProcShip": "N", "GlobalProductCode": "P", "LocalProductCode": "P"},
-            "customs": {
-                "terms_of_trade": "DAP",
-                "extra": {
-                    "ScheduleB": "3002905110",
-                    "ExportLicense": "D123456",
-                    "ShipperEIN": "112233445566",
-                    "ShipperIDType": "S",
-                    "ImportLicense": "ImportLic",
-                    "ConsigneeEIN": "ConEIN2123"
-                }
-            }
-        }
-        payload = Shipment.create(
-            shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = Shipment.create(**shipment_data)
         ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
 
         # remove MessageTime, Date for testing purpose
@@ -489,3 +420,74 @@ ShipmentResponseXml = """<?xml version="1.0" encoding="UTF-8"?>
     </QtdSInAdCur>
 </res:ShipmentResponse>
 """
+
+shipment_data = {
+    "shipper": {
+        "company_name": "shipper company privated limited 12",
+        "address_lines": ["238 850925434 Drive"],
+        "city": "Scottsdale",
+        "postal_code": "85260",
+        "country_code": "US",
+        "country_name": "United States of America",
+        "person_name": "Ms Lucian",
+        "phone_number": "1 23 8613402",
+        "email_address": "test@email.com",
+        "state": "Arizona",
+        "state_code": "AZ",
+        "account_number": "123456789",
+        "extra": {
+            "ShipperID": "123456789",
+            "RegisteredAccount": "123456789",
+            "PhoneExtension": "3403",
+            "FaxNumber": "1 905 8613411",
+            "Telex": "1245"
+        }
+    },
+    "recipient": {
+        "company_name": "IBM Bruse Pte Ltd",
+        "address_lines": ["9 Business Park Central 1", "3th Floor", "The IBM Place"],
+        "city": "Brussels",
+        "postal_code": "1060",
+        "country_code": "BE",
+        "country_name": "Belgium",
+        "person_name": "Mrs Orlander",
+        "phone_number": "506-851-2271",
+        "email_address": "c_orlander@gc.ca",
+        "extra": {
+            "PhoneExtension": "7862",
+            "FaxNumber": "506-851-7403",
+            "Telex": "506-851-7121"
+        }
+    },
+    "shipment": {
+        "items": [
+            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "EE", "code": "cc", "description": "cn"}
+        ],
+        "is_document": False,
+        "paid_by": "S",
+        "payment_account_number": "123456789",
+        "duty_paid_by": "S",
+        "duty_payment_account": "123456789",
+        "declared_value": 200.00,
+        "service_type": "WY",
+        "doc_images": [
+            {
+                "type": "CIN", 
+                "format": "PDF", 
+                "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
+            }
+        ],
+        "extra": {"EProcShip": "N", "GlobalProductCode": "P", "LocalProductCode": "P"},
+        "customs": {
+            "terms_of_trade": "DAP",
+            "extra": {
+                "ScheduleB": "3002905110",
+                "ExportLicense": "D123456",
+                "ShipperEIN": "112233445566",
+                "ShipperIDType": "S",
+                "ImportLicense": "ImportLic",
+                "ConsigneeEIN": "ConEIN2123"
+            }
+        }
+    }
+}

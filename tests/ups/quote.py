@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pyups.freight_rate import FreightRateRequest
-from purplship.domain.entities import Quote
+from purplship.domain.Types import Quote
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 import time

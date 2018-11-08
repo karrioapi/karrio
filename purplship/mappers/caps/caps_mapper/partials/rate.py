@@ -1,21 +1,21 @@
 from pycaps.rating import *
 from datetime import datetime
-from .interface import reduce, Tuple, List, E, CanadaPostMapperBase
+from .interface import reduce, Tuple, List, T, CanadaPostMapperBase
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
     
-    def parse_price_quotes(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_price_quotes(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         price_quotes = response.xpath('.//*[local-name() = $name]', name="price-quote")
         quotes = reduce(self._extract_quote, price_quotes, [])
         return (quotes, self.parse_error_response(response))
 
-    def _extract_quote(self, quotes: List[E.QuoteDetails], price_quoteNode: 'XMLElement') -> List[E.QuoteDetails]: 
+    def _extract_quote(self, quotes: List[T.QuoteDetails], price_quoteNode: 'XMLElement') -> List[T.QuoteDetails]: 
         price_quote = price_quoteType()
         price_quote.build(price_quoteNode)
-        discounts = [E.ChargeDetails(name=d.adjustment_name, currency="CAD", amount=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
+        discounts = [T.ChargeDetails(name=d.adjustment_name, currency="CAD", amount=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
         return quotes + [
-            E.QuoteDetails(
+            T.QuoteDetails(
                 carrier=self.client.carrier_name,
                 currency="CAD",
                 delivery_date=str(price_quote.service_standard.expected_delivery_date),
@@ -27,14 +27,14 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 duties_and_taxes=float(price_quote.price_details.taxes.gst.valueOf_ or 0) + 
                     float(price_quote.price_details.taxes.pst.valueOf_ or 0) + 
                     float(price_quote.price_details.taxes.hst.valueOf_ or 0),
-                extra_charges=list(map(lambda a: E.ChargeDetails(
+                extra_charges=list(map(lambda a: T.ChargeDetails(
                     name=a.adjustment_name, currency="CAD", amount=float(a.adjustment_cost or 0)), price_quote.price_details.adjustments.adjustment)
                 )
             )
         ]
 
 
-    def create_mailing_scenario(self, payload: E.shipment_request) -> mailing_scenario:
+    def create_mailing_scenario(self, payload: T.shipment_request) -> mailing_scenario:
         package = payload.shipment.items[0]
         requested_services = payload.shipment.extra_services + [payload.shipment.service_type]
         
