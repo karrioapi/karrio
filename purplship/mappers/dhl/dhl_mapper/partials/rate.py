@@ -78,8 +78,8 @@ class DHLMapperPartial(DHLMapperBase):
             BkgDetails=ReqType.BkgDetailsType(
                 PaymentCountryCode=payload.shipment.payment_country_code or "CA",
                 NetworkTypeCode=payload.shipment.extra.get('NetworkTypeCode') or "AL",
-                WeightUnit=payload.shipment.weight_unit or "LB",
-                DimensionUnit=payload.shipment.dimension_unit or "IN",
+                WeightUnit=payload.shipment.weight_unit or "KG",
+                DimensionUnit=payload.shipment.dimension_unit or "CM",
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
                 IsDutiable="Y" if is_dutiable else "N",
