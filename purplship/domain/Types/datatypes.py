@@ -50,18 +50,19 @@ class customs_type(NamedTuple):
     commercial_invoice: bool = False
     extra: Dict = {}
 
-
-class label_type(NamedTuple):
-    format: str = None
-    type: str = None
-    extra: Dict = {}
-
 class invoice_type(NamedTuple):
     date: str
     identifier: str = None
     type: str = None
     copies: int = None
     extra: Dict = {}
+
+class doc_image(NamedTuple):
+    type: str = None
+    format: str = None
+    image: str = None
+    extra: Dict = {}
+
 
 class shipment_options(NamedTuple):
 
@@ -89,11 +90,12 @@ class shipment_options(NamedTuple):
     ship_date: str = None
     customs: customs_type = None
     invoice: invoice_type = None
+    doc_images: List[doc_image] = []
     
     references: List[str] = []
     extra_services: List[str] = []
 
-    label: label_type = None
+    label: doc_image = None
     extra: Dict = {}
 
 class shipment_request(NamedTuple):
