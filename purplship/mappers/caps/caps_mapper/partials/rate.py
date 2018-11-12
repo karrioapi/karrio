@@ -37,27 +37,24 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
     def create_mailing_scenario(self, payload: T.shipment_request) -> mailing_scenario:
         package = payload.shipment.items[0]
         requested_services = payload.shipment.extra_services + [payload.shipment.service_type]
-        
-        if len(requested_services) > 0:
-            services = servicesType()
-            for code in requested_services:
-                services.add_service_code(code)
-
-        if 'options' in payload.shipment.extra:
-            options = optionsType()
-            for option in payload.shipment.extra.get('options'):
-                options.add_option(optionType(
-                    option_amount=option.get('option-amount'),
-                    option_code=option.get('option-code')
-                ))
 
         return mailing_scenario(
-            customer_number=payload.shipper.account_number or payload.shipment.payment_account_number or self.client.customer_number,
+            customer_number=payload.shipper.account_number,
             contract_id=payload.shipment.extra.get('contract-id'),
             promo_code=payload.shipment.extra.get('promo-code'),
             quote_type=payload.shipment.extra.get('quote-type'),
             expected_mailing_date=payload.shipment.extra.get('expected-mailing-date'),
-            options=options if ('options' in payload.shipment.extra) else None,
+            options=(lambda options:
+                (
+                    options,
+                    [
+                        options.add_option(optionType(
+                            option_amount=option.get('option-amount'),
+                            option_code=option.get('option-code')
+                        )) for option in payload.shipment.extra.get('options')
+                    ]
+                )[0]
+            )(optionsType()) if ('options' in payload.shipment.extra) else None,
             parcel_characteristics=parcel_characteristicsType(
                 weight=payload.shipment.total_weight or package.weight,
                 dimensions=dimensionsType(
@@ -69,7 +66,12 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 mailing_tube=payload.shipment.extra.get('mailing-tube'),
                 oversized=payload.shipment.extra.get('oversized')
             ),
-            services=services if (len(requested_services) > 0) else None,
+            services=(lambda services:
+                (
+                    services,
+                    [services.add_service_code(code) for code in requested_services]
+                )[0]
+            )(servicesType()) if (len(requested_services) > 0) else None,
             origin_postal_code=payload.shipper.postal_code,
             destination=destinationType(
                 domestic=domesticType(

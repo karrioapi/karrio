@@ -13,7 +13,7 @@ class TestCanadaPostQuote(unittest.TestCase):
         self.mailing_scenario.build(to_xml(QuoteRequestXml))
 
     def test_create_quote_request(self):
-        shipper = {"postal_code": "H8Z2Z3", "country_code": "CA"}
+        shipper = {"postal_code": "H8Z2Z3", "country_code": "CA", "account_number": "1234567"}
         recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
         shipment = {
             "items": [{"height":3, "length":10, "width":3,"weight": 4.0}],
