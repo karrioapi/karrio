@@ -6,6 +6,14 @@ from pydhl import (
     datatypes_global_v61 as GType,
     DCTRequestdatatypes_global as ReqType
 )
+from purplship.mappers.dhl.dhl_units import (
+    ProductCode, 
+    ServiceCode
+)
+from purplship.domain.Types.units import (
+    Currency,
+    Country
+)
 from .interface import (
     reduce, Tuple, List, T, 
     DHLMapperBase
@@ -48,16 +56,19 @@ class DHLMapperPartial(DHLMapperBase):
         ]
 
     def create_dct_request(self, payload: T.shipment_request) -> Req.DCTRequest:
-        service_type = payload.shipment.service_type
         is_dutiable = payload.shipment.declared_value != None
         extra_services = (
-            payload.shipment.extra_services +
-            ([] if not payload.shipment.insured_amount else ["II"]) +
-            ([] if not is_dutiable or "DD" in payload.shipment.extra_services else ["DD"])
+            [ServiceCode[svc] for svc in payload.shipment.extra_services if svc in ServiceCode.__members__] +
+            ([] if not payload.shipment.insured_amount else [ServiceCode.Shipment_Insurance]) +
+            ([] if not is_dutiable or "Duties_and_Taxes_Paid" in payload.shipment.extra_services else [ServiceCode.Duties_and_Taxes_Paid])
         )
 
-        if payload.shipment.is_document:
-            service_type = "D"
+        if payload.shipment.service_type != None:
+            service_type = ProductCode[payload.shipment.service_type]
+        elif payload.shipment.is_document:
+            service_type = ProductCode.EXPRESS_WORLDWIDE_DOC
+        else:
+            service_type = ProductCode.EXPRESS_WORLDWIDE_P
 
         default_packaging_type = "FLY" if payload.shipment.is_document else "BOX"
 
@@ -77,7 +88,7 @@ class DHLMapperPartial(DHLMapperBase):
             ), 
             BkgDetails=ReqType.BkgDetailsType(
                 PaymentCountryCode=payload.shipment.payment_country_code or "CA",
-                NetworkTypeCode=payload.shipment.extra.get('NetworkTypeCode') or "AL",
+                NetworkTypeCode=None,
                 WeightUnit=payload.shipment.weight_unit or "KG",
                 DimensionUnit=payload.shipment.dimension_unit or "CM",
                 ReadyTime=time.strftime("PT%HH%MM"),
@@ -100,22 +111,22 @@ class DHLMapperPartial(DHLMapperBase):
                 ShipmentWeight=payload.shipment.total_weight,
                 Volume=payload.shipment.extra.get('Volume'),
                 PaymentAccountNumber=payload.shipment.payment_account_number,
-                InsuredCurrency=(payload.shipment.currency or "USD") if "II" in extra_services else None,
+                InsuredCurrency=(payload.shipment.currency or "USD") if ServiceCode.Shipment_Insurance in extra_services else None,
                 InsuredValue=payload.shipment.insured_amount,
                 PaymentType=payload.shipment.payment_type,
                 AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
                 QtdShp=[
                     ReqType.QtdShpType(
-                        GlobalProductCode=service_type,
-                        LocalProductCode=service_type,
+                        GlobalProductCode=service_type.value,
+                        LocalProductCode=service_type.value,
                         QtdShpExChrg=[
                             ReqType.QtdShpExChrgType(
-                                SpecialServiceType=svc,
+                                SpecialServiceType=svc.value,
                                 LocalSpecialServiceType=None
                             ) for svc in extra_services
-                        ]
+                        ] if len(extra_services) > 0 else None
                     )
-                ] if service_type is not None or len(extra_services) > 0 else None
+                ]
             ),
             Dutiable=ReqType.DCTDutiable(
                 DeclaredCurrency=payload.shipment.currency or "USD",
