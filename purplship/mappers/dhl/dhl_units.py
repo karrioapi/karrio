@@ -1,5 +1,10 @@
-from enum import Enum
+from enum import Enum, Flag
+from purplship.domain.Types.units import (
+    PackagingUnit
+)
 
+
+""" DHL Native Types/Units """
 
 class Dimension(Enum):
     CM  =    "C" 
@@ -11,7 +16,7 @@ class DeliveryType(Enum):
     Airport_to_Airport   =    "AA"  
     Door_to_Door_C       =    "DC" 
 
-class DCTPackageTypeCode(Enum):
+class DCTPackageType(Enum):
     Flyer_Smalls         =    "FLY" 
     Parcels_Conveyables  =    "COY" 
     Non_conveyables      =    "NCY" 
@@ -19,7 +24,13 @@ class DCTPackageTypeCode(Enum):
     Double_Pallets       =    "DBL" 
     Parcels              =    "BOX"  
 
-class PackageTypeCode(Enum):
+    """ Unified Packaging type mapping """
+    SM                   =    Flyer_Smalls
+    BOX                  =    Parcels
+    PC                   =    Non_conveyables
+    PAL                  =    Pallets
+
+class PackageType(Flag):
     Jumbo_Document        =    "BD"
     Jumbo_Parcel          =    "BP"
     Customer_provided     =    "CP"
@@ -37,7 +48,13 @@ class PackageTypeCode(Enum):
     Parcel                =    "PA"
     Your_packaging        =    "YP"
 
-class ProductCode(Enum):
+    """ Unified Packaging type mapping """
+    SM                    =    Document
+    BOX                   =    Parcel
+    PC                    =    Your_packaging
+    PAL                   =    Freight
+
+class Product(Enum):
     LOGISTICS_SERVICES      =    "0"
     DOMESTIC_EXPRESS_12_00  =    "1"
     # B2C                     =    "2"
@@ -62,7 +79,7 @@ class ProductCode(Enum):
     EXPRESS_10_30           =    "M"
     DOMESTIC_EXPRESS        =    "N"
     DOMESTIC_EXPRESS_10_30  =    "O"
-    EXPRESS_WORLDWIDE_P     =    "P"
+    EXPRESS_WORLDWIDE       =    "P"
     MEDICAL_EXPRESS         =    "Q"
     GLOBALMAIL_BUSINESS     =    "R"
     SAME_DAY                =    "S"
@@ -74,7 +91,7 @@ class ProductCode(Enum):
     EXPRESS_12_00           =    "Y"
     Destination_Charges     =    "Z"
 
-class ServiceCode(Enum):
+class Service(Enum):
     Logistics_Services               =    "0A"
     Mailroom_Management              =    "0B"
     Pallet_Administration            =    "0C"
