@@ -8,7 +8,8 @@ from pydhl import (
 )
 from purplship.mappers.dhl.dhl_units import (
     Product, 
-    Service
+    Service,
+    DCTPackageType
 )
 from purplship.domain.Types.units import (
     DimensionUnit,
@@ -56,21 +57,15 @@ class DHLMapperPartial(DHLMapperBase):
         ]
 
     def create_dct_request(self, payload: T.shipment_request) -> Req.DCTRequest:
+        default_product_code = Product.EXPRESS_WORLDWIDE_DOC if payload.shipment.is_document else Product.EXPRESS_WORLDWIDE
+        product_code = Product[payload.shipment.service_type] if payload.shipment.service_type != None else default_product_code
         is_dutiable = payload.shipment.declared_value != None
+        default_packaging_type = DCTPackageType.SM if payload.shipment.is_document else DCTPackageType.BOX
         extra_services = (
             [Service[svc] for svc in payload.shipment.extra_services if svc in Service.__members__] +
             ([] if not payload.shipment.insured_amount or "Shipment_Insurance" in payload.shipment.extra_services else [Service.Shipment_Insurance]) +
             ([] if not is_dutiable or "Duties_and_Taxes_Paid" in payload.shipment.extra_services else [Service.Duties_and_Taxes_Paid])
         )
-
-        if payload.shipment.service_type != None:
-            product_code = Product[payload.shipment.service_type]
-        elif payload.shipment.is_document:
-            product_code = Product.EXPRESS_WORLDWIDE_DOC
-        else:
-            product_code = Product.EXPRESS_WORLDWIDE
-
-        default_packaging_type = "FLY" if payload.shipment.is_document else "BOX"
 
         GetQuote = Req.GetQuoteType(
             Request=self.init_request(), 
@@ -100,7 +95,9 @@ class DHLMapperPartial(DHLMapperBase):
                         [
                             pieces.add_Piece(ReqType.PieceType(
                                 PieceID=piece.id or str(index),
-                                PackageTypeCode=piece.packaging_type or default_packaging_type,
+                                PackageTypeCode=(
+                                    DCTPackageType[piece.packaging_type] if piece.packaging_type != None else default_packaging_type
+                                ).value,
                                 Height=piece.height, Width=piece.width,
                                 Weight=piece.weight, Depth=piece.length
                             )) for index, piece in enumerate(payload.shipment.items)
