@@ -10,7 +10,9 @@ from purplship.mappers.dhl.dhl_units import (
     PackageType, 
     Service,
     Product,
-    PayorType
+    PayorType,
+    Dimension,
+    WeightUnit
 ) 
 from .interface import (
     reduce, Tuple, List, Union, T, DHLMapperBase
@@ -156,8 +158,8 @@ class DHLMapperPartial(DHLMapperBase):
                 )(ShipReq.Pieces()),
                 Weight=payload.shipment.total_weight or sum(p.weight for p in payload.shipment.items),
                 CurrencyCode=payload.shipment.currency or "USD",
-                WeightUnit=(payload.shipment.weight_unit or "KG")[0],
-                DimensionUnit=(payload.shipment.dimension_unit or "CM")[0],
+                WeightUnit=WeightUnit[payload.shipment.weight_unit or "KG"].value,
+                DimensionUnit=Dimension[payload.shipment.dimension_unit or "CM"].value,
                 Date=payload.shipment.date or time.strftime('%Y-%m-%d'),
                 PackageType=(
                     PackageType[payload.shipment.packaging_type].value if payload.shipment.packaging_type != None else None
