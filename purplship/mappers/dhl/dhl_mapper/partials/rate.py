@@ -10,6 +10,10 @@ from purplship.mappers.dhl.dhl_units import (
     Product, 
     Service
 )
+from purplship.domain.Types.units import (
+    DimensionUnit,
+    WeightUnit
+)
 from .interface import (
     reduce, Tuple, List, T, 
     DHLMapperBase
@@ -60,11 +64,11 @@ class DHLMapperPartial(DHLMapperBase):
         )
 
         if payload.shipment.service_type != None:
-            service_type = Product[payload.shipment.service_type]
+            product_code = Product[payload.shipment.service_type]
         elif payload.shipment.is_document:
-            service_type = Product.EXPRESS_WORLDWIDE_DOC
+            product_code = Product.EXPRESS_WORLDWIDE_DOC
         else:
-            service_type = Product.EXPRESS_WORLDWIDE_P
+            product_code = Product.EXPRESS_WORLDWIDE
 
         default_packaging_type = "FLY" if payload.shipment.is_document else "BOX"
 
@@ -85,8 +89,8 @@ class DHLMapperPartial(DHLMapperBase):
             BkgDetails=ReqType.BkgDetailsType(
                 PaymentCountryCode=payload.shipment.payment_country_code or "CA",
                 NetworkTypeCode=payload.shipment.extra.get('NetworkTypeCode'),
-                WeightUnit=payload.shipment.weight_unit or "KG",
-                DimensionUnit=payload.shipment.dimension_unit or "CM",
+                WeightUnit=WeightUnit[payload.shipment.weight_unit or "KG"].value,
+                DimensionUnit=DimensionUnit[payload.shipment.dimension_unit or "CM"].value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
                 IsDutiable="Y" if is_dutiable else "N",
@@ -113,8 +117,8 @@ class DHLMapperPartial(DHLMapperBase):
                 AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
                 QtdShp=[
                     ReqType.QtdShpType(
-                        GlobalProductCode=service_type.value,
-                        LocalProductCode=service_type.value,
+                        GlobalProductCode=product_code.value,
+                        LocalProductCode=product_code.value,
                         QtdShpExChrg=[
                             ReqType.QtdShpExChrgType(
                                 SpecialServiceType=svc.value,

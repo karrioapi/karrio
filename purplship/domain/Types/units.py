@@ -42,8 +42,8 @@ class PayorType(Enum):
     THIRD_PARTY   = 'THIRD_PARTY'
 
 class WeightUnit(Enum):
-    KG = "Kilogram"
-    LB = "Pound"
+    KG = "KG"
+    LB = "LB"
 
 class Weight:
     def __init__(self, value: float, unit: WeightUnit = WeightUnit.KG):
