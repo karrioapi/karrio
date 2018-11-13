@@ -2,6 +2,10 @@ from pycaps import shipment as Shipment, ncshipment as NCShipment
 from base64 import b64encode
 from datetime import datetime
 from .interface import reduce, Tuple, List, Union, T, CanadaPostMapperBase
+from purplship.domain.Types.units import (
+    Dimension, DimensionUnit,
+    Weight, WeightUnit
+)
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
@@ -102,7 +106,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             )
 
         shipment_ = Shipment.ShipmentType(
-            customer_request_id=payload.shipper.account_number or payload.shipment.payment_account_number or self.client.customer_number,
+            customer_request_id=payload.shipper.account_number or payload.shipment.payment_account_number,
             quickship_label_requested=payload.shipment.extra.get('quickship-label-requested'),
             cpc_pickup_indicator=payload.shipment.extra.get('cpc-pickup-indicator'),
             requested_shipping_point=payload.shipment.extra.get('requested-shipping-point'),
@@ -206,11 +210,19 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
         package = payload.shipment.items[0]
         parcel_characteristics_ = Package.ParcelCharacteristicsType(
-            weight=payload.shipment.total_weight or package.weight,
+            weight=Weight(
+                payload.shipment.total_weight or package.weight, WeightUnit[payload.shipment.weight_unit]
+            ).KG,
             dimensions=Package.dimensionsType(
-                length=package.length,
-                width=package.width,
-                height=package.height
+                length=Dimension(
+                    package.length, DimensionUnit[payload.shipment.dimension_unit]
+                ).CM,
+                width=Dimension(
+                    package.width, DimensionUnit[payload.shipment.dimension_unit]
+                ).CM,
+                height=Dimension(
+                    package.height, DimensionUnit[payload.shipment.dimension_unit]
+                ).CM
             ),
             unpackaged=payload.shipment.extra.get('unpackaged'),
             mailing_tube=payload.shipment.extra.get('mailing-tube')

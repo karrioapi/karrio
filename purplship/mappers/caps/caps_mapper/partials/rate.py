@@ -1,6 +1,12 @@
 from pycaps.rating import *
 from datetime import datetime
 from .interface import reduce, Tuple, List, T, CanadaPostMapperBase
+from purplship.domain.Types.units import (
+    Weight,
+    WeightUnit,
+    Dimension,
+    DimensionUnit
+)
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
@@ -33,7 +39,6 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             )
         ]
 
-
     def create_mailing_scenario(self, payload: T.shipment_request) -> mailing_scenario:
         package = payload.shipment.items[0]
         requested_services = payload.shipment.extra_services + [payload.shipment.service_type]
@@ -56,11 +61,20 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 )[0]
             )(optionsType()) if ('options' in payload.shipment.extra) else None,
             parcel_characteristics=parcel_characteristicsType(
-                weight=payload.shipment.total_weight or package.weight,
+                weight=Weight(
+                    (payload.shipment.total_weight or package.weight), 
+                    WeightUnit[payload.shipment.weight_unit]
+                ).KG,
                 dimensions=dimensionsType(
-                    length=package.length,
-                    width=package.width,
-                    height=package.height
+                    length=Dimension(
+                        package.length, DimensionUnit[payload.shipment.dimension_unit]
+                    ).CM,
+                    width=Dimension(
+                        package.width, DimensionUnit[payload.shipment.dimension_unit]
+                    ).CM,
+                    height=Dimension(
+                        package.height, DimensionUnit[payload.shipment.dimension_unit]
+                    ).CM
                 ),
                 unpackaged=payload.shipment.extra.get('unpackaged'),
                 mailing_tube=payload.shipment.extra.get('mailing-tube'),
