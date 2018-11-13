@@ -91,6 +91,11 @@ class Product(Enum):
     EXPRESS_12_00           =    "Y"
     Destination_Charges     =    "Z"
 
+class PayorType(Enum):
+    SENDER        = 'S'     
+    RECIPIENT     = 'R'  
+    THIRD_PARTY   = 'T'
+    
 class Service(Enum):
     Logistics_Services               =    "0A"
     Mailroom_Management              =    "0B"

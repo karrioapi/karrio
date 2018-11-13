@@ -463,9 +463,9 @@ shipment_data = {
             {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "DHL_Express_Envelope", "code": "cc", "description": "cn"}
         ],
         "is_document": False,
-        "paid_by": "S",
+        "paid_by": "SENDER",
         "payment_account_number": "123456789",
-        "duty_paid_by": "S",
+        "duty_paid_by": "SENDER",
         "duty_payment_account": "123456789",
         "declared_value": 200.00,
         "extra_services": ["Paperless_Trade"],

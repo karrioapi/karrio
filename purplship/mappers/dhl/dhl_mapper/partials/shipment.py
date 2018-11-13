@@ -9,7 +9,8 @@ from purplship.domain.Types.units import PackagingUnit
 from purplship.mappers.dhl.dhl_units import (
     PackageType, 
     Service,
-    Product
+    Product,
+    PayorType
 ) 
 from .interface import (
     reduce, Tuple, List, Union, T, DHLMapperBase
@@ -77,9 +78,9 @@ class DHLMapperPartial(DHLMapperBase):
             Billing=ShipReq.Billing(
                 ShipperAccountNumber=payload.shipper.account_number,
                 BillingAccountNumber=payload.shipment.payment_account_number,
-                ShippingPaymentType=payload.shipment.paid_by,
+                ShippingPaymentType=PayorType[payload.shipment.paid_by].value if payload.shipment.paid_by != None else None,
                 DutyAccountNumber=payload.shipment.duty_payment_account,
-                DutyPaymentType=payload.shipment.duty_paid_by
+                DutyPaymentType=PayorType[payload.shipment.duty_paid_by].value if payload.shipment.duty_paid_by != None else None,
             ),
             Consignee=ShipReq.Consignee(
                 CompanyName=payload.recipient.company_name,

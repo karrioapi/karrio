@@ -37,9 +37,9 @@ class PackagingUnit(Enum):
     PAL = "Pallet"
 
 class PayorType(Enum):
-    SENDER        = 'Sender'
-    RECIPIENT     = 'Recipient'
-    THIRD_PARTY   = 'Third Party'
+    SENDER        = 'SENDER'     
+    RECIPIENT     = 'RECIPIENT'  
+    THIRD_PARTY   = 'THIRD_PARTY'
 
 class WeightUnit(Enum):
     KG = "Kilogram"
