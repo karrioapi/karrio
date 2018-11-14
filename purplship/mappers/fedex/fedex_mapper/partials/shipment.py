@@ -2,6 +2,12 @@ from pyfedex.ship_service_v21 import *
 from base64 import b64encode
 from datetime import datetime
 from .interface import reduce, Tuple, List, T, FedexMapperBase
+from purplship.mappers.fedex.fedex_units import (
+    PackagingType,
+    ServiceType,
+    PaymentType,
+    SpecialServiceType
+)
 
 
 class FedexMapperPartial(FedexMapperBase):
@@ -62,6 +68,8 @@ class FedexMapperPartial(FedexMapperBase):
         )
 
     def create_process_shipment_request(self, payload: T.shipment_request) -> ProcessShipmentRequest:
+        requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
+        options = [opt for opt in payload.shipment.options if opt in SpecialServiceType.__members__]
         return ProcessShipmentRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
             ClientDetail=self.clientDetail,
@@ -70,8 +78,12 @@ class FedexMapperPartial(FedexMapperBase):
             RequestedShipment=RequestedShipment(
                 ShipTimestamp=datetime.now(),
                 DropoffType=payload.shipment.extra.get('DropoffType'),
-                ServiceType=payload.shipment.extra.get('ServiceType'),
-                PackagingType=payload.shipment.packaging_type or "YOUR_PACKAGING",
+                ServiceType=ServiceType[
+                    requested_services[0]
+                ].value if len(requested_services) > 0 else None,
+                PackagingType=PackagingType[
+                    payload.shipment.packaging_type or "YOUR_PACKAGING"
+                ].value,
                 ManifestDetail=None,
                 TotalWeight=Weight(
                     Units=payload.shipment.weight_unit,
@@ -82,7 +94,15 @@ class FedexMapperPartial(FedexMapperBase):
                 ShipmentAuthorizationDetail=None,
                 Shipper=Party(
                     AccountNumber=payload.shipper.account_number,
-                    Tins=None,
+                    Tins=[
+                        TaxpayerIdentification(
+                            TinType=payload.shipper.extra.get('TinType'),
+                            Usage=payload.shipper.extra.get('Usage'),
+                            Number=payload.shipper.tax_id,
+                            EffectiveDate=payload.shipper.extra.get('EffectiveDate'),
+                            ExpirationDate=payload.shipper.extra.get('ExpirationDate')
+                        )
+                    ] if payload.shipper.tax_id != None else None,
                     Contact=Contact(
                         ContactId=None,
                         PersonName=payload.shipper.person_name,
@@ -109,7 +129,15 @@ class FedexMapperPartial(FedexMapperBase):
                 ),
                 Recipient=Party(
                     AccountNumber=payload.recipient.extra.get('AccountNumber'),
-                    Tins=None,
+                    Tins=[
+                        TaxpayerIdentification(
+                            TinType=payload.recipient.extra.get('TinType'),
+                            Usage=payload.recipient.extra.get('Usage'),
+                            Number=payload.recipient.tax_id,
+                            EffectiveDate=payload.recipient.extra.get('EffectiveDate'),
+                            ExpirationDate=payload.recipient.extra.get('ExpirationDate')
+                        )
+                    ] if payload.recipient.tax_id != None else None,
                     Contact=Contact(
                         ContactId=None,
                         PersonName=payload.recipient.person_name,
@@ -138,19 +166,19 @@ class FedexMapperPartial(FedexMapperBase):
                 Origin=None,
                 SoldTo=None,
                 ShippingChargesPayment=Payment(
-                    PaymentType=payload.shipment.paid_by or "SENDER",
+                    PaymentType=PaymentType[payload.shipment.paid_by or "SENDER"].value,
                     Payor=(lambda payor:
                         Payor(ResponsibleParty=Party(
                             AccountNumber=payload.shipment.payment_account_number,
                             Tins=[
                                 TaxpayerIdentification(
-                                    TinType=tin.get('TinType'),
-                                    Number=tin.get('Number'),
-                                    Usage=tin.get('Usage'),
-                                    EffectiveDate=tin.get('EffectiveDate'),
-                                    ExpirationDate=tin.get('ExpirationDate'),
-                                ) for tin in payor.extra.get('Tins')
-                            ] if 'Tins' in payor.extra else None,
+                                    TinType=payor.extra.get('TinType'),
+                                    Number=payor.tax_id,
+                                    Usage=payor.extra.get('Usage'),
+                                    EffectiveDate=payor.extra.get('EffectiveDate'),
+                                    ExpirationDate=payor.extra.get('ExpirationDate'),
+                                )
+                            ] if payor.tax_id != None else None,
                             Contact=Contact(
                                 ContactId=payor.extra.get('ContactId'),
                                 PersonName=payor.person_name,
@@ -180,7 +208,7 @@ class FedexMapperPartial(FedexMapperBase):
                     )) if 'Payor' in payload.shipment.extra else None
                 ) if any((payload.shipment.paid_by, payload.shipment.payment_account_number)) else None,
                 SpecialServicesRequested=ShipmentSpecialServicesRequested(
-                    SpecialServiceTypes=payload.shipment.options,
+                    SpecialServiceTypes=options,
                     CodDetail=None,
                     DeliveryOnInvoiceAcceptanceDetail=None,
                     HoldAtLocationDetail=None,
@@ -198,7 +226,7 @@ class FedexMapperPartial(FedexMapperBase):
                     FreightGuaranteeDetail=None,
                     EtdDetail=None,
                     CustomDeliveryWindowDetail=None
-                ) if len(payload.shipment.options) > 0 else None,
+                ) if len(options) > 0 else None,
                 ExpressFreightDetail=None,
                 FreightShipmentDetail=None,
                 DeliveryInstructions=None,
@@ -252,8 +280,8 @@ class FedexMapperPartial(FedexMapperBase):
                             Units=payload.shipment.dimension_unit
                         ),
                         PhysicalPackaging=None,
-                        ItemDescription=pkg.content,
-                        ItemDescriptionForClearance=None,
+                        ItemDescription=pkg.description,
+                        ItemDescriptionForClearance=pkg.content,
                         CustomerReferences=[
                             CustomerReference(
                                 CustomerReferenceType=ref.get('CustomerReferenceType'),
@@ -264,5 +292,5 @@ class FedexMapperPartial(FedexMapperBase):
                         ContentRecords=None
                     ) for index, pkg in enumerate(payload.shipment.items)
                 ]
-            ),
+            )
         )
