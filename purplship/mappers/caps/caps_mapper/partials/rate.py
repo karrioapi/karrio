@@ -7,6 +7,10 @@ from purplship.domain.Types.units import (
     Dimension,
     DimensionUnit
 )
+from purplship.mappers.caps.caps_units import (
+    OptionCode,
+    ServiceType
+)
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
@@ -41,7 +45,8 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
     def create_mailing_scenario(self, payload: T.shipment_request) -> mailing_scenario:
         package = payload.shipment.items[0]
-        requested_services = payload.shipment.extra_services + [payload.shipment.service_type]
+        requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
+        requested_options = [opt for opt in payload.shipment.options if opt in OptionCode.__members__]
 
         return mailing_scenario(
             customer_number=payload.shipper.account_number,
@@ -54,12 +59,12 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                     options,
                     [
                         options.add_option(optionType(
-                            option_amount=option.get('option-amount'),
-                            option_code=option.get('option-code')
-                        )) for option in payload.shipment.extra.get('options')
+                            option_amount=None,
+                            option_code=OptionCode[option].value
+                        )) for option in requested_options
                     ]
                 )[0]
-            )(optionsType()) if ('options' in payload.shipment.extra) else None,
+            )(optionsType()) if (len(requested_options) > 0) else None,
             parcel_characteristics=parcel_characteristicsType(
                 weight=Weight(
                     (payload.shipment.total_weight or package.weight), 
@@ -83,7 +88,9 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             services=(lambda services:
                 (
                     services,
-                    [services.add_service_code(code) for code in requested_services]
+                    [services.add_service_code(
+                        ServiceType[code].value
+                    ) for code in requested_services]
                 )[0]
             )(servicesType()) if (len(requested_services) > 0) else None,
             origin_postal_code=payload.shipper.postal_code,

@@ -16,7 +16,7 @@ class TestDHLQuote(unittest.TestCase):
         shipper = {"postal_code":"H3N1S4", "country_code":"CA"}
         recipient = {"city":"Lome", "country_code":"TG"}
         shipment = {
-            "service_type": "EXPRESS_WORLDWIDE_DOC",
+            "services": "EXPRESS_WORLDWIDE_DOC",
             "currency": "CAD",
             "insured_amount": 75,
             "declared_value": 100,

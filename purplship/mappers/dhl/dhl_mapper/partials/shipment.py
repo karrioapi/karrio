@@ -59,10 +59,10 @@ class DHLMapperPartial(DHLMapperBase):
     def create_dhlshipment_request(self, payload: T.shipment_request) -> ShipReq.ShipmentRequest:
         is_dutiable = payload.shipment.declared_value != None
         default_product_code = Product.EXPRESS_WORLDWIDE_DOC if payload.shipment.is_document else Product.EXPRESS_WORLDWIDE
-        product_code = Product[payload.shipment.service_type] if payload.shipment.service_type != None else default_product_code
+        product_code = Product[payload.shipment.services] if payload.shipment.services != None else default_product_code
         default_packaging_type = PackageType.Document if payload.shipment.is_document else PackageType.Your_packaging
-        extra_services = (
-            [Service[svc] for svc in payload.shipment.extra_services if svc in Service.__members__] +
+        options = (
+            [Service[svc] for svc in payload.shipment.options if svc in Service.__members__] +
             ([] if not payload.shipment.insured_amount else [Service.Shipment_Insurance])
         )
 
@@ -192,8 +192,8 @@ class DHLMapperPartial(DHLMapperBase):
             SpecialService=[
                 ShipReq.SpecialService(
                     SpecialServiceType=service.value
-                ) for service in extra_services
-            ] if len(extra_services) > 0 else None,
+                ) for service in options
+            ] if len(options) > 0 else None,
             LabelImageFormat=payload.shipment.label.format if payload.shipment.label != None else None,
             DocImages=(lambda images:
                 (

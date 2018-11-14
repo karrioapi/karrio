@@ -159,7 +159,7 @@ class UPSMapperPartial(UPSMapperBase):
                 ),
                 ManufactureInformation=None,
                 Service=FShip.ShipCodeDescriptionType(
-                    Code=payload.shipment.service_type,
+                    Code=payload.shipment.services,
                     Description=None
                 ),
                 HandlingUnitOne=(lambda unit:
@@ -373,7 +373,7 @@ class UPSMapperPartial(UPSMapperBase):
                 MovementReferenceNumber=None,
                 ReferenceNumber=None,
                 Service=PShip.ServiceType(
-                    Code=payload.shipment.service_type
+                    Code=payload.shipment.services
                 ),
                 InvoiceLineTotal=None,
                 NumOfPiecesInShipment=payload.shipment.total_items,

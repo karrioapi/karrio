@@ -187,7 +187,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
       </destination>
       <options>
          <option>
-            <option-code>DC</option-code>
+            <option-code>COD</option-code>
          </option>
       </options>
       <parcel-characteristics>
@@ -300,7 +300,7 @@ NCShipmentRequestXML = """<non-contract-shipment xmlns="http://www.canadapost.ca
       </destination>
       <options>
          <option>
-            <option-code>DC</option-code>
+            <option-code>COD</option-code>
          </option>
       </options>
       <parcel-characteristics>
@@ -398,14 +398,14 @@ shipment_data = {
     "shipment": {
         "items": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
         "label": {"format": "8.5x11"},
-        "service_type": "DOM.EP",
+        "services": ["Expedited_Parcel"],
         "dimension_unit": "CM", 
         "weight_unit": "KG",
+        "options": [ "Collect_on_delivery" ],
         "extra": {
             "cpc-pickup-indicator": True,
             "requested-shipping-point": "K2B8J6", 
             "mailing-tube": False,
-            "options": [{"option-code": "DC" }],
             "notification": {
                 "email": "john.doe@yahoo.com",
                 "on-shipment": True,
@@ -448,10 +448,10 @@ ncshipment_data = {
         "items": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
         "dimension_unit": "CM", 
         "weight_unit": "KG",
-        "service_type": "DOM.EP",
+        "services": ["Expedited_Parcel"],
+        "options": ["Collect_on_delivery"],
         "extra": {
             "requested-shipping-point": "J8R1A2", 
-            "options": [{"option-code": "DC" }],
             "preferences": {
                 "show-packing-instructions": True
             }

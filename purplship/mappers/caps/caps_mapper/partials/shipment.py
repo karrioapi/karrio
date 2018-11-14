@@ -6,6 +6,10 @@ from purplship.domain.Types.units import (
     Dimension, DimensionUnit,
     Weight, WeightUnit
 )
+from purplship.mappers.caps.caps_units import (
+    OptionCode,
+    ServiceType
+)
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
@@ -18,7 +22,6 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         is_non_contract = payload.shipment.extra.get('settlement-info') is None
         shipment = self._create_ncshipment(payload) if is_non_contract else self._create_shipment(payload)
         return shipment
-
 
     """ Private functions """
 
@@ -80,7 +83,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         )
 
     def _create_shipment(self, payload: T.shipment_request) -> Shipment.ShipmentType:
-        def _initialise_delivery_spec() -> Shipment.DeliverySpecType:            
+        def _initialise_delivery_spec() -> Shipment.DeliverySpecType:
             """
             This function is define to ensure type casting
             Note: It is more a convenience than anything else.
@@ -178,79 +181,86 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
     def _initialise_delivery_spec(self, payload: T.shipment_request, is_non_contract: bool = True) -> Union[Shipment.DeliverySpecType, NCShipment.DeliverySpecType]:
         Package = NCShipment if is_non_contract else Shipment
-        
-        sender_ = Package.SenderType(
-            name=payload.shipper.person_name,
-            company=payload.shipper.company_name,
-            contact_phone=payload.shipper.phone_number,
-            address_details=Package.AddressDetailsType(
-                city=payload.shipper.city,
-                prov_state=payload.shipper.state_code,
-                country_code=payload.shipper.country_code,
-                postal_zip_code=payload.shipper.postal_code,
-                address_line_1=payload.shipper.address_lines[0] if len(payload.shipper.address_lines) > 0 else None,
-                address_line_2=payload.shipper.address_lines[1] if len(payload.shipper.address_lines) > 1 else None
-            )
-        )
-
-        destination_ = Package.DestinationType(
-            name=payload.recipient.person_name,
-            company=payload.recipient.company_name,
-            additional_address_info=payload.recipient.extra.get('additional-address-info'),
-            client_voice_number=payload.recipient.extra.get('client-voice-number'),
-            address_details=Package.DestinationAddressDetailsType(
-                city=payload.recipient.city,
-                prov_state=payload.recipient.state_code,
-                country_code=payload.recipient.country_code,
-                postal_zip_code=payload.recipient.postal_code,
-                address_line_1=payload.recipient.address_lines[0] if len(payload.recipient.address_lines) > 0 else None,
-                address_line_2=payload.recipient.address_lines[1] if len(payload.recipient.address_lines) > 1 else None
-            )
-        )
-
         package = payload.shipment.items[0]
-        parcel_characteristics_ = Package.ParcelCharacteristicsType(
-            weight=Weight(
-                payload.shipment.total_weight or package.weight, WeightUnit[payload.shipment.weight_unit]
-            ).KG,
-            dimensions=Package.dimensionsType(
-                length=Dimension(
-                    package.length, DimensionUnit[payload.shipment.dimension_unit]
-                ).CM,
-                width=Dimension(
-                    package.width, DimensionUnit[payload.shipment.dimension_unit]
-                ).CM,
-                height=Dimension(
-                    package.height, DimensionUnit[payload.shipment.dimension_unit]
-                ).CM
+        requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
+        requested_options = [opt for opt in payload.shipment.options if opt in OptionCode.__members__]
+
+        return Package.DeliverySpecType(
+            service_code=ServiceType[
+                requested_services[0]
+            ].value if len(requested_services) > 0 else None,
+            sender=Package.SenderType(
+                name=payload.shipper.person_name,
+                company=payload.shipper.company_name,
+                contact_phone=payload.shipper.phone_number,
+                address_details=Package.AddressDetailsType(
+                    city=payload.shipper.city,
+                    prov_state=payload.shipper.state_code,
+                    country_code=payload.shipper.country_code,
+                    postal_zip_code=payload.shipper.postal_code,
+                    address_line_1=payload.shipper.address_lines[0] if len(payload.shipper.address_lines) > 0 else None,
+                    address_line_2=payload.shipper.address_lines[1] if len(payload.shipper.address_lines) > 1 else None
+                )
             ),
-            unpackaged=payload.shipment.extra.get('unpackaged'),
-            mailing_tube=payload.shipment.extra.get('mailing-tube')
-        )
-
-        delivery_spec_ = Package.DeliverySpecType(
-            service_code=payload.shipment.service_type,
-            sender=sender_,
-            destination=destination_,
-            parcel_characteristics=parcel_characteristics_,
-        )
-
-        if 'preferences' in payload.shipment.extra:
-            delivery_spec_.preferences = Package.PreferencesType(
+            destination=Package.DestinationType(
+                name=payload.recipient.person_name,
+                company=payload.recipient.company_name,
+                additional_address_info=payload.recipient.extra.get('additional-address-info'),
+                client_voice_number=payload.recipient.extra.get('client-voice-number'),
+                address_details=Package.DestinationAddressDetailsType(
+                    city=payload.recipient.city,
+                    prov_state=payload.recipient.state_code,
+                    country_code=payload.recipient.country_code,
+                    postal_zip_code=payload.recipient.postal_code,
+                    address_line_1=payload.recipient.address_lines[0] if len(payload.recipient.address_lines) > 0 else None,
+                    address_line_2=payload.recipient.address_lines[1] if len(payload.recipient.address_lines) > 1 else None
+                )
+            ),
+            parcel_characteristics=Package.ParcelCharacteristicsType(
+                weight=Weight(
+                    payload.shipment.total_weight or package.weight, WeightUnit[payload.shipment.weight_unit]
+                ).KG,
+                dimensions=Package.dimensionsType(
+                    length=Dimension(
+                        package.length, DimensionUnit[payload.shipment.dimension_unit]
+                    ).CM,
+                    width=Dimension(
+                        package.width, DimensionUnit[payload.shipment.dimension_unit]
+                    ).CM,
+                    height=Dimension(
+                        package.height, DimensionUnit[payload.shipment.dimension_unit]
+                    ).CM
+                ),
+                unpackaged=payload.shipment.extra.get('unpackaged'),
+                mailing_tube=payload.shipment.extra.get('mailing-tube')
+            ),
+            options=(lambda options:
+                (
+                    options,
+                    [
+                        options.add_option(
+                            Package.OptionType(
+                                option_code=OptionCode[code].value,
+                                # option_amount=option.get('option-amount'),
+                                # option_qualifier_1=option.get('option-qualifier-1'),
+                                # option_qualifier_2=option.get('option-qualifier-2')
+                            )
+                        ) for code in requested_options
+                    ]
+                )[0]
+            )(Shipment.optionsType()) if len(requested_options) > 0 else None,
+            notification=Package.NotificationType(
+                email=payload.shipment.extra.get('notification').get('email'),
+                on_shipment=payload.shipment.extra.get('notification').get('on-shipment'),
+                on_exception=payload.shipment.extra.get('notification').get('on-exception'),
+                on_delivery=payload.shipment.extra.get('notification').get('on-delivery')
+            ) if ('notification' in payload.shipment.extra) else None,
+            preferences=Package.PreferencesType(
                 show_packing_instructions=payload.shipment.extra.get('preferences').get('show-packing-instructions'),
                 show_postage_rate=payload.shipment.extra.get('preferences').get('show-postage-rate'),
                 show_insured_value=payload.shipment.extra.get('preferences').get('show-insured-value')
-            )
-
-        if _has_any(payload.shipment.extra, ['cost-centre', 'customer-ref-1', 'customer-ref-2']):
-            delivery_spec_.references =  Package.ReferencesType(
-                cost_centre=payload.shipment.extra.get('cost-centre'),
-                customer_ref_1=payload.shipment.extra.get('customer-ref-1'),
-                customer_ref_2=payload.shipment.extra.get('customer-ref-2')
-            )
-
-        if _has_any(payload.shipment, ['customs', 'duty-payment-account']):
-            delivery_spec_.customs = Package.CustomsType(
+            ) if ('preferences' in payload.shipment.extra) else None,
+            customs=Package.CustomsType(
                 currency=payload.shipment.currency,
                 conversion_from_cad=payload.shipment.customs.extra.get('conversion-from-cad'),
                 reason_for_export=payload.shipment.customs.terms_of_trade,
@@ -258,45 +268,32 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 duties_and_taxes_prepaid=payload.shipment.duty_payment_account,
                 certificate_number=payload.shipment.customs.extra.get('certificate-number'),
                 licence_number=payload.shipment.customs.extra.get('licence-number'),
-                invoice_number=payload.shipment.customs.extra.get('invoice-number')
-            )
-
-            if 'sku-list' in payload.shipment.customs.extra:
-                delivery_spec_.customs.sku_list = Package.sku_listType()
-                for sku in payload.shipment.customs.extra.get('sku-list'):
-                    delivery_spec_.customs.sku_list.add_item(Package.SkuType(
-                        customs_number_of_units=sku.get('customs-number-of-units'),
-                        customs_description=sku.get('customs-description'),
-                        sku=sku.get('sku'),
-                        hs_tariff_code=sku.get('hs-tariff-code'),
-                        unit_weight=sku.get('unit-weight'),
-                        customs_value_per_unit=sku.get('customs-value-per-unit'),
-                        customs_unit_of_measure=sku.get('customs-unit-of-measure'),
-                        country_of_origin=sku.get('country-of-origin'),
-                        province_of_origin=sku.get('province-of-origin')
-                    ))
-
-        if 'notification' in payload.shipment.extra:
-            delivery_spec_.notification = Package.NotificationType(
-                email=payload.shipment.extra.get('notification').get('email'),
-                on_shipment=payload.shipment.extra.get('notification').get('on-shipment'),
-                on_exception=payload.shipment.extra.get('notification').get('on-exception'),
-                on_delivery=payload.shipment.extra.get('notification').get('on-delivery')
-            )
-
-        if 'options' in payload.shipment.extra:
-            delivery_spec_.options = Shipment.optionsType()
-            for option in payload.shipment.extra.get('options'):
-                delivery_spec_.options.add_option(
-                    Package.OptionType(
-                        option_code=option.get('option-code'),
-                        option_amount=option.get('option-amount'),
-                        option_qualifier_1=option.get('option-qualifier-1'),
-                        option_qualifier_2=option.get('option-qualifier-2')
-                    )
-                )
-
-        return delivery_spec_
+                invoice_number=payload.shipment.customs.extra.get('invoice-number'),
+                sku_list=(lambda skus:
+                    (
+                        skus,
+                        [
+                            skus.add_item(Package.SkuType(
+                                customs_number_of_units=item.quantity,
+                                customs_description=item.description,
+                                sku=item.sku,
+                                hs_tariff_code=item.extra.get('hs-tariff-code'),
+                                unit_weight=WeightUnit.KG.value,
+                                customs_value_per_unit=item.value_amount,
+                                customs_unit_of_measure=DimensionUnit.CM.value,
+                                country_of_origin=item.origin_country,
+                                province_of_origin=item.extra.get('province-of-origin')
+                            )) for item in payload.shipment.items
+                        ]
+                    )[0]
+                )(Package.sku_listType())
+            ) if _has_any(payload.shipment, ['customs', 'duty-payment-account']) else None,
+            references=Package.ReferencesType(
+                cost_centre=payload.shipment.extra.get('cost-centre'),
+                customer_ref_1=payload.shipment.references[0] if len(payload.shipment.references) > 0 else None,
+                customer_ref_2=payload.shipment.references[1] if len(payload.shipment.references) > 1 else None
+            ) if len(payload.shipment.references) > 0 else None
+        )
 
 
 """ Should be extracted to gds_helpers...? """

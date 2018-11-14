@@ -58,13 +58,13 @@ class DHLMapperPartial(DHLMapperBase):
 
     def create_dct_request(self, payload: T.shipment_request) -> Req.DCTRequest:
         default_product_code = Product.EXPRESS_WORLDWIDE_DOC if payload.shipment.is_document else Product.EXPRESS_WORLDWIDE
-        product_code = Product[payload.shipment.service_type] if payload.shipment.service_type != None else default_product_code
+        product_code = Product[payload.shipment.services] if payload.shipment.services != None else default_product_code
         is_dutiable = payload.shipment.declared_value != None
         default_packaging_type = DCTPackageType.SM if payload.shipment.is_document else DCTPackageType.BOX
-        extra_services = (
-            [Service[svc] for svc in payload.shipment.extra_services if svc in Service.__members__] +
-            ([] if not payload.shipment.insured_amount or "Shipment_Insurance" in payload.shipment.extra_services else [Service.Shipment_Insurance]) +
-            ([] if not is_dutiable or "Duties_and_Taxes_Paid" in payload.shipment.extra_services else [Service.Duties_and_Taxes_Paid])
+        options = (
+            [Service[svc] for svc in payload.shipment.options if svc in Service.__members__] +
+            ([] if not payload.shipment.insured_amount or "Shipment_Insurance" in payload.shipment.options else [Service.Shipment_Insurance]) +
+            ([] if not is_dutiable or "Duties_and_Taxes_Paid" in payload.shipment.options else [Service.Duties_and_Taxes_Paid])
         )
 
         GetQuote = Req.GetQuoteType(
@@ -108,7 +108,7 @@ class DHLMapperPartial(DHLMapperBase):
                 ShipmentWeight=payload.shipment.total_weight,
                 Volume=payload.shipment.extra.get('Volume'),
                 PaymentAccountNumber=payload.shipment.payment_account_number,
-                InsuredCurrency=(payload.shipment.currency or "USD") if Service.Shipment_Insurance in extra_services else None,
+                InsuredCurrency=(payload.shipment.currency or "USD") if Service.Shipment_Insurance in options else None,
                 InsuredValue=payload.shipment.insured_amount,
                 PaymentType=payload.shipment.payment_type,
                 AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
@@ -120,8 +120,8 @@ class DHLMapperPartial(DHLMapperBase):
                             ReqType.QtdShpExChrgType(
                                 SpecialServiceType=svc.value,
                                 LocalSpecialServiceType=None
-                            ) for svc in extra_services
-                        ] if len(extra_services) > 0 else None
+                            ) for svc in options
+                        ] if len(options) > 0 else None
                     )
                 ]
             ),
