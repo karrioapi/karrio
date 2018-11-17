@@ -286,9 +286,6 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
                   <fsp:Code>ShipmentBillingOption</fsp:Code>
                </fsp:ShipmentBillingOption>
             </fsp:PaymentInformation>
-            <fsp:Service>
-               <fsp:Code>Service code</fsp:Code>
-            </fsp:Service>
             <fsp:HandlingUnitOne>
                <fsp:Quantity>HandlingUnitOne quantity</fsp:Quantity>
                <fsp:Type>
@@ -299,14 +296,11 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
                <fsp:Description>Commodity Description</fsp:Description>
                <fsp:Weight>
                   <fsp:UnitOfMeasurement>
-                     <fsp:Code>LB</fsp:Code>
+                     <fsp:Code>LBS</fsp:Code>
                   </fsp:UnitOfMeasurement>
                   <fsp:Value>180</fsp:Value>
                </fsp:Weight>
                <fsp:NumberOfPieces>1</fsp:NumberOfPieces>
-               <fsp:PackagingType>
-                  <fsp:Code>PackagingType code</fsp:Code>
-               </fsp:PackagingType>
                <fsp:FreightClass>FreightClass</fsp:FreightClass>
             </fsp:Commodity>
          </fsp:Shipment>
@@ -573,14 +567,12 @@ freight_shipment_data = {
         "person_name": "Attention Name"
     },
     "shipment": {
-        "services": "Service code",
         "weight_unit": "LB", 
         "references": ["Your Customer Context"],
         "items": [
             {
                 "description": "Commodity Description",
                 "weight": 180,
-                "packaging_type": "PackagingType code",
                 "quantity": 1,
                 "extra": {
                     "FreightClass": "FreightClass"
@@ -641,7 +633,7 @@ package_shipment_data = {
     },
     "shipment": {
         "references": ["Your Customer Context"],
-        "services": "01",
+        "services": ["UPS_Express"],
         "dimension_unit": "IN",
         "weight_unit": "LB",
         "paid_by": "SENDER",
@@ -649,7 +641,7 @@ package_shipment_data = {
         "items": [
             {
                 "description": "Description",
-                "packaging_type": "02",
+                "packaging_type": "Customer_Supplied_Package",
                 "length": 7,
                 "width": 5,
                 "height": 2,

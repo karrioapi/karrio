@@ -45,7 +45,7 @@ class PackagingType(Flag):
     PC         =    Pieces
     PAL        =    Pallet                            
 
-class RatingPackagingType(Enum):
+class RatingPackagingType(Flag):
     UNKNOWN               =     "00"   
     UPS_Letter            =     "01"       
     Package               =     "02"    
@@ -65,7 +65,7 @@ class RatingPackagingType(Enum):
     PC                    =    Package
     PAL                   =    Pallet  
     
-class RatingServiceCode(Flag):
+class RatingServiceCode(Enum):
     UPS_Standard                     =    "11"                  
     UPS_Worldwide_Express            =    "07"                           
     UPS_Worldwide_Expedited          =    "08"                             
@@ -98,7 +98,7 @@ class RatingServiceCode(Flag):
     UPS_Freight_LTL_Guaranteed_A_M   =    "334"                
     UPS_Standard_LTL                 =    "349"                               
    
-class ShippingPackagingType(Enum):
+class ShippingPackagingType(Flag):
     UPS_Letter                = "01"           
     Customer_Supplied_Package = "02"                   
     Tube                      = "03"                          
@@ -121,7 +121,13 @@ class ShippingPackagingType(Enum):
     BPM_Parcel                = "64"            
     Media_Mail                = "65"            
     BPM_Flat                  = "66"          
-    Standard_Flat            = "67"                 
+    Standard_Flat             = "67"        
+
+    """ unified Packaging type mapping  """    
+    SM         =    UPS_Letter
+    BOX        =    UPS_Express_Box
+    PC         =    PAK
+    PAL        =    Pallet           
   
 class ShippingServiceCode(Enum):
     UPS_Standard                     =    "11"               
