@@ -4,6 +4,13 @@ from pyups import (
     common as Common
 ) 
 from .interface import reduce, Tuple, List, Union, T, UPSMapperBase
+from purplship.domain.Types.units import DimensionUnit
+from purplship.mappers.ups.ups_units import (
+    ShippingPackagingType,
+    ShippingServiceCode,
+    WeightUnit,
+    PackagingType
+)
 
 
 class UPSMapperPartial(UPSMapperBase):
@@ -77,6 +84,7 @@ class UPSMapperPartial(UPSMapperBase):
 
 
     def create_freight_ship_request(self, payload: T.shipment_request) -> FShip.FreightShipRequest:
+        services = [ShippingServiceCode[svc] for svc in payload.shipment.services if svc in ShippingServiceCode.__members__]
         payer = T.party(**payload.shipment.extra.get('Payer')) if 'Payer' else None
         return FShip.FreightShipRequest(
             Request=Common.RequestType(
@@ -159,9 +167,8 @@ class UPSMapperPartial(UPSMapperBase):
                 ),
                 ManufactureInformation=None,
                 Service=FShip.ShipCodeDescriptionType(
-                    Code=payload.shipment.service_type,
-                    Description=None
-                ),
+                    Code=services[0].value
+                ) if len(services) > 0 else None,
                 HandlingUnitOne=(lambda unit:
                     FShip.HandlingUnitType(
                         Quantity=unit.get('Quantity'),
@@ -189,25 +196,25 @@ class UPSMapperPartial(UPSMapperBase):
                         Description=pkg.description,
                         Weight=FShip.WeightType(
                             UnitOfMeasurement=FShip.FreightShipUnitOfMeasurementType(
-                                Code=payload.shipment.weight_unit,
+                                Code=WeightUnit[payload.shipment.weight_unit].value,
                                 Description=None
                             ),
                             Value=pkg.weight
                         ),
                         Dimensions=FShip.DimensionsType(
                             UnitOfMeasurement=FShip.FreightShipUnitOfMeasurementType(
-                                Code=payload.shipment.dimension_unit,
+                                Code=DimensionUnit[payload.shipment.dimension_unit].value,
                                 Description=None
                             ),
                             Length=pkg.length,
                             Width=pkg.width,
                             Height=pkg.height
                         ) if any((pkg.length, pkg.width, pkg.height)) else None,
-                        NumberOfPieces=pkg.extra.get('NumberOfPieces'),
+                        NumberOfPieces=pkg.quantity,
                         PackagingType=FShip.ShipCodeDescriptionType(
-                            Code=pkg.packaging_type,
+                            Code=PackagingType[pkg.packaging_type].value,
                             Description=None
-                        ),
+                        ) if pkg.packaging_type != None else None,
                         DangerousGoodsIndicator=None,
                         CommodityValue=FShip.CommodityValueType(
                             CurrencyCode=pkg.value_amount,
@@ -233,6 +240,7 @@ class UPSMapperPartial(UPSMapperBase):
         )
 
     def create_package_ship_request(self, payload: T.shipment_request) -> PShip.ShipmentRequest:
+        services = [ShippingServiceCode[svc] for svc in payload.shipment.services if svc in ShippingServiceCode.__members__]
         return PShip.ShipmentRequest(
             Request=Common.RequestType(
                 RequestOption=payload.shipment.extra.get('RequestOption') or ["validate"],
@@ -358,7 +366,7 @@ class UPSMapperPartial(UPSMapperBase):
                             BillThirdParty=PShip.BillThirdPartyChargeType(
                                 AccountNumber=payload.shipment.payment_account_number,
                                 Address=PShip.BillReceiverAddressType(
-                                    PostalCode=payload.shipment.extra.get('payer_postal_code')
+                                    PostalCode=payload.shipment.extra.get('payor_postal_code')
                                 )
                             ) if payload.shipment.paid_by == 'THIRD_PARTY' else None,
                             ConsigneeBilledIndicator=None
@@ -373,8 +381,8 @@ class UPSMapperPartial(UPSMapperBase):
                 MovementReferenceNumber=None,
                 ReferenceNumber=None,
                 Service=PShip.ServiceType(
-                    Code=payload.shipment.service_type
-                ),
+                    Code=services[0].value
+                ) if len(services) > 0 else None,
                 InvoiceLineTotal=None,
                 NumOfPiecesInShipment=payload.shipment.total_items,
                 USPSEndorsement=None,
@@ -394,12 +402,12 @@ class UPSMapperPartial(UPSMapperBase):
                     PShip.PackageType(
                         Description=pkg.description,
                         Packaging=PShip.PackagingType(
-                            Code=pkg.packaging_type,
+                            Code=ShippingPackagingType[pkg.packaging_type].value,
                             Description=None
-                        ),
+                        ) if pkg.packaging_type != None else None,
                         Dimensions=PShip.DimensionsType(
                             UnitOfMeasurement=PShip.ShipUnitOfMeasurementType(
-                                Code=payload.shipment.dimension_unit,
+                                Code=DimensionUnit[payload.shipment.dimension_unit].value,
                                 Description=None
                             ),
                             Length=pkg.length,
@@ -409,10 +417,7 @@ class UPSMapperPartial(UPSMapperBase):
                         DimWeight=pkg.extra.get('DimWeight'),
                         PackageWeight=PShip.PackageWeightType(
                             UnitOfMeasurement=PShip.ShipUnitOfMeasurementType(
-                                Code="LBS" if (
-                                    payload.shipment.weight_unit == "LB" or
-                                    payload.shipment.weight_unit == None
-                                ) else "KGS",
+                                Code=WeightUnit[payload.shipment.weight_unit].value,
                                 Description=None
                             ),
                             Weight=pkg.weight

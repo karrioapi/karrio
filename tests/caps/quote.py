@@ -13,15 +13,16 @@ class TestCanadaPostQuote(unittest.TestCase):
         self.mailing_scenario.build(to_xml(QuoteRequestXml))
 
     def test_create_quote_request(self):
-        shipper = {"postal_code": "H8Z2Z3", "country_code": "CA"}
+        shipper = {"postal_code": "H8Z2Z3", "country_code": "CA", "account_number": "1234567"}
         recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
         shipment = {
-            "items": [{"height":3, "length":10, "width":3,"weight": 4.0}],
-            "service_type": "DOM.EP",
+            "items": [{"height":3, "length":10, "width":3, "weight": 4.0}],
+            "services": ["Expedited_Parcel"],
+            "dimension_unit": "CM", 
+            "weight_unit": "KG",
             "extra": { "options": []}
         }
-        payload = Quote.create(
-            shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
 
         mailing_scenario_ = proxy.mapper.create_quote_request(payload)
 
@@ -206,7 +207,6 @@ QuoteMissingArgsError = """<messages xmlns="http://www.canadapost.ca/ws/messages
 
 QuoteRequestXml = """<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
     <customer-number>1234567</customer-number>
-    <options/>
     <parcel-characteristics>
         <weight>4.</weight>
         <dimensions>

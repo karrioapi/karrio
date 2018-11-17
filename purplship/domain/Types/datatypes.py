@@ -80,7 +80,6 @@ class shipment_options(NamedTuple):
     currency: str = None
     paid_by: str = None
     declared_value: float = None
-    service_type: str = None
     payment_type: str = None
     duty_paid_by: str = None
     duty_payment_account: str = None
@@ -93,7 +92,8 @@ class shipment_options(NamedTuple):
     doc_images: List[doc_image] = []
     
     references: List[str] = []
-    extra_services: List[str] = []
+    services: List[str] = []
+    options: List[str] = []
 
     label: doc_image = None
     extra: Dict = {}

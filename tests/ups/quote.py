@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pyups.freight_rate import FreightRateRequest
+from pyups.package_rate import RateRequest
 from purplship.domain.Types import Quote
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
@@ -9,34 +10,49 @@ import time
 
 class TestUPSQuote(unittest.TestCase):
     def setUp(self):
-        req_xml = get_node_from_xml(QuoteRequestXml, "FreightRateRequest")
-        self.RateRequest = FreightRateRequest()
-        self.RateRequest.build(req_xml)
+        
+        self.FreightRateRequest = FreightRateRequest()
+        self.FreightRateRequest.build(get_node_from_xml(FreightRateRequestXML, "FreightRateRequest"))
+        
+        self.RateRequest = RateRequest()
+        self.RateRequest.build(get_node_from_xml(RateRequestXML, "RateRequest"))
 
     def test_create_quote_request(self):
+        payload = Quote.create(**rate_req_data)
+        RateRequest_ = proxy.mapper.create_quote_request(payload)
+        self.assertEqual(export(RateRequest_), export(self.RateRequest))
+
+    def test_create_freight_quote_request(self):
         shipper = {
             "postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]
         }
         recipient = {"postal_code":"89109", "city":"Las Vegas", "country_code":"US"}
-        shipment = {"items": [{"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "description":"TV"}]}
+        shipment = {"items": [{"id":"1", "height":3, "length":170, "width":3,"weight":4.0, "packaging_type": "Bag", "description":"TV"}]}
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
         
-        RateRequest_ = proxy.mapper.create_quote_request(payload)
+        FreightRateRequest_ = proxy.mapper.create_quote_request(payload)
         
-        self.assertEqual(export(RateRequest_), export(self.RateRequest))
+        self.assertEqual(export(FreightRateRequest_), export(self.FreightRateRequest))
 
     @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
-    def test_get_quotes(self, http_mock):
+    def test_package_get_quotes(self, http_mock):
         proxy.get_quotes(self.RateRequest)
 
         xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
+        self.assertEqual(strip(xmlStr), strip(RateRequestXML))
+
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    def test_freight_get_quotes(self, http_mock):
+        proxy.get_quotes(self.FreightRateRequest)
+
+        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        self.assertEqual(strip(xmlStr), strip(FreightRateRequestXML))
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteResponseXml))
+            to_xml(FreightRateResponseXML))
         self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteResponse))
+                         jsonify(ParsedFreightRateResponse))
                 
     def test_parse_quote_error(self):
         parsed_response = proxy.mapper.parse_quote_response(
@@ -53,10 +69,6 @@ class TestUPSQuote(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-today = time.strftime('%Y%m%d')
 
 
 ParsedQuoteParsingError = [
@@ -86,7 +98,7 @@ ParsedQuoteMissingArgsError = [
     ]
 ]
 
-ParsedQuoteResponse = [
+ParsedFreightRateResponse = [
     [
         {
             'base_charge': 909.26, 
@@ -188,7 +200,7 @@ QuoteMissingArgsError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlso
 </soapenv:Envelope>
 """
 
-QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0">
+FreightRateRequestXML = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -240,7 +252,6 @@ QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/e
             </frt:PaymentInformation>
             <frt:Service>
                 <frt:Code>309</frt:Code>
-                <frt:Description>UPS Ground Freight</frt:Description>
             </frt:Service>
             <frt:HandlingUnitOne>
                 <frt:Quantity>1</frt:Quantity>
@@ -260,14 +271,13 @@ QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/e
                     <frt:UnitOfMeasurement>
                         <frt:Code>IN</frt:Code>
                     </frt:UnitOfMeasurement>
-                    <frt:Length>10</frt:Length>
+                    <frt:Length>170</frt:Length>
                     <frt:Width>3</frt:Width>
                     <frt:Height>3</frt:Height>
                 </frt:Dimensions>
                 <frt:NumberOfPieces>1</frt:NumberOfPieces>
                 <frt:PackagingType>
                     <frt:Code>BAG</frt:Code>
-                    <frt:Description>BAG</frt:Description>
                 </frt:PackagingType>
                 <frt:FreightClass>50</frt:FreightClass>
             </frt:Commodity>
@@ -276,14 +286,11 @@ QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/e
                     <frt:WeekendPickupIndicator></frt:WeekendPickupIndicator>
                 </frt:PickupOptions>
             </frt:ShipmentServiceOptions>
-            <frt:PickupRequest>
-                <frt:PickupDate>{today}</frt:PickupDate>
-            </frt:PickupRequest>
             <frt:GFPOptions/>
             <frt:HandlingUnitWeight>
                 <frt:Value>1</frt:Value>
                 <frt:UnitOfMeasurement>
-                    <frt:Code>LB</frt:Code>
+                    <frt:Code>LBS</frt:Code>
                 </frt:UnitOfMeasurement>
             </frt:HandlingUnitWeight>
             <frt:AdjustedWeightIndicator></frt:AdjustedWeightIndicator>
@@ -294,7 +301,7 @@ QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/e
 </tns:Envelope>
 """
 
-QuoteResponseXml = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+FreightRateResponseXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
     <soapenv:Header/>
     <soapenv:Body>
         <freightRate:FreightRateResponse xmlns:freightRate="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0">
@@ -446,3 +453,182 @@ QuoteResponseXml = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.or
     </soapenv:Body>
 </soapenv:Envelope>
 """
+
+RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
+    <tns:Header>
+        <upss:UPSSecurity>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
+        </upss:UPSSecurity>
+    </tns:Header>
+    <tns:Body>
+        <rate:RateRequest>
+            <common:Request>
+                <common:RequestOption>Rate</common:RequestOption>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
+            </common:Request>
+            <rate:Shipment>
+                <rate:Shipper>
+                    <rate:Name>Shipper Name</rate:Name>
+                    <rate:ShipperNumber>Your Shipper Number</rate:ShipperNumber>
+                    <rate:Address>
+                        <rate:AddressLine>Address Line</rate:AddressLine>
+                        <rate:City>Montreal</rate:City>
+                        <rate:PostalCode>H3N1S4</rate:PostalCode>
+                        <rate:CountryCode>CountryCode</rate:CountryCode>
+                    </rate:Address>
+                </rate:Shipper>
+                <rate:ShipTo>
+                    <rate:Name>Ship To Name</rate:Name>
+                    <rate:Address>
+                        <rate:AddressLine>Address Line</rate:AddressLine>
+                        <rate:City>Las Vegas</rate:City>
+                        <rate:StateProvinceCode>StateProvinceCode</rate:StateProvinceCode>
+                        <rate:PostalCode>89109</rate:PostalCode>
+                        <rate:CountryCode>US</rate:CountryCode>
+                    </rate:Address>
+                </rate:ShipTo>
+                <rate:ShipFrom>
+                    <rate:Address>
+                        <rate:AddressLine>Address Line</rate:AddressLine>
+                        <rate:City>City</rate:City>
+                        <rate:StateProvinceCode>StateProvinceCode</rate:StateProvinceCode>
+                        <rate:PostalCode>PostalCode</rate:PostalCode>
+                        <rate:CountryCode>CountryCode</rate:CountryCode>
+                    </rate:Address>
+                </rate:ShipFrom>
+                <rate:Service>
+                    <common:Code>03</common:Code>
+                </rate:Service>
+                <rate:Package>
+                    <rate:PackagingType>
+                        <common:Code>02</common:Code>
+                    </rate:PackagingType>
+                    <rate:Dimensions>
+                        <rate:UnitOfMeasurement>
+                            <common:Code>IN</common:Code>
+                        </rate:UnitOfMeasurement>
+                        <rate:Length>10</rate:Length>
+                        <rate:Width>3</rate:Width>
+                        <rate:Height>3</rate:Height>
+                    </rate:Dimensions>
+                    <rate:PackageWeight>
+                        <rate:UnitOfMeasurement>
+                            <common:Code>LBS</common:Code>
+                        </rate:UnitOfMeasurement>
+                        <rate:Weight>4.0</rate:Weight>
+                    </rate:PackageWeight>
+                </rate:Package>
+            </rate:Shipment>
+        </rate:RateRequest>
+    </tns:Body>
+</tns:Envelope>
+"""
+
+RateResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header />
+   <soapenv:Body>
+      <rate:RateResponse xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
+         <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
+            <common:ResponseStatus>
+               <common:Code>1</common:Code>
+               <common:Description>Success</common:Description>
+            </common:ResponseStatus>
+            <common:Alert>
+               <common:Code>110971</common:Code>
+               <common:Description>Your invoice may vary from the displayed reference rates</common:Description>
+            </common:Alert>
+            <common:TransactionReference>
+               <common:CustomerContext>Your Customer Context</common:CustomerContext>
+            </common:TransactionReference>
+         </common:Response>
+         <rate:RatedShipment>
+            <rate:Service>
+               <rate:Code>03</rate:Code>
+               <rate:Description />
+            </rate:Service>
+            <rate:RatedShipmentAlert>
+               <rate:Code>110971</rate:Code>
+               <rate:Description>Your invoice may vary from the displayed reference rates</rate:Description>
+            </rate:RatedShipmentAlert>
+            <rate:BillingWeight>
+               <rate:UnitOfMeasurement>
+                  <rate:Code>LBS</rate:Code>
+                  <rate:Description>Pounds</rate:Description>
+               </rate:UnitOfMeasurement>
+               <rate:Weight>2.0</rate:Weight>
+            </rate:BillingWeight>
+            <rate:TransportationCharges>
+               <rate:CurrencyCode>USD</rate:CurrencyCode>
+               <rate:MonetaryValue>9.86</rate:MonetaryValue>
+            </rate:TransportationCharges>
+            <rate:ServiceOptionsCharges>
+               <rate:CurrencyCode>USD</rate:CurrencyCode>
+               <rate:MonetaryValue>0.00</rate:MonetaryValue>
+            </rate:ServiceOptionsCharges>
+            <rate:TotalCharges>
+               <rate:CurrencyCode>USD</rate:CurrencyCode>
+               <rate:MonetaryValue>9.86</rate:MonetaryValue>
+            </rate:TotalCharges>
+            <rate:RatedPackage>
+               <rate:TransportationCharges>
+                  <rate:CurrencyCode>USD</rate:CurrencyCode>
+                  <rate:MonetaryValue>9.86</rate:MonetaryValue>
+               </rate:TransportationCharges>
+               <rate:ServiceOptionsCharges>
+                  <rate:CurrencyCode>USD</rate:CurrencyCode>
+                  <rate:MonetaryValue>0.00</rate:MonetaryValue>
+               </rate:ServiceOptionsCharges>
+               <rate:TotalCharges>
+                  <rate:CurrencyCode>USD</rate:CurrencyCode>
+                  <rate:MonetaryValue>9.86</rate:MonetaryValue>
+               </rate:TotalCharges>
+               <rate:Weight>1.0</rate:Weight>
+               <rate:BillingWeight>
+                  <rate:UnitOfMeasurement>
+                     <rate:Code>LBS</rate:Code>
+                     <rate:Description>Pounds</rate:Description>
+                  </rate:UnitOfMeasurement>
+                  <rate:Weight>2.0</rate:Weight>
+               </rate:BillingWeight>
+            </rate:RatedPackage>
+         </rate:RatedShipment>
+      </rate:RateResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+"""
+
+
+rate_req_data = {
+    "shipper": {
+        "company_name": "Shipper Name", "account_number": "Your Shipper Number",
+        "postal_code": "H3N1S4",
+        "country_code":"CountryCode", "city":"Montreal", "address_lines": ["Address Line"]
+    },
+    "recipient": {
+        "company_name": "Ship To Name", "address_lines": ["Address Line"],
+        "postal_code":"89109", "city":"Las Vegas", "country_code":"US", "state_code": "StateProvinceCode"
+    },
+    "shipment": {
+        "references": ["Your Customer Context"],
+        "services": ["UPS_Ground"],
+        "items": [
+            {"id":"1", "height":3, "length":10, "width":3,"weight":4.0, "packaging_type": "Package", "description":"TV"}
+        ],
+        "extra": {
+            "ShipFrom": {
+                "address_lines": ["Address Line"], "city": "City",
+                "state_code": "StateProvinceCode", "postal_code": "PostalCode",
+                "country_code": "CountryCode"
+            }
+        }
+    }
+}

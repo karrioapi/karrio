@@ -20,7 +20,6 @@ class TestDHLShipment(unittest.TestCase):
         # remove MessageTime, Date for testing purpose
         ShipmentRequest_.Request.ServiceHeader.MessageTime = None
         ShipmentRequest_.ShipmentDetails.Date = None
-
         self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
@@ -461,15 +460,16 @@ shipment_data = {
     },
     "shipment": {
         "items": [
-            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "EE", "code": "cc", "description": "cn"}
+            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "DHL_Express_Envelope", "code": "cc", "description": "cn"}
         ],
         "is_document": False,
-        "paid_by": "S",
+        "paid_by": "SENDER",
         "payment_account_number": "123456789",
-        "duty_paid_by": "S",
+        "duty_paid_by": "SENDER",
         "duty_payment_account": "123456789",
         "declared_value": 200.00,
-        "service_type": "WY",
+        "options": ["Paperless_Trade"],
+        "services": "EXPRESS_WORLDWIDE",
         "doc_images": [
             {
                 "type": "CIN", 
@@ -477,7 +477,10 @@ shipment_data = {
                 "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
             }
         ],
-        "extra": {"EProcShip": "N", "GlobalProductCode": "P", "LocalProductCode": "P"},
+        "extra": {
+            "EProcShip": "N",
+            "RegionCode": "AM"
+        },
         "customs": {
             "terms_of_trade": "DAP",
             "extra": {

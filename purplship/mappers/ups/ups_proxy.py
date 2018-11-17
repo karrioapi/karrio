@@ -6,6 +6,7 @@ from purplship.domain.proxy import Proxy
 from purplship.mappers.ups.ups_mapper import UPSMapper
 from purplship.mappers.ups.ups_client import UPSClient
 from pyups.freight_rate import FreightRateRequest
+from pyups.package_rate import RateRequest
 from pyups.package_track import TrackRequest
 from pyups.freight_ship import FreightShipRequest
 from pyups.package_ship import ShipmentRequest
@@ -17,10 +18,14 @@ class UPSProxy(Proxy):
         self.client = client
         self.mapper = UPSMapper(client) if mapper is None else mapper
 
-    def get_quotes(self, RateRequest_: FreightRateRequest) -> "XMLElement":
-        envelopeStr = export(
-            create_envelope(header_content=self.mapper.Security, body_content=RateRequest_),
-            namespacedef_='''
+    def get_quotes(self, RateRequest_: Union[RateRequest, FreightRateRequest]) -> "XMLElement":
+        is_freight = isinstance(RateRequest_, FreightRateRequest)
+
+        if is_freight:
+            url_ = '%s/FreightRate' % self.client.server_url
+            body_child_name_ = "FreightRateRequest"
+            body_child_prefix_ = 'frt:'
+            namespace_ = '''
                 xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" 
                 xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" 
                 xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
@@ -28,17 +33,33 @@ class UPSProxy(Proxy):
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
                 xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0"
             '''.replace(' ', '').replace('\n', ' ')
+        else:
+            url_ = '%s/Rate' % self.client.server_url
+            body_child_name_ = "RateRequest"
+            body_child_prefix_ = 'rate:'
+            namespace_ = '''
+                xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" 
+                xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" 
+                xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1"
+            '''.replace(' ', '').replace('\n', ' ')
+
+        envelopeStr = export(
+            create_envelope(header_content=self.mapper.Security, body_content=RateRequest_),
+            namespacedef_=namespace_
         )
         xmlStr = clean_namespaces(
             envelopeStr, 
             envelope_prefix='tns:', 
             header_child_prefix='upss:',
-            body_child_prefix='frt:',
             header_child_name='UPSSecurity',
-            body_child_name='FreightRateRequest'
+            body_child_name=body_child_name_,
+            body_child_prefix=body_child_prefix_
         )
         result = http(
-            url='%s/FreightRate' % self.client.server_url, 
+            url=url_, 
             data=bytearray(xmlStr, "utf-8"), 
             headers={'Content-Type': 'application/xml'}, 
             method="POST"

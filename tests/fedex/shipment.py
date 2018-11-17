@@ -688,7 +688,8 @@ shipment_data = {
         "currency": "USD",
         "weight_unit": "LB",
         "dimension_unit": "IN",
-        "extra_services": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
+        "services": ["INTERNATIONAL_PRIORITY"],
+        "options": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
         "items": [
             {
                 "id": "1",
@@ -696,30 +697,17 @@ shipment_data = {
                 "length": 12,
                 "width": 12,
                 "height": 12,
-                "description": "ABCD",
+                "quantity": 1,
+                "origin_country": "US",
+                "value_amount": 100.0,
+                "value_currency": "USD",
                 "extra": {
                     "CustomerReferences": [
                         {
                             "CustomerReferenceType": "CUSTOMER_REFERENCE",
                             "Value": "TC001_01_PT1_ST01_PK01_SNDUS_RCPCA_POS"
                         }
-                    ],
-                    "NumberOfPieces": 1,
-                    "CountryOfManufacture": "US",
-                    "QuantityUnits": "cm",
-                    "Quantity": 1.0,
-                    "Weight": {
-                        "Unit": "LB",
-                        "Value": "1."
-                    },
-                    "UnitPrice": {
-                        "Currency": "USD",
-                        "Amount": 1.0
-                    },
-                    "CustomsValue": {
-                        "Currency": "USD",
-                        "Amount": 100.0
-                    }
+                    ]
                 }
             }
         ],
@@ -736,14 +724,10 @@ shipment_data = {
             "Payor": {
                 "ResponsibleParty": {
                     "person_name": "Input Your Information",
+                    "tax_id": "213456",
                     "extra": {
                         "ContactId": "12345",
-                        "Tins": [
-                            {
-                                "TinType": "BUSINESS_STATE",
-                                "Number": "213456"
-                            }
-                        ]
+                        "TinType": "BUSINESS_STATE"
                     }
                 }
             },

@@ -4,6 +4,7 @@ from purplship.mappers.ups import UPSClient
 from purplship.domain import Types as T
 from pyups import (
     freight_rate as Rate, 
+    package_rate as PRate,
     package_track as Track, 
     UPSSecurity as Security, 
     error as Err,
@@ -22,6 +23,9 @@ class UPSCapabilities:
     def create_freight_rate_request(self, payload: T.shipment_request) -> Rate.FreightRateRequest:
         pass
 
+    def create_package_rate_request(self, payload: T.shipment_request) -> PRate.RateRequest:
+        pass
+
     def create_track_request(self, payload: T.tracking_request) -> List[Track.TrackRequest]:
         pass  
 
@@ -35,6 +39,9 @@ class UPSCapabilities:
     """ Replys """ 
     
     def parse_freight_rate_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+        pass
+    
+    def parse_package_rate_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
     def parse_track_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
