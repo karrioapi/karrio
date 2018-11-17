@@ -299,9 +299,9 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
                <fsp:Description>Commodity Description</fsp:Description>
                <fsp:Weight>
                   <fsp:UnitOfMeasurement>
-                     <fsp:Code>UnitOfMeasurement code</fsp:Code>
+                     <fsp:Code>LB</fsp:Code>
                   </fsp:UnitOfMeasurement>
-                  <fsp:Value>100</fsp:Value>
+                  <fsp:Value>180</fsp:Value>
                </fsp:Weight>
                <fsp:NumberOfPieces>1</fsp:NumberOfPieces>
                <fsp:PackagingType>
@@ -574,21 +574,20 @@ freight_shipment_data = {
     },
     "shipment": {
         "services": "Service code",
-        "weight_unit": "UnitOfMeasurement code", 
+        "weight_unit": "LB", 
         "references": ["Your Customer Context"],
         "items": [
             {
                 "description": "Commodity Description",
-                "weight": 100,
+                "weight": 180,
                 "packaging_type": "PackagingType code",
+                "quantity": 1,
                 "extra": {
-                    "NumberOfPieces": 1,
                     "FreightClass": "FreightClass"
                 }
             }
         ],
         "extra": {
-            "is_freight": True,
             "Payer": {
                 "company_name": "Payer Name",
                 "address_lines": ["Address Line"],

@@ -203,7 +203,7 @@ class UPSMapperPartial(UPSMapperBase):
                             Width=pkg.width,
                             Height=pkg.height
                         ) if any((pkg.length, pkg.width, pkg.height)) else None,
-                        NumberOfPieces=pkg.extra.get('NumberOfPieces'),
+                        NumberOfPieces=pkg.quantity,
                         PackagingType=FShip.ShipCodeDescriptionType(
                             Code=pkg.packaging_type,
                             Description=None
@@ -358,7 +358,7 @@ class UPSMapperPartial(UPSMapperBase):
                             BillThirdParty=PShip.BillThirdPartyChargeType(
                                 AccountNumber=payload.shipment.payment_account_number,
                                 Address=PShip.BillReceiverAddressType(
-                                    PostalCode=payload.shipment.extra.get('payer_postal_code')
+                                    PostalCode=payload.shipment.extra.get('payor_postal_code')
                                 )
                             ) if payload.shipment.paid_by == 'THIRD_PARTY' else None,
                             ConsigneeBilledIndicator=None
