@@ -58,7 +58,10 @@ class DHLMapperPartial(DHLMapperBase):
 
     def create_dct_request(self, payload: T.shipment_request) -> Req.DCTRequest:
         default_product_code = Product.EXPRESS_WORLDWIDE_DOC if payload.shipment.is_document else Product.EXPRESS_WORLDWIDE
-        product_code = Product[payload.shipment.services] if payload.shipment.services != None else default_product_code
+        products = (
+            [Product[svc] for svc in payload.shipment.services if svc in Product.__members__] +
+            [default_product_code]
+        )
         is_dutiable = payload.shipment.declared_value != None
         default_packaging_type = DCTPackageType.SM if payload.shipment.is_document else DCTPackageType.BOX
         options = (
@@ -114,15 +117,15 @@ class DHLMapperPartial(DHLMapperBase):
                 AcctPickupCloseTime=payload.shipment.extra.get('AcctPickupCloseTime'),
                 QtdShp=[
                     ReqType.QtdShpType(
-                        GlobalProductCode=product_code.value,
-                        LocalProductCode=product_code.value,
+                        GlobalProductCode=product.value,
+                        LocalProductCode=product.value,
                         QtdShpExChrg=[
                             ReqType.QtdShpExChrgType(
                                 SpecialServiceType=svc.value,
                                 LocalSpecialServiceType=None
                             ) for svc in options
                         ] if len(options) > 0 else None
-                    )
+                    ) for product in products
                 ]
             ),
             Dutiable=ReqType.DCTDutiable(
