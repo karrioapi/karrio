@@ -20,7 +20,10 @@ class TestUPSQuote(unittest.TestCase):
     def test_create_quote_request(self):
         payload = Quote.create(**rate_req_data)
         RateRequest_ = proxy.mapper.create_quote_request(payload)
-        self.assertEqual(export(RateRequest_), export(self.RateRequest))
+        self.assertEqual(
+            export(RateRequest_), 
+            export(self.RateRequest).replace('common:Code', 'rate:Code')
+        )
 
     def test_create_freight_quote_request(self):
         shipper = {
@@ -53,6 +56,12 @@ class TestUPSQuote(unittest.TestCase):
             to_xml(FreightRateResponseXML))
         self.assertEqual(jsonify(parsed_response),
                          jsonify(ParsedFreightRateResponse))
+
+    def test_parse_package_quote_response(self):
+        parsed_response = proxy.mapper.parse_quote_response(
+            to_xml(RateResponseXML))
+        self.assertEqual(jsonify(parsed_response),
+                         jsonify(ParsedRateResponse))
                 
     def test_parse_quote_error(self):
         parsed_response = proxy.mapper.parse_quote_response(
@@ -134,6 +143,28 @@ ParsedFreightRateResponse = [
             'service_name': None, 
             'service_type': '309', 
             'total_charge': 332.72
+        }
+    ],
+    []
+]
+
+ParsedRateResponse = [
+    [
+        {
+            'base_charge': 9.86, 
+            'carrier': 'UPS', 
+            'currency': 'USD', 
+            'delivery_date': None, 
+            'discount': None, 
+            'duties_and_taxes': 0, 
+            'extra_charges': [
+                {'amount': 0.0, 'currency': 'USD', 'name': None}
+            ], 
+            'pickup_date': None, 
+            'pickup_time': None, 
+            'service_name': '', 
+            'service_type': '03', 
+            'total_charge': 9.86
         }
     ],
     []
@@ -505,15 +536,15 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                     </rate:Address>
                 </rate:ShipFrom>
                 <rate:Service>
-                    <common:Code>03</common:Code>
+                    <rate:Code>03</rate:Code>
                 </rate:Service>
                 <rate:Package>
                     <rate:PackagingType>
-                        <common:Code>02</common:Code>
+                        <rate:Code>02</rate:Code>
                     </rate:PackagingType>
                     <rate:Dimensions>
                         <rate:UnitOfMeasurement>
-                            <common:Code>IN</common:Code>
+                            <rate:Code>IN</rate:Code>
                         </rate:UnitOfMeasurement>
                         <rate:Length>10</rate:Length>
                         <rate:Width>3</rate:Width>
@@ -521,7 +552,7 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                     </rate:Dimensions>
                     <rate:PackageWeight>
                         <rate:UnitOfMeasurement>
-                            <common:Code>LBS</common:Code>
+                            <rate:Code>LBS</rate:Code>
                         </rate:UnitOfMeasurement>
                         <rate:Weight>4.0</rate:Weight>
                     </rate:PackageWeight>

@@ -57,7 +57,7 @@ class UPSProxy(Proxy):
             header_child_name='UPSSecurity',
             body_child_name=body_child_name_,
             body_child_prefix=body_child_prefix_
-        )
+        ).replace('common:Code', 'rate:Code')
         result = http(
             url=url_, 
             data=bytearray(xmlStr, "utf-8"), 
