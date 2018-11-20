@@ -186,6 +186,11 @@ class UPSMapperPartial(UPSMapperBase):
             [RatingServiceCode[svc] for svc in payload.shipment.services if svc in RatingServiceCode.__members__] + 
             [RatingServiceCode.UPS_Worldwide_Express]
         )[0]
+        payment_details_provided = (
+            all((payload.shipment.paid_by, payload.shipment.payment_account_number)) or
+            (payload.shipment.paid_by == 'SENDER' and payload.shipper.account_number != None) or 
+            (payload.shipment.paid_by == 'RECIPIENT' and payload.recipient.account_number != None)
+        )
         return PRate.RateRequest(
             Request=Common.RequestType(
                 RequestOption=payload.shipment.extra.get('RequestOption') or ["Rate"],
@@ -254,7 +259,7 @@ class UPSMapperPartial(UPSMapperBase):
                                 AccountNumber=payload.shipment.payment_account_number or payload.shipper.account_number
                             ) if payload.shipment.paid_by == 'SENDER' else None,
                             BillReceiver=PRate.BillReceiverChargeType(
-                                AccountNumber=payload.recipient.account_number,
+                                AccountNumber=payload.shipment.payment_account_number or payload.recipient.account_number,
                                 Address=PRate.BillReceiverAddressType(
                                     PostalCode=payload.recipient.postal_code
                                 )
@@ -269,7 +274,7 @@ class UPSMapperPartial(UPSMapperBase):
                         )
                     ],
                     SplitDutyVATIndicator=None
-                ) if any((payload.shipment.paid_by, payload.shipment.payment_account_number)) else None,
+                ) if payment_details_provided else None,
                 FRSPaymentInformation=None,
                 FreightShipmentInformation=None,
                 GoodsNotInFreeCirculationIndicator=None,
