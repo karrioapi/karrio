@@ -44,29 +44,48 @@ class UPSMapperPartial(UPSMapperBase):
         ]
     
     def parse_package_rate_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
-        rate_replys = response.xpath('.//*[local-name() = $name]', name="RateResponse")
+        rate_replys = response.xpath('.//*[local-name() = $name]', name="RatedShipment")
         rates = reduce(self._extract_package_rate, rate_replys, [])
         return (rates, self.parse_error_response(response))
 
     def _extract_package_rate(self, rates: List[T.QuoteDetails], detailNode: 'XMLElement') -> List[T.QuoteDetails]: 
-        detail = PRate.RateResponse()
-        detail.build(detailNode)
+        rate = PRate.RatedShipmentType()
+        rate.build(detailNode)
 
-        total_charge = [r for r in detail.Rate if r.Type.Code == 'AFTR_DSCNT'][0]
-        Discounts_ = [T.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code == 'DSCNT']
-        Surcharges_ = [T.ChargeDetails(name=r.Type.Code, currency=r.Factor.UnitOfMeasurement.Code, amount=float(r.Factor.Value)) for r in detail.Rate if r.Type.Code not in ['DSCNT', 'AFTR_DSCNT', 'DSCNT_RATE', 'LND_GROSS']]
-        extra_charges = Discounts_ + Surcharges_
+        if rate.NegotiatedRateCharges != None:
+            total_charges = rate.NegotiatedRateCharges.TotalChargesWithTaxes or rate.NegotiatedRateCharges.TotalCharge
+            taxes = rate.NegotiatedRateCharges.TaxCharges
+            itemized_charges = rate.NegotiatedRateCharges.ItemizedCharges + taxes
+        else:
+            total_charges = rate.TotalChargesWithTaxes or rate.TotalCharges
+            taxes = rate.TaxCharges
+            itemized_charges = rate.ItemizedCharges + taxes
+
+        extra_charges = itemized_charges + [ rate.ServiceOptionsCharges ] 
+        
         return rates + [
             T.QuoteDetails(
                 carrier=self.client.carrier_name, 
-                currency=detail.TotalShipmentCharge.CurrencyCode,
-                service_name=detail.Service.Description,
-                service_type=detail.Service.Code,
-                base_charge=float(detail.TotalShipmentCharge.MonetaryValue),
-                total_charge=float(total_charge.Factor.Value or 0),
-                duties_and_taxes=reduce(lambda r, c: r + c.amount, Surcharges_, 0),
-                discount=reduce(lambda r, c: r + c.amount, Discounts_, 0),
-                extra_charges=extra_charges
+                currency=rate.TransportationCharges.CurrencyCode,
+                service_name=rate.Service.Description,
+                service_type=rate.Service.Code,
+                base_charge=float(rate.TransportationCharges.MonetaryValue),
+                total_charge=float(total_charges.MonetaryValue),
+                duties_and_taxes=reduce(
+                    lambda total, charge: total + float(charge.MonetaryValue),
+                    taxes or [], 
+                    0
+                ),
+                discount=None,
+                extra_charges=reduce(
+                    lambda total, charge: total + [T.ChargeDetails(
+                        name=charge.Code,
+                        amount=float(charge.MonetaryValue),
+                        currency=charge.CurrencyCode
+                    )],
+                    [charge for charge in extra_charges if charge != None],
+                    []
+                )
             )
         ]
 
@@ -167,6 +186,12 @@ class UPSMapperPartial(UPSMapperBase):
             [RatingServiceCode[svc] for svc in payload.shipment.services if svc in RatingServiceCode.__members__] + 
             [RatingServiceCode.UPS_Worldwide_Express]
         )[0]
+        payment_details_provided = (
+            all((payload.shipment.paid_by, payload.shipment.payment_account_number)) or
+            (payload.shipment.paid_by == 'SENDER' and payload.shipper.account_number != None) or 
+            (payload.shipment.paid_by == 'RECIPIENT' and payload.recipient.account_number != None)
+        )
+        is_negotiated_rate = any((payload.shipment.payment_account_number, payload.shipper.account_number))
         return PRate.RateRequest(
             Request=Common.RequestType(
                 RequestOption=payload.shipment.extra.get('RequestOption') or ["Rate"],
@@ -235,7 +260,7 @@ class UPSMapperPartial(UPSMapperBase):
                                 AccountNumber=payload.shipment.payment_account_number or payload.shipper.account_number
                             ) if payload.shipment.paid_by == 'SENDER' else None,
                             BillReceiver=PRate.BillReceiverChargeType(
-                                AccountNumber=payload.recipient.account_number,
+                                AccountNumber=payload.shipment.payment_account_number or payload.recipient.account_number,
                                 Address=PRate.BillReceiverAddressType(
                                     PostalCode=payload.recipient.postal_code
                                 )
@@ -250,22 +275,22 @@ class UPSMapperPartial(UPSMapperBase):
                         )
                     ],
                     SplitDutyVATIndicator=None
-                ) if any((payload.shipment.paid_by, payload.shipment.payment_account_number)) else None,
+                ) if payment_details_provided else None,
                 FRSPaymentInformation=None,
                 FreightShipmentInformation=None,
                 GoodsNotInFreeCirculationIndicator=None,
-                Service=PRate.CodeDescriptionType(Code=service.value, Description=None),
+                Service=PRate.UOMCodeDescriptionType(Code=service.value, Description=None),
                 NumOfPieces=payload.shipment.total_items,
                 ShipmentTotalWeight=payload.shipment.total_weight,
                 DocumentsOnlyIndicator="" if payload.shipment.is_document else None,
                 Package=[
                     PRate.PackageType(
-                        PackagingType=PRate.CodeDescriptionType(
+                        PackagingType=PRate.UOMCodeDescriptionType(
                             Code=RatingPackagingType[pkg.packaging_type or "BOX"].value,
                             Description=None
                         ),
                         Dimensions=PRate.DimensionsType(
-                            UnitOfMeasurement=PRate.CodeDescriptionType(
+                            UnitOfMeasurement=PRate.UOMCodeDescriptionType(
                                 Code=DimensionUnit[payload.shipment.dimension_unit].value,
                                 Description=None
                             ),
@@ -275,7 +300,7 @@ class UPSMapperPartial(UPSMapperBase):
                         ),
                         DimWeight=pkg.extra.get('DimWeight'),
                         PackageWeight=PRate.PackageWeightType(
-                            UnitOfMeasurement=PRate.CodeDescriptionType(
+                            UnitOfMeasurement=PRate.UOMCodeDescriptionType(
                                 Code=WeightUnit[payload.shipment.weight_unit].value,
                                 Description=None
                             ),
@@ -289,12 +314,12 @@ class UPSMapperPartial(UPSMapperBase):
                 ShipmentServiceOptions=None,
                 ShipmentRatingOptions=(lambda rating:
                     PRate.ShipmentRatingOptionsType(
-                        NegotiatedRatesIndicator="" if 'NegotiatedRatesIndicator' in rating else None,
+                        NegotiatedRatesIndicator="" if is_negotiated_rate else None,
                         FRSShipmentIndicator="" if 'FRSShipmentIndicator' in rating else None,
                         RateChartIndicator="" if 'RateChartIndicator' in rating else None,
                         UserLevelDiscountIndicator="" if 'UserLevelDiscountIndicator' in rating else None
                     )
-                )(payload.shipment.extra.get('ShipmentRatingOptions')) if 'ShipmentRatingOptions' in payload.shipment.extra else None,
+                )(payload.shipment.extra.get('ShipmentRatingOptions') or {}) if 'ShipmentRatingOptions' in payload.shipment.extra or is_negotiated_rate else None,
                 InvoiceLineTotal=None,
                 RatingMethodRequestedIndicator=None,
                 TaxInformationIndicator=None,

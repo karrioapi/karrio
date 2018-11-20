@@ -59,7 +59,10 @@ class DHLMapperPartial(DHLMapperBase):
     def create_dhlshipment_request(self, payload: T.shipment_request) -> ShipReq.ShipmentRequest:
         is_dutiable = payload.shipment.declared_value != None
         default_product_code = Product.EXPRESS_WORLDWIDE_DOC if payload.shipment.is_document else Product.EXPRESS_WORLDWIDE
-        product_code = Product[payload.shipment.services] if payload.shipment.services != None else default_product_code
+        product = (
+            [Product[svc] for svc in payload.shipment.services if svc in Product.__members__] +
+            [default_product_code]
+        )[0]
         default_packaging_type = PackageType.Document if payload.shipment.is_document else PackageType.Your_packaging
         options = (
             [Service[svc] for svc in payload.shipment.options if svc in Service.__members__] +
@@ -167,8 +170,8 @@ class DHLMapperPartial(DHLMapperBase):
                 IsDutiable= "Y" if is_dutiable else "N",
                 InsuredAmount=payload.shipment.insured_amount,
                 DoorTo=payload.shipment.extra.get('DoorTo'),
-                GlobalProductCode=product_code.value,
-                LocalProductCode=product_code.value,
+                GlobalProductCode=product.value,
+                LocalProductCode=product.value,
                 Contents=payload.shipment.extra.get('Contents') or "..."
             ),
             EProcShip=payload.shipment.extra.get('EProcShip'),

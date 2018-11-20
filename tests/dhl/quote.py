@@ -237,8 +237,8 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
             </Pieces>
             <IsDutiable>Y</IsDutiable>
             <QtdShp>
-                <GlobalProductCode>D</GlobalProductCode>
-                <LocalProductCode>D</LocalProductCode>
+                <GlobalProductCode>P</GlobalProductCode>
+                <LocalProductCode>P</LocalProductCode>
                 <QtdShpExChrg>
                     <SpecialServiceType>II</SpecialServiceType>
                 </QtdShpExChrg>
