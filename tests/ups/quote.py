@@ -557,6 +557,9 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                         <rate:Weight>4.0</rate:Weight>
                     </rate:PackageWeight>
                 </rate:Package>
+                <rate:ShipmentRatingOptions>
+                    <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
+                </rate:ShipmentRatingOptions>
             </rate:Shipment>
         </rate:RateRequest>
     </tns:Body>

@@ -191,6 +191,7 @@ class UPSMapperPartial(UPSMapperBase):
             (payload.shipment.paid_by == 'SENDER' and payload.shipper.account_number != None) or 
             (payload.shipment.paid_by == 'RECIPIENT' and payload.recipient.account_number != None)
         )
+        is_negotiated_rate = any((payload.shipment.payment_account_number, payload.shipper.account_number))
         return PRate.RateRequest(
             Request=Common.RequestType(
                 RequestOption=payload.shipment.extra.get('RequestOption') or ["Rate"],
@@ -313,12 +314,12 @@ class UPSMapperPartial(UPSMapperBase):
                 ShipmentServiceOptions=None,
                 ShipmentRatingOptions=(lambda rating:
                     PRate.ShipmentRatingOptionsType(
-                        NegotiatedRatesIndicator="" if 'NegotiatedRatesIndicator' in rating else None,
+                        NegotiatedRatesIndicator="" if is_negotiated_rate else None,
                         FRSShipmentIndicator="" if 'FRSShipmentIndicator' in rating else None,
                         RateChartIndicator="" if 'RateChartIndicator' in rating else None,
                         UserLevelDiscountIndicator="" if 'UserLevelDiscountIndicator' in rating else None
                     )
-                )(payload.shipment.extra.get('ShipmentRatingOptions')) if 'ShipmentRatingOptions' in payload.shipment.extra else None,
+                )(payload.shipment.extra.get('ShipmentRatingOptions') or {}) if 'ShipmentRatingOptions' in payload.shipment.extra or is_negotiated_rate else None,
                 InvoiceLineTotal=None,
                 RatingMethodRequestedIndicator=None,
                 TaxInformationIndicator=None,
