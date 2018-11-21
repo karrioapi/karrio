@@ -468,7 +468,7 @@ shipment_data = {
         "duty_paid_by": "SENDER",
         "duty_payment_account": "123456789",
         "declared_value": 200.00,
-        "options": ["Paperless_Trade"],
+        "options": [{ "code": "Paperless_Trade" }],
         "services": ["EXPRESS_WORLDWIDE"],
         "doc_images": [
             {

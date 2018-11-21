@@ -401,7 +401,7 @@ shipment_data = {
         "services": ["Expedited_Parcel"],
         "dimension_unit": "CM", 
         "weight_unit": "KG",
-        "options": [ "Collect_on_delivery" ],
+        "options": [ { "code": "Collect_on_delivery" } ],
         "extra": {
             "cpc-pickup-indicator": True,
             "requested-shipping-point": "K2B8J6", 
@@ -449,7 +449,7 @@ ncshipment_data = {
         "dimension_unit": "CM", 
         "weight_unit": "KG",
         "services": ["Expedited_Parcel"],
-        "options": ["Collect_on_delivery"],
+        "options": [{ "code": "Collect_on_delivery" }],
         "extra": {
             "requested-shipping-point": "J8R1A2", 
             "preferences": {

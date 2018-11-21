@@ -42,7 +42,7 @@ class FedexMapperPartial(FedexMapperBase):
 
     def create_rate_request(self, payload: T.shipment_request) -> RateRequest:
         requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
-        options = [opt for opt in payload.shipment.options if opt in SpecialServiceType.__members__]
+        options = [opt for opt in payload.shipment.options if opt.code in SpecialServiceType.__members__]
         return RateRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
             ClientDetail=self.clientDetail,
@@ -157,7 +157,7 @@ class FedexMapperPartial(FedexMapperBase):
                     )
                 ) if any((payload.shipment.paid_by, payload.shipment.payment_account_number)) else None,
                 SpecialServicesRequested=ShipmentSpecialServicesRequested(
-                    SpecialServiceTypes=options,
+                    SpecialServiceTypes=[SpecialServiceType[option.code].value for option in options],
                     CodDetail=None,
                     DeliveryOnInvoiceAcceptanceDetail=None,
                     HoldAtLocationDetail=None,

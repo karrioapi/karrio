@@ -689,7 +689,7 @@ shipment_data = {
         "weight_unit": "LB",
         "dimension_unit": "IN",
         "services": ["INTERNATIONAL_PRIORITY"],
-        "options": ["INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"],
+        "options": [{ "code": "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS" }],
         "items": [
             {
                 "id": "1",

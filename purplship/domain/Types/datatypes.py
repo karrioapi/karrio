@@ -63,6 +63,10 @@ class doc_image(NamedTuple):
     image: str = None
     extra: Dict = {}
 
+class option_type(NamedTuple):
+    code: str 
+    value: Dict = {}
+    extra: Dict = {}
 
 class shipment_options(NamedTuple):
 
@@ -93,7 +97,7 @@ class shipment_options(NamedTuple):
     
     references: List[str] = []
     services: List[str] = []
-    options: List[str] = []
+    options: List[option_type] = []
 
     label: doc_image = None
     extra: Dict = {}

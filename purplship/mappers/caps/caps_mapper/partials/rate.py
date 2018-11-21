@@ -46,7 +46,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
     def create_mailing_scenario(self, payload: T.shipment_request) -> mailing_scenario:
         package = payload.shipment.items[0]
         requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
-        requested_options = [opt for opt in payload.shipment.options if opt in OptionCode.__members__]
+        requested_options = [opt for opt in payload.shipment.options if opt.code in OptionCode.__members__]
 
         return mailing_scenario(
             customer_number=payload.shipper.account_number,
@@ -59,8 +59,8 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                     options,
                     [
                         options.add_option(optionType(
-                            option_amount=None,
-                            option_code=OptionCode[option].value
+                            option_amount=option.value.get('option-amount'),
+                            option_code=OptionCode[option.code].value
                         )) for option in requested_options
                     ]
                 )[0]
