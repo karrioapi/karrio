@@ -66,7 +66,10 @@ class FedexMapperPartial(FedexMapperBase):
                     Units=payload.shipment.weight_unit,
                     Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.items, 0)
                 ),
-                TotalInsuredValue=payload.shipment.insured_amount,
+                TotalInsuredValue=Money(
+                    Currency=payload.shipment.currency,
+                    Amount=payload.shipment.insured_amount
+                ) if payload.shipment.insured_amount != None else None,
                 PreferredCurrency=payload.shipment.currency,
                 ShipmentAuthorizationDetail=None,
                 Shipper=Party(
