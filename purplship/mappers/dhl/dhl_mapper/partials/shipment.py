@@ -65,8 +65,8 @@ class DHLMapperPartial(DHLMapperBase):
         )[0]
         default_packaging_type = PackageType.Document if payload.shipment.is_document else PackageType.Your_packaging
         options = (
-            [Service[svc] for svc in payload.shipment.options if svc in Service.__members__] +
-            ([] if not payload.shipment.insured_amount else [Service.Shipment_Insurance])
+            [opt for opt in payload.shipment.options if opt.code in Service.__members__] +
+            ([] if not payload.shipment.insured_amount else [T.option_type(code=Service.Shipment_Insurance)])
         )
 
         Request_ = self.init_request()
@@ -194,8 +194,13 @@ class DHLMapperPartial(DHLMapperBase):
             ],
             SpecialService=[
                 ShipReq.SpecialService(
-                    SpecialServiceType=service.value
-                ) for service in options
+                    SpecialServiceType=Service[option.code].value,
+                    CommunicationAddress=None,
+                    CommunicationType=None,
+                    ChargeValue=None,
+                    CurrencyCode=None,
+                    IsWaived=None
+                ) for option in options
             ] if len(options) > 0 else None,
             LabelImageFormat=payload.shipment.label.format if payload.shipment.label != None else None,
             DocImages=(lambda images:

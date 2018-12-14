@@ -98,6 +98,12 @@ class RatingServiceCode(Enum):
     UPS_Freight_LTL_Guaranteed_A_M   =    "334"                
     UPS_Standard_LTL                 =    "349"                               
    
+class RatingOption(Enum):
+    NegotiatedRatesIndicator    =     "NegotiatedRatesIndicator" 
+    FRSShipmentIndicator        =     "FRSShipmentIndicator" 
+    RateChartIndicator          =     "RateChartIndicator"
+    UserLevelDiscountIndicator  =     "UserLevelDiscountIndicator"
+
 class ShippingPackagingType(Flag):
     UPS_Letter                = "01"           
     Customer_Supplied_Package = "02"                   
@@ -162,7 +168,27 @@ class ShippingServiceCode(Enum):
     UPS_Worldwide_Express_Freight    =    "96"                                
     UPS_Priority_Mail_Innovations    =    "M5"                                
     UPS_Economy_Mail_Innovations     =    "M6"                               
-      
+
+class ServiceOption(Enum):
+    SaturdayDeliveryIndicator          =    "SaturdayDeliveryIndicator"   
+    AccessPointCOD                     =    "AccessPointCOD"                    
+    DeliverToAddresseeOnlyIndicator    =    "DeliverToAddresseeOnlyIndicator"   
+    DirectDeliveryOnlyIndicator        =    "DirectDeliveryOnlyIndicator"       
+    COD                                =    "COD"               
+    DeliveryConfirmation               =    "DeliveryConfirmation"              
+    ReturnOfDocumentIndicator          =    "ReturnOfDocumentIndicator"         
+    UPScarbonneutralIndicator          =    "UPScarbonneutralIndicator"         
+    CertificateOfOriginIndicator       =    "CertificateOfOriginIndicator"      
+    PickupOptions                      =    "PickupOptions"                     
+    DeliveryOptions                    =    "DeliveryOptions"                   
+    RestrictedArticles                 =    "RestrictedArticles"                
+    ShipperExportDeclarationIndicator  =    "ShipperExportDeclarationIndicator" 
+    CommercialInvoiceRemovalIndicator  =    "CommercialInvoiceRemovalIndicator" 
+    ImportControl                      =    "ImportControl"                     
+    ReturnService                      =    "ReturnService"                     
+    SDLShipmentIndicator               =    "SDLShipmentIndicator"              
+    EPRAIndicator                      =    "EPRAIndicator"                     
+
 class WeightUnit(Enum):
     KG = "KGS"
     LB = "LBS"

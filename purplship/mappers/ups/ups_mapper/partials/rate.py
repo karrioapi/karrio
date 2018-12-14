@@ -10,7 +10,9 @@ from purplship.mappers.ups.ups_units import (
     RatingServiceCode,
     RatingPackagingType,
     WeightUnit,
-    PackagingType
+    PackagingType,
+    ServiceOption,
+    RatingOption
 )
 
 
@@ -192,6 +194,8 @@ class UPSMapperPartial(UPSMapperBase):
             (payload.shipment.paid_by == 'RECIPIENT' and payload.recipient.account_number != None)
         )
         is_negotiated_rate = any((payload.shipment.payment_account_number, payload.shipper.account_number))
+        service_options = [opt for opt in payload.shipment.options if opt.code in ServiceOption.__members__]
+        rating_options = [opt for opt in payload.shipment.options if opt.code in RatingOption.__members__]
         return PRate.RateRequest(
             Request=Common.RequestType(
                 RequestOption=payload.shipment.extra.get('RequestOption') or ["Rate"],
@@ -311,15 +315,58 @@ class UPSMapperPartial(UPSMapperBase):
                         AdditionalHandlingIndicator=None
                     ) for pkg in payload.shipment.items
                 ],
-                ShipmentServiceOptions=None,
-                ShipmentRatingOptions=(lambda rating:
-                    PRate.ShipmentRatingOptionsType(
-                        NegotiatedRatesIndicator="" if is_negotiated_rate else None,
-                        FRSShipmentIndicator="" if 'FRSShipmentIndicator' in rating else None,
-                        RateChartIndicator="" if 'RateChartIndicator' in rating else None,
-                        UserLevelDiscountIndicator="" if 'UserLevelDiscountIndicator' in rating else None
-                    )
-                )(payload.shipment.extra.get('ShipmentRatingOptions') or {}) if 'ShipmentRatingOptions' in payload.shipment.extra or is_negotiated_rate else None,
+                ShipmentServiceOptions=PRate.ShipmentServiceOptionsType(
+                    SaturdayDeliveryIndicator=next(("" for o in service_options if o.code == 'SaturdayDeliveryIndicator'), None),
+                    AccessPointCOD=(lambda option:
+                        PRate.ShipmentServiceOptionsAccessPointCODType(
+                            CurrencyCode=option.value.get('CurrencyCode'),
+                            MonetaryValue=option.value.get('MonetaryValue')
+                        ) if option != None else None
+                    )(next((o for o in service_options if o.code == 'AccessPointCOD'), None)),
+                    DeliverToAddresseeOnlyIndicator=next(("" for o in service_options if o.code == 'DeliverToAddresseeOnlyIndicator'), None),
+                    DirectDeliveryOnlyIndicator=next(("" for o in service_options if o.code == 'DirectDeliveryOnlyIndicator'), None),
+                    COD=(lambda option:
+                        PRate.CODType(
+                            CODFundsCode=option.value.get('CODFundsCode'),
+                            CODAmount=option.value.get('CODAmount')
+                        ) if option != None else None
+                    )(next((o for o in service_options if o.code == 'COD'), None)),
+                    DeliveryConfirmation=(lambda option:
+                        PRate.DeliveryConfirmationType(
+                            DCISType=option.value.get('DCISType')
+                        ) if option != None else None
+                    )(next((o for o in service_options if o.code == 'DeliveryConfirmation'), None)),
+                    ReturnOfDocumentIndicator=next(("" for o in service_options if o.code == 'ReturnOfDocumentIndicator'), None),
+                    UPScarbonneutralIndicator=next(("" for o in service_options if o.code == 'UPScarbonneutralIndicator'), None),
+                    CertificateOfOriginIndicator=next(("" for o in service_options if o.code == 'CertificateOfOriginIndicator'), None),
+                    PickupOptions=(lambda option:
+                        PRate.PickupOptionsType(
+                            LiftGateAtPickupIndicator=option.value.get('LiftGateAtPickupIndicator'),
+                            HoldForPickupIndicator=option.value.get('HoldForPickupIndicator')
+                        ) if option != None else None
+                    )(next((o for o in service_options if o.code == 'PickupOptions'), None)),
+                    DeliveryOptions=(lambda option:
+                        PRate.DeliveryOptionsType(
+                            LiftGateAtDeliveryIndicator=option.value.get('LiftGateAtDeliveryIndicator'),
+                            DropOffAtUPSFacilityIndicator=option.value.get('DropOffAtUPSFacilityIndicator')
+                        ) if option != None else None
+                    )(next((o for o in service_options if o.code == 'DeliveryOptions'), None)),
+                    RestrictedArticles=None,
+                    ShipperExportDeclarationIndicator=next(("" for o in service_options if o.code == 'ShipperExportDeclarationIndicator'), None),
+                    CommercialInvoiceRemovalIndicator=next(("" for o in service_options if o.code == 'CommercialInvoiceRemovalIndicator'), None),
+                    ImportControl=None,
+                    ReturnService=None,
+                    SDLShipmentIndicator=next(("" for o in service_options if o.code == 'SDLShipmentIndicator'), None),
+                    EPRAIndicator=next(("" for o in service_options if o.code == 'EPRAIndicator'), None),
+                ) if len(service_options) > 0 else None,
+                ShipmentRatingOptions=PRate.ShipmentRatingOptionsType(
+                    NegotiatedRatesIndicator="" if is_negotiated_rate else None,
+                    FRSShipmentIndicator="" if any([o.code == 'FRSShipmentIndicator' for o in rating_options]) else None,
+                    RateChartIndicator="" if any([o.code == 'RateChartIndicator' for o in rating_options]) else None,
+                    UserLevelDiscountIndicator="" if (
+                        any([o.code == 'UserLevelDiscountIndicator' for o in rating_options]) and is_negotiated_rate
+                    ) else None
+                ) if len(rating_options) > 0 or is_negotiated_rate else None,
                 InvoiceLineTotal=None,
                 RatingMethodRequestedIndicator=None,
                 TaxInformationIndicator=None,

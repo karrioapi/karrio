@@ -69,7 +69,7 @@ class FedexMapperPartial(FedexMapperBase):
 
     def create_process_shipment_request(self, payload: T.shipment_request) -> ProcessShipmentRequest:
         requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
-        options = [opt for opt in payload.shipment.options if opt in SpecialServiceType.__members__]
+        options = [opt for opt in payload.shipment.options if opt.code in SpecialServiceType.__members__]
         return ProcessShipmentRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
             ClientDetail=self.clientDetail,
@@ -208,7 +208,7 @@ class FedexMapperPartial(FedexMapperBase):
                     )) if 'Payor' in payload.shipment.extra else None
                 ) if any((payload.shipment.paid_by, payload.shipment.payment_account_number)) else None,
                 SpecialServicesRequested=ShipmentSpecialServicesRequested(
-                    SpecialServiceTypes=options,
+                    SpecialServiceTypes=[SpecialServiceType[opt.code].value for opt in options],
                     CodDetail=None,
                     DeliveryOnInvoiceAcceptanceDetail=None,
                     HoldAtLocationDetail=None,

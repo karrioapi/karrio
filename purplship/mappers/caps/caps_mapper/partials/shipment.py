@@ -183,7 +183,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         Package = NCShipment if is_non_contract else Shipment
         package = payload.shipment.items[0]
         requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
-        requested_options = [opt for opt in payload.shipment.options if opt in OptionCode.__members__]
+        requested_options = [opt for opt in payload.shipment.options if opt.code in OptionCode.__members__]
 
         return Package.DeliverySpecType(
             service_code=ServiceType[
@@ -240,12 +240,12 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                     [
                         options.add_option(
                             Package.OptionType(
-                                option_code=OptionCode[code].value,
-                                # option_amount=option.get('option-amount'),
-                                # option_qualifier_1=option.get('option-qualifier-1'),
-                                # option_qualifier_2=option.get('option-qualifier-2')
+                                option_code=OptionCode[option.code].value,
+                                option_amount=option.value.get('option-amount'),
+                                option_qualifier_1=option.value.get('option-qualifier-1'),
+                                option_qualifier_2=option.value.get('option-qualifier-2')
                             )
-                        ) for code in requested_options
+                        ) for option in requested_options
                     ]
                 )[0]
             )(Shipment.optionsType()) if len(requested_options) > 0 else None,

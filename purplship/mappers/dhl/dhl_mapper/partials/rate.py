@@ -65,9 +65,9 @@ class DHLMapperPartial(DHLMapperBase):
         is_dutiable = payload.shipment.declared_value != None
         default_packaging_type = DCTPackageType.SM if payload.shipment.is_document else DCTPackageType.BOX
         options = (
-            [Service[svc] for svc in payload.shipment.options if svc in Service.__members__] +
-            ([] if not payload.shipment.insured_amount or "Shipment_Insurance" in payload.shipment.options else [Service.Shipment_Insurance]) +
-            ([] if not is_dutiable or "Duties_and_Taxes_Paid" in payload.shipment.options else [Service.Duties_and_Taxes_Paid])
+            [Service[svc.code] for svc in payload.shipment.options if svc.code in Service.__members__] +
+            ([] if not payload.shipment.insured_amount or "Shipment_Insurance" in [o.code for o in payload.shipment.options] else [Service.Shipment_Insurance]) +
+            ([] if not is_dutiable or "Duties_and_Taxes_Paid" in [o.code for o in payload.shipment.options] else [Service.Duties_and_Taxes_Paid])
         )
 
         GetQuote = Req.GetQuoteType(
