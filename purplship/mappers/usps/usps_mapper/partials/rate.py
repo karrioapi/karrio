@@ -4,19 +4,19 @@ from pyusps import (
     ratev4response as RateRes,
     intlratev2response as IntlRateRes
 )
-from .interface import reduce, Tuple, List, E, USPSMapperBase
+from .interface import reduce, Tuple, List, T, USPSMapperBase
 
 
 class USPSMapperPartial(USPSMapperBase):
     
-    def parse_rate_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_rate_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
-    def _extract_quote(self, quotes: List[E.QuoteDetails], price_quoteNode: 'XMLElement') -> List[E.QuoteDetails]: 
+    def _extract_quote(self, quotes: List[T.QuoteDetails], price_quoteNode: 'XMLElement') -> List[T.QuoteDetails]: 
         pass
 
 
-    def create_rate_request(self, payload: E.shipment_request) -> Rate.RateV4Request:
+    def create_rate_request(self, payload: T.shipment_request) -> Rate.RateV4Request:
         weight_unit = payload.shipment.weight_unit or "LB"
         return Rate.RateV4Request(
             USERID=self.client.username,
@@ -42,7 +42,7 @@ class USPSMapperPartial(USPSMapperBase):
             ]
         )
 
-    def create_intl_rate_request(self, payload: E.shipment_request) -> IntlRate.IntlRateV2Request:
+    def create_intl_rate_request(self, payload: T.shipment_request) -> IntlRate.IntlRateV2Request:
         return IntlRate.IntlRateV2Request(
             USERID=self.client.username,
             Revision=None,

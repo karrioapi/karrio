@@ -1,7 +1,7 @@
 from typing import Tuple, List
 from functools import reduce
 from purplship.mappers.usps import USPSClient
-from purplship.domain import entities as E
+from purplship.domain import Types as T
 from pyusps.ratev4request import RateV4Request
 from pyusps.intlratev2request import IntlRateV2Request
 from pyusps.trackrequest import TrackRequest
@@ -14,22 +14,22 @@ class USPSCapabilities:
 
     """ Requests """
 
-    def create_rate_request(self, payload: E.shipment_request) -> RateV4Request:
+    def create_rate_request(self, payload: T.shipment_request) -> RateV4Request:
         pass
 
-    def create_intl_rate_request(self, payload: E.shipment_request) -> IntlRateV2Request:
+    def create_intl_rate_request(self, payload: T.shipment_request) -> IntlRateV2Request:
         pass
 
-    def create_track_request(self, payload: E.tracking_request) -> TrackRequest:
+    def create_track_request(self, payload: T.tracking_request) -> TrackRequest:
         pass    
         
 
     """ Replys """ 
     
-    def parse_rate_response(self, response: 'XMLElement') -> Tuple[List[E.QuoteDetails], List[E.Error]]:
+    def parse_rate_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
-    def parse_track_response(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_track_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pass
 
 
@@ -40,8 +40,8 @@ class USPSMapperBase(USPSCapabilities):
     def __init__(self, client: USPSClient):
         self.client = client  
 
-    def parse_error_response(self, response: 'XMLElement') -> List[E.Error]:
+    def parse_error_response(self, response: 'XMLElement') -> List[T.Error]:
         pass
 
-    def _extract_error(self, errors: List[E.Error], messageNode: 'XMLElement') -> List[E.Error]:
+    def _extract_error(self, errors: List[T.Error], messageNode: 'XMLElement') -> List[T.Error]:
         pass

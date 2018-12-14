@@ -1,17 +1,17 @@
 from pyusps.trackrequest import *
 from pyusps.trackresponse import *
-from .interface import reduce, Tuple, List, E, USPSMapperBase
+from .interface import reduce, Tuple, List, T, USPSMapperBase
 
 
 class USPSMapperPartial(USPSMapperBase):
 
-    def parse_track_response(self, response: 'XMLElement') -> Tuple[List[E.TrackingDetails], List[E.Error]]:
+    def parse_track_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pass
 
-    def _extract_tracking(self, trackings: List[E.TrackingDetails], track: 'XMLElement') -> List[E.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[T.TrackingDetails], track: 'XMLElement') -> List[T.TrackingDetails]:
         pass
 
-    def create_track_request(self, payload: E.tracking_request) -> TrackRequest:
+    def create_track_request(self, payload: T.tracking_request) -> TrackRequest:
         return TrackRequest(
             USERID=self.client.username,
             TrackID=[
