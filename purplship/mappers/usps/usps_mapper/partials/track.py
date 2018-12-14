@@ -1,5 +1,5 @@
-from pyusps.trackrequest import *
-from pyusps.trackresponse import *
+from pyusps.TrackRequest import *
+from pyusps.TrackResponse import *
 from .interface import reduce, Tuple, List, T, USPSMapperBase
 
 

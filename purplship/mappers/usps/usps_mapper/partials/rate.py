@@ -1,8 +1,8 @@
 from pyusps import (
-    ratev4request as Rate,
-    intlratev2request as IntlRate,
-    ratev4response as RateRes,
-    intlratev2response as IntlRateRes
+    RateV4Request as Rate,
+    IntlRateV2Request as IntlRate,
+    RateV4Response as RateRes,
+    IntlRateV2Response as IntlRateRes
 )
 from .interface import reduce, Tuple, List, T, USPSMapperBase
 
@@ -36,8 +36,16 @@ class USPSMapperPartial(USPSMapperBase):
                    Length=item.length,
                    Height=item.height,
                    Girth=None,
+                   Value=None,
+                   AmountToCollect=None,
+                   SpecialServices=None,
                    Content=None,
-                   Machinable=None
+                   GroundOnly=None,
+                   SortBy=None,
+                   Machinable=None,
+                   ReturnLocations=None,
+                   ReturnServiceInfo=None,
+                   DropOffTime=None
                 ) for index, item in enumerate(payload.shipment.items)
             ]
         )
@@ -64,9 +72,11 @@ class USPSMapperPartial(USPSMapperBase):
                     Girth=None,
                     OriginZip=None,
                     CommercialFlag=None,
+                    CommercialPlusFlag=None,
                     AcceptanceDateTime=None,
                     DestinationPostalCode=None,
-                    ExtraServices=None
+                    ExtraServices=None,
+                    Content=None
                 ) for item in payload.shipment.items
             ]
         )

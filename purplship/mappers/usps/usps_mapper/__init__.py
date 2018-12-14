@@ -1,9 +1,9 @@
 from typing import Tuple, List, Union
 from purplship.domain.mapper import Mapper
 from purplship.domain import Types as T
-from pyusps.ratev4request import RateV4Request
-from pyusps.intlratev2request import IntlRateV2Request
-from pyusps.trackrequest import TrackRequest
+from pyusps.RateV4Request import RateV4Request
+from pyusps.IntlRateV2Request import IntlRateV2Request
+from pyusps.TrackRequest import TrackRequest
 from .partials import (
     USPSRateMapperPartial, 
     USPSTrackMapperPartial
