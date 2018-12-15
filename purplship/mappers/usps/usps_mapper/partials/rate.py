@@ -24,7 +24,7 @@ class USPSMapperPartial(USPSMapperBase):
             Package=[
                Rate.PackageType(
                    ID=item.id or index,
-                   Service=payload.shipment.service_type,
+                   Service=None,
                    FirstClassMailType=None,
                    ZipOrigination=payload.shipper.postal_code,
                    ZipDestination=payload.recipient.postal_code,
