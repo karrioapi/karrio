@@ -20,6 +20,7 @@ setup(name='purplship',
             'gds-helpers==0.5.0',
             'py-ups==1.0',
             'py-caps==1.0',
+            'py-purolator==1.0-alpha',
       ],
       dependency_links=[
             'https://github.com/PurplShip/purplship/releases',
