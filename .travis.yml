@@ -4,9 +4,12 @@ python:
 install:
   - pip install coverage
   - pip install codecov
+  - pip install mypy
   - pip install . --process-dependency-links
 
-script: coverage run --include='purplship/*' -m unittest -v
+script: 
+  - coverage run --include='purplship/*' -m unittest -v
+  - mypy purplship/domain/
 
 after_success:
   - coverage report -m

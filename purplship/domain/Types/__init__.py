@@ -5,9 +5,13 @@ class Quote:
     """ manage quotes operations """
 
     @staticmethod
-    def create(**args) -> shipment_request:
+    def create(shipper: dict, recipient: dict, shipment: dict) -> shipment_request:
         """ Create a quote request payload """
-        return shipment_request(**shipment_request_type(**args)._asdict())
+        return shipment_request(
+            shipper=party(**shipper),
+            recipient=party(**recipient), 
+            shipment=create_shipment_options_type(**shipment)
+        )
 
 class Tracking:
     """ manage tracking operations """
@@ -21,9 +25,13 @@ class Shipment:
     """ manage shipment operations """
 
     @staticmethod
-    def create(**args) -> shipment_request:
+    def create(shipper: Dict, recipient: Dict, shipment: Dict) -> shipment_request:
         """ Create a shipment details request payload """
-        return shipment_request(**shipment_request_type(**args)._asdict())
+        return shipment_request(
+            shipper=party(**shipper),
+            recipient=party(**recipient), 
+            shipment=create_shipment_options_type(**shipment)
+        )
 
 class Pickup:
     """ manage pickup operations """
