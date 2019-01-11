@@ -85,14 +85,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         )
 
     def _create_shipment(self, payload: T.shipment_request) -> Shipment.ShipmentType:
-        def _initialise_delivery_spec() -> Shipment.DeliverySpecType:
-            """
-            This function is define to ensure type casting
-            Note: It is more a convenience than anything else.
-            """
-            return self._initialise_delivery_spec(payload, False)
-
-        delivery_spec_ = _initialise_delivery_spec()
+        delivery_spec_ : Shipment.DeliverySpecType = self._initialise_delivery_spec(payload, False)
 
         delivery_spec_.parcel_characteristics.oversized = payload.shipment.extra.get('oversized')
         
@@ -160,14 +153,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         return shipment_
 
     def _create_ncshipment(self, payload: T.shipment_request) -> NCShipment.NonContractShipmentType:
-        def _initialise_delivery_spec() -> NCShipment.DeliverySpecType:
-            """
-            This function is define to ensure type casting
-            Note: It is more a convenience than anything else.
-            """
-            return self._initialise_delivery_spec(payload)
-
-        delivery_spec_ = _initialise_delivery_spec()
+        delivery_spec_ : NCShipment.DeliverySpecType = self._initialise_delivery_spec(payload)
 
         delivery_spec_.parcel_characteristics.document = payload.shipment.is_document
 
