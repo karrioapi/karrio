@@ -9,7 +9,7 @@ install:
 
 script: 
   - coverage run --include='purplship/*' -m unittest -v
-  - mypy purplship/domain/
+  - mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
 
 after_success:
   - coverage report -m

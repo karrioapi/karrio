@@ -12,7 +12,7 @@ setup(name='purplship',
       author='DanH91',
       author_email='danielk.developer@gmail.com',
       license='LGPL',
-      packages=find_packages(".", exclude=["tests"]),
+      packages=find_packages(".", exclude=["tests", "stubs"]),
       install_requires=[
             'py-fedex==1.1',
             'py-dhl==1.2',

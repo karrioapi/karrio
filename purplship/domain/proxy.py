@@ -1,9 +1,17 @@
-from .mapper import Mapper, Client
+from abc import ABC
 
-class Proxy:
-    """ Unitied API carrier Proxy (Interface) """
-    client: Client
-    mapper: Mapper
+class Proxy(ABC):
+    """ 
+    Unitied API carrier Proxy (Interface) 
+    ...
+
+    Attributes
+    ----------
+    client : Client
+        a carrier client (holding connection settings)
+    mapper : Mapper
+        a carrier mapper for specific carrier data type mapping 
+    """
 
     def get_quotes(self, xmlObj):
         """ export xmlObj as xml string and request quote from carrier  """

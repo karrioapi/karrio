@@ -1,5 +1,27 @@
-from pyfedex.rate_v22 import *
+from pyfedex.rate_v22 import (
+    RateReplyDetail,
+    RateRequest,
+    TransactionDetail,
+    VersionId,
+    RequestedShipment,
+    Money,
+    TaxpayerIdentification,
+    Party,
+    Contact,
+    Address,
+    Payment,
+    Payor,
+    ShipmentSpecialServicesRequested,
+    FreightShipmentDetail,
+    SmartPostShipmentDetail,
+    SmartPostShipmentProcessingOptionsRequested,
+    LabelSpecification,
+    RequestedPackageLineItem,
+    Weight,
+    Dimensions
+)
 from datetime import datetime
+from lxml import etree
 from .interface import reduce, Tuple, List, T, FedexMapperBase
 from purplship.mappers.fedex.fedex_units import (
     PackagingType,
@@ -11,12 +33,12 @@ from purplship.mappers.fedex.fedex_units import (
 
 class FedexMapperPartial(FedexMapperBase):
     
-    def parse_rate_reply(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_rate_reply(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         rate_replys = response.xpath('.//*[local-name() = $name]', name="RateReplyDetails")
-        quotes = reduce(self._extract_quote, rate_replys, [])
+        quotes : List[T.QuoteDetails] = reduce(self._extract_quote, rate_replys, [])
         return (quotes, self.parse_error_response(response))
 
-    def _extract_quote(self, quotes: List[T.QuoteDetails], detailNode: 'XMLElement') -> List[T.QuoteDetails]: 
+    def _extract_quote(self, quotes: List[T.QuoteDetails], detailNode: etree.ElementBase) -> List[T.QuoteDetails]: 
         detail = RateReplyDetail()
         detail.build(detailNode)
         if not detail.RatedShipmentDetails:
@@ -64,7 +86,7 @@ class FedexMapperPartial(FedexMapperBase):
                 VariationOptions=None,
                 TotalWeight=Weight(
                     Units=payload.shipment.weight_unit,
-                    Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.items, 0)
+                    Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.items, 0.0)
                 ),
                 TotalInsuredValue=Money(
                     Currency=payload.shipment.currency,

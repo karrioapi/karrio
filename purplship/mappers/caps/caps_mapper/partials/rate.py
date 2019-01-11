@@ -1,4 +1,17 @@
-from pycaps.rating import *
+from pycaps.rating import (
+    mailing_scenario,
+    optionsType,
+    optionType,
+    dimensionsType,
+    parcel_characteristicsType,
+    servicesType,
+    destinationType,
+    domesticType,
+    united_statesType,
+    internationalType,
+    price_quoteType
+)
+from lxml import etree
 from datetime import datetime
 from .interface import reduce, Tuple, List, T, CanadaPostMapperBase
 from purplship.domain.Types.units import (
@@ -15,12 +28,12 @@ from purplship.mappers.caps.caps_units import (
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
     
-    def parse_price_quotes(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_price_quotes(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         price_quotes = response.xpath('.//*[local-name() = $name]', name="price-quote")
-        quotes = reduce(self._extract_quote, price_quotes, [])
+        quotes : List[T.QuoteDetails] = reduce(self._extract_quote, price_quotes, [])
         return (quotes, self.parse_error_response(response))
 
-    def _extract_quote(self, quotes: List[T.QuoteDetails], price_quoteNode: 'XMLElement') -> List[T.QuoteDetails]: 
+    def _extract_quote(self, quotes: List[T.QuoteDetails], price_quoteNode: etree.ElementBase) -> List[T.QuoteDetails]: 
         price_quote = price_quoteType()
         price_quote.build(price_quoteNode)
         discounts = [T.ChargeDetails(name=d.adjustment_name, currency="CAD", amount=float(d.adjustment_cost or 0)) for d in price_quote.price_details.adjustments.adjustment]
@@ -33,7 +46,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 service_type=price_quote.service_code,
                 base_charge=float(price_quote.price_details.base or 0),
                 total_charge=float(price_quote.price_details.due or 0),
-                discount=reduce(lambda sum, d: sum + d.amount, discounts, 0),
+                discount=reduce(lambda sum, d: sum + d.amount, discounts, 0.0),
                 duties_and_taxes=float(price_quote.price_details.taxes.gst.valueOf_ or 0) + 
                     float(price_quote.price_details.taxes.pst.valueOf_ or 0) + 
                     float(price_quote.price_details.taxes.hst.valueOf_ or 0),
@@ -54,17 +67,14 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             promo_code=payload.shipment.extra.get('promo-code'),
             quote_type=payload.shipment.extra.get('quote-type'),
             expected_mailing_date=payload.shipment.extra.get('expected-mailing-date'),
-            options=(lambda options:
-                (
-                    options,
-                    [
-                        options.add_option(optionType(
-                            option_amount=option.value.get('option-amount'),
-                            option_code=OptionCode[option.code].value
-                        )) for option in requested_options
-                    ]
-                )[0]
-            )(optionsType()) if (len(requested_options) > 0) else None,
+            options=optionsType(
+                option=[
+                    optionType(
+                        option_amount=option.value.get('option-amount'),
+                        option_code=OptionCode[option.code].value
+                    ) for option in requested_options
+                ]
+            ) if (len(requested_options) > 0) else None,
             parcel_characteristics=parcel_characteristicsType(
                 weight=Weight(
                     (payload.shipment.total_weight or package.weight), 
@@ -85,14 +95,11 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 mailing_tube=payload.shipment.extra.get('mailing-tube'),
                 oversized=payload.shipment.extra.get('oversized')
             ),
-            services=(lambda services:
-                (
-                    services,
-                    [services.add_service_code(
-                        ServiceType[code].value
-                    ) for code in requested_services]
-                )[0]
-            )(servicesType()) if (len(requested_services) > 0) else None,
+            services=servicesType(
+                service_code=[
+                    ServiceType[code].value for code in requested_services
+                ]
+            ) if (len(requested_services) > 0) else None,
             origin_postal_code=payload.shipper.postal_code,
             destination=destinationType(
                 domestic=domesticType(
@@ -102,7 +109,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                     zip_code=payload.recipient.postal_code
                 ) if (payload.recipient.country_code == 'US') else None,
                 international=internationalType(
-                    country_code=payload.shipment.country_code
+                    country_code=payload.recipient.country_code
                 ) if (payload.recipient.country_code not in ['US', 'CA']) else None
             )
         )

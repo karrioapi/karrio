@@ -1,4 +1,5 @@
 import time
+from lxml import etree
 from pyups import (
     freight_rate as Rate,
     package_rate as PRate,
@@ -18,12 +19,12 @@ from purplship.mappers.ups.ups_units import (
 
 class UPSMapperPartial(UPSMapperBase):
     
-    def parse_freight_rate_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_freight_rate_response(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         rate_replys = response.xpath('.//*[local-name() = $name]', name="FreightRateResponse")
-        rates = reduce(self._extract_freight_rate, rate_replys, [])
+        rates : List[T.QuoteDetails] = reduce(self._extract_freight_rate, rate_replys, [])
         return (rates, self.parse_error_response(response))
 
-    def _extract_freight_rate(self, rates: List[T.QuoteDetails], detailNode: 'XMLElement') -> List[T.QuoteDetails]: 
+    def _extract_freight_rate(self, rates: List[T.QuoteDetails], detailNode: etree.ElementBase) -> List[T.QuoteDetails]: 
         detail = Rate.FreightRateResponse()
         detail.build(detailNode)
 
@@ -38,19 +39,19 @@ class UPSMapperPartial(UPSMapperBase):
                 service_name=detail.Service.Description,
                 service_type=detail.Service.Code,
                 base_charge=float(detail.TotalShipmentCharge.MonetaryValue),
-                total_charge=float(total_charge.Factor.Value or 0),
-                duties_and_taxes=reduce(lambda r, c: r + c.amount, Surcharges_, 0),
-                discount=reduce(lambda r, c: r + c.amount, Discounts_, 0),
+                total_charge=float(total_charge.Factor.Value or 0.0),
+                duties_and_taxes=reduce(lambda r, c: r + c.amount, Surcharges_, 0.0),
+                discount=reduce(lambda r, c: r + c.amount, Discounts_, 0.0),
                 extra_charges=extra_charges
             )
         ]
     
-    def parse_package_rate_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_package_rate_response(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         rate_replys = response.xpath('.//*[local-name() = $name]', name="RatedShipment")
-        rates = reduce(self._extract_package_rate, rate_replys, [])
+        rates : List[T.QuoteDetails] = reduce(self._extract_package_rate, rate_replys, [])
         return (rates, self.parse_error_response(response))
 
-    def _extract_package_rate(self, rates: List[T.QuoteDetails], detailNode: 'XMLElement') -> List[T.QuoteDetails]: 
+    def _extract_package_rate(self, rates: List[T.QuoteDetails], detailNode: etree.ElementBase) -> List[T.QuoteDetails]: 
         rate = PRate.RatedShipmentType()
         rate.build(detailNode)
 
@@ -76,7 +77,7 @@ class UPSMapperPartial(UPSMapperBase):
                 duties_and_taxes=reduce(
                     lambda total, charge: total + float(charge.MonetaryValue),
                     taxes or [], 
-                    0
+                    0.0
                 ),
                 discount=None,
                 extra_charges=reduce(
@@ -245,7 +246,7 @@ class UPSMapperPartial(UPSMapperBase):
                 )(T.party(**payload.shipment.extra.get('ShipFrom'))) if 'ShipFrom' in payload.shipment.extra else None,
                 AlternateDeliveryAddress=(lambda alternate:
                     PRate.AlternateDeliveryAddressType(
-                        Name=alternate.companyName,
+                        Name=alternate.company_name,
                         Address=PRate.ShipAddressType(
                             AddressLine=alternate.address_lines,
                             City=alternate.city,

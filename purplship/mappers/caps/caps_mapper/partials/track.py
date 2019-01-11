@@ -1,15 +1,18 @@
-from pycaps.track import *
+from pycaps.track import (
+    pin_summary
+)
+from lxml import etree
 from .interface import reduce, Tuple, List, T, CanadaPostMapperBase
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
 
-    def parse_tracking_summary(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
+    def parse_tracking_summary(self, response: etree.ElementBase) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pin_summaries = response.xpath('.//*[local-name() = $name]', name="pin-summary")
-        trackings = reduce(self._extract_tracking, pin_summaries, [])
+        trackings : List[T.TrackingDetails] = reduce(self._extract_tracking, pin_summaries, [])
         return (trackings, self.parse_error_response(response))
 
-    def _extract_tracking(self, trackings: List[T.TrackingDetails], pin_summaryNode: 'XMLElement') -> List[T.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[T.TrackingDetails], pin_summaryNode: etree.ElementBase) -> List[T.TrackingDetails]:
         pin_summary_ = pin_summary()
         pin_summary_.build(pin_summaryNode)
         return trackings + [

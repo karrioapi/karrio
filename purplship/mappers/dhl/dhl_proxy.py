@@ -1,4 +1,5 @@
 from io import StringIO
+from lxml import etree
 from gds_helpers import export, to_xml, request as http
 from purplship.mappers.dhl.dhl_mapper import DHLMapper
 from purplship.mappers.dhl.dhl_client import DHLClient
@@ -16,7 +17,7 @@ class DHLProxy(Proxy):
         self.client = client
         self.mapper = DHLMapper(client) if mapper is None else mapper
 
-    def get_quotes(self, DCTRequest_: DCTRequest) -> "XMLElement":
+    def get_quotes(self, DCTRequest_: DCTRequest) -> etree.ElementBase:
         xmlElt = export(
             DCTRequest_, 
             name_='p:DCTRequest', 
@@ -26,7 +27,7 @@ class DHLProxy(Proxy):
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
 
-    def get_trackings(self, KnownTrackingRequest_: KnownTrackingRequest) -> "XMLElement":
+    def get_trackings(self, KnownTrackingRequest_: KnownTrackingRequest) -> etree.ElementBase:
         xmlElt = export(
             KnownTrackingRequest_, 
             name_='req:KnownTrackingRequest',
@@ -36,7 +37,7 @@ class DHLProxy(Proxy):
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
 
-    def create_shipment(self, ShipmentRequest_: ShipmentRequest) -> "XMLElement":
+    def create_shipment(self, ShipmentRequest_: ShipmentRequest) -> etree.ElementBase:
         xmlElt = export(
             ShipmentRequest_, 
             name_='req:ShipmentRequest',
@@ -46,7 +47,7 @@ class DHLProxy(Proxy):
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
 
-    def request_pickup(self, PickupRequest_: BookPURequest) -> "XMLElement":
+    def request_pickup(self, PickupRequest_: BookPURequest) -> etree.ElementBase:
         xmlElt = export(
             PickupRequest_, 
             name_='req:BookPURequest',
@@ -59,7 +60,7 @@ class DHLProxy(Proxy):
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
 
-    def modify_pickup(self, ModifyPURequest_: ModifyPURequest) -> "XMLElement":
+    def modify_pickup(self, ModifyPURequest_: ModifyPURequest) -> etree.ElementBase:
         xmlElt = export(
             ModifyPURequest_, 
             name_='req:ModifyPURequest',
@@ -72,7 +73,7 @@ class DHLProxy(Proxy):
         result = http(url=self.client.server_url, data=bytearray(xmlElt, "utf-8"), headers={'Content-Type': 'application/xml'}, method="POST")
         return to_xml(result)
 
-    def cancel_pickup(self, CancelPURequest_: CancelPURequest) -> "XMLElement":
+    def cancel_pickup(self, CancelPURequest_: CancelPURequest) -> etree.ElementBase:
         xmlElt = export(
             CancelPURequest_, 
             name_='req:CancelPURequest',

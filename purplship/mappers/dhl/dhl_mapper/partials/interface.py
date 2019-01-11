@@ -1,6 +1,7 @@
 import time
 from typing import Tuple, List, Union
 from functools import reduce
+from lxml import etree
 from purplship.mappers.dhl import DHLClient
 from purplship.domain import Types as T
 from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
@@ -46,19 +47,19 @@ class DHLCapabilities:
 
     """ Response """ 
     
-    def parse_dct_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_dct_response(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
-    def parse_dhltracking_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
+    def parse_dhltracking_response(self, response: etree.ElementBase) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pass
 
-    def parse_dhlshipment_respone(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
+    def parse_dhlshipment_respone(self, response: etree.ElementBase) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         pass
 
-    def parse_book_puresponse(self, response: 'XMLElement') -> Tuple[T.PickupDetails, List[T.Error]]:
+    def parse_book_puresponse(self, response: etree.ElementBase) -> Tuple[T.PickupDetails, List[T.Error]]:
         pass
 
-    def parse_cancel_puresponse(self, response: 'XMLElement') -> Tuple[dict, List[T.Error]]:
+    def parse_cancel_puresponse(self, response: etree.ElementBase) -> Tuple[dict, List[T.Error]]:
         pass
 
 
@@ -83,7 +84,7 @@ class DHLMapperBase(DHLCapabilities):
             './/*[local-name() = $name]', name="Condition")
         return reduce(self._extract_error, conditions, [])
 
-    def _extract_error(self, errors: List[T.Error], conditionNode: 'XMLElement') -> List[T.Error]:
+    def _extract_error(self, errors: List[T.Error], conditionNode: etree.ElementBase) -> List[T.Error]:
         condition = Res.ConditionType()
         condition.build(conditionNode)
         return errors + [

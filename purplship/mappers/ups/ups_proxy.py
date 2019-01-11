@@ -1,4 +1,5 @@
 from typing import Union
+from lxml import etree
 from gds_helpers import to_xml, export, request as http, bundle_xml, exec_parrallel
 from pysoap.envelope import Body, Envelope, Header
 from pysoap import create_envelope, clean_namespaces
@@ -15,10 +16,10 @@ from pyups.freight_pickup import FreightPickupRequest, FreightCancelPickupReques
 class UPSProxy(Proxy):
 
     def __init__(self, client: UPSClient, mapper: UPSMapper = None):
-        self.client = client
-        self.mapper = UPSMapper(client) if mapper is None else mapper
+        self.client : UPSClient = client
+        self.mapper : UPSMapper = UPSMapper(client) if mapper is None else mapper
 
-    def get_quotes(self, RateRequest_: Union[RateRequest, FreightRateRequest]) -> "XMLElement":
+    def get_quotes(self, RateRequest_: Union[RateRequest, FreightRateRequest]) -> etree.ElementBase:
         is_freight = isinstance(RateRequest_, FreightRateRequest)
 
         if is_freight:
@@ -66,7 +67,7 @@ class UPSProxy(Proxy):
         )
         return to_xml(result)
 
-    def get_trackings(self, TrackRequests_: TrackRequest) -> "XMLElement":
+    def get_trackings(self, TrackRequests_: TrackRequest) -> etree.ElementBase:
         """
         get_trackings make parrallel request for each TrackRequest
         """
@@ -74,7 +75,7 @@ class UPSProxy(Proxy):
 
         return to_xml(bundle_xml(xml_strings=results))
 
-    def create_shipment(self, ShipRequest_: Union[FreightShipRequest, ShipmentRequest]) -> "XMLElement":
+    def create_shipment(self, ShipRequest_: Union[FreightShipRequest, ShipmentRequest]) -> etree.ElementBase:
         is_freight = isinstance(ShipRequest_, FreightShipRequest)
 
         if is_freight:
@@ -125,7 +126,7 @@ class UPSProxy(Proxy):
         )
         return to_xml(result)
 
-    def request_pickup(self, FreightPickupRequest_: FreightPickupRequest) -> "XMLElement":
+    def request_pickup(self, FreightPickupRequest_: FreightPickupRequest) -> etree.ElementBase:
         envelopeStr = export(
             create_envelope(header_content=self.mapper.Security, body_content=FreightPickupRequest_),
             namespacedef_='''
@@ -155,7 +156,7 @@ class UPSProxy(Proxy):
         )
         return to_xml(result)
 
-    def cancel_pickup(self, FreightCancelPickupRequest_: FreightCancelPickupRequest) -> "XMLElement":
+    def cancel_pickup(self, FreightCancelPickupRequest_: FreightCancelPickupRequest) -> etree.ElementBase:
         envelopeStr = export(
             create_envelope(header_content=self.mapper.Security, body_content=FreightCancelPickupRequest_),
             namespacedef_='''

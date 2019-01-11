@@ -1,5 +1,6 @@
 from typing import Tuple, List
 from functools import reduce
+from lxml import etree
 from purplship.mappers.fedex import FedexClient
 from purplship.domain import Types as T
 from pyfedex.track_service_v14 import TrackRequest
@@ -32,13 +33,13 @@ class FedexCapabilities:
 
     """ Replys """ 
     
-    def parse_rate_reply(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_rate_reply(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
-    def parse_track_reply(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
+    def parse_track_reply(self, response: etree.ElementBase) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pass
 
-    def parse_process_shipment_reply(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
+    def parse_process_shipment_reply(self, response: etree.ElementBase) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         pass
 
 
@@ -53,7 +54,7 @@ class FedexMapperBase(FedexCapabilities):
         self.webAuthenticationDetail = WebAuthenticationDetail(UserCredential=userCredential)
         self.clientDetail = ClientDetail(AccountNumber=client.account_number, MeterNumber=client.meter_number)    
 
-    def parse_error_response(self, response: 'XMLElement') -> List[T.Error]:
+    def parse_error_response(self, response: etree.ElementBase) -> List[T.Error]:
         notifications = response.xpath(
             './/*[local-name() = $name]', name="Notifications"
         ) + response.xpath(
@@ -61,7 +62,7 @@ class FedexMapperBase(FedexCapabilities):
         )
         return reduce(self._extract_error, notifications, [])
 
-    def _extract_error(self, errors: List[T.Error], notificationNode: 'XMLElement') -> List[T.Error]:
+    def _extract_error(self, errors: List[T.Error], notificationNode: etree.ElementBase) -> List[T.Error]:
         notification = Notification()
         notification.build(notificationNode)
         if notification.Severity in ('SUCCESS', 'NOTE'):

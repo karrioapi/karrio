@@ -3,6 +3,7 @@ from pyups import (
     package_ship as PShip,
     common as Common
 ) 
+from lxml import etree
 from .interface import reduce, Tuple, List, Union, T, UPSMapperBase
 from purplship.domain.Types.units import DimensionUnit
 from purplship.mappers.ups.ups_units import (
@@ -15,7 +16,7 @@ from purplship.mappers.ups.ups_units import (
 
 class UPSMapperPartial(UPSMapperBase):
 
-    def parse_freight_shipment_response(self, shipmentNode: 'XMLElement') -> T.ShipmentDetails:
+    def parse_freight_shipment_response(self, shipmentNode: etree.ElementBase) -> T.ShipmentDetails:
         shipmentResponse = FShip.FreightShipResponse()
         shipmentResponse.build(shipmentNode)
         shipment = shipmentResponse.ShipmentResults
@@ -44,7 +45,7 @@ class UPSMapperPartial(UPSMapperBase):
             )
         )
 
-    def parse_package_shipment_response(self, shipmentNode: 'XMLElement') -> T.ShipmentDetails:
+    def parse_package_shipment_response(self, shipmentNode: etree.ElementBase) -> T.ShipmentDetails:
         shipmentResponse = PShip.ShipmentResponse()
         shipmentResponse.build(shipmentNode)
         shipment = shipmentResponse.ShipmentResults

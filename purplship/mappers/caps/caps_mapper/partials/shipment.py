@@ -1,7 +1,9 @@
 from pycaps import shipment as Shipment, ncshipment as NCShipment
 from base64 import b64encode
 from datetime import datetime
-from .interface import reduce, Tuple, List, Union, T, CanadaPostMapperBase
+from lxml import etree
+from typing import Any, Tuple, List, Union
+from .interface import reduce, T, CanadaPostMapperBase
 from purplship.domain.Types.units import (
     Dimension, DimensionUnit,
     Weight, WeightUnit
@@ -14,7 +16,7 @@ from purplship.mappers.caps.caps_units import (
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
 
-    def parse_shipment_info(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
+    def parse_shipment_info(self, response: etree.ElementBase) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         shipment = self._extract_shipment(response) if len(response.xpath('.//*[local-name() = $name]', name="shipment-id")) > 0 else None
         return (shipment, self.parse_error_response(response))
 
@@ -25,7 +27,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
     """ Private functions """
 
-    def _extract_shipment(self, response: 'XMLElement') -> T.ShipmentDetails:
+    def _extract_shipment(self, response: etree.ElementBase) -> T.ShipmentDetails:
         is_non_contract = len(response.xpath('.//*[local-name() = $name]', name="non-contract-shipment-info")) > 0
         info = NCShipment.NonContractShipmentInfoType() if is_non_contract else Shipment.ShipmentInfoType()
         data = NCShipment.NonContractShipmentReceiptType() if is_non_contract else Shipment.ShipmentPriceType()
@@ -234,21 +236,16 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 unpackaged=payload.shipment.extra.get('unpackaged'),
                 mailing_tube=payload.shipment.extra.get('mailing-tube')
             ),
-            options=(lambda options:
-                (
-                    options,
-                    [
-                        options.add_option(
-                            Package.OptionType(
-                                option_code=OptionCode[option.code].value,
-                                option_amount=option.value.get('option-amount'),
-                                option_qualifier_1=option.value.get('option-qualifier-1'),
-                                option_qualifier_2=option.value.get('option-qualifier-2')
-                            )
-                        ) for option in requested_options
-                    ]
-                )[0]
-            )(Shipment.optionsType()) if len(requested_options) > 0 else None,
+            options=Shipment.optionsType(
+                option=[
+                    Package.OptionType(
+                        option_code=OptionCode[option.code].value,
+                        option_amount=option.value.get('option-amount'),
+                        option_qualifier_1=option.value.get('option-qualifier-1'),
+                        option_qualifier_2=option.value.get('option-qualifier-2')
+                    ) for option in requested_options
+                ]
+            ) if len(requested_options) > 0 else None,
             notification=Package.NotificationType(
                 email=payload.shipment.extra.get('notification').get('email'),
                 on_shipment=payload.shipment.extra.get('notification').get('on-shipment'),
@@ -269,24 +266,21 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                 certificate_number=payload.shipment.customs.extra.get('certificate-number'),
                 licence_number=payload.shipment.customs.extra.get('licence-number'),
                 invoice_number=payload.shipment.customs.extra.get('invoice-number'),
-                sku_list=(lambda skus:
-                    (
-                        skus,
-                        [
-                            skus.add_item(Package.SkuType(
-                                customs_number_of_units=item.quantity,
-                                customs_description=item.description,
-                                sku=item.sku,
-                                hs_tariff_code=item.extra.get('hs-tariff-code'),
-                                unit_weight=WeightUnit.KG.value,
-                                customs_value_per_unit=item.value_amount,
-                                customs_unit_of_measure=DimensionUnit.CM.value,
-                                country_of_origin=item.origin_country,
-                                province_of_origin=item.extra.get('province-of-origin')
-                            )) for item in payload.shipment.items
-                        ]
-                    )[0]
-                )(Package.sku_listType())
+                sku_list=Package.sku_listType(
+                    item=[
+                        Package.SkuType(
+                            customs_number_of_units=item.quantity,
+                            customs_description=item.description,
+                            sku=item.sku,
+                            hs_tariff_code=item.extra.get('hs-tariff-code'),
+                            unit_weight=WeightUnit.KG.value,
+                            customs_value_per_unit=item.value_amount,
+                            customs_unit_of_measure=DimensionUnit.CM.value,
+                            country_of_origin=item.origin_country,
+                            province_of_origin=item.extra.get('province-of-origin')
+                        ) for item in payload.shipment.items
+                    ]
+                )
             ) if _has_any(payload.shipment, ['customs', 'duty-payment-account']) else None,
             references=Package.ReferencesType(
                 cost_centre=payload.shipment.extra.get('cost-centre'),
@@ -297,9 +291,9 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
 
 
 """ Should be extracted to gds_helpers...? """
-def _has_any(dictionary: dict, keys: List[str]) -> bool:
+def _has_any(obj: Any, keys: List[str]) -> bool:
     """
-    Return True if at least one key of the list is contained by the dictionary
+    Return True if at least one key of the list is contained by the obj
     """
-    return any([k for k in keys if k in dictionary])
+    return any([k for k in keys if k in obj])
 

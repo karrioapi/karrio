@@ -1,21 +1,21 @@
 from typing import List, NamedTuple, Dict, Optional
 
 class party(NamedTuple):
-    postal_code: Optional[str] = None
-    city: Optional[str] = None
-    type: Optional[str] = None
-    tax_id: Optional[str] = None
-    account_number: Optional[str] = None
-    person_name: Optional[str] = None
-    company_name: Optional[str] = None
-    country_name: Optional[str] = None
-    country_code: Optional[str] = None
-    email_address: Optional[str] = None
-    phone_number: Optional[str] = None
+    postal_code: str = None
+    city: str = None
+    type: str = None
+    tax_id: str = None
+    account_number: str = None
+    person_name: str = None
+    company_name: str = None
+    country_name: str = None
+    country_code: str = None
+    email_address: str = None
+    phone_number: str = None
 
     """ state or province """
-    state: Optional[str] = None
-    state_code: Optional[str] = None
+    state: str = None
+    state_code: str = None
 
     address_lines: List[str] = []
     extra: Dict = {}
@@ -26,41 +26,41 @@ class item_type(NamedTuple):
     """
 
     weight: float
-    id: Optional[str] = None
-    width: Optional[float] = None
-    height: Optional[float] = None
-    length: Optional[float] = None
-    packaging_type: Optional[str] = None
-    description: Optional[str] = None
-    content: Optional[str] = None
+    id: str = None
+    width: float = None
+    height: float = None
+    length: float = None
+    packaging_type: str = None
+    description: str = None
+    content: str = None
     quantity: int = 1
-    sku: Optional[str] = None
-    code: Optional[str] = None
-    value_amount: Optional[float] = None
-    value_currency: Optional[str] = None
-    origin_country: Optional[str] = None
+    sku: str = None
+    code: str = None
+    value_amount: float = None
+    value_currency: str = None
+    origin_country: str = None
     extra: Dict = {}
 
 class customs_type(NamedTuple):
-    no_eei: Optional[str] = None
-    aes: Optional[str] = None
-    description: Optional[str] = None
-    terms_of_trade: Optional[str] = None
+    no_eei: str = None
+    aes: str = None
+    description: str = None
+    terms_of_trade: str = None
     items: List[item_type] = []
     commercial_invoice: bool = False
     extra: Dict = {}
 
 class invoice_type(NamedTuple):
     date: str
-    identifier: Optional[str] = None
-    type: Optional[str] = None
-    copies: Optional[int] = None
+    identifier: str = None
+    type: str = None
+    copies: int = None
     extra: Dict = {}
 
 class doc_image(NamedTuple):
-    type: Optional[str] = None
-    format: Optional[str] = None
-    image: Optional[str] = None
+    type: str = None
+    format: str = None
+    image: str = None
     extra: Dict = {}
 
 class option_type(NamedTuple):
@@ -73,33 +73,33 @@ class shipment_options(NamedTuple):
     """ packages or commodities """
     items: List[item_type]
 
-    insured_amount: Optional[float] = None
-    total_items: Optional[int] = None
-    packaging_type: Optional[str] = None
+    insured_amount: float = None
+    total_items: int = None
+    packaging_type: str = None
     is_document: bool = False
-    total_weight: Optional[float] = None
+    total_weight: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
 
-    currency: Optional[str] = None
-    paid_by: Optional[str] = None
-    declared_value: Optional[float] = None
-    payment_type: Optional[str] = None
-    duty_paid_by: Optional[str] = None
-    duty_payment_account: Optional[str] = None
-    payment_country_code: Optional[str] = None
-    payment_account_number: Optional[str] = None
+    currency: str = None
+    paid_by: str = None
+    declared_value: float = None
+    payment_type: str = None
+    duty_paid_by: str = None
+    duty_payment_account: str = None
+    payment_country_code: str = None
+    payment_account_number: str = None
 
-    date: Optional[str] = None
-    customs: Optional[customs_type] = None
-    invoice: Optional[invoice_type] = None
+    date: str = None
+    customs: customs_type = None
+    invoice: invoice_type = None
     doc_images: List[doc_image] = []
     
     references: List[str] = []
     services: List[str] = []
     options: List[option_type] = []
 
-    label: Optional[doc_image] = None
+    label: doc_image = None
     extra: Dict = {}
 
 class shipment_request(NamedTuple):
@@ -109,38 +109,38 @@ class shipment_request(NamedTuple):
 
 class tracking_request(NamedTuple):
     tracking_numbers: List[str]
-    language_code: Optional[str] = None
-    level_of_details: Optional[str] = None
+    language_code: str = None
+    level_of_details: str = None
     extra: Dict = {}
 
 class pickup_request(NamedTuple):
     date: str
     account_number: str
-    weight: Optional[float] = None
-    weight_unit: Optional[str] = None
-    pieces: Optional[float] = None
-    ready_time: Optional[str] = None
-    closing_time: Optional[str] = None
-    instruction: Optional[str] = None
-    package_location: Optional[str] = None
+    weight: float = None
+    weight_unit: str = None
+    pieces: float = None
+    ready_time: str = None
+    closing_time: str = None
+    instruction: str = None
+    package_location: str = None
 
-    city: Optional[str] = None
-    postal_code: Optional[str] = None
-    person_name: Optional[str] = None
-    company_name: Optional[str] = None
-    phone_number: Optional[str] = None
-    email_address: Optional[str] = None
+    city: str = None
+    postal_code: str = None
+    person_name: str = None
+    company_name: str = None
+    phone_number: str = None
+    email_address: str = None
     is_business: bool = True
 
     """ state or province """
-    state: Optional[str] = None
-    state_code: Optional[str] = None
+    state: str = None
+    state_code: str = None
 
-    country_name: Optional[str] = None
-    country_code: Optional[str] = None
+    country_name: str = None
+    country_code: str = None
 
     """ required for pickup modification """
-    confirmation_number: Optional[str] = None
+    confirmation_number: str = None
 
     address_lines: List[str] = []
     extra: Dict = {}   
@@ -148,8 +148,8 @@ class pickup_request(NamedTuple):
 class pickup_cancellation_request(NamedTuple):
     pickup_date: str
     confirmation_number: str
-    person_name: Optional[str] = None
-    country_code: Optional[str] = None
+    person_name: str = None
+    country_code: str = None
     extra: Dict = {}   
 
 ''' Generic response data types '''
@@ -161,7 +161,7 @@ class Error():
         self.carrier = carrier
 
 class ChargeDetails:
-    def __init__(self, name: str = None, amount: str = None, currency: str = None):
+    def __init__(self, name: str = None, amount: float = None, currency: str = None):
         self.name = name
         self.amount = amount
         self.currency = currency

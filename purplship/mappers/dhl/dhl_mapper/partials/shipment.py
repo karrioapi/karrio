@@ -36,7 +36,7 @@ class DHLMapperPartial(DHLMapperBase):
             return None
         plates = [p.text for p in shipmentResponseNode.xpath("//LicensePlateBarCode")]
         barcodes = [child.text for child in shipmentResponseNode.xpath("//Barcodes")[0].getchildren()]
-        documents = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
+        documents: List[str] = reduce(lambda r,i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, [])
         reference = T.ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType")) if len(shipmentResponseNode.xpath("//Reference")) > 0 else None
         currency_ = get("CurrencyCode")
         return T.ShipmentDetails(
@@ -66,7 +66,7 @@ class DHLMapperPartial(DHLMapperBase):
         default_packaging_type = PackageType.Document if payload.shipment.is_document else PackageType.Your_packaging
         options = (
             [opt for opt in payload.shipment.options if opt.code in Service.__members__] +
-            ([] if not payload.shipment.insured_amount else [T.option_type(code=Service.Shipment_Insurance)])
+            ([] if not payload.shipment.insured_amount else [T.option_type(code=Service.Shipment_Insurance.value)])
         )
 
         Request_ = self.init_request()
@@ -140,25 +140,22 @@ class DHLMapperPartial(DHLMapperBase):
             ),
             ShipmentDetails=ShipReq.ShipmentDetails(
                 NumberOfPieces=len(payload.shipment.items),
-                Pieces=(lambda pieces:
-                    (
-                        pieces,
-                        [
-                            pieces.add_Piece(ShipReq.Piece(
-                                PieceID=p.id,
-                                PackageType=(
-                                    PackageType[p.packaging_type] if p.packaging_type != None else default_packaging_type
-                                ).value,
-                                Weight=p.weight,
-                                DimWeight=p.extra.get('DimWeight'),
-                                Height=p.height,
-                                Width=p.width,
-                                Depth=p.length,
-                                PieceContents=p.content
-                            )) for p in payload.shipment.items
-                        ]
-                    )[0]
-                )(ShipReq.Pieces()),
+                Pieces=ShipReq.Pieces(
+                    Piece=[
+                        ShipReq.Piece(
+                            PieceID=p.id,
+                            PackageType=(
+                                PackageType[p.packaging_type] if p.packaging_type != None else default_packaging_type
+                            ).value,
+                            Weight=p.weight,
+                            DimWeight=p.extra.get('DimWeight'),
+                            Height=p.height,
+                            Width=p.width,
+                            Depth=p.length,
+                            PieceContents=p.content
+                        ) for p in payload.shipment.items
+                    ]
+                ),
                 Weight=payload.shipment.total_weight or sum(p.weight for p in payload.shipment.items),
                 CurrencyCode=payload.shipment.currency or "USD",
                 WeightUnit=WeightUnit[payload.shipment.weight_unit or "KG"].value,
@@ -203,20 +200,17 @@ class DHLMapperPartial(DHLMapperBase):
                 ) for option in options
             ] if len(options) > 0 else None,
             LabelImageFormat=payload.shipment.label.format if payload.shipment.label != None else None,
-            DocImages=(lambda images:
-                (
-                    images,
-                    [
-                        images.add_DocImage(ShipReq.DocImage(
-                            Type=doc.type,
-                            ImageFormat=doc.format,
-                            Image=b64decode(
-                                doc.image + '=' * (-len(doc.image) % 4)
-                            ) 
-                        )) for doc in payload.shipment.doc_images
-                    ]
-                )[0]
-            )(ShipReq.DocImages()) if len(payload.shipment.doc_images) > 0 else None,
+            DocImages=ShipReq.DocImages(
+                DocImage=[
+                    ShipReq.DocImage(
+                        Type=doc.type,
+                        ImageFormat=doc.format,
+                        Image=b64decode(
+                            doc.image + '=' * (-len(doc.image) % 4)
+                        ) 
+                    ) for doc in payload.shipment.doc_images
+                ]
+            ) if len(payload.shipment.doc_images) > 0 else None,
             RequestArchiveDoc=None,
             NumberOfArchiveDoc=None,
             Label=None,
