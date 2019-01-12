@@ -10,7 +10,7 @@ class Quote:
         return shipment_request(
             shipper=party(**shipper),
             recipient=party(**recipient), 
-            shipment=create_shipment_options_type(**shipment)
+            shipment=create_shipment_options(**shipment)
         )
 
 class Tracking:
@@ -25,12 +25,12 @@ class Shipment:
     """ manage shipment operations """
 
     @staticmethod
-    def create(shipper: Dict, recipient: Dict, shipment: Dict) -> shipment_request:
+    def create(shipper: dict, recipient: dict, shipment: dict) -> shipment_request:
         """ Create a shipment details request payload """
         return shipment_request(
             shipper=party(**shipper),
             recipient=party(**recipient), 
-            shipment=create_shipment_options_type(**shipment)
+            shipment=create_shipment_options(**shipment)
         )
 
 class Pickup:

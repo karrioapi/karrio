@@ -1,4 +1,6 @@
 from abc import ABC
+from purplship.domain.client import Client
+from purplship.domain.mapper import Mapper
 
 class Proxy(ABC):
     """ 
@@ -12,6 +14,8 @@ class Proxy(ABC):
     mapper : Mapper
         a carrier mapper for specific carrier data type mapping 
     """
+    client: Client
+    mapper: Mapper
 
     def get_quotes(self, xmlObj):
         """ export xmlObj as xml string and request quote from carrier  """

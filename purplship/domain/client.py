@@ -12,3 +12,5 @@ class Client(ABC):
     carrier_name : str
         a custom name to identified the carrier client instance (set to carrier name by default) 
     """
+    server_url: str
+    carrier_name: str

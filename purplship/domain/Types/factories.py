@@ -15,7 +15,7 @@ def create_customs_type(no_eei: str = None, aes: str = None, description: str = 
     )
 
 
-def create_shipment_options_type(items: List, insured_amount: float = None, total_items: int = None, packaging_type: str = None, is_document: bool = False, currency: str = None, total_weight: float = None, weight_unit: str = "LB", dimension_unit: str = "IN", paid_by: str = None, duty_paid_by: str = None, payment_type: str = None, payment_country_code: str = None, duty_payment_account: str = None, declared_value: float = None, payment_account_number: str = None, services: List[str] = [], options: List[dict] = [], date : str = None, customs: dict = None, invoice: dict = None, doc_images: List[dict] = [], references: List[str] = [], label: Dict = None, extra: Dict = {}) -> shipment_options:
+def create_shipment_options(items: List, insured_amount: float = None, total_items: int = None, packaging_type: str = None, is_document: bool = False, currency: str = None, total_weight: float = None, weight_unit: str = "LB", dimension_unit: str = "IN", paid_by: str = None, duty_paid_by: str = None, payment_type: str = None, payment_country_code: str = None, duty_payment_account: str = None, declared_value: float = None, payment_account_number: str = None, services: List[str] = [], options: List[dict] = [], date : str = None, customs: dict = None, invoice: dict = None, doc_images: List[dict] = [], references: List[str] = [], label: Dict = None, extra: Dict = {}) -> shipment_options:
     ''' shipment options Type factory function '''
     return shipment_options(
         items=[item_type(**p) for p in items],

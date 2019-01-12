@@ -1,4 +1,4 @@
-from typing import List, NamedTuple, Dict, Optional
+from typing import List, NamedTuple, Dict
 
 class party(NamedTuple):
     postal_code: str = None
