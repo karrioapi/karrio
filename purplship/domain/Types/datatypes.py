@@ -22,7 +22,7 @@ class party(NamedTuple):
 
 class item_type(NamedTuple):
     """
-        item type is a package of commodity
+        item type is a package or a commodity
     """
 
     weight: float
@@ -90,7 +90,7 @@ class shipment_options(NamedTuple):
     payment_country_code: str = None
     payment_account_number: str = None
 
-    ship_date: str = None
+    date: str = None
     customs: customs_type = None
     invoice: invoice_type = None
     doc_images: List[doc_image] = []
@@ -161,7 +161,7 @@ class Error():
         self.carrier = carrier
 
 class ChargeDetails:
-    def __init__(self, name: str = None, amount: str = None, currency: str = None):
+    def __init__(self, name: str = None, amount: float = None, currency: str = None):
         self.name = name
         self.amount = amount
         self.currency = currency

@@ -1,4 +1,29 @@
-from pyfedex.ship_service_v21 import *
+from pyfedex.ship_service_v21 import (
+    CompletedShipmentDetail,
+    ShipmentRateDetail,
+    CompletedPackageDetail,
+    ProcessShipmentRequest,
+    TransactionDetail,
+    VersionId,
+    RequestedShipment,
+    RequestedPackageLineItem,
+    Weight,
+    Party,
+    Contact,
+    Address,
+    TaxpayerIdentification,
+    Payment,
+    Payor,
+    ShipmentSpecialServicesRequested,
+    FreightShipmentDetail,
+    SmartPostShipmentDetail,
+    SmartPostShipmentProcessingOptionsRequested,
+    LabelSpecification,
+    Dimensions,
+    CustomerReference,
+    InternationalTrafficInArmsRegulationsDetail
+)
+from lxml import etree
 from base64 import b64encode
 from datetime import datetime
 from .interface import reduce, Tuple, List, T, FedexMapperBase
@@ -12,12 +37,12 @@ from purplship.mappers.fedex.fedex_units import (
 
 class FedexMapperPartial(FedexMapperBase):
 
-    def parse_process_shipment_reply(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
+    def parse_process_shipment_reply(self, response: etree.ElementBase) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         details = response.xpath('.//*[local-name() = $name]', name="CompletedShipmentDetail")
-        shipment = self._extract_shipment(details[0]) if len(details) > 0 else None
+        shipment : T.ShipmentDetails = self._extract_shipment(details[0]) if len(details) > 0 else None
         return (shipment, self.parse_error_response(response))
 
-    def _extract_shipment(self, shipmentDetailNode: 'XMLElement') -> T.ShipmentDetails:
+    def _extract_shipment(self, shipmentDetailNode: etree.ElementBase) -> T.ShipmentDetails:
         detail = CompletedShipmentDetail()
         detail.build(shipmentDetailNode)
 
@@ -87,7 +112,7 @@ class FedexMapperPartial(FedexMapperBase):
                 ManifestDetail=None,
                 TotalWeight=Weight(
                     Units=payload.shipment.weight_unit,
-                    Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.items, 0)
+                    Value=payload.shipment.total_weight or reduce(lambda r, p: r + p.weight, payload.shipment.items, 0.0)
                 ),
                 TotalInsuredValue=payload.shipment.insured_amount,
                 PreferredCurrency=payload.shipment.currency,
@@ -228,7 +253,27 @@ class FedexMapperPartial(FedexMapperBase):
                     CustomDeliveryWindowDetail=None
                 ) if len(options) > 0 else None,
                 ExpressFreightDetail=None,
-                FreightShipmentDetail=None,
+                FreightShipmentDetail=FreightShipmentDetail(
+                    FedExFreightAccountNumber=None,
+                    FedExFreightBillingContactAndAddress=None,
+                    AlternateBilling=None,
+                    PrintedReferences=None,
+                    Role=None,
+                    CollectTermsType=None,
+                    DeclaredValuePerUnit=None,
+                    DeclaredValueUnits=None,
+                    LiabilityCoverageDetail=None,
+                    Coupons=None,
+                    TotalHandlingUnits=None,
+                    ClientDiscountPercent=None,
+                    PalletWeight=None,
+                    ShipmentDimensions=None,
+                    Comment=None,
+                    SpecialServicePayments=None,
+                    HazardousMaterialsEmergencyContactNumber=None,
+                    HazardousMaterialsOfferor=None,
+                    LineItems=None
+                ) if any([svc for svc in requested_services if 'FREIGHT' in svc]) else None,
                 DeliveryInstructions=None,
                 VariableHandlingChargeDetail=None,
                 CustomsClearanceDetail=None,

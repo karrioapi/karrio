@@ -2,17 +2,18 @@ from pyups import (
     package_track as Track,
     common as Common
 )
+from lxml import etree
 from .interface import reduce, Tuple, List, T, UPSMapperBase
 
 
 class UPSMapperPartial(UPSMapperBase):
 
-    def parse_track_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_track_response(self, response: etree.ElementBase) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         track_details = response.xpath('.//*[local-name() = $name]', name="Shipment")
-        trackings = reduce(self._extract_tracking, track_details, [])
+        trackings : List[T.TrackingDetails] = reduce(self._extract_tracking, track_details, [])
         return (trackings, self.parse_error_response(response))
 
-    def _extract_tracking(self, trackings: List[T.TrackingDetails], shipmentNode: 'XMLElement') -> List[T.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[T.TrackingDetails], shipmentNode: etree.ElementBase) -> List[T.TrackingDetails]:
         trackDetail = Track.ShipmentType()
         trackDetail.build(shipmentNode)
         activityNodes = shipmentNode.xpath('.//*[local-name() = $name]', name="Activity")
@@ -35,7 +36,7 @@ class UPSMapperPartial(UPSMapperBase):
             )
         ]
 
-    def create_track_request(self, payload: T.shipment_request) -> List[Track.TrackRequest]:    
+    def create_track_request(self, payload: T.tracking_request) -> List[Track.TrackRequest]:    
         Request_ = Common.RequestType(
             TransactionReference=Common.TransactionReferenceType(
                 TransactionIdentifier="TransactionIdentifier"

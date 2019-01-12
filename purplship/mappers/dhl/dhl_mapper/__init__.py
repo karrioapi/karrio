@@ -1,4 +1,5 @@
 from typing import Tuple, List, Union
+from lxml import etree
 from purplship.domain.mapper import Mapper
 from purplship.domain import Types as T
 from pydhl import (
@@ -46,13 +47,13 @@ class DHLMapper(
         return self.create_cancel_purequest(payload)
 
 
-    def parse_quote_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_quote_response(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         return self.parse_dct_response(response)
 
-    def parse_tracking_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
+    def parse_tracking_response(self, response: etree.ElementBase) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         return self.parse_dhltracking_response(response)
 
-    def parse_shipment_response(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
+    def parse_shipment_response(self, response: etree.ElementBase) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         return self.parse_dhlshipment_respone(response)
 
     def parse_pickup_response(self, response) -> Tuple[T.PickupDetails, List[T.Error]]:

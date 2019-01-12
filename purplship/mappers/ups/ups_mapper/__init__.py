@@ -1,5 +1,6 @@
 from typing import Tuple, List, Union
 from functools import reduce
+from lxml import etree
 from purplship.domain.mapper import Mapper
 from purplship.domain import Types as T
 from purplship.domain.Types.units import (
@@ -45,17 +46,17 @@ class UPSMapper(
         )(payload)
 
 
-    def parse_quote_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_quote_response(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         details = response.xpath('.//*[local-name() = $name]', name="FreightRateResponse") + response.xpath('.//*[local-name() = $name]', name="FreightRateResponse")
         if len(details) > 0:
             return self.parse_freight_rate_response(response)
         else:
             return self.parse_package_rate_response(response)
 
-    def parse_tracking_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
+    def parse_tracking_response(self, response: etree.ElementBase) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         return self.parse_track_response(response)
 
-    def parse_shipment_response(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
+    def parse_shipment_response(self, response: etree.ElementBase) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         details = response.xpath('.//*[local-name() = $name]', name="FreightShipResponse") + response.xpath('.//*[local-name() = $name]', name="ShipmentResponse")
         if len(details) > 0:
             shipmentNode = details[0]
@@ -70,7 +71,7 @@ class UPSMapper(
 
 def _is_freight(payload: T.shipment_request) -> bool:
     total_weight = Weight(
-        payload.shipment.total_weight or reduce(lambda t, i: t + i.weight, payload.shipment.items, 0),
+        payload.shipment.total_weight or reduce(lambda t, i: t + i.weight, payload.shipment.items, 0.0),
         WeightUnit[payload.shipment.weight_unit]
     ).LB
     any_item_size_over_165 = any([

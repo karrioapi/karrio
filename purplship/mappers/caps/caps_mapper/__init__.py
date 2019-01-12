@@ -1,4 +1,5 @@
 from typing import Tuple, List, Union
+from lxml import etree
 from purplship.domain.mapper import Mapper
 from purplship.domain import Types as T
 from pycaps.rating import mailing_scenario
@@ -29,11 +30,11 @@ class CanadaPostMapper(
 
 
 
-    def parse_quote_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_quote_response(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         return self.parse_price_quotes(response)
 
-    def parse_tracking_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
+    def parse_tracking_response(self, response: etree.ElementBase) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         return self.parse_tracking_summary(response)
 
-    def parse_shipment_response(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
+    def parse_shipment_response(self, response: etree.ElementBase) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         return self.parse_shipment_info(response)

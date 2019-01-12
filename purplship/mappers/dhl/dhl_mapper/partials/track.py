@@ -2,6 +2,7 @@ from pydhl import (
     tracking_request_known as Track,
     tracking_response as TrackRes
 )
+from lxml import etree
 from .interface import reduce, Tuple, List, T, DHLMapperBase
 
 
@@ -9,10 +10,10 @@ class DHLMapperPartial(DHLMapperBase):
 
     def parse_dhltracking_response(self, response) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         awbinfos = response.xpath('.//*[local-name() = $name]', name="AWBInfo")
-        trackings = reduce(self._extract_tracking, awbinfos, [])
+        trackings : List[T.TrackingDetails] = reduce(self._extract_tracking, awbinfos, [])
         return (trackings, self.parse_error_response(response))
 
-    def _extract_tracking(self, trackings: List[T.TrackingDetails], awbInfoNode: 'XMLElement') -> List[T.TrackingDetails]:
+    def _extract_tracking(self, trackings: List[T.TrackingDetails], awbInfoNode: etree.ElementBase) -> List[T.TrackingDetails]:
         awbInfo = TrackRes.AWBInfo()
         awbInfo.build(awbInfoNode)
         if awbInfo.ShipmentInfo == None:

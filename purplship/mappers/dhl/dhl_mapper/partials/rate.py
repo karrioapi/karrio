@@ -1,4 +1,5 @@
 import time
+from lxml import etree
 from pydhl.datatypes_global_v61 import MetaData
 from pydhl import (
     DCT_req_global as Req,
@@ -23,21 +24,21 @@ from .interface import (
 
 class DHLMapperPartial(DHLMapperBase):
     
-    def parse_dct_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_dct_response(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         qtdshp_list = response.xpath(
             './/*[local-name() = $name]', name="QtdShp")
-        quotes = reduce(self._extract_quote, qtdshp_list, [])
+        quotes : List[T.QuoteDetails] = reduce(self._extract_quote, qtdshp_list, [])
         return (quotes, self.parse_error_response(response))
 
-    def _extract_quote(self, quotes: List[T.QuoteDetails], qtdshpNode: 'XMLElement') -> List[T.QuoteDetails]:
+    def _extract_quote(self, quotes: List[T.QuoteDetails], qtdshpNode: etree.ElementBase) -> List[T.QuoteDetails]:
         qtdshp = Res.QtdShpType()
         qtdshp.build(qtdshpNode)
         ExtraCharges = list(map(lambda s: T.ChargeDetails(
             name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)), qtdshp.QtdShpExChrg))
         Discount_ = reduce(
-            lambda d, ec: d + ec.value if "Discount" in ec.name else d, ExtraCharges, 0)
+            lambda d, ec: d + ec.amount if "Discount" in ec.name else d, ExtraCharges, 0.0)
         DutiesAndTaxes_ = reduce(
-            lambda d, ec: d + ec.value if "TAXES PAID" in ec.name else d, ExtraCharges, 0)
+            lambda d, ec: d + ec.amount if "TAXES PAID" in ec.name else d, ExtraCharges, 0.0)
         return quotes + [
             T.QuoteDetails(
                 carrier=self.client.carrier_name,
@@ -92,21 +93,18 @@ class DHLMapperPartial(DHLMapperBase):
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
                 IsDutiable="Y" if is_dutiable else "N",
-                Pieces=(lambda pieces: 
-                    (
-                        pieces,
-                        [
-                            pieces.add_Piece(ReqType.PieceType(
-                                PieceID=piece.id or str(index),
-                                PackageTypeCode=(
-                                    DCTPackageType[piece.packaging_type] if piece.packaging_type != None else default_packaging_type
-                                ).value,
-                                Height=piece.height, Width=piece.width,
-                                Weight=piece.weight, Depth=piece.length
-                            )) for index, piece in enumerate(payload.shipment.items)
-                        ]
-                    )[0]
-                )(ReqType.PiecesType()),
+                Pieces=ReqType.PiecesType(
+                    Piece=[
+                        ReqType.PieceType(
+                            PieceID=piece.id or str(index),
+                            PackageTypeCode=(
+                                DCTPackageType[piece.packaging_type] if piece.packaging_type != None else default_packaging_type
+                            ).value,
+                            Height=piece.height, Width=piece.width,
+                            Weight=piece.weight, Depth=piece.length
+                        ) for index, piece in enumerate(payload.shipment.items)
+                    ]
+                ),
                 NumberOfPieces=payload.shipment.total_items,
                 ShipmentWeight=payload.shipment.total_weight,
                 Volume=payload.shipment.extra.get('Volume'),

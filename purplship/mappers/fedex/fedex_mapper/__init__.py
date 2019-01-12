@@ -1,4 +1,5 @@
 from typing import Tuple, List
+from lxml import etree
 from purplship.domain.mapper import Mapper
 from purplship.domain import Types as T
 from pyfedex.track_service_v14 import TrackRequest
@@ -34,11 +35,11 @@ class FedexMapper(
         return self.create_process_shipment_request(payload)
 
 
-    def parse_quote_response(self, response: 'XMLElement') -> Tuple[List[T.QuoteDetails], List[T.Error]]:
+    def parse_quote_response(self, response: etree.ElementBase) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         return self.parse_rate_reply(response)
 
-    def parse_tracking_response(self, response: 'XMLElement') -> Tuple[List[T.TrackingDetails], List[T.Error]]:
+    def parse_tracking_response(self, response: etree.ElementBase) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         return self.parse_track_reply(response)
 
-    def parse_shipment_response(self, response: 'XMLElement') -> Tuple[T.ShipmentDetails, List[T.Error]]:
+    def parse_shipment_response(self, response: etree.ElementBase) -> Tuple[T.ShipmentDetails, List[T.Error]]:
         return self.parse_process_shipment_reply(response)
