@@ -1,9 +1,26 @@
 from collections import namedtuple
 from typing import List, Dict
-from purplship.domain.Types.datatypes import item_type, party, invoice_type, doc_image, option_type, shipment_options, customs_type
+from purplship.domain.Types.datatypes import (
+    item_type,
+    party,
+    invoice_type,
+    doc_image,
+    option_type,
+    shipment_options,
+    customs_type,
+)
 
-def create_customs_type(no_eei: str = None, aes: str = None, description: str = None, terms_of_trade: str = None, items: List[dict] = [], commercial_invoice: bool = False, extra: dict = {}) -> customs_type:
-    ''' customs Type factory function '''
+
+def create_customs_type(
+    no_eei: str = None,
+    aes: str = None,
+    description: str = None,
+    terms_of_trade: str = None,
+    items: List[dict] = [],
+    commercial_invoice: bool = False,
+    extra: dict = {},
+) -> customs_type:
+    """ customs Type factory function """
     return customs_type(
         no_eei=no_eei,
         aes=aes,
@@ -15,8 +32,34 @@ def create_customs_type(no_eei: str = None, aes: str = None, description: str = 
     )
 
 
-def create_shipment_options(items: List, insured_amount: float = None, total_items: int = None, packaging_type: str = None, is_document: bool = False, currency: str = None, total_weight: float = None, weight_unit: str = "LB", dimension_unit: str = "IN", paid_by: str = None, duty_paid_by: str = None, payment_type: str = None, payment_country_code: str = None, duty_payment_account: str = None, declared_value: float = None, payment_account_number: str = None, services: List[str] = [], options: List[dict] = [], date : str = None, customs: dict = None, invoice: dict = None, doc_images: List[dict] = [], references: List[str] = [], label: Dict = None, extra: Dict = {}) -> shipment_options:
-    ''' shipment options Type factory function '''
+def create_shipment_options(
+    items: List,
+    insured_amount: float = None,
+    total_items: int = None,
+    packaging_type: str = None,
+    is_document: bool = False,
+    currency: str = None,
+    total_weight: float = None,
+    weight_unit: str = "LB",
+    dimension_unit: str = "IN",
+    paid_by: str = None,
+    duty_paid_by: str = None,
+    payment_type: str = None,
+    payment_country_code: str = None,
+    duty_payment_account: str = None,
+    declared_value: float = None,
+    payment_account_number: str = None,
+    services: List[str] = [],
+    options: List[dict] = [],
+    date: str = None,
+    customs: dict = None,
+    invoice: dict = None,
+    doc_images: List[dict] = [],
+    references: List[str] = [],
+    label: Dict = None,
+    extra: Dict = {},
+) -> shipment_options:
+    """ shipment options Type factory function """
     return shipment_options(
         items=[item_type(**p) for p in items],
         insured_amount=insured_amount,
@@ -42,6 +85,5 @@ def create_shipment_options(items: List, insured_amount: float = None, total_ite
         doc_images=[doc_image(**doc) for doc in doc_images],
         references=references,
         label=doc_image(**label) if label else None,
-        extra=extra
+        extra=extra,
     )
-

@@ -8,7 +8,7 @@ install:
   - pip install . --process-dependency-links
 
 script: 
-  - coverage run --include='purplship/*' -m unittest -v
+  - coverage run --include='purplship/*' -m unittest -v -f
   - mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
 
 after_success:
