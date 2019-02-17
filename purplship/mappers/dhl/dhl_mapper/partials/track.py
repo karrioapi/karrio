@@ -1,19 +1,21 @@
-from pydhl import (
-    tracking_request_known as Track,
-    tracking_response as TrackRes
-)
+from pydhl import tracking_request_known as Track, tracking_response as TrackRes
 from lxml import etree
 from .interface import reduce, Tuple, List, T, DHLMapperBase
 
 
 class DHLMapperPartial(DHLMapperBase):
-
-    def parse_dhltracking_response(self, response) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
-        awbinfos = response.xpath('.//*[local-name() = $name]', name="AWBInfo")
-        trackings : List[T.TrackingDetails] = reduce(self._extract_tracking, awbinfos, [])
+    def parse_dhltracking_response(
+        self, response
+    ) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
+        awbinfos = response.xpath(".//*[local-name() = $name]", name="AWBInfo")
+        trackings: List[T.TrackingDetails] = reduce(
+            self._extract_tracking, awbinfos, []
+        )
         return (trackings, self.parse_error_response(response))
 
-    def _extract_tracking(self, trackings: List[T.TrackingDetails], awbInfoNode: etree.ElementBase) -> List[T.TrackingDetails]:
+    def _extract_tracking(
+        self, trackings: List[T.TrackingDetails], awbInfoNode: etree.ElementBase
+    ) -> List[T.TrackingDetails]:
         awbInfo = TrackRes.AWBInfo()
         awbInfo.build(awbInfoNode)
         if awbInfo.ShipmentInfo == None:
@@ -23,25 +25,30 @@ class DHLMapperPartial(DHLMapperBase):
                 carrier=self.client.carrier_name,
                 tracking_number=awbInfo.AWBNumber,
                 shipment_date=str(awbInfo.ShipmentInfo.ShipmentDate),
-                events=list(map(lambda e: T.TrackingEvent(
-                    date=str(e.Date),
-                    time=str(e.Time),
-                    signatory=e.Signatory,
-                    code=e.ServiceEvent.EventCode,
-                    location=e.ServiceArea.Description,
-                    description=e.ServiceEvent.Description
-                ), awbInfo.ShipmentInfo.ShipmentEvent))
+                events=list(
+                    map(
+                        lambda e: T.TrackingEvent(
+                            date=str(e.Date),
+                            time=str(e.Time),
+                            signatory=e.Signatory,
+                            code=e.ServiceEvent.EventCode,
+                            location=e.ServiceArea.Description,
+                            description=e.ServiceEvent.Description,
+                        ),
+                        awbInfo.ShipmentInfo.ShipmentEvent,
+                    )
+                ),
             )
         ]
 
-    def create_dhltracking_request(self, payload: T.tracking_request) -> Track.KnownTrackingRequest:
+    def create_dhltracking_request(
+        self, payload: T.tracking_request
+    ) -> Track.KnownTrackingRequest:
         known_request = Track.KnownTrackingRequest(
             Request=self.init_request(),
             LanguageCode=payload.language_code or "en",
-            LevelOfDetails=payload.level_of_details or "ALL_CHECK_POINTS"
+            LevelOfDetails=payload.level_of_details or "ALL_CHECK_POINTS",
         )
         for tn in payload.tracking_numbers:
             known_request.add_AWBNumber(tn)
         return known_request
-
-        
