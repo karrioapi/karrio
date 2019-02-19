@@ -1,4 +1,5 @@
 from pyfedex.track_service_v14 import (
+    ClientDetail,
     TrackDetail,
     TrackRequest,
     TransactionDetail,
@@ -52,7 +53,10 @@ class FedexMapperPartial(FedexMapperBase):
     def create_track_request(self, payload: T.tracking_request) -> TrackRequest:
         return TrackRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
-            ClientDetail=self.clientDetail,
+            ClientDetail=ClientDetail(
+                AccountNumber=self.client.account_number, 
+                MeterNumber=self.client.meter_number
+            ),
             TransactionDetail=TransactionDetail(
                 CustomerTransactionId=payload.extra.get("CustomerTransactionId")
                 or "Track By Number_v14",

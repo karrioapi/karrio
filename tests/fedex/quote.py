@@ -15,7 +15,7 @@ class TestFeDexQuote(unittest.TestCase):
         self.RateRequest.build(req_xml)
 
     def test_create_quote_request(self):
-        shipper = {"postal_code": "H3N1S4", "country_code": "CA"}
+        shipper = {"postal_code": "H3N1S4", "country_code": "CA", "account_number": "2349857"}
         recipient = {"city": "Lome", "country_code": "TG"}
         shipment = {
             "currency": "USD",
@@ -168,6 +168,7 @@ QuoteRequestXml = f'''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/e
                 </ns:TotalWeight>
                 <ns:PreferredCurrency>USD</ns:PreferredCurrency>
                 <ns:Shipper>
+                    <ns:AccountNumber>2349857</ns:AccountNumber>
                     <ns:Address>
                         <ns:PostalCode>H3N1S4</ns:PostalCode>
                         <ns:CountryCode>CA</ns:CountryCode>

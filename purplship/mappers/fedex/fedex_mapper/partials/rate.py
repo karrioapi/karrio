@@ -1,4 +1,5 @@
 from pyfedex.rate_v22 import (
+    ClientDetail,
     RateReplyDetail,
     RateRequest,
     TransactionDetail,
@@ -94,7 +95,10 @@ class FedexMapperPartial(FedexMapperBase):
         ]
         return RateRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
-            ClientDetail=self.clientDetail,
+            ClientDetail=ClientDetail(
+                AccountNumber=payload.shipper.account_number, 
+                MeterNumber=self.client.meter_number
+            ),
             TransactionDetail=TransactionDetail(CustomerTransactionId="FTC"),
             Version=VersionId(ServiceId="crs", Major=22, Intermediate=0, Minor=0),
             ReturnTransitAndCommit=None,

@@ -27,14 +27,17 @@ class TestUPSQuote(unittest.TestCase):
 
     def test_create_freight_quote_request(self):
         shipper = {
-            "postal_code":"H3N1S4", "country_code":"CA", "city":"Montreal", "address_lines": ["Rue Fake"]
+            "account_number": "56GJE",
+            "postal_code":"H3N1S4", 
+            "country_code":"CA", 
+            "city":"Montreal", 
+            "address_lines": ["Rue Fake"]
         }
         recipient = {"postal_code":"89109", "city":"Las Vegas", "country_code":"US"}
         shipment = {"items": [{"id":"1", "height":3, "length":170, "width":3,"weight":4.0, "packaging_type": "Bag", "description":"TV"}]}
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
-        
+
         FreightRateRequest_ = proxy.mapper.create_quote_request(payload)
-        
         self.assertEqual(export(FreightRateRequest_), export(self.FreightRateRequest))
 
     @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
