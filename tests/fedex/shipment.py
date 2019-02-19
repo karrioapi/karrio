@@ -571,6 +571,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                 </ns:TotalWeight>
                 <ns:PreferredCurrency>USD</ns:PreferredCurrency>
                 <ns:Shipper>
+                    <ns:AccountNumber>2349857</ns:AccountNumber>
                     <ns:Contact>
                         <ns:PersonName>Input Your Information</ns:PersonName>
                         <ns:CompanyName>Input Your Information</ns:CompanyName>
@@ -656,89 +657,90 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
 """
 
 shipment_data = {
-    "shipper": {
-        "person_name": "Input Your Information",
-        "company_name": "Input Your Information",
-        "phone_number": "Input Your Information",
-        "email_address": "Input Your Information",
-        "address_lines": ["Input Your Information", "Input Your Information"],
-        "city": "MEMPHIS",
-        "state_code": "TN",
-        "postal_code": "38117",
-        "country_code": "US"
-    },
-    "recipient": {
-        "person_name": "Input Your Information",
-        "company_name": "Input Your Information",
-        "phone_number": "Input Your Information",
-        "email_address": "Input Your Information",
-        "address_lines": ["Input Your Information", "Input Your Information"],
-        "city": "RICHMOND",
-        "state_code": "BC",
-        "postal_code": "V7C4v7",
-        "country_code": "CA"
-    },
-    "shipment": {
-        "total_items": 1,
-        "paid_by": "THIRD_PARTY",
-        "packaging_type": "YOUR_PACKAGING",
-        "payment_account_number": "Input Your Information",
-        "duty_paid_by": "SENDER",
-        "declared_value": "100.",
-        "currency": "USD",
-        "weight_unit": "LB",
-        "dimension_unit": "IN",
-        "services": ["INTERNATIONAL_PRIORITY"],
-        "options": [{ "code": "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS" }],
-        "items": [
-            {
-                "id": "1",
-                "weight": 20.0,
-                "length": 12,
-                "width": 12,
-                "height": 12,
-                "quantity": 1,
-                "origin_country": "US",
-                "value_amount": 100.0,
-                "value_currency": "USD",
-                "extra": {
-                    "CustomerReferences": [
-                        {
-                            "CustomerReferenceType": "CUSTOMER_REFERENCE",
-                            "Value": "TC001_01_PT1_ST01_PK01_SNDUS_RCPCA_POS"
-                        }
-                    ]
-                }
-            }
-        ],
-        "label": {
-            "format": "COMMON2D",
-            "type": "PNG",
-            "extra": {
-                "LabelStockType": "PAPER_7X4.75"
-            }
-        },
-        "extra": {
-            "ServiceType": "INTERNATIONAL_PRIORITY",
-            "DropoffType": "REGULAR_PICKUP",
-            "Payor": {
-                "ResponsibleParty": {
-                    "person_name": "Input Your Information",
-                    "tax_id": "213456",
-                    "extra": {
-                        "ContactId": "12345",
-                        "TinType": "BUSINESS_STATE"
-                    }
-                }
-            },
-            "ExportDetail": {
-                "ExportComplianceStatement": "30.37(f)"
-            },
-            "SpecialServicesRequested": {
-                "InternationalTrafficInArmsRegulationsDetail": {
-                    "LicenseOrExemptionNumber": 12345
-                }
-            }
-        }
-    }
+   "shipper": {
+      "account_number": "2349857",
+      "person_name": "Input Your Information",
+      "company_name": "Input Your Information",
+      "phone_number": "Input Your Information",
+      "email_address": "Input Your Information",
+      "address_lines": ["Input Your Information", "Input Your Information"],
+      "city": "MEMPHIS",
+      "state_code": "TN",
+      "postal_code": "38117",
+      "country_code": "US"
+   },
+   "recipient": {
+      "person_name": "Input Your Information",
+      "company_name": "Input Your Information",
+      "phone_number": "Input Your Information",
+      "email_address": "Input Your Information",
+      "address_lines": ["Input Your Information", "Input Your Information"],
+      "city": "RICHMOND",
+      "state_code": "BC",
+      "postal_code": "V7C4v7",
+      "country_code": "CA"
+   },
+   "shipment": {
+      "total_items": 1,
+      "paid_by": "THIRD_PARTY",
+      "packaging_type": "YOUR_PACKAGING",
+      "payment_account_number": "Input Your Information",
+      "duty_paid_by": "SENDER",
+      "declared_value": "100.",
+      "currency": "USD",
+      "weight_unit": "LB",
+      "dimension_unit": "IN",
+      "services": ["INTERNATIONAL_PRIORITY"],
+      "options": [{ "code": "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS" }],
+      "items": [
+         {
+               "id": "1",
+               "weight": 20.0,
+               "length": 12,
+               "width": 12,
+               "height": 12,
+               "quantity": 1,
+               "origin_country": "US",
+               "value_amount": 100.0,
+               "value_currency": "USD",
+               "extra": {
+                  "CustomerReferences": [
+                     {
+                           "CustomerReferenceType": "CUSTOMER_REFERENCE",
+                           "Value": "TC001_01_PT1_ST01_PK01_SNDUS_RCPCA_POS"
+                     }
+                  ]
+               }
+         }
+      ],
+      "label": {
+         "format": "COMMON2D",
+         "type": "PNG",
+         "extra": {
+               "LabelStockType": "PAPER_7X4.75"
+         }
+      },
+      "extra": {
+         "ServiceType": "INTERNATIONAL_PRIORITY",
+         "DropoffType": "REGULAR_PICKUP",
+         "Payor": {
+               "ResponsibleParty": {
+                  "person_name": "Input Your Information",
+                  "tax_id": "213456",
+                  "extra": {
+                     "ContactId": "12345",
+                     "TinType": "BUSINESS_STATE"
+                  }
+               }
+         },
+         "ExportDetail": {
+               "ExportComplianceStatement": "30.37(f)"
+         },
+         "SpecialServicesRequested": {
+               "InternationalTrafficInArmsRegulationsDetail": {
+                  "LicenseOrExemptionNumber": 12345
+               }
+         }
+      }
+   }
 }

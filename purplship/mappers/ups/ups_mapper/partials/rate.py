@@ -172,8 +172,7 @@ class UPSMapperPartial(UPSMapperBase):
                         AddressLine=payload.shipper.address_lines,
                     ),
                     ShipperNumber=payload.shipper.account_number
-                    or payload.shipment.payment_account_number
-                    or self.client.account_number,
+                    or payload.shipment.payment_account_number,
                 ),
                 ShipmentBillingOption=Rate.RateCodeDescriptionType(Code=10),
             ),

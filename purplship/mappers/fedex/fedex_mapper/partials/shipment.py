@@ -1,4 +1,5 @@
 from pyfedex.ship_service_v21 import (
+    ClientDetail,
     CompletedShipmentDetail,
     ShipmentRateDetail,
     CompletedPackageDetail,
@@ -124,7 +125,10 @@ class FedexMapperPartial(FedexMapperBase):
         ]
         return ProcessShipmentRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
-            ClientDetail=self.clientDetail,
+            ClientDetail=ClientDetail(
+                AccountNumber=payload.shipper.account_number, 
+                MeterNumber=self.client.meter_number
+            ),
             TransactionDetail=TransactionDetail(CustomerTransactionId="IE_v18_Ship"),
             Version=VersionId(ServiceId="ship", Major=21, Intermediate=0, Minor=0),
             RequestedShipment=RequestedShipment(
