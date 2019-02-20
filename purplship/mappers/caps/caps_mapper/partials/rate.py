@@ -83,7 +83,10 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             contract_id=payload.shipment.extra.get("contract-id"),
             promo_code=payload.shipment.extra.get("promo-code"),
             quote_type=payload.shipment.extra.get("quote-type"),
-            expected_mailing_date=payload.shipment.extra.get("expected-mailing-date"),
+            expected_mailing_date=(
+                payload.shipment.extra.get("expected-mailing-date") or 
+                datetime.today().strftime('%Y-%m-%d')
+            ),
             options=optionsType(
                 option=[
                     optionType(

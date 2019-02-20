@@ -14,6 +14,7 @@ setup(name='purplship',
       license='LGPL',
       packages=find_packages(".", exclude=["tests"]),
       install_requires=[
+            'attrs==18.2.0',
             'py-fedex==1.1',
             'py-dhl==1.2',
             'py-soap==1.1',

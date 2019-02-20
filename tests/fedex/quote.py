@@ -15,104 +15,91 @@ class TestFeDexQuote(unittest.TestCase):
         self.RateRequest.build(req_xml)
 
     def test_create_quote_request(self):
-        shipper = {"postal_code": "H3N1S4", "country_code": "CA", "account_number": "2349857"}
+        shipper = {
+            "postal_code": "H3N1S4",
+            "country_code": "CA",
+            "account_number": "2349857",
+        }
         recipient = {"city": "Lome", "country_code": "TG"}
         shipment = {
             "currency": "USD",
             "payment_account_number": "2349857",
-            "items": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}]
+            "items": [
+                {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
+            ],
         }
-        payload = Quote.create(
-            shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
 
         RateRequest_ = proxy.mapper.create_quote_request(payload)
         # Remove timeStamp for testing
         RateRequest_.RequestedShipment.ShipTimestamp = None
         self.assertEqual(export(RateRequest_), export(self.RateRequest))
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.RateRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
 
     def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteResponseXml))
+        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteResponseXml))
 
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteResponse))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteResponse))
 
     def test_parse_quote_error_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteErrorResponseXml))
+            to_xml(QuoteErrorResponseXml)
+        )
 
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteErrorResponse))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteErrorResponse))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 ParsedQuoteResponse = [
     [
         {
-            'base_charge': 230.49,
-            'carrier': 'carrier_name',
-            'currency': 'USD',
-            'delivery_date': None,
-            'discount': 0.0,
-            'duties_and_taxes': 0.0,
-            'extra_charges': [
-                {
-                    'name': 'FUEL',
-                    'amount': 9.22,
-                    'currency': None
-                }
-            ],
-            'pickup_date': None,
-            'pickup_time': None,
-            'service_name': 'INTERNATIONAL_PRIORITY',
-            'service_type': 'PAYOR_ACCOUNT_SHIPMENT',
-            'total_charge': 239.71
+            "base_charge": 230.49,
+            "carrier": "carrier_name",
+            "currency": "USD",
+            "delivery_date": None,
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [{"amount": 9.22, "currency": None, "name": "FUEL"}],
+            "service_name": "INTERNATIONAL_PRIORITY",
+            "service_type": "PAYOR_ACCOUNT_SHIPMENT",
+            "total_charge": 239.71,
         },
         {
-            'base_charge': 207.47,
-            'carrier': 'carrier_name',
-            'currency': 'USD',
-            'delivery_date': None,
-            'discount': 0.0,
-            'duties_and_taxes': 0.0,
-            'extra_charges': [
-                {
-                    'name': 'FUEL',
-                    'amount': 8.3,
-                    'currency': None
-                }
-            ],
-            'pickup_date': None,
-            'pickup_time': None,
-            'service_name': 'INTERNATIONAL_ECONOMY',
-            'service_type': 'PAYOR_ACCOUNT_SHIPMENT',
-            'total_charge': 215.77
-        }
+            "base_charge": 207.47,
+            "carrier": "carrier_name",
+            "currency": "USD",
+            "delivery_date": None,
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [{"amount": 8.3, "currency": None, "name": "FUEL"}],
+            "service_name": "INTERNATIONAL_ECONOMY",
+            "service_type": "PAYOR_ACCOUNT_SHIPMENT",
+            "total_charge": 215.77,
+        },
     ],
-    []
+    [],
 ]
 
 ParsedQuoteErrorResponse = [
     [],
     [
         {
-            'carrier': 'carrier_name',
-            'code': '873',
-            'message': 'All specified account numbers must match.  '
+            "carrier": "carrier_name",
+            "code": "873",
+            "message": "All specified account numbers must match.  ",
         }
-    ]
+    ],
 ]
 
-QuoteErrorResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+QuoteErrorResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header/>
     <SOAP-ENV:Body>
         <RateReply xmlns="http://fedex.com/ws/rate/v22">
@@ -136,9 +123,9 @@ QuoteErrorResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xml
         </RateReply>
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-'''
+"""
 
-QuoteRequestXml = f'''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://fedex.com/ws/rate/v22">
+QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://fedex.com/ws/rate/v22">
     <tns:Body>
         <ns:RateRequest>
             <ns:WebAuthenticationDetail>
@@ -208,9 +195,9 @@ QuoteRequestXml = f'''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/e
         </ns:RateRequest>
     </tns:Body>
 </tns:Envelope>
-'''
+"""
 
-QuoteResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+QuoteResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header/>
     <SOAP-ENV:Body>
         <RateReply xmlns="http://fedex.com/ws/rate/v22">
@@ -573,4 +560,4 @@ QuoteResponseXml = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.
             </RateReplyDetails>
         </RateReply>
     </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>'''
+</SOAP-ENV:Envelope>"""

@@ -17,11 +17,11 @@ class TestCanadaPostTracking(unittest.TestCase):
 
         self.assertEqual(tracking_pins, self.tracking_numbers)
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
     def test_get_trackings(self, http_mock):
         proxy.get_trackings(self.tracking_numbers)
 
-        reqUrl = http_mock.call_args[1]['url']
+        reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(reqUrl, TrackingRequestURL)
 
     def test_tracking_auth_error_parsing(self):
@@ -30,59 +30,51 @@ class TestCanadaPostTracking(unittest.TestCase):
 
     def test_parse_tracking_response(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingResponseXml))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedTrackingResponse))
+            to_xml(TrackingResponseXml)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(UnknownTrackingNumberResponse))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedUnknownTrackingNumberResponse))
+            to_xml(UnknownTrackingNumberResponse)
+        )
+        self.assertEqual(
+            jsonify(parsed_response), jsonify(ParsedUnknownTrackingNumberResponse)
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 
 ParsedAuthError = [
-  {
-    'carrier': 'CanadaPost', 
-    'code': 'E002', 
-    'message': 'AAA Authentication Failure'
-  }
+    {"carrier": "CanadaPost", "code": "E002", "message": "AAA Authentication Failure"}
 ]
 
 ParsedTrackingResponse = [
-  [
-    {
-      'carrier': 'CanadaPost', 
-      'events': [
+    [
         {
-          'code': 'INDUCTION', 
-          'date': '20110404:133457', 
-          'description': 'Order information received by Canada Post', 
-          'location': '', 
-          'signatory': '', 
-          'time': None
+            "carrier": "CanadaPost",
+            "events": [
+                {
+                    "code": "INDUCTION",
+                    "date": "20110404:133457",
+                    "description": "Order information received by Canada Post",
+                    "location": "",
+                    "signatory": "",
+                    "time": None,
+                }
+            ],
+            "shipment_date": "2011-04-04",
+            "tracking_number": "7023210039414604",
         }
-      ], 
-      'shipment_date': '2011-04-04', 
-      'tracking_number': '7023210039414604'
-    }
-  ], 
-  []
+    ],
+    [],
 ]
 
 ParsedUnknownTrackingNumberResponse = [
-  [], 
-  [
-    {
-      'carrier': 'CanadaPost', 
-      'code': '004', 
-      'message': 'No Pin History'
-    }
-  ]
+    [],
+    [{"carrier": "CanadaPost", "code": "004", "message": "No Pin History"}],
 ]
 
 
@@ -96,7 +88,9 @@ AuthError = """<wrapper>
 </wrapper>
 """
 
-TrackingRequestURL = """https://ct.soa-gw.canadapost.ca/vis/track/pin/1Z12345E6205277936/summary"""
+TrackingRequestURL = (
+    """https://ct.soa-gw.canadapost.ca/vis/track/pin/1Z12345E6205277936/summary"""
+)
 
 TrackingResponseXml = """<wrapper>
     <tracking-summary>

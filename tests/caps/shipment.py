@@ -24,6 +24,7 @@ MockedShipmentResponseXML = """<shipment-info>
 </shipment-info>
 """
 
+
 class TestShipment(unittest.TestCase):
     def setUp(self):
         self.Shipment = ShipmentType()
@@ -44,111 +45,119 @@ class TestShipment(unittest.TestCase):
         NCShipment_.delivery_spec.parcel_characteristics.document = None
         self.assertEqual(export(NCShipment_), export(self.NCShipment))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         proxy.create_shipment(self.Shipment)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(ShipmentRequestXML))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
     def test_create_ncshipment(self, http_mock):
         proxy.create_shipment(self.NCShipment)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(NCShipmentRequestXML))
 
     def test_parse_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(ShipmentResponseXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedShipmentResponse))
+            to_xml(ShipmentResponseXML)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentResponse))
 
     def test_parse_ncshipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(NCShipmentResponseXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(NCParsedShipmentResponse))
+            to_xml(NCShipmentResponseXML)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(NCParsedShipmentResponse))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value=MockedShipmentResponseXML)
+    @patch(
+        "purplship.mappers.caps.caps_proxy.http", return_value=MockedShipmentResponseXML
+    )
     def test_get_info_calls(self, http_mock):
-        with patch.object(CanadaPostProxy, '_get_info', return_value='<a></a>') as get_info_mock:
+        with patch.object(
+            CanadaPostProxy, "_get_info", return_value="<a></a>"
+        ) as get_info_mock:
             proxy_ = CanadaPostProxy(proxy.client)
             proxy_.create_shipment(self.NCShipment)
 
             link = xml_tostring(get_info_mock.call_args[0][0])
-            self.assertEqual(
-                strip(link), 
-                strip(ShipmentPriceLinkXML)
-            )
+            self.assertEqual(strip(link), strip(ShipmentPriceLinkXML))
 
-
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
     def test_get_info(self, http_mock):
         proxy._get_info(to_xml(ShipmentPriceLinkXML))
-        
-        args = http_mock.call_args[1]
-        self.assertEqual(
-            jsonify(args), 
-            GetInfoRequestArgs
-        )
 
-if __name__ == '__main__':
+        args = http_mock.call_args[1]
+        self.assertEqual(jsonify(args), GetInfoRequestArgs)
+
+
+if __name__ == "__main__":
     unittest.main()
 
 
 NCParsedShipmentResponse = [
     {
-        'carrier': 'CanadaPost', 
-        'charges': [
-            {'amount': '18.10', 'currency': 'CAD', 'name': 'base-amount'}, 
-            {'amount': '0.00', 'currency': 'CAD', 'name': 'gst-amount'}, 
-            {'amount': '0.00', 'currency': 'CAD', 'name': 'pst-amount'}, 
-            {'amount': '2.53', 'currency': 'CAD', 'name': 'hst-amount'}, 
-            {'amount': '1.36', 'currency': 'CAD', 'name': 'FUELSC'}, 
-            {'amount': '0', 'currency': 'CAD', 'name': 'DC'}
-        ], 
-        'documents': ['https://ct.soa-gw.canadapost.ca/rs/artifact/76108cb5192002d5/10238/0'], 
-        'reference': {'type': 'Shipment Id', 'value': '406951321983787352'}, 
-        'services': ['DOM.EP', 'DC'], 
-        'shipment_date': '2012-03-14', 
-        'total_charge': {'amount': '21.99', 'currency': 'CAD', 'name': 'Shipment charge'}, 
-        'tracking_numbers': ['12345678901234']
-    }, 
-    []
+        "carrier": "CanadaPost",
+        "charges": [
+            {"amount": "18.10", "currency": "CAD", "name": "base-amount"},
+            {"amount": "0.00", "currency": "CAD", "name": "gst-amount"},
+            {"amount": "0.00", "currency": "CAD", "name": "pst-amount"},
+            {"amount": "2.53", "currency": "CAD", "name": "hst-amount"},
+            {"amount": "1.36", "currency": "CAD", "name": "FUELSC"},
+            {"amount": "0", "currency": "CAD", "name": "DC"},
+        ],
+        "documents": [
+            "https://ct.soa-gw.canadapost.ca/rs/artifact/76108cb5192002d5/10238/0"
+        ],
+        "reference": {"type": "Shipment Id", "value": "406951321983787352"},
+        "services": ["DOM.EP", "DC"],
+        "shipment_date": "2012-03-14",
+        "total_charge": {
+            "amount": "21.99",
+            "currency": "CAD",
+            "name": "Shipment charge",
+        },
+        "tracking_numbers": ["12345678901234"],
+    },
+    [],
 ]
 
 ParsedShipmentResponse = [
     {
-        'carrier': 'CanadaPost', 
-        'charges': [
-            {'amount': '9.19', 'currency': 'CAD', 'name': 'base-amount'}, 
-            {'amount': '0.00', 'currency': 'CAD', 'name': 'gst-amount'}, 
-            {'amount': '0', 'currency': 'CAD', 'name': 'pst-amount'}, 
-            {'amount': '2.29', 'currency': 'CAD', 'name': 'hst-amount'}, 
-            {'amount': '0.00', 'currency': 'CAD', 'name': 'AUTDISC'}, 
-            {'amount': '0.90', 'currency': 'CAD', 'name': 'FUELSC'}, 
-            {'amount': '0', 'currency': 'CAD', 'name': 'DC'}, 
-            {'amount': '7.50', 'currency': 'CAD', 'name': 'UP'}
-        ], 
-        'documents': ['https://XX/rs/artifact/11111111/5555555/0'], 
-        'reference': {'type': 'Shipment Id', 'value': '347881315405043891'}, 
-        'services': ['DOM.EP', 'DC', 'UP'], 
-        'shipment_date': '2011-10-07', 
-        'total_charge': {'amount': '19.88', 'currency': 'CAD', 'name': 'Shipment charge'}, 
-        'tracking_numbers': ['12345']
-    }, 
-    []
+        "carrier": "CanadaPost",
+        "charges": [
+            {"amount": "9.19", "currency": "CAD", "name": "base-amount"},
+            {"amount": "0.00", "currency": "CAD", "name": "gst-amount"},
+            {"amount": "0", "currency": "CAD", "name": "pst-amount"},
+            {"amount": "2.29", "currency": "CAD", "name": "hst-amount"},
+            {"amount": "0.00", "currency": "CAD", "name": "AUTDISC"},
+            {"amount": "0.90", "currency": "CAD", "name": "FUELSC"},
+            {"amount": "0", "currency": "CAD", "name": "DC"},
+            {"amount": "7.50", "currency": "CAD", "name": "UP"},
+        ],
+        "documents": ["https://XX/rs/artifact/11111111/5555555/0"],
+        "reference": {"type": "Shipment Id", "value": "347881315405043891"},
+        "services": ["DOM.EP", "DC", "UP"],
+        "shipment_date": "2011-10-07",
+        "total_charge": {
+            "amount": "19.88",
+            "currency": "CAD",
+            "name": "Shipment charge",
+        },
+        "tracking_numbers": ["12345"],
+    },
+    [],
 ]
 
-GetInfoRequestArgs =  {
-    'url': 'https://XX/rs/111111111/2222222222/shipment/347881315405043891/price', 
-    'headers': {
-        'Accept': 'application/vnd.cpc.shipment-v8+xml', 
-        'Authorization': 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=', 
-        'Accept-language': 'en-CA'
-    }, 
-    'method': 'GET'
+GetInfoRequestArgs = {
+    "url": "https://XX/rs/111111111/2222222222/shipment/347881315405043891/price",
+    "headers": {
+        "Accept": "application/vnd.cpc.shipment-v8+xml",
+        "Authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+        "Accept-language": "en-CA",
+    },
+    "method": "GET",
 }
 
 
@@ -393,36 +402,36 @@ shipment_data = {
         "postal_code": "K1K4T3",
         "country_code": "CA",
         "person_name": "Jain",
-        "state_code": "ON"
+        "state_code": "ON",
     },
     "shipment": {
         "items": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
         "label": {"format": "8.5x11"},
         "services": ["Expedited_Parcel"],
-        "dimension_unit": "CM", 
+        "dimension_unit": "CM",
         "weight_unit": "KG",
-        "options": [ { "code": "Collect_on_delivery" } ],
+        "options": [{"code": "Collect_on_delivery"}],
         "extra": {
             "cpc-pickup-indicator": True,
-            "requested-shipping-point": "K2B8J6", 
+            "requested-shipping-point": "K2B8J6",
             "mailing-tube": False,
             "notification": {
                 "email": "john.doe@yahoo.com",
                 "on-shipment": True,
                 "on-exception": False,
-                "on-delivery": True
+                "on-delivery": True,
             },
             "preferences": {
                 "show-packing-instructions": True,
                 "show-postage-rate": False,
-                "show-insured-value": True
+                "show-insured-value": True,
             },
             "settlement-info": {
                 "contract-id": "0040662505",
-                "intended-method-of-payment": "Account"
-            }
-        }
-    }
+                "intended-method-of-payment": "Account",
+            },
+        },
+    },
 }
 
 ncshipment_data = {
@@ -433,7 +442,7 @@ ncshipment_data = {
         "postal_code": "K1A0B1",
         "phone_number": "555-555-5555",
         "account_number": "123456789",
-        "state_code": "ON"
+        "state_code": "ON",
     },
     "recipient": {
         "company_name": "Consumer",
@@ -442,19 +451,17 @@ ncshipment_data = {
         "postal_code": "K1A0B1",
         "country_code": "CA",
         "person_name": "John Doe",
-        "state_code": "ON"
+        "state_code": "ON",
     },
     "shipment": {
         "items": [{"height": 1, "length": 1, "width": 1, "weight": 15.0}],
-        "dimension_unit": "CM", 
+        "dimension_unit": "CM",
         "weight_unit": "KG",
         "services": ["Expedited_Parcel"],
-        "options": [{ "code": "Collect_on_delivery" }],
+        "options": [{"code": "Collect_on_delivery"}],
         "extra": {
-            "requested-shipping-point": "J8R1A2", 
-            "preferences": {
-                "show-packing-instructions": True
-            }
-        }
-    }
+            "requested-shipping-point": "J8R1A2",
+            "preferences": {"show-packing-instructions": True},
+        },
+    },
 }

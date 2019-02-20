@@ -12,21 +12,21 @@ class TestPickup(unittest.TestCase):
         self.PickupRequest = PickupRequestDetailsType()
         self.PickupRequest.build(to_xml(PickupRequestXml))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
     def test_request_pickup(self, http_mock):
         proxy.request_pickup(self.PickupRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(PickupRequestXml))
 
-    @patch.object(proxy, 'request_pickup')
+    @patch.object(proxy, "request_pickup")
     def test_modify_pickup(self, proxy_mock):
         proxy.modify_pickup(self.PickupRequest)
 
         proxy_mock.assert_called()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 PickupRequestXml = """<pickup-request-details xmlns="http://www.canadapost.ca/ws/pickuprequest">

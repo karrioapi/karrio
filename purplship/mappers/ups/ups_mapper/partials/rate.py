@@ -1,4 +1,3 @@
-import time
 from lxml import etree
 from pyups import freight_rate as Rate, package_rate as PRate, common as Common
 from .interface import reduce, Tuple, List, T, UPSMapperBase
@@ -94,6 +93,12 @@ class UPSMapperPartial(UPSMapperBase):
 
         extra_charges = itemized_charges + [rate.ServiceOptionsCharges]
 
+        arrival = PRate.PickupType()
+        [
+            arrival.build(arrival) for arrival in
+            detailNode.xpath(".//*[local-name() = $name]", name="Arrival")
+        ]
+
         return rates + [
             T.QuoteDetails(
                 carrier=self.client.carrier_name,
@@ -120,6 +125,7 @@ class UPSMapperPartial(UPSMapperBase):
                     [charge for charge in extra_charges if charge != None],
                     [],
                 ),
+                delivery_date=str(arrival.Date)
             )
         ]
 

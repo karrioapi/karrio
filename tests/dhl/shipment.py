@@ -22,78 +22,89 @@ class TestDHLShipment(unittest.TestCase):
         ShipmentRequest_.ShipmentDetails.Date = None
         self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         proxy.create_shipment(self.ShipmentRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml))
-                
+
     def test_parse_shipment_error(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(ShipmentParsingError))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedShipmentParsingError))
+            to_xml(ShipmentParsingError)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentParsingError))
 
     def test_shipment_missing_args_error_parsing(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(ShipmentMissingArgsError))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedShipmentMissingArgsError))
+            to_xml(ShipmentMissingArgsError)
+        )
+        self.assertEqual(
+            jsonify(parsed_response), jsonify(ParsedShipmentMissingArgsError)
+        )
 
     def test_parse_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(ShipmentResponseXml))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedShipmentResponse))
+            to_xml(ShipmentResponseXml)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentResponse))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 ParsedShipmentMissingArgsError = [
     None,
     [
         {
-            'carrier': 'carrier_name',
-            'code': '152',
-            'message': 'Shipment Details segment Contents\n                    Conditional Required Error'
+            "carrier": "carrier_name",
+            "code": "152",
+            "message": "Shipment Details segment Contents\n                    Conditional Required Error",
         }
-    ]
+    ],
 ]
 
 ParsedShipmentParsingError = [
-    None, 
+    None,
     [
         {
-            'carrier': 'carrier_name', 
-            'code': 'PLT006', 
-            'message': "Paperless shipment service is not allowed\n                    for one of these reasons: Shipper or receiver\n                    country doesn't support Paperless Service, the\n                    product selected doesn't support Paperless or\n                    the declared value entered is greater than the\n                    allowed limit. Please contact DHL representative for\n                    further information or resubmit as regular shipment."
+            "carrier": "carrier_name",
+            "code": "PLT006",
+            "message": "Paperless shipment service is not allowed\n                    for one of these reasons: Shipper or receiver\n                    country doesn't support Paperless Service, the\n                    product selected doesn't support Paperless or\n                    the declared value entered is greater than the\n                    allowed limit. Please contact DHL representative for\n                    further information or resubmit as regular shipment.",
         }
-    ]
+    ],
 ]
 
-ParsedShipmentResponse =  [
+ParsedShipmentResponse = [
     {
-        'carrier': 'carrier_name', 
-        'charges': [
-            {'amount': 124.69, 'currency': 'USD', 'name': 'PackageCharge'}
-        ], 
-        'documents': [
-            'iVBORw0KGgoAAAANSUhEUgAAAYwAAABeAQMAAAAKdrGZAAAABlBMVEX///8AAABVwtN+AAAAaklEQVR42mNkYGBIyL8w5a9P7YJXKU8ZgkU2V81cNmWt5IIokaMMX40+N6zsivI+93bZRDMx13vzlRYwMDAxkAxGtYxqGdUyqmVUy6iWUS2jWka1jGoZ1TKqZVTLqJZRLaNaRrWMaiEVAAB3uBe8nSip8QAAAABJRU5ErkJggg==', 
-            'iVBORw0KGgoAAAANSUhEUgAAAZYAAABeAQMAAAA6+qC4AAAABlBMVEX///8AAABVwtN+AAAAZ0lEQVR42u3LIRJAUBRA0Ufwk6IY0eqMLBnBS/yi6Gb8XdiBPRBoZE1iDZpwTz+eiJRhNey2qNNZjUZnMMaLmzVR6W5TNfGaNe46Wp3kybfeivjyHYfD4XA4HA6Hw+FwOBwOh/On8wLTGBe8mbtkhgAAAABJRU5ErkJggg==', 
-            'iVBORw0KGgoAAAANSUhEUgAAAYwAAABeAQMAAAAKdrGZAAAABlBMVEX///8AAABVwtN+AAAAaklEQVR42mNkYGBIyL8w5a9P7YJXKU8ZgkU2V81cNmWt5IIokaMMX40+N6zsivI+93bZRDMx13vzlRYwMDAxkAxGtYxqGdUyqmVUy6iWUS2jWka1jGoZ1TKqZVTLqJZRLaNaRrWMaiEVAAB3uBe8nSip8QAAAABJRU5ErkJggg==', 
-            'iVBORw0KGgoAAAANSUhEUgAAATUAAABeAQMAAAB4lRFqAAAABlBMVEX///8AAABVwtN+AAAAVklEQVR42mNkYGBIyL8whdvO9d6UK0e/3puyeZrrvfkaYnOvlzGm6v4Sjsq/MPECAwMTA3FgVN2oulF1o+pG1Y2qG1U3qm5U3ai6UXWj6kbVjaqjhjoAdiwSvEkaxBcAAAAASUVORK5CYII=', 
-            'iVBORw0KGgoAAAANSUhEUgAAARgAAAAkAQMAAABoj7etAAAABlBMVEX///8AAABVwtN+AAAAPElEQVR42mNkYGBIyL8wZcutGwyvUp4yBMtriM295XDlxCm29MRU31ufpRgYmBgIg1E1o2pG1YyqGepqAKFJD0hDGoJfAAAAAElFTkSuQmCC', 
-            'iVBORw0KGgoAAAANSUhEUgAAAawAAABeAQMAAABFK7JJAAAABlBMVEX///8AAABVwtN+AAAAaUlEQVR42u3LoRVAUACG0Z/gKLKjOK+YhRlMIOko7xUDSBqSUQyhaFYgsYMkfLdfT1ITdUdcL+PtNpuEqYrJJjZ3g06XXZ7Rs1cKZil2TV+ubW4kX5/QaDQajUaj0Wg0Go1Go9FotH+3F1GxE7xDV+SvAAAAAElFTkSuQmCC'
-        ], 
-        'reference': {'type': 'St', 'value': 'reference'}, 
-        'services': ['EXPRESS WORLDWIDE', 'DUTIES & TAXES PAID ', 'PAPERLESS TRADE ', 'C', 'DTP', 'PLT'], 
-        'shipment_date': '2017-11-10', 
-        'total_charge': {'amount': '155.160', 'currency': 'USD', 'name': 'Shipment charge'}, 
-        'tracking_numbers': ['0044650491']
-    }, 
-    []
+        "carrier": "carrier_name",
+        "charges": [{"amount": 124.69, "currency": "USD", "name": "PackageCharge"}],
+        "documents": [
+            "iVBORw0KGgoAAAANSUhEUgAAAYwAAABeAQMAAAAKdrGZAAAABlBMVEX///8AAABVwtN+AAAAaklEQVR42mNkYGBIyL8w5a9P7YJXKU8ZgkU2V81cNmWt5IIokaMMX40+N6zsivI+93bZRDMx13vzlRYwMDAxkAxGtYxqGdUyqmVUy6iWUS2jWka1jGoZ1TKqZVTLqJZRLaNaRrWMaiEVAAB3uBe8nSip8QAAAABJRU5ErkJggg==",
+            "iVBORw0KGgoAAAANSUhEUgAAAZYAAABeAQMAAAA6+qC4AAAABlBMVEX///8AAABVwtN+AAAAZ0lEQVR42u3LIRJAUBRA0Ufwk6IY0eqMLBnBS/yi6Gb8XdiBPRBoZE1iDZpwTz+eiJRhNey2qNNZjUZnMMaLmzVR6W5TNfGaNe46Wp3kybfeivjyHYfD4XA4HA6Hw+FwOBwOh/On8wLTGBe8mbtkhgAAAABJRU5ErkJggg==",
+            "iVBORw0KGgoAAAANSUhEUgAAAYwAAABeAQMAAAAKdrGZAAAABlBMVEX///8AAABVwtN+AAAAaklEQVR42mNkYGBIyL8w5a9P7YJXKU8ZgkU2V81cNmWt5IIokaMMX40+N6zsivI+93bZRDMx13vzlRYwMDAxkAxGtYxqGdUyqmVUy6iWUS2jWka1jGoZ1TKqZVTLqJZRLaNaRrWMaiEVAAB3uBe8nSip8QAAAABJRU5ErkJggg==",
+            "iVBORw0KGgoAAAANSUhEUgAAATUAAABeAQMAAAB4lRFqAAAABlBMVEX///8AAABVwtN+AAAAVklEQVR42mNkYGBIyL8whdvO9d6UK0e/3puyeZrrvfkaYnOvlzGm6v4Sjsq/MPECAwMTA3FgVN2oulF1o+pG1Y2qG1U3qm5U3ai6UXWj6kbVjaqjhjoAdiwSvEkaxBcAAAAASUVORK5CYII=",
+            "iVBORw0KGgoAAAANSUhEUgAAARgAAAAkAQMAAABoj7etAAAABlBMVEX///8AAABVwtN+AAAAPElEQVR42mNkYGBIyL8wZcutGwyvUp4yBMtriM295XDlxCm29MRU31ufpRgYmBgIg1E1o2pG1YyqGepqAKFJD0hDGoJfAAAAAElFTkSuQmCC",
+            "iVBORw0KGgoAAAANSUhEUgAAAawAAABeAQMAAABFK7JJAAAABlBMVEX///8AAABVwtN+AAAAaUlEQVR42u3LoRVAUACG0Z/gKLKjOK+YhRlMIOko7xUDSBqSUQyhaFYgsYMkfLdfT1ITdUdcL+PtNpuEqYrJJjZ3g06XXZ7Rs1cKZil2TV+ubW4kX5/QaDQajUaj0Wg0Go1Go9FotH+3F1GxE7xDV+SvAAAAAElFTkSuQmCC",
+        ],
+        "reference": {"type": "St", "value": "reference"},
+        "services": [
+            "EXPRESS WORLDWIDE",
+            "DUTIES & TAXES PAID ",
+            "PAPERLESS TRADE ",
+            "C",
+            "DTP",
+            "PLT",
+        ],
+        "shipment_date": "2017-11-10",
+        "total_charge": {
+            "amount": "155.160",
+            "currency": "USD",
+            "name": "Shipment charge",
+        },
+        "tracking_numbers": ["0044650491"],
+    },
+    [],
 ]
 
 
@@ -439,8 +450,8 @@ shipment_data = {
             "RegisteredAccount": "123456789",
             "PhoneExtension": "3403",
             "FaxNumber": "1 905 8613411",
-            "Telex": "1245"
-        }
+            "Telex": "1245",
+        },
     },
     "recipient": {
         "company_name": "IBM Bruse Pte Ltd",
@@ -455,12 +466,21 @@ shipment_data = {
         "extra": {
             "PhoneExtension": "7862",
             "FaxNumber": "506-851-7403",
-            "Telex": "506-851-7121"
-        }
+            "Telex": "506-851-7121",
+        },
     },
     "shipment": {
         "items": [
-            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0, "packaging_type": "DHL_Express_Envelope", "code": "cc", "description": "cn"}
+            {
+                "id": "1",
+                "height": 3,
+                "length": 10,
+                "width": 3,
+                "weight": 4.0,
+                "packaging_type": "DHL_Express_Envelope",
+                "code": "cc",
+                "description": "cn",
+            }
         ],
         "is_document": False,
         "paid_by": "SENDER",
@@ -468,19 +488,16 @@ shipment_data = {
         "duty_paid_by": "SENDER",
         "duty_payment_account": "123456789",
         "declared_value": 200.00,
-        "options": [{ "code": "Paperless_Trade" }],
+        "options": [{"code": "Paperless_Trade"}],
         "services": ["EXPRESS_WORLDWIDE"],
         "doc_images": [
             {
-                "type": "CIN", 
-                "format": "PDF", 
-                "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
+                "type": "CIN",
+                "format": "PDF",
+                "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
             }
         ],
-        "extra": {
-            "EProcShip": "N",
-            "RegionCode": "AM"
-        },
+        "extra": {"EProcShip": "N", "RegionCode": "AM"},
         "customs": {
             "terms_of_trade": "DAP",
             "extra": {
@@ -489,8 +506,8 @@ shipment_data = {
                 "ShipperEIN": "112233445566",
                 "ShipperIDType": "S",
                 "ImportLicense": "ImportLic",
-                "ConsigneeEIN": "ConEIN2123"
-            }
-        }
-    }
+                "ConsigneeEIN": "ConEIN2123",
+            },
+        },
+    },
 }

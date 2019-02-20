@@ -20,43 +20,41 @@ class TestFeDexTracking(unittest.TestCase):
 
         self.assertEqual(export(TrackRequest_), export(self.TrackRequest))
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_get_trackings(self, http_mock):
         proxy.get_trackings(self.TrackRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXML))
 
     def test_parse_tracking_response(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingResponseXML))
+            to_xml(TrackingResponseXML)
+        )
 
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedTrackingResponse))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
 
     def test_tracking_auth_error_parsing(self):
         parsed_response = proxy.mapper.parse_error_response(
-            to_xml(TrackingAuthErrorXML))
+            to_xml(TrackingAuthErrorXML)
+        )
 
         self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
 
     def test_parse_error_tracking_response(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingErrorResponseXML))
+            to_xml(TrackingErrorResponseXML)
+        )
 
         self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponseError))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 
 ParsedAuthError = [
-    {
-        "carrier": "carrier_name",
-        "code": "1000",
-        "message": "Authentication Failed"
-    }
+    {"carrier": "carrier_name", "code": "1000", "message": "Authentication Failed"}
 ]
 
 ParsedTrackingResponse = [
@@ -70,29 +68,29 @@ ParsedTrackingResponse = [
                     "description": "Shipment information sent to FedEx",
                     "location": "CUSTOMER",
                     "signatory": None,
-                    "time": None
+                    "time": None,
                 }
             ],
             "shipment_date": "2016-11-17 00:00:00",
-            "tracking_number": "794887075005"
+            "tracking_number": "794887075005",
         }
     ],
-    []
+    [],
 ]
 
 ParsedTrackingResponseError = [
     [],
     [
         {
-            'carrier': 'carrier_name',
-            'code': '6035',
-            'message': 'Invalid tracking numbers.   Please check the following numbers '
-               'and resubmit.'
+            "carrier": "carrier_name",
+            "code": "6035",
+            "message": "Invalid tracking numbers.   Please check the following numbers "
+            "and resubmit.",
         }
-    ]
+    ],
 ]
 
-TrackingErrorResponseXML = '''<?xml version="1.0" encoding="UTF-8"?>
+TrackingErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Header />
    <SOAP-ENV:Body>
@@ -168,9 +166,9 @@ TrackingErrorResponseXML = '''<?xml version="1.0" encoding="UTF-8"?>
       </TrackReply>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-'''
+"""
 
-TrackingAuthErrorXML = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+TrackingAuthErrorXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header/>
     <SOAP-ENV:Body>
         <v14:TrackReply xmlns:v14="http://fedex.com/ws/track/v14">
@@ -197,9 +195,9 @@ TrackingAuthErrorXML = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmls
         </v14:TrackReply>
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-'''
+"""
 
-TrackingRequestXML = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14">
+TrackingRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14">
     <tns:Body>
         <ns:TrackRequest>
             <ns:WebAuthenticationDetail>
@@ -234,9 +232,9 @@ TrackingRequestXML = '''<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
         </ns:TrackRequest>
     </tns:Body>
 </tns:Envelope>
-'''
+"""
 
-TrackingResponseXML = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+TrackingResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Header/>
    <SOAP-ENV:Body>
       <TrackReply xmlns="http://fedex.com/ws/track/v14">
@@ -404,4 +402,4 @@ TrackingResponseXML = '''<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlso
       </TrackReply>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-'''
+"""
