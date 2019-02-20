@@ -48,8 +48,6 @@ class DHLMapperPartial(DHLMapperBase):
                 carrier=self.client.carrier_name,
                 currency=qtdshp.CurrencyCode,
                 delivery_date=str(qtdshp.DeliveryDate[0].DlvyDateTime),
-                pickup_date=str(qtdshp.PickupDate),
-                pickup_time=str(qtdshp.PickupCutoffTime),
                 service_name=qtdshp.LocalProductName,
                 service_type=qtdshp.NetworkTypeCode,
                 base_charge=float(qtdshp.WeightCharge or 0),

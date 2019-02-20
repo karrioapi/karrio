@@ -12,10 +12,14 @@ from tests.utils import strip, get_node_from_xml
 class TestUPSShipment(unittest.TestCase):
     def setUp(self):
         self.FreightShipRequest = FreightShipRequest()
-        self.FreightShipRequest.build(get_node_from_xml(FreightShipmentRequestXML, 'FreightShipRequest'))
+        self.FreightShipRequest.build(
+            get_node_from_xml(FreightShipmentRequestXML, "FreightShipRequest")
+        )
 
         self.ShipmentRequest = ShipmentRequest()
-        self.ShipmentRequest.build(get_node_from_xml(ShipmentRequestXML, 'ShipmentRequest'))
+        self.ShipmentRequest.build(
+            get_node_from_xml(ShipmentRequestXML, "ShipmentRequest")
+        )
 
     def test_create_freight_shipment_request(self):
         payload = Shipment.create(**freight_shipment_data)
@@ -27,94 +31,123 @@ class TestUPSShipment(unittest.TestCase):
         Shipment_ = proxy.mapper.create_shipment_request(payload)
         self.assertEqual(export(Shipment_), export(self.ShipmentRequest))
 
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
     def test_create_freight_shipment(self, http_mock):
         proxy.create_shipment(self.FreightShipRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(FreightShipmentRequestXML))
 
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         proxy.create_shipment(self.ShipmentRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(ShipmentRequestXML))
 
     def test_parse_freight_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(FreightShipmentResponseXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedFreightShipmentResponse))
-                         
+            to_xml(FreightShipmentResponseXML)
+        )
+        self.assertEqual(
+            jsonify(parsed_response), jsonify(ParsedFreightShipmentResponse)
+        )
+
     def test_parse_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(NegotiatedShipmentResponseXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(NegotiatedParsedShipmentResponse))
-                         
+            to_xml(NegotiatedShipmentResponseXML)
+        )
+        self.assertEqual(
+            jsonify(parsed_response), jsonify(NegotiatedParsedShipmentResponse)
+        )
+
     def test_parse_publish_rate_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(ShipmentResponseXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedShipmentResponse))
+            to_xml(ShipmentResponseXML)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentResponse))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 
 ParsedFreightShipmentResponse = [
     {
-        'carrier': 'UPS', 
-        'charges': [
-            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': 'DSCNT'}, 
-            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': 'DSCNT_RATE'}, 
-            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': '2'}, 
-            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': 'LND_GROSS'}, 
-            {'amount': 'Value', 'currency': 'UnitOfMeasurement code', 'name': 'AFTR_DSCNT'}
-        ], 
-        'documents': [], 
-        'reference': {'type': 'CustomerContext', 'value': 'Your Customer Context'}, 
-        'services': ['Service code'], 
-        'shipment_date': None, 
-        'total_charge': {'amount': 'MonetaryValue', 'currency': 'CurrencyCode', 'name': 'Shipment charge'}, 
-        'tracking_numbers': ['Shipment Number']
-    }, 
-    []
+        "carrier": "UPS",
+        "charges": [
+            {"amount": "Value", "currency": "UnitOfMeasurement code", "name": "DSCNT"},
+            {
+                "amount": "Value",
+                "currency": "UnitOfMeasurement code",
+                "name": "DSCNT_RATE",
+            },
+            {"amount": "Value", "currency": "UnitOfMeasurement code", "name": "2"},
+            {
+                "amount": "Value",
+                "currency": "UnitOfMeasurement code",
+                "name": "LND_GROSS",
+            },
+            {
+                "amount": "Value",
+                "currency": "UnitOfMeasurement code",
+                "name": "AFTR_DSCNT",
+            },
+        ],
+        "documents": [],
+        "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
+        "services": ["Service code"],
+        "shipment_date": None,
+        "total_charge": {
+            "amount": "MonetaryValue",
+            "currency": "CurrencyCode",
+            "name": "Shipment charge",
+        },
+        "tracking_numbers": ["Shipment Number"],
+    },
+    [],
 ]
 
 NegotiatedParsedShipmentResponse = [
     {
-        'carrier': 'UPS', 
-        'charges': [
-            {'amount': '88.12', 'currency': 'USD', 'name': None}, 
-            {'amount': '0.00', 'currency': 'USD', 'name': None}
-        ], 
-        'documents': ['R0lGODdheAUgA+cAAAAAAAEBAQIC (Truncated)'], 
-        'reference': {'type': 'CustomerContext', 'value': 'Your Customer Context'}, 
-        'services': None, 
-        'shipment_date': None, 
-        'total_charge': {'amount': '70.00', 'currency': 'USD', 'name': 'Shipment charge'}, 
-        'tracking_numbers': ['1ZWA82900191640782']
-    }, 
-    []
+        "carrier": "UPS",
+        "charges": [
+            {"amount": "88.12", "currency": "USD", "name": None},
+            {"amount": "0.00", "currency": "USD", "name": None},
+        ],
+        "documents": ["R0lGODdheAUgA+cAAAAAAAEBAQIC (Truncated)"],
+        "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
+        "services": None,
+        "shipment_date": None,
+        "total_charge": {
+            "amount": "70.00",
+            "currency": "USD",
+            "name": "Shipment charge",
+        },
+        "tracking_numbers": ["1ZWA82900191640782"],
+    },
+    [],
 ]
 
 ParsedShipmentResponse = [
     {
-        'carrier': 'UPS', 
-        'charges': [
-            {'amount': '88.12', 'currency': 'USD', 'name': None}, 
-            {'amount': '0.00', 'currency': 'USD', 'name': None}], 
-            'documents': ['R0lGODdheAUgA+c(Truncated)'], 
-            'reference': {'type': 'CustomerContext', 'value': 'Your Customer Context'}, 
-            'services': None, 
-            'shipment_date': None, 
-            'total_charge': {'amount': '88.12', 'currency': 'USD', 'name': 'Shipment charge'}, 
-            'tracking_numbers': ['1ZWA82900191640782']
-    }, 
-    []
+        "carrier": "UPS",
+        "charges": [
+            {"amount": "88.12", "currency": "USD", "name": None},
+            {"amount": "0.00", "currency": "USD", "name": None},
+        ],
+        "documents": ["R0lGODdheAUgA+c(Truncated)"],
+        "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
+        "services": None,
+        "shipment_date": None,
+        "total_charge": {
+            "amount": "88.12",
+            "currency": "USD",
+            "name": "Shipment charge",
+        },
+        "tracking_numbers": ["1ZWA82900191640782"],
+    },
+    [],
 ]
 
 
@@ -555,7 +588,7 @@ freight_shipment_data = {
         "country_code": "CountryCode",
         "person_name": "Attention Name",
         "phone_number": "Shipper Phone number",
-        "account_number": "Your Shipper Number"
+        "account_number": "Your Shipper Number",
     },
     "recipient": {
         "company_name": "Ship To Name",
@@ -564,19 +597,17 @@ freight_shipment_data = {
         "state_code": "StateProvinceCode",
         "postal_code": "PostalCode",
         "country_code": "CountryCode",
-        "person_name": "Attention Name"
+        "person_name": "Attention Name",
     },
     "shipment": {
-        "weight_unit": "LB", 
+        "weight_unit": "LB",
         "references": ["Your Customer Context"],
         "items": [
             {
                 "description": "Commodity Description",
                 "weight": 180,
                 "quantity": 1,
-                "extra": {
-                    "FreightClass": "FreightClass"
-                }
+                "extra": {"FreightClass": "FreightClass"},
             }
         ],
         "extra": {
@@ -589,19 +620,15 @@ freight_shipment_data = {
                 "country_code": "CountryCode",
                 "person_name": "Attention Name",
                 "phone_number": "Phone Number",
-                "account_number": "Payer Shipper Number"
+                "account_number": "Payer Shipper Number",
             },
-            "ShipmentBillingOption": {
-                "Code": "ShipmentBillingOption"
-            },
+            "ShipmentBillingOption": {"Code": "ShipmentBillingOption"},
             "HandlingUnitOne": {
                 "Quantity": "HandlingUnitOne quantity",
-                "Type": {
-                    "Code": "HandlingUnitOne type"
-                }
-            }
-        }
-    }
+                "Type": {"Code": "HandlingUnitOne type"},
+            },
+        },
+    },
 }
 
 package_shipment_data = {
@@ -616,10 +643,7 @@ package_shipment_data = {
         "state_code": "StateProvinceCode",
         "postal_code": "PostalCode",
         "country_code": "CountryCode",
-        "extra": {
-            "Extension": "1",
-            "FaxNumber": "1234567890"
-        }
+        "extra": {"Extension": "1", "FaxNumber": "1234567890"},
     },
     "recipient": {
         "company_name": "Ship To Name",
@@ -629,7 +653,7 @@ package_shipment_data = {
         "city": "City",
         "state_code": "StateProvinceCode",
         "postal_code": "PostalCode",
-        "country_code": "CountryCode"
+        "country_code": "CountryCode",
     },
     "shipment": {
         "references": ["Your Customer Context"],
@@ -645,15 +669,10 @@ package_shipment_data = {
                 "length": 7,
                 "width": 5,
                 "height": 2,
-                "weight": 10
+                "weight": 10,
             }
         ],
-        "label": {
-            "format": "GIF",
-            "extra": {
-                "HTTPUserAgent": "Mozilla/4.5"
-            }
-        },
+        "label": {"format": "GIF", "extra": {"HTTPUserAgent": "Mozilla/4.5"}},
         "extra": {
             "Description": "Description",
             "ShipFrom": {
@@ -665,13 +684,9 @@ package_shipment_data = {
                 "state_code": "StateProvinceCode",
                 "postal_code": "PostalCode",
                 "country_code": "CountryCode",
-                "extra": {
-                    "FaxNumber": "1234567890"
-                }
+                "extra": {"FaxNumber": "1234567890"},
             },
-            "ShipmentCharge": {
-                "Type": "01"
-            }
-        }
-    }
+            "ShipmentCharge": {"Type": "01"},
+        },
+    },
 }

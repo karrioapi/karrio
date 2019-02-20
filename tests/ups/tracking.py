@@ -20,11 +20,11 @@ class TestUPSTracking(unittest.TestCase):
 
         self.assertEqual(export(TrackRequests_[0]), export(self.TrackRequest))
 
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
     def test_get_trackings(self, http_mock):
         proxy.get_trackings([self.TrackRequest])
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
 
     def test_tracking_auth_error_parsing(self):
@@ -33,100 +33,91 @@ class TestUPSTracking(unittest.TestCase):
 
     def test_tracking_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingResponseXml))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedTrackingResponse))
+            to_xml(TrackingResponseXml)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(InvalidTrackingNumberResponse))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedInvalidTrackingNumberResponse))
+            to_xml(InvalidTrackingNumberResponse)
+        )
+        self.assertEqual(
+            jsonify(parsed_response), jsonify(ParsedInvalidTrackingNumberResponse)
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 
 ParsedAuthError = [
-  {
-    'carrier': 'UPS', 
-    'code': '250003', 
-    'message': 'Invalid Access License number'
-  }
+    {"carrier": "UPS", "code": "250003", "message": "Invalid Access License number"}
 ]
 
 ParsedTrackingResponse = [
-  [
-    {
-      'carrier': 'UPS', 
-      'events': 
-      [
+    [
         {
-          'code': 'KB', 
-          'date': '20100830', 
-          'description': 'UPS INTERNAL ACTIVITY CODE', 
-          'location': 'BONN', 
-          'signatory': None, 
-          'time': '103900'
-        }, 
-        {
-          'code': 'DJ', 
-          'date': '20100830', 
-          'description': 'ADVERSE WEATHER CONDITIONS CAUSED THIS DELAY', 
-          'location': 'BONN', 
-          'signatory': None, 
-          'time': '103200'
-        }, 
-        {
-          'code': 'X', 
-          'date': '20100910', 
-          'description': "THE RECEIVER'S LOCATION WAS CLOSED ON THE 2ND DELIVERY ATTEMPT. A 3RD DELIVERY ATTEMPT WILL BE MADE", 
-          'location': 'ANYTOWN', 
-          'signatory': None, 
-          'time': '180300'
-        }, 
-        {
-          'code': 'FS', 
-          'date': '20100912', 
-          'description': 'DELIVERED', 
-          'location': 'ANYTOWN', 
-          'signatory': None, 
-          'time': '115700'
-        }, 
-        {
-          'code': 'PU', 
-          'date': '20100404', 
-          'description': 'PICKUP SCAN', 
-          'location': 'WEST CHESTER-MALVERN', 
-          'signatory': None, 
-          'time': '144000'
-        }, 
-        {
-          'code': 'KB', 
-          'date': '20100830', 
-          'description': 'UPS INTERNAL ACTIVITY CODE', 
-          'location': 'BONN', 
-          'signatory': None, 
-          'time': '131300'
+            "carrier": "UPS",
+            "events": [
+                {
+                    "code": "KB",
+                    "date": "20100830",
+                    "description": "UPS INTERNAL ACTIVITY CODE",
+                    "location": "BONN",
+                    "signatory": None,
+                    "time": "103900",
+                },
+                {
+                    "code": "DJ",
+                    "date": "20100830",
+                    "description": "ADVERSE WEATHER CONDITIONS CAUSED THIS DELAY",
+                    "location": "BONN",
+                    "signatory": None,
+                    "time": "103200",
+                },
+                {
+                    "code": "X",
+                    "date": "20100910",
+                    "description": "THE RECEIVER'S LOCATION WAS CLOSED ON THE 2ND DELIVERY ATTEMPT. A 3RD DELIVERY ATTEMPT WILL BE MADE",
+                    "location": "ANYTOWN",
+                    "signatory": None,
+                    "time": "180300",
+                },
+                {
+                    "code": "FS",
+                    "date": "20100912",
+                    "description": "DELIVERED",
+                    "location": "ANYTOWN",
+                    "signatory": None,
+                    "time": "115700",
+                },
+                {
+                    "code": "PU",
+                    "date": "20100404",
+                    "description": "PICKUP SCAN",
+                    "location": "WEST CHESTER-MALVERN",
+                    "signatory": None,
+                    "time": "144000",
+                },
+                {
+                    "code": "KB",
+                    "date": "20100830",
+                    "description": "UPS INTERNAL ACTIVITY CODE",
+                    "location": "BONN",
+                    "signatory": None,
+                    "time": "131300",
+                },
+            ],
+            "shipment_date": None,
+            "tracking_number": "1Z12345E6205277936",
         }
-      ], 
-      'shipment_date': None, 
-      'tracking_number': '1Z12345E6205277936'
-    }
-  ], 
-  []
+    ],
+    [],
 ]
 
 ParsedInvalidTrackingNumberResponse = [
-  [], 
-  [
-    {
-      'carrier': 'UPS', 
-      'code': '151018', 
-      'message': 'Invalid tracking number'
-    }
-  ]
+    [],
+    [{"carrier": "UPS", "code": "151018", "message": "Invalid tracking number"}],
 ]
 
 

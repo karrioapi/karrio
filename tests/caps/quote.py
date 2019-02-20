@@ -14,14 +14,18 @@ class TestCanadaPostQuote(unittest.TestCase):
         self.mailing_scenario.build(to_xml(QuoteRequestXml))
 
     def test_create_quote_request(self):
-        shipper = {"postal_code": "H8Z2Z3", "country_code": "CA", "account_number": "1234567"}
+        shipper = {
+            "postal_code": "H8Z2Z3",
+            "country_code": "CA",
+            "account_number": "1234567",
+        }
         recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
         shipment = {
-            "items": [{"height":3, "length":10, "width":3, "weight": 4.0}],
+            "items": [{"height": 3, "length": 10, "width": 3, "weight": 4.0}],
             "services": ["Expedited_Parcel"],
-            "dimension_unit": "CM", 
+            "dimension_unit": "CM",
             "weight_unit": "KG",
-            "extra": { "options": []}
+            "extra": {"options": []},
         }
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
 
@@ -29,164 +33,120 @@ class TestCanadaPostQuote(unittest.TestCase):
 
         self.assertEqual(export(mailing_scenario_), export(self.mailing_scenario))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.mailing_scenario)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
-        reqUrl = http_mock.call_args[1]['url']
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
+        reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
         self.assertEqual(reqUrl, "%s/rs/ship/price" % (proxy.client.server_url))
 
     def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteResponseXml))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteResponse))
+        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteResponseXml))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteResponse))
 
     def test_parse_quote_parsing_error(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteParsingError))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteParsingError))
+        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteParsingError))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteParsingError))
 
     def test_parse_quote_missing_args_error(self):
         parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteMissingArgsError))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteMissingArgsError))
+            to_xml(QuoteMissingArgsError)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteMissingArgsError))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 
 ParsedQuoteParsingError = [
-    [], 
+    [],
     [
         {
-            'carrier': 'CanadaPost', 
-            'code': 'AA004', 
-            'message': 'You cannot mail on behalf of the requested customer.'
+            "carrier": "CanadaPost",
+            "code": "AA004",
+            "message": "You cannot mail on behalf of the requested customer.",
         }
-    ]
+    ],
 ]
 
 ParsedQuoteMissingArgsError = [
-    [], 
+    [],
     [
         {
-            'carrier': 'CanadaPost', 
-            'code': 'Server', 
-            'message': '/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v3}parcel-characteristics with anonymous type, found </parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v3), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v3}weight, {http://www.canadapost.ca/ws/ship/rate-v3}dimensions, {http://www.canadapost.ca/ws/ship/rate-v3}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v3}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v3}oversized]'
+            "carrier": "CanadaPost",
+            "code": "Server",
+            "message": "/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v3}parcel-characteristics with anonymous type, found </parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v3), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v3}weight, {http://www.canadapost.ca/ws/ship/rate-v3}dimensions, {http://www.canadapost.ca/ws/ship/rate-v3}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v3}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v3}oversized]",
         }
-    ]
+    ],
 ]
 
 ParsedQuoteResponse = [
     [
         {
-            'base_charge': 9.59, 
-            'carrier': 'CanadaPost',
-            'currency': 'CAD',
-            'delivery_date': '2011-10-24', 
-            'discount': 0.6200000000000001, 
-            'duties_and_taxes': 0.0, 
-            'extra_charges': [
-                {
-                    'name': 'Automation discount', 
-                    'amount': -0.29,
-                    'currency': 'CAD'
-                }, 
-                {
-                    'name': 'Fuel surcharge', 
-                    'amount': 0.91,
-                    'currency': 'CAD'
-                }
-            ], 
-            'pickup_date': None, 
-            'pickup_time': None, 
-            'service_name': 'Expedited Parcel', 
-            'service_type': 'DOM.EP', 
-            'total_charge': 10.21
-        }, 
+            "base_charge": 9.59,
+            "carrier": "CanadaPost",
+            "currency": "CAD",
+            "delivery_date": "2011-10-24",
+            "discount": 0.620_000_000_000_000_1,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [
+                {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
+                {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
+            ],
+            "service_name": "Expedited Parcel",
+            "service_type": "DOM.EP",
+            "total_charge": 10.21,
+        },
         {
-            'base_charge': 22.64, 
-            'carrier': 'CanadaPost', 
-            'currency': 'CAD',
-            'delivery_date': '2011-10-21', 
-            'discount': 2.56, 
-            'duties_and_taxes': 0.0, 
-            'extra_charges': [
-                {
-                    'name': 'Automation discount', 
-                    'amount': -0.68,
-                    'currency': 'CAD'
-                }, 
-                {
-                    'name': 'Fuel surcharge', 
-                    'amount': 3.24,
-                    'currency': 'CAD'
-                }
-            ], 
-            'pickup_date': None, 
-            'pickup_time': None, 
-            'service_name': 'Priority Courier', 
-            'service_type': 'DOM.PC', 
-            'total_charge': 25.2
-        }, 
+            "base_charge": 22.64,
+            "carrier": "CanadaPost",
+            "currency": "CAD",
+            "delivery_date": "2011-10-21",
+            "discount": 2.56,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [
+                {"amount": -0.68, "currency": "CAD", "name": "Automation discount"},
+                {"amount": 3.24, "currency": "CAD", "name": "Fuel surcharge"},
+            ],
+            "service_name": "Priority Courier",
+            "service_type": "DOM.PC",
+            "total_charge": 25.2,
+        },
         {
-            'base_charge': 9.59, 
-            'carrier': 'CanadaPost', 
-            'currency': 'CAD',
-            'delivery_date': '2011-10-26', 
-            'discount': 0.6200000000000001, 
-            'duties_and_taxes': 0.0, 
-            'extra_charges': [
-                {
-                    'name': 'Automation discount', 
-                    'amount': -0.29,
-                    'currency': 'CAD'
-                }, 
-                {
-                    'name': 'Fuel surcharge', 
-                    'amount': 0.91,
-                    'currency': 'CAD'
-                }
-            ], 
-            'pickup_date': None, 
-            'pickup_time': None, 
-            'service_name': 'Regular Parcel', 
-            'service_type': 'DOM.RP', 
-            'total_charge': 10.21
-        }, 
+            "base_charge": 9.59,
+            "carrier": "CanadaPost",
+            "currency": "CAD",
+            "delivery_date": "2011-10-26",
+            "discount": 0.620_000_000_000_000_1,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [
+                {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
+                {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
+            ],
+            "service_name": "Regular Parcel",
+            "service_type": "DOM.RP",
+            "total_charge": 10.21,
+        },
         {
-            'base_charge': 12.26, 
-            'carrier': 'CanadaPost', 
-            'currency': 'CAD',
-            'delivery_date': '2011-10-24',
-            'discount': 1.38, 
-            'duties_and_taxes': 0.0, 
-            'extra_charges': [
-                {
-                    'name': 'Automation discount', 
-                    'amount': -0.37,
-                    'currency': 'CAD'
-                }, 
-                {
-                    'name': 'Fuel surcharge', 
-                    'amount': 1.75,
-                    'currency': 'CAD'
-                }
-            ], 
-            'pickup_date': None, 
-            'pickup_time': None, 
-            'service_name': 'Xpresspost', 
-            'service_type': 'DOM.XP', 
-            'total_charge': 13.64
-        }
-    ], 
-    []
+            "base_charge": 12.26,
+            "carrier": "CanadaPost",
+            "currency": "CAD",
+            "delivery_date": "2011-10-24",
+            "discount": 1.38,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [
+                {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
+                {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"},
+            ],
+            "service_name": "Xpresspost",
+            "service_type": "DOM.XP",
+            "total_charge": 13.64,
+        },
+    ],
+    [],
 ]
 
 

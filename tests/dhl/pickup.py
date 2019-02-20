@@ -32,8 +32,8 @@ class TestDHLPickup(unittest.TestCase):
         PURequest_.Place.PackageLocation = None
         PURequest_.Place.StateCode = None
         self.assertEqual(
-            export(PURequest_).replace("dhlPickup:", ""), 
-            export(self.PURequest).replace("dhlPickup:", "")
+            export(PURequest_).replace("dhlPickup:", ""),
+            export(self.PURequest).replace("dhlPickup:", ""),
         )
 
     def test_create_modify_pickup_request(self):
@@ -46,8 +46,8 @@ class TestDHLPickup(unittest.TestCase):
         ModifyPURequest_.Place.PackageLocation = None
         ModifyPURequest_.Place.StateCode = None
         self.assertEqual(
-            export(ModifyPURequest_).replace("dhlPickup:", ""), 
-            export(self.ModifyPURequest).replace("dhlPickup:", "")
+            export(ModifyPURequest_).replace("dhlPickup:", ""),
+            export(self.ModifyPURequest).replace("dhlPickup:", ""),
         )
 
     def test_create_pickup_cancellation_request(self):
@@ -57,70 +57,63 @@ class TestDHLPickup(unittest.TestCase):
         CancelPURequest_.Request.ServiceHeader.MessageTime = None
         CancelPURequest_.CancelTime = None
         self.assertEqual(
-            export(CancelPURequest_).replace("dhlPickup:", ""), 
-            export(self.CancelPURequest).replace("dhlPickup:", "")
+            export(CancelPURequest_).replace("dhlPickup:", ""),
+            export(self.CancelPURequest).replace("dhlPickup:", ""),
         )
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_request_pickup(self, http_mock):
         proxy.request_pickup(self.PURequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(
-            strip(xmlStr), 
+            strip(xmlStr),
             _reformat_time(
-                'CloseTime', _reformat_time(
-                    'ReadyByTime', strip(PickupRequestXML)
-                )
-            )
+                "CloseTime", _reformat_time("ReadyByTime", strip(PickupRequestXML))
+            ),
         )
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_modify_pickup(self, http_mock):
         proxy.modify_pickup(self.ModifyPURequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(
-            strip(xmlStr), 
+            strip(xmlStr),
             _reformat_time(
-                'CloseTime', _reformat_time(
-                    'ReadyByTime', strip(ModifyPURequestXML)
-                )
-            )
+                "CloseTime", _reformat_time("ReadyByTime", strip(ModifyPURequestXML))
+            ),
         )
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_cancel_pickup(self, http_mock):
         proxy.cancel_pickup(self.CancelPURequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(CancelPURequestXML))
 
     def test_parse_request_pickup_response(self):
-        parsed_response = proxy.mapper.parse_pickup_response(
-            to_xml(PickupResponseXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedPickupResponse))
-    
+        parsed_response = proxy.mapper.parse_pickup_response(to_xml(PickupResponseXML))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedPickupResponse))
+
     def test_parse_modify_pickup_response(self):
-        parsed_response = proxy.mapper.parse_pickup_response(
-            to_xml(ModifyPURequestXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedModifyPUResponse))
-                
+        parsed_response = proxy.mapper.parse_pickup_response(to_xml(ModifyPURequestXML))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedModifyPUResponse))
+
     def test_parse_cancellation_pickup_response(self):
         parsed_response = proxy.mapper.parse_pickup_cancellation_response(
-            to_xml(CancelPUResponseXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedCancelPUResponse))
-                                         
+            to_xml(CancelPUResponseXML)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedCancelPUResponse))
+
     def test_parse_request_pickup_error(self):
         parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(PickupErrorResponseXML))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedPickupErrorResponse))
+            to_xml(PickupErrorResponseXML)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedPickupErrorResponse))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
 
 request_data = {
@@ -140,9 +133,7 @@ request_data = {
     "email_address": "test@mail.com",
     "instruction": "behind the front desk",
     "address_lines": ["234 rue Hubert"],
-    "extra": { 
-        "RequestorContact": { "PersonName": "Rikhil", "Phone": "23162" }
-    }
+    "extra": {"RequestorContact": {"PersonName": "Rikhil", "Phone": "23162"}},
 }
 
 modification_data = {
@@ -157,10 +148,10 @@ modification_data = {
     "phone_number": "4801313131",
     "country_code": "CA",
     "email_address": "test@mail.com",
-    "extra": { 
-        "RequestorContact": { "PersonName": "Rikhil", "Phone": "23162" },
-        "OriginSvcArea": "KUL"
-    }
+    "extra": {
+        "RequestorContact": {"PersonName": "Rikhil", "Phone": "23162"},
+        "OriginSvcArea": "KUL",
+    },
 }
 
 cancellation_data = {
@@ -168,56 +159,45 @@ cancellation_data = {
     "person_name": "Rikhil",
     "pickup_date": "2013-10-10",
     "country_code": "BR",
-    "extra": {
-        "Reason": "001"
-    }
+    "extra": {"Reason": "001"},
 }
 
 ParsedPickupResponse = [
     {
-        'carrier': 'carrier_name', 
-        'confirmation_number': '3674', 
-        'pickup_charge': None, 
-        'pickup_date': '2013-10-09', 
-        'ref_times': [
-            {
-                'name': 'ReadyByTime', 'value': '10:30'
-            }, 
-            {
-                'name': 'CallInTime', 'value': '08:30'
-            }
-        ]
-    }, 
-    []
+        "carrier": "carrier_name",
+        "confirmation_number": "3674",
+        "pickup_charge": None,
+        "pickup_date": "2013-10-09",
+        "ref_times": [
+            {"name": "ReadyByTime", "value": "10:30"},
+            {"name": "CallInTime", "value": "08:30"},
+        ],
+    },
+    [],
 ]
 
 ParsedModifyPUResponse = [
     {
-        'carrier': 'carrier_name',
-        'confirmation_number': 100094,
-        'pickup_charge': None,
-        'pickup_date': None,
-        'ref_times': []
+        "carrier": "carrier_name",
+        "confirmation_number": 100094,
+        "pickup_charge": None,
+        "pickup_date": None,
+        "ref_times": [],
     },
-    []
+    [],
 ]
 
-ParsedCancelPUResponse = [
-    {
-        "confirmation_number": "100129"
-    }, 
-    []
-]
+ParsedCancelPUResponse = [{"confirmation_number": "100129"}, []]
 
 ParsedPickupErrorResponse = [
-    None, 
+    None,
     [
         {
-            'carrier': 'carrier_name', 
-            'code': 'PU012', 
-            'message': ' Pickup NOT scheduled.  Ready by time is passed the station cutoff time. For pickup assistance call customer service representative.'
+            "carrier": "carrier_name",
+            "code": "PU012",
+            "message": " Pickup NOT scheduled.  Ready by time is passed the station cutoff time. For pickup assistance call customer service representative.",
         }
-    ]
+    ],
 ]
 
 PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>

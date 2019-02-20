@@ -13,17 +13,17 @@ class TestDHLQuote(unittest.TestCase):
         self.DCTRequest.build(to_xml(QuoteRequestXml))
 
     def test_create_quote_request(self):
-        shipper = {"postal_code":"H3N1S4", "country_code":"CA"}
-        recipient = {"city":"Lome", "country_code":"TG"}
+        shipper = {"postal_code": "H3N1S4", "country_code": "CA"}
+        recipient = {"city": "Lome", "country_code": "TG"}
         shipment = {
             "services": "EXPRESS_WORLDWIDE_DOC",
             "currency": "CAD",
             "insured_amount": 75,
             "declared_value": 100,
             "items": [
-                {"id":"1", "height":3, "length":10, "width":3,"weight":4.0 }
-            ], 
-            "is_document": False
+                {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
+            ],
+            "is_document": False,
         }
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
 
@@ -35,124 +35,109 @@ class TestDHLQuote(unittest.TestCase):
         DCTRequest_.GetQuote.BkgDetails.ReadyTime = None
         self.assertEqual(export(DCTRequest_), export(self.DCTRequest))
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.DCTRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
 
     def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteResponseXml))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteResponse))
-                
+        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteResponseXml))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteResponse))
+
     def test_parse_quote_parsing_error(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteParsingError))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteParsingError))
-                
+        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteParsingError))
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteParsingError))
+
     def test_parse_quote_missing_args_error(self):
         parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteMissingArgsError))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteMissingArgsError))
-                
+            to_xml(QuoteMissingArgsError)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteMissingArgsError))
+
     def test_parse_quote_vol_weight_higher_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteVolWeightHigher))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedQuoteVolWeightHigher))
+            to_xml(QuoteVolWeightHigher)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteVolWeightHigher))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 
-
-
 ParsedQuoteParsingError = [
-    [], 
+    [],
     [
         {
-            'carrier': 'carrier_name', 
-            'code': '111', 
-            'message': 'Error in parsing request XML:Error: The\n                    content of element type "ServiceHeader"\n                    must match\n                    "(MessageTime,MessageReference,SiteID,Password)".\n                    at line 9, column 30'
+            "carrier": "carrier_name",
+            "code": "111",
+            "message": 'Error in parsing request XML:Error: The\n                    content of element type "ServiceHeader"\n                    must match\n                    "(MessageTime,MessageReference,SiteID,Password)".\n                    at line 9, column 30',
         }
-    ]
+    ],
 ]
 
 ParsedQuoteMissingArgsError = [
-    [], 
+    [],
     [
         {
-            'carrier': 'carrier_name', 
-            'code': '340004', 
-            'message': 'The location information is missing. At least one attribute post code, city name or suburb name should be provided'}, {'carrier': 'carrier_name', 'code': '220001', 'message': 'Failure - request'
-        }
-    ]
+            "carrier": "carrier_name",
+            "code": "340004",
+            "message": "The location information is missing. At least one attribute post code, city name or suburb name should be provided",
+        },
+        {"carrier": "carrier_name", "code": "220001", "message": "Failure - request"},
+    ],
 ]
 
 ParsedQuoteResponse = [
     [
         {
-            'base_charge': 195.32, 
-            'carrier': 'carrier_name', 
-            'currency': 'CAD',
-            'delivery_date': '2018-06-26 11:59:00', 
-            'discount': 0, 
-            'duties_and_taxes': 0, 
-            'extra_charges': [
-                {
-                    'name': 'FUEL SURCHARGE', 
-                    'amount': 12.7,
-                    'currency': None
-                }
-            ], 
-            'pickup_date': '2018-06-21', 
-            'pickup_time': 'PT17H30M', 
-            'service_name': 'EXPRESS WORLDWIDE DOC', 
-            'service_type': 'TD', 
-            'total_charge': 208.02
-        }, 
+            "base_charge": 195.32,
+            "carrier": "carrier_name",
+            "currency": "CAD",
+            "delivery_date": "2018-06-26 11:59:00",
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [
+                {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
+            ],
+            "service_name": "EXPRESS WORLDWIDE DOC",
+            "service_type": "TD",
+            "total_charge": 208.02,
+        },
         {
-            'base_charge': 213.47, 
-            'carrier': 'carrier_name', 
-            'currency': 'CAD',
-            'delivery_date': '2018-06-26 11:59:00', 
-            'discount': 0, 
-            'duties_and_taxes': 0, 
-            'extra_charges': [], 
-            'pickup_date': '2018-06-21', 
-            'pickup_time': 'PT17H30M', 
-            'service_name': 'EXPRESS EASY DOC', 
-            'service_type': 'TD', 
-            'total_charge': 213.47
-        }
-    ], 
-    []
+            "base_charge": 213.47,
+            "carrier": "carrier_name",
+            "currency": "CAD",
+            "delivery_date": "2018-06-26 11:59:00",
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [],
+            "service_name": "EXPRESS EASY DOC",
+            "service_type": "TD",
+            "total_charge": 213.47,
+        },
+    ],
+    [],
 ]
 
 ParsedQuoteVolWeightHigher = [
     [
         {
-            'base_charge': 0.0, 
-            'carrier': 'carrier_name', 
-            'currency': None,
-            'delivery_date': '2017-11-13 11:59:00', 
-            'discount': 0, 
-            'duties_and_taxes': 0, 
-            'extra_charges': [], 
-            'pickup_date': '2017-11-10', 
-            'pickup_time': 'PT13H30M', 
-            'service_name': 'EXPRESS WORLDWIDE NONDOC', 
-            'service_type': 'TD', 
-            'total_charge': 0.0
+            "base_charge": 0.0,
+            "carrier": "carrier_name",
+            "currency": None,
+            "delivery_date": "2017-11-13 11:59:00",
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [],
+            "service_name": "EXPRESS WORLDWIDE NONDOC",
+            "service_type": "TD",
+            "total_charge": 0.0,
         }
-    ], 
-    []
+    ],
+    [],
 ]
 
 

@@ -19,13 +19,15 @@ class TestDHLTracking(unittest.TestCase):
 
         # remove MessageTime for testing purpose
         KnownTrackingRequest_.Request.ServiceHeader.MessageTime = None
-        self.assertEqual(export(KnownTrackingRequest_), export(self.KnownTrackingRequest))
+        self.assertEqual(
+            export(KnownTrackingRequest_), export(self.KnownTrackingRequest)
+        )
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_get_trackings(self, http_mock):
         proxy.get_trackings(self.KnownTrackingRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
 
     def test_tracking_auth_error_parsing(self):
@@ -34,24 +36,24 @@ class TestDHLTracking(unittest.TestCase):
 
     def test_parse_tracking_response(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingResponseXml))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedTrackingResponse))
+            to_xml(TrackingResponseXml)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
 
     def test_tracking_single_not_found_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingSingleNotFound))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedTrackingSingNotFound))
+            to_xml(TrackingSingleNotFound)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingSingNotFound))
 
     def test_tracking_unknown_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(UnknownTrackResponse))
-        self.assertEqual(jsonify(parsed_response),
-                         jsonify(ParsedUnknownTrackResponse))
+            to_xml(UnknownTrackResponse)
+        )
+        self.assertEqual(jsonify(parsed_response), jsonify(ParsedUnknownTrackResponse))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 
@@ -59,7 +61,7 @@ ParsedAuthError = [
     {
         "carrier": "carrier_name",
         "code": "111",
-        "message": " Error Parsing incoming request XML\n                    Error: Datatype error: In element\n                    'Password' : Value 'testPwd'\n                    with length '7' is less than minimum\n                    length facet of '8'.. at line 11, column 33"
+        "message": " Error Parsing incoming request XML\n                    Error: Datatype error: In element\n                    'Password' : Value 'testPwd'\n                    with length '7' is less than minimum\n                    length facet of '8'.. at line 11, column 33",
     }
 ]
 
@@ -69,9 +71,9 @@ ParsedTrackingSingNotFound = [
         {
             "carrier": "carrier_name",
             "code": "103",
-            "message": "No Shipments Found for AWBNumber 123456789"
+            "message": "No Shipments Found for AWBNumber 123456789",
         }
-    ]
+    ],
 ]
 
 ParsedTrackingResponse = [
@@ -85,7 +87,7 @@ ParsedTrackingResponse = [
                     "description": "Shipment picked up",
                     "location": "Barcelona - Spain ",
                     "signatory": "960528602",
-                    "time": "13:26:00"
+                    "time": "13:26:00",
                 },
                 {
                     "code": "PO",
@@ -93,7 +95,7 @@ ParsedTrackingResponse = [
                     "description": "Departing origin",
                     "location": "Barcelona - Spain ",
                     "signatory": " 00:00:00",
-                    "time": "19:27:00"
+                    "time": "19:27:00",
                 },
                 {
                     "code": "RW",
@@ -101,7 +103,7 @@ ParsedTrackingResponse = [
                     "description": "",
                     "location": "Barcelona - Spain ",
                     "signatory": "",
-                    "time": "19:27:00"
+                    "time": "19:27:00",
                 },
                 {
                     "code": "PL",
@@ -109,7 +111,7 @@ ParsedTrackingResponse = [
                     "description": "Processed at Location Barcelona - Spain ",
                     "location": "Barcelona - Spain ",
                     "signatory": "",
-                    "time": "20:39:01"
+                    "time": "20:39:01",
                 },
                 {
                     "code": "AF",
@@ -117,7 +119,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at DHL facility in Barcelona -\n                        Spain ",
                     "location": "Barcelona - Spain ",
                     "signatory": "",
-                    "time": "21:17:57"
+                    "time": "21:17:57",
                 },
                 {
                     "code": "DF",
@@ -125,7 +127,7 @@ ParsedTrackingResponse = [
                     "description": "Departed from DHL facility in Barcelona\n                        - Spain ",
                     "location": "Barcelona - Spain ",
                     "signatory": "",
-                    "time": "22:01:00"
+                    "time": "22:01:00",
                 },
                 {
                     "code": "AF",
@@ -133,7 +135,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at DHL facility in Leipzig -\n                        Germany ",
                     "location": "Leipzig - Germany ",
                     "signatory": "",
-                    "time": "00:32:16"
+                    "time": "00:32:16",
                 },
                 {
                     "code": "PL",
@@ -141,7 +143,7 @@ ParsedTrackingResponse = [
                     "description": "Processed at Location Leipzig - Germany ",
                     "location": "Leipzig - Germany ",
                     "signatory": "",
-                    "time": "01:05:03"
+                    "time": "01:05:03",
                 },
                 {
                     "code": "DF",
@@ -149,7 +151,7 @@ ParsedTrackingResponse = [
                     "description": "Departed from DHL facility in Leipzig -\n                        Germany ",
                     "location": "Leipzig - Germany ",
                     "signatory": "",
-                    "time": "05:52:19"
+                    "time": "05:52:19",
                 },
                 {
                     "code": "AF",
@@ -157,7 +159,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at DHL facility in Bergamo -\n                        Italy ",
                     "location": "Bergamo - Italy ",
                     "signatory": "",
-                    "time": "19:43:22"
+                    "time": "19:43:22",
                 },
                 {
                     "code": "PL",
@@ -165,7 +167,7 @@ ParsedTrackingResponse = [
                     "description": "Processed at Location Bergamo - Italy ",
                     "location": "Bergamo - Italy ",
                     "signatory": "",
-                    "time": "23:30:00"
+                    "time": "23:30:00",
                 },
                 {
                     "code": "DF",
@@ -173,7 +175,7 @@ ParsedTrackingResponse = [
                     "description": "Departed from DHL facility in Bergamo -\n                        Italy ",
                     "location": "Bergamo - Italy ",
                     "signatory": "",
-                    "time": "02:06:00"
+                    "time": "02:06:00",
                 },
                 {
                     "code": "DF",
@@ -181,7 +183,7 @@ ParsedTrackingResponse = [
                     "description": "Departed from DHL facility in Milan -\n                        Italy ",
                     "location": "Milan - Italy ",
                     "signatory": "",
-                    "time": "06:23:00"
+                    "time": "06:23:00",
                 },
                 {
                     "code": "AR",
@@ -189,7 +191,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at DHL facility in Milan -\n                        Italy ",
                     "location": "Milan - Italy ",
                     "signatory": "",
-                    "time": "08:59:00"
+                    "time": "08:59:00",
                 },
                 {
                     "code": "WC",
@@ -197,7 +199,7 @@ ParsedTrackingResponse = [
                     "description": "With delivery courier",
                     "location": "Milan - Italy ",
                     "signatory": "",
-                    "time": "09:19:00"
+                    "time": "09:19:00",
                 },
                 {
                     "code": "OK",
@@ -205,11 +207,11 @@ ParsedTrackingResponse = [
                     "description": "Shipment delivered",
                     "location": "Milan - Italy ",
                     "signatory": "CAMPAGNA",
-                    "time": "10:09:00"
-                }
+                    "time": "10:09:00",
+                },
             ],
             "shipment_date": "2009-08-28 13:26:00",
-            "tracking_number": "3180831640"
+            "tracking_number": "3180831640",
         },
         {
             "carrier": "carrier_name",
@@ -220,11 +222,11 @@ ParsedTrackingResponse = [
                     "description": "Shipment picked up",
                     "location": "Singapore - Singapore ",
                     "signatory": "",
-                    "time": "10:00:00"
+                    "time": "10:00:00",
                 }
             ],
             "shipment_date": "2009-08-26 10:00:00",
-            "tracking_number": "7740842550"
+            "tracking_number": "7740842550",
         },
         {
             "carrier": "carrier_name",
@@ -235,7 +237,7 @@ ParsedTrackingResponse = [
                     "description": "Shipment picked up",
                     "location": "Hong Kong - Hong Kong ",
                     "signatory": "",
-                    "time": "23:58:00"
+                    "time": "23:58:00",
                 },
                 {
                     "code": "RW",
@@ -243,31 +245,30 @@ ParsedTrackingResponse = [
                     "description": "",
                     "location": "Hong Kong - Hong Kong ",
                     "signatory": "21.20",
-                    "time": "02:19:50"
-                }
+                    "time": "02:19:50",
+                },
             ],
             "shipment_date": "2009-08-13 23:58:00",
-            "tracking_number": "1815115363"
-        }
+            "tracking_number": "1815115363",
+        },
     ],
-    []
+    [],
 ]
 
 ParsedUnknownTrackResponse = [
     [
         {
-            'carrier': 'carrier_name',
-            'events': [],
-            'shipment_date': '2002-05-02 18:00:00',
-            'tracking_number': '4677100470'
+            "carrier": "carrier_name",
+            "events": [],
+            "shipment_date": "2002-05-02 18:00:00",
+            "tracking_number": "4677100470",
         }
     ],
-    []
+    [],
 ]
 
 
-
-AuthError = '''<?xml version="1.0" encoding="UTF-8"?>
+AuthError = """<?xml version="1.0" encoding="UTF-8"?>
 <req:ShipmentTrackingErrorResponse xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com track-err-res.xsd">
     <Response>
         <ServiceHeader>
@@ -287,7 +288,7 @@ AuthError = '''<?xml version="1.0" encoding="UTF-8"?>
     </Response>
 </req:ShipmentTrackingErrorResponse>
 <!-- ServiceInvocationId:20180628011253_42d7_3a8bef3e-ebbd-4e1a-b248-d01e51b1c77f -->
-'''
+"""
 
 TrackingSingleNotFound = """<?xml version="1.0" encoding="UTF-8"?>
 <res:TrackingResponse xmlns:res="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingResponse.xsd">
@@ -311,7 +312,7 @@ TrackingSingleNotFound = """<?xml version="1.0" encoding="UTF-8"?>
 </res:TrackingResponse>
 """
 
-TrackingRequestXml = '''<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd">
+TrackingRequestXml = """<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd">
 	<Request>
 		<ServiceHeader>
 			<MessageReference>1234567890123456789012345678901</MessageReference>
@@ -324,9 +325,9 @@ TrackingRequestXml = '''<req:KnownTrackingRequest xmlns:req="http://www.dhl.com"
 	<LevelOfDetails>ALL_CHECK_POINTS</LevelOfDetails>
         
 </req:KnownTrackingRequest>
-'''
+"""
 
-TrackingResponseXml = '''<?xml version="1.0" encoding="UTF-8"?>
+TrackingResponseXml = """<?xml version="1.0" encoding="UTF-8"?>
 <req:TrackingResponse xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingResponse.xsd">
     <Response>
         <ServiceHeader>
@@ -659,7 +660,7 @@ TrackingResponseXml = '''<?xml version="1.0" encoding="UTF-8"?>
         </ShipmentInfo>
     </AWBInfo>
 </req:TrackingResponse>
-'''
+"""
 
 UnknownTrackResponse = """<?xml version="1.0" encoding="UTF-8"?>
 <res:TrackingResponse xmlns:res="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingResponse.xsd">

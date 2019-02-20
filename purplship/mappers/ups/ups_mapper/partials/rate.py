@@ -125,7 +125,7 @@ class UPSMapperPartial(UPSMapperBase):
                     [charge for charge in extra_charges if charge != None],
                     [],
                 ),
-                delivery_date=arrival.Date
+                delivery_date=str(arrival.Date)
             )
         ]
 

@@ -1,5 +1,6 @@
 """PurplShip Unified datatypes module."""
 from typing import List, NamedTuple, Dict
+import attr
 
 
 class party(NamedTuple):
@@ -182,155 +183,98 @@ class pickup_cancellation_request(NamedTuple):
 """ Generic response data types """
 
 
+@attr.s(auto_attribs=True)
 class Error:
     """PurplShip Error type."""
 
-    def __init__(self, message: str = None, code: str = None, carrier: str = None):
-        """Error type constructor."""
-        self.message = message
-        self.code = code
-        self.carrier = carrier
+    message: str = None
+    code: str = None
+    carrier: str = None
 
 
+@attr.s(auto_attribs=True)
 class ChargeDetails:
     """PurplShip charge type."""
 
-    def __init__(self, name: str = None, amount: float = None, currency: str = None):
-        """Charge details type constructor."""
-        self.name = name
-        self.amount = amount
-        self.currency = currency
+    name: str = None
+    amount: float = None
+    currency: str = None
 
 
+@attr.s(auto_attribs=True)
 class ReferenceDetails:
     """PurplShip reference details type."""
 
-    def __init__(self, value: str, type: str = None):
-        """Purplship Reference details type constructor."""
-        self.value = value
-        self.type = type
+    value: str
+    type: str = None
 
 
+@attr.s(auto_attribs=True)
 class TimeDetails:
     """PurplShip time details type."""
 
-    def __init__(self, value: str, name: str = None):
-        """Time details type constructor."""
-        self.value = value
-        self.name = name
+    value: str
+    name: str = None
 
 
+@attr.s(auto_attribs=True)
 class TrackingEvent:
     """PurplShip tracking event type."""
 
-    def __init__(
-        self,
-        date: str,
-        description: str,
-        location: str,
-        code: str,
-        time: str = None,
-        signatory: str = None,
-    ):
-        """Tracking event type constructor."""
-        self.date = date
-        self.time = time
-        self.description = description
-        self.location = location
-        self.code = code
-        self.signatory = signatory
+    date: str
+    description: str
+    location: str
+    code: str
+    time: str = None
+    signatory: str = None
 
 
+@attr.s(auto_attribs=True)
 class QuoteDetails:
     """PurplShip quote details type."""
 
-    def __init__(
-        self,
-        carrier: str,
-        service_name: str,
-        service_type: str,
-        base_charge: float,
-        duties_and_taxes: float,
-        total_charge: float,
-        currency: str,
-        pickup_time: str = None,
-        delivery_date: str = None,
-        pickup_date: str = None,
-        discount: float = None,
-        extra_charges: List[ChargeDetails] = [],
-    ):
-        """Quotes details type constructor."""
-        self.carrier = carrier
-        self.service_name = service_name
-        self.service_type = service_type
-        self.base_charge = base_charge
-        self.duties_and_taxes = duties_and_taxes
-        self.total_charge = total_charge
-        self.currency = currency
-        self.discount = discount
-        self.extra_charges = extra_charges
-
-        self.pickup_time = pickup_time
-        self.delivery_date = delivery_date
-        self.pickup_date = pickup_date
+    carrier: str
+    service_name: str
+    service_type: str
+    base_charge: float
+    duties_and_taxes: float
+    total_charge: float
+    currency: str
+    delivery_date: str = None
+    discount: float = None
+    extra_charges: List[ChargeDetails] = []
 
 
+@attr.s(auto_attribs=True)
 class TrackingDetails:
     """PurplShip tracking details type."""
 
-    def __init__(
-        self,
-        carrier: str,
-        tracking_number: str,
-        shipment_date: str = None,
-        events: List[TrackingEvent] = [],
-    ):
-        """Tracking details type constructor."""
-        self.carrier = carrier
-        self.events = events
-        self.shipment_date = shipment_date
-        self.tracking_number = tracking_number
+    carrier: str
+    tracking_number: str
+    shipment_date: str = None
+    events: List[TrackingEvent] = []
 
 
+@attr.s(auto_attribs=True)
 class ShipmentDetails:
     """PurplShip shipment details type."""
 
-    def __init__(
-        self,
-        carrier: str,
-        tracking_numbers: List[str],
-        total_charge: ChargeDetails,
-        charges: List[ChargeDetails],
-        shipment_date: str = None,
-        services: List[str] = None,
-        documents: List[str] = [],
-        reference: ReferenceDetails = None,
-    ):
-        """Shipment details type constructor."""
-        self.carrier = carrier
-        self.tracking_numbers = tracking_numbers
-        self.shipment_date = shipment_date
-        self.documents = documents
-        self.services = services
-        self.reference = reference
-        self.total_charge = total_charge
-        self.charges = charges
+    carrier: str
+    tracking_numbers: List[str]
+    total_charge: ChargeDetails
+    charges: List[ChargeDetails]
+    shipment_date: str = None
+    services: List[str] = None
+    documents: List[str] = []
+    reference: ReferenceDetails = None
 
 
+@attr.s(auto_attribs=True)
 class PickupDetails:
     """PurplShip pickup details type."""
 
-    def __init__(
-        self,
-        carrier: str,
-        confirmation_number: str,
-        pickup_date: str = None,
-        pickup_charge: ChargeDetails = None,
-        ref_times: List[TimeDetails] = None,
-    ):
-        """Pickup details type constructor."""
-        self.carrier = carrier
-        self.confirmation_number = confirmation_number
-        self.pickup_date = pickup_date
-        self.pickup_charge = pickup_charge
-        self.ref_times = ref_times
+    carrier: str
+    confirmation_number: str
+    pickup_date: str = None
+    pickup_charge: ChargeDetails = None
+    ref_times: List[TimeDetails] = None

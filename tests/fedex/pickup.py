@@ -11,27 +11,31 @@ from tests.utils import strip, get_node_from_xml
 class TestFedExPickup(unittest.TestCase):
     def setUp(self):
         self.PickupRequest = CreatePickupRequest()
-        self.PickupRequest.build(get_node_from_xml(PickupRequestXml, 'CreatePickupRequest'))
+        self.PickupRequest.build(
+            get_node_from_xml(PickupRequestXml, "CreatePickupRequest")
+        )
 
         self.PickupCancellation = CancelPickupRequest()
-        self.PickupCancellation.build(get_node_from_xml(PickupCancellationRequestXML, 'CancelPickupRequest'))
+        self.PickupCancellation.build(
+            get_node_from_xml(PickupCancellationRequestXML, "CancelPickupRequest")
+        )
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_request_pickup(self, http_mock):
         proxy.request_pickup(self.PickupRequest)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(PickupRequestXml))
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value='<a></a>')
+    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_cancel_pickup(self, http_mock):
         proxy.cancel_pickup(self.PickupCancellation)
 
-        xmlStr = http_mock.call_args[1]['data'].decode("utf-8")
+        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(PickupCancellationRequestXML))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 PickupCancellationRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/pickup/v15">
