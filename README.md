@@ -44,10 +44,10 @@ Python 3.6.5
 
 PurplShip can be installed with [pip](https://pip.pypa.io/):
 
-For latest dev versions
+For released version (specify a purplship==version if needed)
 
 ```shell
-pip install --process-dependency-links -e git://github.com/PurplShip/purplship.git#egg=purplship
+pip install -f https://git.io/fxTZ6 purplship
 ```
 
 Alternatively, you can grab the latest source code from [GitHub](https://github.com/PurplShip/purplship):
@@ -55,12 +55,6 @@ Alternatively, you can grab the latest source code from [GitHub](https://github.
 ```shell
 git clone https://github.com/PurplShip/purplship.git
 pip install --process-dependency-links -e purplship
-```
-
-For released version (specify a purplship==version if needed)
-
-```shell
-pip install -f https://git.io/fxTZ6 purplship
 ```
 
 ## Running the tests
