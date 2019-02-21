@@ -39,12 +39,13 @@ class UPSMapper(
 
     def create_shipment_request(
         self, payload: T.shipment_request
-    ) -> Union[FShip.FreightShipRequest, PShip.ShipmentRequest]:
-        return (
-            self.create_freight_ship_request
-            if _is_freight(payload)
-            else self.create_package_ship_request
-        )(payload)
+    ) -> PShip.ShipmentRequest:
+        return self.create_package_ship_request(payload)
+
+    def create_freight_shipment_request(
+        self, payload: T.shipment_request
+    ) -> FShip.FreightShipRequest:
+        return self.create_freight_ship_request(payload)
 
     def parse_quote_response(
         self, response: etree.ElementBase
