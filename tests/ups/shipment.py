@@ -23,7 +23,7 @@ class TestUPSShipment(unittest.TestCase):
 
     def test_create_freight_shipment_request(self):
         payload = Shipment.create(**freight_shipment_data)
-        Shipment_ = proxy.mapper.create_shipment_request(payload)
+        Shipment_ = proxy.mapper.create_freight_shipment_request(payload)
         self.assertEqual(export(Shipment_), export(self.FreightShipRequest))
 
     def test_create_package_shipment_request(self):

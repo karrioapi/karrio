@@ -26,11 +26,12 @@ class UPSMapper(
     def create_quote_request(
         self, payload: T.shipment_request
     ) -> Union[PRate.RateRequest, Rate.FreightRateRequest]:
-        return (
-            self.create_freight_rate_request
-            if _is_freight(payload)
-            else self.create_package_rate_request
-        )(payload)
+        return self.create_package_rate_request(payload)
+
+    def create_freight_quote_request(
+        self, payload: T.shipment_request
+    ) -> Union[PRate.RateRequest, Rate.FreightRateRequest]:
+        return self.create_freight_rate_request(payload)
 
     def create_tracking_request(
         self, payload: T.tracking_request
@@ -81,23 +82,3 @@ class UPSMapper(
             shipment if len(details) > 0 else None,
             self.parse_error_response(response),
         )
-
-
-def _is_freight(payload: T.shipment_request) -> bool:
-    total_weight = Weight(
-        payload.shipment.total_weight
-        or reduce(lambda t, i: t + i.weight, payload.shipment.items, 0.0),
-        WeightUnit[payload.shipment.weight_unit],
-    ).LB
-    any_item_size_over_165 = any(
-        [
-            (
-                Dimension(
-                    item.length or 0, DimensionUnit[payload.shipment.dimension_unit]
-                ).IN
-                > 165
-            )
-            for item in payload.shipment.items
-        ]
-    )
-    return total_weight > 150 or any_item_size_over_165

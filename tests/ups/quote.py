@@ -52,7 +52,7 @@ class TestUPSQuote(unittest.TestCase):
         }
         payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
 
-        FreightRateRequest_ = proxy.mapper.create_quote_request(payload)
+        FreightRateRequest_ = proxy.mapper.create_freight_quote_request(payload)
         self.assertEqual(export(FreightRateRequest_), export(self.FreightRateRequest))
 
     @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
