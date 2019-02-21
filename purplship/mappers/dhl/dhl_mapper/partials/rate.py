@@ -103,7 +103,7 @@ class DHLMapperPartial(DHLMapperBase):
 
         GetQuote = Req.GetQuoteType(
             Request=self.init_request(),
-            From=Req.DCTFrom(
+            From=ReqType.DCTFrom(
                 CountryCode=payload.shipper.country_code,
                 Postalcode=payload.shipper.postal_code,
                 City=payload.shipper.city,

@@ -121,9 +121,46 @@ ParsedQuoteMissingArgsError = [
     ],
 ]
 
-ParsedFreightRateResponse = [[{'base_charge': 909.26, 'carrier': 'UPS', 'currency': 'USD', 'delivery_date': None, 'discount': 776.36, 'duties_and_taxes': 576.54, 'extra_charges': [{'amount': 776.36, 'currency': 'USD', 'name': 'DSCNT'}, {'amount': 480.0, 'currency': 'USD', 'name': 'HOL_WE_PU_DEL'}, {'amount': 66.54, 'currency': 'USD', 'name': '2'}, {'amount': 30.0, 'currency': 'USD', 'name': 'CA_BORDER'}], 'service_name': None, 'service_type': '309', 'total_charge': 332.72}], []]
+ParsedFreightRateResponse = [
+    [
+        {
+            "base_charge": 909.26,
+            "carrier": "UPS",
+            "currency": "USD",
+            "delivery_date": None,
+            "discount": 776.36,
+            "duties_and_taxes": 576.54,
+            "extra_charges": [
+                {"amount": 776.36, "currency": "USD", "name": "DSCNT"},
+                {"amount": 480.0, "currency": "USD", "name": "HOL_WE_PU_DEL"},
+                {"amount": 66.54, "currency": "USD", "name": "2"},
+                {"amount": 30.0, "currency": "USD", "name": "CA_BORDER"},
+            ],
+            "service_name": None,
+            "service_type": "309",
+            "total_charge": 332.72,
+        }
+    ],
+    [],
+]
 
-ParsedRateResponse = [[{'base_charge': 9.86, 'carrier': 'UPS', 'currency': 'USD', 'delivery_date': 'None', 'discount': None, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': 0.0, 'currency': 'USD', 'name': None}], 'service_name': '', 'service_type': '03', 'total_charge': 9.86}], []]
+ParsedRateResponse = [
+    [
+        {
+            "base_charge": 9.86,
+            "carrier": "UPS",
+            "currency": "USD",
+            "delivery_date": "None",
+            "discount": None,
+            "duties_and_taxes": 0.0,
+            "extra_charges": [{"amount": 0.0, "currency": "USD", "name": None}],
+            "service_name": "UPS_Ground",
+            "service_type": "03",
+            "total_charge": 9.86,
+        }
+    ],
+    [],
+]
 
 
 QuoteParsingError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">

@@ -9,6 +9,7 @@ from purplship.mappers.ups.ups_units import (
     PackagingType,
     ServiceOption,
     RatingOption,
+    ShippingServiceCode
 )
 
 
@@ -50,10 +51,13 @@ class UPSMapperPartial(UPSMapperBase):
             if r.Type.Code not in ["DSCNT", "AFTR_DSCNT", "DSCNT_RATE", "LND_GROSS"]
         ]
         extra_charges = Discounts_ + Surcharges_
+        currency_ = next(c.text for c in detailNode.xpath(
+            ".//*[local-name() = $name]", name="CurrencyCode"
+        ))
         return rates + [
             T.QuoteDetails(
                 carrier=self.client.carrier_name,
-                currency=detail.TotalShipmentCharge.CurrencyCode,
+                currency=currency_,
                 service_name=detail.Service.Description,
                 service_type=detail.Service.Code,
                 base_charge=float(detail.TotalShipmentCharge.MonetaryValue),
@@ -98,12 +102,15 @@ class UPSMapperPartial(UPSMapperBase):
             arrival.build(arrival) for arrival in
             detailNode.xpath(".//*[local-name() = $name]", name="Arrival")
         ]
+        currency_ = next(c.text for c in detailNode.xpath(
+            ".//*[local-name() = $name]", name="CurrencyCode"
+        ))
 
         return rates + [
             T.QuoteDetails(
                 carrier=self.client.carrier_name,
-                currency=rate.TransportationCharges.CurrencyCode,
-                service_name=rate.Service.Description,
+                currency=currency_,
+                service_name=str(ShippingServiceCode(rate.Service.Code).name),
                 service_type=rate.Service.Code,
                 base_charge=float(rate.TransportationCharges.MonetaryValue),
                 total_charge=float(total_charges.MonetaryValue),

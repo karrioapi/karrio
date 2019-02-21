@@ -20,6 +20,7 @@ from pyfedex.rate_v22 import (
     RequestedPackageLineItem,
     Weight,
     Dimensions,
+    RatedShipmentDetail,
 )
 from datetime import datetime
 from lxml import etree
@@ -49,21 +50,24 @@ class FedexMapperPartial(FedexMapperBase):
         detail.build(detailNode)
         if not detail.RatedShipmentDetails:
             return quotes
-        shipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
+        shipmentDetail: RatedShipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
+        currency_ = next(c.text for c in detailNode.xpath(
+            ".//*[local-name() = $name]", name="Currency"
+        ))
         Discounts_ = map(
             lambda d: T.ChargeDetails(
-                name=d.RateDiscountType, amount=float(d.Amount.Amount)
+                name=d.RateDiscountType, amount=float(d.Amount.Amount), currency=currency_
             ),
             shipmentDetail.FreightDiscounts,
         )
         Surcharges_ = map(
             lambda s: T.ChargeDetails(
-                name=s.SurchargeType, amount=float(s.Amount.Amount)
+                name=s.SurchargeType, amount=float(s.Amount.Amount), currency=currency_
             ),
             shipmentDetail.Surcharges,
         )
         Taxes_ = map(
-            lambda t: T.ChargeDetails(name=t.TaxType, amount=float(t.Amount.Amount)),
+            lambda t: T.ChargeDetails(name=t.TaxType, amount=float(t.Amount.Amount), currency=currency_),
             shipmentDetail.Taxes,
         )
         return quotes + [
@@ -71,9 +75,7 @@ class FedexMapperPartial(FedexMapperBase):
                 carrier=self.client.carrier_name,
                 service_name=detail.ServiceType,
                 service_type=detail.ActualRateType,
-                currency=shipmentDetail.CurrencyExchangeRate.IntoCurrency
-                if shipmentDetail.CurrencyExchangeRate
-                else None,
+                currency=currency_,
                 base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
                 total_charge=float(
                     shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount
