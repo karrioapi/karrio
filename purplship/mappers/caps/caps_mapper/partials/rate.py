@@ -31,10 +31,11 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
     ) -> List[T.QuoteDetails]:
         price_quote = price_quoteType()
         price_quote.build(price_quoteNode)
+        currency = "CAD"
         discounts = [
             T.ChargeDetails(
                 name=d.adjustment_name,
-                currency="CAD",
+                currency=currency,
                 amount=float(d.adjustment_cost or 0),
             )
             for d in price_quote.price_details.adjustments.adjustment
@@ -42,23 +43,23 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         return quotes + [
             T.QuoteDetails(
                 carrier=self.client.carrier_name,
-                currency="CAD",
+                currency=currency,
                 delivery_date=str(price_quote.service_standard.expected_delivery_date),
                 service_name=price_quote.service_name,
                 service_type=price_quote.service_code,
                 base_charge=float(price_quote.price_details.base or 0),
                 total_charge=float(price_quote.price_details.due or 0),
                 discount=reduce(lambda sum, d: sum + d.amount, discounts, 0.0),
-                duties_and_taxes=float(
-                    price_quote.price_details.taxes.gst.valueOf_ or 0
-                )
-                + float(price_quote.price_details.taxes.pst.valueOf_ or 0)
-                + float(price_quote.price_details.taxes.hst.valueOf_ or 0),
+                duties_and_taxes=(
+                    float(price_quote.price_details.taxes.gst.valueOf_ or 0) +
+                    float(price_quote.price_details.taxes.pst.valueOf_ or 0) +
+                    float(price_quote.price_details.taxes.hst.valueOf_ or 0)
+                ),
                 extra_charges=list(
                     map(
                         lambda a: T.ChargeDetails(
                             name=a.adjustment_name,
-                            currency="CAD",
+                            currency=currency,
                             amount=float(a.adjustment_cost or 0),
                         ),
                         price_quote.price_details.adjustments.adjustment,
@@ -84,8 +85,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             promo_code=payload.shipment.extra.get("promo-code"),
             quote_type=payload.shipment.extra.get("quote-type"),
             expected_mailing_date=(
-                payload.shipment.extra.get("expected-mailing-date") or 
-                datetime.today().strftime('%Y-%m-%d')
+                payload.shipment.date or datetime.today().strftime('%Y-%m-%d')
             ),
             options=optionsType(
                 option=[
