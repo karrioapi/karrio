@@ -1,10 +1,9 @@
 import unittest
 from unittest.mock import patch
-import time
 from gds_helpers import to_xml, export, jsonify, xml_tostring
 from pycaps.shipment import ShipmentType
 from pycaps.ncshipment import NonContractShipmentType
-from purplship.domain.Types import Shipment
+from purplship.domain.Types import ShipmentRequest
 from purplship.mappers.caps import CanadaPostProxy
 from tests.caps.fixture import proxy
 from tests.utils import strip
@@ -25,7 +24,7 @@ MockedShipmentResponseXML = """<shipment-info>
 """
 
 
-class TestShipment(unittest.TestCase):
+class TestCanadaPostShipment(unittest.TestCase):
     def setUp(self):
         self.Shipment = ShipmentType()
         self.Shipment.build(to_xml(ShipmentRequestXML))
@@ -34,12 +33,12 @@ class TestShipment(unittest.TestCase):
         self.NCShipment.build(to_xml(NCShipmentRequestXML))
 
     def test_create_shipment_request(self):
-        payload = Shipment.create(**shipment_data)
+        payload = ShipmentRequest(**shipment_data)
         Shipment_ = proxy.mapper.create_shipment_request(payload)
         self.assertEqual(export(Shipment_), export(self.Shipment))
 
     def test_create_ncshipment_request(self):
-        payload = Shipment.create(**ncshipment_data)
+        payload = ShipmentRequest(**ncshipment_data)
         NCShipment_ = proxy.mapper.create_shipment_request(payload)
         # removed for testing purpose
         NCShipment_.delivery_spec.parcel_characteristics.document = None

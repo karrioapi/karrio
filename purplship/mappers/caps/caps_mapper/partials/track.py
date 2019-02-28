@@ -35,5 +35,5 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             )
         ]
 
-    def create_tracking_pins(self, payload: T.tracking_request) -> List[str]:
+    def create_tracking_pins(self, payload: T.TrackingRequest) -> List[str]:
         return payload.tracking_numbers

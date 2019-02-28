@@ -1,9 +1,8 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, jsonify, export
-from purplship.domain.Types import Tracking
+from gds_helpers import to_xml, jsonify
+from purplship.domain.Types import TrackingRequest
 from tests.caps.fixture import proxy
-from tests.utils import strip
 
 
 class TestCanadaPostTracking(unittest.TestCase):
@@ -11,7 +10,7 @@ class TestCanadaPostTracking(unittest.TestCase):
         self.tracking_numbers = ["1Z12345E6205277936"]
 
     def test_create_tracking_request(self):
-        payload = Tracking.create(tracking_numbers=self.tracking_numbers)
+        payload = TrackingRequest(tracking_numbers=self.tracking_numbers)
 
         tracking_pins = proxy.mapper.create_tracking_request(payload)
 

@@ -43,10 +43,10 @@ class DHLMapperPartial(DHLMapperBase):
             self.parse_error_response(response) if not success else [],
         )
 
-    def create_tracking_pins(self, payload: T.tracking_request) -> List[str]:
+    def create_tracking_pins(self, payload: T.TrackingRequest) -> List[str]:
         return payload.tracking_numbers
 
-    def create_book_purequest(self, payload: T.pickup_request) -> BookPURequest:
+    def create_book_purequest(self, payload: T.PickupRequest) -> BookPURequest:
         Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(
             payload
         )
@@ -61,7 +61,7 @@ class DHLMapperPartial(DHLMapperBase):
             Pickup=Pickup_,
         )
 
-    def create_modify_purequest(self, payload: T.pickup_request) -> ModifyPURequest:
+    def create_modify_purequest(self, payload: T.PickupRequest) -> ModifyPURequest:
         Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(
             payload
         )
@@ -79,7 +79,7 @@ class DHLMapperPartial(DHLMapperBase):
         )
 
     def create_cancel_purequest(
-        self, payload: T.pickup_cancellation_request
+        self, payload: T.PickupCancellationRequest
     ) -> CancelPURequest:
         return CancelPURequest(
             Request=self.init_request(),
@@ -125,7 +125,7 @@ class DHLMapperPartial(DHLMapperBase):
         )
 
     def _create_pickup_request(
-        self, payload: T.pickup_request
+        self, payload: T.PickupRequest
     ) -> Tuple[
         PickpuDataTypes.Requestor,
         PickpuDataTypes.Place,

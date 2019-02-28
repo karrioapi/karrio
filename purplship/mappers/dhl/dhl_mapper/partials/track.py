@@ -42,7 +42,7 @@ class DHLMapperPartial(DHLMapperBase):
         ]
 
     def create_dhltracking_request(
-        self, payload: T.tracking_request
+        self, payload: T.TrackingRequest
     ) -> Track.KnownTrackingRequest:
         known_request = Track.KnownTrackingRequest(
             Request=self.init_request(),

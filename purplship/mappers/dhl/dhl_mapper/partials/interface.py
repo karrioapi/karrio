@@ -27,31 +27,31 @@ class DHLCapabilities:
 
     """ Requests """
 
-    def create_dct_request(self, payload: T.shipment_request) -> Req.DCTRequest:
+    def create_dct_request(self, payload: T.ShipmentRequest) -> Req.DCTRequest:
         pass
 
     def create_dhltracking_request(
-        self, payload: T.tracking_request
+        self, payload: T.TrackingRequest
     ) -> Track.KnownTrackingRequest:
         pass
 
     def create_dhlshipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> ShipReq.ShipmentRequest:
         pass
 
     def create_book_purequest(
-        self, payload: T.pickup_request
+        self, payload: T.PickupRequest
     ) -> BookPUReq.BookPURequest:
         pass
 
     def create_modify_purequest(
-        self, payload: T.pickup_request
+        self, payload: T.PickupRequest
     ) -> ModifPUReq.ModifyPURequest:
         pass
 
     def create_cancel_purequest(
-        self, payload: T.pickup_cancellation_request
+        self, payload: T.PickupCancellationRequest
     ) -> CancelPUReq.CancelPURequest:
         pass
 

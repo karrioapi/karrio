@@ -1,9 +1,8 @@
 import unittest
 from unittest.mock import patch
-from datetime import datetime
 from pyfedex.rate_v22 import RateRequest
 from gds_helpers import to_xml, jsonify, export
-from purplship.domain.Types import Quote
+from purplship.domain import Types as T
 from tests.fedex.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
@@ -28,7 +27,7 @@ class TestFeDexQuote(unittest.TestCase):
                 {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
             ],
         }
-        payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = T.RateRequest(shipper=shipper, recipient=recipient, shipment=shipment)
 
         RateRequest_ = proxy.mapper.create_quote_request(payload)
         # Remove timeStamp for testing

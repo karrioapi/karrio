@@ -137,7 +137,7 @@ class UPSMapperPartial(UPSMapperBase):
         ]
 
     def create_freight_rate_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> Rate.FreightRateRequest:
         service = (
             [
@@ -236,7 +236,7 @@ class UPSMapperPartial(UPSMapperBase):
         )
 
     def create_package_rate_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> PRate.RateRequest:
         service = (
             [
@@ -318,7 +318,7 @@ class UPSMapperPartial(UPSMapperBase):
                             CountryCode=shipFrom.country_code,
                         ),
                     )
-                )(T.party(**payload.shipment.extra.get("ShipFrom")))
+                )(T.Party(**payload.shipment.extra.get("ShipFrom")))
                 if "ShipFrom" in payload.shipment.extra
                 else None,
                 AlternateDeliveryAddress=(
@@ -332,7 +332,7 @@ class UPSMapperPartial(UPSMapperBase):
                             CountryCode=alternate.country_code,
                         ),
                     )
-                )(T.party(**payload.shipment.extra.get("AlternateDeliveryAddress")))
+                )(T.Party(**payload.shipment.extra.get("AlternateDeliveryAddress")))
                 if "AlternateDeliveryAddress" in payload.shipment.extra
                 else None,
                 ShipmentIndicationType=None,

@@ -27,31 +27,31 @@ class DHLMapper(
     DHLShipmentMapperPartial,
     DHLPickupMapperPartial,
 ):
-    def create_quote_request(self, payload: T.shipment_request) -> Req.DCTRequest:
+    def create_quote_request(self, payload: T.ShipmentRequest) -> Req.DCTRequest:
         return self.create_dct_request(payload)
 
     def create_tracking_request(
-        self, payload: T.tracking_request
+        self, payload: T.TrackingRequest
     ) -> Track.KnownTrackingRequest:
         return self.create_dhltracking_request(payload)
 
     def create_shipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> ShipReq.ShipmentRequest:
         return self.create_dhlshipment_request(payload)
 
     def create_pickup_request(
-        self, payload: T.pickup_request
+        self, payload: T.PickupRequest
     ) -> BookPUReq.BookPURequest:
         return self.create_book_purequest(payload)
 
     def modify_pickup_request(
-        self, payload: T.pickup_request
+        self, payload: T.PickupRequest
     ) -> ModifPUReq.ModifyPURequest:
         return self.create_modify_purequest(payload)
 
     def create_pickup_cancellation_request(
-        self, payload: T.pickup_cancellation_request
+        self, payload: T.PickupCancellationRequest
     ) -> CancelPUReq.CancelPURequest:
         return self.create_cancel_purequest(payload)
 

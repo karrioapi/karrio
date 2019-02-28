@@ -3,10 +3,9 @@ from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pyups.freight_rate import FreightRateRequest
 from pyups.package_rate import RateRequest
-from purplship.domain.Types import Quote
+from purplship.domain import Types as T
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
-import time
 
 
 class TestUPSQuote(unittest.TestCase):
@@ -21,7 +20,7 @@ class TestUPSQuote(unittest.TestCase):
         self.RateRequest.build(get_node_from_xml(RateRequestXML, "RateRequest"))
 
     def test_create_quote_request(self):
-        payload = Quote.create(**rate_req_data)
+        payload = T.RateRequest(**rate_req_data)
         RateRequest_ = proxy.mapper.create_quote_request(payload)
         self.assertEqual(
             export(RateRequest_),
@@ -50,7 +49,7 @@ class TestUPSQuote(unittest.TestCase):
                 }
             ]
         }
-        payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = T.RateRequest(shipper=shipper, recipient=recipient, shipment=shipment)
 
         FreightRateRequest_ = proxy.mapper.create_freight_quote_request(payload)
         self.assertEqual(export(FreightRateRequest_), export(self.FreightRateRequest))

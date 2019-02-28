@@ -4,7 +4,7 @@ from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_20 import CancelPURequest
 from gds_helpers import to_xml, export, jsonify
-from purplship.domain.Types import Pickup
+from purplship.domain.Types import PickupCancellationRequest, PickupRequest
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 import time
@@ -23,7 +23,7 @@ class TestDHLPickup(unittest.TestCase):
         self.CancelPURequest.build(to_xml(CancelPURequestXML))
 
     def test_create_pickup_request(self):
-        payload = Pickup.request(**request_data)
+        payload = PickupRequest(**request_data)
         PURequest_ = proxy.mapper.create_pickup_request(payload)
         # remove MessageTime for testing purpose
         PURequest_.Request.ServiceHeader.MessageTime = None
@@ -37,7 +37,7 @@ class TestDHLPickup(unittest.TestCase):
         )
 
     def test_create_modify_pickup_request(self):
-        payload = Pickup.request(**modification_data)
+        payload = PickupRequest(**modification_data)
         ModifyPURequest_ = proxy.mapper.modify_pickup_request(payload)
         # remove MessageTime for testing purpose
         ModifyPURequest_.Request.ServiceHeader.MessageTime = None
@@ -51,7 +51,7 @@ class TestDHLPickup(unittest.TestCase):
         )
 
     def test_create_pickup_cancellation_request(self):
-        payload = Pickup.cancellation(**cancellation_data)
+        payload = PickupCancellationRequest(**cancellation_data)
         CancelPURequest_ = proxy.mapper.create_pickup_cancellation_request(payload)
         # remove MessageTime for testing purpose
         CancelPURequest_.Request.ServiceHeader.MessageTime = None

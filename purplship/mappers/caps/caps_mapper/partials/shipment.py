@@ -1,9 +1,7 @@
 from pycaps import shipment as Shipment, ncshipment as NCShipment
-from base64 import b64encode
-from datetime import datetime
 from lxml import etree
 from typing import Any, Tuple, List, Union
-from .interface import reduce, T, CanadaPostMapperBase
+from .interface import T, CanadaPostMapperBase
 from purplship.domain.Types.units import Dimension, DimensionUnit, Weight, WeightUnit
 from purplship.mappers.caps.caps_units import OptionCode, ServiceType
 
@@ -20,9 +18,11 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         return (shipment, self.parse_error_response(response))
 
     def create_shipment(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> Union[Shipment.ShipmentType, NCShipment.NonContractShipmentType]:
         is_non_contract = payload.shipment.extra.get("settlement-info") is None
+        print(is_non_contract)
+        print("hey yo")
         shipment = (
             self._create_ncshipment(payload)
             if is_non_contract
@@ -130,7 +130,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
             reference=T.ReferenceDetails(value=info.shipment_id, type="Shipment Id"),
         )
 
-    def _create_shipment(self, payload: T.shipment_request) -> Shipment.ShipmentType:
+    def _create_shipment(self, payload: T.ShipmentRequest) -> Shipment.ShipmentType:
         delivery_spec_: Shipment.DeliverySpecType = self._initialise_delivery_spec(
             payload, False
         )
@@ -249,7 +249,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         return shipment_
 
     def _create_ncshipment(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> NCShipment.NonContractShipmentType:
         delivery_spec_: NCShipment.DeliverySpecType = self._initialise_delivery_spec(
             payload
@@ -273,7 +273,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         )
 
     def _initialise_delivery_spec(
-        self, payload: T.shipment_request, is_non_contract: bool = True
+        self, payload: T.ShipmentRequest, is_non_contract: bool = True
     ) -> Union[Shipment.DeliverySpecType, NCShipment.DeliverySpecType]:
         Package = NCShipment if is_non_contract else Shipment
         package = payload.shipment.items[0]
@@ -416,7 +416,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
                     ]
                 ),
             )
-            if _has_any(payload.shipment, ["customs", "duty-payment-account"])
+            if payload.shipment.customs is not None
             else None,
             references=Package.ReferencesType(
                 cost_centre=payload.shipment.extra.get("cost-centre"),

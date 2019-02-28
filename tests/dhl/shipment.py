@@ -1,9 +1,8 @@
 import unittest
 from unittest.mock import patch
-import time
 from gds_helpers import to_xml, jsonify, export
 from pydhl.ship_val_global_req_61 import ShipmentRequest
-from purplship.domain.Types import Shipment
+from purplship.domain import Types as T
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
@@ -14,7 +13,7 @@ class TestDHLShipment(unittest.TestCase):
         self.ShipmentRequest.build(to_xml(ShipmentRequestXml))
 
     def test_create_shipment_request(self):
-        payload = Shipment.create(**shipment_data)
+        payload = T.ShipmentRequest(**shipment_data)
         ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
 
         # remove MessageTime, Date for testing purpose

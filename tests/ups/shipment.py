@@ -1,10 +1,9 @@
 import unittest
 from unittest.mock import patch
-import time
 from gds_helpers import to_xml, jsonify, export
 from pyups.freight_ship import FreightShipRequest
 from pyups.package_ship import ShipmentRequest
-from purplship.domain.Types import Shipment
+from purplship.domain import Types as T
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
@@ -22,12 +21,12 @@ class TestUPSShipment(unittest.TestCase):
         )
 
     def test_create_freight_shipment_request(self):
-        payload = Shipment.create(**freight_shipment_data)
+        payload = T.ShipmentRequest(**freight_shipment_data)
         Shipment_ = proxy.mapper.create_freight_shipment_request(payload)
         self.assertEqual(export(Shipment_), export(self.FreightShipRequest))
 
     def test_create_package_shipment_request(self):
-        payload = Shipment.create(**package_shipment_data)
+        payload = T.ShipmentRequest(**package_shipment_data)
         Shipment_ = proxy.mapper.create_shipment_request(payload)
         self.assertEqual(export(Shipment_), export(self.ShipmentRequest))
 

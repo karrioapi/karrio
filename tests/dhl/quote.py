@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pydhl.DCT_req_global import DCTRequest
-from purplship.domain.Types import Quote
+from purplship.domain import Types as T
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
@@ -25,7 +25,7 @@ class TestDHLQuote(unittest.TestCase):
             ],
             "is_document": False,
         }
-        payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = T.RateRequest(shipper=shipper, recipient=recipient, shipment=shipment)
 
         DCTRequest_ = proxy.mapper.create_quote_request(payload)
 

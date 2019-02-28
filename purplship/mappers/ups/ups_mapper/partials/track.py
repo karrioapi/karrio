@@ -50,7 +50,7 @@ class UPSMapperPartial(UPSMapperBase):
         ]
 
     def create_track_request(
-        self, payload: T.tracking_request
+        self, payload: T.TrackingRequest
     ) -> List[Track.TrackRequest]:
         Request_ = Common.RequestType(
             TransactionReference=Common.TransactionReferenceType(

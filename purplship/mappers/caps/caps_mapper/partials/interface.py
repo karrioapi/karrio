@@ -16,14 +16,14 @@ class CanadaPostCapabilities:
 
     """ Requests """
 
-    def create_mailing_scenario(self, payload: T.shipment_request) -> mailing_scenario:
+    def create_mailing_scenario(self, payload: T.ShipmentRequest) -> mailing_scenario:
         pass
 
-    def create_tracking_pins(self, payload: T.tracking_request) -> List[str]:
+    def create_tracking_pins(self, payload: T.TrackingRequest) -> List[str]:
         pass
 
     def create_shipment(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> Union[ShipmentType, NonContractShipmentType]:
         pass
 

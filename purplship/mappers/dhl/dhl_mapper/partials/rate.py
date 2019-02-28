@@ -66,7 +66,7 @@ class DHLMapperPartial(DHLMapperBase):
             )
         ]
 
-    def create_dct_request(self, payload: T.shipment_request) -> Req.DCTRequest:
+    def create_dct_request(self, payload: T.ShipmentRequest) -> Req.DCTRequest:
         default_product_code = (
             Product.EXPRESS_WORLDWIDE_DOC
             if payload.shipment.is_document

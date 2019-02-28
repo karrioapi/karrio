@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from pyfedex.track_service_v14 import TrackRequest
 from gds_helpers import to_xml, jsonify, export
-from purplship.domain.Types import Tracking
+from purplship.domain.Types import TrackingRequest
 from tests.fedex.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
@@ -14,7 +14,7 @@ class TestFeDexTracking(unittest.TestCase):
         self.TrackRequest.build(req_xml)
 
     def test_create_tracking_request(self):
-        payload = Tracking.create(tracking_numbers=["794887075005"])
+        payload = TrackingRequest(tracking_numbers=["794887075005"])
 
         TrackRequest_ = proxy.mapper.create_tracking_request(payload)
 

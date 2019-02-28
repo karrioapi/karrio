@@ -1,4 +1,3 @@
-from io import StringIO
 from typing import List, Union
 from lxml import etree
 from gds_helpers import export, to_xml, request as http, exec_parrallel, bundle_xml
@@ -9,8 +8,6 @@ from purplship.domain.proxy import Proxy
 from base64 import b64encode
 from pycaps.shipment import ShipmentType
 from pycaps.ncshipment import NonContractShipmentType
-
-from functools import reduce
 
 
 class CanadaPostProxy(Proxy):
@@ -56,7 +53,6 @@ class CanadaPostProxy(Proxy):
         self, shipment: Union[NonContractShipmentType, ShipmentType]
     ) -> etree.ElementBase:
         is_non_contract = isinstance(shipment, NonContractShipmentType)
-
         if is_non_contract:
             req_type = "application/vnd.cpc.ncshipment-v4+xml"
             namespace = 'xmlns="http://www.canadapost.ca/ws/ncshipment-v4"'

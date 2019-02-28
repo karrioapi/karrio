@@ -18,14 +18,14 @@ class CanadaPostMapper(
     CanadaPostTrackMapperPartial,
     CanadaPostShipmentMapperPartial,
 ):
-    def create_quote_request(self, payload: T.shipment_request) -> mailing_scenario:
+    def create_quote_request(self, payload: T.ShipmentRequest) -> mailing_scenario:
         return self.create_mailing_scenario(payload)
 
-    def create_tracking_request(self, payload: T.tracking_request) -> List[str]:
+    def create_tracking_request(self, payload: T.TrackingRequest) -> List[str]:
         return self.create_tracking_pins(payload)
 
     def create_shipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> Union[ShipmentType, NonContractShipmentType]:
         return self.create_shipment(payload)
 

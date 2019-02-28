@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from pydhl.tracking_request_known import KnownTrackingRequest
 from gds_helpers import to_xml, jsonify, export
-from purplship.domain.Types import Tracking
+from purplship.domain.Types import TrackingRequest
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 
@@ -13,7 +13,7 @@ class TestDHLTracking(unittest.TestCase):
         self.KnownTrackingRequest.build(to_xml(TrackingRequestXml))
 
     def test_create_tracking_request(self):
-        payload = Tracking.create(tracking_numbers=["8346088391"])
+        payload = TrackingRequest(tracking_numbers=["8346088391"])
 
         KnownTrackingRequest_ = proxy.mapper.create_tracking_request(payload)
 

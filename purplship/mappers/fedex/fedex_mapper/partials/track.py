@@ -50,7 +50,7 @@ class FedexMapperPartial(FedexMapperBase):
             )
         ]
 
-    def create_track_request(self, payload: T.tracking_request) -> TrackRequest:
+    def create_track_request(self, payload: T.TrackingRequest) -> TrackRequest:
         return TrackRequest(
             WebAuthenticationDetail=self.webAuthenticationDetail,
             ClientDetail=ClientDetail(

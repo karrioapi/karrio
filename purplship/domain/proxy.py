@@ -1,11 +1,11 @@
-from abc import ABC
+import attr
 from purplship.domain.client import Client
 from purplship.domain.mapper import Mapper
 
 
-class Proxy(ABC):
-    """ 
-    Unitied API carrier Proxy (Interface) 
+@attr.s(auto_attribs=True)
+class Proxy:
+    """Unitied API carrier Proxy (Interface) 
     ...
 
     Attributes

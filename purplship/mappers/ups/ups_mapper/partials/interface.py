@@ -22,27 +22,27 @@ class UPSCapabilities:
     """ Requests factories """
 
     def create_freight_rate_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> Rate.FreightRateRequest:
         pass
 
     def create_package_rate_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> PRate.RateRequest:
         pass
 
     def create_track_request(
-        self, payload: T.tracking_request
+        self, payload: T.TrackingRequest
     ) -> List[Track.TrackRequest]:
         pass
 
     def create_freight_ship_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> FShip.FreightShipRequest:
         pass
 
     def create_package_ship_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> PShip.ShipmentRequest:
         pass
 
