@@ -1,6 +1,7 @@
 """PurplShip Unified datatypes module."""
 import attr
-from typing import List, Dict, Callable, Any
+from typing import List, Dict
+from jstruct import JList, JStruct
 
 
 @attr.s(auto_attribs=True)
@@ -26,10 +27,6 @@ class Party:
     extra: Dict = {}
 
 
-def party_converter(args) -> Party:
-    return Party(**args) if isinstance(args, dict) else args
-
-
 @attr.s(auto_attribs=True)
 class Item:
     """item type (can be a package or a commodity)."""
@@ -51,13 +48,6 @@ class Item:
     extra: Dict = {}
 
 
-def item_converter(args) -> Item:
-    return Item(**args) if isinstance(args, dict) else args
-
-def item_list(args) -> List[Item]:
-    return [item_converter(arg) for arg in args]
-
-
 @attr.s(auto_attribs=True)
 class Customs:
     """customs type."""
@@ -66,13 +56,9 @@ class Customs:
     aes: str = None
     description: str = None
     terms_of_trade: str = None
-    items: List[Item] = attr.ib(default=[], converter=item_list)
+    items: List[Item] = JList[Item]
     commercial_invoice: bool = False
     extra: Dict = {}
-
-
-def customs_converter(args) -> Customs:
-    return Customs(**args) if isinstance(args, dict) else args
 
 
 @attr.s(auto_attribs=True)
@@ -86,10 +72,6 @@ class Invoice:
     extra: Dict = {}
 
 
-def invoice_converter(args) -> Invoice:
-    return Invoice(**args) if isinstance(args, dict) else args
-
-
 @attr.s(auto_attribs=True)
 class Doc:
     """document image type."""
@@ -100,10 +82,6 @@ class Doc:
     extra: Dict = {}
 
 
-def doc_converter(args) -> Doc:
-    return Doc(**args) if isinstance(args, dict) else args
-
-
 @attr.s(auto_attribs=True)
 class Option:
     """shipment option type."""
@@ -112,21 +90,11 @@ class Option:
     value: Dict = {}
     extra: Dict = {}
 
-
-def option_converter(args) -> Option:
-    return Option(**args) if isinstance(args, dict) else args
-
-def option_list(args) -> List[Option]:
-    return [option_converter(arg) for arg in args]
-
-def doc_list(args) -> List[Doc]:
-    return [doc_converter(arg) for arg in args]
-
 @attr.s(auto_attribs=True)
 class Shipment:
     """shipment configuration type."""
 
-    items: List[Item] = attr.ib(default=[], converter=item_list)
+    items: List[Item] = JList[Item]
     insured_amount: float = None
     total_items: int = None
     packaging_type: str = None
@@ -145,29 +113,25 @@ class Shipment:
     payment_account_number: str = None
 
     date: str = None
-    customs: Customs = attr.ib(default=None, converter=customs_converter)
-    invoice: Invoice = attr.ib(default=None, converter=invoice_converter)
-    doc_images: List[Doc] = attr.ib(default=[], converter=doc_list)
+    customs: Customs = JStruct[Customs]
+    invoice: Invoice = JStruct[Invoice]
+    doc_images: List[Doc] = JList[Doc]
 
     references: List[str] = []
     services: List[str] = []
-    options: List[Option] = attr.ib(default=[], converter=option_list)
+    options: List[Option] = JList[Option]
 
-    label: Doc = attr.ib(default=None, converter=doc_converter)
+    label: Doc = JStruct[Doc]
     extra: Dict = {}
-
-
-def shipment_converter(args) -> Shipment: 
-    return Shipment(**args) if isinstance(args, dict) else args
 
 
 @attr.s(auto_attribs=True)
 class ShipmentRequest:
     """shipment request type."""
 
-    shipper: Party = attr.ib(converter=party_converter)
-    recipient: Party = attr.ib(converter=party_converter)
-    shipment: Shipment = attr.ib(converter=shipment_converter)
+    shipper: Party = JStruct[Party]
+    recipient: Party = JStruct[Party]
+    shipment: Shipment = JStruct[Shipment]
 
 
 class RateRequest(ShipmentRequest):

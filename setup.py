@@ -15,12 +15,14 @@ setup(name='purplship',
       packages=find_packages(".", exclude=["tests"]),
       install_requires=[
             'attrs==18.2.0',
+            'jstruct==1.0.0',
             'py-fedex==1.1',
             'py-dhl==1.2',
             'py-soap==1.1',
             'gds-helpers==0.6.0',
             'py-ups==1.0',
             'py-caps==1.0',
+            'py-aups==1.0a0'
       ],
       dependency_links=[
             'https://github.com/PurplShip/purplship/releases',
