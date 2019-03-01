@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pyups.package_track import TrackRequest
-from purplship.domain.Types import Tracking
+from purplship.domain.Types import TrackingRequest
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
@@ -14,7 +14,7 @@ class TestUPSTracking(unittest.TestCase):
         self.TrackRequest.build(tracking_request_xml)
 
     def test_create_tracking_request(self):
-        payload = Tracking.create(tracking_numbers=["1Z12345E6205277936"])
+        payload = TrackingRequest(tracking_numbers=["1Z12345E6205277936"])
 
         TrackRequests_ = proxy.mapper.create_tracking_request(payload)
 

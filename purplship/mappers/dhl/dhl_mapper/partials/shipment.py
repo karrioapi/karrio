@@ -1,8 +1,7 @@
 import time
 from base64 import b64decode
 from pydhl.datatypes_global_v61 import MetaData
-from pydhl import ship_val_global_req_61 as ShipReq, ship_val_global_res_61 as ShipRes
-from purplship.domain.Types.units import PackagingUnit
+from pydhl import ship_val_global_req_61 as ShipReq
 from purplship.mappers.dhl.dhl_units import (
     PackageType,
     Service,
@@ -11,7 +10,7 @@ from purplship.mappers.dhl.dhl_units import (
     Dimension,
     WeightUnit,
 )
-from .interface import reduce, Tuple, List, Union, T, DHLMapperBase
+from .interface import reduce, Tuple, List, T, DHLMapperBase
 
 
 class DHLMapperPartial(DHLMapperBase):
@@ -76,7 +75,7 @@ class DHLMapperPartial(DHLMapperBase):
         )
 
     def create_dhlshipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> ShipReq.ShipmentRequest:
         is_dutiable = payload.shipment.declared_value != None
         default_product_code = (
@@ -102,7 +101,7 @@ class DHLMapperPartial(DHLMapperBase):
         ] + (
             []
             if not payload.shipment.insured_amount
-            else [T.option_type(code=Service.Shipment_Insurance.value)]
+            else [T.Option(code=Service.Shipment_Insurance.value)]
         )
 
         Request_ = self.init_request()

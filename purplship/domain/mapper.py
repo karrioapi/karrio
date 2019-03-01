@@ -14,7 +14,7 @@ class Mapper(ABC):
         a carrier client (holding connection settings)
     """
 
-    def create_quote_request(self, payload: T.shipment_request):
+    def create_quote_request(self, payload: T.ShipmentRequest):
         """ Create a carrier specific quote request xml data from payload """
         raise Exception("Not Supported")
 
@@ -24,7 +24,7 @@ class Mapper(ABC):
         """ Create a united API quote result list from carrier xml response  """
         raise Exception("Not Supported")
 
-    def create_tracking_request(self, payload: T.tracking_request):
+    def create_tracking_request(self, payload: T.TrackingRequest):
         """ Create a carrier specific tracking request xml data from payload """
         raise Exception("Not Supported")
 
@@ -34,7 +34,7 @@ class Mapper(ABC):
         """ Create a united API tracking result list from carrier xml response  """
         raise Exception("Not Supported")
 
-    def create_shipment_request(self, payload: T.shipment_request):
+    def create_shipment_request(self, payload: T.ShipmentRequest):
         """ Create a carrier specific shipment creation request xml data from payload """
         raise Exception("Not Supported")
 
@@ -44,11 +44,11 @@ class Mapper(ABC):
         """ Create a united API shipment creation result from carrier xml response  """
         raise Exception("Not Supported")
 
-    def create_pickup_request(self, payload: T.pickup_request):
+    def create_pickup_request(self, payload: T.PickupRequest):
         """ Create a carrier specific pickup request xml data from payload """
         raise Exception("Not Supported")
 
-    def modify_pickup_request(self, payload: T.pickup_request):
+    def modify_PickupRequest(self, payload: T.PickupRequest):
         """ Create a carrier specific pickup modification request xml data from payload """
         raise Exception("Not Supported")
 
@@ -57,7 +57,7 @@ class Mapper(ABC):
         raise Exception("Not Supported")
 
     def create_pickup_cancellation_request(
-        self, payload: T.pickup_cancellation_request
+        self, payload: T.PickupCancellationRequest
     ):
         """ Create a carrier specific pickup cancellation request xml data from payload """
         raise Exception("Not Supported")

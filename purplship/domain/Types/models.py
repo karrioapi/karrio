@@ -1,9 +1,10 @@
 """PurplShip Unified datatypes module."""
-from typing import List, NamedTuple, Dict
 import attr
+from typing import List, Dict, Callable, Any
 
 
-class party(NamedTuple):
+@attr.s(auto_attribs=True)
+class Party:
     """shipping party type."""
 
     postal_code: str = None
@@ -25,7 +26,12 @@ class party(NamedTuple):
     extra: Dict = {}
 
 
-class item_type(NamedTuple):
+def party_converter(args) -> Party:
+    return Party(**args) if isinstance(args, dict) else args
+
+
+@attr.s(auto_attribs=True)
+class Item:
     """item type (can be a package or a commodity)."""
 
     weight: float
@@ -45,19 +51,32 @@ class item_type(NamedTuple):
     extra: Dict = {}
 
 
-class customs_type(NamedTuple):
+def item_converter(args) -> Item:
+    return Item(**args) if isinstance(args, dict) else args
+
+def item_list(args) -> List[Item]:
+    return [item_converter(arg) for arg in args]
+
+
+@attr.s(auto_attribs=True)
+class Customs:
     """customs type."""
 
     no_eei: str = None
     aes: str = None
     description: str = None
     terms_of_trade: str = None
-    items: List[item_type] = []
+    items: List[Item] = attr.ib(default=[], converter=item_list)
     commercial_invoice: bool = False
     extra: Dict = {}
 
 
-class invoice_type(NamedTuple):
+def customs_converter(args) -> Customs:
+    return Customs(**args) if isinstance(args, dict) else args
+
+
+@attr.s(auto_attribs=True)
+class Invoice:
     """invoice type."""
 
     date: str
@@ -67,7 +86,12 @@ class invoice_type(NamedTuple):
     extra: Dict = {}
 
 
-class doc_image(NamedTuple):
+def invoice_converter(args) -> Invoice:
+    return Invoice(**args) if isinstance(args, dict) else args
+
+
+@attr.s(auto_attribs=True)
+class Doc:
     """document image type."""
 
     type: str = None
@@ -76,7 +100,12 @@ class doc_image(NamedTuple):
     extra: Dict = {}
 
 
-class option_type(NamedTuple):
+def doc_converter(args) -> Doc:
+    return Doc(**args) if isinstance(args, dict) else args
+
+
+@attr.s(auto_attribs=True)
+class Option:
     """shipment option type."""
 
     code: str
@@ -84,10 +113,20 @@ class option_type(NamedTuple):
     extra: Dict = {}
 
 
-class shipment_options(NamedTuple):
+def option_converter(args) -> Option:
+    return Option(**args) if isinstance(args, dict) else args
+
+def option_list(args) -> List[Option]:
+    return [option_converter(arg) for arg in args]
+
+def doc_list(args) -> List[Doc]:
+    return [doc_converter(arg) for arg in args]
+
+@attr.s(auto_attribs=True)
+class Shipment:
     """shipment configuration type."""
 
-    items: List[item_type]
+    items: List[Item] = attr.ib(default=[], converter=item_list)
     insured_amount: float = None
     total_items: int = None
     packaging_type: str = None
@@ -106,27 +145,37 @@ class shipment_options(NamedTuple):
     payment_account_number: str = None
 
     date: str = None
-    customs: customs_type = None
-    invoice: invoice_type = None
-    doc_images: List[doc_image] = []
+    customs: Customs = attr.ib(default=None, converter=customs_converter)
+    invoice: Invoice = attr.ib(default=None, converter=invoice_converter)
+    doc_images: List[Doc] = attr.ib(default=[], converter=doc_list)
 
     references: List[str] = []
     services: List[str] = []
-    options: List[option_type] = []
+    options: List[Option] = attr.ib(default=[], converter=option_list)
 
-    label: doc_image = None
+    label: Doc = attr.ib(default=None, converter=doc_converter)
     extra: Dict = {}
 
 
-class shipment_request(NamedTuple):
+def shipment_converter(args) -> Shipment: 
+    return Shipment(**args) if isinstance(args, dict) else args
+
+
+@attr.s(auto_attribs=True)
+class ShipmentRequest:
     """shipment request type."""
 
-    shipper: party
-    recipient: party
-    shipment: shipment_options
+    shipper: Party = attr.ib(converter=party_converter)
+    recipient: Party = attr.ib(converter=party_converter)
+    shipment: Shipment = attr.ib(converter=shipment_converter)
 
 
-class tracking_request(NamedTuple):
+class RateRequest(ShipmentRequest):
+    pass
+
+
+@attr.s(auto_attribs=True)
+class TrackingRequest:
     """tracking request type."""
 
     tracking_numbers: List[str]
@@ -135,7 +184,8 @@ class tracking_request(NamedTuple):
     extra: Dict = {}
 
 
-class pickup_request(NamedTuple):
+@attr.s(auto_attribs=True)
+class PickupRequest:
     """pickup request type."""
 
     date: str
@@ -170,7 +220,8 @@ class pickup_request(NamedTuple):
     extra: Dict = {}
 
 
-class pickup_cancellation_request(NamedTuple):
+@attr.s(auto_attribs=True)
+class PickupCancellationRequest:
     """pickup cancellation request type."""
 
     pickup_date: str
@@ -180,7 +231,7 @@ class pickup_cancellation_request(NamedTuple):
     extra: Dict = {}
 
 
-""" Generic response data types """
+""" Unified response data types """
 
 
 @attr.s(auto_attribs=True)

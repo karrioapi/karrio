@@ -3,7 +3,7 @@ from unittest.mock import patch
 import time
 from gds_helpers import to_xml, jsonify, export
 from pyfedex.ship_service_v21 import ProcessShipmentRequest
-from purplship.domain.Types import Shipment
+from purplship.domain.Types import ShipmentRequest
 from tests.fedex.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
@@ -16,7 +16,7 @@ class TestFedExShipment(unittest.TestCase):
         )
 
     def test_create_shipment_request(self):
-        payload = Shipment.create(**shipment_data)
+        payload = ShipmentRequest(**shipment_data)
         ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
         ShipmentRequest_.RequestedShipment.ShipTimestamp = None
         self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))

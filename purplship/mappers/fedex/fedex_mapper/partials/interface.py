@@ -21,14 +21,14 @@ class FedexCapabilities:
 
     """ Requests """
 
-    def create_rate_request(self, payload: T.shipment_request) -> RateRequest:
+    def create_rate_request(self, payload: T.ShipmentRequest) -> RateRequest:
         pass
 
-    def create_track_request(self, payload: T.tracking_request) -> TrackRequest:
+    def create_track_request(self, payload: T.TrackingRequest) -> TrackRequest:
         pass
 
     def create_process_shipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> ProcessShipmentRequest:
         pass
 

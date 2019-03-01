@@ -86,7 +86,7 @@ class FedexMapperPartial(FedexMapperBase):
             )
         ]
 
-    def create_rate_request(self, payload: T.shipment_request) -> RateRequest:
+    def create_rate_request(self, payload: T.ShipmentRequest) -> RateRequest:
         requested_services = [
             svc for svc in payload.shipment.services if svc in ServiceType.__members__
         ]

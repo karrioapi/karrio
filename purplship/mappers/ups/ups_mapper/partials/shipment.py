@@ -1,6 +1,6 @@
 from pyups import freight_ship as FShip, package_ship as PShip, common as Common
 from lxml import etree
-from .interface import reduce, Tuple, List, Union, T, UPSMapperBase
+from .interface import T, UPSMapperBase
 from purplship.domain.Types.units import DimensionUnit
 from purplship.mappers.ups.ups_units import (
     ShippingPackagingType,
@@ -93,14 +93,14 @@ class UPSMapperPartial(UPSMapperBase):
         )
 
     def create_freight_ship_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> FShip.FreightShipRequest:
         services = [
             ShippingServiceCode[svc]
             for svc in payload.shipment.services
             if svc in ShippingServiceCode.__members__
         ]
-        payer = T.party(**payload.shipment.extra.get("Payer")) if "Payer" else None
+        payer = T.Party(**payload.shipment.extra.get("Payer")) if "Payer" else None
         return FShip.FreightShipRequest(
             Request=Common.RequestType(
                 RequestOption=payload.shipment.extra.get("RequestOption") or "1",
@@ -282,7 +282,7 @@ class UPSMapperPartial(UPSMapperBase):
         )
 
     def create_package_ship_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> PShip.ShipmentRequest:
         services = [
             ShippingServiceCode[svc]
@@ -368,7 +368,7 @@ class UPSMapperPartial(UPSMapperBase):
                             CountryCode=alternate.country_code,
                         ),
                     )
-                )(T.party(payload.shipment.extra.get("AlternateDeliveryAddress")))
+                )(T.Party(payload.shipment.extra.get("AlternateDeliveryAddress")))
                 if "AlternateDeliveryAddress" in payload.shipment.extra
                 else None,
                 ShipFrom=(
@@ -396,7 +396,7 @@ class UPSMapperPartial(UPSMapperBase):
                             CountryCode=shipFrom.country_code,
                         ),
                     )
-                )(T.party(**payload.shipment.extra.get("ShipFrom")))
+                )(T.Party(**payload.shipment.extra.get("ShipFrom")))
                 if "ShipFrom" in payload.shipment.extra
                 else None,
                 PaymentInformation=PShip.PaymentInfoType(
@@ -424,7 +424,7 @@ class UPSMapperPartial(UPSMapperBase):
                                                 PostalCode=address.postal_code,
                                                 CountryCode=address.country_code,
                                             )
-                                        )(T.party(**card.get("Address")))
+                                        )(T.Party(**card.get("Address")))
                                         if "Address" in card
                                         else None,
                                     )

@@ -1,14 +1,11 @@
 import unittest
 from unittest.mock import patch
-import time
-from gds_helpers import to_xml, jsonify, export
 from pyups.freight_pickup import FreightPickupRequest, FreightCancelPickupRequest
-from purplship.domain.Types import Shipment
 from tests.ups.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
 
-class TestPickup(unittest.TestCase):
+class TestUPSPickup(unittest.TestCase):
     def setUp(self):
         self.PickupRequest = FreightPickupRequest()
         self.PickupRequest.build(

@@ -21,14 +21,14 @@ from .partials import (
 class FedexMapper(
     Mapper, FedexRateMapperPartial, FedexTrackMapperPartial, FedexShipmentMapperPartial
 ):
-    def create_quote_request(self, payload: T.shipment_request) -> RateRequest:
+    def create_quote_request(self, payload: T.ShipmentRequest) -> RateRequest:
         return self.create_rate_request(payload)
 
-    def create_tracking_request(self, payload: T.tracking_request) -> TrackRequest:
+    def create_tracking_request(self, payload: T.TrackingRequest) -> TrackRequest:
         return self.create_track_request(payload)
 
     def create_shipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> ProcessShipmentRequest:
         return self.create_process_shipment_request(payload)
 

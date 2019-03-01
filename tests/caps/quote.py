@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, jsonify, export
 from pycaps.rating import mailing_scenario
-from purplship.domain.Types import Quote
+from purplship.domain.Types import RateRequest
 from tests.caps.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 from datetime import datetime
@@ -27,7 +27,7 @@ class TestCanadaPostQuote(unittest.TestCase):
             "weight_unit": "KG",
             "extra": {"options": []},
         }
-        payload = Quote.create(shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = RateRequest(shipper=shipper, recipient=recipient, shipment=shipment)
 
         mailing_scenario_ = proxy.mapper.create_quote_request(payload)
 

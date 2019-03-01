@@ -113,7 +113,7 @@ class FedexMapperPartial(FedexMapperBase):
         )
 
     def create_process_shipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> ProcessShipmentRequest:
         requested_services = [
             svc for svc in payload.shipment.services if svc in ServiceType.__members__
@@ -313,7 +313,7 @@ class FedexMapperPartial(FedexMapperBase):
                         if payload.shipment.payment_account_number is not None
                         else None
                     )(
-                        T.party(
+                        T.Party(
                             **payload.shipment.extra.get("Payor").get(
                                 "ResponsibleParty"
                             )

@@ -24,27 +24,27 @@ class UPSMapper(
     Mapper, UPSRateMapperPartial, UPSTrackMapperPartial, UPSShipmentMapperPartial
 ):
     def create_quote_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> Union[PRate.RateRequest, Rate.FreightRateRequest]:
         return self.create_package_rate_request(payload)
 
     def create_freight_quote_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> Union[PRate.RateRequest, Rate.FreightRateRequest]:
         return self.create_freight_rate_request(payload)
 
     def create_tracking_request(
-        self, payload: T.tracking_request
+        self, payload: T.TrackingRequest
     ) -> List[Track.TrackRequest]:
         return self.create_track_request(payload)
 
     def create_shipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> PShip.ShipmentRequest:
         return self.create_package_ship_request(payload)
 
     def create_freight_shipment_request(
-        self, payload: T.shipment_request
+        self, payload: T.ShipmentRequest
     ) -> FShip.FreightShipRequest:
         return self.create_freight_ship_request(payload)
 

@@ -1,13 +1,12 @@
 import unittest
-from unittest.mock import patch
-import time
-from gds_helpers import to_xml, jsonify, export
 from pycaps.pickuprequest import PickupRequestDetailsType
+from unittest.mock import patch
+from gds_helpers import to_xml
 from tests.caps.fixture import proxy
 from tests.utils import strip
 
 
-class TestPickup(unittest.TestCase):
+class TestCanadaPostPickup(unittest.TestCase):
     def setUp(self):
         self.PickupRequest = PickupRequestDetailsType()
         self.PickupRequest.build(to_xml(PickupRequestXml))
