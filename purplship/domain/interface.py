@@ -25,18 +25,18 @@ class IDeserialize:
 
 @attr.s(auto_attribs=True)
 class IRequestFrom:
-    action: Callable[[Proxy, Dict[Any, Any]], IDeserialize]
+    action: Callable[[Proxy], IDeserialize]
 
-    def from_(self, proxy: Proxy, defaults: dict = {}) -> IDeserialize:
-        return self.action(proxy, defaults)
+    def from_(self, proxy: Proxy) -> IDeserialize:
+        return self.action(proxy)
 
 
 @attr.s(auto_attribs=True)
 class IRequestWith:
-    action: Callable[[T, S], IDeserialize]
+    action: Callable[[Proxy], IDeserialize]
 
-    def with_(self, proxy: Proxy, defaults: dict = {}) -> IDeserialize:
-        return self.action(proxy, defaults)
+    def with_(self, proxy: Proxy) -> IDeserialize:
+        return self.action(proxy)
 
 
 class pickup:
@@ -44,9 +44,8 @@ class pickup:
     @staticmethod
     def book(**args):
 
-        def action(proxy: Proxy, defaults: dict = {}):
-            params = dict(**{**defaults, **args})
-            payload = PickupRequest(**params)
+        def action(proxy: Proxy):
+            payload = PickupRequest(**args)
             mapper: Mapper = proxy.mapper
             request = mapper.create_pickup_request(payload)
             response = proxy.request_pickup(request)
@@ -61,9 +60,8 @@ class pickup:
     @staticmethod
     def cancel(**args):
 
-        def action(proxy: Proxy, defaults: dict = {}):
-            params = dict(**{**defaults, **args})
-            payload = PickupCancellationRequest(**params)
+        def action(proxy: Proxy):
+            payload = PickupCancellationRequest(**args)
             mapper: Mapper = proxy.mapper
             request = mapper.create_pickup_cancellation_request(payload)
             response = proxy.cancel_pickup(request)
@@ -78,9 +76,8 @@ class pickup:
     @staticmethod
     def update(**args):
 
-        def action(proxy: Proxy, defaults: dict = {}):
-            params = dict(**{**defaults, **args})
-            payload = PickupRequest(**params)
+        def action(proxy: Proxy):
+            payload = PickupRequest(**args)
             mapper: Mapper = proxy.mapper
             request = mapper.create_pickup_request(payload)
             response = proxy.modify_pickup(request)
@@ -98,9 +95,8 @@ class rating:
     @staticmethod
     def fetch(**args):
 
-        def action(proxy: Proxy, defaults: dict = {}):
-            params = dict(**{**defaults, **args})
-            payload = ShipmentRequest(**params)
+        def action(proxy: Proxy):
+            payload = ShipmentRequest(**args)
             mapper: Mapper = proxy.mapper
             request = mapper.create_quote_request(payload)
             response = proxy.get_quotes(request)
@@ -118,9 +114,8 @@ class shipment:
     @staticmethod
     def create(**args):
 
-        def action(proxy: Proxy, defaults: dict = {}):
-            params = dict(**{**defaults, **args})
-            payload = ShipmentRequest(**params)
+        def action(proxy: Proxy):
+            payload = ShipmentRequest(**args)
             mapper: Mapper = proxy.mapper
             request = mapper.create_shipment_request(payload)
             response = proxy.create_shipment(request)
@@ -138,9 +133,8 @@ class tracking:
     @staticmethod
     def fetch(**args) -> IRequestFrom:
 
-        def action(proxy: Proxy, defaults: dict = {}) -> IDeserialize:
-            params = dict(**{**defaults, **args})
-            payload = TrackingRequest(**params)
+        def action(proxy: Proxy) -> IDeserialize:
+            payload = TrackingRequest(**args)
             mapper: Mapper = proxy.mapper
             request = mapper.create_tracking_request(payload)
             response = proxy.get_trackings(request)
