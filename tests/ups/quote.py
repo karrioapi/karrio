@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from pyups.freight_rate import FreightRateRequest
 from pyups.package_rate import RateRequest
 from purplship.domain import Types as T
@@ -72,21 +72,21 @@ class TestUPSQuote(unittest.TestCase):
         parsed_response = proxy.mapper.parse_quote_response(
             to_xml(FreightRateResponseXML)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedFreightRateResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedFreightRateResponse))
 
     def test_parse_package_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(to_xml(RateResponseXML))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedRateResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_quote_error(self):
         parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteParsingError))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteParsingError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
 
     def test_parse_quote_missing_args_error(self):
         parsed_response = proxy.mapper.parse_quote_response(
             to_xml(QuoteMissingArgsError)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteMissingArgsError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
 
 
 if __name__ == "__main__":

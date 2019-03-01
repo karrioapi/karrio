@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from pyups.freight_ship import FreightShipRequest
 from pyups.package_ship import ShipmentRequest
 from purplship.domain import Types as T
@@ -49,7 +49,7 @@ class TestUPSShipment(unittest.TestCase):
             to_xml(FreightShipmentResponseXML)
         )
         self.assertEqual(
-            jsonify(parsed_response), jsonify(ParsedFreightShipmentResponse)
+            to_dict(parsed_response), to_dict(ParsedFreightShipmentResponse)
         )
 
     def test_parse_shipment_response(self):
@@ -57,14 +57,14 @@ class TestUPSShipment(unittest.TestCase):
             to_xml(NegotiatedShipmentResponseXML)
         )
         self.assertEqual(
-            jsonify(parsed_response), jsonify(NegotiatedParsedShipmentResponse)
+            to_dict(parsed_response), to_dict(NegotiatedParsedShipmentResponse)
         )
 
     def test_parse_publish_rate_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentResponseXML)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
 
 if __name__ == "__main__":

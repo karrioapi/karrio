@@ -11,20 +11,26 @@ Shipping carriers API integrations Library
 PurplSHip prevents you from reinventing the wheel and is easy to use:
 
 ```shell
->>> from purplship.mappers.dhl import  DHLClient, DHLProxy
->>> from purplship.domain.Types import Tracking
->>> client = DHLClient(
-    "https://xmlpi-ea.dhl.com/XMLShippingServlet",
-    "YOUR_DHL_SITE_ID",
-    "YOUR_DHL_SITE_PASSWORD",
-    "YOUR_DHL_ACCOUNT_NUMBER",
-    "CARRIER_NAME"
-  )
->>> proxy = DHLProxy(client)
->>> payload = Tracking.create(tracking_numbers=["8346088391"])
->>> tracking_req_xml_obj = proxy.mapper.create_tracking_request(payload)
->>> response = proxy.get_trackings(tracking_req_xml_obj)
->>> trackings = proxy.mapper.parse_tracking_response(response)
+import purplship
+
+proxy = purplship.gateway['aups'].create({
+    "server_url": "https://digitalapi.auspost.com.au/test",
+    "username": "username",
+    "password": "password",
+    "account_number": "1234567"
+})
+
+rate_request = purplship.rating.fetch(
+    shipper={"postal_code": "H3N1S4", "country_code": "CA"},
+    recipient = {"city": "Lome", "country_code": "TG"},
+    shipment = {
+        "items": [
+            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
+        ]
+    }
+).from_(proxy)
+
+rates = rate_request.parse()
 ```
 
 ## Getting Started
@@ -47,7 +53,7 @@ PurplShip can be installed with [pip](https://pip.pypa.io/):
 For released version (specify a purplship==version if needed)
 
 ```shell
-pip install -f https://git.io/fxTZ6 purplship
+pip install -f https://git.io/purplship purplship
 ```
 
 Alternatively, you can grab the latest source code from [GitHub](https://github.com/PurplShip/purplship):

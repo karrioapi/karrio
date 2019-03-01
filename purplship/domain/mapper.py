@@ -14,7 +14,7 @@ class Mapper(ABC):
         a carrier client (holding connection settings)
     """
 
-    def create_quote_request(self, payload: T.ShipmentRequest):
+    def create_quote_request(self, payload: T.RateRequest):
         """ Create a carrier specific quote request xml data from payload """
         raise Exception("Not Supported")
 

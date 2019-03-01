@@ -157,20 +157,22 @@ class UPSMapperPartial(UPSMapperBase):
             ShipFrom=Rate.ShipFromType(
                 Name=payload.shipper.company_name,
                 Address=Rate.AddressType(
+                    AddressLine=payload.shipper.address_lines,
                     City=payload.shipper.city,
                     PostalCode=payload.shipper.postal_code,
                     CountryCode=payload.shipper.country_code,
-                    AddressLine=payload.shipper.address_lines,
+                    StateProvinceCode=payload.shipper.state_code
                 ),
                 AttentionName=payload.shipper.person_name,
             ),
             ShipTo=Rate.ShipToType(
                 Name=payload.recipient.company_name,
                 Address=Rate.AddressType(
+                    AddressLine=payload.recipient.address_lines,
                     City=payload.recipient.city,
                     PostalCode=payload.recipient.postal_code,
                     CountryCode=payload.recipient.country_code,
-                    AddressLine=payload.recipient.address_lines,
+                    StateProvinceCode=payload.recipient.state_code
                 ),
                 AttentionName=payload.recipient.person_name,
             ),

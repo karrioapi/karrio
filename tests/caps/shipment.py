@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, export, jsonify, xml_tostring
+from gds_helpers import to_xml, export, to_dict, xml_tostring
 from pycaps.shipment import ShipmentType
 from pycaps.ncshipment import NonContractShipmentType
 from purplship.domain.Types import ShipmentRequest
@@ -62,13 +62,13 @@ class TestCanadaPostShipment(unittest.TestCase):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentResponseXML)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
     def test_parse_ncshipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(NCShipmentResponseXML)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(NCParsedShipmentResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(NCParsedShipmentResponse))
 
     @patch(
         "purplship.mappers.caps.caps_proxy.http", return_value=MockedShipmentResponseXML
@@ -88,7 +88,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         proxy._get_info(to_xml(ShipmentPriceLinkXML))
 
         args = http_mock.call_args[1]
-        self.assertEqual(jsonify(args), GetInfoRequestArgs)
+        self.assertEqual(to_dict(args), GetInfoRequestArgs)
 
 
 if __name__ == "__main__":

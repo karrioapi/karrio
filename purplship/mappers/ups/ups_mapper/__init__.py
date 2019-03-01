@@ -25,12 +25,12 @@ class UPSMapper(
 ):
     def create_quote_request(
         self, payload: T.ShipmentRequest
-    ) -> Union[PRate.RateRequest, Rate.FreightRateRequest]:
+    ) -> PRate.RateRequest:
         return self.create_package_rate_request(payload)
 
     def create_freight_quote_request(
         self, payload: T.ShipmentRequest
-    ) -> Union[PRate.RateRequest, Rate.FreightRateRequest]:
+    ) -> Rate.FreightRateRequest:
         return self.create_freight_rate_request(payload)
 
     def create_tracking_request(

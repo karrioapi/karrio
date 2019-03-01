@@ -1,0 +1,2 @@
+from .rate import AustraliaPostMapperPartial as AustraliaPostRateMapperPartial
+from .track import AustraliaPostMapperPartial as AustraliaPostTrackMapperPartial

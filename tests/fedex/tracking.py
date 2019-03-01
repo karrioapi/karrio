@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from pyfedex.track_service_v14 import TrackRequest
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from purplship.domain.Types import TrackingRequest
 from tests.fedex.fixture import proxy
 from tests.utils import strip, get_node_from_xml
@@ -32,21 +32,21 @@ class TestFeDexTracking(unittest.TestCase):
             to_xml(TrackingResponseXML)
         )
 
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_auth_error_parsing(self):
         parsed_response = proxy.mapper.parse_error_response(
             to_xml(TrackingAuthErrorXML)
         )
 
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_error_tracking_response(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(TrackingErrorResponseXML)
         )
 
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponseError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponseError))
 
 
 if __name__ == "__main__":

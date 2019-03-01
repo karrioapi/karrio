@@ -1,10 +1,11 @@
 """Interface."""
 
 import attr
-from typing import Callable, TypeVar, Dict, Any
+from typing import Callable, TypeVar
 from purplship.domain.proxy import Proxy
 from purplship.domain.mapper import Mapper
 from purplship.domain.Types.models import (
+    RateRequest,
     ShipmentRequest,
     TrackingRequest,
     PickupRequest,
@@ -96,7 +97,7 @@ class rating:
     def fetch(**args):
 
         def action(proxy: Proxy):
-            payload = ShipmentRequest(**args)
+            payload = RateRequest(**args)
             mapper: Mapper = proxy.mapper
             request = mapper.create_quote_request(payload)
             response = proxy.get_quotes(request)

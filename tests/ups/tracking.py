@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from pyups.package_track import TrackRequest
 from purplship.domain.Types import TrackingRequest
 from tests.ups.fixture import proxy
@@ -29,20 +29,20 @@ class TestUPSTracking(unittest.TestCase):
 
     def test_tracking_auth_error_parsing(self):
         parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_tracking_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(TrackingResponseXml)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(InvalidTrackingNumberResponse)
         )
         self.assertEqual(
-            jsonify(parsed_response), jsonify(ParsedInvalidTrackingNumberResponse)
+            to_dict(parsed_response), to_dict(ParsedInvalidTrackingNumberResponse)
         )
 
 

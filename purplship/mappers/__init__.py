@@ -4,6 +4,7 @@ import attr
 from enum import Enum
 from typing import Callable
 from purplship.domain import Proxy
+from purplship.mappers.aups import AustraliaPostProxy, AustraliaPostClient
 from purplship.mappers.caps import CanadaPostProxy, CanadaPostClient
 from purplship.mappers.dhl import DHLProxy, DHLClient
 from purplship.mappers.fedex import FedexProxy, FedexClient
@@ -11,6 +12,7 @@ from purplship.mappers.ups import UPSProxy, UPSClient
 
 
 class Providers(Enum):
+    aups = (AustraliaPostProxy, AustraliaPostClient)
     caps = (CanadaPostProxy, CanadaPostClient)
     dhl = (DHLProxy, DHLClient)
     fedex = (FedexProxy, FedexClient)

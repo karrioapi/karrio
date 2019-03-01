@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from pydhl.DCT_req_global import DCTRequest
 from purplship.domain import Types as T
 from tests.dhl.fixture import proxy
@@ -44,23 +44,23 @@ class TestDHLQuote(unittest.TestCase):
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteResponseXml))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
     def test_parse_quote_parsing_error(self):
         parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteParsingError))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteParsingError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
 
     def test_parse_quote_missing_args_error(self):
         parsed_response = proxy.mapper.parse_quote_response(
             to_xml(QuoteMissingArgsError)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteMissingArgsError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
 
     def test_parse_quote_vol_weight_higher_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
             to_xml(QuoteVolWeightHigher)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteVolWeightHigher))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteVolWeightHigher))
 
 
 if __name__ == "__main__":

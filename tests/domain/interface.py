@@ -7,16 +7,17 @@ from tests.caps.tracking import TrackingRequestURL
 from tests.ups.quote import rate_req_data, RateRequestXML
 from tests.utils import strip
 
-ups = purplship.gateway['ups'].create({
-    "server_url": "https://wwwcie.ups.com/webservices",
-    "username": "username",
-    "password": "password",
-    "access_license_number": "FG09H9G8H09GH8G0",
-})
+ups = purplship.gateway["ups"].create(
+    {
+        "server_url": "https://wwwcie.ups.com/webservices",
+        "username": "username",
+        "password": "password",
+        "access_license_number": "FG09H9G8H09GH8G0",
+    }
+)
 
 
 class TestFluentInterface(unittest.TestCase):
-
     @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
     def test_shipment_create(self, http_mock):
         purplship.shipment.create(**shipment_data).with_(caps).parse()
@@ -33,7 +34,9 @@ class TestFluentInterface(unittest.TestCase):
 
     @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
     def test_tracking_fetch(self, http_mock):
-        purplship.tracking.fetch(tracking_numbers=["1Z12345E6205277936"]).from_(caps).parse()
+        purplship.tracking.fetch(tracking_numbers=["1Z12345E6205277936"]).from_(
+            caps
+        ).parse()
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(reqUrl, TrackingRequestURL)

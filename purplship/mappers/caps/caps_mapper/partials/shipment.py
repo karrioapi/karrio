@@ -21,8 +21,6 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         self, payload: T.ShipmentRequest
     ) -> Union[Shipment.ShipmentType, NCShipment.NonContractShipmentType]:
         is_non_contract = payload.shipment.extra.get("settlement-info") is None
-        print(is_non_contract)
-        print("hey yo")
         shipment = (
             self._create_ncshipment(payload)
             if is_non_contract

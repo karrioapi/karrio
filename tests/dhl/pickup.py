@@ -3,7 +3,7 @@ from unittest.mock import patch
 from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_20 import CancelPURequest
-from gds_helpers import to_xml, export, jsonify
+from gds_helpers import to_xml, export, to_dict
 from purplship.domain.Types import PickupCancellationRequest, PickupRequest
 from tests.dhl.fixture import proxy
 from tests.utils import strip
@@ -94,23 +94,23 @@ class TestDHLPickup(unittest.TestCase):
 
     def test_parse_request_pickup_response(self):
         parsed_response = proxy.mapper.parse_pickup_response(to_xml(PickupResponseXML))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedPickupResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupResponse))
 
     def test_parse_modify_pickup_response(self):
         parsed_response = proxy.mapper.parse_pickup_response(to_xml(ModifyPURequestXML))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedModifyPUResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedModifyPUResponse))
 
     def test_parse_cancellation_pickup_response(self):
         parsed_response = proxy.mapper.parse_pickup_cancellation_response(
             to_xml(CancelPUResponseXML)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedCancelPUResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedCancelPUResponse))
 
     def test_parse_request_pickup_error(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(PickupErrorResponseXML)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedPickupErrorResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupErrorResponse))
 
 
 if __name__ == "__main__":

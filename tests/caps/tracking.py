@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, jsonify
+from gds_helpers import to_xml, to_dict
 from purplship.domain.Types import TrackingRequest
 from tests.caps.fixture import proxy
 
@@ -25,20 +25,20 @@ class TestCanadaPostTracking(unittest.TestCase):
 
     def test_tracking_auth_error_parsing(self):
         parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(TrackingResponseXml)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(UnknownTrackingNumberResponse)
         )
         self.assertEqual(
-            jsonify(parsed_response), jsonify(ParsedUnknownTrackingNumberResponse)
+            to_dict(parsed_response), to_dict(ParsedUnknownTrackingNumberResponse)
         )
 
 

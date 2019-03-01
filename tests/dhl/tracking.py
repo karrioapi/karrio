@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from pydhl.tracking_request_known import KnownTrackingRequest
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from purplship.domain.Types import TrackingRequest
 from tests.dhl.fixture import proxy
 from tests.utils import strip
@@ -32,25 +32,25 @@ class TestDHLTracking(unittest.TestCase):
 
     def test_tracking_auth_error_parsing(self):
         parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedAuthError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(TrackingResponseXml)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_single_not_found_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(TrackingSingleNotFound)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedTrackingSingNotFound))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingSingNotFound))
 
     def test_tracking_unknown_response_parsing(self):
         parsed_response = proxy.mapper.parse_tracking_response(
             to_xml(UnknownTrackResponse)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedUnknownTrackResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedUnknownTrackResponse))
 
 
 if __name__ == "__main__":
