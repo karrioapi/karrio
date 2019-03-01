@@ -32,7 +32,7 @@ class AustraliaPostProxy(Proxy):
             },
             method="POST",
         )
-        return result
+        return to_dict(result)
 
     def get_trackings(self, tracking_ids: List[str]) -> dict:
         ids = ','.join(tracking_ids)
@@ -47,4 +47,4 @@ class AustraliaPostProxy(Proxy):
             },
             method="GET",
         )
-        return result
+        return to_dict(result)

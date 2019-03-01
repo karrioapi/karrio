@@ -31,13 +31,14 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
             s[new_] = s.pop(old_)
             return s
         clean_response = {
-            **response,
-            **{"shipments": [swap(s, 'from', 'from_') for s in response.get('shipments', [])]}
+            "shipments": [swap(s, 'from', 'from_') for s in response.get('shipments', [])]
         }
         price_response: ShippingPriceResponse = ShippingPriceResponse(**clean_response)
         return (
             reduce(self._extract_quote, price_response.shipments, []),
-            self.parse_error_response(response)
+            self.parse_error_response({
+                "errors": response.get('errors', [])
+            })
         )
 
     def _extract_quote(
