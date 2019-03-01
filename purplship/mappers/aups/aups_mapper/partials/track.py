@@ -21,13 +21,21 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
         tracking_response: TrackingResponse = TrackingResponse(**response)
         return (
             reduce(self._extract_tracking, tracking_response.tracking_results, []),
-            self.parse_error_response(response)
+            self.parse_error_response({
+                "errors": response.get('errors', []) + reduce(
+                    lambda r, t: r + t.get('errors', []),
+                    response.get('tracking_results', []),
+                    []
+                )
+            })
         )
 
     def _extract_tracking(
-        self, trackings: List[TrackingDetails], tracking_result: TrackingResult
+        self, tracking: List[TrackingDetails], tracking_result: TrackingResult
     ) -> List[TrackingDetails]:
-        return trackings + [
+        if not not tracking_result.errors:
+            return tracking
+        return tracking + [
             TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=tracking_result.tracking_id,

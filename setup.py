@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='purplship',
-      version='1.0-rc10',
+      version='1.0.0',
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -25,7 +25,7 @@ setup(name='purplship',
             'py-aups==1.0a0'
       ],
       dependency_links=[
-            'https://github.com/PurplShip/purplship/releases',
+            'https://git.io/fxTZ6',
       ],
       classifiers=[
         "Programming Language :: Python :: 3",

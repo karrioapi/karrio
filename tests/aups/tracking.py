@@ -1,8 +1,76 @@
 import unittest
+from unittest.mock import patch
+from tests.aups.fixture import proxy
+from gds_helpers import jsonify, to_dict
+from purplship.domain.Types import TrackingRequest
 
 
 class TestAustraliaPostTracking(unittest.TestCase):
-    pass
+    def test_create_quote_request(self):
+        payload = TrackingRequest(tracking_numbers=TRACKING_REQUEST)
+
+        tracking_request = proxy.mapper.create_tracking_request(payload)
+        self.assertEqual(to_dict(tracking_request), to_dict(TRACKING_REQUEST))
+
+    @patch("purplship.mappers.aups.aups_proxy.http", return_value="{}")
+    def test_get_quotes(self, http_mock):
+        proxy.get_trackings(TRACKING_REQUEST)
+
+        reqUrl = http_mock.call_args[1]["url"]
+        self.assertEqual(
+            reqUrl,
+            f'{proxy.client.server_url}/track?tracking_ids={",".join(TRACKING_REQUEST)}',
+        )
+
+    def test_parse_quote_response(self):
+        parsed_response = proxy.mapper.parse_tracking_response(TRACKING_RESPONSE)
+        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
+
+    def test_parse_quote_response_with_errors(self):
+        parsed_response = proxy.mapper.parse_tracking_response(TRACKING_ERROR)
+        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_ERROR))
+
+    def test_parse_quote_response_errors(self):
+        parsed_response = proxy.mapper.parse_tracking_response(ERRORS)
+        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
+
+
+TRACKING_REQUEST = ["7XX1000", "7XX1000634011427"]
+
+PARSED_TRACKING_RESPONSE = [
+    [
+        {
+            "carrier": "AustraliaPost",
+            "events": [
+                {
+                    "date": "2017-09-18T14:35:07+10:00",
+                    "description": "Item Delivered",
+                    "location": "MEL",
+                },
+                {
+                    "date": "2017-09-18T09:50:05+10:00",
+                    "description": "On Board for Delivery",
+                    "location": "MEL",
+                },
+            ],
+            "tracking_number": "7XX1000634011427",
+        }
+    ],
+    [{"carrier": "AustraliaPost", "code": "ESB-10001"}],
+]
+
+PARSED_TRACKING_ERROR = [[], [{"carrier": "AustraliaPost", "code": "ESB-10001"}]]
+
+PARSED_ERRORS = [
+    [],
+    [
+        {
+            "carrier": "AustraliaPost",
+            "code": "51101",
+            "message": "The request must contain 10 or less AP article ids, consignment ids, or barcode ids.",
+        }
+    ],
+]
 
 
 TRACKING_RESPONSE = {
