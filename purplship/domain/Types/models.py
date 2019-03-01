@@ -22,6 +22,7 @@ class Party:
 
     state: str = None
     state_code: str = None
+    suburb: str = None
 
     address_lines: List[str] = []
     extra: Dict = {}
@@ -89,6 +90,7 @@ class Option:
     code: str
     value: Dict = {}
     extra: Dict = {}
+
 
 @attr.s(auto_attribs=True)
 class Shipment:

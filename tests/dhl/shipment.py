@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from pydhl.ship_val_global_req_61 import ShipmentRequest
 from purplship.domain import Types as T
 from tests.dhl.fixture import proxy
@@ -32,21 +32,21 @@ class TestDHLShipment(unittest.TestCase):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentParsingError)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentParsingError))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentParsingError))
 
     def test_shipment_missing_args_error_parsing(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentMissingArgsError)
         )
         self.assertEqual(
-            jsonify(parsed_response), jsonify(ParsedShipmentMissingArgsError)
+            to_dict(parsed_response), to_dict(ParsedShipmentMissingArgsError)
         )
 
     def test_parse_shipment_response(self):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentResponseXml)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
 
 if __name__ == "__main__":

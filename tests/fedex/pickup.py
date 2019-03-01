@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import time
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from pyfedex.pickup_service_v15 import CreatePickupRequest, CancelPickupRequest
 from purplship.domain.Types import ShipmentRequest
 from tests.fedex.fixture import proxy

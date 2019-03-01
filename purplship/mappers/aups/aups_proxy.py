@@ -1,6 +1,6 @@
 from typing import List
 from base64 import b64encode
-from gds_helpers import request as http, jsonify
+from gds_helpers import request as http, jsonify, to_dict
 from purplship.mappers.aups.aups_mapper import AustraliaPostMapper
 from purplship.mappers.aups.aups_client import AustraliaPostClient
 from purplship.domain.proxy import Proxy
@@ -20,8 +20,7 @@ class AustraliaPostProxy(Proxy):
     """ Proxy interface methods """
 
     def get_quotes(self, shipping_price_request: ShippingPriceRequest) -> dict:
-        data: object = jsonify(shipping_price_request)
-
+        data = jsonify(to_dict(shipping_price_request))
         result = http(
             url=f"{self.client.server_url}/prices/shipments",
             data=bytearray(data, "utf-8"),

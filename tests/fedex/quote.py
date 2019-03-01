@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from pyfedex.rate_v22 import RateRequest
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from purplship.domain import Types as T
 from tests.fedex.fixture import proxy
 from tests.utils import strip, get_node_from_xml
@@ -44,14 +44,14 @@ class TestFeDexQuote(unittest.TestCase):
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteResponseXml))
 
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
     def test_parse_quote_error_response(self):
         parsed_response = proxy.mapper.parse_quote_response(
             to_xml(QuoteErrorResponseXml)
         )
 
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedQuoteErrorResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteErrorResponse))
 
 
 if __name__ == "__main__":

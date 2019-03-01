@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import time
-from gds_helpers import to_xml, jsonify, export
+from gds_helpers import to_xml, to_dict, export
 from pyfedex.ship_service_v21 import ProcessShipmentRequest
 from purplship.domain.Types import ShipmentRequest
 from tests.fedex.fixture import proxy
@@ -32,7 +32,7 @@ class TestFedExShipment(unittest.TestCase):
         parsed_response = proxy.mapper.parse_shipment_response(
             to_xml(ShipmentResponseXML)
         )
-        self.assertEqual(jsonify(parsed_response), jsonify(ParsedShipmentResponse))
+        self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
 
 if __name__ == "__main__":

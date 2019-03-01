@@ -76,17 +76,17 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
         return ShippingPriceRequest(
             shipments=[
                 Shipment(
-                    shipment_reference=None,
-                    sender_references=payload.shipment.references,
+                    shipment_reference=" ".join(payload.shipment.references),
+                    sender_references=None,
                     goods_descriptions=None,
                     despatch_date=payload.shipment.date,
                     consolidate=None,
-                    email_tracking_enabled=None,
+                    email_tracking_enabled=payload.shipment.extra.get('email_tracking_enabled'),
                     from_=From(
                         name=payload.shipper.person_name,
-                        type_=None,
+                        type=None,
                         lines=payload.shipper.address_lines,
-                        suburb=None,
+                        suburb=payload.shipper.suburb,
                         state=payload.shipper.state_code,
                         postcode=payload.shipper.postal_code,
                         country=payload.shipper.country_code,
@@ -96,9 +96,9 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
                     to=To(
                         name=payload.recipient.person_name,
                         business_name=payload.recipient.company_name,
-                        type_=None,
+                        type=None,
                         lines=payload.recipient.address_lines,
-                        suburb=None,
+                        suburb=payload.recipient.suburb,
                         state=payload.recipient.state_code,
                         postcode=payload.recipient.postal_code,
                         country=payload.recipient.country_code,
@@ -112,7 +112,7 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
                     authorisation_number=None,
                     items=[
                         Item(
-                            item_reference=None,
+                            item_reference=item.sku,
                             product_id=item.id,
                             item_description=item.description,
                             length=item.length,
@@ -123,10 +123,10 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
                             contains_dangerous_goods=None,
                             transportable_by_air=None,
                             dangerous_goods_declaration=None,
-                            authority_to_leave=None,
+                            authority_to_leave=item.extra.get('authority_to_leave'),
                             reason_for_return=None,
-                            allow_partial_delivery=None,
-                            packaging_type=None,
+                            allow_partial_delivery=item.extra.get('allow_partial_delivery'),
+                            packaging_type=item.packaging_type,
                             atl_number=None,
                             features=None,
                             tracking_details=None,
