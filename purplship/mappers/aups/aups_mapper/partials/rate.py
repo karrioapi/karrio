@@ -55,20 +55,15 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
                 currency="AUD",
                 delivery_date=None,
                 discount=summary.discount,
-                extra_charges=(
-                    [ChargeDetails(
-                        name='Fuel', amount=summary.fuel_surcharge
-                    )] if summary.fuel_surcharge is not None else [] +
-                    [ChargeDetails(
-                        name='Security', amount=summary.security_surcharge
-                    )] if summary.security_surcharge is not None else [] +
-                    [ChargeDetails(
-                        name='Transit', amount=summary.transit_cover
-                    )] if summary.transit_cover is not None else [] +
-                    [ChargeDetails(
-                        name='Freight', amount=summary.freight_charge
-                    )] if summary.freight_charge is not None else []
-                )
+                extra_charges=[
+                    ChargeDetails(**details)
+                    for details in (
+                        [] if not summary.fuel_surcharge else [{"name": 'Fuel', "amount": summary.fuel_surcharge}] +
+                        [] if not summary.security_surcharge else [{"name": 'Fuel', "amount": summary.security_surcharge}] +
+                        [] if not summary.transit_cover else [{"name": 'Fuel', "amount": summary.transit_cover}] +
+                        [] if not summary.freight_charge else [{"name": 'Fuel', "amount": summary.freight_charge}]
+                    )
+                ]
             )
         ]
 
