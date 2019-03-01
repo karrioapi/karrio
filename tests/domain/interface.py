@@ -1,12 +1,18 @@
 import unittest
+import purplship
 from unittest.mock import patch
-from purplship.domain import interface as purplship
 from tests.caps.fixture import proxy as caps
-from tests.ups.fixture import proxy as ups
 from tests.caps.shipment import shipment_data, ShipmentRequestXML
 from tests.caps.tracking import TrackingRequestURL
 from tests.ups.quote import rate_req_data, RateRequestXML
 from tests.utils import strip
+
+ups = purplship.gateway['ups'].create({
+    "server_url": "https://wwwcie.ups.com/webservices",
+    "username": "username",
+    "password": "password",
+    "access_license_number": "FG09H9G8H09GH8G0",
+})
 
 
 class TestFluentInterface(unittest.TestCase):

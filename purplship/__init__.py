@@ -6,3 +6,4 @@ from purplship.domain.interface import (
     shipment,
     tracking
 )
+from purplship.mappers import gateway
