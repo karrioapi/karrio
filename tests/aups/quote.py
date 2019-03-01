@@ -2,9 +2,7 @@ import unittest
 from unittest.mock import patch
 from tests.aups.fixture import proxy
 from gds_helpers import jsonify, to_dict
-from purplship.domain.Types import (
-    RateRequest
-)
+from purplship.domain.Types import RateRequest
 from pyaups.shipping_price_request import ShippingPriceRequest
 
 
@@ -16,7 +14,9 @@ class TestAustraliaPostQuote(unittest.TestCase):
         payload = RateRequest(**RATE_PAYLOAD)
 
         shipping_price_request = proxy.mapper.create_quote_request(payload)
-        self.assertEqual(to_dict(shipping_price_request), to_dict(self.ShippingPriceRequest))
+        self.assertEqual(
+            to_dict(shipping_price_request), to_dict(self.ShippingPriceRequest)
+        )
 
     @patch("purplship.mappers.aups.aups_proxy.http", return_value="{}")
     def test_get_quotes(self, http_mock):
@@ -46,7 +46,7 @@ RATE_PAYLOAD = {
         "postal_code": "3000",
         "phone_number": "0401234567",
         "email_address": "john.citizen@citizen.com",
-        "suburb": "MELBOURNE"
+        "suburb": "MELBOURNE",
     },
     "recipient": {
         "person_name": "Jane Smith",
@@ -56,7 +56,7 @@ RATE_PAYLOAD = {
         "postal_code": "2000",
         "phone_number": "0412345678",
         "email_address": "jane.smith@smith.com",
-        "suburb": "Sydney"
+        "suburb": "Sydney",
     },
     "shipment": {
         "references": ["XYZ-001-01"],
@@ -68,10 +68,7 @@ RATE_PAYLOAD = {
                 "width": 10,
                 "weight": 1,
                 "sku": "SKU-1",
-                "extra": {
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True
-                }
+                "extra": {"authority_to_leave": False, "allow_partial_delivery": True},
             },
             {
                 "id": "T28S",
@@ -80,10 +77,7 @@ RATE_PAYLOAD = {
                 "width": 10,
                 "weight": 1,
                 "sku": "SKU-2",
-                "extra": {
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True,
-                }
+                "extra": {"authority_to_leave": False, "allow_partial_delivery": True},
             },
             {
                 "id": "T28S",
@@ -92,16 +86,11 @@ RATE_PAYLOAD = {
                 "width": 10,
                 "weight": 1,
                 "sku": "SKU-3",
-                "extra": {
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True,
-                }
+                "extra": {"authority_to_leave": False, "allow_partial_delivery": True},
             },
         ],
-        "extra": {
-            "email_tracking_enabled": True
-        }
-    }
+        "extra": {"email_tracking_enabled": True},
+    },
 }
 
 
@@ -176,7 +165,7 @@ SHIPPING_PRICE_RESPONSE = {
                 "total_gst": 5.87,
                 "tracking_summary": {},
                 "number_of_items": 4,
-            }
+            },
         }
     ]
 }
@@ -214,7 +203,7 @@ SHIPPING_PRICE_REQUEST = {
                     "width": 10,
                     "weight": 1,
                     "authority_to_leave": False,
-                    "allow_partial_delivery": True
+                    "allow_partial_delivery": True,
                 },
                 {
                     "item_reference": "SKU-2",
@@ -224,7 +213,7 @@ SHIPPING_PRICE_REQUEST = {
                     "width": 10,
                     "weight": 1,
                     "authority_to_leave": False,
-                    "allow_partial_delivery": True
+                    "allow_partial_delivery": True,
                 },
                 {
                     "item_reference": "SKU-3",
@@ -234,7 +223,7 @@ SHIPPING_PRICE_REQUEST = {
                     "width": 10,
                     "weight": 1,
                     "authority_to_leave": False,
-                    "allow_partial_delivery": True
+                    "allow_partial_delivery": True,
                 },
             ],
         }
