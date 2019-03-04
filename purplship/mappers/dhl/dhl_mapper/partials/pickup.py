@@ -6,7 +6,7 @@ from pydhl.book_pickup_global_res_20 import BookPUResponse
 from pydhl.modify_pickup_global_res_20 import ModifyPUResponse
 from pydhl import pickupdatatypes_global_20 as PickpuDataTypes
 
-from .interface import reduce, Union, Tuple, List, T, DHLMapperBase
+from .interface import Union, Tuple, List, T, DHLMapperBase
 
 
 class DHLMapperPartial(DHLMapperBase):
@@ -42,9 +42,6 @@ class DHLMapperPartial(DHLMapperBase):
             cancellation if success else None,
             self.parse_error_response(response) if not success else [],
         )
-
-    def create_tracking_pins(self, payload: T.TrackingRequest) -> List[str]:
-        return payload.tracking_numbers
 
     def create_book_purequest(self, payload: T.PickupRequest) -> BookPURequest:
         Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(

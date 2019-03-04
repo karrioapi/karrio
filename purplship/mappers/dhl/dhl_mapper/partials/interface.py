@@ -27,7 +27,7 @@ class DHLCapabilities:
 
     """ Requests """
 
-    def create_dct_request(self, payload: T.ShipmentRequest) -> Req.DCTRequest:
+    def create_dct_request(self, payload: T.RateRequest) -> Req.DCTRequest:
         pass
 
     def create_dhltracking_request(

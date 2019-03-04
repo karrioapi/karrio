@@ -27,7 +27,7 @@ class DHLMapper(
     DHLShipmentMapperPartial,
     DHLPickupMapperPartial,
 ):
-    def create_quote_request(self, payload: T.ShipmentRequest) -> Req.DCTRequest:
+    def create_quote_request(self, payload: T.RateRequest) -> Req.DCTRequest:
         return self.create_dct_request(payload)
 
     def create_tracking_request(

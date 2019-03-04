@@ -4,12 +4,11 @@ from pydhl.datatypes_global_v61 import MetaData
 from pydhl import (
     DCT_req_global as Req,
     DCT_Response_global as Res,
-    datatypes_global_v61 as GType,
     DCTRequestdatatypes_global as ReqType,
 )
 from purplship.mappers.dhl.dhl_units import Product, Service, DCTPackageType
 from purplship.domain.Types.units import DimensionUnit, WeightUnit
-from .interface import reduce, Tuple, List, T, DHLMapperBase
+from purplship.mappers.dhl.dhl_mapper.partials.interface import reduce, Tuple, List, T, DHLMapperBase
 
 
 class DHLMapperPartial(DHLMapperBase):
@@ -66,7 +65,7 @@ class DHLMapperPartial(DHLMapperBase):
             )
         ]
 
-    def create_dct_request(self, payload: T.ShipmentRequest) -> Req.DCTRequest:
+    def create_dct_request(self, payload: T.RateRequest) -> Req.DCTRequest:
         default_product_code = (
             Product.EXPRESS_WORLDWIDE_DOC
             if payload.shipment.is_document
