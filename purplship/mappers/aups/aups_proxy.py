@@ -34,7 +34,7 @@ class AustraliaPostProxy(Proxy):
         )
         return to_dict(result)
 
-    def get_trackings(self, tracking_ids: List[str]) -> dict:
+    def get_tracking(self, tracking_ids: List[str]) -> dict:
         ids = ','.join(tracking_ids)
 
         result = http(

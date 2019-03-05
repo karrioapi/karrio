@@ -23,7 +23,7 @@ class Proxy:
         """ export xmlObj as xml string and request quote from carrier  """
         raise Exception("Not Supported")
 
-    def get_trackings(self, xmlObj):
+    def get_tracking(self, xmlObj):
         """ export xmlObj as xml string and request tracking from carrier  """
         raise Exception("Not Supported")
 

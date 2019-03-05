@@ -32,7 +32,7 @@ class DHLProxy(Proxy):
         )
         return to_xml(result)
 
-    def get_trackings(
+    def get_tracking(
         self, KnownTrackingRequest_: KnownTrackingRequest
     ) -> etree.ElementBase:
         xmlElt = export(

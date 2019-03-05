@@ -14,7 +14,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
 
     @patch("purplship.mappers.aups.aups_proxy.http", return_value="{}")
     def test_get_quotes(self, http_mock):
-        proxy.get_trackings(TRACKING_REQUEST)
+        proxy.get_tracking(TRACKING_REQUEST)
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(

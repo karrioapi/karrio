@@ -79,9 +79,9 @@ class UPSProxy(Proxy):
         )
         return to_xml(result)
 
-    def get_trackings(self, TrackRequests_: TrackRequest) -> etree.ElementBase:
+    def get_tracking(self, TrackRequests_: TrackRequest) -> etree.ElementBase:
         """
-        get_trackings make parrallel request for each TrackRequest
+        get_tracking make parrallel request for each TrackRequest
         """
         results = exec_parrallel(self._get_tracking, TrackRequests_)
 

@@ -8,17 +8,17 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         self, response: etree.ElementBase
     ) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         pin_summaries = response.xpath(".//*[local-name() = $name]", name="pin-summary")
-        trackings: List[T.TrackingDetails] = reduce(
+        tracking: List[T.TrackingDetails] = reduce(
             self._extract_tracking, pin_summaries, []
         )
-        return (trackings, self.parse_error_response(response))
+        return (tracking, self.parse_error_response(response))
 
     def _extract_tracking(
-        self, trackings: List[T.TrackingDetails], pin_summaryNode: etree.ElementBase
+        self, tracking: List[T.TrackingDetails], pin_summaryNode: etree.ElementBase
     ) -> List[T.TrackingDetails]:
         pin_summary_ = pin_summary()
         pin_summary_.build(pin_summaryNode)
-        return trackings + [
+        return tracking + [
             T.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=pin_summary_.pin,
