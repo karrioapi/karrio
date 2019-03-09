@@ -21,8 +21,8 @@ class TestFeDexTracking(unittest.TestCase):
         self.assertEqual(export(TrackRequest_), export(self.TrackRequest))
 
     @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
-    def test_get_trackings(self, http_mock):
-        proxy.get_trackings(self.TrackRequest)
+    def test_get_tracking(self, http_mock):
+        proxy.get_tracking(self.TrackRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXML))

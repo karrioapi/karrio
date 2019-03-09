@@ -146,6 +146,7 @@ QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/e
                 <ns:Intermediate>0</ns:Intermediate>
                 <ns:Minor>0</ns:Minor>
             </ns:Version>
+            <ns:ReturnTransitAndCommit>true</ns:ReturnTransitAndCommit>
             <ns:RequestedShipment>
                 <ns:PackagingType>YOUR_PACKAGING</ns:PackagingType>
                 <ns:TotalWeight>

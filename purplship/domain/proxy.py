@@ -1,3 +1,5 @@
+"""PurplShip Proxy base class definition module."""
+
 import attr
 from purplship.domain.client import Client
 from purplship.domain.mapper import Mapper
@@ -23,7 +25,7 @@ class Proxy:
         """ export xmlObj as xml string and request quote from carrier  """
         raise Exception("Not Supported")
 
-    def get_trackings(self, xmlObj):
+    def get_tracking(self, xmlObj):
         """ export xmlObj as xml string and request tracking from carrier  """
         raise Exception("Not Supported")
 

@@ -38,6 +38,10 @@ class TestAustraliaPostQuote(unittest.TestCase):
         self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
+if __name__ == "__main__":
+    unittest.main()
+
+
 RATE_PAYLOAD = {
     "shipper": {
         "person_name": "John Citizen",

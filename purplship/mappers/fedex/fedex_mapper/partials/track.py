@@ -19,19 +19,19 @@ class FedexMapperPartial(FedexMapperBase):
         track_details = response.xpath(
             ".//*[local-name() = $name]", name="TrackDetails"
         )
-        trackings: List[T.TrackingDetails] = reduce(
+        tracking: List[T.TrackingDetails] = reduce(
             self._extract_tracking, track_details, []
         )
-        return (trackings, self.parse_error_response(response))
+        return (tracking, self.parse_error_response(response))
 
     def _extract_tracking(
-        self, trackings: List[T.TrackingDetails], trackDetailNode: etree.ElementBase
+        self, tracking: List[T.TrackingDetails], trackDetailNode: etree.ElementBase
     ) -> List[T.TrackingDetails]:
         trackDetail = TrackDetail()
         trackDetail.build(trackDetailNode)
         if trackDetail.Notification.Severity == "ERROR":
-            return trackings
-        return trackings + [
+            return tracking
+        return tracking + [
             T.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=trackDetail.TrackingNumber,

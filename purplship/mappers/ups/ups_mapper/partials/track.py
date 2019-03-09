@@ -8,13 +8,13 @@ class UPSMapperPartial(UPSMapperBase):
         self, response: etree.ElementBase
     ) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         track_details = response.xpath(".//*[local-name() = $name]", name="Shipment")
-        trackings: List[T.TrackingDetails] = reduce(
+        tracking: List[T.TrackingDetails] = reduce(
             self._extract_tracking, track_details, []
         )
-        return (trackings, self.parse_error_response(response))
+        return (tracking, self.parse_error_response(response))
 
     def _extract_tracking(
-        self, trackings: List[T.TrackingDetails], shipmentNode: etree.ElementBase
+        self, tracking: List[T.TrackingDetails], shipmentNode: etree.ElementBase
     ) -> List[T.TrackingDetails]:
         trackDetail = Track.ShipmentType()
         trackDetail.build(shipmentNode)
@@ -28,7 +28,7 @@ class UPSMapperPartial(UPSMapperBase):
             return activity
 
         activities = map(buildActivity, activityNodes)
-        return trackings + [
+        return tracking + [
             T.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=trackDetail.InquiryNumber.Value,

@@ -41,9 +41,9 @@ class CanadaPostProxy(Proxy):
         )
         return to_xml(result)
 
-    def get_trackings(self, tracking_pins: List[str]) -> etree.ElementBase:
+    def get_tracking(self, tracking_pins: List[str]) -> etree.ElementBase:
         """
-        get_trackings make parrallel request for each pin
+        get_tracking make parrallel request for each pin
         """
         results = exec_parrallel(self._get_tracking, tracking_pins)
 

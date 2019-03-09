@@ -38,7 +38,7 @@ class FedexProxy(Proxy):
         )
         return to_xml(result)
 
-    def get_trackings(self, TrackRequest_: Track.TrackRequest) -> etree.ElementBase:
+    def get_tracking(self, TrackRequest_: Track.TrackRequest) -> etree.ElementBase:
         envelopeStr = export(
             create_envelope(body_content=TrackRequest_),
             namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14"',

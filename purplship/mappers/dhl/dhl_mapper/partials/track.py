@@ -8,19 +8,19 @@ class DHLMapperPartial(DHLMapperBase):
         self, response
     ) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
         awbinfos = response.xpath(".//*[local-name() = $name]", name="AWBInfo")
-        trackings: List[T.TrackingDetails] = reduce(
+        tracking: List[T.TrackingDetails] = reduce(
             self._extract_tracking, awbinfos, []
         )
-        return (trackings, self.parse_error_response(response))
+        return (tracking, self.parse_error_response(response))
 
     def _extract_tracking(
-        self, trackings: List[T.TrackingDetails], awbInfoNode: etree.ElementBase
+        self, tracking: List[T.TrackingDetails], awbInfoNode: etree.ElementBase
     ) -> List[T.TrackingDetails]:
         awbInfo = TrackRes.AWBInfo()
         awbInfo.build(awbInfoNode)
         if awbInfo.ShipmentInfo == None:
-            return trackings
-        return trackings + [
+            return tracking
+        return tracking + [
             T.TrackingDetails(
                 carrier=self.client.carrier_name,
                 tracking_number=awbInfo.AWBNumber,

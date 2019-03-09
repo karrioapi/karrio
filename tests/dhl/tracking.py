@@ -24,8 +24,8 @@ class TestDHLTracking(unittest.TestCase):
         )
 
     @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
-    def test_get_trackings(self, http_mock):
-        proxy.get_trackings(self.KnownTrackingRequest)
+    def test_get_tracking(self, http_mock):
+        proxy.get_tracking(self.KnownTrackingRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))

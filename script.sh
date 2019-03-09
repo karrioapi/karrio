@@ -15,3 +15,8 @@ check() {
 build() {
     python setup.py bdist_wheel 
 }
+
+updaterelease(){
+    git tag -f -a $0
+    git push -f --tags
+}

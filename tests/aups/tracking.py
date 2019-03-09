@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from tests.aups.fixture import proxy
-from gds_helpers import jsonify, to_dict
+from gds_helpers import to_dict
 from purplship.domain.Types import TrackingRequest
 
 
@@ -14,7 +14,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
 
     @patch("purplship.mappers.aups.aups_proxy.http", return_value="{}")
     def test_get_quotes(self, http_mock):
-        proxy.get_trackings(TRACKING_REQUEST)
+        proxy.get_tracking(TRACKING_REQUEST)
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -33,6 +33,10 @@ class TestAustraliaPostTracking(unittest.TestCase):
     def test_parse_quote_response_errors(self):
         parsed_response = proxy.mapper.parse_tracking_response(ERRORS)
         self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
+
+
+if __name__ == "__main__":
+    unittest.main()
 
 
 TRACKING_REQUEST = ["7XX1000", "7XX1000634011427"]

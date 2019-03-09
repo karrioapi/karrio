@@ -138,7 +138,7 @@ class tracking:
             payload = TrackingRequest(**args)
             mapper: Mapper = proxy.mapper
             request = mapper.create_tracking_request(payload)
-            response = proxy.get_trackings(request)
+            response = proxy.get_tracking(request)
 
             def deserialize():
                 return mapper.parse_tracking_response(response)

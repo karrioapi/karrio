@@ -51,9 +51,12 @@ class FedexMapperPartial(FedexMapperBase):
         if not detail.RatedShipmentDetails:
             return quotes
         shipmentDetail: RatedShipmentDetail = detail.RatedShipmentDetails[0].ShipmentRateDetail
-        currency_ = next(c.text for c in detailNode.xpath(
+        delivery_ = reduce(lambda v, c: c.text, detailNode.xpath(
+            ".//*[local-name() = $name]", name="DeliveryTimestamp"
+        ), None)
+        currency_ = reduce(lambda v, c: c.text, detailNode.xpath(
             ".//*[local-name() = $name]", name="Currency"
-        ))
+        ), None)
         Discounts_ = map(
             lambda d: T.ChargeDetails(
                 name=d.RateDiscountType, amount=float(d.Amount.Amount), currency=currency_
@@ -76,6 +79,7 @@ class FedexMapperPartial(FedexMapperBase):
                 service_name=detail.ServiceType,
                 service_type=detail.ActualRateType,
                 currency=currency_,
+                delivery_date=delivery_,
                 base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
                 total_charge=float(
                     shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount
@@ -103,7 +107,7 @@ class FedexMapperPartial(FedexMapperBase):
             ),
             TransactionDetail=TransactionDetail(CustomerTransactionId="FTC"),
             Version=VersionId(ServiceId="crs", Major=22, Intermediate=0, Minor=0),
-            ReturnTransitAndCommit=None,
+            ReturnTransitAndCommit=True,
             CarrierCodes=None,
             VariableOptions=None,
             ConsolidationKey=None,

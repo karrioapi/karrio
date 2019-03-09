@@ -1,7 +1,10 @@
-from abc import ABC
+"""PurplShip Client base class definition"""
+
+import attr
 
 
-class Client(ABC):
+@attr.s(auto_attribs=True)
+class Client:
     """ 
     Unitied API carrier Client (Interface)
     ...
