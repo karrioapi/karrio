@@ -1,3 +1,5 @@
+"""PurplShip Proxy base class definition module."""
+
 import attr
 from purplship.domain.client import Client
 from purplship.domain.mapper import Mapper

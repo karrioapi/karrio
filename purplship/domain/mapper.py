@@ -1,4 +1,6 @@
-from abc import ABC, abstractmethod
+"""PurplShip Mapper base class definition module."""
+
+from abc import ABC
 from typing import List, Tuple
 from ..domain import Types as T
 

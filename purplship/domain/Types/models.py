@@ -1,7 +1,7 @@
 """PurplShip Unified datatypes module."""
 import attr
 from typing import List, Dict
-from jstruct import JList, JStruct
+from jstruct import JList, JStruct, REQUIRED
 
 
 @attr.s(auto_attribs=True)
@@ -131,9 +131,9 @@ class Shipment:
 class ShipmentRequest:
     """shipment request type."""
 
-    shipper: Party = JStruct[Party]
-    recipient: Party = JStruct[Party]
-    shipment: Shipment = JStruct[Shipment]
+    shipper: Party = JStruct[Party, REQUIRED]
+    recipient: Party = JStruct[Party, REQUIRED]
+    shipment: Shipment = JStruct[Shipment, REQUIRED]
 
 
 class RateRequest(ShipmentRequest):
@@ -207,6 +207,7 @@ class Error:
     message: str = None
     code: str = None
     carrier: str = None
+    details: dict = None
 
 
 @attr.s(auto_attribs=True)

@@ -40,3 +40,7 @@ class TestFluentInterface(unittest.TestCase):
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(reqUrl, TrackingRequestURL)
+
+
+if __name__ == "__main__":
+    unittest.main()

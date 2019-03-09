@@ -19,10 +19,11 @@ setup(name='purplship',
             'py-fedex==1.1',
             'py-dhl==1.2',
             'py-soap==1.1',
-            'gds-helpers==0.7.0',
+            'gds-helpers==0.8.0',
             'py-ups==1.0',
             'py-caps==1.0',
-            'py-aups==1.0a0'
+            'py-aups==1.0a0',
+            'py-sendle==1.0a0'
       ],
       dependency_links=[
             'https://git.io/purplship',
