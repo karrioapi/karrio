@@ -1,22 +1,18 @@
 import time
-from typing import Tuple, List, Union
+from typing import Tuple, List
 from functools import reduce
 from lxml import etree
 from purplship.mappers.dhl import DHLClient
 from purplship.domain import Types as T
-from pydhl.datatypes_global_v61 import ServiceHeader, MetaData, Request
+from pydhl.datatypes_global_v61 import ServiceHeader, Request
 from pydhl import (
     DCT_req_global as Req,
     ship_val_global_req_61 as ShipReq,
     DCT_Response_global as Res,
     tracking_request_known as Track,
-    tracking_response as TrackRes,
     book_pickup_global_req_20 as BookPUReq,
     modify_pickup_global_req_20 as ModifPUReq,
     cancel_pickup_global_req_20 as CancelPUReq,
-    book_pickup_global_res_20 as BookPURes,
-    modify_pickup_global_res_20 as ModifPURes,
-    pickupdatatypes_global_20 as PickpuDataTypes,
 )
 
 
@@ -91,14 +87,16 @@ class DHLMapperBase(DHLCapabilities):
     def __init__(self, client: DHLClient):
         self.client = client
 
-    def init_request(self) -> Request:
-        ServiceHeader_ = ServiceHeader(
-            MessageReference="1234567890123456789012345678901",
-            MessageTime=time.strftime("%Y-%m-%dT%H:%M:%S"),
-            SiteID=self.client.site_id,
-            Password=self.client.password,
+    def init_request(self, **kwargs) -> Request:
+        return Request(
+            ServiceHeader=ServiceHeader(
+                MessageReference="1234567890123456789012345678901",
+                MessageTime=time.strftime("%Y-%m-%dT%H:%M:%S"),
+                SiteID=self.client.site_id,
+                Password=self.client.password,
+            ),
+            **kwargs
         )
-        return Request(ServiceHeader=ServiceHeader_)
 
     def parse_error_response(self, response) -> List[T.Error]:
         conditions = response.xpath(".//*[local-name() = $name]", name="Condition")

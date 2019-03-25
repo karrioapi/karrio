@@ -1,3 +1,14 @@
+from lxml import etree
+from functools import reduce
+from datetime import datetime
+from typing import Tuple, List
+from .interface import T, FedexMapperBase
+from purplship.mappers.fedex.fedex_units import (
+    PackagingType,
+    ServiceType,
+    PaymentType,
+    SpecialServiceType,
+)
 from pyfedex.rate_v22 import (
     ClientDetail,
     RateReplyDetail,
@@ -21,15 +32,6 @@ from pyfedex.rate_v22 import (
     Weight,
     Dimensions,
     RatedShipmentDetail,
-)
-from datetime import datetime
-from lxml import etree
-from .interface import reduce, Tuple, List, T, FedexMapperBase
-from purplship.mappers.fedex.fedex_units import (
-    PackagingType,
-    ServiceType,
-    PaymentType,
-    SpecialServiceType,
 )
 
 
@@ -79,7 +81,9 @@ class FedexMapperPartial(FedexMapperBase):
                 service_name=detail.ServiceType,
                 service_type=detail.ActualRateType,
                 currency=currency_,
-                delivery_date=delivery_,
+                delivery_date=datetime.strptime(
+                    delivery_, "%Y-%m-%dT%H:%M:%S"
+                ).strftime("%Y-%m-%d") if delivery_ else None,
                 base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
                 total_charge=float(
                     shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount

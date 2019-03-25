@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='purplship',
-      version='1.0.0',
+      version='1.0.1',
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
