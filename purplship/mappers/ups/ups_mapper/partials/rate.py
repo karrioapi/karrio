@@ -1,4 +1,5 @@
 from lxml import etree
+from datetime import datetime
 from pyups import freight_rate as Rate, package_rate as PRate, common as Common
 from .interface import reduce, Tuple, List, T, UPSMapperBase
 from purplship.domain.Types.units import DimensionUnit
@@ -132,7 +133,7 @@ class UPSMapperPartial(UPSMapperBase):
                     [charge for charge in extra_charges if charge != None],
                     [],
                 ),
-                delivery_date=str(arrival.Date)
+                delivery_date=arrival.Date
             )
         ]
 
@@ -274,7 +275,7 @@ class UPSMapperPartial(UPSMapperBase):
         ]
         return PRate.RateRequest(
             Request=Common.RequestType(
-                RequestOption=payload.shipment.extra.get("RequestOption") or ["Rate"],
+                RequestOption=payload.shipment.extra.get("RequestOption", ["Shop"]),
                 SubVersion=None,
                 TransactionReference=Common.TransactionReferenceType(
                     CustomerContext=", ".join(payload.shipment.references),
@@ -286,7 +287,7 @@ class UPSMapperPartial(UPSMapperBase):
             PickupType=None,
             CustomerClassification=None,
             Shipment=PRate.ShipmentType(
-                OriginRecordTransactionTimestamp=None,
+                OriginRecordTransactionTimestamp=payload.shipment.date or datetime.utcnow(),
                 Shipper=PRate.ShipperType(
                     Name=payload.shipper.company_name,
                     ShipperNumber=payload.shipper.account_number,
@@ -379,18 +380,24 @@ class UPSMapperPartial(UPSMapperBase):
                 GoodsNotInFreeCirculationIndicator=None,
                 Service=PRate.UOMCodeDescriptionType(
                     Code=service.value, Description=None
+                ) if any("Rate" in o for o in payload.shipment.extra.get("RequestOption", [])) else None,
+                NumOfPieces=payload.shipment.total_items or len(payload.shipment.items),
+                ShipmentTotalWeight=PRate.ShipmentWeightType(
+                    UnitOfMeasurement=PRate.CodeDescriptionType(
+                        Code=WeightUnit[payload.shipment.weight_unit].value,
+                        Description=None,
+                    ),
+                    Weight=payload.shipment.total_weight or sum(i.weight for i in payload.shipment.items)
                 ),
-                NumOfPieces=payload.shipment.total_items,
-                ShipmentTotalWeight=payload.shipment.total_weight,
                 DocumentsOnlyIndicator="" if payload.shipment.is_document else None,
                 Package=[
                     PRate.PackageType(
-                        PackagingType=PRate.UOMCodeDescriptionType(
+                        PackagingType=PRate.CodeDescriptionType(
                             Code=RatingPackagingType[pkg.packaging_type or "BOX"].value,
                             Description=None,
                         ),
                         Dimensions=PRate.DimensionsType(
-                            UnitOfMeasurement=PRate.UOMCodeDescriptionType(
+                            UnitOfMeasurement=PRate.CodeDescriptionType(
                                 Code=DimensionUnit[
                                     payload.shipment.dimension_unit
                                 ].value,
@@ -402,7 +409,7 @@ class UPSMapperPartial(UPSMapperBase):
                         ),
                         DimWeight=pkg.extra.get("DimWeight"),
                         PackageWeight=PRate.PackageWeightType(
-                            UnitOfMeasurement=PRate.UOMCodeDescriptionType(
+                            UnitOfMeasurement=PRate.CodeDescriptionType(
                                 Code=WeightUnit[payload.shipment.weight_unit].value,
                                 Description=None,
                             ),
@@ -425,7 +432,7 @@ class UPSMapperPartial(UPSMapperBase):
                     ),
                     AccessPointCOD=(
                         lambda option: PRate.ShipmentServiceOptionsAccessPointCODType(
-                            CurrencyCode=option.value.get("CurrencyCode"),
+                            CurrencyCode=payload.shipment.currency,
                             MonetaryValue=option.value.get("MonetaryValue"),
                         )
                         if option != None
@@ -589,10 +596,16 @@ class UPSMapperPartial(UPSMapperBase):
                 )
                 if len(rating_options) > 0 or is_negotiated_rate
                 else None,
-                InvoiceLineTotal=None,
+                InvoiceLineTotal=PRate.InvoiceLineTotalType(
+                    MonetaryValue=payload.shipment.declared_value or 1.0,
+                    CurrencyCode=payload.shipment.currency
+                ),
                 RatingMethodRequestedIndicator=None,
                 TaxInformationIndicator=None,
                 PromotionalDiscountInformation=None,
-                DeliveryTimeInformation=None,
+                DeliveryTimeInformation=PRate.TimeInTransitRequestType(
+                    PackageBillType="02" if payload.shipment.is_document else "03",
+                    Pickup=None
+                ),
             ),
         )

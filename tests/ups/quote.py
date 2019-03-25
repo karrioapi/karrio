@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 from gds_helpers import to_xml, to_dict, export
 from pyups.freight_rate import FreightRateRequest
@@ -22,34 +23,10 @@ class TestUPSQuote(unittest.TestCase):
     def test_create_quote_request(self):
         payload = T.RateRequest(**rate_req_data)
         RateRequest_ = proxy.mapper.create_quote_request(payload)
-        self.assertEqual(
-            export(RateRequest_),
-            export(self.RateRequest).replace("common:Code", "rate:Code"),
-        )
+        self.assertEqual(export(RateRequest_), export(self.RateRequest))
 
     def test_create_freight_quote_request(self):
-        shipper = {
-            "account_number": "56GJE",
-            "postal_code": "H3N1S4",
-            "country_code": "CA",
-            "city": "Montreal",
-            "address_lines": ["Rue Fake"],
-        }
-        recipient = {"postal_code": "89109", "city": "Las Vegas", "country_code": "US"}
-        shipment = {
-            "items": [
-                {
-                    "id": "1",
-                    "height": 3,
-                    "length": 170,
-                    "width": 3,
-                    "weight": 4.0,
-                    "packaging_type": "Bag",
-                    "description": "TV",
-                }
-            ]
-        }
-        payload = T.RateRequest(shipper=shipper, recipient=recipient, shipment=shipment)
+        payload = T.RateRequest(**freight_quote_payload)
 
         FreightRateRequest_ = proxy.mapper.create_freight_quote_request(payload)
         self.assertEqual(export(FreightRateRequest_), export(self.FreightRateRequest))
@@ -59,7 +36,9 @@ class TestUPSQuote(unittest.TestCase):
         proxy.get_quotes(self.RateRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(RateRequestXML))
+        self.assertEqual(
+            strip(xmlStr), strip(RateRequestXML)
+        )
 
     @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
     def test_freight_get_quotes(self, http_mock):
@@ -92,6 +71,8 @@ class TestUPSQuote(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
+ship_date = datetime.utcnow()
 
 ParsedQuoteParsingError = [
     [],
@@ -149,7 +130,7 @@ ParsedRateResponse = [
             "base_charge": 9.86,
             "carrier": "UPS",
             "currency": "USD",
-            "delivery_date": "None",
+            "delivery_date": None,
             "discount": None,
             "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 0.0, "currency": "USD", "name": None}],
@@ -476,7 +457,7 @@ FreightRateResponseXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmls
 </soapenv:Envelope>
 """
 
-RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
+RateRequestXML = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
     <tns:Header>
         <upss:UPSSecurity>
             <upss:UsernameToken>
@@ -491,12 +472,13 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
-                <common:RequestOption>Rate</common:RequestOption>
+                <common:RequestOption>Shop</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
             </common:Request>
             <rate:Shipment>
+                <rate:OriginRecordTransactionTimestamp>{ship_date}</rate:OriginRecordTransactionTimestamp>
                 <rate:Shipper>
                     <rate:Name>Shipper Name</rate:Name>
                     <rate:ShipperNumber>Your Shipper Number</rate:ShipperNumber>
@@ -526,9 +508,13 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                         <rate:CountryCode>CountryCode</rate:CountryCode>
                     </rate:Address>
                 </rate:ShipFrom>
-                <rate:Service>
-                    <rate:Code>03</rate:Code>
-                </rate:Service>
+                <rate:NumOfPieces>1</rate:NumOfPieces>
+                <rate:ShipmentTotalWeight>
+                    <rate:UnitOfMeasurement>
+                        <rate:Code>LBS</rate:Code>
+                    </rate:UnitOfMeasurement>
+                    <rate:Weight>4.0</rate:Weight>
+                </rate:ShipmentTotalWeight>
                 <rate:Package>
                     <rate:PackagingType>
                         <rate:Code>02</rate:Code>
@@ -551,6 +537,12 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                 <rate:ShipmentRatingOptions>
                     <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
                 </rate:ShipmentRatingOptions>
+                <rate:InvoiceLineTotal>
+                    <rate:MonetaryValue>1.0</rate:MonetaryValue>
+                </rate:InvoiceLineTotal>
+                <rate:DeliveryTimeInformation>
+                    <rate:PackageBillType>03</rate:PackageBillType>
+                </rate:DeliveryTimeInformation>
             </rate:Shipment>
         </rate:RateRequest>
     </tns:Body>
@@ -650,6 +642,7 @@ rate_req_data = {
         "state_code": "StateProvinceCode",
     },
     "shipment": {
+        "date": ship_date,
         "references": ["Your Customer Context"],
         "services": ["UPS_Ground"],
         "items": [
@@ -672,5 +665,29 @@ rate_req_data = {
                 "country_code": "CountryCode",
             }
         },
+    },
+}
+
+freight_quote_payload = {
+    "shipper": {
+        "account_number": "56GJE",
+        "postal_code": "H3N1S4",
+        "country_code": "CA",
+        "city": "Montreal",
+        "address_lines": ["Rue Fake"],
+    },
+    "recipient": {"postal_code": "89109", "city": "Las Vegas", "country_code": "US"},
+    "shipment": {
+        "items": [
+            {
+                "id": "1",
+                "height": 3,
+                "length": 170,
+                "width": 3,
+                "weight": 4.0,
+                "packaging_type": "Bag",
+                "description": "TV",
+            }
+        ]
     },
 }
