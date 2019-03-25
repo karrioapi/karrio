@@ -1,4 +1,5 @@
 import time
+from typing import Union, Tuple, List
 from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_20 import CancelPURequest
@@ -6,7 +7,7 @@ from pydhl.book_pickup_global_res_20 import BookPUResponse
 from pydhl.modify_pickup_global_res_20 import ModifyPUResponse
 from pydhl import pickupdatatypes_global_20 as PickpuDataTypes
 
-from .interface import Union, Tuple, List, T, DHLMapperBase
+from .interface import T, DHLMapperBase
 
 
 class DHLMapperPartial(DHLMapperBase):

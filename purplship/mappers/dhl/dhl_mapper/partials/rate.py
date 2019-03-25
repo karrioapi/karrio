@@ -100,81 +100,86 @@ class DHLMapperPartial(DHLMapperBase):
             )
         )
 
-        GetQuote = Req.GetQuoteType(
-            Request=self.init_request(),
-            From=ReqType.DCTFrom(
-                CountryCode=payload.shipper.country_code,
-                Postalcode=payload.shipper.postal_code,
-                City=payload.shipper.city,
-                Suburb=payload.shipper.state_code,
-            ),
-            To=Req.DCTTo(
-                CountryCode=payload.recipient.country_code,
-                Postalcode=payload.recipient.postal_code,
-                City=payload.recipient.city,
-                Suburb=payload.recipient.state_code,
-            ),
-            BkgDetails=ReqType.BkgDetailsType(
-                PaymentCountryCode=payload.shipment.payment_country_code or "CA",
-                NetworkTypeCode=payload.shipment.extra.get("NetworkTypeCode"),
-                WeightUnit=WeightUnit[payload.shipment.weight_unit or "KG"].value,
-                DimensionUnit=DimensionUnit[
-                    payload.shipment.dimension_unit or "CM"
-                ].value,
-                ReadyTime=time.strftime("PT%HH%MM"),
-                Date=time.strftime("%Y-%m-%d"),
-                IsDutiable="Y" if is_dutiable else "N",
-                Pieces=ReqType.PiecesType(
-                    Piece=[
-                        ReqType.PieceType(
-                            PieceID=piece.id or str(index),
-                            PackageTypeCode=(
-                                DCTPackageType[piece.packaging_type]
-                                if piece.packaging_type != None
-                                else default_packaging_type
-                            ).value,
-                            Height=piece.height,
-                            Width=piece.width,
-                            Weight=piece.weight,
-                            Depth=piece.length,
-                        )
-                        for index, piece in enumerate(payload.shipment.items)
-                    ]
-                ),
-                NumberOfPieces=payload.shipment.total_items,
-                ShipmentWeight=payload.shipment.total_weight,
-                Volume=payload.shipment.extra.get("Volume"),
-                PaymentAccountNumber=payload.shipment.payment_account_number,
-                InsuredCurrency=(payload.shipment.currency or "USD")
-                if Service.Shipment_Insurance in options
-                else None,
-                InsuredValue=payload.shipment.insured_amount,
-                PaymentType=payload.shipment.payment_type,
-                AcctPickupCloseTime=payload.shipment.extra.get("AcctPickupCloseTime"),
-                QtdShp=[
-                    ReqType.QtdShpType(
-                        GlobalProductCode=product.value,
-                        LocalProductCode=product.value,
-                        QtdShpExChrg=[
-                            ReqType.QtdShpExChrgType(
-                                SpecialServiceType=svc.value,
-                                LocalSpecialServiceType=None,
-                            )
-                            for svc in options
-                        ]
-                        if len(options) > 0
-                        else None,
+        return Req.DCTRequest(
+            schemaVersion="1.0",
+            GetQuote=Req.GetQuoteType(
+                Request=self.init_request(
+                    MetaData=MetaData(
+                        SoftwareName="3PV",
+                        SoftwareVersion="1.0"
                     )
-                    for product in products
-                ],
-            ),
-            Dutiable=ReqType.DCTDutiable(
-                DeclaredCurrency=payload.shipment.currency or "USD",
-                DeclaredValue=payload.shipment.declared_value or 0,
+                ),
+                From=ReqType.DCTFrom(
+                    CountryCode=payload.shipper.country_code,
+                    Postalcode=payload.shipper.postal_code,
+                    City=payload.shipper.city,
+                    Suburb=payload.shipper.state_code,
+                ),
+                To=Req.DCTTo(
+                    CountryCode=payload.recipient.country_code,
+                    Postalcode=payload.recipient.postal_code,
+                    City=payload.recipient.city,
+                    Suburb=payload.recipient.state_code,
+                ),
+                BkgDetails=ReqType.BkgDetailsType(
+                    PaymentCountryCode=payload.shipment.payment_country_code or "CA",
+                    NetworkTypeCode=payload.shipment.extra.get("NetworkTypeCode"),
+                    WeightUnit=WeightUnit[payload.shipment.weight_unit or "KG"].value,
+                    DimensionUnit=DimensionUnit[
+                        payload.shipment.dimension_unit or "CM"
+                    ].value,
+                    ReadyTime=time.strftime("PT%HH%MM"),
+                    Date=time.strftime("%Y-%m-%d"),
+                    IsDutiable="Y" if is_dutiable else "N",
+                    Pieces=ReqType.PiecesType(
+                        Piece=[
+                            ReqType.PieceType(
+                                PieceID=piece.id or str(index),
+                                PackageTypeCode=(
+                                    DCTPackageType[piece.packaging_type]
+                                    if piece.packaging_type != None
+                                    else default_packaging_type
+                                ).value,
+                                Height=piece.height,
+                                Width=piece.width,
+                                Weight=piece.weight,
+                                Depth=piece.length,
+                            )
+                            for index, piece in enumerate(payload.shipment.items)
+                        ]
+                    ),
+                    NumberOfPieces=payload.shipment.total_items,
+                    ShipmentWeight=payload.shipment.total_weight,
+                    Volume=payload.shipment.extra.get("Volume"),
+                    PaymentAccountNumber=payload.shipment.payment_account_number,
+                    InsuredCurrency=(payload.shipment.currency or "USD")
+                    if Service.Shipment_Insurance in options
+                    else None,
+                    InsuredValue=payload.shipment.insured_amount,
+                    PaymentType=payload.shipment.payment_type,
+                    AcctPickupCloseTime=payload.shipment.extra.get("AcctPickupCloseTime"),
+                    QtdShp=[
+                        ReqType.QtdShpType(
+                            GlobalProductCode=product.value,
+                            LocalProductCode=product.value,
+                            QtdShpExChrg=[
+                                ReqType.QtdShpExChrgType(
+                                    SpecialServiceType=svc.value,
+                                    LocalSpecialServiceType=None,
+                                )
+                                for svc in options
+                            ]
+                            if len(options) > 0
+                            else None,
+                        )
+                        for product in products
+                    ],
+                ),
+                Dutiable=ReqType.DCTDutiable(
+                    DeclaredCurrency=payload.shipment.currency or "USD",
+                    DeclaredValue=payload.shipment.declared_value or 0,
+                )
+                if is_dutiable
+                else None,
             )
-            if is_dutiable
-            else None,
         )
-        GetQuote.Request.MetaData = MetaData(SoftwareName="3PV", SoftwareVersion="1.0")
-
-        return Req.DCTRequest(schemaVersion="1.0", GetQuote=GetQuote)
