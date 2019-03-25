@@ -1,5 +1,6 @@
 import time
 from lxml import etree
+from datetime import datetime
 from pydhl.datatypes_global_v61 import MetaData
 from pydhl import (
     DCT_req_global as Req,
@@ -42,11 +43,15 @@ class DHLMapperPartial(DHLMapperBase):
             ExtraCharges,
             0.0,
         )
+        delivery_ = str(qtdshp.DeliveryDate[0].DlvyDateTime)
         return quotes + [
             T.QuoteDetails(
                 carrier=self.client.carrier_name,
                 currency=qtdshp.CurrencyCode,
-                delivery_date=str(qtdshp.DeliveryDate[0].DlvyDateTime),
+                delivery_date=datetime.strptime(
+                    delivery_,
+                    "%Y-%m-%d %H:%M:%S"
+                ).strftime("%Y-%m-%d") if delivery_ else None,
                 service_name=qtdshp.LocalProductName,
                 service_type=qtdshp.NetworkTypeCode,
                 base_charge=float(qtdshp.WeightCharge or 0),

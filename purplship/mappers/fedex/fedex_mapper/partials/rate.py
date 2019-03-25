@@ -81,7 +81,9 @@ class FedexMapperPartial(FedexMapperBase):
                 service_name=detail.ServiceType,
                 service_type=detail.ActualRateType,
                 currency=currency_,
-                delivery_date=delivery_,
+                delivery_date=datetime.strptime(
+                    delivery_, "%Y-%m-%dT%H:%M:%S"
+                ).strftime("%Y-%m-%d") if delivery_ else None,
                 base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
                 total_charge=float(
                     shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount
