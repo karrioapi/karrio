@@ -330,7 +330,7 @@ class FedexMapperPartial(FedexMapperBase):
                 else None,
                 ShippingDocumentSpecification=None,
                 RateRequestTypes=(
-                    ["LIST", "PREFERRED"]
+                    ["LIST"] + ([] if not payload.shipment.currency else ["PREFERRED"])
                 ),
                 EdtRequestType=payload.shipment.extra.get("EdtRequestType"),
                 PackageCount=len(payload.shipment.items),
