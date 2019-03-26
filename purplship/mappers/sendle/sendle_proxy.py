@@ -30,7 +30,7 @@ class SendleProxy(Proxy):
                 "Content-Type": "application/json",
                 "Authorization": f"Basic {self.authorization}",
             },
-            method="POST",
+            method="GET",
         )
         return to_dict(response)
 
