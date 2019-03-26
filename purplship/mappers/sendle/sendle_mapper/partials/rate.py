@@ -49,7 +49,7 @@ class SendleMapperPartial(SendleMapperBase):
             SendleMapperPartial._create_domestic_quote
             if (
                 payload.recipient.country_code is None or
-                payload.recipient.country_code == 'AUS'
+                payload.recipient.country_code == 'AU'
             ) else
             SendleMapperPartial._create_international_quote
         )(payload)
