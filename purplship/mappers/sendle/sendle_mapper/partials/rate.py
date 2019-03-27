@@ -39,7 +39,7 @@ class SendleMapperPartial(SendleMapperBase):
             duties_and_taxes=parcel_quote.quote.tax.amount,
             total_charge=parcel_quote.quote.net.amount,
             currency=parcel_quote.quote.net.currency,
-            delivery_date=str(parcel_quote.eta.date_range[-1:]),
+            delivery_date=parcel_quote.eta.date_range[-1],
             discount=None,
             extra_charges=[]
         )
@@ -49,7 +49,7 @@ class SendleMapperPartial(SendleMapperBase):
             SendleMapperPartial._create_domestic_quote
             if (
                 payload.recipient.country_code is None or
-                payload.recipient.country_code == 'AUS'
+                payload.recipient.country_code == 'AU'
             ) else
             SendleMapperPartial._create_international_quote
         )(payload)
