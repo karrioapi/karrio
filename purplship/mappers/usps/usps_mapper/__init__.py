@@ -2,9 +2,9 @@ from typing import Tuple, List, Union
 from lxml import etree
 from purplship.domain.mapper import Mapper
 from purplship.domain import Types as T
-from pyusps.RateV4Request import RateV4Request
-from pyusps.IntlRateV2Request import IntlRateV2Request
-from pyusps.TrackRequest import TrackRequest
+from pyusps.ratev4request import RateV4Request
+from pyusps.intlratev2request import IntlRateV2Request
+from pyusps.trackfieldrequest import TrackFieldRequest
 from .partials import (
     USPSRateMapperPartial, 
     USPSTrackMapperPartial
@@ -18,9 +18,9 @@ class USPSMapper(
     ):        
 
     def create_quote_request(self, payload: T.RateRequest) -> Union[RateV4Request, IntlRateV2Request]:
-        self.create_rate_request(payload)
+        return self.create_rate_request(payload)
 
-    def create_tracking_request(self, payload: T.TrackingRequest) -> TrackRequest:
+    def create_tracking_request(self, payload: T.TrackingRequest) -> TrackFieldRequest:
         return self.create_track_request(payload)
 
     """Parser"""

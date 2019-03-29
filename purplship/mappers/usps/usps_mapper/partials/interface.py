@@ -10,7 +10,7 @@ from purplship.domain.Types import (
 )
 from pyusps.ratev4request import RateV4Request
 from pyusps.intlratev2request import IntlRateV2Request
-from pyusps.trackrequest import TrackRequest
+from pyusps.trackfieldrequest import TrackFieldRequest
 from pyusps.error import Error as USPSError
 
 
@@ -24,7 +24,7 @@ class USPSCapabilities:
     def create_rate_request(self, payload: RateRequest) -> Union[RateV4Request, IntlRateV2Request]:
         pass
 
-    def create_track_request(self, payload: TrackingRequest) -> TrackRequest:
+    def create_track_request(self, payload: TrackingRequest) -> TrackFieldRequest:
         pass    
 
     """ Reply """

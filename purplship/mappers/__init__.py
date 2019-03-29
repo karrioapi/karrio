@@ -9,6 +9,7 @@ from purplship.mappers.caps import CanadaPostProxy, CanadaPostClient
 from purplship.mappers.dhl import DHLProxy, DHLClient
 from purplship.mappers.fedex import FedexProxy, FedexClient
 from purplship.mappers.ups import UPSProxy, UPSClient
+from purplship.mappers.usps import USPSProxy, USPSClient
 from purplship.mappers.sendle import SendleProxy, SendleClient
 
 
@@ -19,6 +20,7 @@ class Providers(Enum):
     fedex = (FedexProxy, FedexClient)
     sendle = (SendleProxy, SendleClient)
     ups = (UPSProxy, UPSClient)
+    usps = (USPSProxy, USPSClient)
 
 
 @attr.s(auto_attribs=True)
