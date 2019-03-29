@@ -17,6 +17,6 @@ build() {
 }
 
 updaterelease(){
-    git tag -f -a $0
+    git tag -f -a $1
     git push -f --tags
 }
