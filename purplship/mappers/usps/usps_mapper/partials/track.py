@@ -30,8 +30,9 @@ class USPSMapperPartial(USPSMapperBase):
         tracking.build(tracking_node)
         details: List[TrackDetailType] = [
             (lambda t: (t, t.build(detail)))(TrackDetailType())[0]
-            for detail in
-            tracking_node.xpath(".//*[local-name() = $name]", name="TrackDetail")
+            for detail in tracking_node.xpath(
+                ".//*[local-name() = $name]", name="TrackDetail"
+            )
         ]
         return TrackingDetails(
             carrier=self.client.carrier_name,
@@ -69,10 +70,8 @@ class USPSMapperPartial(USPSMapperBase):
             SourceID=None,
             TrackID=[
                 TrackIDType(
-                    ID=tracking_number,
-                    DestinationZipCode=None,
-                    MailingDate=None
+                    ID=tracking_number, DestinationZipCode=None, MailingDate=None
                 )
                 for tracking_number in payload.tracking_numbers
-            ]
+            ],
         )

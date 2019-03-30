@@ -9,6 +9,7 @@ from purplship.domain.Types import (
     QuoteDetails,
     Error
 )
+from purplship.domain.Types.errors import OriginNotServicedError
 from pysendle.quotes import (
     DomesticParcelQuote,
     InternationalParcelQuote,
@@ -45,6 +46,15 @@ class SendleMapperPartial(SendleMapperBase):
         )
 
     def create_parcel_quote_request(self, payload: RateRequest) -> ParcelQuoteRequest:
+        """Create the appropriate Sendle rate request depending on the destination
+
+        :param payload: PurplShip unified API rate request data
+        :return: a domestic or international Sendle compatible request
+        :raises: an OriginNotServicedError when origin country is not serviced by the carrier
+        """
+        if payload.shipper.country_code and payload.shipper.country_code != 'AU':
+            raise OriginNotServicedError(payload.shipper.country_code, "Sendle")
+
         return (
             SendleMapperPartial._create_domestic_quote
             if (

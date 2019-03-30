@@ -1,3 +1,4 @@
+import urllib.parse
 from lxml import etree
 from typing import Union
 from gds_helpers import export, to_xml, request as http
@@ -19,20 +20,18 @@ class USPSProxy(Proxy):
     def get_quotes(
         self, rate_request: Union[RateV4Request, IntlRateV2Request]
     ) -> etree.ElementBase:
-        xml_str = export(rate_request).rstrip("\r\n")
         api = "RateV4" if isinstance(rate_request, RateV4Request) else "IntlRateV2"
+        query = urllib.parse.urlencode({'API': api, 'XML': export(rate_request)})
         response = http(
-            url=f"{self.client.server_url}?API={api}&XML={xml_str}",
-            headers={"Content-Type": "application/xml"},
+            url=f'{self.client.server_url}?{query}',
             method="GET",
         )
         return to_xml(response)
 
     def get_tracking(self, tracking_request: TrackFieldRequest) -> etree.ElementBase:
-        xml_str = export(tracking_request).rstrip("\r\n")
+        query = urllib.parse.urlencode({'API': 'TrackV2', 'XML': export(tracking_request)})
         response = http(
-            url=f"{self.client.server_url}?API=TrackV2&XML={xml_str}",
-            headers={"Content-Type": "application/xml"},
+            url=f"{self.client.server_url}?{query}",
             method="GET",
         )
         return to_xml(response)

@@ -252,12 +252,12 @@ class QuoteDetails:
     carrier: str
     service_name: str
     service_type: str
-    base_charge: float
-    duties_and_taxes: float
-    total_charge: float
     currency: str
+    discount: float = 0.0
+    base_charge: float = 0.0
     delivery_date: str = None
-    discount: float = None
+    total_charge: float = 0.0
+    duties_and_taxes: float = 0.0
     extra_charges: List[ChargeDetails] = []
 
 

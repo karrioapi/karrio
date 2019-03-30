@@ -1,5 +1,6 @@
 from lxml import etree
 from functools import reduce
+from datetime import datetime
 from typing import Tuple, List, Union, Any
 from purplship.mappers.usps.usps_mapper.partials.interface import USPSMapperBase
 from purplship.domain.Types import (
@@ -9,6 +10,7 @@ from purplship.domain.Types import (
     ChargeDetails,
     Option,
 )
+from purplship.domain.Types.errors import OriginNotServicedError
 from purplship.domain.Types.units import (
     Weight,
     WeightUnit,
@@ -40,14 +42,10 @@ class USPSMapperPartial(USPSMapperBase):
     ) -> Tuple[List[QuoteDetails], List[Error]]:
         is_intl = response.tag == "IntlRateV2Response"
         quotes: List[QuoteDetails] = [
-            (
-                self._extract_quote
-                if not is_intl
-                else self._extract_intl_quote
-            )(package)
+            (self._extract_quote if not is_intl else self._extract_intl_quote)(package)
             for package in response.xpath(
                 ".//*[local-name() = $name]",
-                name="Postage" if not is_intl else "Service"
+                name="Postage" if not is_intl else "Service",
             )
         ]
         return quotes, self.parse_error_response(response)
@@ -58,11 +56,14 @@ class USPSMapperPartial(USPSMapperBase):
         currency = "USD"
         services: List[RateRes.SpecialServiceType] = [
             (lambda s: (s, s.build(svc)))(RateRes.SpecialServiceType())[0]
-            for svc in postage_node.xpath(".//*[local-name() = $name]", name="SpecialService")
+            for svc in postage_node.xpath(
+                ".//*[local-name() = $name]", name="SpecialService"
+            )
         ]
 
         def get(key: str) -> Any:
             return reduce(lambda r, v: v.text, postage_node.findall(key), None)
+
         return QuoteDetails(
             carrier=self.client.carrier_name,
             service_name=None,
@@ -89,7 +90,9 @@ class USPSMapperPartial(USPSMapperBase):
         currency = "USD"
         special_services: List[IntlRateRes.ExtraServiceType] = [
             (lambda s: (s, s.build(svc)))(IntlRateRes.ExtraServiceType())[0]
-            for svc in service_node.xpath(".//*[local-name() = $name]", name="ExtraService")
+            for svc in service_node.xpath(
+                ".//*[local-name() = $name]", name="ExtraService"
+            )
         ]
         return QuoteDetails(
             carrier=self.client.carrier_name,
@@ -114,6 +117,15 @@ class USPSMapperPartial(USPSMapperBase):
     def create_rate_request(
         self, payload: RateRequest
     ) -> Union[Rate.RateV4Request, IntlRate.IntlRateV2Request]:
+        """Create the appropriate USPS rate request depending on the destination
+
+        :param payload: PurplShip unified API rate request data
+        :return: a domestic or international USPS compatible request
+        :raises: an OriginNotServicedError when origin country is not serviced by the carrier
+        """
+        if payload.shipper.country_code and payload.shipper.country_code != "US":
+            raise OriginNotServicedError(payload.shipper.country_code, "USPS")
+
         return (
             self._create_rate_request
             if (
@@ -138,7 +150,7 @@ class USPSMapperPartial(USPSMapperBase):
             USERID=self.client.username,
             Revision="2",
             Package=[
-                Rate.PackageType(
+                (lambda weight, width, length, height, item_services, item_special_services: Rate.PackageType(
                     ID=item.id or str(index),
                     DestinationEntryFacilityType=None,
                     SortationLevel=None,
@@ -148,63 +160,46 @@ class USPSMapperPartial(USPSMapperBase):
                         )
                         if len(item_services) > 0
                         else None
-                    )(
-                        services
-                        + [
-                            svc
-                            for svc in item.extra.get("services", [])
-                            if svc in Service.__members__
-                        ]
-                    ),
+                    )(list(set(item_services))),
                     FirstClassMailType=FirstClassMailType[item.packaging_type].value
                     if (
                         item.packaging_type is not None
                         and any(
                             svc
-                            for svc in (services + item.extra.get("services", []))
+                            for svc in item_services
                             if Service[svc].value
-                            in [
-                                "First Class",
-                                "First Class Commercial",
-                                "First Class HFPCommercial",
-                            ]
+                            in ["First Class", "First Class Commercial", "First Class HFPCommercial"]
                         )
                     )
                     else None,
                     ZipOrigination=payload.shipper.postal_code,
                     ZipDestination=payload.recipient.postal_code,
-                    Pounds=Weight(item.weight, weight_unit).LB,
-                    Ounces=None,
-                    Container=item.extra.get("Container")
-                    or (
+                    Pounds=weight,
+                    Ounces=weight * 16,
+                    Container=item.extra.get("Container") or (
                         Container[item.packaging_type].value
                         if item.packaging_type
                         else None
                     ),
-                    Size=item.extra.get("Size"),
-                    Width=Dimension(item.width, dimension_unit).IN,
-                    Length=Dimension(item.length, dimension_unit).IN,
-                    Height=Dimension(item.height, dimension_unit).IN,
+                    Size=item.extra.get("Size") or (
+                        "LARGE"
+                        if any(dim for dim in [width, length, height] if dim and dim > 12) else
+                        "REGULAR"
+                    ),
+                    Width=width,
+                    Length=length,
+                    Height=height,
                     Girth=item.extra.get("Girth"),
                     Value=item.value_amount,
                     AmountToCollect=None,
-                    SpecialServices=(
-                        lambda item_special_services: Rate.SpecialServicesType(
-                            SpecialService=[
-                                SpecialService[svc.code].value
-                                for svc in item_special_services
-                            ]
-                        )
-                        if len(item_special_services) > 0
-                        else None
-                    )(
-                        special_services
-                        + [
-                            Option(**svc)
-                            for svc in item.extra.get("options", [])
-                            if svc["code"] in SpecialService.__members__
+                    SpecialServices=Rate.SpecialServicesType(
+                        SpecialService=[
+                            SpecialService[svc.code].value
+                            for svc in item_special_services
                         ]
-                    ),
+                    )
+                    if len(item_special_services) > 0
+                    else None,
                     Content=None,
                     GroundOnly=None,
                     SortBy=None,
@@ -212,7 +207,24 @@ class USPSMapperPartial(USPSMapperBase):
                     ReturnLocations=None,
                     ReturnServiceInfo=None,
                     DropOffTime=None,
-                    ShipDate=item.extra.get("ShipDate") or payload.shipment.date,
+                    ShipDate=(
+                        lambda date: Rate.ShipDateType(
+                            Option="PEMSH",
+                            valueOf_=date
+                        ) if date else None
+                    )(item.extra.get("ShipDate") or payload.shipment.date),
+                ))(
+                    round(Weight(item.weight, weight_unit).LB),  # weight
+                    Dimension(item.width, dimension_unit).IN,  # width
+                    Dimension(item.length, dimension_unit).IN,  # length
+                    Dimension(item.height, dimension_unit).IN,  # height
+                    (services + [
+                        s for s in item.extra.get("services", []) if s in Service.__members__
+                    ]),  # item_services
+                    (special_services + [
+                        Option(**o) for o in item.extra.get("options", [])
+                        if o["code"] in SpecialService.__members__
+                    ])  # item_special_services
                 )
                 for index, item in enumerate(payload.shipment.items)
             ],
@@ -235,7 +247,7 @@ class USPSMapperPartial(USPSMapperBase):
                 IntlRate.PackageType(
                     ID=item.id or index,
                     Pounds=Weight(item.weight, weight_unit).LB,
-                    Ounces=None,
+                    Ounces=Weight(item.weight, weight_unit).LB * 16,
                     Machinable=item.extra.get("Machinable"),
                     MailType=IntlMailType[item.packaging_type].value,
                     GXG=None,
@@ -250,7 +262,15 @@ class USPSMapperPartial(USPSMapperBase):
                         if item.packaging_type
                         else None
                     ),
-                    Size=item.extra.get("Size"),
+                    Size=item.extra.get("Size") or (
+                        "LARGE" if any(
+                            dim for dim in [
+                                Dimension(item.width, dimension_unit).IN,
+                                Dimension(item.length, dimension_unit).IN,
+                                Dimension(item.height, dimension_unit).IN
+                            ] if dim > 12
+                        ) else "REGULAR"
+                    ),
                     Width=Dimension(item.width, dimension_unit).IN,
                     Length=Dimension(item.length, dimension_unit).IN,
                     Height=Dimension(item.height, dimension_unit).IN,

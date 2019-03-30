@@ -52,15 +52,14 @@ class USPSMapperBase(USPSCapabilities):
 
     def parse_error_response(self, response: etree.ElementBase) -> List[Error]:
         error_nodes: List[USPSError] = [
-            (lambda error: (error, error.build(node)))(USPSError())[0]
-            for node in response.xpath(".//*[local-name() = $name]", name="Error")
+            (lambda error: (error, error.build(node)))(USPSError())[0] for node in
+            ([response] if response.tag == "Error" else response.xpath(".//*[local-name() = $name]", name="Error"))
         ]
         return [
             Error(
                 carrier=self.client.carrier_name,
-                code=error.Number,
-                message=error.Description,
-                details=dict(context=error.HelpContext),
+                code=str(error.Number),
+                message=error.Description
             )
             for error in error_nodes
         ]

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from tests.usps.fixture import proxy
-from gds_helpers import to_dict, to_xml, export
+from gds_helpers import to_dict, to_xml, export, jsonify
 from purplship.domain.Types import TrackingRequest
 from pyusps.trackfieldrequest import TrackFieldRequest
 from tests.utils import strip
@@ -19,14 +19,17 @@ class TestUSPSTracking(unittest.TestCase):
         self.assertEqual(strip(export(tracking_request)), strip(TRACKING_REQUEST_STR))
 
     @patch("purplship.mappers.usps.usps_proxy.http", return_value="<a></a>")
-    def test_get_tracking(self, http_mock):
+    @patch("urllib.parse.urlencode", return_value="")
+    def test_get_tracking(self, encode_mock, http_mock):
         proxy.get_tracking(self.RateRequest)
 
-        reqUrl = http_mock.call_args[1]["url"]
-        self.assertEqual(reqUrl, TRACKING_REQUEST)
+        data = encode_mock.call_args[0][0]
+        self.assertEqual(strip(jsonify(data)), strip(jsonify(TRACKING_REQUEST)))
 
     def test_parse_tracking_response(self):
-        parsed_response = proxy.mapper.parse_tracking_response(to_xml(TRACKING_RESPONSE))
+        parsed_response = proxy.mapper.parse_tracking_response(
+            to_xml(TRACKING_RESPONSE)
+        )
         self.assertEqual(to_dict(parsed_response), PARSED_TRACKING_RESPONSE)
 
 
@@ -36,16 +39,31 @@ if __name__ == "__main__":
 
 TRACKING_PAYLOAD = ["XXXXXXXXXXXX1"]
 
-PARSED_TRACKING_RESPONSE = [[{'carrier': 'USPS', 'events': [{'code': '03', 'date': 'January 6, 2016', 'location': 'LAKE CHARLES, IL, 12345', 'time': '9:10 am'}]}], []]
+PARSED_TRACKING_RESPONSE = [
+    [
+        {
+            "carrier": "USPS",
+            "events": [
+                {
+                    "code": "03",
+                    "date": "January 6, 2016",
+                    "location": "LAKE CHARLES, IL, 12345",
+                    "time": "9:10 am",
+                }
+            ],
+        }
+    ],
+    [],
+]
 
 
 TRACKING_REQUEST_STR = f"""<TrackFieldRequest USERID="{proxy.client.username}">
     <Revision>1</Revision>
     <TrackID ID="XXXXXXXXXXXX1"/>
 </TrackFieldRequest>
-""".rstrip("\r\n")
+"""
 
-TRACKING_REQUEST = f"http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML={TRACKING_REQUEST_STR}"
+TRACKING_REQUEST = {'API': 'TrackV2', 'XML': TRACKING_REQUEST_STR}
 
 TRACKING_RESPONSE = """
 <TrackResponse>

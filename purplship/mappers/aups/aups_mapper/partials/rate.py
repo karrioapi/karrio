@@ -9,6 +9,7 @@ from purplship.domain.Types import (
     ShipmentRequest,
     QuoteDetails
 )
+from purplship.domain.Types.errors import OriginNotServicedError
 from pyaups.shipping_price_response import (
     ShippingPriceResponse,
     Shipment as ResponseShipment,
@@ -69,6 +70,15 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
         ]
 
     def create_shipping_price_request(self, payload: ShipmentRequest) -> ShippingPriceRequest:
+        """Create the appropriate Australia post rate request depending on the destination
+
+        :param payload: PurplShip unified API rate request data
+        :return: a domestic or international Australia post compatible request
+        :raises: an OriginNotServicedError when origin country is not serviced by the carrier
+        """
+        if payload.shipper.country_code and payload.shipper.country_code != 'AU':
+            raise OriginNotServicedError(payload.shipper.country_code, "Australia post")
+
         return ShippingPriceRequest(
             shipments=[
                 Shipment(

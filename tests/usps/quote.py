@@ -1,7 +1,8 @@
 import unittest
+import urllib.parse
 from unittest.mock import patch
 from tests.usps.fixture import proxy
-from gds_helpers import to_dict, to_xml, export
+from gds_helpers import to_dict, to_xml, export, jsonify
 from purplship.domain.Types import RateRequest
 from pyusps.ratev4request import RateV4Request
 from pyusps.intlratev2request import IntlRateV2Request
@@ -28,18 +29,20 @@ class TestUSPSQuote(unittest.TestCase):
         self.assertEqual(strip(export(rate_request)), strip(INTL_RATE_REQUEST_STR))
 
     @patch("purplship.mappers.usps.usps_proxy.http", return_value="<a></a>")
-    def test_get_quotes(self, http_mock):
+    @patch("urllib.parse.urlencode", return_value="")
+    def test_get_quotes(self, encode_mock, http_mock):
         proxy.get_quotes(self.RateRequest)
 
-        reqUrl = http_mock.call_args[1]["url"]
-        self.assertEqual(reqUrl, RATE_REQUEST)
+        data = encode_mock.call_args[0][0]
+        self.assertEqual(strip(jsonify(data)), strip(jsonify(RATE_REQUEST)))
 
     @patch("purplship.mappers.usps.usps_proxy.http", return_value="<a></a>")
-    def test_get_intl_quotes(self, http_mock):
+    @patch("urllib.parse.urlencode", return_value="")
+    def test_get_intl_quotes(self, encode_mock, http_mock):
         proxy.get_quotes(self.IntlRateRequest)
 
-        reqUrl = http_mock.call_args[1]["url"]
-        self.assertEqual(reqUrl, INTL_RATE_REQUEST)
+        data = encode_mock.call_args[0][0]
+        self.assertEqual(strip(jsonify(data)), strip(jsonify(INTL_RATE_REQUEST)))
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(to_xml(RATE_RESPONSE))
@@ -68,7 +71,9 @@ RATE_PAYLOAD = {
                 "id": "1ST",
                 "weight": 3.123_456_78,
                 "packaging_type": "SM",
-                "extra": {"services": ["First_Class"]},
+                "extra": {
+                    "services": ["First_Class"],
+                },
             },
             {
                 "id": "2ND",
@@ -331,28 +336,17 @@ PARSED_INTL_RATE_RESPONSE = [
     [],
 ]
 
-PARSED_ERRORS = [
-    [],
-    [
-        {
-            "carrier": "USPS",
-            "code": -2_147_218_040,
-            "details": {"context": "1000440"},
-            "message": "Invalid International Mail Type",
-        }
-    ],
-]
+PARSED_ERRORS = [[], [{'carrier': 'USPS', 'code': '-2147218040', 'message': 'Invalid International Mail Type'}]]
 
 
-ERRORS = """<any>
-    <Error>
-        <Number>-2147218040</Number>
-        <Source>IntlPostage;clsIntlPostage.CalcAllPostageDimensionsXML;IntlRateV2.ProcessRequest</Source>
-        <Description>Invalid International Mail Type</Description>
-        <HelpFile />
-        <HelpContext>1000440</HelpContext>
-    </Error>
-</any>
+ERRORS = """<?xml version="1.0" encoding="UTF-8"?>
+<Error>
+    <Number>-2147218040</Number>
+    <Source>IntlPostage;clsIntlPostage.CalcAllPostageDimensionsXML;IntlRateV2.ProcessRequest</Source>
+    <Description>Invalid International Mail Type</Description>
+    <HelpFile />
+    <HelpContext>1000440</HelpContext>
+</Error>
 """
 
 RATE_REQUEST_STR = f"""<RateV4Request USERID="{proxy.client.username}">
@@ -362,15 +356,19 @@ RATE_REQUEST_STR = f"""<RateV4Request USERID="{proxy.client.username}">
         <FirstClassMailType>LETTER</FirstClassMailType>
         <ZipOrigination>44106</ZipOrigination>
         <ZipDestination>20770</ZipDestination>
-        <Pounds>3.12345678</Pounds>
+        <Pounds>3</Pounds>
+        <Ounces>48.</Ounces>
         <Container>SM FLAT RATE ENVELOPE</Container>
+        <Size>REGULAR</Size>
     </Package>
     <Package ID="2ND">
         <Service>Priority</Service>
         <ZipOrigination>44106</ZipOrigination>
         <ZipDestination>20770</ZipDestination>
         <Pounds>1</Pounds>
+        <Ounces>16.</Ounces>
         <Container>NONRECTANGULAR</Container>
+        <Size>LARGE</Size>
         <Width>15</Width>
         <Length>30</Length>
         <Height>15</Height>
@@ -385,19 +383,20 @@ RATE_REQUEST_STR = f"""<RateV4Request USERID="{proxy.client.username}">
         <ZipOrigination>44106</ZipOrigination>
         <ZipDestination>20770</ZipDestination>
         <Pounds>8</Pounds>
+        <Ounces>128.</Ounces>
         <Size>REGULAR</Size>
-        <ShipDate>2016-03-23</ShipDate>
+        <ShipDate Option="PEMSH">2016-03-23</ShipDate>
     </Package>
-</RateV4Request>""".rstrip(
-    "\r\n"
-)
+</RateV4Request>
+"""
 
-RATE_REQUEST = f"http://production.shippingapis.com/ShippingAPI.dll?API=RateV4&XML={RATE_REQUEST_STR}"
+RATE_REQUEST = {'API': 'RateV4', 'XML': RATE_REQUEST_STR}
 
 INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{proxy.client.username}">
     <Revision>2</Revision>
     <Package ID="1ST">
         <Pounds>15.12345678</Pounds>
+        <Ounces>241.975308479999995</Ounces>
         <Machinable>True</Machinable>
         <MailType>PACKAGE</MailType>
         <ValueOfContents>200</ValueOfContents>
@@ -414,6 +413,7 @@ INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{proxy.client.username}">
     </Package>
     <Package ID="2ND">
         <Pounds>3.12345678</Pounds>
+        <Ounces>49.975308480000002</Ounces>
         <MailType>ENVELOPE</MailType>
         <ValueOfContents>75</ValueOfContents>
         <Country>AUSTRALIA</Country>
@@ -429,11 +429,10 @@ INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{proxy.client.username}">
             <ExtraService>106</ExtraService>
         </ExtraServices>
     </Package>
-</IntlRateV2Request>""".rstrip(
-    "\r\n"
-)
+</IntlRateV2Request>
+"""
 
-INTL_RATE_REQUEST = f"http://production.shippingapis.com/ShippingAPI.dll?API=IntlRateV2&XML={INTL_RATE_REQUEST_STR}"
+INTL_RATE_REQUEST = {'API': 'IntlRateV2', 'XML': INTL_RATE_REQUEST_STR}
 
 RATE_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 <RateV4Response>

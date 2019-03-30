@@ -18,4 +18,4 @@ class OriginNotServicedError(Error):
     """Raised when an origin is not supported by a shipping provider."""
 
     def __init__(self, origin: str, carrier: str):
-        super().__init__(f"{origin} not serviced by {carrier}")
+        super().__init__(f"Origin country '{origin}' is not serviced by {carrier}")
