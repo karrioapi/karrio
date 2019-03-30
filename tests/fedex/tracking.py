@@ -352,7 +352,6 @@ TrackingResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlso
                   <City>COLORADO SPRINGS</City>
                   <StateOrProvinceCode>CO</StateOrProvinceCode>
                   <CountryCode>US</CountryCode>
-                  <CountryName>United States</CountryName>
                   <Residential>false</Residential>
                </ShipperAddress>
                <DatesOrTimes>
@@ -363,7 +362,6 @@ TrackingResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlso
                   <City>DENVER</City>
                   <StateOrProvinceCode>CO</StateOrProvinceCode>
                   <CountryCode>US</CountryCode>
-                  <CountryName>United States</CountryName>
                   <Residential>false</Residential>
                </DestinationAddress>
                <DeliveryAttempts>0</DeliveryAttempts>

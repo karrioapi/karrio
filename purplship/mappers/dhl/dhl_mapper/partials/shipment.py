@@ -136,7 +136,7 @@ class DHLMapperPartial(DHLMapperBase):
                 DivisionCode=payload.recipient.state_code,
                 PostalCode=payload.recipient.postal_code,
                 CountryCode=payload.recipient.country_code,
-                CountryName=payload.recipient.country_name,
+                CountryName=None,
                 FederalTaxId=payload.shipper.tax_id,
                 StateTaxId=None,
                 Contact=ShipReq.Contact(
@@ -171,7 +171,7 @@ class DHLMapperPartial(DHLMapperBase):
                 PostalCode=payload.shipper.postal_code,
                 CountryCode=payload.shipper.country_code,
                 City=payload.shipper.city,
-                CountryName=payload.shipper.country_name,
+                CountryName=None,
                 Division=payload.shipper.state,
                 DivisionCode=payload.shipper.state_code,
                 Contact=ShipReq.Contact(

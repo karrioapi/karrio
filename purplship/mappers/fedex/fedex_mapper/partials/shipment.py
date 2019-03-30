@@ -190,7 +190,7 @@ class FedexMapperPartial(FedexMapperBase):
                         PostalCode=payload.shipper.postal_code,
                         UrbanizationCode=None,
                         CountryCode=payload.shipper.country_code,
-                        CountryName=payload.shipper.country_name,
+                        CountryName=None,
                         Residential=None,
                         GeographicCoordinates=None,
                     ),
@@ -238,7 +238,7 @@ class FedexMapperPartial(FedexMapperBase):
                         PostalCode=payload.recipient.postal_code,
                         UrbanizationCode=None,
                         CountryCode=payload.recipient.country_code,
-                        CountryName=payload.recipient.country_name,
+                        CountryName=None,
                         Residential=None,
                         GeographicCoordinates=None,
                     ),
@@ -293,14 +293,13 @@ class FedexMapperPartial(FedexMapperBase):
                                     PostalCode=payor.postal_code,
                                     UrbanizationCode=None,
                                     CountryCode=payor.country_code,
-                                    CountryName=payor.country_name,
+                                    CountryName=None,
                                     Residential=None,
                                     GeographicCoordinates=None,
                                 )
                                 if any(
                                     (
                                         payor.country_code,
-                                        payor.country_name,
                                         payor.address_lines,
                                         payor.city,
                                         payor.state_code,

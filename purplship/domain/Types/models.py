@@ -15,7 +15,6 @@ class Party:
     account_number: str = None
     person_name: str = None
     company_name: str = None
-    country_name: str = None
     country_code: str = None
     email_address: str = None
     phone_number: str = None
@@ -176,7 +175,6 @@ class PickupRequest:
     state: str = None
     state_code: str = None
 
-    country_name: str = None
     country_code: str = None
 
     """ required for pickup modification """

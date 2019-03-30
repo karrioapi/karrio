@@ -186,7 +186,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
-        <CountryName>Belgium</CountryName>
         <Contact>
             <PersonName>Mrs Orlander</PersonName>
             <PhoneNumber>506-851-2271</PhoneNumber>
@@ -242,7 +241,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
         <CountryCode>US</CountryCode>
-        <CountryName>United States of America</CountryName>
         <Contact>
             <PersonName>Ms Lucian</PersonName>
             <PhoneNumber>1 23 8613402</PhoneNumber>
@@ -325,7 +323,6 @@ ShipmentResponseXml = """<?xml version="1.0" encoding="UTF-8"?>
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
-        <CountryName>Belgium</CountryName>
         <Contact>
             <PersonName>Mrs Orlander</PersonName>
             <PhoneNumber>506-851-2271</PhoneNumber>
@@ -345,7 +342,6 @@ ShipmentResponseXml = """<?xml version="1.0" encoding="UTF-8"?>
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
         <CountryCode>US</CountryCode>
-        <CountryName>United States of America</CountryName>
         <Contact>
             <PersonName>Ms Lucian</PersonName>
             <PhoneNumber>1 23 8613402</PhoneNumber>
@@ -437,7 +433,6 @@ shipment_data = {
         "city": "Scottsdale",
         "postal_code": "85260",
         "country_code": "US",
-        "country_name": "United States of America",
         "person_name": "Ms Lucian",
         "phone_number": "1 23 8613402",
         "email_address": "test@email.com",
@@ -458,7 +453,6 @@ shipment_data = {
         "city": "Brussels",
         "postal_code": "1060",
         "country_code": "BE",
-        "country_name": "Belgium",
         "person_name": "Mrs Orlander",
         "phone_number": "506-851-2271",
         "email_address": "c_orlander@gc.ca",
