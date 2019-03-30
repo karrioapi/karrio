@@ -32,16 +32,14 @@ class Builder:
 
 
 class Gateway:
-
     def __getitem__(self, key):
         def initializer(settings: dict) -> Proxy:
             try:
                 _Proxy, _Client = Providers[key].value
-                return _Proxy(
-                    client=_Client(**settings)
-                )
+                return _Proxy(client=_Client(**settings))
             except KeyError as e:
                 raise Exception(f"Unknown provider id '{key}'") from e
+
         return Builder(initializer)
 
 

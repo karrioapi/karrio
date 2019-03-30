@@ -69,7 +69,7 @@ class IntlMailType(Enum):
     FLATRATE = "FLATRATE"
 
     """ Unified Packaging type mapping """
-    SM = LETTER
+    SM = ENVELOPE
     BOX = PACKAGE
     PC = POSTCARDS
     PAL = ALL
@@ -94,7 +94,7 @@ class Container(Enum):
     CUBIC_SOFT_PACK = "CUBIC SOFT PACK"
 
     """ Unified Packaging type mapping """
-    SM = FLAT_RATE_ENVELOPE
+    SM = SM_FLAT_RATE_ENVELOPE
     BOX = SM_FLAT_RATE_BOX
     PC = VARIABLE
     PAL = CUBIC_PARCELS
@@ -146,7 +146,7 @@ class SpecialService(Enum):
     Special_Handling_Fragile = "190"
 
 
-class IntlSpecialService(Enum):
+class ExtraService(Enum):
     Registered_Mail = "103"
     Insurance_Global_Express_Guaranteed = "106"
     Insurance_Express_Mail_International = "107"

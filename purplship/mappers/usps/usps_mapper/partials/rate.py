@@ -1,72 +1,86 @@
 from lxml import etree
-from typing import Tuple, List, Union
+from functools import reduce
+from typing import Tuple, List, Union, Any
 from purplship.mappers.usps.usps_mapper.partials.interface import USPSMapperBase
 from purplship.domain.Types import (
     QuoteDetails,
     Error,
     RateRequest,
-    ChargeDetails
+    ChargeDetails,
+    Option,
 )
 from purplship.domain.Types.units import (
     Weight,
     WeightUnit,
     Dimension,
-    DimensionUnit
+    DimensionUnit,
+    Country,
 )
 from purplship.mappers.usps.usps_units import (
     SpecialService,
     Container,
     Service,
     IntlContainer,
-    IntlSpecialService,
+    ExtraService,
     IntlContentType,
     FirstClassMailType,
-    IntlMailType
+    IntlMailType,
 )
 from pyusps import (
     ratev4request as Rate,
     intlratev2request as IntlRate,
     ratev4response as RateRes,
-    intlratev2response as IntlRateRes
+    intlratev2response as IntlRateRes,
 )
 
 
 class USPSMapperPartial(USPSMapperBase):
-    
-    def parse_rate_response(self, response: etree.ElementBase) -> Tuple[List[QuoteDetails], List[Error]]:
+    def parse_rate_response(
+        self, response: etree.ElementBase
+    ) -> Tuple[List[QuoteDetails], List[Error]]:
+        is_intl = response.tag == "IntlRateV2Response"
         quotes: List[QuoteDetails] = [
-            (self._extract_quote if response.tag == "" else self._extract_intl_quote)
-            (package) for package in
-            response.xpath(".//*[local-name() = $name]", name="Postage")
+            (
+                self._extract_quote
+                if not is_intl
+                else self._extract_intl_quote
+            )(package)
+            for package in response.xpath(
+                ".//*[local-name() = $name]",
+                name="Postage" if not is_intl else "Service"
+            )
         ]
-        return (
-            quotes, self.parse_error_response(response)
-        )
+        return quotes, self.parse_error_response(response)
 
     def _extract_quote(self, postage_node: etree.ElementBase) -> QuoteDetails:
         postage: RateRes.PostageType = RateRes.PostageType()
         postage.build(postage_node)
         currency = "USD"
-        special_services: List[RateRes.SpecialServiceType] = [
-            svc for svc in postage.SpecialServices
+        services: List[RateRes.SpecialServiceType] = [
+            (lambda s: (s, s.build(svc)))(RateRes.SpecialServiceType())[0]
+            for svc in postage_node.xpath(".//*[local-name() = $name]", name="SpecialService")
         ]
+
+        def get(key: str) -> Any:
+            return reduce(lambda r, v: v.text, postage_node.findall(key), None)
         return QuoteDetails(
             carrier=self.client.carrier_name,
-            service_name=postage.MailService,
-            service_type=postage.CommitmentName,
+            service_name=None,
+            service_type=get("MailService"),
             base_charge=None,
             duties_and_taxes=None,
-            total_charge=postage.Rate,
+            total_charge=float(postage_node.find("Rate").text),
             currency=currency,
             delivery_date=postage.CommitmentDate,
             discount=None,
             extra_charges=[
                 ChargeDetails(
-                    name=SpecialService(svc.ServiceID).name,
+                    name=SpecialService(str(svc.ServiceID)).name,
                     amount=svc.Price,
-                    currency=currency
-                ) for svc in special_services
-            ]
+                    currency=currency,
+                )
+                for svc in services
+            ],
         )
 
     def _extract_intl_quote(self, service_node: etree.ElementBase) -> QuoteDetails:
@@ -74,11 +88,12 @@ class USPSMapperPartial(USPSMapperBase):
         service.build(service_node)
         currency = "USD"
         special_services: List[IntlRateRes.ExtraServiceType] = [
-            svc for svc in service.ExtraServices
+            (lambda s: (s, s.build(svc)))(IntlRateRes.ExtraServiceType())[0]
+            for svc in service_node.xpath(".//*[local-name() = $name]", name="ExtraService")
         ]
         return QuoteDetails(
             carrier=self.client.carrier_name,
-            service_name=service.ID,
+            service_name=None,
             service_type=service.MailType,
             base_charge=None,
             duties_and_taxes=None,
@@ -88,116 +103,187 @@ class USPSMapperPartial(USPSMapperBase):
             discount=None,
             extra_charges=[
                 ChargeDetails(
-                    name=IntlSpecialService(special.ServiceID).name,
+                    name=ExtraService(special.ServiceID).name,
                     amount=special.Price,
-                    currency=currency
-                ) for special in special_services
-            ]
+                    currency=currency,
+                )
+                for special in special_services
+            ],
         )
 
-    def create_rate_request(self, payload: RateRequest) -> Union[Rate.RateV4Request, IntlRate.IntlRateV2Request]:
+    def create_rate_request(
+        self, payload: RateRequest
+    ) -> Union[Rate.RateV4Request, IntlRate.IntlRateV2Request]:
         return (
             self._create_rate_request
             if (
-                payload.recipient.country_code is None or
-                payload.recipient.country_code == 'US'
-            ) else
-            self._create_intl_rate_request
+                payload.recipient.country_code is None
+                or payload.recipient.country_code == "US"
+            )
+            else self._create_intl_rate_request
         )(payload)
 
     def _create_rate_request(self, payload: RateRequest) -> Rate.RateV4Request:
         weight_unit = WeightUnit[payload.shipment.weight_unit or "LB"]
         dimension_unit = DimensionUnit[payload.shipment.dimension_unit or "IN"]
-        special_services = [
-            SpecialService[svc.code].value
+        special_services: List[Option] = [
+            svc
             for svc in payload.shipment.options
             if svc.code in SpecialService.__members__
         ]
-        services = [
-            Service[svc].value for svc
-            in payload.shipment.services
-            if svc in Service.__members__
+        services: List[str] = [
+            svc for svc in payload.shipment.services if svc in Service.__members__
         ]
         return Rate.RateV4Request(
             USERID=self.client.username,
             Revision="2",
             Package=[
-               Rate.PackageType(
-                   ID=item.id or str(index),
-                   DestinationEntryFacilityType=None,
-                   SortationLevel=None,
-                   Service=", ".join(services) if len(services) else None,
-                   FirstClassMailType=(
-                       FirstClassMailType[item.packaging_type]
-                   ) if any(
-                       svc for svc in services if Service[svc].value
-                       in ['First Class', 'First Class Commercial', 'First Class HFPCommercial']
-                   ) else None,
-                   ZipOrigination=payload.shipper.postal_code,
-                   ZipDestination=payload.recipient.postal_code,
-                   Pounds=Weight(item.weight, weight_unit).LB,
-                   Ounces=None,
-                   Container=Container[item.packaging_type].value,
-                   Size=None,
-                   Width=Dimension(item.width, dimension_unit).IN,
-                   Length=Dimension(item.length, dimension_unit).IN,
-                   Height=Dimension(item.height, dimension_unit).IN,
-                   Girth=None,
-                   Value=None,
-                   AmountToCollect=None,
-                   SpecialServices=Rate.SpecialServicesType(
-                       SpecialService=special_services
-                   ) if len(special_services) else None,
-                   Content=None,
-                   GroundOnly=None,
-                   SortBy=None,
-                   Machinable=None,
-                   ReturnLocations=None,
-                   ReturnServiceInfo=None,
-                   DropOffTime=None,
-                   ShipDate=payload.shipment.date,
-                ) for index, item in enumerate(payload.shipment.items)
-            ]
+                Rate.PackageType(
+                    ID=item.id or str(index),
+                    DestinationEntryFacilityType=None,
+                    SortationLevel=None,
+                    Service=(
+                        lambda item_services: ", ".join(
+                            [Service[svc].value for svc in item_services]
+                        )
+                        if len(item_services) > 0
+                        else None
+                    )(
+                        services
+                        + [
+                            svc
+                            for svc in item.extra.get("services", [])
+                            if svc in Service.__members__
+                        ]
+                    ),
+                    FirstClassMailType=FirstClassMailType[item.packaging_type].value
+                    if (
+                        item.packaging_type is not None
+                        and any(
+                            svc
+                            for svc in (services + item.extra.get("services", []))
+                            if Service[svc].value
+                            in [
+                                "First Class",
+                                "First Class Commercial",
+                                "First Class HFPCommercial",
+                            ]
+                        )
+                    )
+                    else None,
+                    ZipOrigination=payload.shipper.postal_code,
+                    ZipDestination=payload.recipient.postal_code,
+                    Pounds=Weight(item.weight, weight_unit).LB,
+                    Ounces=None,
+                    Container=item.extra.get("Container")
+                    or (
+                        Container[item.packaging_type].value
+                        if item.packaging_type
+                        else None
+                    ),
+                    Size=item.extra.get("Size"),
+                    Width=Dimension(item.width, dimension_unit).IN,
+                    Length=Dimension(item.length, dimension_unit).IN,
+                    Height=Dimension(item.height, dimension_unit).IN,
+                    Girth=item.extra.get("Girth"),
+                    Value=item.value_amount,
+                    AmountToCollect=None,
+                    SpecialServices=(
+                        lambda item_special_services: Rate.SpecialServicesType(
+                            SpecialService=[
+                                SpecialService[svc.code].value
+                                for svc in item_special_services
+                            ]
+                        )
+                        if len(item_special_services) > 0
+                        else None
+                    )(
+                        special_services
+                        + [
+                            Option(**svc)
+                            for svc in item.extra.get("options", [])
+                            if svc["code"] in SpecialService.__members__
+                        ]
+                    ),
+                    Content=None,
+                    GroundOnly=None,
+                    SortBy=None,
+                    Machinable=None,
+                    ReturnLocations=None,
+                    ReturnServiceInfo=None,
+                    DropOffTime=None,
+                    ShipDate=item.extra.get("ShipDate") or payload.shipment.date,
+                )
+                for index, item in enumerate(payload.shipment.items)
+            ],
         )
 
-    def _create_intl_rate_request(self, payload: RateRequest) -> IntlRate.IntlRateV2Request:
+    def _create_intl_rate_request(
+        self, payload: RateRequest
+    ) -> IntlRate.IntlRateV2Request:
         weight_unit = WeightUnit[payload.shipment.weight_unit or "LB"]
         dimension_unit = DimensionUnit[payload.shipment.dimension_unit or "IN"]
-        special_services = [
-            IntlSpecialService[svc.code].value
+        extra_services = [
+            ExtraService[svc.code].value
             for svc in payload.shipment.options
-            if svc.code in IntlSpecialService.__members__
+            if svc.code in ExtraService.__members__
         ]
         return IntlRate.IntlRateV2Request(
             USERID=self.client.username,
             Revision="2",
             Package=[
                 IntlRate.PackageType(
-                    ID=None,
+                    ID=item.id or index,
                     Pounds=Weight(item.weight, weight_unit).LB,
                     Ounces=None,
+                    Machinable=item.extra.get("Machinable"),
                     MailType=IntlMailType[item.packaging_type].value,
                     GXG=None,
-                    ValueOfContents=item.value_amount or payload.shipment.declared_value,
-                    Country=payload.recipient.country_code,
-                    Container=IntlContainer[item.packaging_type].value,
-                    Size=None,
+                    ValueOfContents=item.value_amount
+                    or payload.shipment.declared_value,
+                    Country=Country[payload.recipient.country_code].value
+                    if payload.recipient.country_code
+                    else None,
+                    Container=item.extra.get("Container")
+                    or (
+                        IntlContainer[item.packaging_type].value
+                        if item.packaging_type
+                        else None
+                    ),
+                    Size=item.extra.get("Size"),
                     Width=Dimension(item.width, dimension_unit).IN,
                     Length=Dimension(item.length, dimension_unit).IN,
                     Height=Dimension(item.height, dimension_unit).IN,
-                    Girth=None,
+                    Girth=item.extra.get("Girth"),
                     OriginZip=payload.shipper.postal_code,
-                    CommercialFlag=None,
-                    CommercialPlusFlag=None,
+                    CommercialFlag=item.extra.get("CommercialFlag"),
+                    CommercialPlusFlag=item.extra.get("CommercialPlusFlag"),
                     AcceptanceDateTime=payload.shipment.date,
                     DestinationPostalCode=payload.recipient.postal_code,
-                    ExtraServices=Rate.SpecialServicesType(
-                       SpecialService=special_services
-                    ) if len(special_services) else None,
+                    ExtraServices=(
+                        lambda item_extra_services: IntlRate.ExtraServicesType(
+                            ExtraService=[
+                                ExtraService[svc.code].value
+                                for svc in item_extra_services
+                            ]
+                        )
+                        if len(item_extra_services) > 0
+                        else None
+                    )(
+                        extra_services
+                        + [
+                            Option(**svc)
+                            for svc in item.extra.get("options", [])
+                            if svc["code"] in ExtraService.__members__
+                        ]
+                    ),
                     Content=IntlRate.ContentType(
                         ContentType=IntlContentType[item.content].value,
-                        ContentDescription=item.content
-                    ) if item.content else None
-                ) for item in payload.shipment.items
-            ]
+                        ContentDescription=item.content,
+                    )
+                    if item.content
+                    else None,
+                )
+                for index, item in enumerate(payload.shipment.items)
+            ],
         )

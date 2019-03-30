@@ -24,7 +24,7 @@ setup(name='purplship',
             'py-caps==1.0',
             'py-aups==1.0a0',
             'py-sendle==1.0a0',
-            'py-usps==1.0-alpha',
+            'py-usps==1.0a0',
       ],
       dependency_links=[
             'https://git.io/purplship',
