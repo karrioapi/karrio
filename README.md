@@ -76,12 +76,16 @@ PurplShip has usage and reference documentation at [doc.purplship.com](https://d
 ## Built With
 
 - [generateDs-helpers](https://github.com/PurplShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation helpers
-- [py-dhl](https://github.com/PurplShip/py-fedex) - The DHL xml generated datatypes library
-- [py-fedex](https://github.com/PurplShip/py-dhl) - The FedEx xml generated datatypes library
+- [py-dhl](https://github.com/PurplShip/py-dhl) - The DHL xml generated datatypes library
+- [py-fedex](https://github.com/PurplShip/py-fedex) - The FedEx xml generated datatypes library
+- [py-aups](https://github.com/PurplShip/py-aups) - The Australia post JSON generated datatypes library
+- [py-sendle](https://github.com/PurplShip/py-sendle) - The Sendle JSON generated datatypes library
+- [py-usps](https://github.com/PurplShip/py-usps) - The USPS xml generated datatypes library
 - [py-caps](https://github.com/PurplShip/py-caps) - The Canada Post xml generated datatypes library
 - [py-ups](https://github.com/PurplShip/py-ups) - The UPS xml generated datatypes library
 - [py-soap](https://github.com/PurplShip/py-soap) - The SOAP xml generated datatypes and utilities library
 - [lxml](https://lxml.de/) - Processing XML and HTML with Python
+- [jstruct](https://github.com/DanH91/jstruct) - JSON to python datatypes
 
 ## Contributing
 
