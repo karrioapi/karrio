@@ -15,7 +15,6 @@ class Party:
     account_number: str = None
     person_name: str = None
     company_name: str = None
-    country_name: str = None
     country_code: str = None
     email_address: str = None
     phone_number: str = None
@@ -176,7 +175,6 @@ class PickupRequest:
     state: str = None
     state_code: str = None
 
-    country_name: str = None
     country_code: str = None
 
     """ required for pickup modification """
@@ -254,12 +252,12 @@ class QuoteDetails:
     carrier: str
     service_name: str
     service_type: str
-    base_charge: float
-    duties_and_taxes: float
-    total_charge: float
     currency: str
+    discount: float = 0.0
+    base_charge: float = 0.0
     delivery_date: str = None
-    discount: float = None
+    total_charge: float = 0.0
+    duties_and_taxes: float = 0.0
     extra_charges: List[ChargeDetails] = []
 
 

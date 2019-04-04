@@ -16,6 +16,7 @@ from datetime import datetime
 from .interface import reduce, Tuple, List, T, CanadaPostMapperBase
 from purplship.domain.Types.units import Weight, WeightUnit, Dimension, DimensionUnit
 from purplship.mappers.caps.caps_units import OptionCode, ServiceType
+from purplship.domain.Types.errors import OriginNotServicedError
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
@@ -69,6 +70,15 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         ]
 
     def create_mailing_scenario(self, payload: T.ShipmentRequest) -> mailing_scenario:
+        """Create the appropriate Canada Post rate request depending on the destination
+
+        :param payload: PurplShip unified API rate request data
+        :return: a domestic or international Canada post compatible request
+        :raises: an OriginNotServicedError when origin country is not serviced by the carrier
+        """
+        if payload.shipper.country_code and payload.shipper.country_code != 'CA':
+            raise OriginNotServicedError(payload.shipper.country_code, "Canada Post")
+
         package = payload.shipment.items[0]
         requested_services = [
             svc for svc in payload.shipment.services if svc in ServiceType.__members__

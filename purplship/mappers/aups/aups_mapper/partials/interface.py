@@ -43,12 +43,11 @@ class AustraliaPostMapperBase(AustraliaPostCapabilities):
 
     def parse_error_response(self, response: dict) -> List[Error]:
         if 'errors' in response:
-            errorResponse: Errors = Errors(**response)
             return [
                 Error(
-                    message=error.message,
+                    message=error.get('message'),
                     carrier=self.client.carrier_name,
-                    code=error.code
-                ) for error in errorResponse.errors
+                    code=error.get('code') or error.get('error_code')
+                ) for error in response.get('errors', [])
             ]
         return []
