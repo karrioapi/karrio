@@ -25,7 +25,7 @@ class TestAustraliaPostQuote(unittest.TestCase):
         data = http_mock.call_args[1]["data"].decode("utf-8")
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(data, jsonify(SHIPPING_PRICE_REQUEST))
-        self.assertEqual(reqUrl, f"{proxy.client.server_url}/prices/shipments")
+        self.assertEqual(reqUrl, f"{proxy.client.server_url}/shipping/v1/prices/shipments")
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(SHIPPING_PRICE_RESPONSE)

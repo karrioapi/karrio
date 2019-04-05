@@ -12,4 +12,5 @@ class AustraliaPostClient(Client):
     password: str
     account_number: str
     carrier_name: str = "AustraliaPost"
-    server_url: str = "https://digitalapi.auspost.com.au/shipping/v1"
+    server_url: str = "https://digitalapi.auspost.com.au"
+    api: str = "Logistic"  # Possible values: 'Logistic', 'Postage'

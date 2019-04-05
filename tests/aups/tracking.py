@@ -19,7 +19,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(
             reqUrl,
-            f'{proxy.client.server_url}/track?tracking_ids={",".join(TRACKING_REQUEST)}',
+            f'{proxy.client.server_url}/shipping/v1/track?tracking_ids={",".join(TRACKING_REQUEST)}',
         )
 
     def test_parse_quote_response(self):
