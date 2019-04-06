@@ -20,17 +20,17 @@ proxy = purplship.gateway['aups'].create({
     "account_number": "1234567"
 })
 
-rate_request = purplship.rating.fetch(
-    shipper={"postal_code": "H3N1S4", "country_code": "CA"},
-    recipient = {"city": "Lome", "country_code": "TG"},
-    shipment = {
+response = purplship.rating.fetch({
+    "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
+    "recipient": {"city": "Lome", "country_code": "TG"},
+    "shipment": {
         "items": [
             {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
         ]
     }
-).from_(proxy)
+}).from_(proxy)
 
-rates = rate_request.parse()
+rates = response.parse()
 ```
 
 ## Getting Started
