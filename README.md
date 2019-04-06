@@ -1,20 +1,24 @@
 # PurplShip
 
-[![Build Status](https://travis-ci.org/PurplShip/purplship.svg?branch=master)](https://travis-ci.org/PurplShip/purplship) [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
+[![Build Status](https://travis-ci.org/PurplShip/purplship.svg?branch=master)](https://travis-ci.org/PurplShip/purplship) [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship) [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
-Shipping carriers API integrations Library
+## Overview
+
+PurplShip is an open source library that makes shipping carrier API integration
+easy.
+PurplShip proposes an intuitive unified API, to make multi-carrier integration seamless.
 
 - Integrate multiple carriers: DHL, FedEx, UPS, Canada Post and more with ease
 - Use an intuitive, unified API across multiple carriers
-- Use your developer credentials with negotiated rates
+- Use your developer credentials and your negotiated rates
 
-PurplSHip prevents you from reinventing the wheel and is easy to use:
+PurplShip helps quickly getting started with shipping services as it is easy to use:
 
-```shell
+```python
 import purplship
 
-usps = purplship.gateway['usps'].create({
-    "username": "username",
+dhl = purplship.gateway['dhl'].create({
+    "site_id": "username",
     "password": "password"
 })
 
@@ -23,10 +27,10 @@ response = purplship.rating.fetch({
     "recipient": {"city": "Lome", "country_code": "TG"},
     "shipment": {
         "items": [
-            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
+            {"height": 3, "length": 10, "width": 3, "weight": 4.0}
         ]
     }
-}).from_(usps)
+}).from_(dhl)
 
 rates = response.parse()
 ```
@@ -74,13 +78,13 @@ PurplShip has usage and reference documentation at [doc.purplship.com](https://d
 ## Built With
 
 - [generateDs-helpers](https://github.com/PurplShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation helpers
-- [py-dhl](https://github.com/PurplShip/py-dhl) - The DHL xml generated datatypes library
-- [py-fedex](https://github.com/PurplShip/py-fedex) - The FedEx xml generated datatypes library
-- [py-aups](https://github.com/PurplShip/py-aups) - The Australia post JSON generated datatypes library
-- [py-sendle](https://github.com/PurplShip/py-sendle) - The Sendle JSON generated datatypes library
-- [py-usps](https://github.com/PurplShip/py-usps) - The USPS xml generated datatypes library
-- [py-caps](https://github.com/PurplShip/py-caps) - The Canada Post xml generated datatypes library
-- [py-ups](https://github.com/PurplShip/py-ups) - The UPS xml generated datatypes library
+- [py-dhl](https://github.com/PurplShip/purplship-carriers/tree/master/py-dhl) - The DHL xml generated datatypes library
+- [py-fedex](https://github.com/PurplShip/purplship-carriers/tree/master/py-fedex) - The FedEx xml generated datatypes library
+- [py-aups](https://github.com/PurplShip/purplship-carriers/tree/master/py-aups) - The Australia post JSON generated datatypes library
+- [py-sendle](https://github.com/PurplShip/purplship-carriers/tree/master/py-sendle) - The Sendle JSON generated datatypes library
+- [py-usps](https://github.com/PurplShip/purplship-carriers/tree/master/py-usps) - The USPS xml generated datatypes library
+- [py-caps](https://github.com/PurplShip/purplship-carriers/tree/master/py-caps) - The Canada Post xml generated datatypes library
+- [py-ups](https://github.com/PurplShip/purplship-carriers/tree/master/py-ups) - The UPS xml generated datatypes library
 - [py-soap](https://github.com/PurplShip/py-soap) - The SOAP xml generated datatypes and utilities library
 - [lxml](https://lxml.de/) - Processing XML and HTML with Python
 - [jstruct](https://github.com/DanH91/jstruct) - JSON to python datatypes
