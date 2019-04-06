@@ -28,13 +28,7 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
     def parse_shipping_price_response(
         self, response: dict
     ) -> Tuple[List[QuoteDetails], List[Error]]:
-        def swap(s: dict, old_: str, new_: str) -> dict:
-            s[new_] = s.pop(old_)
-            return s
-        clean_response = {
-            "shipments": [swap(s, 'from', 'from_') for s in response.get('shipments', [])]
-        }
-        price_response: ShippingPriceResponse = ShippingPriceResponse(**clean_response)
+        price_response: ShippingPriceResponse = ShippingPriceResponse(**response)
         return (
             reduce(self._extract_quote, price_response.shipments, []),
             self.parse_error_response({

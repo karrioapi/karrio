@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import patch
-from tests.aups.fixture import proxy
+from tests.aups.logistic.fixture import proxy
 from gds_helpers import jsonify, to_dict
 from purplship.domain.Types import RateRequest
 from pyaups.shipping_price_request import ShippingPriceRequest
 
 
-class TestAustraliaPostQuote(unittest.TestCase):
+class TestAustraliaPostLogisticRate(unittest.TestCase):
     def setUp(self):
         self.ShippingPriceRequest = ShippingPriceRequest(**SHIPPING_PRICE_REQUEST)
 
@@ -25,7 +25,9 @@ class TestAustraliaPostQuote(unittest.TestCase):
         data = http_mock.call_args[1]["data"].decode("utf-8")
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(data, jsonify(SHIPPING_PRICE_REQUEST))
-        self.assertEqual(reqUrl, f"{proxy.client.server_url}/prices/shipments")
+        self.assertEqual(
+            reqUrl, f"{proxy.client.server_url}/shipping/v1/prices/shipments"
+        )
 
     def test_parse_quote_response(self):
         parsed_response = proxy.mapper.parse_quote_response(SHIPPING_PRICE_RESPONSE)
@@ -133,7 +135,7 @@ SHIPPING_PRICE_RESPONSE = {
         {
             "shipment_reference": "XYZ-001-01",
             "email_tracking_enabled": True,
-            "from": {
+            "from_": {
                 "type": "MERCHANT_LOCATION",
                 "lines": ["1 Main Street"],
                 "suburb": "MELBOURNE",

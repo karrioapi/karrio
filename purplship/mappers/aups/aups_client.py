@@ -2,14 +2,21 @@
 
 import attr
 from purplship.domain.client import Client
+from enum import Enum
+
+
+class AustraliaPostApis(Enum):
+    Logistic = "Logistic"
+    Postage = "Postage"
 
 
 @attr.s(auto_attribs=True)
 class AustraliaPostClient(Client):
     """Australia post connection settings."""
 
-    username: str
-    password: str
-    account_number: str
+    api_key: str
+    password: str = None  # Required only for Logistic API
+    account_number: str = None  # Required only for Logistic API
     carrier_name: str = "AustraliaPost"
-    server_url: str = "https://digitalapi.auspost.com.au/shipping/v1"
+    server_url: str = "https://digitalapi.auspost.com.au"
+    api: str = AustraliaPostApis.Logistic.name

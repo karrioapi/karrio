@@ -1,7 +1,7 @@
 """Interface."""
 
 import attr
-from typing import Callable, TypeVar
+from typing import Callable, TypeVar, Union
 from purplship.domain.proxy import Proxy
 from purplship.domain.mapper import Mapper
 from purplship.domain.Types.models import (
@@ -43,10 +43,13 @@ class IRequestWith:
 class pickup:
 
     @staticmethod
-    def book(**args):
+    def book(args: Union[PickupRequest, dict]):
 
         def action(proxy: Proxy):
-            payload = PickupRequest(**args)
+            payload = (
+                args if isinstance(args, PickupRequest)
+                else PickupRequest(**args)
+            )
             mapper: Mapper = proxy.mapper
             request = mapper.create_pickup_request(payload)
             response = proxy.request_pickup(request)
@@ -59,10 +62,13 @@ class pickup:
         return IRequestWith(action)
 
     @staticmethod
-    def cancel(**args):
+    def cancel(args: Union[PickupCancellationRequest, dict]):
 
         def action(proxy: Proxy):
-            payload = PickupCancellationRequest(**args)
+            payload = (
+                args if isinstance(args, PickupCancellationRequest)
+                else PickupCancellationRequest(**args)
+            )
             mapper: Mapper = proxy.mapper
             request = mapper.create_pickup_cancellation_request(payload)
             response = proxy.cancel_pickup(request)
@@ -75,10 +81,13 @@ class pickup:
         return IRequestFrom(action)
 
     @staticmethod
-    def update(**args):
+    def update(args: Union[PickupRequest, dict]):
 
         def action(proxy: Proxy):
-            payload = PickupRequest(**args)
+            payload = (
+                args if isinstance(args, PickupRequest)
+                else PickupRequest(**args)
+            )
             mapper: Mapper = proxy.mapper
             request = mapper.create_pickup_request(payload)
             response = proxy.modify_pickup(request)
@@ -94,10 +103,13 @@ class pickup:
 class rating:
 
     @staticmethod
-    def fetch(**args):
+    def fetch(args: Union[RateRequest, dict]):
 
         def action(proxy: Proxy):
-            payload = RateRequest(**args)
+            payload = (
+                args if isinstance(args, RateRequest)
+                else RateRequest(**args)
+            )
             mapper: Mapper = proxy.mapper
             request = mapper.create_quote_request(payload)
             response = proxy.get_quotes(request)
@@ -113,10 +125,13 @@ class rating:
 class shipment:
 
     @staticmethod
-    def create(**args):
+    def create(args: Union[ShipmentRequest, dict]):
 
         def action(proxy: Proxy):
-            payload = ShipmentRequest(**args)
+            payload = (
+                args if isinstance(args, ShipmentRequest)
+                else ShipmentRequest(**args)
+            )
             mapper: Mapper = proxy.mapper
             request = mapper.create_shipment_request(payload)
             response = proxy.create_shipment(request)
@@ -132,10 +147,13 @@ class shipment:
 class tracking:
 
     @staticmethod
-    def fetch(**args) -> IRequestFrom:
+    def fetch(args: Union[TrackingRequest, dict]) -> IRequestFrom:
 
         def action(proxy: Proxy) -> IDeserialize:
-            payload = TrackingRequest(**args)
+            payload = (
+                args if isinstance(args, TrackingRequest)
+                else TrackingRequest(**args)
+            )
             mapper: Mapper = proxy.mapper
             request = mapper.create_tracking_request(payload)
             response = proxy.get_tracking(request)

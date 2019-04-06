@@ -71,9 +71,7 @@ RATE_PAYLOAD = {
                 "id": "1ST",
                 "weight": 3.123_456_78,
                 "packaging_type": "SM",
-                "extra": {
-                    "services": ["First_Class"],
-                },
+                "extra": {"services": ["First_Class"]},
             },
             {
                 "id": "2ND",
@@ -336,7 +334,16 @@ PARSED_INTL_RATE_RESPONSE = [
     [],
 ]
 
-PARSED_ERRORS = [[], [{'carrier': 'USPS', 'code': '-2147218040', 'message': 'Invalid International Mail Type'}]]
+PARSED_ERRORS = [
+    [],
+    [
+        {
+            "carrier": "USPS",
+            "code": "-2147218040",
+            "message": "Invalid International Mail Type",
+        }
+    ],
+]
 
 
 ERRORS = """<?xml version="1.0" encoding="UTF-8"?>
@@ -390,7 +397,7 @@ RATE_REQUEST_STR = f"""<RateV4Request USERID="{proxy.client.username}">
 </RateV4Request>
 """
 
-RATE_REQUEST = {'API': 'RateV4', 'XML': RATE_REQUEST_STR}
+RATE_REQUEST = {"API": "RateV4", "XML": RATE_REQUEST_STR}
 
 INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{proxy.client.username}">
     <Revision>2</Revision>
@@ -432,7 +439,7 @@ INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{proxy.client.username}">
 </IntlRateV2Request>
 """
 
-INTL_RATE_REQUEST = {'API': 'IntlRateV2', 'XML': INTL_RATE_REQUEST_STR}
+INTL_RATE_REQUEST = {"API": "IntlRateV2", "XML": INTL_RATE_REQUEST_STR}
 
 RATE_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 <RateV4Response>
