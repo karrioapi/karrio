@@ -8,12 +8,14 @@ from purplship.domain.Types import (
     QuoteDetails,
     Item
 )
-from purplship.domain.Types.errors import OriginNotServicedError
+from purplship.domain.Types.errors import OriginNotServicedError, MultiItemShipmentSupportError
 from purplship.domain.Types.units import (
     Weight,
     WeightUnit,
     Dimension,
     DimensionUnit,
+    PackagingUnit,
+    Country
 )
 from pyaups.international_parcel_postage import ServiceRequest as IntlParcelServiceRequest
 from pyaups.domestic_letter_postage import ServiceRequest as DomesticLetterServiceRequest
@@ -63,13 +65,15 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
         :raises: an OriginNotServicedError when origin country is not serviced by the carrier
         """
         if payload.shipper.country_code and payload.shipper.country_code != 'AU':
-            raise OriginNotServicedError(payload.shipper.country_code, "Australia post")
+            raise OriginNotServicedError(payload.shipper.country_code, self.client.carrier_name)
+        if len(payload.shipment.items) > 1:
+            raise MultiItemShipmentSupportError(self.client.carrier_name)
 
         return (
             AustraliaPostMapperPartial._create_domestic_service_request
             if (
                 payload.recipient.country_code is None or
-                payload.recipient.country_code == 'AU'
+                payload.recipient.country_code == Country.AU.name
             ) else
             AustraliaPostMapperPartial._create_intl_service_request
         )(payload)
@@ -79,12 +83,16 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
         weight_unit: WeightUnit = WeightUnit[payload.shipment.weight_unit or "KG"]
         dimension_unit: DimensionUnit = DimensionUnit[payload.shipment.dimension_unit or "CM"]
         item: Item = payload.shipment.items[0]
-        is_letter: bool = any(svc for svc in payload.shipment.services if 'LETTER' in svc)
+        is_letter: bool = (
+            any(svc for svc in payload.shipment.services if 'LETTER' in svc)
+            or payload.shipment.packaging_type == PackagingUnit.SM.name
+            or item.packaging_type == PackagingUnit.SM.name
+        )
         return (
             DomesticLetterServiceRequest(
                 length=Dimension(item.length, dimension_unit).CM,
                 width=Dimension(item.width, dimension_unit).CM,
-                thickness=Dimension(item.extra.get('thickness'), dimension_unit).CM,
+                thickness=Dimension(item.extra.get('thickness') or item.height, dimension_unit).CM,
                 weight=Weight(item.weight or payload.shipment.total_weight, weight_unit).KG
             )
             if is_letter else
@@ -94,15 +102,20 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
                 length=Dimension(item.length, dimension_unit).CM,
                 width=Dimension(item.width, dimension_unit).CM,
                 height=Dimension(item.height, dimension_unit).CM,
-                weight=Dimension(item.weight or payload.shipment.total_weight, dimension_unit).CM,
+                weight=Weight(item.weight or payload.shipment.total_weight, weight_unit).KG,
             )
         )
 
     @staticmethod
     def _create_intl_service_request(payload: ShipmentRequest) -> IntlServiceRequest:
         weight_unit: WeightUnit = WeightUnit[payload.shipment.weight_unit or "KG"]
-        weight: float = payload.shipment.items[0].weight or payload.shipment.total_weight
-        is_letter: bool = any(svc for svc in payload.shipment.services if 'LETTER' in svc)
+        item: Item = payload.shipment.items[0]
+        weight: float = item.weight or payload.shipment.total_weight
+        is_letter: bool = (
+            any(svc for svc in payload.shipment.services if 'LETTER' in svc)
+            or payload.shipment.packaging_type == PackagingUnit.SM.name
+            or item.packaging_type == PackagingUnit.SM.name
+        )
         return (
             IntlLetterServiceRequest(
                 country_code=payload.recipient.country_code,

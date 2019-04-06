@@ -4,7 +4,7 @@ from base64 import b64encode
 from gds_helpers import request as http, jsonify, to_dict
 from purplship.mappers.aups.aups_logistic_mapper import AustraliaPostMapper as AustraliaPostLogisticMapper
 from purplship.mappers.aups.aups_postage_mapper import AustraliaPostMapper as AustraliaPostPostageMapper
-from purplship.mappers.aups.aups_client import AustraliaPostClient
+from purplship.mappers.aups.aups_client import AustraliaPostClient, AustraliaPostApis
 from purplship.domain.proxy import Proxy
 from pyaups.shipping_price_request import ShippingPriceRequest
 from pyaups.domestic_letter_postage import ServiceRequest as DomesticLetterServiceRequest
@@ -19,16 +19,20 @@ PostageRequest = Union[
     IntlLetterServiceRequest,
     IntlParcelServiceRequest
 ]
+MAPPERS = {
+    AustraliaPostApis.Logistic: AustraliaPostLogisticMapper,
+    AustraliaPostApis.Postage: AustraliaPostPostageMapper
+}
 
 
 class AustraliaPostProxy(Proxy):
     def __init__(self, client: AustraliaPostClient, mapper: Mapper = None):
         self.client: AustraliaPostClient = client
-        self.mapper = {
-            "Logistic": AustraliaPostLogisticMapper,
-            "Postage": AustraliaPostPostageMapper
-        }[client.api](client) if mapper is None else mapper
-
+        self.mapper = (
+            MAPPERS[AustraliaPostApis(client.api)](client)
+            if mapper is None else
+            mapper
+        )
         self.authorization = b64encode(
             f"{self.client.api_key}:{self.client.password}".encode("utf-8")
         ).decode("ascii") if self.client.password else None
@@ -41,7 +45,6 @@ class AustraliaPostProxy(Proxy):
             if isinstance(request, ShippingPriceRequest) else
             self._get_postage_service
         )(request)
-        print(response)
         return to_dict(response)
 
     def get_tracking(self, tracking_ids: List[str]) -> dict:
@@ -82,12 +85,11 @@ class AustraliaPostProxy(Proxy):
             IntlLetterServiceRequest: "/letter/international/service.json",
         }[type(postage_request)]
         query_string = urllib.parse.urlencode(to_dict(postage_request))
-        print(f"{self.client.server_url}/postage{route}?{query_string}")
         return http(
             url=f"{self.client.server_url}/postage{route}?{query_string}",
             headers={
                 "Content-Type": "application/json",
                 "AUTH-KEY": self.client.api_key,
             },
-            method="POST",
+            method="GET",
         )

@@ -45,12 +45,14 @@ class AustraliaPostMapperBase(AustraliaPostCapabilities):
         self.client: AustraliaPostClient = client
 
     def parse_error_response(self, response: dict) -> List[Error]:
+        if "errors" not in response and "error" not in response:
+            return []
         error_response: ErrorResponse = ErrorResponse(**response)
         errors: List[Union[APIError, PostageError]] = error_response.error + error_response.errors
         return [
             Error(
                 carrier=self.client.carrier_name,
-                code=error.get('code') or error.get('error_code'),
+                code=error.get('code'),
                 message=error.get('message') or error.get('errorMessage')
             ) for error in to_dict(errors)
         ]
