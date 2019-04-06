@@ -1,20 +1,24 @@
 # PurplShip
 
-[![Build Status](https://travis-ci.org/PurplShip/purplship.svg?branch=master)](https://travis-ci.org/PurplShip/purplship) [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
+[![Build Status](https://travis-ci.org/PurplShip/purplship.svg?branch=master)](https://travis-ci.org/PurplShip/purplship) [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship) [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
-Shipping carriers API integrations Library
+## Overview
+
+PurplShip is an open source library that makes shipping carrier API integration
+easy.
+PurplShip proposes an intuitive unified API, to make multi-carrier integration seamless.
 
 - Integrate multiple carriers: DHL, FedEx, UPS, Canada Post and more with ease
 - Use an intuitive, unified API across multiple carriers
-- Use your developer credentials with negotiated rates
+- Use your developer credentials and your negotiated rates
 
-PurplSHip prevents you from reinventing the wheel and is easy to use:
+PurplShip helps quickly getting started with shipping services as it is easy to use:
 
-```shell
+```python
 import purplship
 
-usps = purplship.gateway['usps'].create({
-    "username": "username",
+dhl = purplship.gateway['dhl'].create({
+    "site_id": "username",
     "password": "password"
 })
 
@@ -23,10 +27,10 @@ response = purplship.rating.fetch({
     "recipient": {"city": "Lome", "country_code": "TG"},
     "shipment": {
         "items": [
-            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
+            {"height": 3, "length": 10, "width": 3, "weight": 4.0}
         ]
     }
-}).from_(usps)
+}).from_(dhl)
 
 rates = response.parse()
 ```

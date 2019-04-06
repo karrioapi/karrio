@@ -12,5 +12,5 @@ class FedexClient(Client):
     password: str
     meter_number: str
     account_number: str
-    carrier_name: str = "Fedex"
+    carrier_name: str = "FedEx"
     server_url: str = "https://ws.fedex.com:443/web-services"

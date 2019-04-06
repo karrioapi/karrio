@@ -11,4 +11,4 @@ class SendleClient(Client):
     sendle_id: str
     api_key: str
     carrier_name: str = "Sendle"
-    server_url: str = "https://api.sendle.com/api"
+    server_url: str = "https://api.sendle.com"
