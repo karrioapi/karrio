@@ -123,14 +123,14 @@ class USPSMapperPartial(USPSMapperBase):
         :return: a domestic or international USPS compatible request
         :raises: an OriginNotServicedError when origin country is not serviced by the carrier
         """
-        if payload.shipper.country_code and payload.shipper.country_code != "US":
-            raise OriginNotServicedError(payload.shipper.country_code, "USPS")
+        if payload.shipper.country_code and payload.shipper.country_code != Country.US.name:
+            raise OriginNotServicedError(payload.shipper.country_code, self.client.carrier_name)
 
         return (
             self._create_rate_request
             if (
                 payload.recipient.country_code is None
-                or payload.recipient.country_code == "US"
+                or payload.recipient.country_code == Country.US.name
             )
             else self._create_intl_rate_request
         )(payload)

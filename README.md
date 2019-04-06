@@ -13,11 +13,9 @@ PurplSHip prevents you from reinventing the wheel and is easy to use:
 ```shell
 import purplship
 
-proxy = purplship.gateway['aups'].create({
-    "server_url": "https://digitalapi.auspost.com.au/test",
+usps = purplship.gateway['usps'].create({
     "username": "username",
-    "password": "password",
-    "account_number": "1234567"
+    "password": "password"
 })
 
 response = purplship.rating.fetch({
@@ -28,7 +26,7 @@ response = purplship.rating.fetch({
             {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
         ]
     }
-}).from_(proxy)
+}).from_(usps)
 
 rates = response.parse()
 ```

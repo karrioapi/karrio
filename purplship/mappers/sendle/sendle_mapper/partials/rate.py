@@ -9,7 +9,8 @@ from purplship.domain.Types import (
     QuoteDetails,
     Error
 )
-from purplship.domain.Types.errors import OriginNotServicedError
+from purplship.domain.Types.units import Country
+from purplship.domain.Types.errors import OriginNotServicedError, MultiItemShipmentSupportError
 from pysendle.quotes import (
     DomesticParcelQuote,
     InternationalParcelQuote,
@@ -52,14 +53,16 @@ class SendleMapperPartial(SendleMapperBase):
         :return: a domestic or international Sendle compatible request
         :raises: an OriginNotServicedError when origin country is not serviced by the carrier
         """
-        if payload.shipper.country_code and payload.shipper.country_code != 'AU':
-            raise OriginNotServicedError(payload.shipper.country_code, "Sendle")
+        if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
+            raise OriginNotServicedError(payload.shipper.country_code, self.client.carrier_name)
+        if len(payload.shipment.items) > 1:
+            raise MultiItemShipmentSupportError(self.client.carrier_name)
 
         return (
             SendleMapperPartial._create_domestic_quote
             if (
                 payload.recipient.country_code is None or
-                payload.recipient.country_code == 'AU'
+                payload.recipient.country_code == Country.AU.name
             ) else
             SendleMapperPartial._create_international_quote
         )(payload)

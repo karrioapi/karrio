@@ -64,7 +64,7 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
         :return: a domestic or international Australia post compatible request
         :raises: an OriginNotServicedError when origin country is not serviced by the carrier
         """
-        if payload.shipper.country_code and payload.shipper.country_code != 'AU':
+        if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
             raise OriginNotServicedError(payload.shipper.country_code, self.client.carrier_name)
         if len(payload.shipment.items) > 1:
             raise MultiItemShipmentSupportError(self.client.carrier_name)

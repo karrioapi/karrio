@@ -14,9 +14,9 @@ from pycaps.rating import (
 from lxml import etree
 from datetime import datetime
 from .interface import reduce, Tuple, List, T, CanadaPostMapperBase
-from purplship.domain.Types.units import Weight, WeightUnit, Dimension, DimensionUnit
+from purplship.domain.Types.units import Weight, WeightUnit, Dimension, DimensionUnit, Country
 from purplship.mappers.caps.caps_units import OptionCode, ServiceType
-from purplship.domain.Types.errors import OriginNotServicedError
+from purplship.domain.Types.errors import OriginNotServicedError, MultiItemShipmentSupportError
 
 
 class CanadaPostMapperPartial(CanadaPostMapperBase):
@@ -25,7 +25,7 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
     ) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         price_quotes = response.xpath(".//*[local-name() = $name]", name="price-quote")
         quotes: List[T.QuoteDetails] = reduce(self._extract_quote, price_quotes, [])
-        return (quotes, self.parse_error_response(response))
+        return quotes, self.parse_error_response(response)
 
     def _extract_quote(
         self, quotes: List[T.QuoteDetails], price_quoteNode: etree.ElementBase
@@ -76,8 +76,10 @@ class CanadaPostMapperPartial(CanadaPostMapperBase):
         :return: a domestic or international Canada post compatible request
         :raises: an OriginNotServicedError when origin country is not serviced by the carrier
         """
-        if payload.shipper.country_code and payload.shipper.country_code != 'CA':
-            raise OriginNotServicedError(payload.shipper.country_code, "Canada Post")
+        if payload.shipper.country_code and payload.shipper.country_code != Country.CA.name:
+            raise OriginNotServicedError(payload.shipper.country_code, self.client.carrier_name)
+        if len(payload.shipment.items) > 1:
+            raise MultiItemShipmentSupportError(self.client.carrier_name)
 
         package = payload.shipment.items[0]
         requested_services = [
