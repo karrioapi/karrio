@@ -8,9 +8,9 @@ from purplship.domain.client import Client
 class AustraliaPostClient(Client):
     """Australia post connection settings."""
 
-    username: str
-    password: str
-    account_number: str
+    api_key: str
+    password: str = None  # Required only for Logistic API
+    account_number: str = None  # Required only for Logistic API
     carrier_name: str = "AustraliaPost"
     server_url: str = "https://digitalapi.auspost.com.au"
     api: str = "Logistic"  # Possible values: 'Logistic', 'Postage'

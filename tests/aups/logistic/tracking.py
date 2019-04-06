@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tests.aups.fixture import proxy
+from tests.aups.logistic.fixture import proxy
 from gds_helpers import to_dict
 from purplship.domain.Types import TrackingRequest
 

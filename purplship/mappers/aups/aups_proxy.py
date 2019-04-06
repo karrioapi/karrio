@@ -29,8 +29,9 @@ class AustraliaPostProxy(Proxy):
             "Postage": AustraliaPostPostageMapper
         }[client.api](client) if mapper is None else mapper
 
-        pair = "%s:%s" % (self.client.username, self.client.password)
-        self.authorization = b64encode(pair.encode("utf-8")).decode("ascii")
+        self.authorization = b64encode(
+            f"{self.client.api_key}:{self.client.password}".encode("utf-8")
+        ).decode("ascii") if self.client.password else None
 
     """ Proxy interface methods """
 
@@ -57,6 +58,8 @@ class AustraliaPostProxy(Proxy):
         )
         return to_dict(result)
 
+    """ Private methods """
+
     def _get_shipping_price(self, shipping_price_request: ShippingPriceRequest) -> str:
         data = jsonify(to_dict(shipping_price_request))
         return http(
@@ -69,7 +72,7 @@ class AustraliaPostProxy(Proxy):
                 "Authorization": f"Basic {self.authorization}",
             },
             method="POST",
-        )
+        ).replace('from', 'from_')
 
     def _get_postage_service(self, postage_request: PostageRequest) -> str:
         route: str = {
@@ -83,7 +86,7 @@ class AustraliaPostProxy(Proxy):
             url=f"{self.client.server_url}/postage{route}?{query_string}",
             headers={
                 "Content-Type": "application/json",
-                "AUTH-KEY": self.client.username,
+                "AUTH-KEY": self.client.api_key,
             },
             method="POST",
         )

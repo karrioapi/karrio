@@ -1,2 +1,2 @@
-from tests.aups.tracking import *
-from tests.aups.quote import *
+from tests.aups.logistic import *
+from tests.aups.postage import *
