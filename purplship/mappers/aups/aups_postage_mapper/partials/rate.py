@@ -32,9 +32,12 @@ class AustraliaPostMapperPartial(AustraliaPostMapperBase):
     def parse_service_response(
         self, response: dict
     ) -> Tuple[List[QuoteDetails], List[Error]]:
-        service_response: ServiceResponse = ServiceResponse(**response)
+        services: List[Service] = (
+            ServiceResponse(**response).services.service
+            if "services" in response else []
+        )
         return (
-            [self._extract_quote(svc) for svc in service_response.services.service],
+            [self._extract_quote(svc) for svc in services],
             self.parse_error_response(response)
         )
 

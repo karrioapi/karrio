@@ -41,7 +41,7 @@ class AustraliaPostProxy(Proxy):
             if isinstance(request, ShippingPriceRequest) else
             self._get_postage_service
         )(request)
-
+        print(response)
         return to_dict(response)
 
     def get_tracking(self, tracking_ids: List[str]) -> dict:
@@ -82,6 +82,7 @@ class AustraliaPostProxy(Proxy):
             IntlLetterServiceRequest: "/letter/international/service.json",
         }[type(postage_request)]
         query_string = urllib.parse.urlencode(to_dict(postage_request))
+        print(f"{self.client.server_url}/postage{route}?{query_string}")
         return http(
             url=f"{self.client.server_url}/postage{route}?{query_string}",
             headers={

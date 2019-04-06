@@ -63,7 +63,7 @@ TRACKING_REQUEST_STR = f"""<TrackFieldRequest USERID="{proxy.client.username}">
 </TrackFieldRequest>
 """
 
-TRACKING_REQUEST = {'API': 'TrackV2', 'XML': TRACKING_REQUEST_STR}
+TRACKING_REQUEST = {"API": "TrackV2", "XML": TRACKING_REQUEST_STR}
 
 TRACKING_RESPONSE = """
 <TrackResponse>
