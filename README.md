@@ -93,8 +93,6 @@ Please read [CONTRIBUTING.md](https://github.com/PurplShip/purplship/blob/master
 
 - **Daniel K.** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [PurplShip](https://purplship.com/open-source)
 
-See also the list of [contributors](https://github.com/PurplShip/purplship/blob/master/contributors) who participated in this project.
-
 ## License
 
-This project is licensed under the LGPL License - see the [LICENSE.md](https://github.com/PurplShip/purplship/blob/master/LICENSE) file for details
+This project is licensed under the LGPLv3 License - see the [LICENSE.md](https://github.com/PurplShip/purplship/blob/master/LICENSE) file for details

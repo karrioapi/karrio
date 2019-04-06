@@ -2,8 +2,8 @@
 
 import attr
 from enum import Enum
-from typing import Callable
-from purplship.domain import Proxy
+from typing import Callable, Union
+from purplship.domain import Proxy, Client
 from purplship.mappers.aups import AustraliaPostProxy, AustraliaPostClient
 from purplship.mappers.caps import CanadaPostProxy, CanadaPostClient
 from purplship.mappers.dhl import DHLProxy, DHLClient
@@ -33,10 +33,12 @@ class Builder:
 
 class Gateway:
     def __getitem__(self, key):
-        def initializer(settings: dict) -> Proxy:
+        def initializer(settings: Union[Client, dict]) -> Proxy:
             try:
                 _Proxy, _Client = Providers[key].value
-                return _Proxy(client=_Client(**settings))
+                return _Proxy(
+                    client=_Client(**settings) if isinstance(settings, dict) else settings
+                )
             except KeyError as e:
                 raise Exception(f"Unknown provider id '{key}'") from e
 
