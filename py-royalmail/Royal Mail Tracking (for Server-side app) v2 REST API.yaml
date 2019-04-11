@@ -1,0 +1,691 @@
+---
+swagger: "2.0"
+info:
+  x-ibm-name: royal-mail-tracking-for-server-side-app-v2-rest-api
+  title: Royal Mail Tracking (for Server-side app) v2 REST API
+  version: 1.0.11
+  description: |-
+    The Royal Mail Tracking API V2 exposes a web service that allows account customers to receive track-and-trace information for their mail items. Built on industry standards, Tracking API V2 provides a simple and low cost method for customers to integrate with Royal Mail.
+
+    The API provides the latest tracking information, the tracking history, and the proof of delivery information for a single mail item and summary information for multiple mail pieces. The API provides an alternative mechanism to using the track and trace function on the Royal Mail website (http://www.royalmail.com/track-trace).
+
+
+    There are no costs to customers for using the Tracking API V2, however customers’ own development costs must be covered by the customer developing the solution. Royal Mail will not accept any responsibility for these development, implementation and testing costs.
+
+    Customers should address initial enquiries regarding development of systems for these purposes to their account handler.
+  contact: []
+schemes:
+- https
+basePath: /mailpieces/v2
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Client-Secret:
+    type: apiKey
+    description: ""
+    in: header
+    name: X-IBM-Client-Secret
+  Client-Id:
+    type: apiKey
+    description: ""
+    in: header
+    name: X-IBM-Client-Id
+x-ibm-configuration:
+  testable: true
+  enforced: true
+  phase: realized
+paths:
+  /{mailPieceId}/events:
+    get:
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            $ref: '#/definitions/eventsSuccessResponse'
+        400:
+          description: 4XX and 5XX All client and server errors
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: GET mailpieces/v2/{mailPieceId}/events
+      parameters:
+      - name: mailPieceId
+        type: string
+        required: true
+        in: path
+        description: 1D or 2D barcode tracking number of the mail item being queried.
+      description: The behaviour of the events operation is to provide a history of
+        tracks for a single mail item. This operation returns the summary, signature
+        metadata, estimated delivery window and events for a supplied tracking number.
+      operationId: events
+  /summary:
+    get:
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            $ref: '#/definitions/summarySuccessResponse'
+        400:
+          description: 4XX and 5XX All client and server errors
+          schema:
+            $ref: '#/definitions/summaryErrorResponse'
+      summary: GET mailpieces/v2/summary?mailPieceId={mp1,mp2,mp3..mp30}
+      parameters:
+      - name: mailPieceId
+        required: true
+        in: query
+        description: 1D or 2D barcode tracking number
+        type: string
+      description: The behaviour of the summary operation is to allow customers to
+        obtain the latest tracking data for a mail item. This operation returns the
+        summary of one or more tracking numbers provided in the request. This operation
+        only allows a maximum of 30 tracking numbers to be provided in the mailPieceId
+        query parameter via a comma separated list.
+      operationId: summary
+  /{mailPieceId}/signature:
+    get:
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            $ref: '#/definitions/signatureSuccessResponse'
+        400:
+          description: 4XX and 5XX All client and server errors
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: GET mailpieces/v2/{mailPieceId}/signature
+      parameters:
+      - name: mailPieceId
+        type: string
+        required: true
+        in: path
+        description: 1D or 2D barcode tracking number of the mail item being queried.
+      description: The signature operation provides the details captured at the point
+        of delivery as proof that delivery has occurred. Note that a proof of delivery
+        is only captured by the delivery track for those service offerings that require
+        a signature on delivery.
+      operationId: signature
+definitions:
+  summaryErrorResponse:
+    properties:
+      mailPieces:
+        type: array
+        items:
+          $ref: '#/definitions/mailPieceIdDef'
+      httpCode:
+        type: string
+        description: HTTP status code associated with the error condition
+        example: "404"
+      httpMessage:
+        type: string
+        description: HTTP status description associated with the error condition
+        example: Not Found
+      moreinformation:
+        type: string
+        description: Description of the error condition
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/errorsDef'
+    additionalProperties: false
+    required:
+    - httpCode
+    - httpMessage
+  summarySuccessOutput:
+    properties:
+      mailPieces:
+        type: array
+        items:
+          $ref: '#/definitions/summaryMailPiecesDef'
+      integrationFooter:
+        $ref: '#/definitions/integrationFooterDef'
+    additionalProperties: false
+  eventsSuccessOutput:
+    properties:
+      mailPieces:
+        $ref: '#/definitions/eventsMailPiecesDef'
+      integrationFooter:
+        $ref: '#/definitions/integrationFooterDef'
+    additionalProperties: false
+  signatureSuccessOutput:
+    additionalProperties: false
+    properties:
+      mailPieces:
+        $ref: '#/definitions/signatureMailPiecesDef'
+      integrationFooter:
+        $ref: '#/definitions/integrationFooterDef'
+  errorResponse:
+    properties:
+      httpCode:
+        type: string
+        description: HTTP error code.  Please note that this will only be populated
+          in the event of an error condition.
+        example: "404"
+      httpMessage:
+        type: string
+        description: HTTP error code description. Please note that this will only
+          be populated in the event of an error condition.
+        example: Not Found
+      moreInformation:
+        type: string
+        description: Information relating to the error condition.
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/errorsDef'
+    additionalProperties: false
+    required:
+    - httpCode
+    - httpMessage
+  subLinksEventsDef:
+    properties:
+      href:
+        type: string
+        description: Relative URL link for event information
+        example: /mailpieces/v2/FQ087430672GB/events
+      title:
+        type: string
+        description: Title of the link
+        example: Events
+      description:
+        type: string
+        description: Description of the link
+        example: Get events
+    additionalProperties: false
+    description: Container for events link information
+    required:
+    - href
+    - title
+    - description
+  subLinksRedeliveryDef:
+    properties:
+      href:
+        type: string
+        description: Relative URL link for redelivery
+        example: /personal/receiving-mail/redelivery
+      title:
+        type: string
+        description: Title of the link
+        example: Redelivery
+      description:
+        type: string
+        description: Description of the link
+        example: Book a redelivery
+    additionalProperties: false
+    description: Container for redelivery link information
+    required:
+    - href
+    - title
+    - description
+  subLinksSignatureDef:
+    properties:
+      href:
+        type: string
+        example: /mailpieces/v2/090367574000000FE1E1B/signature
+        description: Relative URL link for signature information
+      title:
+        type: string
+        example: Signature
+        description: Title of the link
+      description:
+        type: string
+        example: Get signature
+        description: Description of the link
+    additionalProperties: false
+    required:
+    - href
+    - title
+    - description
+    description: Container for signature link information
+  signatureSuccessResponse:
+    properties:
+      mailPieces:
+        $ref: '#/definitions/signatureMailPiecesDef'
+    additionalProperties: true
+    description: 200 OK response for signature Operation
+    required:
+    - mailPieces
+  mailPieceIdDef:
+    properties:
+      mailPieceId:
+        type: string
+        description: 1D or 2D Barcode
+        example: 090367574000000FE1E1B
+      status:
+        type: string
+        description: HTTP status code specific to the item
+        example: "404"
+    additionalProperties: false
+  summarySuccessResponse:
+    properties:
+      mailPieces:
+        type: array
+        items:
+          $ref: '#/definitions/summaryMailPiecesDef'
+        description: Repeating Node of Mail Piece Data
+    additionalProperties: true
+    description: 200 OK response for summary Operation
+  integrationFooterDef:
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/errorsDef'
+        description: Repeating node of Error messages
+    additionalProperties: false
+  errorsDef:
+    properties:
+      errorCode:
+        type: string
+        description: Code associated with the error condition
+        example: E1142
+      errorDescription:
+        type: string
+        description: Description of the error condition
+        example: Barcode reference $mailPieceId isn't recognised
+      errorCause:
+        type: string
+        description: Cause of the error (if known)
+        example: A mail item with that barcode cannot be located
+      errorResolution:
+        type: string
+        description: Description of the resolution and action required to correct
+          the error
+        example: Check barcode and resubmit
+    additionalProperties: false
+    description: Array containing error information.
+  summaryLinksDef:
+    properties:
+      events:
+        $ref: '#/definitions/subLinksEventsDef'
+    additionalProperties: false
+    description: Object containing API links
+  signatureLinksDef:
+    properties:
+      events:
+        $ref: '#/definitions/subLinksEventsDef'
+      summary:
+        $ref: '#/definitions/subLinksSummaryDef'
+    additionalProperties: false
+  summaryMailPiecesDef:
+    additionalProperties: false
+    description: ""
+    properties:
+      mailPieceId:
+        type: string
+        description: 1D or 2D barcode provided in the API request
+        example: 090367574000000FE1E1B
+      status:
+        type: string
+        description: HTTP status code associated with the provision of mail piece
+          summary information
+        example: "200"
+      carrierShortName:
+        type: string
+        description: Short name of the carrier
+        example: RM
+      carrierFullName:
+        type: string
+        description: Full name of the carrier
+        example: Royal Mail Group Ltd
+      summary:
+        $ref: '#/definitions/allSummaryDef'
+      links:
+        $ref: '#/definitions/summaryLinksDef'
+      error:
+        $ref: '#/definitions/errorsDef'
+    required:
+    - mailPieceId
+    - status
+  signatureMailPiecesDef:
+    properties:
+      mailPieceId:
+        type: string
+        description: 1D or 2D barcode provided in the API request
+        example: 090367574000000FE1E1B
+      carrierShortName:
+        type: string
+        description: Short name of the carrier
+        example: RM
+      carrierFullName:
+        type: string
+        description: Full name of the carrier
+        example: Royal Mail Group Ltd
+      signature:
+        $ref: '#/definitions/signatureSignatureDef'
+      links:
+        $ref: '#/definitions/signatureLinksDef'
+    additionalProperties: false
+    required:
+    - mailPieceId
+    description: Object containing signature image and meta-data information for the
+      requested mail item.
+  signatureSignatureDef:
+    properties:
+      uniqueItemId:
+        type: string
+        description: 2D barcode for the mail piece
+        example: 090367574000000FE1E1B
+      oneDBarcode:
+        type: string
+        description: 1D barcode for the mail piece
+        example: FQ087430672GB
+      recipientName:
+        type: string
+        description: Name of the person who signed for the mail piece
+        example: Simon
+      signatureDateTime:
+        type: string
+        description: 'Date timestamp associated with when the signature was captured
+          in the following format: ISO8601  YYYY-MM-DDThh:mm:ss±hh:mm'
+        example: "2017-03-30T16:15:00+01:00"
+        format: date-time
+      imageFormat:
+        type: string
+        description: Media type of the signature image, i.e. image/svg+xml or image/png
+        example: image/svg+xml
+      imageId:
+        type: string
+        description: Unique identifier associated with the signature image
+        example: "001234"
+      height:
+        type: integer
+        format: int32
+        description: Height of the signature image (in pixels)
+        example: 530
+      width:
+        type: integer
+        format: int32
+        description: Width of the signature image (in pixels)
+        example: 660
+      image:
+        type: string
+        description: SVG image or base64 encoded PNG image
+        example: '"<svg height=\"530\" width=\"660\"><polyline style=\"fill:none;
+          stroke:#000000; stroke-width:4.0\" points=\" 372.44107,213.46997 372.44107,213.46997
+          372.44107,210.47229 368.44662,207.47461 368.44662,207.47461 361.45633,204.47699
+          353.4674,203.47772 353.4674,203.47772 343.4813,206.4754 343.4813,206.4754
+          330.49933,210.47229 316.51874,216.46759 316.51874,216.46759 303.53677,226.45978
+          289.55618,237.45123 289.55618,237.45123 277.5728,248.44263 277.5728,248.44263
+          267.5867,260.43323 260.5964,272.4239 260.5964,272.4239 256.60196,282.41608
+          256.60196,291.40906 256.60196,291.40906 258.59918,298.40356 258.59918,298.40356
+          262.59363,303.39966 267.5867,307.39655 267.5867,307.39655 273.57837,307.39655
+          280.56866,305.39813 280.56866,305.39813 287.55896,299.40283 287.55896,299.40283
+          292.55203,293.40747 296.54648,288.41138 296.54648,288.41138 296.54648,285.41376
+          293.55063,283.41528 293.55063,283.41528 290.55478,283.41528 290.55478,283.41528
+          286.56033,286.41296 282.5659,292.40826 282.5659,292.40826 278.57144,298.40356
+          275.5756,304.39893 275.5756,304.39893 274.577,309.39502 274.577,309.39502
+          274.577,314.3911 274.577,317.38873 274.577,317.38873 279.57004,317.38873
+          283.5645,317.38873 283.5645,317.38873 288.55756,310.39423 288.55756,310.39423
+          294.54926,300.40204 299.5423,290.40985 299.5423,290.40985 303.53677,273.4231
+          306.5326,251.4403 306.5326,251.4403 308.52982,223.46216 308.52982,190.48792
+          308.52982,190.48792 308.52982,165.50739 308.52982,165.50739 305.534,148.52069
+          304.53537,137.5293 304.53537,137.5293 302.53815,130.53473 299.5423,126.53784
+          299.5423,126.53784 296.54648,126.53784 296.54648,126.53784 294.54926,137.5293
+          292.55203,148.52069 292.55203,148.52069 292.55203,164.50818 292.55203,181.49493
+          292.55203,181.49493 296.54648,201.47931 296.54648,201.47931 298.5437,221.46368
+          299.5423,240.44885 299.5423,240.44885 299.5423,257.4356 299.5423,273.4231
+          299.5423,273.4231 299.5423,284.4145 299.5423,284.4145 296.54648,293.40747
+          296.54648,300.40204 296.54648,300.40204 295.54785,305.39813 295.54785,307.39655
+          295.54785,307.39655 295.54785,305.39813 295.54785,305.39813 295.54785,295.40594
+          299.5423,285.41376 299.5423,285.41376 301.53955,272.4239 303.53677,261.4325
+          303.53677,261.4325 304.53537,251.4403 304.53537,251.4403 304.53537,244.44574
+          301.53955,240.44885 301.53955,240.44885 298.5437,239.44965 294.54926,243.44653
+          294.54926,243.44653 289.55618,249.44183 289.55618,249.44183 285.56174,256.4364
+          281.56726,265.42932 281.56726,265.42932 278.57144,276.42078 275.5756,286.41296
+          275.5756,286.41296 275.5756,294.40674 275.5756,294.40674 275.5756,303.39966
+          278.57144,310.39423 278.57144,310.39423 281.56726,315.39032 288.55756,318.388
+          288.55756,318.388 295.54785,319.3872 295.54785,319.3872 302.53815,319.3872
+          308.52982,314.3911 308.52982,314.3911 314.5215,306.39734 319.51456,298.40356
+          319.51456,298.40356 322.5104,291.40906 322.5104,291.40906 323.50903,286.41296
+          324.50763,282.41608 324.50763,282.41608 325.50626,280.41766 328.50208,280.41766
+          328.50208,280.41766 338.48822,284.4145 338.48822,284.4145 351.47018,290.40985
+          369.44522,295.40594 369.44522,295.40594 393.41193,300.40204 393.41193,300.40204\"/></svg>"'
+    required:
+    - imageFormat
+    description: Object containing mail piece signature data.
+    additionalProperties: false
+  eventsSuccessResponse:
+    properties:
+      mailPieces:
+        $ref: '#/definitions/eventsMailPiecesDef'
+    additionalProperties: true
+    description: 200 OK Response for events Operation
+    required:
+    - mailPieces
+  eventsMailPiecesDef:
+    additionalProperties: false
+    properties:
+      mailPieceId:
+        type: string
+        description: 1D or 2D barcode provided in the API request
+        example: 090367574000000FE1E1B
+      carrierShortName:
+        type: string
+        description: Short name of the carrier
+        example: RM
+      carrierFullName:
+        type: string
+        description: Full name of the carrier
+        example: Royal Mail Group Ltd
+      summary:
+        $ref: '#/definitions/allSummaryDef'
+      signature:
+        $ref: '#/definitions/eventsSignatureDef'
+      estimatedDelivery:
+        $ref: '#/definitions/eventsEstimatedDeliveryDef'
+      events:
+        type: array
+        items:
+          $ref: '#/definitions/eventsEventsDef'
+        description: Array containing mail piece event information
+      links:
+        $ref: '#/definitions/eventsLinksDef'
+    required:
+    - mailPieceId
+    description: Object containing tracking information for the requested mail item.
+      This will only be provided in the event that no error information is returned.
+  eventsLinksDef:
+    properties:
+      summary:
+        $ref: '#/definitions/subLinksSummaryDef'
+      signature:
+        $ref: '#/definitions/subLinksSignatureDef'
+      redelivery:
+        $ref: '#/definitions/subLinksRedeliveryDef'
+    additionalProperties: false
+    description: Object containing API links
+  subLinksSummaryDef:
+    properties:
+      href:
+        type: string
+        description: Relative URL link for operation information
+        example: /mailpieces/v2/summary?mailPieceId=090367574000000FE1E1B
+      title:
+        type: string
+        description: Title of the link
+        example: Summary
+      description:
+        type: string
+        description: Description of the link
+        example: Get summary
+    required:
+    - href
+    - title
+    - description
+    additionalProperties: false
+  allInternationalPostalProviderDef:
+    properties:
+      url:
+        type: string
+        description: URL link to website of delivery provider for international parcels
+        example: https://www.royalmail.com/track-your-item
+      title:
+        type: string
+        description: Name of the international postal organisation
+        example: Royal Mail Group Ltd
+      description:
+        type: string
+        description: Description of the international postal organisation
+        example: Royal Mail Group Ltd
+    required:
+    - url
+    - title
+    - description
+    description: Object containing details of  international postal organisation
+    additionalProperties: false
+  eventsEventsDef:
+    type: object
+    properties:
+      eventCode:
+        type: string
+        description: Code associated with the mail piece event
+        example: EVNMI
+      eventName:
+        type: string
+        description: Name of the event
+        example: Forwarded - Mis-sort
+      eventDateTime:
+        type: string
+        description: 'Date and time of the event in the format: ISO8601  -   YYYY-MM-DDThh:mm:ss±hh:mm'
+        example: "2016-10-20T10:04:00+01:00"
+        format: date-time
+      locationName:
+        type: string
+        description: Location name associated with the mail piece event
+        example: Stafford DO
+    required:
+    - eventDateTime
+    description: Repeating node of events
+    additionalProperties: false
+  eventsEstimatedDeliveryDef:
+    properties:
+      date:
+        type: string
+        description: 'Date of the estimated delivery window in the format: ISO8601
+          YYYY-MM-DD.'
+        example: "2017-02-20"
+        format: date
+      startOfEstimatedWindow:
+        type: string
+        description: 'Start time of the estimated delivery window in the format: hh:mm:ss±hh:mm'
+        example: 08:00:00+01:00
+      endOfEstimatedWindow:
+        type: string
+        description: 'End time of the estimated delivery window in the format: hh:mm:ss±hh:mm'
+        example: 11:00:00+01:00
+    description: Object containing the estimated delivery data
+    additionalProperties: false
+  eventsSignatureDef:
+    properties:
+      recipientName:
+        type: string
+        description: Name of the person who provided the signature
+        example: Simon
+      signatureDateTime:
+        type: string
+        description: 'Date and time the signature was captured in the following format:
+          ISO8601  YYYY-MM-DDThh:mm:ss±hh:mm'
+        example: "2016-10-20T10:04:00+01:00"
+        format: date-time
+      imageId:
+        type: string
+        description: Identifier associated with the signature image
+        example: "001234"
+    description: Object containing signature metadata data
+    additionalProperties: false
+  allSummaryDef:
+    properties:
+      uniqueItemId:
+        type: string
+        description: 2D barcode for the mail piece
+        example: 090367574000000FE1E1B
+      oneDBarcode:
+        type: string
+        description: 1D barcode for the mail piece
+        example: FQ087430672GB
+      productId:
+        type: string
+        description: Identifier for the tracked product
+        example: SD2
+      productName:
+        type: string
+        description: Name of the tracked product
+        example: Special Delivery Guaranteed
+      productDescription:
+        type: string
+        description: Description of tracked product
+        example: Our guaranteed next working day service with tracking and a signature
+          on delivery
+      productCategory:
+        type: string
+        description: Category for tracked product
+        example: NON-INTERNATIONAL
+      destinationCountryCode:
+        type: string
+        description: Destination country code
+        example: GBR
+      destinationCountryName:
+        type: string
+        description: Destination country name
+        example: United Kingdom of Great Britain and Northern Ireland
+      originCountryCode:
+        type: string
+        description: Origin Country Code
+        example: GBR
+      originCountryName:
+        type: string
+        description: Origin Country Name
+        example: United Kingdom of Great Britain and Northern Ireland
+      lastEventCode:
+        type: string
+        description: Code associated with the latest mail piece event
+        example: EVNMI
+      lastEventName:
+        type: string
+        description: Name of the latest mail piece event
+        example: Forwarded - Mis-sort
+      lastEventDateTime:
+        type: string
+        description: 'Date timestamp associated with the latest mail piece event in
+          the following format: ISO8601  YYYY-MM-DDThh:mm:ss±hh:mm'
+        example: "2016-10-20T10:04:00+01:00"
+        format: date-time
+      lastEventLocationName:
+        type: string
+        description: Location name associated with the latest mail piece event
+        example: Stafford DO
+      statusDescription:
+        type: string
+        description: Status description associated with the latest mail piece event
+        example: It's being redirected
+      statusCategory:
+        type: string
+        description: Status category associated with the latest mail piece event
+        example: IN TRANSIT
+      statusHelpText:
+        type: string
+        description: Status help text associated with the latest mail piece event
+        example: The item is in transit and a confirmation will be provided on delivery.
+          For more information on levels of tracking by service, please see Sending
+          Mail.
+      summaryLine:
+        type: string
+        description: Summary message for mail item’s last tracking scan
+        example: Item FQ087430672GB was forwarded to the Delivery Office on 2016-10-20.
+      internationalPostalProvider:
+        $ref: '#/definitions/allInternationalPostalProviderDef'
+    description: Object containing mail piece summary data
+    additionalProperties: false
+tags: []
+security:
+- Client-Secret: []
+  Client-Id: []
+x-ibm-endpoints:
+- endpointUrl: https://api.royalmail.net
+  description: Custom API Endpoint
+  type:
+  - production
+  - development
+...

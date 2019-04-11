@@ -1,0 +1,229 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="LinjegodsWebServices" elementFormDefault="qualified">
+    <xs:element name="TrackAndTrace">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="username" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="password" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="id" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TrackAndTraceResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="TrackAndTraceResult" type="tns:TrackAndTraceResultat" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="TrackAndTraceResultat">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="ResponseCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ResponseMessage" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="AmountOfShipments" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Shipments" type="tns:ArrayOfShipment" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfShipment">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Shipment" nillable="true" type="tns:Shipment" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Shipment">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="AmountOfPods" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="AmountOfKollies" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ShipmentMessage" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Fraktbrevnr" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="SendersRef" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="SendKundenv" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ProduktKD" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ProduktKDTxt" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="IlevStedNr" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="PostStednv" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="InnlevDt" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="UtlevDt" type="xs:dateTime" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UtlevKl" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UlevSignNv" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Vekt" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Volum" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Kolli" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="MottKundenv" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UlevAdrNv" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UlevAdrNv2" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UtlevStedNr" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UtlevStedNv" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="GiroKidTx" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="GarOppfyltJn" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="AmountOfKolliesDelivered" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="NetFreight" nillable="true" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="CollectionSurcharge" nillable="true" type="xs:decimal" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Documents" type="tns:Documents" />
+            <xs:element minOccurs="0" maxOccurs="1" name="OrdreReferanse" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="SendingTilstandKd" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="SendingTilstand" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="TilstandAvvikJN" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UtslippCo2Kg" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Documents">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="PODs" type="tns:ArrayOfPOD" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ColliObservations" type="tns:ArrayOfColliObservation" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfPOD">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="POD" nillable="true" type="tns:POD" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="POD">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="ConsignmentNo" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="DocumentType" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="RegDT" type="xs:dateTime" />
+            <xs:element minOccurs="0" maxOccurs="1" name="URIToTiffImage" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfColliObservation">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ColliObservation" nillable="true" type="tns:ColliObservation" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ColliObservation">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="kollinr" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="obstype" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="obstypekode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="obsdato" type="xs:dateTime" />
+            <xs:element minOccurs="0" maxOccurs="1" name="obssted" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="TilleggsInfo" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Breddegrad" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Lengdegrad" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="TrackAndTracePODs">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="user" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="password" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="id" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TrackAndTracePODsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="TrackAndTracePODsResult" type="tns:TrackAndTracePODsResultat" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="TrackAndTracePODsResultat">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="ResponseCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ResponseMessage" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="AmountOfPODs" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="PODs" type="tns:ArrayOfPOD" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PriceAndTimeTable">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="username" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="password" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="kriterie" type="tns:FreightPriceArguments" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="FreightPriceArguments">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="Customnumber" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="PaymentCode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Weight" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Volumd3" type="xs:decimal" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ProductCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="TypeOfGoods" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="HandleCodeOfPackes" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ConsignorPostCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ConsigneePostCode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="AcceptanceDate" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="NumberOfPackages" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="UnitNumbers" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UnitCode" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PriceAndTimeTableResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="PriceAndTimeTableResult" type="tns:PriceAndTimeTableResult" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="PriceAndTimeTableResult">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="ResponseCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ResponseMessage" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="price" type="tns:FreightPriceResultat" />
+            <xs:element minOccurs="0" maxOccurs="1" name="timeTable" type="tns:ScheduledDeliveryTimeResultat" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FreightPriceResultat">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="MessageId" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Message" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Grossfreight" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Discount" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Freight" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Netfreight" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="PrivateDeliverySurcharge" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="ParcelVolumSurcharge" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="GiroServiceSurcharge" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="ConsigneeToPay" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="CollectionSurcharge" type="xs:decimal" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ScheduledDeliveryTimeResultat">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="ScheduledDeliveryTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="MessageId" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Message" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PriceAndTimeTableV2">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="username" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="password" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="kriterie" type="tns:FreightPriceArgumentsV2" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="FreightPriceArgumentsV2">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="Customnumber" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="PaymentCode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Weight" type="xs:decimal" />
+            <xs:element minOccurs="1" maxOccurs="1" name="Volumd3" type="xs:decimal" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ProductCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="TypeOfGoods" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="HandleCodeOfPackes" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ConsignorPostCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ConsigneePostCode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="AcceptanceDate" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="NumberOfPackages" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="UnitNumbers" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="UnitCode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="LengthCm" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="WidthCm" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="HeightCm" type="xs:int" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PriceAndTimeTableV2Response">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="PriceAndTimeTableV2Result" type="tns:PriceAndTimeTableResult" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TrackAndTraceResultat" nillable="true" type="tns:TrackAndTraceResultat" />
+    <xs:element name="TrackAndTracePODsResultat" nillable="true" type="tns:TrackAndTracePODsResultat" />
+</xs:schema>

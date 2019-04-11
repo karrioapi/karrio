@@ -1,0 +1,22 @@
+<xs:schema elementFormDefault="unqualified" version="2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="option">
+    <xs:all>
+      <xs:element name="optionCode" type="xs:string"/>
+      <xs:element name="optionDesc" type="xs:string" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="options">
+    <xs:sequence minOccurs="0" maxOccurs="4">
+      <xs:element name="option" type="option"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="product">
+    <xs:all>
+      <xs:element name="id" type="xs:string" minOccurs="0"/>
+      <xs:element name="division" type="xs:string" minOccurs="0"/>
+      <xs:element name="productDesc" type="xs:string" minOccurs="0"/>
+      <xs:element name="type" type="xs:string" minOccurs="1"/>
+      <xs:element name="options" type="options" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+</xs:schema>

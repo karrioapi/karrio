@@ -1,0 +1,1555 @@
+---
+swagger: "2.0"
+info:
+  version: 1.0.21
+  title: Royal Mail API Shipping V2 (REST)
+  x-ibm-name: royal-mail-api-shipping-v2-rest
+  description: |-
+    This API specification details the requirements for integrating with Royal Mail API Shipping V2 (REST). It specifically covers how the Royal Mail API Shipping V2 (REST) can be used by business customers to conduct shipping activity with Royal Mail and provides the technical information to build this integration. This specification must be used with the relevant accompanying specifications for customers wishing to interface their systems with Royal Mail services.
+
+    Royal Mail API Shipping V2 (REST) exposes a fully RESTful service that allows account customers to create shipments, produce labels, and produce documentation for all the tasks required to ship domestic items with Royal Mail. Built on industry standards, Royal Mail API Shipping V2 (REST) provides a simple and low cost method for customers to integrate with Royal Mail, and allows them to get shipping quickly. The API offers data streaming and offline barcoding to allow customers greater flexibility when generating their labels.
+
+    There are no costs to customers for using the Royal Mail API Shipping V2 (REST) services, however customers’ own development costs must be covered by the customer developing the solution. Royal Mail will not accept any responsibility for these development, implementation and testing costs. Customers should address initial enquiries regarding development of systems for these purposes to their account handler.
+
+    This API can be used in conjunction with Royal Mail Pro Shipping, a GUI based shipping platform. For more details on Royal Mail Pro Shipping, including videos on and briefs on updating cancelling a shipment and manifesting click here&#58; www.royalmail.com/pro-shipping-help
+paths:
+  /token:
+    get:
+      tags:
+      - Token
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            $ref: '#/definitions/token'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        403:
+          $ref: '#/responses/403ForbiddenResponse'
+        404:
+          $ref: '#/responses/404NotFoundResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      operationId: getToken
+      parameters:
+      - $ref: '#/parameters/X-RMG-User-Name'
+      - $ref: '#/parameters/X-RMG-Password'
+      summary: Method to get a JSON Web Token (JWT).
+      description: "This method accepts a Royal Mail issued user name and (encoded
+        SHA-1 hash) password. On successful validation of the user's credentials,
+        a JWT valid for 4 hours is returned. The user must send this JWT in the *X-RMG-Auth-Token*
+        header when making subsequent calls to this API's business operations.\n>\n**Use
+        the Password Generator utility attachment on the Developer Portal API Shipping
+        V2 (REST) page to hash and encode the plain text password.** "
+  /domestic:
+    post:
+      tags:
+      - Shipment
+      responses:
+        201:
+          description: 201 Created
+          schema:
+            $ref: '#/definitions/createdShipmentResponse'
+        400:
+          $ref: '#/responses/400BadRequestResponse'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        404:
+          $ref: '#/responses/404NotFoundResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        409:
+          $ref: '#/responses/409ConflictResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        500:
+          $ref: '#/responses/5XXServerErrorResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      summary: Create a domestic shipment.
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: createDomesticBody
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/shipment'
+      description: |-
+        This operation will take a domestic shipment request in the message body and return the newly created shipment numbers and item details.
+        **Offline Shipment Not Currently Available.**
+    parameters:
+    - $ref: '#/parameters/X-RMG-Auth-Token'
+  /shipments:
+    post:
+      tags:
+      - Shipment
+      responses:
+        201:
+          description: 201 Created
+          schema:
+            $ref: '#/definitions/createdShipmentResponse'
+        400:
+          $ref: '#/responses/400BadRequestResponse'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        404:
+          $ref: '#/responses/404NotFoundResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        409:
+          $ref: '#/responses/409ConflictResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        500:
+          $ref: '#/responses/5XXServerErrorResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      summary: Create an international or domestic shipment.
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: createInternationalBody
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/shipmentsRequest'
+      description: This operation will accept a shipment request(domestic or international)
+        in the message body and return the newly created shipment numbers and item
+        details.
+    parameters:
+    - $ref: '#/parameters/X-RMG-Auth-Token'
+  /shipments/{shipmentNumber}/documents:
+    put:
+      tags:
+      - Shipment
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            type: object
+            properties:
+              internationalDocument:
+                description: 'Base64 encoded PDF international document. '
+                type: string
+                example: JVBERi0xLjMKJeLjz9MKMSAwIG9iajw8L1Byb2R1Y2VyKGh0bWxkb2MgMS44LjI3IENvcHlyaWdodCAxOTk3LTIwMDYgRWFzeSBTb2Z0d2FyZSBQcm9kdWN0cywgQWxsIFJpZ2h0cyBSZXNlcnZlZC4pL0NyZWF0aW9uRGF0ZShEOjIwMTUwMjA5MTAxNDMyLTAxMDApPj5lbmRvYmoKMiAwIG9iajw8L1R5cGUvRW5jb2RpbmcvRGlmZmVyZW5jZXNbIDMyL3NwYWNlL2V4Y2xhbS9xdW90ZWRibC9udW1iZXJzaWduL2RvbGxhci9wZXJjZW50L2FtcGVyc2FuZC9xdW90ZXNpbmdsZS9wYXJlbmxlZnQvcGFyZW5yaWdodC9hc3Rlcmlzay9wbHVzL2NvbW1hL2h5cGhlbi9wZXJpb2Qvc2xhc2gvemVyby9vbmUvdHdvL3RocmVlL2ZvdXIvZml2ZS9zaXgvc2V2ZW4vZWlnaHQvbmluZS9jb2xvbi9zZW1pY29sb24vbGVzCnRyYWlsZXIKPDwvU2l6ZSAyNi9Sb290IDI1IDAgUi9JbmZvIDEgMCBSL0lEWzw1Nzc0ODI2ZGMxMDI3ZmIzODgwZGMyMDE3YjQ5MGI2OT48NTc3NDgyNmRjMTAyN2ZiMzg4MGRjMjAxN2I0OTBiNjk+XT4+CnN0YXJ0eHJlZgoxNzEzMjUKJSVFT0YK
+        400:
+          $ref: '#/responses/400BadRequestResponse'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        404:
+          $ref: '#/responses/404NotFoundResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        500:
+          $ref: '#/responses/5XXServerErrorResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      summary: Create international documents.
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: createDocumentsBody
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/documentsRequest'
+      description: Create base64 encoded PDF international documents for the given
+        shipment number.
+    parameters:
+    - $ref: '#/parameters/shipmentNumber'
+    - $ref: '#/parameters/X-RMG-Auth-Token'
+  /{shipmentNumber}:
+    put:
+      tags:
+      - Shipment
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            $ref: '#/definitions/cancelOrUpdateShipmentResponse'
+        400:
+          $ref: '#/responses/400BadRequestResponse'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        404:
+          $ref: '#/responses/404NotFoundResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        409:
+          $ref: '#/responses/409ConflictResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        500:
+          $ref: '#/responses/5XXServerErrorResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      summary: Update a shipment.
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: detail
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/shipment'
+      - $ref: '#/parameters/shipmentNumber'
+      description: "Update a shipment with the specified *shipmentNumber*. Fields
+        to be updated populated in the body. Service related information cannot be
+        updated, and if passed as part of request, will be ignored.\n\nOn successful
+        update, the shipment number updated is returned. "
+    delete:
+      tags:
+      - Shipment
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            $ref: '#/definitions/cancelOrUpdateShipmentResponse'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        404:
+          $ref: '#/responses/404NotFoundResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        409:
+          $ref: '#/responses/409ConflictResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        500:
+          $ref: '#/responses/5XXServerErrorResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      summary: Cancel a shipment.
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      description: Cancel a shipment with the specified *shipmentNumber*.
+    parameters:
+    - $ref: '#/parameters/shipmentNumber'
+    - $ref: '#/parameters/X-RMG-Auth-Token'
+  /{shipmentNumber}/label:
+    parameters:
+    - $ref: '#/parameters/shipmentNumber'
+    - $ref: '#/parameters/X-RMG-Auth-Token'
+    put:
+      tags:
+      - Shipment
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            $ref: '#/definitions/labelResponse'
+        400:
+          $ref: '#/responses/400BadRequestResponse'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        404:
+          $ref: '#/responses/404NotFoundResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        409:
+          $ref: '#/responses/409ConflictResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        500:
+          $ref: '#/responses/5XXServerErrorResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      summary: Create shipment label.
+      operationId: ""
+      parameters:
+      - $ref: '#/parameters/outputFormat'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      description: This method returns a label for the shipment identifier passed
+        in the url.
+  /manifest:
+    post:
+      tags:
+      - Manifest
+      responses:
+        200:
+          description: 200 OK
+          schema:
+            $ref: '#/definitions/manifestResponse'
+        400:
+          $ref: '#/responses/400BadRequestResponse'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        409:
+          $ref: '#/responses/409ConflictResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        500:
+          $ref: '#/responses/5XXServerErrorResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      summary: Create shipping manifest.
+      parameters:
+      - name: manifestRequest
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/manifestRequest'
+      description: This method creates a shipping manifest
+    put:
+      tags:
+      - Manifest
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/printManifestResponse'
+        400:
+          $ref: '#/responses/400BadRequestResponse'
+        401:
+          $ref: '#/responses/401UnauthorizedResponse'
+        405:
+          $ref: '#/responses/405MethodNotAllowedResponse'
+        409:
+          $ref: '#/responses/409ConflictResponse'
+        429:
+          $ref: '#/responses/429TooManyRequestsResponse'
+        500:
+          $ref: '#/responses/5XXServerErrorResponse'
+        503:
+          $ref: '#/responses/503ServiceUnavailableResponse'
+      summary: Create manifest image.
+      parameters:
+      - name: salesOrderNumber
+        description: The Sales Order Number, which is available via the GUI the day
+          after the manifest was created.
+        type: string
+        required: false
+        in: query
+      - name: manifestBatchNumber
+        description: This is the batch number to print and is returned by a prior
+          call to create manifest operation.
+        type: string
+        required: false
+        in: query
+      description: This method return a manifest image for a previously manifested
+        shipment.
+    parameters:
+    - $ref: '#/parameters/X-RMG-Auth-Token'
+securityDefinitions:
+  clientSecret:
+    type: apiKey
+    description: Client Secret
+    in: header
+    name: X-IBM-Client-Secret
+  clientID:
+    description: Client ID
+    in: header
+    name: X-IBM-Client-Id
+    type: apiKey
+security:
+- clientID: []
+  clientSecret: []
+x-ibm-configuration:
+  enforced: true
+  testable: true
+  phase: realized
+definitions:
+  address:
+    type: object
+    properties:
+      buildingName:
+        description: This field will be used if supplied but is not necessary to process
+          a shipment. It does not replace the need for a full addressLine1 input.
+        type: string
+        example: One Broadgate
+      buildingNumber:
+        description: This field will be used if supplied but is not necessary to process
+          a shipment. It does not replace the need for a full addressLine1 input.
+        type: string
+        example: 1
+      addressLine1:
+        description: First line of the address.
+        type: string
+        example: AddressLine 1
+      addressLine2:
+        description: Second line of the address
+        type: string
+        example: AddressLine 2
+      addressLine3:
+        description: Third line of the address
+        type: string
+        example: AddressLine 3
+      postTown:
+        description: Town or City. The postTown will be updated to match the postTown
+          resolved postcode.
+        type: string
+        example: London
+      county:
+        description: County of address. Mandatory for state & provinces in the US,
+          Canada or Australia.
+        type: string
+        example: London
+      postCode:
+        description: Mandatory for UK addresses. If the Shipment Type is “Return”
+          then this must match the postcode of the registered return address.
+        type: string
+        example: EC2M 2QS
+      countryCode:
+        description: "The relevant country's 2-digit ISO code for the address. Note
+          that this field is case sensitive. \n\nOptional for domestic shipments.\n
+          \  - If supplied, must be UK country code. One of GB,JE,GE or JM.\n\nMandatory
+          for international shipments.\n   - DO NOT USE UK country codes. For the
+          list of allowable values, please go to API Shipping V2 page on the Royal
+          Mail API (Developer) Portal and refer to API Shipping Reference Data."
+        type: string
+        example: GB
+    required:
+    - addressLine1
+    - postTown
+    - postCode
+    additionalProperties: false
+  contact:
+    description: Contact details.
+    type: object
+    properties:
+      name:
+        description: Contact name
+        type: string
+        example: Joe Bloggs
+      complementaryName:
+        description: Business name. If using the Local Collect option, the name format
+          must be&#58; \'C/O\' + Location Name + \'Post Office\' or \'Enquiry Office\'
+          E.g. "C/O Mount Pleasant Post Office
+        type: string
+        example: Acme Ltd
+      telephoneNumber:
+        description: UK mobile phone number. Required if a SMS service enhancement
+          is selected. Conditionally required if using Local Collect service enhancement.
+        type: string
+        example: 07801323456
+      email:
+        description: Email address to be used for notifications. Required if Email
+          enhancement is selected. Conditionally required if using Local Collect service
+          enhancement.
+        type: string
+        example: example@royalmail.com
+    required:
+    - name
+    additionalProperties: false
+  cancelOrUpdateShipmentResponse:
+    properties:
+      shipmentNumber:
+        type: string
+        description: Shipment Number that has been cancelled / updated
+        example: HY188980166GB
+    required:
+    - shipmentNumber
+    additionalProperties: false
+  completedShipments:
+    type: array
+    items:
+      $ref: '#/definitions/shipmentWithBarcodeAndWeight'
+    description: Array of shipments with barcode and weight
+  contentDetail:
+    type: object
+    properties:
+      countryOfManufactureCode:
+        description: 2-digit country ISO code representing the country in which the
+          goods where manufactured. Note that this field is case sensitive. For the
+          list of allowable values, please go to API Shipping V2 page on the Royal
+          Mail API (Developer) Portal and refer to API Shipping Reference Data.
+        type: string
+        example: US
+      manufacturersName:
+        description: Name of manufacturer of goods in the shipment.
+        type: string
+        example: Bloggs Corp
+      description:
+        description: Description of goods being delivered.
+        type: string
+        example: Toys
+      unitWeight:
+        $ref: '#/definitions/measurement'
+      unitQuantity:
+        description: Quantity of content items within the shipment.
+        type: integer
+        example: 2
+      unitValue:
+        description: Value of content items within the shipment.
+        type: number
+        example: 20.500000
+      currencyCode:
+        description: 3-digit ISO currency code for value of content item within the
+          shipment.
+        type: string
+        example: USD
+      tariffCode:
+        description: Tariff code for content item within the shipment. See https&#58;//www.gov.uk/trade-tariff.
+        type: number
+        minimum: 6
+        example: "9503004100"
+      tariffDescription:
+        description: Description that compliments the tariff code supplied.
+        type: string
+        example: Stuffed toys.
+    required:
+    - countryOfManufactureCode
+    - unitQuantity
+    - unitValue
+    - currencyCode
+    additionalProperties: false
+  createdShipmentResponse:
+    properties:
+      completedShipments:
+        $ref: '#/definitions/completedShipments'
+    required:
+    - completedShipments
+    additionalProperties: false
+  documentsRequest:
+    properties:
+      documentName:
+        description: The type of the document to output. Valid values are CN22, CN23
+          and CI (for Commercial Invoice).
+        type: string
+        enum:
+        - CN22,CN23,CI
+        example: CN23
+      documentCopies:
+        description: 'Number of copies of the international documents within the single
+          base64 encoded PDF output. Valid values: 1 or 3. 3 for Commercial Invoice
+          Only.'
+        enum:
+        - "1,3"
+        type: number
+        example: 1
+    required:
+    - documentName
+    additionalProperties: false
+  errorResponse:
+    type: object
+    properties:
+      httpCode:
+        description: HTTP status code.
+        type: string
+        example: 429
+      httpMessage:
+        description: HTTP error code description.
+        type: string
+        example: Too Many Requests
+      moreInformation:
+        description: Information relating to the error condition.
+        type: string
+        example: The rate limit has been exceeded for the plan or operation being
+          used.
+      errors:
+        items:
+          $ref: '#/definitions/errors'
+    additionalProperties: false
+  errors:
+    description: List of errors.
+    type: array
+    items:
+      $ref: '#/definitions/error'
+  error:
+    properties:
+      errorCode:
+        description: Code associated with the error condition
+        type: string
+      errorDescription:
+        description: Description of the error condition
+        type: string
+      errorCause:
+        description: Cause of the error (if known)
+        type: string
+      errorResolution:
+        description: Description of the resolution and action required to correct
+          the error
+        type: string
+    additionalProperties: false
+  labelResponse:
+    properties:
+      label:
+        description: Label in PDF format and Base64 encoded
+        type: string
+        example: JVBERi0xLjYKJeTjz9IKMSAwIG9iagpbL1BERi9JbWFnZUIvSW1hZ2VDL0ltYWdlSS9UZXh0XQplbmRvYmoKNCAwIG9iago8PC9MZW5ndGggNSAwIFIKL0ZpbHRlci9GbGF0ZURlY29kZQo+PgpzdHJlYW0KeJwDAAAAAAEKZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjgKZW5kb2JqCjYgMCBvYmoKPDwv+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6SlpqeoMCBSCi9JbmZvIDMyIDAgUgovSURbPDZDM0VCNEREOEE2OTNEMTVDQUE4NkRCODJCNTc2MTIzPjw2QzNFQjRERDhBNjkzRDE1Q0FBODZEQjgyQjU3NjEyMz5dCj4+CnN0YXJ0eHJlZgoxMzI1OTYKJSVFT0YK
+      labelImages:
+        $ref: '#/definitions/labelImages'
+      format:
+        description: The format of the response as requested in the printLabelRequest
+          i.e. PDF/DS/DSPDF/PNG/DSPNG
+        type: string
+        example: PDF
+      labelData:
+        description: Label details.
+        type: object
+        properties:
+          upuCode:
+            description: Always 'JGB'
+            type: string
+            example: JGB
+          informationTypeID:
+            description: Always 6
+            type: string
+            example: "6"
+          versionID:
+            description: Always 1
+            type: string
+            example: "1"
+          format:
+            description: Dependant on Service Format selected
+            type: string
+            example: P
+          mailType:
+            description: Depends on what service was selected e.g. Inland Large Letter
+            type: string
+            example: Inland Large Letter
+          itemID:
+            description: Unique Item ID for shipment which is same as received in
+              response to creatshipmentRequest. If customer is not using the 2D barcode
+              returned by the API, then they must convert this number to hex and then
+              use this hex number in the 2D barcode.
+            type: string
+            example: "459"
+          checkDigit:
+            description: System Calculated value
+            type: string
+            example: "3"
+          itemWeight:
+            description: Shipment/Item Weight
+            type: string
+            example: "250"
+          weightType:
+            description: Dependant on Service selected i.e. g, kg etc.
+            type: string
+            example: g
+          product:
+            description: Dependant on Service Reference selected
+            type: string
+            example: CRL_1
+          trackingNumber:
+            description: 1D Linear Barcode for shipment which is the same as shipment
+              number received in response to a Create Shipment request
+            type: string
+            example: TTT000527313GB
+          destinationPostcodeDPS:
+            description: The post/pin code for the destination.
+            type: string
+            example: EC2M 2QS
+          returnToSenderPostcode:
+            description: Post/Pin code for the sender for returns
+            type: string
+            example: LU3 1SY
+          requiredAtDelivery:
+            description: If a signature is required, the value will be S, otherwise
+              blank.
+            type: string
+            example: S
+          buildingNumber:
+            description: Building Number (Label)
+            type: string
+            example: "1"
+          buildingName:
+            description: Building Name (Label)
+            type: string
+            example: One Broadgate
+          dateOfShipment:
+            description: Provisional Date Of Shipment
+            type: string
+            example: "2015-08-20"
+      recipientAddress:
+        $ref: '#/definitions/recipientAddress'
+      recipientContact:
+        $ref: '#/definitions/recipientContact'
+    additionalProperties: false
+  labelImages:
+    properties:
+      image1DBarcode:
+        type: string
+        example: iVBORw0KGgoAAAANSUhEUgAAAfUAAABvAgMAAACIrLETAAAADFBMVEXMzMz///8AAAD/AADq3YbvAAAACXBIWXMAAB7pAAAe6QF1y32iAAAACXZwQWcAAAH1AAAAbwAUn0l/AAAAjUlEQVRo3u3NUQ3AMAgFwJlkH5UwFTNRCf0YKgergQm4hJAWXrgj1xVjRlzPyCei+plZ3zNn5qxVz0dWrHp09bC2Feu+olfRvSY7XIHswOyDu0bfjH38e3/5+8Dj8Xg8Ho/H4/F4PB6Px+PxeDwej8fj8Xg8Ho/H4/F4PB6Px+PxeDwej8fj8Xg8/hf/AgOtTBVIW17PAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE1LTA4LTIwVDEzOjMwOjAyKzAyOjAwaNwXVgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNS0wOC0yMFQxMzozMDowMiswMjowMBmBr+oAAAAASUVORK5CYII=
+      image2DMatrix:
+        type: string
+        example: iVBORw0KGgoAAAANSUhEUgAAABQAAAAUAQAAAACl8iCgAAAAAmJLR0QAAd2KE6QAAAAJcEhZcwA
+          AHukAAB7pAXXLfaIAAAAJdnBBZwAAABQAAAAUAKM7KtEAAAA1SURBVAjXYzA2NmAAYfvzDGDMYP8B
+          jI0PHABj5jMfwJjnDAMYGxt8AGObwwxgzPzfAIyhAACHQRVDZvCDogAAACV0RVh0ZGF0ZTpjcmVh
+          dGUAMjAxNS0wOC0yMFQxMzozMDowMyswMjowMM6rHOIAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTUt
+          MDgtMjBUMTM6MzA6MDMrMDI6MDC/9qReAAAAAElFTkSuQmCC
+    additionalProperties: false
+  manifestRequest:
+    properties:
+      serviceOccurence:
+        description: All or one Service Occurrence. If not included then ALL Service
+          Occurrences are included in the manifest.
+        type: string
+        example: "1"
+      serviceCode:
+        description: All or one Service Offerings. If not included then ALL Service
+          Offerings are included in the manifest. Please note that this field is case
+          sensitive.
+        type: string
+        example: TRM
+      yourDescription:
+        description: This is a description field that corresponds to the Your Description
+          field in RM's Online Business Account (OBA). This is for customer reference
+          and will not appear on any paperwork.
+        type: string
+        example: Manfest description
+      yourReference:
+        description: Included on the Customer Collection Receipt.
+        type: string
+        example: Manfest reference
+    additionalProperties: false
+  manifestResponse:
+    description: Create Manifest Response
+    properties:
+      batchNumber:
+        description: The batch number of the manifest. It is a sequentially allocated
+          number. Used in subsequent call to the create manifest label operation.
+        type: integer
+        format: int32
+        example: 81
+      count:
+        description: Total number of shipments on this manifest
+        type: integer
+        format: int32
+        example: 1
+      manifest:
+        type: string
+        description: Customer Collection Receipt in PDF format - Base64 encoded for
+          transfer. Returned here when 'Include the Manifest Image in 'createManifest'
+          response' is enabled in Pro Shipping GUI.
+        example: JVBERi0xLjMKJeLjz9MKMSAwIG9iajw8L1Byb2R1Y2VyKGh0bWxkb2MgMS44LjI3IENvcHlyaWdo
+          dCAxOTk3LTIwMDYgRWFzeSBTb2Z0d2FyZSBQcm9kdWN0cywgQWxsIFJpZ2h0cyBSZXNlcnZlZC4p
+          L0NyZWF0aW9uRGF0ZShEOjIwMTUwMjA2MTUwNTEyLTAxMDApPj5lbmRvYmoKMiAwIG9iajw8L1R5
+          cGUvRW5jb2RpbmcvRGlmZmVyZW5jZXNbIDMyL3NwYWNlL2V4Y2xhbS9xdW90ZWRibC9udW1iZXJz
+          aWduL2RvbGxhci9wZXJjZW50L2FtcGVyc2FuZC9xdW90ZXNpbmdsZS9wYXJlbmxlZnQvcGFyZW5y
+          aWdodC9hc3Rlcmlzay9wbHVzL2NvbW1hL2h5cGhlbi9wZXJpb2Qvc2xhc2gvemVyby9vbmUvdHdv
+          L3RocmVlL2ZvdXIvZml2ZS9zaXgvc2V2ZW4vZWlnaHQvbmluZS9jb2xvbi9zZW1pY29sb24vbGVz
+          cy9lcXVhbC9ncmVhdGVyL3F1ZXN0aW9uL2F0L0EvQi9DL0QvRS9GL0cvSC9JL0ovSy9ML00vTi9P
+          L1AvUS9SL1MvVC9VL1YvVy9YL1kvWi9icmFja2V0bGVmdC9iYWNrc2xhc2gvYnJhY2tldHJpZ2h0
+          biAKMDAwMDEyMjYwMyAwMDAwMCBuIAowMDAwMTIyNjU1IDAwMDAwIG4gCjAwMDAxMjI3MzYgMDAw
+          MDAgbiAKdHJhaWxlcgo8PC9TaXplIDI3L1Jvb3QgMjYgMCBSL0luZm8gMSAwIFIvSURbPDkzNjgx
+          OThmZWM3ODA1ZjgxYmM4ZDgzYTI3MTg3NmQ2Pjw5MzY4MTk4ZmVjNzgwNWY4MWJjOGQ4M2EyNzE4
+          NzZkNj5dPj4Kc3RhcnR4cmVmCjEyMjkxNwolJUVPRgo=
+      shipments:
+        $ref: '#/definitions/manifestShipments'
+    additionalProperties: false
+  manifestShipments:
+    type: array
+    items:
+      $ref: '#/definitions/manifestShipment'
+    description: Array of manifested shipments to be returned as part of create manifest
+      request.
+  manifestShipment:
+    description: shipment manifest detail
+    properties:
+      code:
+        description: The service offering code of a shipment on the manifest. Please
+          note that this field is case sensitive.
+        type: string
+        example: TRM
+      shipmentNumber:
+        description: The 1D shipment number of a shipment on the manifest
+        type: string
+        example: HY188980152GB
+    additionalProperties: false
+  measurement:
+    type: object
+    properties:
+      unitOfMeasure:
+        description: |-
+          'g' for grams.
+          'kg' for kilograms.
+          'cm' for centimeters.
+
+          For shipment/items must be 'g'.
+          For shipment/internationalInfo/parcels, use appropriate 'g' or 'kg' for weight measures. For length, width and height fields, use 'cm' for parcel dimensions.
+        type: string
+        enum:
+        - g
+        - kg
+        - cm
+        example: g
+      value:
+        description: For shipment/items, this is the weight in grams of each item
+          (no decimal places). If the service has a weight band, for example Special
+          Delivery, then the upper band will be used. For example, 150 grams will
+          use the 100 to 200 grams band. Tracked services, for example, do not have
+          a band and therefore take the actual weight. **Note** Where Average Weight
+          End of Day option is turned ON, for Average Weight Products populate with
+          '0'. For more information go to Pro Shipping V2 API page on the Royal Mail
+          API (Developer) Portal and refer to Shipping API Reference Data for Average
+          Weight Products.
+        type: number
+        example: 25
+    required:
+    - unitOfMeasure
+    - value
+    additionalProperties: false
+  offlineShipment:
+    type: object
+    properties:
+      number:
+        description: Not Currently Available. Offline 1D Linear Barcode number assigned
+          to the shipment. This should be from the 1D barcode range received by you
+          in response to request1Drange
+        type: string
+        example: BQ070802658GB
+      itemID:
+        description: Not Currently Available. Offline 2D Item ID number assigned to
+          the shipment. This should be from the 2D barcode range received by you in
+          response to request2Drange
+        type: string
+        example: 2B0000000000100007A13
+      status:
+        description: Not Currently Available. Code for status of Offline Shipment.
+          Valid values are 'AllocatedOffline'. You have to call the *label* operation
+          before adding the shipment to the manifest, and ‘PrintedOffline’  label
+          is not required when using this status in this operation.
+        type: string
+        example: AllocatedOffline
+    additionalProperties: false
+  parcel:
+    type: object
+    properties:
+      weight:
+        $ref: '#/definitions/measurement'
+      length:
+        $ref: '#/definitions/measurement'
+      height:
+        $ref: '#/definitions/measurement'
+      width:
+        $ref: '#/definitions/measurement'
+      purposeOfShipment:
+        description: "Purpose of shipment (also known as Nature of Goods). These are
+          2-3 character codes as defined below&#58;\n\n\n\"21\" for Returned Goods
+          \n“31” for Gift\n“32” for Commercial Sample\n\"91\" for Documents \n“991”
+          for Mixed Content\n\"999\" for Other"
+        type: string
+        example: "31"
+      explanation:
+        description: Comments regarding the parcel
+        type: string
+        example: Toys
+      invoiceNumber:
+        description: Invoice number
+        type: string
+        example: "12787578435"
+      exportLicenseNumber:
+        description: Export licence number
+        type: string
+        example: "6465464565"
+      certificateNumber:
+        description: Certificate number
+        type: string
+        example: "123243423"
+      contentDetails:
+        type: array
+        description: Content details list.
+        items:
+          $ref: '#/definitions/contentDetail'
+      fees:
+        description: Parcel fees
+        type: number
+        example: 20.120000
+    required:
+    - contentDetails
+    additionalProperties: false
+  printManifestResponse:
+    description: Print Manifest Response
+    properties:
+      manifest:
+        type: string
+        description: Customer Collection Receipt in PDF format -Base64 encoded for
+          transfer
+        example: JVBERi0xLjMKJeLjz9MKMSAwIG9iajw8L1Byb2R1Y2VyKGh0bWxkb2MgMS44LjI3IENvcHlyaWdo
+          dCAxOTk3LTIwMDYgRWFzeSBTb2Z0d2FyZSBQcm9kdWN0cywgQWxsIFJpZ2h0cyBSZXNlcnZlZC4p
+          L0NyZWF0aW9uRGF0ZShEOjIwMTUwMjA2MTUwNTEyLTAxMDApPj5lbmRvYmoKMiAwIG9iajw8L1R5
+          cGUvRW5jb2RpbmcvRGlmZmVyZW5jZXNbIDMyL3NwYWNlL2V4Y2xhbS9xdW90ZWRibC9udW1iZXJz
+          aWduL2RvbGxhci9wZXJjZW50L2FtcGVyc2FuZC9xdW90ZXNpbmdsZS9wYXJlbmxlZnQvcGFyZW5y
+          aWdodC9hc3Rlcmlzay9wbHVzL2NvbW1hL2h5cGhlbi9wZXJpb2Qvc2xhc2gvemVyby9vbmUvdHdv
+          L3RocmVlL2ZvdXIvZml2ZS9zaXgvc2V2ZW4vZWlnaHQvbmluZS9jb2xvbi9zZW1pY29sb24vbGVz
+          cy9lcXVhbC9ncmVhdGVyL3F1ZXN0aW9uL2F0L0EvQi9DL0QvRS9GL0cvSC9JL0ovSy9ML00vTi9P
+          L1AvUS9SL1MvVC9VL1YvVy9YL1kvWi9icmFja2V0bGVmdC9iYWNrc2xhc2gvYnJhY2tldHJpZ2h0
+          biAKMDAwMDEyMjYwMyAwMDAwMCBuIAowMDAwMTIyNjU1IDAwMDAwIG4gCjAwMDAxMjI3MzYgMDAw
+          MDAgbiAKdHJhaWxlcgo8PC9TaXplIDI3L1Jvb3QgMjYgMCBSL0luZm8gMSAwIFIvSURbPDkzNjgx
+          OThmZWM3ODA1ZjgxYmM4ZDgzYTI3MTg3NmQ2Pjw5MzY4MTk4ZmVjNzgwNWY4MWJjOGQ4M2EyNzE4
+          NzZkNj5dPj4Kc3RhcnR4cmVmCjEyMjkxNwolJUVPRgo=
+    additionalProperties: false
+  recipientAddress:
+    description: Recipient address details.
+    properties:
+      buildingName:
+        description: This field will be used if supplied but is not necessary to process
+          a shipment. It does not replace the need for a full addressLine1 input.
+        type: string
+        example: One House
+      buildingNumber:
+        description: This field will be used if supplied but is not necessary to process
+          a shipment. It does not replace the need for a full addressLine1 input.
+        type: string
+        example: "1"
+      addressLine1:
+        description: First line of the address.
+        type: string
+        example: Addressline 1
+      addressLine2:
+        description: Second line of the address
+        type: string
+        example: Addressline 2
+      addressLine3:
+        description: Third line of the address
+        type: string
+        example: Addressline 3
+      stateOrProvince:
+        description: State or Province
+        type: string
+        example: ""
+      postTown:
+        description: Town or City. The postTown will be updated to match the postTown
+          resolved postcode.
+        type: string
+        example: London
+      county:
+        description: County of address. Mandatory for state & provinces in the US,
+          Canada or Australia.
+        type: string
+        example: London
+      postCode:
+        description: 'Mandatory for UK addresses. '
+        type: string
+        example: EC2M 2QS
+      country:
+        description: Recipient 2-digit ISO country code.
+        type: string
+        minLength: 2
+        maxLength: 2
+        example: GB
+    required:
+    - addressLine1
+    - postTown
+    - postCode
+    additionalProperties: false
+  recipientContact:
+    properties:
+      name:
+        description: Contact name
+        type: string
+        example: Miss A Jones
+      complementaryName:
+        description: Business name
+        type: string
+        example: Acme Ltd
+      telephoneNumber:
+        description: UK mobile phone number. Required if a SMS service enhancement
+          is selected.
+        type: string
+        example: 09784456354
+      electronicAddress:
+        description: Email address to be used for notifications. Required if Email
+          enhancement is selected
+        type: string
+        example: example@acme.co.uk
+    required:
+    - name
+    additionalProperties: false
+  service:
+    properties:
+      format:
+        description: The Service Format code for the shipment. Note that this field
+          is case sensitive. For the list of permissible values, please go to Pro
+          Shipping V2 API page on the Royal Mail API (Developer) Portal and refer
+          to Shipping API Reference Data.
+        type: string
+        example: P
+      occurrence:
+        description: Part of the customer’s contract identifier. In conjunction with
+          the Service Offering it identifies an agreement line on the customer’s account.
+          If only one Service Reference exists then this is not required. No leading
+          zero is required.
+        type: string
+        example: "1"
+      offering:
+        description: The Service Offering code for the mail item ordered. Please note
+          that this field is case sensitive. For the list of permissible values, please
+          go to Pro Shipping V2 API page on the Royal Mail API (Developer) Portal
+          and refer to Shipping API Reference Data
+        type: string
+        example: CRL
+      type:
+        description: The system Service Type of the shipment. For the list of permissible
+          values, please go to Pro Shipping V2 API page on the Royal Mail API (Developer)  and
+          refer to Shipping API Reference Data.
+        type: string
+        example: "1"
+      signature:
+        description: For RM Tracked items only, this element specifies whether a signature
+          is required on delivery. If this element is not included then it defaults
+          to false.
+        type: string
+        example: "false"
+      enhancements:
+        $ref: '#/definitions/serviceEnhancements'
+    required:
+    - offering
+    - type
+    additionalProperties: false
+  serviceEnhancements:
+    description: List of service enhancement types.
+    type: array
+    items:
+      type: string
+    example:
+    - "13"
+  shipment:
+    type: object
+    properties:
+      shipmentType:
+        description: Specifies whether the shipment being created is a standard delivery
+          service or a returns service. Accepted values are ‘Delivery’ and ‘Return’.
+          Please note that this field is not case sensitive.
+        type: string
+        example: Delivery
+      service:
+        $ref: '#/definitions/service'
+      shippingDate:
+        description: This is the date that the item will be physically sent (in the
+          format YYYY-MM-DD). This may be up to 28 days in the future. Please note
+          that for returns a Shipping date must be provided.
+        type: string
+        example: "2015-08-28"
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/shipmentRequestItem'
+      recipientContact:
+        $ref: '#/definitions/contact'
+      recipientAddress:
+        $ref: '#/definitions/address'
+      senderReference:
+        description: This field allows the user to supply their own reference number.
+          Where supported (e.g. Tracked Returns) this number will appear on the label.
+        type: string
+        example: DS324354545
+      departmentReference:
+        description: This is the department reference code that customers can define
+          in OBA.
+        type: string
+        example: DEPTREF
+      customerReference:
+        description: This field allows customers to supply a reference that applies
+          to multiple shipments and is included to mirror the functionality offered
+          by the Customer Reference field in OBA, whereby a reference can be associated
+          to a group of items. For references that apply to a single shipment, the
+          senderReference field should be used. **Warning** Misuse of this field may
+          result in incorrect billing.
+        type: string
+        example: CUSTOMERREF
+      safePlace:
+        description: For Tracked non-signature service offerings only; this field
+          allows a string that gives details of the recipient’s designated safeplace
+          (e.g. “inside the porch”).
+        type: string
+        example: Porch
+    required:
+    - shipmentType
+    - service
+    - recipientContact
+    - recipientAddress
+    additionalProperties: false
+  shipmentsRequest:
+    type: object
+    properties:
+      shipmentType:
+        description: Specifies whether the shipment being created is a standard delivery
+          service or a returns service. Accepted values are ‘Delivery’ and ‘Return’.
+          Please note that this field is not case sensitive.
+        type: string
+        example: Delivery
+      service:
+        $ref: '#/definitions/service'
+      bfpoCode:
+        description: For HM Forces (BFPO) Service Type only when the Service Format
+          is not International Flat, International Letter or International Packet.
+          For the list of permissible values, please go to API Shipping V2 page on
+          the Royal Mail API (Developer) Portal and refer to API Shipping Reference
+          Data.
+        type: string
+        example: EAA
+      shippingDate:
+        description: This is the date that the item will be physically sent (in the
+          format YYYY-MM-DD). This may be up to 28 days in the future. Please note
+          that for returns a Shipping date must be provided.
+        type: string
+        example: "2015-08-28"
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/shipmentRequestItemInternational'
+      recipientContact:
+        $ref: '#/definitions/contact'
+      recipientAddress:
+        $ref: '#/definitions/address'
+      senderReference:
+        description: This field allows the user to supply their own reference number.
+          Where supported (e.g. Tracked Returns) this number will appear on the label.
+        type: string
+        example: DS324354545
+      departmentReference:
+        description: This is the department reference code that customers can define
+          in OBA.
+        type: string
+        example: DEPTREF
+      customerReference:
+        description: This field allows customers to supply a reference that applies
+          to multiple shipments and is included to mirror the functionality offered
+          by the Customer Reference field in OBA, whereby a reference can be associated
+          to a group of items. For references that apply to a single shipment, the
+          senderReference field should be used. **Warning** Misuse of this field may
+          result in incorrect billing.
+        type: string
+        example: CUSTOMERREF
+      safePlace:
+        description: For Tracked non-signature service offerings only; this field
+          allows a string that gives details of the recipient's designated safeplace
+          (e.g. “inside the porch”).
+        type: string
+        example: Porch
+      internationalInfo:
+        type: object
+        properties:
+          parcels:
+            type: array
+            items:
+              $ref: '#/definitions/parcel'
+          shipperExporterVatNo:
+            description: Exporter's VAT number defined in OBA.
+            type: string
+            example: GB999999973
+          recipientImportersVatNo:
+            description: Recipient / Importer’s VAT number.
+            type: string
+            example: GB888999964
+          originalExportShipmentNo:
+            description: Original export shipment number.
+            type: string
+            example: "4235454454"
+          documentsOnly:
+            description: Indication of export of documents only.
+            type: boolean
+            example: false
+          shipmentDescription:
+            description: Description of the shipment.
+            type: string
+            example: Personal items
+          comments:
+            description: Comments regarding the shipment.
+            type: string
+            example: Personal items
+          invoiceDate:
+            description: Commercial Invoice Date in the format YYYY-MM-DD.
+            type: string
+            example: "2018-08-28"
+          termsOfDelivery:
+            description: '3 Character code indicating terms of delivery (IncoTerms).
+              The relevant international standard code for the terms of delivery;
+              refer to the International Chamber of Commerce (ICC) for required listing
+              of codes.  '
+            type: string
+            maxLength: 3
+            example: DAP
+          purchaseOrderRef:
+            description: Vendor's Purchase Order Number for the shipment.
+            type: string
+            example: "910487552"
+        required:
+        - parcels
+        additionalProperties: false
+    required:
+    - shipmentType
+    - service
+    - recipientContact
+    - recipientAddress
+    - internationalInfo
+    example:
+      shipmentType: Delivery
+      service:
+        format: P
+        occurrence: "1"
+        offering: OLA
+        type: I
+        signature: false
+      bfpoCode: EAA
+      shippingDate: "2015-08-28"
+      items:
+      - count: 1
+        weight:
+          unitOfMeasure: g
+          value: 25
+      recipientContact:
+        name: Joe Bloggs
+        complementaryName: Acme Ltd
+        telephoneNumber: 07801323456
+        email: example@royalmail.com
+      recipientAddress:
+        buildingName: Amphitheatre
+        buildingNumber: 600
+        addressLine1: Parkway Mountain View
+        addressLine2: AddressLine 2
+        addressLine3: AddressLine 3
+        postTown: Mountain View
+        county: CA
+        postCode: "94043"
+        countryCode: US
+      senderReference: DS324354545
+      departmentReference: DEPTREF
+      customerReference: CUSTOMERREF
+      safePlace: Porch
+      internationalInfo:
+        parcels:
+        - weight:
+            unitOfMeasure: g
+            value: 25
+          length:
+            unitOfMeasure: cm
+            value: 55
+          height:
+            unitOfMeasure: cm
+            value: 20
+          width:
+            unitOfMeasure: cm
+            value: 30
+          purposeOfShipment: "31"
+          explanation: Toys
+          invoiceNumber: "12787578435"
+          exportLicenseNumber: "6465464565"
+          certificateNumber: "123243423"
+          contentDetails:
+          - countryOfManufactureCode: US
+            manufacturersName: Bloggs Corp
+            description: Toys
+            unitWeight:
+              unitOfMeasure: g
+              value: 25
+            unitQuantity: 1
+            unitValue: 20.500000
+            currencyCode: USD
+            tariffCode: "9503004100"
+            tariffDescription: Stuffed toys.
+          fees: 20.120000
+        shipperExporterVatNo: GB999999973
+        recipientImportersVatNo: GB888999964
+        originalExportShipmentNo: "4235454454"
+        documentsOnly: false
+        shipmentDescription: Personal items
+        comments: Personal items
+        invoiceDate: "2018-08-28"
+        termsOfDelivery: DAP
+        purchaseOrderRef: "910487552"
+    additionalProperties: false
+  shipmentBarcodeItems:
+    type: array
+    items:
+      $ref: '#/definitions/shipmentBarcodeItem'
+    description: Array of Shipment Barcode Item. Will be returned as part of create
+      shipment response. This needs to be filled up only for create offline shipment
+      requests.
+  shipmentBarcodeItem:
+    properties:
+      shipmentNumber:
+        description: For barcoded products i.e. you have used offline barcoding operation,
+          this field will contain the 1D barcode number sent in the request. For nonbarcoded
+          products, this field will contain the Shipping API V2 internal reference
+          number. For requests where there are multiple items, there will be a corresponding
+          shipmentNumber for each item.
+        type: string
+        example: HY188980152GB
+      itemID:
+        description: This is the 2D item ID used in the label
+        type: string
+        example: "1000076"
+      status:
+        description: This will be set to 'Allocated' or 'Printed'. 'Printed' when
+          label is also returned when creating shipment, otherwise 'Allocated' set.
+          For the full set of values the shipment status can hold, please go to Pro
+          Shipping V2 API page on the Royal Mail API (Developer) Portal and refer
+          to the Shipping API Reference Data sheet.
+        type: string
+        example: Printed
+      validFrom:
+        description: Datetime value associated with when the shipment status code
+          is valid from.
+        type: string
+        format: date
+        example: "2015-02-09T09:52:06.000+02:00"
+      label:
+        description: "Label in PDF format and Base64 encoded. Depending on the scenarios
+          described below, the label contents returned here can vary depending on
+          what is enabled in the Pro Shipping GUI.\n  \nFor both domestic & international
+          shipments:\n\n1. A standard outward shipment label is returned if combined
+          Create Shipment/ Include Label Image are enabled.\n\nFor domestic shipment
+          only:\n\n2. If #1. above is enabled and Include Returns Label is also enabled,
+          then two shipments will be created and a standard outward shipment label
+          is created for the outward shipment and a returns label is created for the
+          return shipment.\n\nFor international shipment only:\n\n3. If #1. above
+          is enabled and Include CN Documentation is also enabled, then the label
+          also includes the CN23 Customs document as well as the standard outward
+          shipment label. Note, no Commercial Invoice is returned."
+        type: string
+        example: JVBERi0xLjYKJeTjz9IKMSAwIG9iagpbL1BERi9JbWFnZUIvSW1hZ2VDL0ltYWdlSS9UZXh0XQplbmRvYmoKNCAwIG9iago8PC9MZW5ndGggNSAwIFIKL0ZpbHRlci9GbGF0ZURlY29kZQo+PgpzdHJlYW0KeJwDAAAAAAEKZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjgKZW5kb2JqCjYgMCBvYmoKPDwv+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6SlpqeoMCBSCi9JbmZvIDMyIDAgUgovSURbPDZDM0VCNEREOEE2OTNEMTVDQUE4NkRCODJCNTc2MTIzPjw2QzNFQjRERDhBNjkzRDE1Q0FBODZEQjgyQjU3NjEyMz5dCj4+CnN0YXJ0eHJlZgoxMzI1OTYKJSVFT0YK
+    required:
+    - status
+    - itemID
+    - shipmentNumber
+    additionalProperties: false
+  shipmentWithBarcodeAndWeight:
+    properties:
+      shipmentItems:
+        $ref: '#/definitions/shipmentBarcodeItems'
+      weight:
+        $ref: '#/definitions/measurement'
+    additionalProperties: false
+  shipmentRequestItem:
+    description: Item details. Up to 9 shipments can be created with one request.
+    properties:
+      offlineShipment:
+        description: Not Currently Available. For offline barcoding shipments.
+        type: array
+        items:
+          $ref: '#/definitions/offlineShipment'
+      count:
+        description: Number of items for the associated weight
+        type: integer
+        example: 1
+      weight:
+        $ref: '#/definitions/measurement'
+    required:
+    - weight
+    - count
+    additionalProperties: false
+  shipmentRequestItemInternational:
+    description: Item details. Up to 9 shipments can be created with one request.
+    properties:
+      count:
+        description: Number of items for the associated weight
+        type: integer
+        example: 1
+      weight:
+        $ref: '#/definitions/measurement'
+    required:
+    - weight
+    - count
+    additionalProperties: false
+  token:
+    properties:
+      token:
+        description: JSON Web Token(JWT) security token.
+        type: string
+        example: eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MjU4NzQ3MjQsImlhdCI6MTUyNTg2MDMyNCwidXNlcklkIjoiSE9VTlNMT1cxIiwicGFzc3dvcmQiOiJyWWJHbUZqb3kzNU85M2xia01zazFwbmVpSVE9In0.D662-SDHQxP1ZqUOc9JHmOIW96ICV0Z-Co8eYRZiSwU
+    additionalProperties: false
+consumes:
+- application/json
+produces:
+- application/json
+parameters:
+  shipmentNumber:
+    name: shipmentNumber
+    type: string
+    required: true
+    in: path
+  X-RMG-User-Name:
+    name: X-RMG-User-Name
+    type: string
+    required: true
+    in: header
+    description: User Name
+  X-RMG-Password:
+    name: X-RMG-Password
+    type: string
+    required: true
+    in: header
+    description: Encoded SHA-1 hashed password.
+  outputFormat:
+    name: outputFormat
+    type: string
+    required: true
+    in: query
+    description: "Label Format Type. The content of the response. \n>\nUnspecified
+      / PDF: returns the standard Base64 Encoded PDF Label \n\nDS: returns a data
+      stream\n\nDSPDF: returns both the data stream and the Base64 Encoded PDF Label.\n\nPNG:
+      returns Base64 Encoded PNG images of the 2D Data Matric and 1D Linear Barcode.\n\nDSPNG:
+      returns both the data stream and the Base64 Encoded PNG images of the 2D Data
+      Matric and 1D Linear Barcode."
+  X-RMG-Auth-Token:
+    name: X-RMG-Auth-Token
+    type: string
+    required: true
+    in: header
+    description: Authorisation token required to invoke this operation. Can be retrieved
+      by invoking the **/token** operation.
+responses:
+  400BadRequestResponse:
+    description: "Bad request. \nSee the *ErrorCodes* worksheet in the *Shipping Reference
+      Data* attachment for detailed descriptions of these business errors.\n    "
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "400"
+        httpMessage: Bad Request
+        errors:
+        - errorCode: E1088
+          errorDescription: The serviceType specified is not valid
+          errorCause: Bad Request
+  401UnauthorizedResponse:
+    description: "Unauthorized.\nThe provided security credentials are invalid. The
+      following possible 401 error messages can be returned.\n\n--------------------------------------------------------------------\n\nhttpcode
+      --------| 401\n      \nhttpMessage -----| Unauthorized\n\nmoreInformation -|
+      Invalid client id or secret.\n\n--------------------------------------------------------------------\n\nhttpcode
+      --------| 401\n      \nhttpMessage -----| JWT validation failed\n\nerrorCode
+      -------| E0015\n\nerrorDescription | Access denied\n\nerrorCause ------| Invalid
+      or expired JWT token\n\nerrorResolution -| Please request for a new JWT token "
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "401"
+        httpMessage: JWT validation failed
+        errors:
+        - errorCode: E0015
+          errorDescription: Access denied
+          errorCause: Invalid or expired JWT token
+          errorResolution: Please request for a new JWT token
+  403ForbiddenResponse:
+    description: "Access denied. \nInvalid username or password."
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "403"
+        httpMessage: Access denied
+        errors:
+        - errorCode: E0007
+          errorDescription: Authorization Failure.
+          errorCause: Access denied
+          errorResolution: Please contact Customer solutions team.
+  404NotFoundResponse:
+    description: "Not Found. \nSee the *ErrorCodes* worksheet in the *Shipping Reference
+      Data* attachment for detailed descriptions of these business errors.\nThe following
+      API Gateway error can also be returned.\n--------------------------------------------------------------------\nhttpcode
+      --------| 404\n      \nhttpMessage -----| Not Found\nmoreInformation -| API
+      not found for requested URI"
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "404"
+        httpMessage: Not Found
+        errors:
+        - errorCode: E1124
+          errorDescription: shipmentNumber [ShipmentNumber] not found
+          errorCause: Not Found
+  405MethodNotAllowedResponse:
+    description: |-
+      Method Not Allowed.
+      Requested method is not supported for this URI.
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "405"
+        httpMessage: Method Not Allowed
+        moreInformation: The method is not allowed for the requested URL
+  409ConflictResponse:
+    description: "Conflict. \nSee the *ErrorCodes* worksheet in the *Shipping Reference
+      Data* attachment for detailed descriptions of these business errors.\n   "
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "409"
+        httpMessage: Conflict
+        errors:
+        - errorCode: E1149
+          errorDescription: Shipment numbers are exhausted, so new shipments cannot
+            be created. Royal Mail is aware of this problem and will be uploading
+            new barcode prefixes shortly.
+          errorCause: Conflict
+  429TooManyRequestsResponse:
+    description: "Too Many Requests. \nRate limit exceeded. The following possible
+      429 error messages can be returned.\n\n--------------------------------------------------------------------\n\nhttpcode
+      --------| 429\n      \nhttpMessage -----| Too Many Requests\n\nmoreInformation
+      -| The rate limit has been exceeded for the plan or operation being used.\n\n--------------------------------------------------------------------\n\nhttpcode
+      --------| 429\n      \nhttpMessage -----| Configured Throttling Rate for Service
+      Exceeded. Please try again later.\n\nerrorCode -------| E0010\n\nerrorDescription
+      | Configured Throttling Rate for Service Exceeded. Please try again later.\n\nerrorCause
+      ------| Configured Throttling Rate for Service Exceeded. Please try again later.\n\nerrorResolution
+      -| Please contact Customer solutions team to discuss throttling rate."
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "429"
+        httpMessage: Too Many Requests
+        moreInformation: The rate limit has been exceeded for the plan or operation
+          being used.
+  5XXServerErrorResponse:
+    description: |-
+      All server errors EXCEPT for 503.
+      An unexpected error has occurred.
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "500"
+        httpMessage: Business Fulfilment System Returned an Error Response
+        moreInformation: ""
+        errors:
+        - errorCode: E0009
+          errorDescription: Internal server error
+          errorCause: Business Fulfilment System Returned an Error Response
+          errorResolution: Please contact Customer solutions team.
+  503ServiceUnavailableResponse:
+    description: "Service Unavailable. \nThe API is currently unavailable.  The following
+      503 error messages\ncan be returned.\n\n--------------------------------------------------------------------\n\nhttpcode
+      ----| 503\n\nhttpMessage -| Service Unavailable\n\n--------------------------------------------------------------------\n\nhttpcode
+      --------| 503\n  \nhttpMessage -----| Service Unavailable\n\nerrorCode -------|
+      E0001\n\nerrorDescription | Service Unavailable\n\nerrorCause ------| Service
+      Unavailable\n\nerrorResolution -| Please report the problem to the Customer
+      Solutions team.\n\n--------------------------------------------------------------------\n\nhttpcode
+      --------| 503\n \nhttpMessage -----| Service Temporarily Unavailable. Please
+      try again later.\n\nerrorCode -------| E0002\n\nerrorDescription | Service Temporarily
+      Unavailable. Please try again later.\n\nerrorCause ------| Service temporarily
+      unavailable\n\nerrorResolution -| Please retry the request at a later stage."
+    schema:
+      $ref: '#/definitions/errorResponse'
+    examples:
+      application/json:
+        httpCode: "503"
+        httpMessage: Service Unavailable
+schemes:
+- https
+basePath: /shipping/v2
+x-ibm-endpoints:
+- endpointUrl: https://api.royalmail.net
+  description: Custom API Endpoint
+  type:
+  - production
+  - development
+...

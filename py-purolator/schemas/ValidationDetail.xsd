@@ -1,0 +1,36 @@
+<xsd:schema elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF" 
+    xmlns:tns="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF">
+    <xsd:complexType name="ArrayOfValidationDetail">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="ValidationDetail" nillable="true" type="tns:ValidationDetail"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfValidationDetail" nillable="true" type="tns:ArrayOfValidationDetail"/>
+    <xsd:complexType name="ValidationDetail">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>This class holds the results of a single validation. Effectively, it's the same as a ValidationResult, but creating a separate class allows us to mark up a DataContract with impunity.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="Key" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Get or set a name describing the location of the validation result.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="Message" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Get or set a message describing the validation failure.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="Tag" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Get or set a value characterizing the fault.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ValidationDetail" nillable="true" type="tns:ValidationDetail"/>
+</xsd:schema>

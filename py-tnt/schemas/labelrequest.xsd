@@ -1,0 +1,42 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="labelcommon.xsd"/>
+  <xsd:element name="labelRequest" nillable="false">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="consignment" type=" labelConsignmentsType " nillable="false" minOccurs="1" maxOccurs="5"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="labelConsignmentsType">
+    <xsd:sequence>
+      <xsd:element name="consignmentIdentity" type=" consignmentIdentityType " minOccurs="1"/>
+      <xsd:element name="collectionDateTime" type="xsd:dateTime " minOccurs="1"/>
+      <xsd:element name="sender" type=" nameAndAddressRequestType " minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="delivery" type=" nameAndAddressRequestType " minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="contact" type=" contactType " minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="product" type=" productType " minOccurs="1"/>
+      <xsd:element name="account" type=" accountType " minOccurs="1"/>
+      <xsd:element name="cashAmount" type=" doubleTwoDecimalPlaces " minOccurs="0"/>
+      <xsd:element name="cashCurrency" type="xsd:string " minOccurs="0"/>
+      <xsd:element name="cashType" type=" cashTypeEnum " minOccurs="0"/>
+      <xsd:element name="ncolNumber" type="xsd:string " minOccurs="0"/>
+      <xsd:element name="specialInstructions" type="xsd:string " minOccurs="0"/>
+      <xsd:element name="bulkShipment" type=" booleanEnum " minOccurs="0"/>
+      <xsd:element name="customControlled" type=" booleanEnum " minOccurs="0"/>
+      <xsd:element name="termsOfPayment" type=" senderReceiverEnum " minOccurs="0"/>
+      <xsd:element name="totalNumberOfPieces" type="xsd:int " minOccurs="1"/>
+      <xsd:element name="pieceLine" type=" pieceLineType " minOccurs="1" maxOccurs="99"/>
+    </xsd:sequence>
+    <xsd:attribute name="key" type="xsd:string " use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="productType">
+    <xsd:sequence>
+      <xsd:element name="lineOfBusiness" type=" integerMin0Max9 "/>
+      <xsd:element name="groupId" type=" integerMin0Max9 "/>
+      <xsd:element name="subGroupId" type=" integerMin0Max9 "/>
+      <xsd:element name="id" type=" stringMaxLength4 "/>
+      <xsd:element name="type" type=" productTypeEnum "/>
+      <xsd:element name="option" type=" stringMaxLength4 " minOccurs="0" maxOccurs="5"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
