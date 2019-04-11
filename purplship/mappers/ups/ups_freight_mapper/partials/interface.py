@@ -1,16 +1,13 @@
-from typing import Tuple, List, Union
+from typing import Tuple, List
 from functools import reduce
 from lxml import etree
 from purplship.mappers.ups import UPSClient
 from purplship.domain import Types as T
 from pyups import (
     freight_rate as Rate,
-    package_rate as PRate,
-    package_track as Track,
     UPSSecurity as Security,
     error as Err,
     freight_ship as FShip,
-    package_ship as PShip,
 )
 
 
@@ -26,24 +23,9 @@ class UPSCapabilities:
     ) -> Rate.FreightRateRequest:
         pass
 
-    def create_package_rate_request(
-        self, payload: T.ShipmentRequest
-    ) -> PRate.RateRequest:
-        pass
-
-    def create_track_request(
-        self, payload: T.TrackingRequest
-    ) -> List[Track.TrackRequest]:
-        pass
-
     def create_freight_ship_request(
         self, payload: T.ShipmentRequest
     ) -> FShip.FreightShipRequest:
-        pass
-
-    def create_package_ship_request(
-        self, payload: T.ShipmentRequest
-    ) -> PShip.ShipmentRequest:
         pass
 
     """ Response Parser """
@@ -53,22 +35,7 @@ class UPSCapabilities:
     ) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
         pass
 
-    def parse_package_rate_response(
-        self, response: etree.ElementBase
-    ) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
-        pass
-
-    def parse_track_response(
-        self, response: etree.ElementBase
-    ) -> Tuple[List[T.TrackingDetails], List[T.Error]]:
-        pass
-
     def parse_freight_shipment_response(
-        self, response: etree.ElementBase
-    ) -> T.ShipmentDetails:
-        pass
-
-    def parse_package_shipment_response(
         self, response: etree.ElementBase
     ) -> T.ShipmentDetails:
         pass

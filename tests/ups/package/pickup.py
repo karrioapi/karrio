@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from pyups.freight_pickup import FreightPickupRequest, FreightCancelPickupRequest
-from tests.ups.fixture import proxy
+from tests.ups.package.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
 

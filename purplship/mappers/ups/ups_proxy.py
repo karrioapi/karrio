@@ -1,11 +1,11 @@
-from typing import Union
+from typing import Union, cast
 from lxml import etree
 from gds_helpers import to_xml, export, request as http, bundle_xml, exec_parrallel
-from pysoap.envelope import Body, Envelope, Header
 from pysoap import create_envelope, clean_namespaces
 from purplship.domain.proxy import Proxy
-from purplship.mappers.ups.ups_mapper import UPSMapper
-from purplship.mappers.ups.ups_client import UPSClient
+from purplship.mappers.ups.ups_freight_mapper import UPSMapper as UPSFreightMapper
+from purplship.mappers.ups.ups_package_mapper import UPSMapper as UPSPackageMapper
+from purplship.mappers.ups.ups_client import UPSClient, UPSApi
 from pyups.freight_rate import FreightRateRequest
 from pyups.package_rate import RateRequest
 from pyups.package_track import TrackRequest
@@ -13,16 +13,24 @@ from pyups.freight_ship import FreightShipRequest
 from pyups.package_ship import ShipmentRequest
 from pyups.freight_pickup import FreightPickupRequest, FreightCancelPickupRequest
 
+UPSMapper = Union[UPSPackageMapper, UPSFreightMapper]
+MAPPERS = {
+    UPSApi.Package: UPSPackageMapper,
+    UPSApi.Freight: UPSFreightMapper
+}
+
 
 class UPSProxy(Proxy):
     def __init__(self, client: UPSClient, mapper: UPSMapper = None):
         self.client: UPSClient = client
-        self.mapper: UPSMapper = UPSMapper(client) if mapper is None else mapper
+        self.mapper: UPSMapper = cast(
+            UPSMapper, mapper or MAPPERS[UPSApi(client.api)](client)
+        )
 
     def get_quotes(
-        self, RateRequest_: Union[RateRequest, FreightRateRequest]
+        self, rate_request_: Union[RateRequest, FreightRateRequest]
     ) -> etree.ElementBase:
-        is_freight = isinstance(RateRequest_, FreightRateRequest)
+        is_freight = isinstance(rate_request_, FreightRateRequest)
 
         if is_freight:
             url_ = "%s/FreightRate" % self.client.server_url
@@ -57,14 +65,15 @@ class UPSProxy(Proxy):
                 "\n", " "
             )
 
-        envelopeStr = export(
+        envelope_str = export(
             create_envelope(
-                header_content=self.mapper.Security, body_content=RateRequest_
+                header_content=self.mapper.Security,
+                body_content=rate_request_
             ),
             namespacedef_=namespace_,
         )
-        xmlStr = clean_namespaces(
-            envelopeStr,
+        xml_str = clean_namespaces(
+            envelope_str,
             envelope_prefix="tns:",
             header_child_prefix="upss:",
             header_child_name="UPSSecurity",
@@ -73,7 +82,7 @@ class UPSProxy(Proxy):
         ).replace("common:Code", "rate:Code")
         result = http(
             url=url_,
-            data=bytearray(xmlStr, "utf-8"),
+            data=bytearray(xml_str, "utf-8"),
             headers={"Content-Type": "application/xml"},
             method="POST",
         )
@@ -130,7 +139,8 @@ class UPSProxy(Proxy):
 
         envelopeStr = export(
             create_envelope(
-                header_content=self.mapper.Security, body_content=ShipRequest_
+                header_content=self.mapper.Security,
+                body_content=ShipRequest_
             ),
             namespacedef_=namespace_,
         )
