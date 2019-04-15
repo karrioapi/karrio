@@ -1,3 +1,2 @@
-from .ups_client import UPSClient
-from .ups_mapper import UPSMapper
-from .ups_proxy import UPSProxy
+from .ups_client import UPSClient, UPSApi
+from .ups_proxy import UPSProxy, UPSFreightMapper, UPSPackageMapper

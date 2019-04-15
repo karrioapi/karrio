@@ -3,7 +3,7 @@ from unittest.mock import patch
 from gds_helpers import to_xml, to_dict, export
 from pyups.package_track import TrackRequest
 from purplship.domain.Types import TrackingRequest
-from tests.ups.fixture import proxy
+from tests.ups.package.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 
 

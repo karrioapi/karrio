@@ -1,10 +1,10 @@
 import urllib.parse
-from typing import List, Union, Type
+from typing import List, Union, Type, cast
 from base64 import b64encode
 from gds_helpers import request as http, jsonify, to_dict
 from purplship.mappers.aups.aups_logistic_mapper import AustraliaPostMapper as AustraliaPostLogisticMapper
 from purplship.mappers.aups.aups_postage_mapper import AustraliaPostMapper as AustraliaPostPostageMapper
-from purplship.mappers.aups.aups_client import AustraliaPostClient, AustraliaPostApis
+from purplship.mappers.aups.aups_client import AustraliaPostClient, AustraliaPostApi
 from purplship.domain.proxy import Proxy
 from pyaups.shipping_price_request import ShippingPriceRequest
 from pyaups.domestic_letter_postage import ServiceRequest as DomesticLetterServiceRequest
@@ -20,18 +20,16 @@ PostageRequest = Union[
     IntlParcelServiceRequest
 ]
 MAPPERS = {
-    AustraliaPostApis.Logistic: AustraliaPostLogisticMapper,
-    AustraliaPostApis.Postage: AustraliaPostPostageMapper
+    AustraliaPostApi.Logistic: AustraliaPostLogisticMapper,
+    AustraliaPostApi.Postage: AustraliaPostPostageMapper
 }
 
 
 class AustraliaPostProxy(Proxy):
     def __init__(self, client: AustraliaPostClient, mapper: Mapper = None):
         self.client: AustraliaPostClient = client
-        self.mapper = (
-            MAPPERS[AustraliaPostApis(client.api)](client)
-            if mapper is None else
-            mapper
+        self.mapper: Mapper = cast(
+            Mapper, mapper or MAPPERS[AustraliaPostApi(client.api)](client)
         )
         self.authorization = b64encode(
             f"{self.client.api_key}:{self.client.password}".encode("utf-8")

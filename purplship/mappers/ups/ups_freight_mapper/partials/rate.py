@@ -8,8 +8,7 @@ from purplship.mappers.ups.ups_units import (
     WeightUnit,
     PackagingType,
     ServiceOption,
-    RatingOption,
-    ShippingServiceCode
+    RatingOption
 )
 
 
@@ -65,74 +64,6 @@ class UPSMapperPartial(UPSMapperBase):
                 duties_and_taxes=reduce(lambda r, c: r + c.amount, Surcharges_, 0.0),
                 discount=reduce(lambda r, c: r + c.amount, Discounts_, 0.0),
                 extra_charges=extra_charges,
-            )
-        ]
-
-    def parse_package_rate_response(
-        self, response: etree.ElementBase
-    ) -> Tuple[List[T.QuoteDetails], List[T.Error]]:
-        rate_replys = response.xpath(".//*[local-name() = $name]", name="RatedShipment")
-        rates: List[T.QuoteDetails] = reduce(
-            self._extract_package_rate, rate_replys, []
-        )
-        return (rates, self.parse_error_response(response))
-
-    def _extract_package_rate(
-        self, rates: List[T.QuoteDetails], detailNode: etree.ElementBase
-    ) -> List[T.QuoteDetails]:
-        rate = PRate.RatedShipmentType()
-        rate.build(detailNode)
-
-        if rate.NegotiatedRateCharges != None:
-            total_charges = (
-                rate.NegotiatedRateCharges.TotalChargesWithTaxes
-                or rate.NegotiatedRateCharges.TotalCharge
-            )
-            taxes = rate.NegotiatedRateCharges.TaxCharges
-            itemized_charges = rate.NegotiatedRateCharges.ItemizedCharges + taxes
-        else:
-            total_charges = rate.TotalChargesWithTaxes or rate.TotalCharges
-            taxes = rate.TaxCharges
-            itemized_charges = rate.ItemizedCharges + taxes
-
-        extra_charges = itemized_charges + [rate.ServiceOptionsCharges]
-
-        arrival = PRate.PickupType()
-        [
-            arrival.build(arrival) for arrival in
-            detailNode.xpath(".//*[local-name() = $name]", name="Arrival")
-        ]
-        currency_ = next(c.text for c in detailNode.xpath(
-            ".//*[local-name() = $name]", name="CurrencyCode"
-        ))
-
-        return rates + [
-            T.QuoteDetails(
-                carrier=self.client.carrier_name,
-                currency=currency_,
-                service_name=str(ShippingServiceCode(rate.Service.Code).name),
-                service_type=rate.Service.Code,
-                base_charge=float(rate.TransportationCharges.MonetaryValue),
-                total_charge=float(total_charges.MonetaryValue),
-                duties_and_taxes=reduce(
-                    lambda total, charge: total + float(charge.MonetaryValue),
-                    taxes or [],
-                    0.0,
-                ),
-                discount=None,
-                extra_charges=reduce(
-                    lambda total, charge: total
-                    + [
-                        T.ChargeDetails(
-                            name=charge.Code,
-                            amount=float(charge.MonetaryValue),
-                            currency=charge.CurrencyCode,
-                        )
-                    ],
-                    [charge for charge in extra_charges if charge != None],
-                    [],
-                ),
-                delivery_date=str(arrival.Date)
             )
         ]
 
