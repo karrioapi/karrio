@@ -5,7 +5,7 @@ from purplship.domain.client import Client
 from enum import Enum
 
 
-class AustraliaPostApis(Enum):
+class AustraliaPostApi(Enum):
     Logistic = "Logistic"
     Postage = "Postage"
 
@@ -19,4 +19,4 @@ class AustraliaPostClient(Client):
     account_number: str = None  # Required only for Logistic API
     carrier_name: str = "AustraliaPost"
     server_url: str = "https://digitalapi.auspost.com.au"
-    api: str = AustraliaPostApis.Logistic.name
+    api: str = AustraliaPostApi.Logistic.name

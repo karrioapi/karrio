@@ -177,11 +177,15 @@ class PickupRequest:
 
     country_code: str = None
 
-    """ required for pickup modification """
-    confirmation_number: str = None
-
     address_lines: List[str] = []
     extra: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class PickupUpdateRequest(PickupRequest):
+    """pickup update request type."""
+
+    confirmation_number: str = None
 
 
 @attr.s(auto_attribs=True)

@@ -8,6 +8,7 @@ from pydhl.modify_pickup_global_res_20 import ModifyPUResponse
 from pydhl import pickupdatatypes_global_20 as PickpuDataTypes
 
 from .interface import T, DHLMapperBase
+from purplship.mappers.dhl.dhl_units import CountryRegion
 
 
 class DHLMapperPartial(DHLMapperBase):
@@ -48,26 +49,28 @@ class DHLMapperPartial(DHLMapperBase):
         Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(
             payload
         )
+        country_code = payload.country_code or "AM"
 
         return BookPURequest(
             Request=self.init_request(),
             schemaVersion="1.0",
-            RegionCode=payload.extra.get("RegionCode") or "AM",
+            RegionCode=payload.extra.get("RegionCode") or CountryRegion[country_code].value,
             Requestor=Requestor_,
             Place=Place_,
             PickupContact=PickupContact_,
             Pickup=Pickup_,
         )
 
-    def create_modify_purequest(self, payload: T.PickupRequest) -> ModifyPURequest:
+    def create_modify_purequest(self, payload: T.PickupUpdateRequest) -> ModifyPURequest:
         Requestor_, Place_, PickupContact_, Pickup_ = self._create_pickup_request(
             payload
         )
+        country_code = payload.country_code or "AM"
 
         return ModifyPURequest(
             Request=self.init_request(),
             schemaVersion="1.0",
-            RegionCode=payload.extra.get("RegionCode") or "AM",
+            RegionCode=payload.extra.get("RegionCode") or CountryRegion[country_code].value,
             ConfirmationNumber=payload.confirmation_number,
             Requestor=Requestor_,
             Place=Place_,

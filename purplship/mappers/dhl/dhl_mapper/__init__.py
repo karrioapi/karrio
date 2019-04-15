@@ -46,7 +46,7 @@ class DHLMapper(
         return self.create_book_purequest(payload)
 
     def modify_pickup_request(
-        self, payload: T.PickupRequest
+        self, payload: T.PickupUpdateRequest
     ) -> ModifPUReq.ModifyPURequest:
         return self.create_modify_purequest(payload)
 

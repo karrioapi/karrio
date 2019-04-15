@@ -4,10 +4,9 @@ from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_20 import CancelPURequest
 from gds_helpers import to_xml, export, to_dict
-from purplship.domain.Types import PickupCancellationRequest, PickupRequest
+from purplship.domain.Types import PickupCancellationRequest, PickupRequest, PickupUpdateRequest
 from tests.dhl.fixture import proxy
 from tests.utils import strip
-import time
 from purplship.mappers.dhl.dhl_proxy import _reformat_time
 
 
@@ -37,7 +36,7 @@ class TestDHLPickup(unittest.TestCase):
         )
 
     def test_create_modify_pickup_request(self):
-        payload = PickupRequest(**modification_data)
+        payload = PickupUpdateRequest(**modification_data)
         ModifyPURequest_ = proxy.mapper.modify_pickup_request(payload)
         # remove MessageTime for testing purpose
         ModifyPURequest_.Request.ServiceHeader.MessageTime = None

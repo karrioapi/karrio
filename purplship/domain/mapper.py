@@ -50,7 +50,7 @@ class Mapper(ABC):
         """ Create a carrier specific pickup request xml data from payload """
         raise Exception("Not Supported")
 
-    def modify_pickup_request(self, payload: T.PickupRequest):
+    def modify_pickup_request(self, payload: T.PickupUpdateRequest):
         """ Create a carrier specific pickup modification request data from payload """
         raise Exception("Not Supported")
 

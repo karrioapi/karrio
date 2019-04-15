@@ -42,7 +42,7 @@ class DHLCapabilities:
         pass
 
     def create_modify_purequest(
-        self, payload: T.PickupRequest
+        self, payload: T.PickupUpdateRequest
     ) -> ModifPUReq.ModifyPURequest:
         pass
 

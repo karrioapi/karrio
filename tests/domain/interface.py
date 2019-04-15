@@ -4,7 +4,7 @@ from unittest.mock import patch
 from tests.caps.fixture import proxy as caps
 from tests.caps.shipment import shipment_data, ShipmentRequestXML
 from tests.caps.tracking import TrackingRequestURL
-from tests.ups.quote import rate_req_data, RateRequestXML
+from tests.ups.package.quote import rate_req_data, RateRequestXML
 from tests.utils import strip
 
 ups = purplship.gateway["ups"].create(
