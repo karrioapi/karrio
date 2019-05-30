@@ -1,6 +1,9 @@
 # PurplShip
 
-[![Build Status](https://travis-ci.org/PurplShip/purplship.svg?branch=master)](https://travis-ci.org/PurplShip/purplship) [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship) [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Build Status](https://travis-ci.org/PurplShip/purplship.svg?branch=master)](https://travis-ci.org/PurplShip/purplship)
+[![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![PurplShip Slack](https://img.shields.io/badge/slack-purplship-purple.svg)](https://join.slack.com/t/purplship/shared_invite/enQtNjUwOTIzMjc3NDYxLTZjYTdjYTM5YWRhNjM3OTMxY2FmOTE2ZmU0YmUyYmRjYTc5NjA2NmFlNzJlZDg4OGFkNzRmMjAwZDc5MjA1NDA)
 
 ## Overview
 
