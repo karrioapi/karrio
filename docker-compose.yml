@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+  web:
+    image: purplship/purplship-server:2019.5.0
+    build: .
+    command: bash -c "(echo \"from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'pass')\" | python manage.py shell) > /dev/null 2>&1; python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DEBUG_MODE=True
+      - APP_STAGE=containerized
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
