@@ -60,7 +60,7 @@ class TestDHLPickup(unittest.TestCase):
             export(self.CancelPURequest).replace("dhlPickup:", ""),
         )
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_request_pickup(self, http_mock):
         proxy.request_pickup(self.PURequest)
 
@@ -72,7 +72,7 @@ class TestDHLPickup(unittest.TestCase):
             ),
         )
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_modify_pickup(self, http_mock):
         proxy.modify_pickup(self.ModifyPURequest)
 
@@ -84,7 +84,7 @@ class TestDHLPickup(unittest.TestCase):
             ),
         )
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_cancel_pickup(self, http_mock):
         proxy.cancel_pickup(self.CancelPURequest)
 

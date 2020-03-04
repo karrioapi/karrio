@@ -20,7 +20,7 @@ class TestFeDexTracking(unittest.TestCase):
 
         self.assertEqual(export(TrackRequest_), export(self.TrackRequest))
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         proxy.get_tracking(self.TrackRequest)
 

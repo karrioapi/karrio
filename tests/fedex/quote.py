@@ -34,7 +34,7 @@ class TestFeDexQuote(unittest.TestCase):
         RateRequest_.RequestedShipment.ShipTimestamp = None
         self.assertEqual(export(RateRequest_), export(self.RateRequest))
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.RateRequest)
 

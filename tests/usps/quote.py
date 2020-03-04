@@ -28,7 +28,7 @@ class TestUSPSQuote(unittest.TestCase):
         rate_request = proxy.mapper.create_quote_request(payload)
         self.assertEqual(strip(export(rate_request)), strip(INTL_RATE_REQUEST_STR))
 
-    @patch("purplship.mappers.usps.usps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.usps.usps_proxy.http", return_value="<a></a>")
     @patch("urllib.parse.urlencode", return_value="")
     def test_get_quotes(self, encode_mock, http_mock):
         proxy.get_quotes(self.RateRequest)
@@ -36,7 +36,7 @@ class TestUSPSQuote(unittest.TestCase):
         data = encode_mock.call_args[0][0]
         self.assertEqual(strip(jsonify(data)), strip(jsonify(RATE_REQUEST)))
 
-    @patch("purplship.mappers.usps.usps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.usps.usps_proxy.http", return_value="<a></a>")
     @patch("urllib.parse.urlencode", return_value="")
     def test_get_intl_quotes(self, encode_mock, http_mock):
         proxy.get_quotes(self.IntlRateRequest)

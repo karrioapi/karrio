@@ -44,14 +44,14 @@ class TestCanadaPostShipment(unittest.TestCase):
         NCShipment_.delivery_spec.parcel_characteristics.document = None
         self.assertEqual(export(NCShipment_), export(self.NCShipment))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.caps.caps_proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         proxy.create_shipment(self.Shipment)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(ShipmentRequestXML))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.caps.caps_proxy.http", return_value="<a></a>")
     def test_create_ncshipment(self, http_mock):
         proxy.create_shipment(self.NCShipment)
 
@@ -71,7 +71,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         self.assertEqual(to_dict(parsed_response), to_dict(NCParsedShipmentResponse))
 
     @patch(
-        "purplship.mappers.caps.caps_proxy.http", return_value=MockedShipmentResponseXML
+        "purplship.carriers.caps.caps_proxy.http", return_value=MockedShipmentResponseXML
     )
     def test_get_info_calls(self, http_mock):
         with patch.object(
@@ -83,7 +83,7 @@ class TestCanadaPostShipment(unittest.TestCase):
             link = xml_tostring(get_info_mock.call_args[0][0])
             self.assertEqual(strip(link), strip(ShipmentPriceLinkXML))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.caps.caps_proxy.http", return_value="<a></a>")
     def test_get_info(self, http_mock):
         proxy._get_info(to_xml(ShipmentPriceLinkXML))
 

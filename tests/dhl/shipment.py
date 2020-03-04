@@ -21,7 +21,7 @@ class TestDHLShipment(unittest.TestCase):
         ShipmentRequest_.ShipmentDetails.Date = None
         self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         proxy.create_shipment(self.ShipmentRequest)
 

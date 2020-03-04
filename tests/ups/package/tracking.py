@@ -20,7 +20,7 @@ class TestUPSTracking(unittest.TestCase):
 
         self.assertEqual(export(TrackRequests_[0]), export(self.TrackRequest))
 
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         proxy.get_tracking([self.TrackRequest])
 

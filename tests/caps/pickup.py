@@ -11,7 +11,7 @@ class TestCanadaPostPickup(unittest.TestCase):
         self.PickupRequest = PickupRequestDetailsType()
         self.PickupRequest.build(to_xml(PickupRequestXml))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.caps.caps_proxy.http", return_value="<a></a>")
     def test_request_pickup(self, http_mock):
         proxy.request_pickup(self.PickupRequest)
 

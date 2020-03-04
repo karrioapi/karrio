@@ -20,14 +20,14 @@ class TestFedExPickup(unittest.TestCase):
             get_node_from_xml(PickupCancellationRequestXML, "CancelPickupRequest")
         )
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_request_pickup(self, http_mock):
         proxy.request_pickup(self.PickupRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(PickupRequestXml))
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_cancel_pickup(self, http_mock):
         proxy.cancel_pickup(self.PickupCancellation)
 

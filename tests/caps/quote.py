@@ -33,7 +33,7 @@ class TestCanadaPostQuote(unittest.TestCase):
 
         self.assertEqual(export(mailing_scenario_), export(self.mailing_scenario))
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.caps.caps_proxy.http", return_value="<a></a>")
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.mailing_scenario)
 

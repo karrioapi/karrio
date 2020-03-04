@@ -21,7 +21,7 @@ class TestFedExShipment(unittest.TestCase):
         ShipmentRequest_.RequestedShipment.ShipTimestamp = None
         self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
 
-    @patch("purplship.mappers.fedex.fedex_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.fedex.fedex_proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         proxy.create_shipment(self.ShipmentRequest)
 

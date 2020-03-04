@@ -1,4 +1,9 @@
-"""PurplShip Library."""
+try:
+    from purplship.freight import *
+except Exception:
+    pass
 
-from purplship.mappers.gateway import gateway
-from purplship.domain.interface import pickup, rating, shipment, tracking
+try:
+    from purplship.shipping import *
+except Exception:
+    pass

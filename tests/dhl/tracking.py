@@ -23,7 +23,7 @@ class TestDHLTracking(unittest.TestCase):
             export(KnownTrackingRequest_), export(self.KnownTrackingRequest)
         )
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         proxy.get_tracking(self.KnownTrackingRequest)
 

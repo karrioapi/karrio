@@ -1,1 +1,0 @@
-from .rate import AustraliaPostMapperPartial as AustraliaPostRateMapperPartial

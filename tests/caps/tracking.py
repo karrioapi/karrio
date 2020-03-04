@@ -16,7 +16,7 @@ class TestCanadaPostTracking(unittest.TestCase):
 
         self.assertEqual(tracking_pins, self.tracking_numbers)
 
-    @patch("purplship.mappers.caps.caps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.caps.caps_proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         proxy.get_tracking(self.tracking_numbers)
 

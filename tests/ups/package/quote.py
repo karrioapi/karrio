@@ -20,7 +20,7 @@ class TestUPSQuote(unittest.TestCase):
             export(self.RateRequest).replace("common:Code", "rate:Code"),
         )
 
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
     def test_package_get_quotes(self, http_mock):
         proxy.get_quotes(self.RateRequest)
 

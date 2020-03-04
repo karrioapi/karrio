@@ -18,7 +18,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
             to_dict(shipping_price_request), to_dict(self.ShippingPriceRequest)
         )
 
-    @patch("purplship.mappers.aups.aups_proxy.http", return_value="{}")
+    @patch("purplship.carriers.aups.aups_proxy.http", return_value="{}")
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.ShippingPriceRequest)
 

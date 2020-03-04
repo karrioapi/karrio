@@ -35,7 +35,7 @@ class TestDHLQuote(unittest.TestCase):
         DCTRequest_.GetQuote.BkgDetails.ReadyTime = None
         self.assertEqual(export(DCTRequest_), export(self.DCTRequest))
 
-    @patch("purplship.mappers.dhl.dhl_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
     def test_get_quotes(self, http_mock):
         proxy.get_quotes(self.DCTRequest)
 

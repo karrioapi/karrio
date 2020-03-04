@@ -18,7 +18,7 @@ class TestUSPSTracking(unittest.TestCase):
         tracking_request = proxy.mapper.create_tracking_request(payload)
         self.assertEqual(strip(export(tracking_request)), strip(TRACKING_REQUEST_STR))
 
-    @patch("purplship.mappers.usps.usps_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.usps.usps_proxy.http", return_value="<a></a>")
     @patch("urllib.parse.urlencode", return_value="")
     def test_get_tracking(self, encode_mock, http_mock):
         proxy.get_tracking(self.RateRequest)

@@ -12,7 +12,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
         tracking_request = proxy.mapper.create_tracking_request(payload)
         self.assertEqual(to_dict(tracking_request), to_dict(TRACKING_REQUEST))
 
-    @patch("purplship.mappers.aups.aups_proxy.http", return_value="{}")
+    @patch("purplship.carriers.aups.aups_proxy.http", return_value="{}")
     def test_get_quotes(self, http_mock):
         proxy.get_tracking(TRACKING_REQUEST)
 

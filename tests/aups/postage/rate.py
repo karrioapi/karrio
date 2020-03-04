@@ -30,7 +30,7 @@ class TestAustraliaPostPostageRate(unittest.TestCase):
             to_dict(shipping_price_request), to_dict(self.ParcelServiceRequest)
         )
 
-    @patch("purplship.mappers.aups.aups_proxy.http", return_value="{}")
+    @patch("purplship.carriers.aups.aups_proxy.http", return_value="{}")
     def test_domestic_letter_get_quotes(self, http_mock):
         proxy.get_quotes(self.LetterServiceRequest)
 
@@ -39,7 +39,7 @@ class TestAustraliaPostPostageRate(unittest.TestCase):
             req_url, DOMESTIC_LETTER_POSTAGE_REQUEST_URL
         )
 
-    @patch("purplship.mappers.aups.aups_proxy.http", return_value="{}")
+    @patch("purplship.carriers.aups.aups_proxy.http", return_value="{}")
     def test_intl_parcel_get_quotes(self, http_mock):
         proxy.get_quotes(self.ParcelServiceRequest)
 

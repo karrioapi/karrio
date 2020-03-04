@@ -25,14 +25,14 @@ class TestSendleQuote(unittest.TestCase):
         parcel_quote = proxy.mapper.create_quote_request(payload)
         self.assertEqual(to_dict(parcel_quote), to_dict(self.InternationalParcelQuote))
 
-    @patch("purplship.mappers.sendle.sendle_proxy.http", return_value="{}")
+    @patch("purplship.carriers.sendle.sendle_proxy.http", return_value="{}")
     def test_get_domestic_quotes(self, http_mock):
         proxy.get_quotes(self.DomesticParcelQuote)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, DOMESTIC_PARCEL_QUOTE_QUERY_STR)
 
-    @patch("purplship.mappers.sendle.sendle_proxy.http", return_value="{}")
+    @patch("purplship.carriers.sendle.sendle_proxy.http", return_value="{}")
     def test_get_domestic_quotes(self, http_mock):
         proxy.get_quotes(self.InternationalParcelQuote)
 

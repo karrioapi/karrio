@@ -19,14 +19,14 @@ class TestUPSPickup(unittest.TestCase):
             )
         )
 
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
     def test_request_pickup(self, http_mock):
         proxy.request_pickup(self.PickupRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(PickupRequestXml))
 
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
     def test_cancel_pickup(self, http_mock):
         proxy.cancel_pickup(self.CancelPickupRequest)
 
