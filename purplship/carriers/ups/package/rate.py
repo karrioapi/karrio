@@ -1,14 +1,13 @@
 from functools import reduce, partial
 from typing import Callable, List, Tuple
 from pyups import common
-from pyups.package_rate import (
-    RateRequest as UPSRateRequest, RatedShipmentType, PickupType, ShipFromType,
+from pyups.rate_web_service_schema import (
+    RateRequest as UPSRateRequest, PickupType, RatedShipmentType,
     ShipToType, ShipmentType, ShipperType, ShipAddressType, ShipToAddressType,
-    AlternateDeliveryAddressType, PaymentDetailsType, ShipmentChargeType, PackageType,
+    PaymentDetailsType, ShipmentChargeType, PackageType,
     BillShipperChargeType, BillReceiverAddressType, PackageWeightType, BillReceiverChargeType,
-    ShipmentRatingOptionsType, DeliveryConfirmationType, CODType, UOMCodeDescriptionType,
-    ShipmentServiceOptionsType, PickupOptionsType, DimensionsType, BillThirdPartyChargeType,
-    ShipmentServiceOptionsAccessPointCODType, DeliveryOptionsType,
+    ShipmentRatingOptionsType, UOMCodeDescriptionType,
+    ShipmentServiceOptionsType, DimensionsType, BillThirdPartyChargeType,
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
@@ -16,7 +15,7 @@ from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import DimensionUnit
 from purplship.core.models import (
-    RateDetails, ChargeDetails, Error, RateRequest, Party
+    RateDetails, ChargeDetails, Error, RateRequest
 )
 from purplship.carriers.ups.units import (
     RatingServiceCode, RatingPackagingType, WeightUnit, ServiceOption,
@@ -113,23 +112,21 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
     )
     service_options = [
         opt
-        for opt in payload.shipment.options
-        if opt.code in ServiceOption.__members__
+        for opt in payload.shipment.options.keys()
+        if opt in ServiceOption.__members__
     ]
     rating_options = [
         opt
-        for opt in payload.shipment.options
-        if opt.code in RatingOption.__members__
+        for opt in payload.shipment.options.keys()
+        if opt in RatingOption.__members__
     ]
     request = UPSRateRequest(
         Request=common.RequestType(
-            RequestOption=payload.shipment.extra.get("RequestOption") or ["Rate"],
+            RequestOption=["Rate"],
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
                 CustomerContext=", ".join(payload.shipment.references),
-                TransactionIdentifier=payload.shipment.extra.get(
-                    "TransactionIdentifier"
-                ),
+                TransactionIdentifier=None,
             ),
         ),
         PickupType=None,
@@ -158,34 +155,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
                     ResidentialAddressIndicator=None,
                 ),
             ),
-            ShipFrom=(
-                lambda shipFrom: ShipFromType(
-                    Name=shipFrom.company_name,
-                    Address=ShipAddressType(
-                        AddressLine=shipFrom.address_lines,
-                        City=shipFrom.city,
-                        StateProvinceCode=shipFrom.state_code,
-                        PostalCode=shipFrom.postal_code,
-                        CountryCode=shipFrom.country_code,
-                    ),
-                )
-            )(Party(**payload.shipment.extra.get("ShipFrom")))
-            if "ShipFrom" in payload.shipment.extra
-            else None,
-            AlternateDeliveryAddress=(
-                lambda alternate: AlternateDeliveryAddressType(
-                    Name=alternate.company_name,
-                    Address=ShipAddressType(
-                        AddressLine=alternate.address_lines,
-                        City=alternate.city,
-                        StateProvinceCode=alternate.state_code,
-                        PostalCode=alternate.postal_code,
-                        CountryCode=alternate.country_code,
-                    ),
-                )
-            )(Party(**payload.shipment.extra.get("AlternateDeliveryAddress")))
-            if "AlternateDeliveryAddress" in payload.shipment.extra
-            else None,
+            ShipFrom=None,
+            AlternateDeliveryAddress=None,
             ShipmentIndicationType=None,
             PaymentDetails=PaymentDetailsType(
                 ShipmentCharge=[
@@ -208,11 +179,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
                         else None,
                         BillThirdParty=BillThirdPartyChargeType(
                             AccountNumber=payload.shipment.payment_account_number,
-                            Address=BillReceiverAddressType(
-                                PostalCode=payload.shipment.extra.get(
-                                    "payor_postal_code"
-                                )
-                            ),
+                            Address=None,
                         )
                         if payload.shipment.paid_by == "THIRD_PARTY"
                         else None,
@@ -249,7 +216,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
                         Width=pkg.width,
                         Height=pkg.height,
                     ),
-                    DimWeight=pkg.extra.get("DimWeight"),
+                    DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
                             Code=WeightUnit[payload.shipment.weight_unit].value,
@@ -264,177 +231,32 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
                 for pkg in payload.shipment.items
             ],
             ShipmentServiceOptions=ShipmentServiceOptionsType(
-                SaturdayDeliveryIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "SaturdayDeliveryIndicator"
-                    ),
-                    None,
-                ),
-                AccessPointCOD=(
-                    lambda option: ShipmentServiceOptionsAccessPointCODType(
-                        CurrencyCode=option.value.get("CurrencyCode"),
-                        MonetaryValue=option.value.get("MonetaryValue"),
-                    )
-                    if option is not None
-                    else None
-                )(
-                    next(
-                        (o for o in service_options if o.code == "AccessPointCOD"),
-                        None,
-                    )
-                ),
-                DeliverToAddresseeOnlyIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "DeliverToAddresseeOnlyIndicator"
-                    ),
-                    None,
-                ),
-                DirectDeliveryOnlyIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "DirectDeliveryOnlyIndicator"
-                    ),
-                    None,
-                ),
-                COD=(
-                    lambda option: CODType(
-                        CODFundsCode=option.value.get("CODFundsCode"),
-                        CODAmount=option.value.get("CODAmount"),
-                    )
-                    if option is not None
-                    else None
-                )(next((o for o in service_options if o.code == "COD"), None)),
-                DeliveryConfirmation=(
-                    lambda option: DeliveryConfirmationType(
-                        DCISType=option.value.get("DCISType")
-                    )
-                    if option is not None
-                    else None
-                )(
-                    next(
-                        (
-                            o
-                            for o in service_options
-                            if o.code == "DeliveryConfirmation"
-                        ),
-                        None,
-                    )
-                ),
-                ReturnOfDocumentIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "ReturnOfDocumentIndicator"
-                    ),
-                    None,
-                ),
-                UPScarbonneutralIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "UPScarbonneutralIndicator"
-                    ),
-                    None,
-                ),
-                CertificateOfOriginIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "CertificateOfOriginIndicator"
-                    ),
-                    None,
-                ),
-                PickupOptions=(
-                    lambda option: PickupOptionsType(
-                        LiftGateAtPickupIndicator=option.value.get(
-                            "LiftGateAtPickupIndicator"
-                        ),
-                        HoldForPickupIndicator=option.value.get(
-                            "HoldForPickupIndicator"
-                        ),
-                    )
-                    if option is not None
-                    else None
-                )(
-                    next(
-                        (o for o in service_options if o.code == "PickupOptions"),
-                        None,
-                    )
-                ),
-                DeliveryOptions=(
-                    lambda option: DeliveryOptionsType(
-                        LiftGateAtDeliveryIndicator=option.value.get(
-                            "LiftGateAtDeliveryIndicator"
-                        ),
-                        DropOffAtUPSFacilityIndicator=option.value.get(
-                            "DropOffAtUPSFacilityIndicator"
-                        ),
-                    )
-                    if option is not None
-                    else None
-                )(
-                    next(
-                        (o for o in service_options if o.code == "DeliveryOptions"),
-                        None,
-                    )
-                ),
+                SaturdayDeliveryIndicator=None,
+                AccessPointCOD=None,
+                DeliverToAddresseeOnlyIndicator=None,
+                DirectDeliveryOnlyIndicator=None,
+                COD=None,
+                DeliveryConfirmation=None,
+                ReturnOfDocumentIndicator=None,
+                UPScarbonneutralIndicator=None,
+                CertificateOfOriginIndicator=None,
+                PickupOptions=None,
+                DeliveryOptions=None,
                 RestrictedArticles=None,
-                ShipperExportDeclarationIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "ShipperExportDeclarationIndicator"
-                    ),
-                    None,
-                ),
-                CommercialInvoiceRemovalIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "CommercialInvoiceRemovalIndicator"
-                    ),
-                    None,
-                ),
+                ShipperExportDeclarationIndicator=None,
+                CommercialInvoiceRemovalIndicator=None,
                 ImportControl=None,
                 ReturnService=None,
-                SDLShipmentIndicator=next(
-                    (
-                        ""
-                        for o in service_options
-                        if o.code == "SDLShipmentIndicator"
-                    ),
-                    None,
-                ),
-                EPRAIndicator=next(
-                    ("" for o in service_options if o.code == "EPRAIndicator"), None
-                ),
+                SDLShipmentIndicator=None,
+                EPRAIndicator=None,
             )
             if len(service_options) > 0
             else None,
             ShipmentRatingOptions=ShipmentRatingOptionsType(
                 NegotiatedRatesIndicator="" if is_negotiated_rate else None,
-                FRSShipmentIndicator=""
-                if any([o.code == "FRSShipmentIndicator" for o in rating_options])
-                else None,
-                RateChartIndicator=""
-                if any([o.code == "RateChartIndicator" for o in rating_options])
-                else None,
-                UserLevelDiscountIndicator=""
-                if (
-                    any(
-                        [
-                            o.code == "UserLevelDiscountIndicator"
-                            for o in rating_options
-                        ]
-                    )
-                    and is_negotiated_rate
-                )
-                else None,
+                FRSShipmentIndicator=None,
+                RateChartIndicator=None,
+                UserLevelDiscountIndicator=None,
             )
             if len(rating_options) > 0 or is_negotiated_rate
             else None,

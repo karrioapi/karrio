@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from gds_helpers import to_dict
 from tests.aups.postage.fixture import proxy
-from purplship.domain.Types import RateRequest
+from purplship.core.models import RateRequest
 from pyaups.domestic_letter_postage import ServiceRequest as LetterServiceRequest
 from pyaups.international_parcel_postage import ServiceRequest as ParcelServiceRequest
 

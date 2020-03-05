@@ -1,5 +1,5 @@
 from typing import List, Tuple, Optional
-from pyfedex.track_service_v14 import (
+from pyfedex.track_service_v18 import (
     TrackDetail, TrackRequest, TransactionDetail, Localization,
     VersionId, TrackSelectionDetail, TrackPackageIdentifier,
 )
@@ -49,8 +49,7 @@ def track_request(payload: TrackingRequest, settings: Settings) -> Serializable[
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
         TransactionDetail=TransactionDetail(
-            CustomerTransactionId=payload.extra.get("CustomerTransactionId")
-            or "Track By Number_v14",
+            CustomerTransactionId="Track By Number_v14",
             Localization=Localization(LanguageCode=payload.language_code or "en"),
         ),
         Version=VersionId(ServiceId="trck", Major=14, Intermediate=0, Minor=0),

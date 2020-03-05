@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from tests.aups.logistic.fixture import proxy
 from gds_helpers import jsonify, to_dict
-from purplship.domain.Types import RateRequest
+from purplship.core.models import RateRequest
 from pyaups.shipping_price_request import ShippingPriceRequest
 
 

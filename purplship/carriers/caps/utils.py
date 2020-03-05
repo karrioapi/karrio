@@ -1,5 +1,6 @@
 """PurplShip Canada post client settings."""
 
+from typing import Optional
 from base64 import b64encode
 from purplship.core.settings import Settings as BaseSettings
 
@@ -10,6 +11,7 @@ class Settings(BaseSettings):
     username: str
     password: str
     customer_number: str
+    contract_id: Optional[str] = None
 
     @property
     def authorization(self):

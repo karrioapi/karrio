@@ -60,7 +60,7 @@ def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[Ra
     dimension_unit = DimensionUnit[payload.shipment.dimension_unit or "IN"]
     special_services: List[Option] = [
         svc
-        for svc in payload.shipment.options
+        for svc in payload.shipment.options.keys()
         if svc.code in SpecialService.__members__
     ]
     services: List[str] = [
@@ -96,12 +96,12 @@ def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[Ra
                 ZipDestination=payload.recipient.postal_code,
                 Pounds=weight,
                 Ounces=weight * 16,
-                Container=item.extra.get("Container") or (
+                Container=(
                     Container[item.packaging_type].value
                     if item.packaging_type
                     else None
                 ),
-                Size=item.extra.get("Size") or (
+                Size=Z(
                     "LARGE"
                     if any(dim for dim in [width, length, height] if dim and dim > 12) else
                     "REGULAR"
@@ -109,12 +109,12 @@ def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[Ra
                 Width=width,
                 Length=length,
                 Height=height,
-                Girth=item.extra.get("Girth"),
+                Girth=None,
                 Value=item.value_amount,
                 AmountToCollect=None,
                 SpecialServices=SpecialServicesType(
                     SpecialService=[
-                        SpecialService[svc.code].value
+                        SpecialService[svc].value
                         for svc in item_special_services
                     ]
                 )
@@ -127,24 +127,14 @@ def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[Ra
                 ReturnLocations=None,
                 ReturnServiceInfo=None,
                 DropOffTime=None,
-                ShipDate=(
-                    lambda date: ShipDateType(
-                        Option="PEMSH",
-                        valueOf_=date
-                    ) if date else None
-                )(item.extra.get("ShipDate") or payload.shipment.date),
+                ShipDate=payload.shipment.date,
             ))(
                 round(Weight(item.weight, weight_unit).LB),  # weight
                 Dimension(item.width, dimension_unit).IN,  # width
                 Dimension(item.length, dimension_unit).IN,  # length
                 Dimension(item.height, dimension_unit).IN,  # height
-                (services + [
-                    s for s in item.extra.get("services", []) if s in Service.__members__
-                ]),  # item_services
-                (special_services + [
-                    Option(**o) for o in item.extra.get("options", [])
-                    if o["code"] in SpecialService.__members__
-                ])  # item_special_services
+                [],  # item_services
+                []  # item_special_services
             )
             for index, item in enumerate(payload.shipment.items)
         ],

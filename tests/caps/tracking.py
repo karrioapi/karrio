@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from gds_helpers import to_xml, to_dict
-from purplship.domain.Types import TrackingRequest
+from purplship.core.models import TrackingRequest
 from tests.caps.fixture import proxy
 
 

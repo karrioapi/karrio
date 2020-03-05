@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/PurplShip/purplship.svg?branch=master)](https://travis-ci.org/PurplShip/purplship)
 [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![PurplShip Slack](https://img.shields.io/badge/slack-purplship-purple.svg)](https://join.slack.com/t/purplship/shared_invite/enQtNjUwOTIzMjc3NDYxLTZjYTdjYTM5YWRhNjM3OTMxY2FmOTE2ZmU0YmUyYmRjYTc5NjA2NmFlNzJlZDg4OGFkNzRmMjAwZDc5MjA1NDA)
 
 ## Overview
 
@@ -18,14 +17,14 @@ PurplShip proposes an intuitive unified API, to make multi-carrier integration s
 PurplShip helps quickly getting started with shipping services as it is easy to use:
 
 ```python
-import purplship
+import purplship.shipping as api
 
-dhl = purplship.gateway['dhl'].create({
+dhl = api.gateway['dhl'].create({
     "site_id": "username",
     "password": "password"
 })
 
-response = purplship.rating.fetch({
+response = api.rating.fetch({
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "shipment": {
@@ -92,9 +91,6 @@ PurplShip has usage and reference documentation at [doc.purplship.com](https://d
 - [lxml](https://lxml.de/) - Processing XML and HTML with Python
 - [jstruct](https://github.com/DanH91/jstruct) - JSON to python datatypes
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://github.com/PurplShip/purplship/blob/master/CODE_OF_CONDUCT.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Authors
 

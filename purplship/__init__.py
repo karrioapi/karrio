@@ -4,6 +4,6 @@ except Exception:
     pass
 
 try:
-    from purplship.shipping import *
+    from purplship.package import *
 except Exception:
     pass

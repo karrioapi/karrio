@@ -53,7 +53,7 @@ def intl_rate_request(payload: RateRequest, settings: Settings) -> Serializable[
     dimension_unit = DimensionUnit[payload.shipment.dimension_unit or "IN"]
     extra_services = [
         ExtraService[svc.code].value
-        for svc in payload.shipment.options
+        for svc in payload.shipment.options.keys()
         if svc.code in ExtraService.__members__
     ]
     request = IntlRateV2Request(
@@ -64,55 +64,35 @@ def intl_rate_request(payload: RateRequest, settings: Settings) -> Serializable[
                 ID=item.id or index,
                 Pounds=Weight(item.weight, weight_unit).LB,
                 Ounces=Weight(item.weight, weight_unit).LB * 16,
-                Machinable=item.extra.get("Machinable"),
+                Machinable=None,
                 MailType=IntlMailType[item.packaging_type].value,
                 GXG=None,
-                ValueOfContents=item.value_amount
-                or payload.shipment.declared_value,
+                ValueOfContents=item.value_amount or payload.shipment.declared_value,
                 Country=Country[payload.recipient.country_code].value
                 if payload.recipient.country_code
                 else None,
-                Container=item.extra.get("Container")
-                or (
+                Container=(
                     IntlContainer[item.packaging_type].value
                     if item.packaging_type
                     else None
                 ),
-                Size=item.extra.get("Size") or (
-                    "LARGE" if any(
-                        dim for dim in [
-                            Dimension(item.width, dimension_unit).IN,
-                            Dimension(item.length, dimension_unit).IN,
-                            Dimension(item.height, dimension_unit).IN
-                        ] if dim > 12
-                    ) else "REGULAR"
-                ),
+                Size="LARGE" if any(
+                    dim for dim in [
+                        Dimension(item.width, dimension_unit).IN,
+                        Dimension(item.length, dimension_unit).IN,
+                        Dimension(item.height, dimension_unit).IN
+                    ] if dim > 12
+                ) else "REGULAR",
                 Width=Dimension(item.width, dimension_unit).IN,
                 Length=Dimension(item.length, dimension_unit).IN,
                 Height=Dimension(item.height, dimension_unit).IN,
-                Girth=item.extra.get("Girth"),
+                Girth=None,
                 OriginZip=payload.shipper.postal_code,
-                CommercialFlag=item.extra.get("CommercialFlag"),
-                CommercialPlusFlag=item.extra.get("CommercialPlusFlag"),
+                CommercialFlag=None,
+                CommercialPlusFlag=None,
                 AcceptanceDateTime=payload.shipment.date,
                 DestinationPostalCode=payload.recipient.postal_code,
-                ExtraServices=(
-                    lambda item_extra_services: ExtraServicesType(
-                        ExtraService=[
-                            ExtraService[svc.code].value
-                            for svc in item_extra_services
-                        ]
-                    )
-                    if len(item_extra_services) > 0
-                    else None
-                )(
-                    extra_services
-                    + [
-                        Option(**svc)
-                        for svc in item.extra.get("options", [])
-                        if svc["code"] in ExtraService.__members__
-                    ]
-                ),
+                ExtraServices=None,
                 Content=ContentType(
                     ContentType=IntlContentType[item.content].value,
                     ContentDescription=item.content,

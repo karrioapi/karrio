@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from tests.sendle.fixture import proxy
 from gds_helpers import to_dict
-from purplship.domain.Types import TrackingRequest
+from purplship.core.models import TrackingRequest
 
 
 class TestSendleTracking(unittest.TestCase):

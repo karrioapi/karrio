@@ -2,12 +2,11 @@ from base64 import b64encode
 from datetime import datetime
 from typing import List, Tuple
 from functools import reduce
-from pyfedex.ship_service_v21 import (
+from pyfedex.ship_service_v25 import (
     CompletedShipmentDetail, ShipmentRateDetail, CompletedPackageDetail, ProcessShipmentRequest,
     TransactionDetail, VersionId, RequestedShipment, RequestedPackageLineItem, Weight, Party,
-    Contact, Address, TaxpayerIdentification, Payment, Payor, ShipmentSpecialServicesRequested,
-    FreightShipmentDetail, SmartPostShipmentDetail, SmartPostShipmentProcessingOptionsRequested,
-    LabelSpecification, Dimensions, CustomerReference, InternationalTrafficInArmsRegulationsDetail,
+    Contact, Address, TaxpayerIdentification, Payment, ShipmentSpecialServicesRequested,
+    FreightShipmentDetail, LabelSpecification, Dimensions
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
@@ -86,7 +85,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
         svc for svc in payload.shipment.services if svc in ServiceType.__members__
     ]
     options = [
-        opt for opt in payload.shipment.options if opt.code in SpecialServiceType.__members__
+        opt for opt in payload.shipment.options.keys() if opt.code in SpecialServiceType.__members__
     ]
     request = ProcessShipmentRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -95,7 +94,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
         Version=VersionId(ServiceId="ship", Major=21, Intermediate=0, Minor=0),
         RequestedShipment=RequestedShipment(
             ShipTimestamp=datetime.now(),
-            DropoffType=payload.shipment.extra.get("DropoffType"),
+            DropoffType=None,
             ServiceType=ServiceType[requested_services[0]].value
             if len(requested_services) > 0
             else None,
@@ -116,11 +115,11 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
                 Tins=(
                     [
                         TaxpayerIdentification(
-                            TinType=payload.shipper.extra.get("TinType"),
-                            Usage=payload.shipper.extra.get("Usage"),
+                            TinType=None,
+                            Usage=None,
                             Number=payload.shipper.tax_id,
-                            EffectiveDate=payload.shipper.extra.get("EffectiveDate"),
-                            ExpirationDate=payload.shipper.extra.get("ExpirationDate"),
+                            EffectiveDate=None,
+                            ExpirationDate=None,
                         )
                     ]
                     if payload.shipper.tax_id is not None else None
@@ -159,17 +158,15 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
                 ),
             ),
             Recipient=Party(
-                AccountNumber=payload.recipient.extra.get("AccountNumber"),
+                AccountNumber=payload.recipient.account_number,
                 Tins=(
                     [
                         TaxpayerIdentification(
-                            TinType=payload.recipient.extra.get("TinType"),
-                            Usage=payload.recipient.extra.get("Usage"),
+                            TinType=None,
+                            Usage=None,
                             Number=payload.recipient.tax_id,
-                            EffectiveDate=payload.recipient.extra.get("EffectiveDate"),
-                            ExpirationDate=payload.recipient.extra.get(
-                                "ExpirationDate"
-                            ),
+                            EffectiveDate=None,
+                            ExpirationDate=None,
                         )
                     ]
                     if payload.recipient.tax_id is not None else None
@@ -212,77 +209,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
             SoldTo=None,
             ShippingChargesPayment=Payment(
                 PaymentType=PaymentType[payload.shipment.paid_by or "SENDER"].value,
-                Payor=(
-                    lambda payor: Payor(
-                        ResponsibleParty=Party(
-                            AccountNumber=payload.shipment.payment_account_number,
-                            Tins=(
-                                [
-                                    TaxpayerIdentification(
-                                        TinType=payor.extra.get("TinType"),
-                                        Number=payor.tax_id,
-                                        Usage=payor.extra.get("Usage"),
-                                        EffectiveDate=payor.extra.get("EffectiveDate"),
-                                        ExpirationDate=payor.extra.get(
-                                            "ExpirationDate"
-                                        ),
-                                    )
-                                ]
-                                if payor.tax_id is not None else None
-                            ),
-                            Contact=Contact(
-                                ContactId=payor.extra.get("ContactId"),
-                                PersonName=payor.person_name,
-                                Title=None,
-                                CompanyName=payor.company_name,
-                                PhoneNumber=payor.phone_number,
-                                PhoneExtension=None,
-                                TollFreePhoneNumber=None,
-                                PagerNumber=None,
-                                FaxNumber=None,
-                                EMailAddress=payor.email_address,
-                            )
-                            if any(
-                                (
-                                    payor.company_name,
-                                    payor.phone_number,
-                                    payor.person_name,
-                                    payor.email_address,
-                                )
-                            )
-                            else None,
-                            Address=Address(
-                                StreetLines=payor.address_lines,
-                                City=payor.city,
-                                StateOrProvinceCode=payor.state_code,
-                                PostalCode=payor.postal_code,
-                                UrbanizationCode=None,
-                                CountryCode=payor.country_code,
-                                CountryName=None,
-                                Residential=None,
-                                GeographicCoordinates=None,
-                            )
-                            if any(
-                                (
-                                    payor.country_code,
-                                    payor.address_lines,
-                                    payor.city,
-                                    payor.state_code,
-                                    payor.postal_code,
-                                )
-                            )
-                            else None,
-                        )
-                    )
-                    if payload.shipment.payment_account_number is not None
-                    else None
-                )(
-                    Party(
-                        **payload.shipment.extra.get("Payor").get("ResponsibleParty")
-                    )
-                )
-                if "Payor" in payload.shipment.extra
-                else None,
+                Payor=None,
             )
             if any(
                 (payload.shipment.paid_by, payload.shipment.payment_account_number)
@@ -290,7 +217,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
             else None,
             SpecialServicesRequested=ShipmentSpecialServicesRequested(
                 SpecialServiceTypes=[
-                    SpecialServiceType[opt.code].value for opt in options
+                    SpecialServiceType[option].value for option in options
                 ],
                 CodDetail=None,
                 DeliveryOnInvoiceAcceptanceDetail=None,
@@ -299,19 +226,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
                 ReturnShipmentDetail=None,
                 PendingShipmentDetail=None,
                 InternationalControlledExportDetail=None,
-                InternationalTrafficInArmsRegulationsDetail=(
-                    InternationalTrafficInArmsRegulationsDetail(
-                        LicenseOrExemptionNumber=payload.shipment.extra.get(
-                            "SpecialServicesRequested"
-                        )
-                        .get("InternationalTrafficInArmsRegulationsDetail")
-                        .get("LicenseOrExemptionNumber")
-                    )
-                )
-                if "SpecialServicesRequested" in payload.shipment.extra
-                and "InternationalTrafficInArmsRegulationsDetail"
-                in payload.shipment.extra.get("SpecialServicesRequested")
-                else None,
+                InternationalTrafficInArmsRegulationsDetail=None,
                 ShipmentDryIceDetail=None,
                 HomeDeliveryPremiumDetail=None,
                 FreightGuaranteeDetail=None,
@@ -348,36 +263,16 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
             VariableHandlingChargeDetail=None,
             CustomsClearanceDetail=None,
             PickupDetail=None,
-            SmartPostDetail=(
-                lambda smart_post: SmartPostShipmentDetail(
-                    ProcessingOptionsRequested=SmartPostShipmentProcessingOptionsRequested(
-                        Options=smart_post.get("ProcessingOptionsRequested").get(
-                            "Options"
-                        )
-                    )
-                    if "ProcessingOptionsRequested" in smart_post
-                    else None,
-                    Indicia=smart_post.get("Indicia"),
-                    AncillaryEndorsement=smart_post.get("AncillaryEndorsement"),
-                    HubId=smart_post.get("HubId"),
-                    CustomerManifestId=smart_post.get("CustomerManifestId"),
-                )
-            )(payload.shipment.extra.get("SmartPostDetail"))
-            if "SmartPostDetail" in payload.shipment.extra
-            else None,
+            SmartPostDetail=None,
             BlockInsightVisibility=None,
             LabelSpecification=LabelSpecification(
-                Dispositions=payload.shipment.label.extra.get("Dispositions"),
+                Dispositions=None,
                 LabelFormatType=payload.shipment.label.format,
                 ImageType=payload.shipment.label.type,
-                LabelStockType=payload.shipment.label.extra.get("LabelStockType"),
-                LabelPrintingOrientation=payload.shipment.label.extra.get(
-                    "LabelPrintingOrientation"
-                ),
-                LabelOrder=payload.shipment.label.extra.get("LabelOrder"),
-                PrintedLabelOrigin=payload.shipment.label.extra.get(
-                    "PrintedLabelOrigin"
-                ),
+                LabelStockType=None,
+                LabelPrintingOrientation=None,
+                LabelOrder=None,
+                PrintedLabelOrigin=None,
                 CustomerSpecifiedDetail=None,
             )
             if payload.shipment.label is not None
@@ -386,7 +281,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
             RateRequestTypes=(
                 ["LIST"] + ([] if not payload.shipment.currency else ["PREFERRED"])
             ),
-            EdtRequestType=payload.shipment.extra.get("EdtRequestType"),
+            EdtRequestType=None,
             MasterTrackingId=None,
             PackageCount=len(payload.shipment.items),
             ConfigurationData=None,
@@ -409,16 +304,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
                     PhysicalPackaging=None,
                     ItemDescription=pkg.description,
                     ItemDescriptionForClearance=pkg.content,
-                    CustomerReferences=(
-                        [
-                            CustomerReference(
-                                CustomerReferenceType=ref.get("CustomerReferenceType"),
-                                Value=ref.get("Value"),
-                            )
-                            for ref in pkg.extra.get("CustomerReferences")
-                        ]
-                        if "CustomerReferences" in pkg.extra else None
-                    ),
+                    CustomerReferences=None,
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )

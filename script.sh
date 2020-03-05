@@ -13,7 +13,9 @@ check() {
 }
 
 build() {
-    python setup.py bdist_wheel 
+    python setup.core.py bdist_wheel
+    python setup.freight.py bdist_wheel
+    python setup.shipping.py bdist_wheel
 }
 
 updaterelease(){

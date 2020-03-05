@@ -2,12 +2,11 @@ import time
 from datetime import datetime
 from functools import reduce
 from typing import List, Tuple
-from pydhl.datatypes_global_v61 import MetaData
-from pydhl import (
-    DCT_req_global as Req,
-    DCT_Response_global as Res,
-    DCTRequestdatatypes_global as ReqType,
+from pydhl.dct_req_global_2_0 import (
+    DCTRequest, DCTTo, DCTFrom, GetQuoteType, BkgDetailsType, PiecesType, MetaData,
+    PieceType, QtdShpType, QtdShpExChrgType, DCTDutiable
 )
+from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
@@ -27,7 +26,7 @@ def parse_dct_response(response: Element, settings: Settings) -> Tuple[List[Rate
 
 
 def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
-    qtdshp = Res.QtdShpType()
+    qtdshp = ResponseQtdShpType()
     qtdshp.build(qtdshp_node)
     ExtraCharges = list(
         map(
@@ -71,7 +70,7 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     )
 
 
-def dct_request(payload: RateRequest, settings: Settings) -> Serializable[Req.DCTRequest]:
+def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
     default_product_code = (
         Product.EXPRESS_WORLDWIDE_DOC
         if payload.shipment.is_document
@@ -86,41 +85,42 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[Req.DC
     default_packaging_type = (
         DCTPackageType.SM if payload.shipment.is_document else DCTPackageType.BOX
     )
+    option_codes = [code for code in payload.shipment.options.keys()]
     options = (
-        [Service[svc.code] for svc in payload.shipment.options if svc.code in Service.__members__] +
+        [Service[code] for code in option_codes if code in Service.__members__] +
         (
             []
             if not payload.shipment.insured_amount
-            or "Shipment_Insurance" in [o.code for o in payload.shipment.options]
+            or "Shipment_Insurance" in option_codes
             else [Service.Shipment_Insurance]
         ) +
         (
             []
             if not is_dutiable
-            or "Duties_and_Taxes_Paid" in [o.code for o in payload.shipment.options]
+            or "Duties_and_Taxes_Paid" in option_codes
             else [Service.Duties_and_Taxes_Paid]
         )
     )
 
-    request = Req.DCTRequest(
+    request = DCTRequest(
         schemaVersion="1.0",
-        GetQuote=Req.GetQuoteType(
+        GetQuote=GetQuoteType(
             Request=settings.Request(MetaData=MetaData(SoftwareName="3PV", SoftwareVersion="1.0")),
-            From=ReqType.DCTFrom(
+            From=DCTFrom(
                 CountryCode=payload.shipper.country_code,
                 Postalcode=payload.shipper.postal_code,
                 City=payload.shipper.city,
                 Suburb=payload.shipper.state_code,
             ),
-            To=Req.DCTTo(
+            To=DCTTo(
                 CountryCode=payload.recipient.country_code,
                 Postalcode=payload.recipient.postal_code,
                 City=payload.recipient.city,
                 Suburb=payload.recipient.state_code,
             ),
-            BkgDetails=ReqType.BkgDetailsType(
+            BkgDetails=BkgDetailsType(
                 PaymentCountryCode=payload.shipment.payment_country_code or "CA",
-                NetworkTypeCode=payload.shipment.extra.get("NetworkTypeCode"),
+                NetworkTypeCode=None,
                 WeightUnit=WeightUnit[payload.shipment.weight_unit or "KG"].value,
                 DimensionUnit=DimensionUnit[
                     payload.shipment.dimension_unit or "CM"
@@ -128,9 +128,9 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[Req.DC
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
                 IsDutiable="Y" if is_dutiable else "N",
-                Pieces=ReqType.PiecesType(
+                Pieces=PiecesType(
                     Piece=[
-                        ReqType.PieceType(
+                        PieceType(
                             PieceID=piece.id or str(index),
                             PackageTypeCode=(
                                 DCTPackageType[piece.packaging_type]
@@ -147,7 +147,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[Req.DC
                 ),
                 NumberOfPieces=payload.shipment.total_items,
                 ShipmentWeight=payload.shipment.total_weight,
-                Volume=payload.shipment.extra.get("Volume"),
+                Volume=None,
                 PaymentAccountNumber=payload.shipment.payment_account_number,
                 InsuredCurrency=(
                     (payload.shipment.currency or Currency.USD.name)
@@ -155,13 +155,13 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[Req.DC
                 ),
                 InsuredValue=payload.shipment.insured_amount,
                 PaymentType=payload.shipment.payment_type,
-                AcctPickupCloseTime=payload.shipment.extra.get("AcctPickupCloseTime"),
+                AcctPickupCloseTime=None,
                 QtdShp=[
-                    ReqType.QtdShpType(
+                    QtdShpType(
                         GlobalProductCode=product.value,
                         LocalProductCode=product.value,
                         QtdShpExChrg=[
-                            ReqType.QtdShpExChrgType(
+                            QtdShpExChrgType(
                                 SpecialServiceType=svc.value,
                                 LocalSpecialServiceType=None,
                             )
@@ -173,7 +173,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[Req.DC
                 ],
             ),
             Dutiable=(
-                ReqType.DCTDutiable(
+                DCTDutiable(
                     DeclaredCurrency=payload.shipment.currency or Currency.USD.name,
                     DeclaredValue=payload.shipment.declared_value or 0,
                 )
@@ -184,7 +184,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[Req.DC
     return Serializable(request, _request_serializer)
 
 
-def _request_serializer(request: Req.DCTRequest) -> str:
+def _request_serializer(request: DCTRequest) -> str:
     return export(
         request,
         name_="p:DCTRequest",

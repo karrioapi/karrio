@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from tests.sendle.fixture import proxy
 from gds_helpers import to_dict
-from purplship.domain.Types import RateRequest
+from purplship.core.models import RateRequest
 from pysendle.quotes import DomesticParcelQuote, InternationalParcelQuote
 
 

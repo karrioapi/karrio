@@ -1,8 +1,8 @@
 from typing import Tuple, List
-from pydhl.modify_pickup_global_req_20 import ModifyPURequest
-from pydhl.modify_pickup_global_res_20 import ModifyPUResponse
-from pydhl.pickupdatatypes_global_20 import (
-    Requestor, RequestorContact, Place, Contact, Pickup, WeightSeg
+from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest
+from pydhl.modify_pickup_global_res_3_0 import ModifyPUResponse
+from pydhl.pickupdatatypes_global_3_0 import (
+    Requestor, Place, Contact, Pickup, WeightSeg
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
@@ -42,25 +42,16 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
 
 
 def modify_pickup_request(payload: PickupUpdateRequest, settings: Settings) -> Serializable[ModifyPURequest]:
-    country_code = payload.country_code or "AM"
-
     request = ModifyPURequest(
         Request=settings.Request(),
         schemaVersion="1.0",
-        RegionCode=payload.extra.get("RegionCode") or CountryRegion[country_code].value,
+        RegionCode=CountryRegion[payload.country_code].value if payload.country_code else "AM",
         ConfirmationNumber=payload.confirmation_number,
         Requestor=Requestor(
             AccountNumber=payload.account_number,
-            AccountType=payload.extra.get("AccountType") or "D",
-            RequestorContact=(
-                RequestorContact(
-                    PersonName=payload.extra.get("RequestorContact").get("PersonName"),
-                    Phone=payload.extra.get("RequestorContact").get("Phone"),
-                    PhoneExtension=payload.extra.get("RequestorContact").get("PhoneExtension"),
-                )
-                if "RequestorContact" in payload.extra else None
-            ),
-            CompanyName=payload.extra.get("CompanyName"),
+            AccountType="D",
+            RequestorContact=None,
+            CompanyName=None,
         ),
         Place=Place(
             City=payload.city,
@@ -80,13 +71,13 @@ def modify_pickup_request(payload: PickupUpdateRequest, settings: Settings) -> S
             ReadyByTime=payload.ready_time,
             CloseTime=payload.closing_time,
             SpecialInstructions=payload.instruction,
-            RemotePickupFlag=payload.extra.get("RemotePickupFlag"),
+            RemotePickupFlag=None,
             weight=(
                 WeightSeg(Weight=payload.weight, WeightUnit=payload.weight_unit)
                 if any([payload.weight, payload.weight_unit]) else None
             ),
         ),
-        OriginSvcArea=payload.extra.get("OriginSvcArea"),
+        OriginSvcArea=None,
     )
     return Serializable(request, _request_serializer)
 

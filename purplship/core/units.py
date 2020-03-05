@@ -691,3 +691,9 @@ class CountryCurrency(Enum):
     ZA = "ZAR"
     ZM = "ZMW"
     ZW = "USD"
+
+
+class Option(Enum):
+    insurance = "insurance"  # Need to be integrated and documented
+    notification = "notification"  # Need to be integrated and documented
+    payment = "payment"  # Need to be integrated and documented

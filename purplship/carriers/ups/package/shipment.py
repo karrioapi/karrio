@@ -1,10 +1,10 @@
 from typing import List
 from functools import partial
 from pyups import common
-from pyups.package_ship import (
+from pyups.ship_web_service_schema import (
     ShipmentRequest as UPSShipmentRequest, ShipmentResponse, ShipmentType, ShipperType,
-    ShipPhoneType, ShipToType, ShipAddressType, AlternateDeliveryAddressType, ShipFromType,
-    PaymentInfoType, ShipmentChargeType, BillShipperType, BillReceiverType, CreditCardType,
+    ShipPhoneType, ShipToType, ShipAddressType,
+    PaymentInfoType, ShipmentChargeType, BillShipperType, BillReceiverType,
     BillReceiverAddressType, BillThirdPartyChargeType, ServiceType, PackageType, PackagingType,
     DimensionsType, PackageWeightType, ShipUnitOfMeasurementType, LabelSpecificationType, LabelImageFormatType
 )
@@ -79,36 +79,31 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     services = [ShippingServiceCode[svc] for svc in payload.shipment.services if svc in ShippingServiceCode.__members__]
     request = UPSShipmentRequest(
         Request=common.RequestType(
-            RequestOption=payload.shipment.extra.get("RequestOption")
-            or ["validate"],
+            RequestOption=["validate"],
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
                 CustomerContext=", ".join(payload.shipment.references),
-                TransactionIdentifier=payload.shipment.extra.get(
-                    "TransactionIdentifier"
-                ),
+                TransactionIdentifier=None,
             ),
         ),
         Shipment=ShipmentType(
-            Description=payload.shipment.extra.get("Description"),
+            Description=None,
             ReturnService=None,
             DocumentsOnlyIndicator="" if payload.shipment.is_document else None,
             Shipper=ShipperType(
                 Name=payload.shipper.company_name,
                 AttentionName=payload.shipper.person_name,
-                CompanyDisplayableName=payload.shipper.extra.get(
-                    "CompanyDisplayableName"
-                ),
+                CompanyDisplayableName=None,
                 TaxIdentificationNumber=payload.shipper.tax_id,
                 TaxIDType=None,
                 Phone=ShipPhoneType(
                     Number=payload.shipper.phone_number,
-                    Extension=payload.shipper.extra.get("Extension"),
+                    Extension=None,
                 )
                 if payload.shipper.phone_number is not None
                 else None,
                 ShipperNumber=payload.shipper.account_number,
-                FaxNumber=payload.shipper.extra.get("FaxNumber"),
+                FaxNumber=None,
                 EMailAddress=payload.shipper.email_address,
                 Address=ShipAddressType(
                     AddressLine=payload.shipper.address_lines,
@@ -121,18 +116,16 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             ShipTo=ShipToType(
                 Name=payload.recipient.company_name,
                 AttentionName=payload.recipient.person_name,
-                CompanyDisplayableName=payload.recipient.extra.get(
-                    "CompanyDisplayableName"
-                ),
+                CompanyDisplayableName=None,
                 TaxIdentificationNumber=payload.recipient.tax_id,
                 TaxIDType=None,
                 Phone=ShipPhoneType(
                     Number=payload.recipient.phone_number,
-                    Extension=payload.recipient.extra.get("Extension"),
+                    Extension=None,
                 )
                 if payload.recipient.phone_number is not None
                 else None,
-                FaxNumber=payload.recipient.extra.get("FaxNumber"),
+                FaxNumber=None,
                 EMailAddress=payload.recipient.email_address,
                 Address=ShipAddressType(
                     AddressLine=payload.recipient.address_lines,
@@ -143,86 +136,18 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 ),
                 LocationID=None,
             ),
-            AlternateDeliveryAddress=(
-                lambda alternate: AlternateDeliveryAddressType(
-                    Name=alternate.company_name,
-                    AttentionName=alternate.person_name,
-                    UPSAccessPointID=alternate.extra.get("UPSAccessPointID"),
-                    Address=ShipAddressType(
-                        AddressLine=alternate.address_lines,
-                        City=alternate.city,
-                        StateProvinceCode=alternate.state_code,
-                        PostalCode=alternate.postal_code,
-                        CountryCode=alternate.country_code,
-                    ),
-                )
-            )(Party(payload.shipment.extra.get("AlternateDeliveryAddress")))
-            if "AlternateDeliveryAddress" in payload.shipment.extra
-            else None,
-            ShipFrom=(
-                lambda ship_from: ShipFromType(
-                    Name=ship_from.company_name,
-                    AttentionName=ship_from.person_name,
-                    CompanyDisplayableName=ship_from.extra.get(
-                        "CompanyDisplayableName"
-                    ),
-                    TaxIdentificationNumber=ship_from.tax_id,
-                    TaxIDType=None,
-                    Phone=ShipPhoneType(
-                        Number=ship_from.phone_number,
-                        Extension=ship_from.extra.get("Extension"),
-                    )
-                    if ship_from.phone_number is not None
-                    else None,
-                    FaxNumber=ship_from.extra.get("FaxNumber"),
-                    EMailAddress=ship_from.email_address,
-                    Address=ShipAddressType(
-                        AddressLine=ship_from.address_lines,
-                        City=ship_from.city,
-                        StateProvinceCode=ship_from.state_code,
-                        PostalCode=ship_from.postal_code,
-                        CountryCode=ship_from.country_code,
-                    ),
-                )
-            )(Party(**payload.shipment.extra.get("ShipFrom")))
-            if "ShipFrom" in payload.shipment.extra
-            else None,
+            AlternateDeliveryAddress=None,
+            ShipFrom=None,
             PaymentInformation=PaymentInfoType(
                 ShipmentCharge=[
                     ShipmentChargeType(
-                        Type=payload.shipment.extra.get("ShipmentCharge").get(
-                            "Type"
-                        )
-                        if "ShipmentCharge" in payload.shipment.extra
-                        else None,
+                        Type=None,
                         BillShipper=BillShipperType(
-                            AccountNumber=payload.shipment.payment_account_number
-                            or payload.shipper.account_number,
-                            CreditCard=(
-                                lambda card: CreditCardType(
-                                    Type=card.get("Type"),
-                                    Number=card.get("Number"),
-                                    ExpirationDate=card.get("ExpirationDate"),
-                                    SecurityCode=card.get("Type"),
-                                    Address=(
-                                        lambda address: ShipAddressType(
-                                            AddressLine=address.address_lines,
-                                            City=address.city,
-                                            StateProvinceCode=address.state_code,
-                                            PostalCode=address.postal_code,
-                                            CountryCode=address.country_code,
-                                        )
-                                    )(Party(**card.get("Address")))
-                                    if "Address" in card
-                                    else None,
-                                )
-                            )(payload.shipment.extra.get("CreditCard"))
-                            if "CreditCard" in payload.shipment.extra
-                            else None,
+                            AccountNumber=payload.shipment.payment_account_number or payload.shipper.account_number,
+                            CreditCard=None,
                             AlternatePaymentMethod=payload.shipment.payment_type,
                         )
-                        if payload.shipment.paid_by == "SENDER"
-                        else None,
+                        if payload.shipment.paid_by == "SENDER" else None,
                         BillReceiver=BillReceiverType(
                             AccountNumber=payload.recipient.account_number,
                             Address=BillReceiverAddressType(
@@ -233,11 +158,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         else None,
                         BillThirdParty=BillThirdPartyChargeType(
                             AccountNumber=payload.shipment.payment_account_number,
-                            Address=BillReceiverAddressType(
-                                PostalCode=payload.shipment.extra.get(
-                                    "payor_postal_code"
-                                )
-                            ),
+                            Address=None,
                         )
                         if payload.shipment.paid_by == "THIRD_PARTY"
                         else None,
@@ -277,7 +198,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         Code=ShippingPackagingType[pkg.packaging_type].value,
                         Description=None,
                     )
-                    if pkg.packaging_type != None
+                    if pkg.packaging_type is not None
                     else None,
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
@@ -290,7 +211,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         Width=pkg.width,
                         Height=pkg.height,
                     ),
-                    DimWeight=pkg.extra.get("DimWeight"),
+                    DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
                             Code=WeightUnit[payload.shipment.weight_unit].value,
@@ -298,7 +219,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         ),
                         Weight=pkg.weight,
                     ),
-                    LargePackageIndicator=pkg.extra.get("LargePackageIndicator"),
+                    LargePackageIndicator=None,
                     ReferenceNumber=None,
                     AdditionalHandlingIndicator=None,
                     PackageServiceOptions=None,
@@ -313,9 +234,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 Code=payload.shipment.label.format,
                 Description=payload.shipment.label.format,
             ),
-            HTTPUserAgent=payload.shipment.label.extra.get("HTTPUserAgent"),
+            HTTPUserAgent=None,
             LabelStockSize=None,
-            Instruction=payload.shipment.label.extra.get("Instruction"),
+            Instruction=None,
         )
         if payload.shipment.label is not None
         else None,

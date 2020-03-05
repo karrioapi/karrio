@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from pyfedex.track_service_v14 import TrackRequest
 from gds_helpers import to_xml, to_dict, export
-from purplship.domain.Types import TrackingRequest
+from purplship.core.models import TrackingRequest
 from tests.fedex.fixture import proxy
 from tests.utils import strip, get_node_from_xml
 

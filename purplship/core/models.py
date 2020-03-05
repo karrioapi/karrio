@@ -23,8 +23,9 @@ class Party:
     state_code: str = None
     suburb: str = None
 
+    address_line_1: str = None
+    address_line_2: str = None
     address_lines: List[str] = []
-    extra: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -45,7 +46,6 @@ class Item:
     value_amount: float = None
     value_currency: str = None
     origin_country: str = None
-    extra: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -58,7 +58,6 @@ class Customs:
     terms_of_trade: str = None
     items: List[Item] = JList[Item]
     commercial_invoice: bool = False
-    extra: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -69,7 +68,6 @@ class Invoice:
     identifier: str = None
     type: str = None
     copies: int = None
-    extra: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -79,16 +77,6 @@ class Doc:
     type: str = None
     format: str = None
     image: str = None
-    extra: Dict = {}
-
-
-@attr.s(auto_attribs=True)
-class Option:
-    """shipment option type."""
-
-    code: str
-    value: Dict = {}
-    extra: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -120,10 +108,9 @@ class Shipment:
 
     references: List[str] = []
     services: List[str] = []
-    options: List[Option] = JList[Option]
+    options: Dict = {}
 
     label: Doc = JStruct[Doc]
-    extra: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -133,6 +120,7 @@ class ShipmentRequest:
     shipper: Party = JStruct[Party, REQUIRED]
     recipient: Party = JStruct[Party, REQUIRED]
     shipment: Shipment = JStruct[Shipment, REQUIRED]
+    options: Dict = {}
 
 
 class RateRequest(ShipmentRequest):
@@ -146,7 +134,6 @@ class TrackingRequest:
     tracking_numbers: List[str]
     language_code: str = None
     level_of_details: str = None
-    extra: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -178,7 +165,6 @@ class PickupRequest:
     country_code: str = None
 
     address_lines: List[str] = []
-    extra: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -196,7 +182,6 @@ class PickupCancellationRequest:
     confirmation_number: str
     person_name: str = None
     country_code: str = None
-    extra: Dict = {}
 
 
 """ Unified response data types """

@@ -1,5 +1,5 @@
 from purplship.core import Settings as BaseSettings
-from pyups.UPSSecurity import UPSSecurity, UsernameTokenType, ServiceAccessTokenType
+from pyups.ups_security import UPSSecurity, UsernameTokenType, ServiceAccessTokenType
 
 
 class Settings(BaseSettings):

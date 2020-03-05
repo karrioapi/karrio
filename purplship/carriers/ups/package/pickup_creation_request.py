@@ -1,4 +1,4 @@
-from pyups.package_pickup import (
+from pyups.pickup_web_service_schema import (
     PickupCreationRequest
 )
 from purplship.core.utils.xml import Element

@@ -4,7 +4,7 @@ from pydhl.book_pickup_global_req_20 import BookPURequest
 from pydhl.modify_pickup_global_req_20 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_20 import CancelPURequest
 from gds_helpers import to_xml, export, to_dict
-from purplship.domain.Types import PickupCancellationRequest, PickupRequest, PickupUpdateRequest
+from purplship.core.models import PickupCancellationRequest, PickupRequest, PickupUpdateRequest
 from tests.dhl.fixture import proxy
 from tests.utils import strip
 from purplship.mappers.dhl.dhl_proxy import _reformat_time

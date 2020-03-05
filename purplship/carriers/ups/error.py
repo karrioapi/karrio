@@ -1,6 +1,6 @@
 from typing import List, Callable
 from functools import reduce
-from pyups.error import CodeType
+from pyups.error_1_1 import CodeType
 from purplship.core.models import Error
 from purplship.core.utils.xml import Element
 from .utils import Settings

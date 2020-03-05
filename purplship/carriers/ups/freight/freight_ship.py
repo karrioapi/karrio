@@ -1,10 +1,10 @@
 from typing import List, Tuple
 from functools import partial
 from pyups import common
-from pyups.freight_ship import (
+from pyups.freight_ship_web_service_schema import (
     FreightShipRequest, FreightShipResponse, ShipToType, ShipFromType, ShipmentType,
     FreightShipAddressType, FreightShipPhoneType, PhoneType, PayerType, CommodityType,
-    PaymentInformationType, ShipCodeDescriptionType, HandlingUnitType,
+    PaymentInformationType, ShipCodeDescriptionType,
     CommodityValueType, FreightShipUnitOfMeasurementType, WeightType, DimensionsType
 )
 from purplship.core.utils.helpers import export
@@ -13,7 +13,7 @@ from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import DimensionUnit
 from purplship.core.models import (
-    ShipmentRequest, ShipmentDetails, ChargeDetails, ReferenceDetails, Party, Error
+    ShipmentRequest, ShipmentDetails, ChargeDetails, ReferenceDetails, Error
 )
 from purplship.carriers.ups.units import ShippingServiceCode, WeightUnit, PackagingType
 from purplship.carriers.ups.error import parse_error_response
@@ -63,16 +63,14 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
         for svc in payload.shipment.services
         if svc in ShippingServiceCode.__members__
     ]
-    payer = Party(**payload.shipment.extra.get("Payer")) if "Payer" in payload.shipment.extra else None
+    payer = None
     request = FreightShipRequest(
         Request=common.RequestType(
-            RequestOption=payload.shipment.extra.get("RequestOption") or "1",
+            RequestOption="1",
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
                 CustomerContext=", ".join(payload.shipment.references),
-                TransactionIdentifier=payload.shipment.extra.get(
-                    "TransactionIdentifier"
-                ),
+                TransactionIdentifier=None,
             ),
         ),
         Shipment=ShipmentType(
@@ -92,11 +90,11 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 AttentionName=payload.shipper.person_name,
                 Phone=FreightShipPhoneType(
                     Number=payload.shipper.phone_number,
-                    Extension=payload.shipper.extra.get("Extension"),
+                    Extension=None,
                 )
                 if payload.shipper.phone_number is not None
                 else None,
-                FaxNumber=payload.shipper.extra.get("FaxNumber"),
+                FaxNumber=None,
                 EMailAddress=payload.shipper.email_address,
             ),
             ShipperNumber=payload.shipper.account_number,
@@ -115,11 +113,11 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 AttentionName=payload.recipient.person_name,
                 Phone=PhoneType(
                     Number=payload.recipient.phone_number,
-                    Extension=payload.recipient.extra.get("Extension"),
+                    Extension=None,
                 )
                 if payload.recipient.phone_number is not None
                 else None,
-                FaxNumber=payload.recipient.extra.get("FaxNumber"),
+                FaxNumber=None,
                 EMailAddress=payload.recipient.email_address,
             ),
             PaymentInformation=PaymentInformationType(
@@ -138,48 +136,23 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                     AttentionName=payer.person_name,
                     Phone=FreightShipPhoneType(
                         Number=payer.phone_number,
-                        Extension=payer.extra.get("Extension"),
+                        Extension=None,
                     )
                     if payer.phone_number is not None
                     else None,
-                    FaxNumber=payer.extra.get("FaxNumber"),
+                    FaxNumber=None,
                     EMailAddress=payer.email_address,
                 )
                 if payer is not None
                 else None,
-                ShipmentBillingOption=(
-                    lambda option: ShipCodeDescriptionType(
-                        Code=option.get("Code"),
-                        Description=option.get("Description"),
-                    )
-                )(payload.shipment.extra.get("ShipmentBillingOption"))
-                if "ShipmentBillingOption" in payload.shipment.extra
-                else None,
+                ShipmentBillingOption=None,
             ),
             ManufactureInformation=None,
             Service=ShipCodeDescriptionType(Code=services[0].value)
             if len(services) > 0
             else None,
-            HandlingUnitOne=(
-                lambda unit: HandlingUnitType(
-                    Quantity=unit.get("Quantity"),
-                    Type=ShipCodeDescriptionType(
-                        Code=unit.get("Type").get("Code"),
-                        Description=unit.get("Type").get("Description"),
-                    )
-                    if "Type" in unit
-                    else None,
-                )
-            )(payload.shipment.extra.get("HandlingUnitOne"))
-            if "HandlingUnitOne" in payload.shipment.extra
-            else None,
-            HandlingUnitTwo=(
-                lambda unit: HandlingUnitType(
-                    Quantity=unit.get("Quantity"), Type=unit.get("Type")
-                )
-            )(payload.shipment.extra.get("HandlingUnitTwo"))
-            if "HandlingUnitTwo" in payload.shipment.extra
-            else None,
+            HandlingUnitOne=None,
+            HandlingUnitTwo=None,
             ExistingShipmentID=None,
             HandlingInstructions=None,
             DeliveryInstructions=None,
@@ -215,7 +188,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                         Code=PackagingType[pkg.packaging_type].value,
                         Description=None,
                     )
-                    if pkg.packaging_type != None
+                    if pkg.packaging_type is not None
                     else None,
                     DangerousGoodsIndicator=None,
                     CommodityValue=CommodityValueType(
@@ -224,7 +197,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                     )
                     if any((pkg.value_amount, pkg.value_currency))
                     else None,
-                    FreightClass=pkg.extra.get("FreightClass"),
+                    FreightClass=None,
                     NMFCCommodityCode=None,
                     NMFCCommodity=None,
                 )

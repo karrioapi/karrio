@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from tests.usps.fixture import proxy
 from gds_helpers import to_dict, to_xml, export, jsonify
-from purplship.domain.Types import TrackingRequest
+from purplship.core.models import TrackingRequest
 from pyusps.trackfieldrequest import TrackFieldRequest
 from tests.utils import strip
 

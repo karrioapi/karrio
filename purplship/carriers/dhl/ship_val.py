@@ -2,25 +2,24 @@ import time
 from base64 import b64decode
 from functools import reduce
 from typing import List, Tuple, Optional
-from pydhl.datatypes_global_v61 import MetaData
-from pydhl.ship_val_global_req_61 import (
+from pydhl.ship_val_global_req_6_2 import (
     ShipmentRequest as DHLShipmentRequest, Billing, Consignee, Contact, Commodity,
     Shipper, ShipmentDetails as DHLShipmentDetails, Pieces, Piece, Reference,
-    SpecialService, DocImage, DocImages, Dutiable
+    SpecialService, DocImage, DocImages, Dutiable, MetaData
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
-    ShipmentRequest, Error, ShipmentDetails, ReferenceDetails, ChargeDetails, Option
+    ShipmentRequest, Error, ShipmentDetails, ReferenceDetails, ChargeDetails
 )
-from purplship.carriers.dhl.units import PackageType, Service, Product, PayorType, Dimension, WeightUnit
+from purplship.carriers.dhl.units import PackageType, Service, Product, PayorType, Dimension, WeightUnit, CountryRegion
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
 
 
 def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Error]]:
-    return _extract_shipment(response), parse_error_response(response, settings)
+    return _extract_shipment(response, settings), parse_error_response(response, settings)
 
 
 def _extract_shipment(shipment_response_node, settings: Settings) -> Optional[ShipmentDetails]:
@@ -78,18 +77,18 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     default_packaging_type = (
         PackageType.Document if payload.shipment.is_document else PackageType.Your_packaging
     )
-    options = (
-        [opt for opt in payload.shipment.options if opt.code in Service.__members__] +
-        ([] if not payload.shipment.insured_amount else [Option(code=Service.Shipment_Insurance.value)])
+    options = dict(
+        [(code, value) for code, value in payload.shipment.options.items() if code in Service.__members__] +
+        ([] if not payload.shipment.insured_amount else [(Service.Shipment_Insurance.value, payload.shipment.insured_amount)])
     )
 
     request = DHLShipmentRequest(
         schemaVersion="6.1",
         Request=settings.Request(MetaData=MetaData(SoftwareName="3PV", SoftwareVersion="1.0")),
-        RegionCode=payload.shipment.extra.get("RegionCode"),
-        RequestedPickupTime=payload.shipment.extra.get("RequestedPickupTime") or "Y",
-        LanguageCode=payload.shipment.extra.get("LanguageCode") or "en",
-        PiecesEnabled=payload.shipment.extra.get("PiecesEnabled") or "Y",
+        RegionCode=CountryRegion[payload.shipper.country_code],
+        RequestedPickupTime="Y",
+        LanguageCode="en",
+        PiecesEnabled="Y",
         LatinResponseInd=None,
         Billing=Billing(
             ShipperAccountNumber=payload.shipper.account_number,
@@ -119,10 +118,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     PersonName=payload.recipient.person_name,
                     PhoneNumber=payload.recipient.phone_number,
                     Email=payload.recipient.email_address,
-                    FaxNumber=payload.recipient.extra.get("FaxNumber"),
-                    Telex=payload.recipient.extra.get("Telex"),
-                    PhoneExtension=payload.recipient.extra.get("PhoneExtension"),
-                    MobilePhoneNumber=payload.recipient.extra.get("MobilePhoneNumber"),
+                    FaxNumber=None,
+                    Telex=None,
+                    PhoneExtension=None,
+                    MobilePhoneNumber=None,
                 )
                 if any(
                     [payload.recipient.person_name, payload.recipient.phone_number, payload.recipient.email_address]
@@ -133,7 +132,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         Commodity=[
             Commodity(CommodityCode=c.code, CommodityName=c.description) for c in payload.shipment.items
         ],
-        NewShipper=payload.shipment.extra.get("NewShipper"),
+        NewShipper=None,
         Shipper=Shipper(
             ShipperID=payload.shipper.account_number,
             RegisteredAccount=payload.shipper.account_number,
@@ -150,10 +149,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     PersonName=payload.shipper.person_name,
                     PhoneNumber=payload.shipper.phone_number,
                     Email=payload.shipper.email_address,
-                    FaxNumber=payload.shipper.extra.get("FaxNumber"),
-                    Telex=payload.shipper.extra.get("Telex"),
-                    PhoneExtension=payload.shipper.extra.get("PhoneExtension"),
-                    MobilePhoneNumber=payload.shipper.extra.get("MobilePhoneNumber"),
+                    FaxNumber=None,
+                    Telex=None,
+                    PhoneExtension=None,
+                    MobilePhoneNumber=None,
                 )
                 if any(
                     [payload.shipper.person_name, payload.shipper.phone_number, payload.shipper.email_address,]
@@ -170,7 +169,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                             PackageType[p.packaging_type] if p.packaging_type is not None else default_packaging_type
                         ).value,
                         Weight=p.weight,
-                        DimWeight=p.extra.get("DimWeight"),
+                        DimWeight=None,
                         Height=p.height,
                         Width=p.width,
                         Depth=p.length,
@@ -192,22 +191,22 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             ),
             IsDutiable="Y" if is_dutiable else "N",
             InsuredAmount=payload.shipment.insured_amount,
-            DoorTo=payload.shipment.extra.get("DoorTo"),
+            DoorTo=payload.options.get("DoorTo"),
             GlobalProductCode=product.value,
             LocalProductCode=product.value,
-            Contents=payload.shipment.extra.get("Contents") or "...",
+            Contents="...",
         ),
-        EProcShip=payload.shipment.extra.get("EProcShip"),
+        EProcShip=None,
         Dutiable=Dutiable(
             DeclaredCurrency=payload.shipment.currency or "USD",
             DeclaredValue=payload.shipment.declared_value,
             TermsOfTrade=payload.shipment.customs.terms_of_trade,
-            ScheduleB=payload.shipment.customs.extra.get("ScheduleB"),
-            ExportLicense=payload.shipment.customs.extra.get("ExportLicense"),
-            ShipperEIN=payload.shipment.customs.extra.get("ShipperEIN"),
-            ShipperIDType=payload.shipment.customs.extra.get("ShipperIDType"),
-            ImportLicense=payload.shipment.customs.extra.get("ImportLicense"),
-            ConsigneeEIN=payload.shipment.customs.extra.get("ConsigneeEIN"),
+            ScheduleB=None,
+            ExportLicense=None,
+            ShipperEIN=None,
+            ShipperIDType=None,
+            ImportLicense=None,
+            ConsigneeEIN=None,
         )
         if is_dutiable
         else None,
@@ -218,14 +217,14 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         SpecialService=(
             [
                 SpecialService(
-                    SpecialServiceType=Service[option.code].value,
+                    SpecialServiceType=Service[code].value,
                     CommunicationAddress=None,
                     CommunicationType=None,
-                    ChargeValue=None,
-                    CurrencyCode=None,
+                    ChargeValue=value,
+                    CurrencyCode=payload.shipment.currency,
                     IsWaived=None,
                 )
-                for option in options
+                for code, value in options.items()
             ] if len(options) > 0 else None
         ),
         LabelImageFormat=(

@@ -1,7 +1,7 @@
 from typing import List
 from functools import partial
 from pyups.common import RequestType, TransactionReferenceType
-from pyups.package_track import (
+from pyups.track_web_service_schema import (
     TrackRequest, ShipmentType, ActivityType
 )
 from purplship.core.utils.helpers import export

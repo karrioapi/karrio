@@ -1,4 +1,4 @@
-from pyups.freight_pickup import (
+from pyups.freight_pickup_web_service_schema import (
     FreightPickupRequest
 )
 from purplship.core.utils.xml import Element

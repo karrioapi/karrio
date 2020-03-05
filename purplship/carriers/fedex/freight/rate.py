@@ -1,11 +1,11 @@
 from functools import reduce
 from datetime import datetime
 from typing import Tuple, List, Optional
-from pyfedex.rate_v22 import (
+from pyfedex.rate_service_v26 import (
     RateReplyDetail, RateRequest as FedexRateRequest, TransactionDetail, VersionId,
     RequestedShipment, Money, TaxpayerIdentification, Party, Contact, Address, Payment,
-    Payor, ShipmentSpecialServicesRequested, FreightShipmentDetail, SmartPostShipmentDetail,
-    SmartPostShipmentProcessingOptionsRequested, LabelSpecification, RequestedPackageLineItem,
+    Payor, ShipmentSpecialServicesRequested, FreightShipmentDetail,
+    LabelSpecification, RequestedPackageLineItem,
     Weight, Dimensions, RatedShipmentDetail,
 )
 from purplship.core.utils.helpers import export
@@ -77,7 +77,7 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[FedexRateRequest]:
     requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
-    options = [opt for opt in payload.shipment.options if opt.code in SpecialServiceType.__members__]
+    options = [opt for opt in payload.shipment.options.keys() if opt.code in SpecialServiceType.__members__]
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -90,7 +90,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
         ConsolidationKey=None,
         RequestedShipment=RequestedShipment(
             ShipTimestamp=datetime.now(),
-            DropoffType=payload.shipment.extra.get("DropoffType"),
+            DropoffType=None,
             ServiceType=(
                 ServiceType[requested_services[0]].value if len(requested_services) > 0 else None
             ),
@@ -115,11 +115,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
                 Tins=(
                     [
                         TaxpayerIdentification(
-                            TinType=payload.shipper.extra.get("TinType"),
-                            Usage=payload.shipper.extra.get("Usage"),
+                            TinType=None,
+                            Usage=None,
                             Number=payload.shipper.tax_id,
-                            EffectiveDate=payload.shipper.extra.get("EffectiveDate"),
-                            ExpirationDate=payload.shipper.extra.get("ExpirationDate"),
+                            EffectiveDate=None,
+                            ExpirationDate=None,
                         )
                     ]
                     if payload.shipper.tax_id is not None else None
@@ -161,13 +161,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
                 Tins=(
                     [
                         TaxpayerIdentification(
-                            TinType=payload.recipient.extra.get("TinType"),
-                            Usage=payload.recipient.extra.get("Usage"),
+                            TinType=None,
+                            Usage=None,
                             Number=payload.recipient.tax_id,
-                            EffectiveDate=payload.recipient.extra.get("EffectiveDate"),
-                            ExpirationDate=payload.recipient.extra.get(
-                                "ExpirationDate"
-                            ),
+                            EffectiveDate=None,
+                            ExpirationDate=None,
                         )
                     ]
                     if payload.recipient.tax_id is not None else None
@@ -228,7 +226,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             else None,
             SpecialServicesRequested=ShipmentSpecialServicesRequested(
                 SpecialServiceTypes=[
-                    SpecialServiceType[option.code].value for option in options
+                    SpecialServiceType[option].value for option in options
                 ],
                 CodDetail=None,
                 DeliveryOnInvoiceAcceptanceDetail=None,
@@ -273,35 +271,15 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             VariableHandlingChargeDetail=None,
             CustomsClearanceDetail=None,
             PickupDetail=None,
-            SmartPostDetail=(
-                lambda smartpost: SmartPostShipmentDetail(
-                    ProcessingOptionsRequested=SmartPostShipmentProcessingOptionsRequested(
-                        Options=smartpost.get("ProcessingOptionsRequested").get(
-                            "Options"
-                        )
-                    )
-                    if "ProcessingOptionsRequested" in smartpost
-                    else None,
-                    Indicia=smartpost.get("Indicia"),
-                    AncillaryEndorsement=smartpost.get("AncillaryEndorsement"),
-                    HubId=smartpost.get("HubId"),
-                    CustomerManifestId=smartpost.get("CustomerManifestId"),
-                )
-            )(payload.shipment.extra.get("SmartPostDetail"))
-            if "SmartPostDetail" in payload.shipment.extra
-            else None,
+            SmartPostDetail=None,
             BlockInsightVisibility=None,
             LabelSpecification=LabelSpecification(
                 LabelFormatType=payload.shipment.label.format,
                 ImageType=payload.shipment.label.type,
-                LabelStockType=payload.shipment.label.extra.get("LabelStockType"),
-                LabelPrintingOrientation=payload.shipment.label.extra.get(
-                    "LabelPrintingOrientation"
-                ),
-                LabelOrder=payload.shipment.label.extra.get("LabelOrder"),
-                PrintedLabelOrigin=payload.shipment.label.extra.get(
-                    "PrintedLabelOrigin"
-                ),
+                LabelStockType=None,
+                LabelPrintingOrientation=None,
+                LabelOrder=None,
+                PrintedLabelOrigin=None,
                 CustomerSpecifiedDetail=None,
             )
             if payload.shipment.label is not None
@@ -310,7 +288,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             RateRequestTypes=(
                 ["LIST"] + ([] if not payload.shipment.currency else ["PREFERRED"])
             ),
-            EdtRequestType=payload.shipment.extra.get("EdtRequestType"),
+            EdtRequestType=None,
             PackageCount=len(payload.shipment.items),
             ShipmentOnlyFields=None,
             ConfigurationData=None,

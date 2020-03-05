@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-with open("README.md", "r") as fh:
+with open("builds/package/README.md", "r") as fh:
     long_description = fh.read()
 
 
@@ -13,7 +13,7 @@ setup(name='purplship.freight',
       author='PurplShip',
       author_email='danielk.developer@gmail.com',
       license='LGPLv3',
-      packages=find_packages(".", exclude=["purplship.shipping*", "tests*"]),
+      packages=find_packages(".", exclude=["purplship.package*", "tests*"]),
       install_requires=[
             'attrs',
             'jstruct',

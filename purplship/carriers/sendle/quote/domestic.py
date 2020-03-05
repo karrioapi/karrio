@@ -13,10 +13,7 @@ def domestic_quote_request(payload: RateRequest) -> DomesticParcelQuote:
         delivery_suburb=" ".join(payload.recipient.address_lines),
         delivery_postcode=payload.recipient.postal_code,
         kilogram_weight=str(payload.shipment.total_weight or payload.shipment.items[0].weight),
-        cubic_metre_volume=(
-            payload.shipment.extra.get('cubic_metre_volume') or
-            payload.shipment.items[0].extra.get('cubic_metre_volume')
-        ),
+        cubic_metre_volume=None,
         plan_name=reduce(
             lambda plan, s: Plan[s].value if s in Plan.__members__ else None,
             payload.shipment.services,

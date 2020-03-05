@@ -1,5 +1,5 @@
 from typing import List, Optional, Tuple
-from pydhl.tracking_request_known import KnownTrackingRequest
+from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.tracking_response import AWBInfo
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable

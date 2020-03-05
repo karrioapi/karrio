@@ -1,7 +1,7 @@
 from functools import reduce, partial
 from typing import List, Tuple
 from pyups import common
-from pyups.freight_rate import (
+from pyups.freight_rate_web_service_schema import (
     FreightRateRequest, FreightRateResponse, ShipFromType, AddressType,
     ShipToType, PaymentInformationType, PayerType, RateCodeDescriptionType,
     HandlingUnitType, ShipmentServiceOptionsType, PickupOptionsType, WeightType,

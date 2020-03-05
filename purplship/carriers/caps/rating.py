@@ -9,7 +9,7 @@ from typing import List, Tuple
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
-from purplship.core.settings import Settings
+from purplship.carriers.caps.utils import Settings
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country, Currency
 from purplship.core.errors import OriginNotServicedError, MultiItemShipmentSupportError
 from purplship.core.models import RateDetails, ChargeDetails, Error, ShipmentRequest
@@ -79,25 +79,25 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
     requested_services = [
         svc for svc in payload.shipment.services if svc in ServiceType.__members__
     ]
-    requested_options = [
-        opt
-        for opt in payload.shipment.options
-        if opt.code in OptionCode.__members__
-    ]
+    requested_options = {
+        code: value
+        for (code, value) in payload.shipment.options.items()
+        if code in OptionCode.__members__
+    }
 
     request = mailing_scenario(
-        customer_number=payload.shipper.account_number,
-        contract_id=payload.shipment.extra.get("contract-id"),
-        promo_code=payload.shipment.extra.get("promo-code"),
-        quote_type=payload.shipment.extra.get("quote-type"),
+        customer_number=payload.shipper.account_number or settings.customer_number,
+        contract_id=settings.contract_id,
+        promo_code=None,
+        quote_type=None,
         expected_mailing_date=(payload.shipment.date or datetime.today().strftime('%Y-%m-%d')),
         options=(
             optionsType(option=[
                 optionType(
-                    option_amount=option.value.get("option-amount"),
-                    option_code=OptionCode[option.code].value,
+                    option_amount=value.get("option-amount"),
+                    option_code=OptionCode[code].value,
                 )
-                for option in requested_options
+                for code, value in requested_options.items()
             ])
             if (len(requested_options) > 0) else None
         ),
@@ -117,9 +117,9 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
                     package.height, DimensionUnit[payload.shipment.dimension_unit]
                 ).CM,
             ),
-            unpackaged=payload.shipment.extra.get("unpackaged"),
-            mailing_tube=payload.shipment.extra.get("mailing-tube"),
-            oversized=payload.shipment.extra.get("oversized"),
+            unpackaged=None,
+            mailing_tube=None,
+            oversized=None,
         ),
         services=(
             servicesType(service_code=[ServiceType[code].value for code in requested_services])

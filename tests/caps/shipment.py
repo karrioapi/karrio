@@ -3,7 +3,7 @@ from unittest.mock import patch
 from gds_helpers import to_xml, export, to_dict, xml_tostring
 from pycaps.shipment import ShipmentType
 from pycaps.ncshipment import NonContractShipmentType
-from purplship.domain.Types import ShipmentRequest
+from purplship.core.models import ShipmentRequest
 from purplship.mappers.caps import CanadaPostProxy
 from tests.caps.fixture import proxy
 from tests.utils import strip

@@ -3,7 +3,7 @@ import urllib.parse
 from unittest.mock import patch
 from tests.usps.fixture import proxy
 from gds_helpers import to_dict, to_xml, export, jsonify
-from purplship.domain.Types import RateRequest
+from purplship.core.models import RateRequest
 from pyusps.ratev4request import RateV4Request
 from pyusps.intlratev2request import IntlRateV2Request
 from tests.utils import strip

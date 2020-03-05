@@ -1,6 +1,6 @@
-import purplship
+import purplship.package as api
 
-proxy = purplship.gateway["aups"].create(
+proxy = api.gateway["aups"].create(
     {
         "api_key": "username",
         "password": "password",

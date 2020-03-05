@@ -1,8 +1,8 @@
 from typing import Tuple, List
-from pydhl.book_pickup_global_req_20 import BookPURequest
-from pydhl.book_pickup_global_res_20 import BookPUResponse
-from pydhl.pickupdatatypes_global_20 import (
-    Requestor, RequestorContact, Place, Contact, Pickup, WeightSeg
+from pydhl.book_pickup_global_req_3_0 import BookPURequest
+from pydhl.book_pickup_global_res_3_0 import BookPUResponse
+from pydhl.pickupdatatypes_global_3_0 import (
+    Requestor, Place, Contact, Pickup, WeightSeg
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
@@ -42,24 +42,15 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
 
 
 def book_pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[BookPURequest]:
-    country_code = payload.country_code or "AM"
-
     request = BookPURequest(
         Request=settings.Request(),
         schemaVersion="1.0",
-        RegionCode=payload.extra.get("RegionCode") or CountryRegion[country_code].value,
+        RegionCode=CountryRegion[payload.country_code].value if payload.country_code else "AM",
         Requestor=Requestor(
             AccountNumber=payload.account_number,
-            AccountType=payload.extra.get("AccountType") or "D",
-            RequestorContact=(
-                RequestorContact(
-                    PersonName=payload.extra.get("RequestorContact").get("PersonName"),
-                    Phone=payload.extra.get("RequestorContact").get("Phone"),
-                    PhoneExtension=payload.extra.get("RequestorContact").get("PhoneExtension"),
-                )
-                if "RequestorContact" in payload.extra else None
-            ),
-            CompanyName=payload.extra.get("CompanyName"),
+            AccountType="D",
+            RequestorContact=None,
+            CompanyName=None,
         ),
         Place=Place(
             City=payload.city,
@@ -79,7 +70,7 @@ def book_pickup_request(payload: PickupRequest, settings: Settings) -> Serializa
             ReadyByTime=payload.ready_time,
             CloseTime=payload.closing_time,
             SpecialInstructions=payload.instruction,
-            RemotePickupFlag=payload.extra.get("RemotePickupFlag"),
+            RemotePickupFlag=None,
             weight=(
                 WeightSeg(Weight=payload.weight, WeightUnit=payload.weight_unit)
                 if any([payload.weight, payload.weight_unit]) else None
