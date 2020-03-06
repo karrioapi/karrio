@@ -1,4 +1,5 @@
-<xsd:schema elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://purolator.com/pws/datatypes/v1" 
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://purolator.com/pws/datatypes/v1">
     <xsd:complexType name="SchedulePickUpRequestContainer">
         <xsd:annotation>

@@ -1,4 +1,4 @@
-<xsd:schema xmlns:tns="http://purolator.com/pws/datatypes/v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://purolator.com/pws/datatypes/v1" elementFormDefault="qualified">
+<xsd:schema xmlns:tns="http://purolator.com/pws/datatypes/v1" targetNamespace="http://purolator.com/pws/datatypes/v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
     <xsd:complexType name="GetLocationsByAddressRequestContainer">
         <xsd:annotation>
             <xsd:appinfo/>
