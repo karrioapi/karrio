@@ -1,6 +1,7 @@
 """PurplShip Proxy base class definition module."""
 
 import attr
+from abc import ABC
 from typing import TypeVar
 from purplship.core.settings import Settings
 from purplship.core.errors import MethodNotSupportedError
@@ -11,8 +12,8 @@ S = TypeVar('S')
 
 
 @attr.s(auto_attribs=True)
-class Proxy:
-    """Unitied Shipping API Proxy (Interface)
+class Proxy(ABC):
+    """Unified Shipping API Proxy (Interface)
     """
 
     settings: Settings

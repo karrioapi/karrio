@@ -2,4 +2,4 @@
 
 from lxml import etree
 
-Element = Element
+Element = etree.Element

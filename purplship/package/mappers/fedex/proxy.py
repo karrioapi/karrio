@@ -2,10 +2,10 @@ from purplship.core.utils.helpers import to_xml, request as http
 from purplship.package.proxy import Proxy as BaseProxy
 from purplship.package.mappers.fedex.settings import Settings
 from purplship.core.utils.serializable import Serializable, Deserializable
-from pyfedex.rate_v22 import RateRequest
-from pyfedex.ship_service_v21 import ProcessShipmentRequest
-from pyfedex.pickup_service_v15 import CreatePickupRequest, CancelPickupRequest
-from pyfedex.track_service_v14 import TrackRequest
+from pyfedex.rate_service_v26 import RateRequest
+from pyfedex.ship_service_v25 import ProcessShipmentRequest
+from pyfedex.pickup_service_v20 import CreatePickupRequest, CancelPickupRequest
+from pyfedex.track_service_v18 import TrackRequest
 
 
 class Proxy(BaseProxy):

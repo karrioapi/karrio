@@ -112,12 +112,12 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
     )
     service_options = [
         opt
-        for opt in payload.shipment.options.keys()
+        for opt in payload.options.keys()
         if opt in ServiceOption.__members__
     ]
     rating_options = [
         opt
-        for opt in payload.shipment.options.keys()
+        for opt in payload.options.keys()
         if opt in RatingOption.__members__
     ]
     request = UPSRateRequest(

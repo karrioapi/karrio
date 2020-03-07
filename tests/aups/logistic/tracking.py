@@ -1,50 +1,59 @@
 import unittest
 from unittest.mock import patch
-from tests.aups.logistic.fixture import proxy
-from gds_helpers import to_dict
+from tests.aups.logistic.fixture import gateway
+from gds_helpers import to_dict, jsonify
+from purplship.package import tracking
 from purplship.core.models import TrackingRequest
 
 
 class TestAustraliaPostTracking(unittest.TestCase):
-    def test_create_quote_request(self):
-        payload = TrackingRequest(tracking_numbers=TRACKING_REQUEST)
+    def setUp(self):
+        self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_PAYLOAD)
 
-        tracking_request = proxy.mapper.create_tracking_request(payload)
-        self.assertEqual(to_dict(tracking_request), to_dict(TRACKING_REQUEST))
+    def test_create_tracking_request(self):
+        request = gateway.mapper.create_tracking_request(self.TrackingRequest)
+        self.assertEqual(request.serialize(), TRACKING_REQUEST)
 
-    @patch("purplship.carriers.aups.aups_proxy.http", return_value="{}")
-    def test_get_quotes(self, http_mock):
-        proxy.get_tracking(TRACKING_REQUEST)
+    @patch("purplship.package.mappers.aups.proxy.http", return_value="{}")
+    def test_get_tracking(self, http_mock):
+        tracking.fetch(self.TrackingRequest).from_(gateway)
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(
             reqUrl,
-            f'{proxy.client.server_url}/shipping/v1/track?tracking_ids={",".join(TRACKING_REQUEST)}',
+            f'{gateway.proxy.settings.server_url}/shipping/v1/track?tracking_ids={TRACKING_REQUEST}',
         )
 
-    def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_tracking_response(TRACKING_RESPONSE)
-        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
+    def test_parse_tracking_response(self):
+        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+            mock.return_value = jsonify(TRACKING_RESPONSE)
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
 
-    def test_parse_quote_response_with_errors(self):
-        parsed_response = proxy.mapper.parse_tracking_response(TRACKING_ERROR)
-        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_ERROR))
+    def test_parse_tracking_response_with_errors(self):
+        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+            mock.return_value = jsonify(TRACKING_ERROR)
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_ERROR))
 
-    def test_parse_quote_response_errors(self):
-        parsed_response = proxy.mapper.parse_tracking_response(ERRORS)
-        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
+    def test_parse_tracking_response_errors(self):
+        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+            mock.return_value = jsonify(ERRORS)
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
 if __name__ == "__main__":
     unittest.main()
 
+TRACKING_PAYLOAD = ["7XX1000", "7XX1000634011427"]
 
-TRACKING_REQUEST = ["7XX1000", "7XX1000634011427"]
+TRACKING_REQUEST = "7XX1000,7XX1000634011427"
 
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier": "AustraliaPost",
+            "carrier": "Australia Post Shipping",
             "events": [
                 {
                     "date": "2017-09-18T14:35:07+10:00",
@@ -60,16 +69,16 @@ PARSED_TRACKING_RESPONSE = [
             "tracking_number": "7XX1000634011427",
         }
     ],
-    [{"carrier": "AustraliaPost", "code": "ESB-10001"}],
+    [{"carrier": "Australia Post Shipping", "code": "ESB-10001"}],
 ]
 
-PARSED_TRACKING_ERROR = [[], [{"carrier": "AustraliaPost", "code": "ESB-10001"}]]
+PARSED_TRACKING_ERROR = [[], [{"carrier": "Australia Post Shipping", "code": "ESB-10001"}]]
 
 PARSED_ERRORS = [
     [],
     [
         {
-            "carrier": "AustraliaPost",
+            "carrier": "Australia Post Shipping",
             "code": "51101",
             "message": "The request must contain 10 or less AP article ids, consignment ids, or barcode ids.",
         }

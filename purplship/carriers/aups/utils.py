@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     """Australia post connection settings."""
 
     api_key: str
-    password: str = None
-    account_number: str = None
+    password: str
+    account_number: str
 
     @property
     def authorization(self):

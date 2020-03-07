@@ -1,53 +1,56 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict
+from gds_helpers import to_dict
+from purplship.package import tracking
 from purplship.core.models import TrackingRequest
-from tests.caps.fixture import proxy
+from tests.caps.fixture import gateway
 
 
 class TestCanadaPostTracking(unittest.TestCase):
     def setUp(self):
-        self.tracking_numbers = ["1Z12345E6205277936"]
+        self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_PAYLOAD)
 
     def test_create_tracking_request(self):
-        payload = TrackingRequest(tracking_numbers=self.tracking_numbers)
+        request = gateway.mapper.create_tracking_request(self.TrackingRequest)
 
-        tracking_pins = proxy.mapper.create_tracking_request(payload)
+        self.assertEqual(request.serialize(), TRACKING_PAYLOAD)
 
-        self.assertEqual(tracking_pins, self.tracking_numbers)
-
-    @patch("purplship.carriers.caps.caps_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        proxy.get_tracking(self.tracking_numbers)
+        tracking.fetch(self.TrackingRequest).from_(gateway)
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(reqUrl, TrackingRequestURL)
 
     def test_tracking_auth_error_parsing(self):
-        parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
+        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+            mock.return_value = AuthError
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingResponseXml)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
+        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+            mock.return_value = TrackingResponseXml
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(UnknownTrackingNumberResponse)
-        )
-        self.assertEqual(
-            to_dict(parsed_response), to_dict(ParsedUnknownTrackingNumberResponse)
-        )
+        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+            mock.return_value = UnknownTrackingNumberResponse
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedUnknownTrackingNumberResponse)
+            )
 
 
 if __name__ == "__main__":
     unittest.main()
 
+TRACKING_PAYLOAD = ["1Z12345E6205277936"]
 
 ParsedAuthError = [
-    {"carrier": "CanadaPost", "code": "E002", "message": "AAA Authentication Failure"}
+    [],
+    [{"carrier": "CanadaPost", "code": "E002", "message": "AAA Authentication Failure"}]
 ]
 
 ParsedTrackingResponse = [

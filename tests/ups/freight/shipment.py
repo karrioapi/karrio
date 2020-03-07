@@ -3,7 +3,7 @@ from unittest.mock import patch
 from gds_helpers import to_xml, to_dict, export
 from pyups.freight_ship import FreightShipRequest
 from purplship.domain import Types as T
-from tests.ups.freight.fixture import proxy
+from tests.ups.freight.fixture import gateway
 from tests.utils import strip, get_node_from_xml
 
 
@@ -16,18 +16,18 @@ class TestUPSShipment(unittest.TestCase):
 
     def test_create_freight_shipment_request(self):
         payload = T.ShipmentRequest(**freight_shipment_data)
-        Shipment_ = proxy.mapper.create_shipment_request(payload)
+        Shipment_ = gateway.mapper.create_shipment_request(payload)
         self.assertEqual(export(Shipment_), export(self.FreightShipRequest))
 
-    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.freight.mappers.ups.proxy.http", return_value="<a></a>")
     def test_create_freight_shipment(self, http_mock):
-        proxy.create_shipment(self.FreightShipRequest)
+        gateway.proxy.create_shipment(self.FreightShipRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(FreightShipmentRequestXML))
 
     def test_parse_freight_shipment_response(self):
-        parsed_response = proxy.mapper.parse_shipment_response(
+        parsed_response = gateway.mapper.parse_shipment_response(
             to_xml(FreightShipmentResponseXML)
         )
         self.assertEqual(

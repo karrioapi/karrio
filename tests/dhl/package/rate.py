@@ -1,70 +1,77 @@
+import re
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict, export
-from pydhl.DCT_req_global import DCTRequest
-from purplship.domain import Types as T
-from tests.dhl.fixture import proxy
-from tests.utils import strip
+from gds_helpers import to_dict
+from purplship.core.models import RateRequest
+from purplship.package import rating
+from tests.dhl.package.fixture import gateway
 
 
 class TestDHLQuote(unittest.TestCase):
     def setUp(self):
-        self.DCTRequest = DCTRequest()
-        self.DCTRequest.build(to_xml(QuoteRequestXml))
+        self.RateRequest = RateRequest(**RatePayload)
 
-    def test_create_quote_request(self):
-        shipper = {"postal_code": "H3N1S4", "country_code": "CA"}
-        recipient = {"city": "Lome", "country_code": "TG"}
-        shipment = {
-            "services": "EXPRESS_WORLDWIDE_DOC",
-            "currency": "CAD",
-            "insured_amount": 75,
-            "declared_value": 100,
-            "items": [
-                {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
-            ],
-            "is_document": False,
-        }
-        payload = T.RateRequest(shipper=shipper, recipient=recipient, shipment=shipment)
-
-        DCTRequest_ = proxy.mapper.create_quote_request(payload)
+    def test_create_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
 
         # remove MessageTime, Date and ReadyTime for testing purpose
-        DCTRequest_.GetQuote.Request.ServiceHeader.MessageTime = None
-        DCTRequest_.GetQuote.BkgDetails.Date = None
-        DCTRequest_.GetQuote.BkgDetails.ReadyTime = None
-        self.assertEqual(export(DCTRequest_), export(self.DCTRequest))
+        serialized_request = re.sub(
+            '<MessageTime>[^>]+</MessageTime>', '', re.sub(
+                '<Date>[^>]+</Date>', '', re.sub(
+                    '<ReadyTime>[^>]+</ReadyTime>', '', request.serialize())))
 
-    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
-    def test_get_quotes(self, http_mock):
-        proxy.get_quotes(self.DCTRequest)
+        self.assertEqual(serialized_request, RateRequestXML)
 
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
+    @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
+    def test_get_rates(self, http_mock):
+        rating.fetch(self.RateRequest).from_(gateway)
 
-    def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteResponseXml))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, gateway.settings.server_url)
 
-    def test_parse_quote_parsing_error(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteParsingError))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
+    def test_parse_rate_response(self):
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = QuoteResponseXml
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
-    def test_parse_quote_missing_args_error(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteMissingArgsError)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
+    def test_parse_rate_parsing_error(self):
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = QuoteParsingError
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
 
-    def test_parse_quote_vol_weight_higher_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteVolWeightHigher)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteVolWeightHigher))
+    def test_parse_rate_missing_args_error(self):
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = QuoteMissingArgsError
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
+
+    def test_parse_rate_vol_weight_higher_response(self):
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = QuoteVolWeightHigher
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteVolWeightHigher))
 
 
 if __name__ == "__main__":
     unittest.main()
+
+
+RatePayload = {
+    "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
+    "recipient": {"city": "Lome", "country_code": "TG"},
+    "shipment": {
+        "services": ["EXPRESS_WORLDWIDE_DOC"],
+        "currency": "CAD",
+        "insured_amount": 75,
+        "declared_value": 100,
+        "items": [
+            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
+        ],
+        "is_document": False,
+    }
+}
 
 
 ParsedQuoteParsingError = [
@@ -190,10 +197,11 @@ QuoteMissingArgsError = """<?xml version="1.0" ?>
 </DCTResponse>
 """
 
-QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="1.0">
+RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.">
     <GetQuote>
         <Request>
             <ServiceHeader>
+                
                 <MessageReference>1234567890123456789012345678901</MessageReference>
                 <SiteID>site_id</SiteID>
                 <Password>password</Password>
@@ -209,6 +217,8 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
         </From>
         <BkgDetails>
             <PaymentCountryCode>CA</PaymentCountryCode>
+            
+            
             <DimensionUnit>IN</DimensionUnit>
             <WeightUnit>LB</WeightUnit>
             <Pieces>
@@ -220,28 +230,28 @@ QuoteRequestXml = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:/
                     <Weight>4.</Weight>
                 </Piece>
             </Pieces>
-            <IsDutiable>Y</IsDutiable>
+            <IsDutiable>N</IsDutiable>
+            <QtdShp>
+                <GlobalProductCode>D</GlobalProductCode>
+                <LocalProductCode>D</LocalProductCode>
+                <QtdShpExChrg>
+                    <SpecialServiceType>II</SpecialServiceType>
+                </QtdShpExChrg>
+            </QtdShp>
             <QtdShp>
                 <GlobalProductCode>P</GlobalProductCode>
                 <LocalProductCode>P</LocalProductCode>
                 <QtdShpExChrg>
                     <SpecialServiceType>II</SpecialServiceType>
                 </QtdShpExChrg>
-                <QtdShpExChrg>
-                    <SpecialServiceType>DD</SpecialServiceType>
-                </QtdShpExChrg>
             </QtdShp>
-            <InsuredValue>75.</InsuredValue>
+            <InsuredValue>75</InsuredValue>
             <InsuredCurrency>CAD</InsuredCurrency>
         </BkgDetails>
         <To>
             <CountryCode>TG</CountryCode>
             <City>Lome</City>
         </To>
-        <Dutiable>
-            <DeclaredCurrency>CAD</DeclaredCurrency>
-            <DeclaredValue>100.</DeclaredValue>
-        </Dutiable>
     </GetQuote>
 </p:DCTRequest>
 """

@@ -3,9 +3,9 @@ from purplship.core.utils.helpers import to_xml, request as http, bundle_xml, ex
 from purplship.package.proxy import Proxy as BaseProxy
 from purplship.package.mappers.ups.settings import Settings
 from purplship.core.utils.serializable import Serializable, Deserializable
-from pyups.package_rate import RateRequest
-from pyups.package_track import TrackRequest
-from pyups.package_ship import ShipmentRequest
+from pyups.rate_web_service_schema import RateRequest
+from pyups.track_web_service_schema import TrackRequest
+from pyups.ship_web_service_schema import ShipmentRequest
 
 
 class Proxy(BaseProxy):

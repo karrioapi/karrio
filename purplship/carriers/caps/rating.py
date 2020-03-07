@@ -81,13 +81,13 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
     ]
     requested_options = {
         code: value
-        for (code, value) in payload.shipment.options.items()
+        for (code, value) in payload.options.items()
         if code in OptionCode.__members__
     }
 
     request = mailing_scenario(
         customer_number=payload.shipper.account_number or settings.customer_number,
-        contract_id=settings.contract_id,
+        contract_id=None,
         promo_code=None,
         quote_type=None,
         expected_mailing_date=(payload.shipment.date or datetime.today().strftime('%Y-%m-%d')),
@@ -104,7 +104,7 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
         parcel_characteristics=parcel_characteristicsType(
             weight=Weight(
                 (payload.shipment.total_weight or package.weight),
-                WeightUnit[payload.shipment.weight_unit],
+                WeightUnit[payload.shipment.weight_unit or "KG"],
             ).KG,
             dimensions=dimensionsType(
                 length=Dimension(
@@ -147,5 +147,5 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
 def _request_serializer(request: mailing_scenario) -> str:
     return export(
         request,
-        namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v3"',
+        namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"',
     )

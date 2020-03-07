@@ -4,7 +4,7 @@ from pyusps.intlratev2response import ServiceType, ExtraServiceType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
-from purplship.core.models import RateDetails, Error, RateRequest, ChargeDetails, Option
+from purplship.core.models import RateDetails, Error, RateRequest, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country
 from purplship.carriers.usps.units import IntlContainer, ExtraService, IntlContentType, IntlMailType
 from purplship.carriers.usps.error import parse_error_response
@@ -53,7 +53,7 @@ def intl_rate_request(payload: RateRequest, settings: Settings) -> Serializable[
     dimension_unit = DimensionUnit[payload.shipment.dimension_unit or "IN"]
     extra_services = [
         ExtraService[svc.code].value
-        for svc in payload.shipment.options.keys()
+        for svc in payload.options.keys()
         if svc.code in ExtraService.__members__
     ]
     request = IntlRateV2Request(

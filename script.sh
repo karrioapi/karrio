@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 test() {
-    python -m unittest -v
+    pushd tests
+    python -m unittest -v $@
+    popd
 }
 
 typecheck() {

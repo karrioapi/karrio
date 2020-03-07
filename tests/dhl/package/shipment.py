@@ -1,52 +1,50 @@
+import re
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict, export
-from pydhl.ship_val_global_req_61 import ShipmentRequest
-from purplship.domain import Types as T
-from tests.dhl.fixture import proxy
-from tests.utils import strip
+from gds_helpers import to_dict
+from purplship.core.models import ShipmentRequest
+from purplship.package import shipment
+from tests.dhl.package.fixture import gateway
 
 
 class TestDHLShipment(unittest.TestCase):
     def setUp(self):
-        self.ShipmentRequest = ShipmentRequest()
-        self.ShipmentRequest.build(to_xml(ShipmentRequestXml))
+        self.ShipmentRequest = ShipmentRequest(**shipment_data)
 
     def test_create_shipment_request(self):
-        payload = T.ShipmentRequest(**shipment_data)
-        ShipmentRequest_ = proxy.mapper.create_shipment_request(payload)
+        request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         # remove MessageTime, Date for testing purpose
-        ShipmentRequest_.Request.ServiceHeader.MessageTime = None
-        ShipmentRequest_.ShipmentDetails.Date = None
-        self.assertEqual(export(ShipmentRequest_), export(self.ShipmentRequest))
+        serialized_request = re.sub(
+            '<MessageTime>[^>]+</MessageTime>', '', re.sub(
+                '<Date>[^>]+</Date>', '', request.serialize()))
 
-    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
+        self.assertEqual(serialized_request, ShipmentRequestXml)
+
+    @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        proxy.create_shipment(self.ShipmentRequest)
+        shipment.create(self.ShipmentRequest).with_(gateway)
 
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(ShipmentRequestXml))
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_shipment_error(self):
-        parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(ShipmentParsingError)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentParsingError))
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = ShipmentParsingError
+            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentParsingError))
 
     def test_shipment_missing_args_error_parsing(self):
-        parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(ShipmentMissingArgsError)
-        )
-        self.assertEqual(
-            to_dict(parsed_response), to_dict(ParsedShipmentMissingArgsError)
-        )
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = ShipmentMissingArgsError
+            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentMissingArgsError))
 
     def test_parse_shipment_response(self):
-        parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(ShipmentResponseXml)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = ShipmentResponseXml
+            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
 
 if __name__ == "__main__":
@@ -155,16 +153,17 @@ ShipmentMissingArgsError = """<?xml version="1.0" encoding="UTF-8"?>
 <!-- ServiceInvocationId:20180831211951_7837_4526a967-d468-4741-a69e-88be23f892dc -->
 """
 
-ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.1">
+ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.2">
     <Request>
         <ServiceHeader>
+            
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>
         </ServiceHeader>
         <MetaData>
             <SoftwareName>3PV</SoftwareName>
-            <SoftwareVersion>1.0</SoftwareVersion>
+            <SoftwareVersion>6.2</SoftwareVersion>
         </MetaData>
     </Request>
     <RegionCode>AM</RegionCode>
@@ -189,9 +188,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <Contact>
             <PersonName>Mrs Orlander</PersonName>
             <PhoneNumber>506-851-2271</PhoneNumber>
-            <PhoneExtension>7862</PhoneExtension>
-            <FaxNumber>506-851-7403</FaxNumber>
-            <Telex>506-851-7121</Telex>
             <Email>c_orlander@gc.ca</Email>
         </Contact>
     </Consignee>
@@ -202,12 +198,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     <Dutiable>
         <DeclaredValue>200.</DeclaredValue>
         <DeclaredCurrency>USD</DeclaredCurrency>
-        <ScheduleB>3002905110</ScheduleB>
-        <ExportLicense>D123456</ExportLicense>
-        <ShipperEIN>112233445566</ShipperEIN>
-        <ShipperIDType>S</ShipperIDType>
-        <ImportLicense>ImportLic</ImportLicense>
-        <ConsigneeEIN>ConEIN2123</ConsigneeEIN>
         <TermsOfTrade>DAP</TermsOfTrade>
     </Dutiable>
     <ShipmentDetails>
@@ -226,6 +216,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <WeightUnit>L</WeightUnit>
         <GlobalProductCode>P</GlobalProductCode>
         <LocalProductCode>P</LocalProductCode>
+        
         <Contents>...</Contents>
         <DimensionUnit>I</DimensionUnit>
         <IsDutiable>Y</IsDutiable>
@@ -244,16 +235,12 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <Contact>
             <PersonName>Ms Lucian</PersonName>
             <PhoneNumber>1 23 8613402</PhoneNumber>
-            <PhoneExtension>3403</PhoneExtension>
-            <FaxNumber>1 905 8613411</FaxNumber>
-            <Telex>1245</Telex>
             <Email>test@email.com</Email>
         </Contact>
     </Shipper>
     <SpecialService>
         <SpecialServiceType>WY</SpecialServiceType>
     </SpecialService>
-    <EProcShip>N</EProcShip>
     <DocImages>
         <DocImage>
             <Type>CIN</Type>
@@ -439,13 +426,6 @@ shipment_data = {
         "state": "Arizona",
         "state_code": "AZ",
         "account_number": "123456789",
-        "extra": {
-            "ShipperID": "123456789",
-            "RegisteredAccount": "123456789",
-            "PhoneExtension": "3403",
-            "FaxNumber": "1 905 8613411",
-            "Telex": "1245",
-        },
     },
     "recipient": {
         "company_name": "IBM Bruse Pte Ltd",
@@ -456,11 +436,6 @@ shipment_data = {
         "person_name": "Mrs Orlander",
         "phone_number": "506-851-2271",
         "email_address": "c_orlander@gc.ca",
-        "extra": {
-            "PhoneExtension": "7862",
-            "FaxNumber": "506-851-7403",
-            "Telex": "506-851-7121",
-        },
     },
     "shipment": {
         "items": [
@@ -481,7 +456,6 @@ shipment_data = {
         "duty_paid_by": "SENDER",
         "duty_payment_account": "123456789",
         "declared_value": 200.00,
-        "options": [{"code": "Paperless_Trade"}],
         "services": ["EXPRESS_WORLDWIDE"],
         "doc_images": [
             {
@@ -490,17 +464,9 @@ shipment_data = {
                 "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
             }
         ],
-        "extra": {"EProcShip": "N", "RegionCode": "AM"},
         "customs": {
             "terms_of_trade": "DAP",
-            "extra": {
-                "ScheduleB": "3002905110",
-                "ExportLicense": "D123456",
-                "ShipperEIN": "112233445566",
-                "ShipperIDType": "S",
-                "ImportLicense": "ImportLic",
-                "ConsigneeEIN": "ConEIN2123",
-            },
         },
     },
+    "options": {"Paperless_Trade": True},
 }

@@ -1,20 +1,13 @@
 """PurplShip Client base class definition"""
 
 import attr
+from abc import ABC
 
 
 @attr.s(auto_attribs=True)
-class Settings:
+class Settings(ABC):
     """ 
-    Unitied API carrier Client (Interface)
-    ...
-
-    Attributes
-    ----------
-    server_url : str
-        a carrier server url address (can be test or prod) 
-    carrier_name : str
-        a custom name to identified the carrier client instance (set to carrier name by default) 
+    Unified API carrier Connection settings (Interface)
     """
 
     server_url: str

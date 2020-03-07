@@ -1,52 +1,48 @@
 import unittest
 from unittest.mock import patch
-from pyfedex.track_service_v14 import TrackRequest
-from gds_helpers import to_xml, to_dict, export
+from gds_helpers import to_dict
 from purplship.core.models import TrackingRequest
-from tests.fedex.fixture import proxy
-from tests.utils import strip, get_node_from_xml
+from purplship.package import tracking
+from tests.fedex.package.fixture import gateway
 
 
 class TestFeDexTracking(unittest.TestCase):
     def setUp(self):
-        req_xml = get_node_from_xml(TrackingRequestXML, "TrackRequest")
-        self.TrackRequest = TrackRequest()
-        self.TrackRequest.build(req_xml)
+        self.maxDiff = None
+        self.TrackRequest = TrackingRequest(tracking_numbers=["794887075005"])
 
     def test_create_tracking_request(self):
-        payload = TrackingRequest(tracking_numbers=["794887075005"])
+        request = gateway.mapper.create_tracking_request(self.TrackRequest)
 
-        TrackRequest_ = proxy.mapper.create_tracking_request(payload)
+        self.assertEqual(request.serialize(), TrackingRequestXML)
 
-        self.assertEqual(export(TrackRequest_), export(self.TrackRequest))
-
-    @patch("purplship.carriers.fedex.fedex_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.fedex.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        proxy.get_tracking(self.TrackRequest)
+        tracking.fetch(self.TrackRequest).from_(gateway)
 
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(TrackingRequestXML))
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_tracking_response(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingResponseXML)
-        )
+        with patch("purplship.package.mappers.fedex.proxy.http") as mock:
+            mock.return_value = TrackingResponseXML
+            parsed_response = tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_auth_error_parsing(self):
-        parsed_response = proxy.mapper.parse_error_response(
-            to_xml(TrackingAuthErrorXML)
-        )
+        with patch("purplship.package.mappers.fedex.proxy.http") as mock:
+            mock.return_value = TrackingAuthErrorXML
+            parsed_response = tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_error_tracking_response(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingErrorResponseXML)
-        )
+        with patch("purplship.package.mappers.fedex.proxy.http") as mock:
+            mock.return_value = TrackingErrorResponseXML
+            parsed_response = tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponseError))
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponseError))
 
 
 if __name__ == "__main__":
@@ -54,7 +50,8 @@ if __name__ == "__main__":
 
 
 ParsedAuthError = [
-    {"carrier": "carrier_name", "code": "1000", "message": "Authentication Failed"}
+    [],
+    [{'carrier': 'carrier_name', 'code': '1000', 'message': 'Authentication Failed'}]
 ]
 
 ParsedTrackingResponse = [
@@ -197,38 +194,38 @@ TrackingAuthErrorXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmls
 </SOAP-ENV:Envelope>
 """
 
-TrackingRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14">
+TrackingRequestXML = """<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v18="http://fedex.com/ws/track/v18">
     <tns:Body>
         <ns:TrackRequest>
-            <ns:WebAuthenticationDetail>
-                <ns:UserCredential>
-                    <ns:Key>user_key</ns:Key>
-                    <ns:Password>password</ns:Password>
-                </ns:UserCredential>
-            </ns:WebAuthenticationDetail>
-            <ns:ClientDetail>
-                <ns:AccountNumber>2349857</ns:AccountNumber>
-                <ns:MeterNumber>1293587</ns:MeterNumber>
-            </ns:ClientDetail>
-            <ns:TransactionDetail>
-                <ns:CustomerTransactionId>Track By Number_v14</ns:CustomerTransactionId>
-                <ns:Localization>
-                    <ns:LanguageCode>en</ns:LanguageCode>
-                </ns:Localization>
-            </ns:TransactionDetail>
-            <ns:Version>
-                <ns:ServiceId>trck</ns:ServiceId>
-                <ns:Major>14</ns:Major>
-                <ns:Intermediate>0</ns:Intermediate>
-                <ns:Minor>0</ns:Minor>
-            </ns:Version>
-            <ns:SelectionDetails>
-                <ns:CarrierCode>FDXE</ns:CarrierCode>
-                <ns:PackageIdentifier>
-                    <ns:Type>TRACKING_NUMBER_OR_DOORTAG</ns:Type>
-                    <ns:Value>794887075005</ns:Value>
-                </ns:PackageIdentifier>
-            </ns:SelectionDetails>
+            <WebAuthenticationDetail>
+                <UserCredential>
+                    <Key>user_key</Key>
+                    <Password>password</Password>
+                </UserCredential>
+            </WebAuthenticationDetail>
+            <ClientDetail>
+                <AccountNumber>2349857</AccountNumber>
+                <MeterNumber>1293587</MeterNumber>
+            </ClientDetail>
+            <TransactionDetail>
+                <CustomerTransactionId>Track By Number_v14</CustomerTransactionId>
+                <Localization>
+                    <LanguageCode>en</LanguageCode>
+                </Localization>
+            </TransactionDetail>
+            <Version>
+                <ServiceId>trck</ServiceId>
+                <Major>14</Major>
+                <Intermediate>0</Intermediate>
+                <Minor>0</Minor>
+            </Version>
+            <SelectionDetails>
+                <CarrierCode>FDXE</CarrierCode>
+                <PackageIdentifier>
+                    <Type>TRACKING_NUMBER_OR_DOORTAG</Type>
+                    <Value>794887075005</Value>
+                </PackageIdentifier>
+            </SelectionDetails>
         </ns:TrackRequest>
     </tns:Body>
 </tns:Envelope>

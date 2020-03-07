@@ -1,8 +1,11 @@
 from io import StringIO
 import urllib.request
 from xmltodict import parse
+from attr.exceptions import NotAnAttrsClassError
+import attr
 import ssl
 import json
+from json import JSONEncoder
 import asyncio
 from lxml import etree
 from purplship.core.utils.xml import Element
@@ -57,6 +60,17 @@ def jsonify_xml(xml_str: str) -> dict:
     return parse(xml_str)
 
 
+class Encoder(JSONEncoder):
+    def default(self, o):
+        try:
+            return attr.asdict(o)
+        except NotAnAttrsClassError:
+            if hasattr(o, "__dict__"):
+                return o.__dict__
+            else:
+                return o
+
+
 def jsonify(entity: Union[dict, T]) -> str:
     """Return a JSON.
 
@@ -64,7 +78,7 @@ def jsonify(entity: Union[dict, T]) -> str:
     """
     return json.dumps(
         entity,
-        default=lambda o: o.__dict__ if hasattr(o, "__dict__") else str(o),
+        cls=Encoder,
         sort_keys=True,
         indent=4,
     )

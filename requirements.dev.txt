@@ -1,4 +1,3 @@
--f https://git.io/purplship
 appdirs==1.4.3
 attrs==19.3.0
 bandit==1.5.1

@@ -81,7 +81,7 @@ def _request_serializer(request: TrackRequest) -> str:
     return clean_namespaces(
         export(
             create_envelope(body_content=request),
-            namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/track/v14"',
+            namespacedef_='tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v18="http://fedex.com/ws/track/v18"',
         ),
         envelope_prefix="tns:",
         body_child_prefix="ns:",

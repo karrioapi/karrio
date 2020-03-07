@@ -8,22 +8,26 @@ class DimensionUnit(Enum):
 
 class Dimension:
     def __init__(self, value: float, unit: DimensionUnit = DimensionUnit.CM):
-        self.value = value
-        self.unit = unit
+        self._value = value
+        self._unit = unit
+
+    @property
+    def value(self):
+        return self.__getattribute__(str(self._unit.value))
 
     @property
     def CM(self):
-        if self.unit == DimensionUnit.CM:
-            return self.value
+        if self._unit == DimensionUnit.CM:
+            return float(self._value)
         else:
-            return self.value * 0.393701
+            return float(self._value * 0.393701)
 
     @property
     def IN(self):
-        if self.unit == DimensionUnit.IN:
-            return self.value
+        if self._unit == DimensionUnit.IN:
+            return float(self._value)
         else:
-            return self.value * 2.54
+            return float(self._value * 2.54)
 
 
 class DocFormat(Enum):
@@ -53,22 +57,26 @@ class WeightUnit(Enum):
 
 class Weight:
     def __init__(self, value: float, unit: WeightUnit = WeightUnit.KG):
-        self.value = value
-        self.unit = unit
+        self._value = value
+        self._unit = unit
+
+    @property
+    def value(self):
+        return self.__getattribute__(str(self._unit.value))
 
     @property
     def KG(self):
-        if self.unit == WeightUnit.KG:
-            return self.value
+        if self._unit == WeightUnit.KG:
+            return float(self._value)
         else:
-            return self.value * 0.453592
+            return float(self._value * 0.453592)
 
     @property
     def LB(self):
-        if self.unit == WeightUnit.LB:
-            return self.value
+        if self._unit == WeightUnit.LB:
+            return float(self._value)
         else:
-            return self.value * 2.204620823516057
+            return float(self._value * 2.204620823516057)
 
 
 class Currency(Enum):

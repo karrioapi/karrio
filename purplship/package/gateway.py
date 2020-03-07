@@ -6,24 +6,17 @@ from typing import Callable, Union
 from purplship.core import Settings
 from purplship.package.proxy import Proxy
 from purplship.package.mapper import Mapper
-
-import purplship.package.mappers.aups
-import purplship.package.mappers.caps
-import purplship.package.mappers.dhl
-import purplship.package.mappers.fedex
-import purplship.package.mappers.ups
-import purplship.package.mappers.usps
-import purplship.package.mappers.sendle
+from purplship.package.mappers import *
 
 
 class Providers(Enum):
-    aups = purplship.package.mappers.aups
-    caps = purplship.package.mappers.caps
-    dhl = purplship.package.mappers.dhl
-    fedex = purplship.package.mappers.fedex
-    sendle = purplship.package.mappers.sendle
-    ups = purplship.package.mappers.ups
-    usps = purplship.package.mappers.usps
+    aups = aups
+    caps = caps
+    dhl = dhl
+    fedex = fedex
+    sendle = sendle
+    ups = ups
+    usps = usps
 
 
 @attr.s(auto_attribs=True)

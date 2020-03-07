@@ -1,8 +1,8 @@
 from typing import Tuple, List
-from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest
+from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest, MetaData
 from pydhl.modify_pickup_global_res_3_0 import ModifyPUResponse
 from pydhl.pickupdatatypes_global_3_0 import (
-    Requestor, Place, Contact, Pickup, WeightSeg
+    Requestor, Place, RequestorContact, Pickup, WeightSeg
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
@@ -10,7 +10,8 @@ from purplship.core.utils.xml import Element
 from purplship.core.models import (
     Error, PickupDetails, ChargeDetails, TimeDetails, PickupUpdateRequest
 )
-from purplship.carriers.dhl.units import CountryRegion
+from purplship.core.units import WeightUnit, Weight
+from purplship.carriers.dhl.units import CountryRegion, WeightUnit as DHLWeightUnit
 from purplship.carriers.dhl.utils import Settings, reformat_time
 from purplship.carriers.dhl.error import parse_error_response
 
@@ -42,16 +43,20 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
 
 
 def modify_pickup_request(payload: PickupUpdateRequest, settings: Settings) -> Serializable[ModifyPURequest]:
+    weight_unit = payload.weight_unit or "LB"
     request = ModifyPURequest(
-        Request=settings.Request(),
-        schemaVersion="1.0",
+        Request=settings.Request(MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)),
+        schemaVersion=3.0,
         RegionCode=CountryRegion[payload.country_code].value if payload.country_code else "AM",
         ConfirmationNumber=payload.confirmation_number,
         Requestor=Requestor(
             AccountNumber=payload.account_number,
             AccountType="D",
-            RequestorContact=None,
-            CompanyName=None,
+            RequestorContact=RequestorContact(
+                PersonName=payload.person_name,
+                Phone=payload.phone_number
+            ),
+            CompanyName=payload.company_name,
         ),
         Place=Place(
             City=payload.city,
@@ -59,22 +64,27 @@ def modify_pickup_request(payload: PickupUpdateRequest, settings: Settings) -> S
             PostalCode=payload.postal_code,
             CompanyName=payload.company_name,
             CountryCode=payload.country_code,
-            PackageLocation=payload.package_location or "...",
+            PackageLocation=payload.package_location,
             LocationType="B" if payload.is_business else "R",
             Address1=(payload.address_lines[0] if len(payload.address_lines) > 0 else None),
             Address2=(payload.address_lines[1] if len(payload.address_lines) > 1 else None),
         ),
-        PickupContact=Contact(PersonName=payload.person_name, Phone=payload.phone_number),
+        PickupContact=RequestorContact(
+            PersonName=payload.person_name,
+            Phone=payload.phone_number
+        ),
         Pickup=Pickup(
             Pieces=payload.pieces,
             PickupDate=payload.date,
             ReadyByTime=payload.ready_time,
             CloseTime=payload.closing_time,
             SpecialInstructions=payload.instruction,
-            RemotePickupFlag=None,
+            RemotePickupFlag="Y",
             weight=(
-                WeightSeg(Weight=payload.weight, WeightUnit=payload.weight_unit)
-                if any([payload.weight, payload.weight_unit]) else None
+                WeightSeg(
+                    Weight=Weight(payload.weight, WeightUnit[weight_unit]).LB,
+                    WeightUnit=DHLWeightUnit[weight_unit].value
+                ) if payload.weight is not None else None
             ),
         ),
         OriginSvcArea=None,
@@ -90,7 +100,6 @@ def _request_serializer(request: ModifyPURequest) -> str:
             namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd"',
         )
         .replace("dhlPickup:", "")
-        .replace('schemaVersion="1."', 'schemaVersion="1.0"')
     )
 
     xml_str = reformat_time("CloseTime", reformat_time("ReadyByTime", xml_str))

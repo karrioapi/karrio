@@ -1,6 +1,7 @@
 """PurplShip Mapper base class definition module."""
 
 import attr
+from abc import ABC
 from typing import List, TypeVar
 from purplship.core.settings import Settings
 from purplship.core.models import (
@@ -16,8 +17,8 @@ S = TypeVar('S')
 
 
 @attr.s(auto_attribs=True)
-class Mapper:
-    """Unitied Shipping API Mapper (Interface)
+class Mapper(ABC):
+    """Unified Shipping API Mapper (Interface)
     """
     settings: Settings
 

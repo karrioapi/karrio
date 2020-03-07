@@ -1,11 +1,11 @@
 from functools import reduce
 from typing import List, Any
-from pyusps.ratev4request import RateV4Request, PackageType, ShipDateType, SpecialServicesType
+from pyusps.ratev4request import RateV4Request, PackageType, SpecialServicesType
 from pyusps.ratev4response import PostageType, SpecialServiceType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
-from purplship.core.models import RateDetails, Error, RateRequest, ChargeDetails, Option
+from purplship.core.models import RateDetails, Error, RateRequest, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Currency
 from purplship.carriers.usps.units import SpecialService, Container, Service, FirstClassMailType
 from purplship.carriers.usps.error import parse_error_response
@@ -58,14 +58,6 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
 def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[RateV4Request]:
     weight_unit = WeightUnit[payload.shipment.weight_unit or "LB"]
     dimension_unit = DimensionUnit[payload.shipment.dimension_unit or "IN"]
-    special_services: List[Option] = [
-        svc
-        for svc in payload.shipment.options.keys()
-        if svc.code in SpecialService.__members__
-    ]
-    services: List[str] = [
-        svc for svc in payload.shipment.services if svc in Service.__members__
-    ]
     request = RateV4Request(
         USERID=settings.username,
         Revision="2",

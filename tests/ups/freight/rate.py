@@ -3,7 +3,7 @@ from unittest.mock import patch
 from gds_helpers import to_xml, to_dict, export
 from pyups.freight_rate import FreightRateRequest
 from purplship.domain import Types as T
-from tests.ups.freight.fixture import proxy
+from tests.ups.freight.fixture import gateway
 from tests.utils import strip, get_node_from_xml
 
 
@@ -15,21 +15,21 @@ class TestUPSQuote(unittest.TestCase):
             get_node_from_xml(FreightRateRequestXML, "FreightRateRequest")
         )
 
-    def test_create_quote_request(self):
+    def test_create_rate_request(self):
         payload = T.RateRequest(**rate_req_data)
 
-        FreightRateRequest_ = proxy.mapper.create_quote_request(payload)
+        FreightRateRequest_ = gateway.mapper.create_rate_request(payload)
         self.assertEqual(export(FreightRateRequest_), export(self.FreightRateRequest))
 
-    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.freight.mappers.ups.proxy.http", return_value="<a></a>")
     def test_freight_get_quotes(self, http_mock):
-        proxy.get_quotes(self.FreightRateRequest)
+        gateway.proxy.get_rates(self.FreightRateRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(FreightRateRequestXML))
 
     def test_parse_freight_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(
+        parsed_response = gateway.mapper.parse_rate_response(
             to_xml(FreightRateResponseXML)
         )
         self.assertEqual(to_dict(parsed_response), to_dict(ParsedFreightRateResponse))

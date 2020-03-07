@@ -10,9 +10,9 @@ from purplship.carriers.ups.package import (
     parse_shipment_response, parse_track_response, parse_rate_response,
     shipment_request, track_request, rate_request
 )
-from pyups.package_rate import RateRequest as UPSRateRequest
-from pyups.package_track import TrackRequest
-from pyups.package_ship import ShipmentRequest as UPSShipmentRequest
+from pyups.rate_web_service_schema import RateRequest as UPSRateRequest
+from pyups.track_web_service_schema import TrackRequest
+from pyups.ship_web_service_schema import ShipmentRequest as UPSShipmentRequest
 
 
 class Mapper(BaseMapper):

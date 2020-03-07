@@ -3,7 +3,7 @@ from unittest.mock import patch
 from gds_helpers import to_xml, to_dict, export
 from pyups.package_rate import RateRequest
 from purplship.domain import Types as T
-from tests.ups.package.fixture import proxy
+from tests.ups.package.fixture import gateway
 from tests.utils import strip, get_node_from_xml
 
 
@@ -12,31 +12,31 @@ class TestUPSQuote(unittest.TestCase):
         self.RateRequest = RateRequest()
         self.RateRequest.build(get_node_from_xml(RateRequestXML, "RateRequest"))
 
-    def test_create_quote_request(self):
+    def test_create_rate_request(self):
         payload = T.RateRequest(**rate_req_data)
-        RateRequest_ = proxy.mapper.create_quote_request(payload)
+        RateRequest_ = gateway.mapper.create_rate_request(payload)
         self.assertEqual(
             export(RateRequest_),
             export(self.RateRequest).replace("common:Code", "rate:Code"),
         )
 
-    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_package_get_quotes(self, http_mock):
-        proxy.get_quotes(self.RateRequest)
+        gateway.proxy.get_rates(self.RateRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(RateRequestXML))
 
     def test_parse_package_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(RateResponseXML))
+        parsed_response = gateway.mapper.parse_rate_response(to_xml(RateResponseXML))
         self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
-    def test_parse_quote_error(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteParsingError))
+    def test_parse_rate_error(self):
+        parsed_response = gateway.mapper.parse_rate_response(to_xml(QuoteParsingError))
         self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
 
-    def test_parse_quote_missing_args_error(self):
-        parsed_response = proxy.mapper.parse_quote_response(
+    def test_parse_rate_missing_args_error(self):
+        parsed_response = gateway.mapper.parse_rate_response(
             to_xml(QuoteMissingArgsError)
         )
         self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))

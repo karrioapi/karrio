@@ -1,63 +1,65 @@
+import re
 import unittest
 from unittest.mock import patch
-from pyfedex.rate_v22 import RateRequest
-from gds_helpers import to_xml, to_dict, export
-from purplship.domain import Types as T
-from tests.fedex.fixture import proxy
-from tests.utils import strip, get_node_from_xml
+from pyfedex.rate_service_v26 import RateRequest
+from gds_helpers import to_dict
+from purplship.core.models import RateRequest
+from purplship.package import rating
+from tests.fedex.package.fixture import gateway
 
 
 class TestFeDexQuote(unittest.TestCase):
     def setUp(self):
-        req_xml = get_node_from_xml(QuoteRequestXml, "RateRequest")
-        self.RateRequest = RateRequest()
-        self.RateRequest.build(req_xml)
+        self.RateRequest = RateRequest(**RateRequestPayload)
 
-    def test_create_quote_request(self):
-        shipper = {
-            "postal_code": "H3N1S4",
-            "country_code": "CA",
-            "account_number": "2349857",
-        }
-        recipient = {"city": "Lome", "country_code": "TG"}
-        shipment = {
-            "currency": "USD",
-            "payment_account_number": "2349857",
-            "items": [
-                {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
-            ],
-        }
-        payload = T.RateRequest(shipper=shipper, recipient=recipient, shipment=shipment)
-
-        RateRequest_ = proxy.mapper.create_quote_request(payload)
+    def test_create_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
         # Remove timeStamp for testing
-        RateRequest_.RequestedShipment.ShipTimestamp = None
-        self.assertEqual(export(RateRequest_), export(self.RateRequest))
+        serialized_request = re.sub(
+            '<ShipTimestamp>[^>]+</ShipTimestamp>', '', request.serialize())
 
-    @patch("purplship.carriers.fedex.fedex_proxy.http", return_value="<a></a>")
-    def test_get_quotes(self, http_mock):
-        proxy.get_quotes(self.RateRequest)
+        self.assertEqual(serialized_request, RateRequestXml)
 
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
+    @patch("purplship.package.mappers.fedex.proxy.http", return_value="<a></a>")
+    def test_get_rates(self, http_mock):
+        rating.fetch(self.RateRequest).from_(gateway)
 
-    def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteResponseXml))
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, gateway.settings.server_url)
 
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
+    def test_parse_rate_response(self):
+        with patch("purplship.package.mappers.fedex.proxy.http") as mock:
+            mock.return_value = RateResponseXml
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
-    def test_parse_quote_error_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteErrorResponseXml)
-        )
-
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteErrorResponse))
+    def test_parse_rate_error_response(self):
+        with patch("purplship.package.mappers.fedex.proxy.http") as mock:
+            mock.return_value = RateErrorResponseXml
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateErrorResponse))
 
 
 if __name__ == "__main__":
     unittest.main()
 
-ParsedQuoteResponse = [
+RateRequestPayload = {
+    "shipper": {
+        "postal_code": "H3N1S4",
+        "country_code": "CA",
+        "account_number": "2349857",
+    },
+    "recipient": {"city": "Lome", "country_code": "TG"},
+    "shipment": {
+        "currency": "USD",
+        "payment_account_number": "2349857",
+        "items": [
+            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
+        ],
+    }
+}
+
+ParsedRateResponse = [
     [
         {
             "base_charge": 230.49,
@@ -87,7 +89,7 @@ ParsedQuoteResponse = [
     [],
 ]
 
-ParsedQuoteErrorResponse = [
+ParsedRateErrorResponse = [
     [],
     [
         {
@@ -98,7 +100,7 @@ ParsedQuoteErrorResponse = [
     ],
 ]
 
-QuoteErrorResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+RateErrorResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header/>
     <SOAP-ENV:Body>
         <RateReply xmlns="http://fedex.com/ws/rate/v22">
@@ -124,80 +126,75 @@ QuoteErrorResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xml
 </SOAP-ENV:Envelope>
 """
 
-QuoteRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://fedex.com/ws/rate/v22">
+RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
     <tns:Body>
         <ns:RateRequest>
-            <ns:WebAuthenticationDetail>
-                <ns:UserCredential>
-                    <ns:Key>user_key</ns:Key>
-                    <ns:Password>password</ns:Password>
-                </ns:UserCredential>
-            </ns:WebAuthenticationDetail>
-            <ns:ClientDetail>
-                <ns:AccountNumber>2349857</ns:AccountNumber>
-                <ns:MeterNumber>1293587</ns:MeterNumber>
-            </ns:ClientDetail>
-            <ns:TransactionDetail>
-                <ns:CustomerTransactionId>FTC</ns:CustomerTransactionId>
-            </ns:TransactionDetail>
-            <ns:Version>
-                <ns:ServiceId>crs</ns:ServiceId>
-                <ns:Major>22</ns:Major>
-                <ns:Intermediate>0</ns:Intermediate>
-                <ns:Minor>0</ns:Minor>
-            </ns:Version>
-            <ns:ReturnTransitAndCommit>true</ns:ReturnTransitAndCommit>
-            <ns:RequestedShipment>
-                <ns:PackagingType>YOUR_PACKAGING</ns:PackagingType>
-                <ns:TotalWeight>
-                    <ns:Units>LB</ns:Units>
-                    <ns:Value>4.</ns:Value>
-                </ns:TotalWeight>
-                <ns:PreferredCurrency>USD</ns:PreferredCurrency>
-                <ns:Shipper>
-                    <ns:AccountNumber>2349857</ns:AccountNumber>
-                    <ns:Address>
-                        <ns:PostalCode>H3N1S4</ns:PostalCode>
-                        <ns:CountryCode>CA</ns:CountryCode>
-                    </ns:Address>
-                </ns:Shipper>
-                <ns:Recipient>
-                    <ns:Address>
-                        <ns:City>Lome</ns:City>
-                        <ns:CountryCode>TG</ns:CountryCode>
-                    </ns:Address>
-                </ns:Recipient>
-                <ns:ShippingChargesPayment>
-                    <ns:PaymentType>SENDER</ns:PaymentType>
-                    <ns:Payor>
-                        <ns:ResponsibleParty>
-                            <ns:AccountNumber>2349857</ns:AccountNumber>
-                        </ns:ResponsibleParty>
-                    </ns:Payor>
-                </ns:ShippingChargesPayment>
-                <ns:RateRequestTypes>LIST</ns:RateRequestTypes>
-                <ns:RateRequestTypes>PREFERRED</ns:RateRequestTypes>
-                <ns:PackageCount>1</ns:PackageCount>
-                <ns:RequestedPackageLineItems>
-                    <ns:GroupPackageCount>1</ns:GroupPackageCount>
-                    <ns:Weight>
-                        <ns:Units>LB</ns:Units>
-                        <ns:Value>4.</ns:Value>
-                    </ns:Weight>
-                    <ns:Dimensions>
-                        <ns:Length>10</ns:Length>
-                        <ns:Width>3</ns:Width>
-                        <ns:Height>3</ns:Height>
-                        <ns:Units>IN</ns:Units>
-                    </ns:Dimensions>
-                </ns:RequestedPackageLineItems>
-            </ns:RequestedShipment>
+            <WebAuthenticationDetail>
+                <UserCredential>
+                    <Key>user_key</Key>
+                    <Password>password</Password>
+                </UserCredential>
+            </WebAuthenticationDetail>
+            <ClientDetail>
+                <AccountNumber>2349857</AccountNumber>
+                <MeterNumber>1293587</MeterNumber>
+            </ClientDetail>
+            <TransactionDetail>
+                <CustomerTransactionId>FTC</CustomerTransactionId>
+            </TransactionDetail>
+            <Version>
+                <ServiceId>crs</ServiceId>
+                <Major>26</Major>
+                <Intermediate>0</Intermediate>
+                <Minor>0</Minor>
+            </Version>
+            <ReturnTransitAndCommit>true</ReturnTransitAndCommit>
+            <RequestedShipment>
+                
+                <DropoffType>REGULAR_PICKUP</DropoffType>
+                <PackagingType>YOUR_PACKAGING</PackagingType>
+                <TotalWeight>
+                    <Units>LB</Units>
+                    <Value>4.</Value>
+                </TotalWeight>
+                <PreferredCurrency>USD</PreferredCurrency>
+                <Shipper>
+                    <AccountNumber>2349857</AccountNumber>
+                    <Address>
+                        <PostalCode>H3N1S4</PostalCode>
+                        <CountryCode>CA</CountryCode>
+                    </Address>
+                </Shipper>
+                <Recipient>
+                    <Address>
+                        <City>Lome</City>
+                        <CountryCode>TG</CountryCode>
+                    </Address>
+                </Recipient>
+                <RateRequestTypes>LIST</RateRequestTypes>
+                <RateRequestTypes>PREFERRED</RateRequestTypes>
+                <PackageCount>1</PackageCount>
+                <RequestedPackageLineItems>
+                    <SequenceNumber>1</SequenceNumber>
+                    <GroupPackageCount>1</GroupPackageCount>
+                    <Weight>
+                        <Units>LB</Units>
+                        <Value>4.</Value>
+                    </Weight>
+                    <Dimensions>
+                        <Length>10</Length>
+                        <Width>3</Width>
+                        <Height>3</Height>
+                        <Units>IN</Units>
+                    </Dimensions>
+                </RequestedPackageLineItems>
+            </RequestedShipment>
         </ns:RateRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-QuoteResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+RateResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header/>
     <SOAP-ENV:Body>
         <RateReply xmlns="http://fedex.com/ws/rate/v22">
@@ -560,4 +557,5 @@ QuoteResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.
             </RateReplyDetails>
         </RateReply>
     </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>"""
+</SOAP-ENV:Envelope>
+"""

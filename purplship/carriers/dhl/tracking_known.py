@@ -13,23 +13,23 @@ from .error import parse_error_response
 
 def parse_known_tracking_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Error]]:
     awb_nodes = response.xpath(".//*[local-name() = $name]", name="AWBInfo")
-    tracking_details = [_extract_tracking(awb_info_node, settings) for awb_info_node in awb_nodes]
+    tracking_details = [_extract_tracking(info_node, settings) for info_node in awb_nodes]
     return (
         [details for details in tracking_details if details is not None],
         parse_error_response(response, settings)
     )
 
 
-def _extract_tracking(awb_info_node: Element, settings: Settings) -> Optional[TrackingDetails]:
-    awb_info = AWBInfo()
-    awb_info.build(awb_info_node)
-    if not awb_info_node.ShipmentInfo:
+def _extract_tracking(info_node: Element, settings: Settings) -> Optional[TrackingDetails]:
+    info = AWBInfo()
+    info.build(info_node)
+    if info.ShipmentInfo is None:
         return None
 
     return TrackingDetails(
         carrier=settings.carrier_name,
-        tracking_number=awb_info.AWBNumber,
-        shipment_date=str(awb_info.ShipmentInfo.ShipmentDate),
+        tracking_number=info.AWBNumber,
+        shipment_date=str(info.ShipmentInfo.ShipmentDate),
         events=list(
             map(
                 lambda e: TrackingEvent(
@@ -40,7 +40,7 @@ def _extract_tracking(awb_info_node: Element, settings: Settings) -> Optional[Tr
                     location=e.ServiceArea.Description,
                     description=e.ServiceEvent.Description,
                 ),
-                awb_info.ShipmentInfo.ShipmentEvent,
+                info.ShipmentInfo.ShipmentEvent,
             )
         ),
     )

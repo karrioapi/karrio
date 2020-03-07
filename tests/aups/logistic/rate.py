@@ -1,43 +1,45 @@
 import unittest
 from unittest.mock import patch
-from tests.aups.logistic.fixture import proxy
+from tests.aups.logistic.fixture import gateway
 from gds_helpers import jsonify, to_dict
 from purplship.core.models import RateRequest
+from purplship.package import rating
 from pyaups.shipping_price_request import ShippingPriceRequest
 
 
 class TestAustraliaPostLogisticRate(unittest.TestCase):
     def setUp(self):
         self.ShippingPriceRequest = ShippingPriceRequest(**SHIPPING_PRICE_REQUEST)
+        self.RateRequest = RateRequest(**RATE_PAYLOAD)
 
-    def test_create_quote_request(self):
-        payload = RateRequest(**RATE_PAYLOAD)
-
-        shipping_price_request = proxy.mapper.create_quote_request(payload)
+    def test_create_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
         self.assertEqual(
-            to_dict(shipping_price_request), to_dict(self.ShippingPriceRequest)
+            to_dict(request.serialize()), to_dict(self.ShippingPriceRequest)
         )
 
-    @patch("purplship.carriers.aups.aups_proxy.http", return_value="{}")
-    def test_get_quotes(self, http_mock):
-        proxy.get_quotes(self.ShippingPriceRequest)
+    @patch("purplship.package.mappers.aups.proxy.http", return_value="{}")
+    def test_get_rates(self, http_mock):
+        rating.fetch(self.RateRequest).from_(gateway)
 
-        data = http_mock.call_args[1]["data"].decode("utf-8")
         reqUrl = http_mock.call_args[1]["url"]
-        self.assertEqual(data, jsonify(SHIPPING_PRICE_REQUEST))
         self.assertEqual(
-            reqUrl, f"{proxy.client.server_url}/shipping/v1/prices/shipments"
+            reqUrl, f"{gateway.settings.server_url}/shipping/v1/prices/shipments"
         )
 
-    def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(SHIPPING_PRICE_RESPONSE)
-        self.assertEqual(
-            to_dict(parsed_response), to_dict(PARSED_SHIPPING_PRICE_RESPONSE)
-        )
+    def test_parse_rate_response(self):
+        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+            mock.return_value = jsonify(SHIPPING_PRICE_RESPONSE)
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_SHIPPING_PRICE_RESPONSE)
+            )
 
-    def test_parse_quote_response_errors(self):
-        parsed_response = proxy.mapper.parse_quote_response(ERRORS)
-        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
+    def test_parse_rate_response_errors(self):
+        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+            mock.return_value = jsonify(ERRORS)
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
 if __name__ == "__main__":
@@ -74,7 +76,6 @@ RATE_PAYLOAD = {
                 "width": 10,
                 "weight": 1,
                 "sku": "SKU-1",
-                "extra": {"authority_to_leave": False, "allow_partial_delivery": True},
             },
             {
                 "id": "T28S",
@@ -83,7 +84,6 @@ RATE_PAYLOAD = {
                 "width": 10,
                 "weight": 1,
                 "sku": "SKU-2",
-                "extra": {"authority_to_leave": False, "allow_partial_delivery": True},
             },
             {
                 "id": "T28S",
@@ -92,10 +92,8 @@ RATE_PAYLOAD = {
                 "width": 10,
                 "weight": 1,
                 "sku": "SKU-3",
-                "extra": {"authority_to_leave": False, "allow_partial_delivery": True},
             },
-        ],
-        "extra": {"email_tracking_enabled": True},
+        ]
     },
 }
 
@@ -104,7 +102,7 @@ PARSED_SHIPPING_PRICE_RESPONSE = [
     [
         {
             "base_charge": 58.74,
-            "carrier": "AustraliaPost",
+            "carrier": "Australia Post Shipping",
             "currency": "AUD",
             "delivery_date": None,
             "discount": None,
@@ -122,7 +120,7 @@ PARSED_ERRORS = [
     [],
     [
         {
-            "carrier": "AustraliaPost",
+            "carrier": "Australia Post Shipping",
             "code": "44003",
             "message": "The product T28S specified in an item has indicated that dangerous goods will be included in the parcel, however, the product does not allow dangerous goods to be sent using the service.  Please choose a product that allows dangerous goods to be included within the parcel to be sent.",
         }
@@ -134,8 +132,7 @@ SHIPPING_PRICE_RESPONSE = {
     "shipments": [
         {
             "shipment_reference": "XYZ-001-01",
-            "email_tracking_enabled": True,
-            "from_": {
+            "from": {
                 "type": "MERCHANT_LOCATION",
                 "lines": ["1 Main Street"],
                 "suburb": "MELBOURNE",

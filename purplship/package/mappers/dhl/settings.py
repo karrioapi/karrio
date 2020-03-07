@@ -8,6 +8,8 @@ from purplship.carriers.dhl.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """DHL connection settings."""
 
+    site_id: str
+    password: str
     carrier_name: str = "DHL"
     server_url: str = "https://xmlpi-ea.dhl.com/XMLShippingServlet"
 

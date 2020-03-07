@@ -1,9 +1,9 @@
 from typing import List
 from purplship.freight.mappers.fedex.settings import Settings
 from purplship.freight.mapper import Mapper as BaseMapper
-from pyfedex.track_service_v14 import TrackRequest
-from pyfedex.ship_service_v21 import ProcessShipmentRequest
-from pyfedex.rate_v22 import RateRequest as FedexRateRequest
+from pyfedex.track_service_v18 import TrackRequest
+from pyfedex.ship_service_v25 import ProcessShipmentRequest
+from pyfedex.rate_service_v26 import RateRequest as FedexRateRequest
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.models import (
     RateDetails, RateRequest, TrackingDetails, TrackingRequest,

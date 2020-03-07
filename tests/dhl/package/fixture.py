@@ -1,7 +1,7 @@
-from purplship.mappers.dhl import DHLClient, DHLProxy
+import purplship.package as api
 
-proxy = DHLProxy(
-    DHLClient(
+gateway = api.gateway["dhl"].create(
+    dict(
         server_url="https://xmlpi-ea.dhl.com/XMLShippingServlet",
         site_id="site_id",
         password="password",

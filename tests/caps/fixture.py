@@ -1,7 +1,7 @@
-from purplship.mappers.caps import CanadaPostClient, CanadaPostProxy
+import purplship.package as api
 
-proxy = CanadaPostProxy(
-    CanadaPostClient(
+gateway = api.gateway["caps"].create(
+    dict(
         server_url="https://ct.soa-gw.canadapost.ca",
         username="username",
         password="password",

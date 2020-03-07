@@ -1,6 +1,6 @@
 """PurplShip Unified datatypes module."""
 import attr
-from typing import List, Dict
+from typing import List, Dict, Union
 from jstruct import JList, JStruct, REQUIRED
 
 
@@ -108,7 +108,6 @@ class Shipment:
 
     references: List[str] = []
     services: List[str] = []
-    options: Dict = {}
 
     label: Doc = JStruct[Doc]
 
@@ -117,9 +116,9 @@ class Shipment:
 class ShipmentRequest:
     """shipment request type."""
 
-    shipper: Party = JStruct[Party, REQUIRED]
-    recipient: Party = JStruct[Party, REQUIRED]
-    shipment: Shipment = JStruct[Shipment, REQUIRED]
+    shipper: Union[Party, Dict] = JStruct[Party, REQUIRED]
+    recipient: Union[Party, Dict] = JStruct[Party, REQUIRED]
+    shipment: Union[Shipment, Dict] = JStruct[Shipment, REQUIRED]
     options: Dict = {}
 
 

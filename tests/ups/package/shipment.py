@@ -3,7 +3,7 @@ from unittest.mock import patch
 from gds_helpers import to_xml, to_dict, export
 from pyups.package_ship import ShipmentRequest
 from purplship.domain import Types as T
-from tests.ups.package.fixture import proxy
+from tests.ups.package.fixture import gateway
 from tests.utils import strip, get_node_from_xml
 
 
@@ -16,18 +16,18 @@ class TestUPSShipment(unittest.TestCase):
 
     def test_create_package_shipment_request(self):
         payload = T.ShipmentRequest(**package_shipment_data)
-        Shipment_ = proxy.mapper.create_shipment_request(payload)
+        Shipment_ = gateway.mapper.create_shipment_request(payload)
         self.assertEqual(export(Shipment_), export(self.ShipmentRequest))
 
-    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        proxy.create_shipment(self.ShipmentRequest)
+        gateway.proxy.create_shipment(self.ShipmentRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(ShipmentRequestXML))
 
     def test_parse_shipment_response(self):
-        parsed_response = proxy.mapper.parse_shipment_response(
+        parsed_response = gateway.mapper.parse_shipment_response(
             to_xml(NegotiatedShipmentResponseXML)
         )
         self.assertEqual(
@@ -35,7 +35,7 @@ class TestUPSShipment(unittest.TestCase):
         )
 
     def test_parse_publish_rate_shipment_response(self):
-        parsed_response = proxy.mapper.parse_shipment_response(
+        parsed_response = gateway.mapper.parse_shipment_response(
             to_xml(ShipmentResponseXML)
         )
         self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))

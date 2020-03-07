@@ -13,8 +13,8 @@ from purplship.core.utils.xml import Element
 from pycaps.shipment import (
     ShipmentType, ShipmentInfoType, ShipmentPriceType, DeliverySpecType,
     SenderType, AddressDetailsType, DestinationType, DestinationAddressDetailsType,
-    ParcelCharacteristicsType, optionsType, ReferencesType,
-    sku_listType, SkuType, dimensionsType, OptionType, CustomsType
+    ParcelCharacteristicsType, optionsType, ReferencesType, NotificationType, PrintPreferencesType,
+    sku_listType, SkuType, dimensionsType, OptionType, CustomsType, PreferencesType
 )
 
 
@@ -28,11 +28,9 @@ def parse_shipment_response(response: Element, settings: Settings) -> Tuple[Ship
 
 
 def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
-    info = ShipmentInfoType()
-    data = ShipmentPriceType()
-
-    info.build(response.xpath(".//*[local-name() = $name]", name="shipment-info")[0])
-    data.build(response.xpath(".//*[local-name() = $name]", name="shipment-price")[0])
+    info: ShipmentInfoType = ShipmentInfoType()
+    info.build(response)
+    data: ShipmentPriceType = info.shipment_price
     currency_ = Currency.CAD.name
 
     return ShipmentDetails(
@@ -74,14 +72,14 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         svc for svc in payload.shipment.services if svc in ServiceType.__members__
     ]
     requested_options = dict(
-        (opt, value) for opt, value in payload.shipment.options.items() if opt in OptionCode.__members__
+        (opt, value) for opt, value in payload.options.items() if opt in OptionCode.__members__
     )
     request = ShipmentType(
         customer_request_id=payload.shipper.account_number or settings.customer_number,
         groupIdOrTransmitShipment=None,
         quickship_label_requested=None,
         cpc_pickup_indicator=None,
-        requested_shipping_point=None,
+        requested_shipping_point=payload.shipper.postal_code,
         shipping_point_id=None,
         expected_mailing_date=None,
         provide_pricing_info=True,
@@ -128,17 +126,17 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             parcel_characteristics=ParcelCharacteristicsType(
                 weight=Weight(
                     payload.shipment.total_weight or package.weight,
-                    WeightUnit[payload.shipment.weight_unit],
+                    WeightUnit[payload.shipment.weight_unit or "KG"],
                 ).KG,
                 dimensions=dimensionsType(
                     length=Dimension(
-                        package.length, DimensionUnit[payload.shipment.dimension_unit]
+                        package.length, DimensionUnit[payload.shipment.dimension_unit or "CM"]
                     ).CM,
                     width=Dimension(
-                        package.width, DimensionUnit[payload.shipment.dimension_unit]
+                        package.width, DimensionUnit[payload.shipment.dimension_unit or "CM"]
                     ).CM,
                     height=Dimension(
-                        package.height, DimensionUnit[payload.shipment.dimension_unit]
+                        package.height, DimensionUnit[payload.shipment.dimension_unit or "CM"]
                     ).CM,
                 ),
                 unpackaged=None,
@@ -152,13 +150,27 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         option_qualifier_1=None,
                         option_qualifier_2=None,
                     )
-                    for code, value in requested_options
+                    for code, value in requested_options.items()
                 ]
             )
             if len(requested_options) > 0
             else None,
-            notification=None,
-            preferences=None,
+            notification=NotificationType(
+                email=payload.shipper.email_address,
+                on_shipment=True,
+                on_exception=True,
+                on_delivery=True,
+            ) if payload.shipper.email_address is not None else None,
+            print_preferences=PrintPreferencesType(
+                output_format=payload.shipment.label.format if payload.shipment.label else "8.5x11",
+                encoding=payload.shipment.label.type if payload.shipment.label else None
+            ),
+            preferences=PreferencesType(
+                service_code=None,
+                show_packing_instructions=True,
+                show_postage_rate=True,
+                show_insured_value=True,
+            ),
             customs=CustomsType(
                 currency=payload.shipment.currency,
                 conversion_from_cad=None,

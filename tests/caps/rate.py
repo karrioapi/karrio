@@ -1,65 +1,65 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict, export
+from gds_helpers import to_xml, to_dict
 from pycaps.rating import mailing_scenario
+from purplship.package import rating
 from purplship.core.models import RateRequest
-from tests.caps.fixture import proxy
-from tests.utils import strip, get_node_from_xml
+from tests.caps.fixture import gateway
 from datetime import datetime
 
 
 class TestCanadaPostQuote(unittest.TestCase):
     def setUp(self):
-        self.mailing_scenario = mailing_scenario()
-        self.mailing_scenario.build(to_xml(QuoteRequestXml))
+        self.RateRequest = RateRequest(**RatePayload)
 
-    def test_create_quote_request(self):
-        shipper = {
-            "postal_code": "H8Z2Z3",
-            "country_code": "CA",
-            "account_number": "1234567",
-        }
-        recipient = {"postal_code": "H8Z2V4", "country_code": "CA"}
-        shipment = {
-            "items": [{"height": 3, "length": 10, "width": 3, "weight": 4.0}],
-            "services": ["Expedited_Parcel"],
-            "dimension_unit": "CM",
-            "weight_unit": "KG",
-            "extra": {"options": []},
-        }
-        payload = RateRequest(shipper=shipper, recipient=recipient, shipment=shipment)
+    def test_create_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
 
-        mailing_scenario_ = proxy.mapper.create_quote_request(payload)
+        self.assertEqual(request.serialize(), QuoteRequestXml)
 
-        self.assertEqual(export(mailing_scenario_), export(self.mailing_scenario))
+    @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
+    def test_get_rates(self, http_mock):
+        rating.fetch(self.RateRequest).from_(gateway)
 
-    @patch("purplship.carriers.caps.caps_proxy.http", return_value="<a></a>")
-    def test_get_quotes(self, http_mock):
-        proxy.get_quotes(self.mailing_scenario)
-
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         reqUrl = http_mock.call_args[1]["url"]
-        self.assertEqual(strip(xmlStr), strip(QuoteRequestXml))
-        self.assertEqual(reqUrl, "%s/rs/ship/price" % (proxy.client.server_url))
+        self.assertEqual(reqUrl, f"{gateway.proxy.settings.server_url}/rs/ship/price")
 
-    def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteResponseXml))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
+    def test_parse_rate_response(self):
+        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+            mock.return_value = QuoteResponseXml
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
-    def test_parse_quote_parsing_error(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(QuoteParsingError))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
+    def test_parse_rate_parsing_error(self):
+        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+            mock.return_value = QuoteParsingError
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
 
-    def test_parse_quote_missing_args_error(self):
-        parsed_response = proxy.mapper.parse_quote_response(
-            to_xml(QuoteMissingArgsError)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
+    def test_parse_rate_missing_args_error(self):
+        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+            mock.return_value = QuoteMissingArgsError
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
 
 
 if __name__ == "__main__":
     unittest.main()
 
+RatePayload = dict(
+    shipper={
+        "postal_code": "H8Z2Z3",
+        "country_code": "CA",
+        "account_number": "1234567",
+    },
+    recipient={"postal_code": "H8Z2V4", "country_code": "CA"},
+    shipment={
+        "items": [{"height": 3, "length": 10, "width": 3, "weight": 4.0}],
+        "services": ["Expedited_Parcel"],
+        "dimension_unit": "CM",
+        "weight_unit": "KG",
+    }
+)
 
 ParsedQuoteParsingError = [
     [],
@@ -78,7 +78,7 @@ ParsedQuoteMissingArgsError = [
         {
             "carrier": "CanadaPost",
             "code": "Server",
-            "message": "/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v3}parcel-characteristics with anonymous type, found </parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v3), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v3}weight, {http://www.canadapost.ca/ws/ship/rate-v3}dimensions, {http://www.canadapost.ca/ws/ship/rate-v3}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v3}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v3}oversized]",
+            "message": "/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v4}parcel-characteristics with anonymous type, found </parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v4), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v4}weight, {http://www.canadapost.ca/ws/ship/rate-v4}dimensions, {http://www.canadapost.ca/ws/ship/rate-v4}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v4}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v4}oversized]",
         }
     ],
 ]
@@ -161,12 +161,12 @@ QuoteParsingError = """<messages xmlns="http://www.canadapost.ca/ws/messages">
 QuoteMissingArgsError = """<messages xmlns="http://www.canadapost.ca/ws/messages">
     <message>
         <code>Server</code>
-        <description>/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v3}parcel-characteristics with anonymous type, found &lt;/parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v3), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v3}weight, {http://www.canadapost.ca/ws/ship/rate-v3}dimensions, {http://www.canadapost.ca/ws/ship/rate-v3}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v3}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v3}oversized]</description>
+        <description>/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v4}parcel-characteristics with anonymous type, found &lt;/parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v4), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v4}weight, {http://www.canadapost.ca/ws/ship/rate-v4}dimensions, {http://www.canadapost.ca/ws/ship/rate-v4}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v4}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v4}oversized]</description>
     </message>
 </messages>
 """
 
-QuoteRequestXml = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v3">
+QuoteRequestXml = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>1234567</customer-number>
     <expected-mailing-date>{datetime.today().strftime('%Y-%m-%d')}</expected-mailing-date>
     <parcel-characteristics>
@@ -192,7 +192,7 @@ QuoteRequestXml = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/
 QuoteResponseXml = """<price-quotes>
    <price-quote>
       <service-code>DOM.EP</service-code>
-      <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.EP?country=CA" media-type="application/vnd.cpc.ship.rate-v3+xml" />
+      <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.EP?country=CA" media-type="application/vnd.cpc.ship.rate-v4+xml" />
       <service-name>Expedited Parcel</service-name>
       <price-details>
          <base>9.59</base>
@@ -238,7 +238,7 @@ QuoteResponseXml = """<price-quotes>
    </price-quote>
    <price-quote>
       <service-code>DOM.PC</service-code>
-      <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.PC?country=CA" media-type="application/vnd.cpc.ship.rate-v3+xml" />
+      <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.PC?country=CA" media-type="application/vnd.cpc.ship.rate-v4+xml" />
       <service-name>Priority Courier</service-name>
       <price-details>
          <base>22.64</base>
@@ -284,7 +284,7 @@ QuoteResponseXml = """<price-quotes>
    </price-quote>
    <price-quote>
       <service-code>DOM.RP</service-code>
-      <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.RP?country=CA" media-type="application/vnd.cpc.ship.rate-v3+xml" />
+      <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.RP?country=CA" media-type="application/vnd.cpc.ship.rate-v4+xml" />
       <service-name>Regular Parcel</service-name>
       <price-details>
          <base>9.59</base>
@@ -333,7 +333,7 @@ QuoteResponseXml = """<price-quotes>
    </price-quote>
    <price-quote>
       <service-code>DOM.XP</service-code>
-      <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.XP?country=CA" media-type="application/vnd.cpc.ship.rate-v3+xml" />
+      <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.XP?country=CA" media-type="application/vnd.cpc.ship.rate-v4+xml" />
       <service-name>Xpresspost</service-name>
       <price-details>
          <base>12.26</base>

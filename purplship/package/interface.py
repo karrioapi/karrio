@@ -6,7 +6,7 @@ from purplship.package.gateway import Gateway
 from purplship.core.models import (
     RateRequest, ShipmentRequest,
     TrackingRequest, PickupRequest,
-    PickupCancellationRequest
+    PickupCancellationRequest, PickupUpdateRequest
 )
 
 T = TypeVar('T')
@@ -69,7 +69,7 @@ class pickup:
             response = gateway.proxy.cancel_pickup(request)
 
             def deserialize():
-                return response
+                return gateway.mapper.parse_cancel_pickup_response(response)
 
             return IDeserialize(deserialize)
 
@@ -81,9 +81,9 @@ class pickup:
         def action(gateway: Gateway):
             payload = (
                 args if isinstance(args, PickupRequest)
-                else PickupRequest(**args)
+                else PickupUpdateRequest(**args)
             )
-            request = gateway.mapper.create_pickup_request(payload)
+            request = gateway.mapper.create_modify_pickup_request(payload)
             response = gateway.proxy.modify_pickup(request)
 
             def deserialize():

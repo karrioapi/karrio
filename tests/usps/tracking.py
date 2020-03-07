@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tests.usps.fixture import proxy
+from tests.usps.fixture import gateway
 from gds_helpers import to_dict, to_xml, export, jsonify
 from purplship.core.models import TrackingRequest
 from pyusps.trackfieldrequest import TrackFieldRequest
@@ -15,19 +15,19 @@ class TestUSPSTracking(unittest.TestCase):
     def test_create_tracking_request(self):
         payload = TrackingRequest(tracking_numbers=TRACKING_PAYLOAD)
 
-        tracking_request = proxy.mapper.create_tracking_request(payload)
+        tracking_request = gateway.mapper.create_tracking_request(payload)
         self.assertEqual(strip(export(tracking_request)), strip(TRACKING_REQUEST_STR))
 
-    @patch("purplship.carriers.usps.usps_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.usps.usps_gateway.proxy.http", return_value="<a></a>")
     @patch("urllib.parse.urlencode", return_value="")
     def test_get_tracking(self, encode_mock, http_mock):
-        proxy.get_tracking(self.RateRequest)
+        gateway.proxy.get_tracking(self.RateRequest)
 
         data = encode_mock.call_args[0][0]
         self.assertEqual(strip(jsonify(data)), strip(jsonify(TRACKING_REQUEST)))
 
     def test_parse_tracking_response(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
+        parsed_response = gateway.mapper.parse_tracking_response(
             to_xml(TRACKING_RESPONSE)
         )
         self.assertEqual(to_dict(parsed_response), PARSED_TRACKING_RESPONSE)
@@ -57,7 +57,7 @@ PARSED_TRACKING_RESPONSE = [
 ]
 
 
-TRACKING_REQUEST_STR = f"""<TrackFieldRequest USERID="{proxy.client.username}">
+TRACKING_REQUEST_STR = f"""<TrackFieldRequest USERID="{gateway.proxy.client.username}">
     <Revision>1</Revision>
     <TrackID ID="XXXXXXXXXXXX1"/>
 </TrackFieldRequest>

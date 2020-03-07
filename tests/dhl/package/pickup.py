@@ -1,126 +1,81 @@
+import re
 import unittest
 from unittest.mock import patch
-from pydhl.book_pickup_global_req_20 import BookPURequest
-from pydhl.modify_pickup_global_req_20 import ModifyPURequest
-from pydhl.cancel_pickup_global_req_20 import CancelPURequest
 from gds_helpers import to_xml, export, to_dict
 from purplship.core.models import PickupCancellationRequest, PickupRequest, PickupUpdateRequest
-from tests.dhl.fixture import proxy
-from tests.utils import strip
-from purplship.mappers.dhl.dhl_proxy import _reformat_time
+from purplship.package import pickup
+from tests.dhl.package.fixture import gateway
 
 
 class TestDHLPickup(unittest.TestCase):
     def setUp(self):
-        self.PURequest = BookPURequest()
-        self.PURequest.build(to_xml(PickupRequestXML))
-
-        self.ModifyPURequest = ModifyPURequest()
-        self.ModifyPURequest.build(to_xml(ModifyPURequestXML))
-
-        self.CancelPURequest = CancelPURequest()
-        self.CancelPURequest.build(to_xml(CancelPURequestXML))
+        self.BookPURequest = PickupRequest(**book_pickup_payload)
+        self.ModifyPURequest = PickupUpdateRequest(**modification_data)
+        self.CancelPURequest = PickupCancellationRequest(**cancellation_data)
 
     def test_create_pickup_request(self):
-        payload = PickupRequest(**request_data)
-        PURequest_ = proxy.mapper.create_pickup_request(payload)
+        request = gateway.mapper.create_pickup_request(self.BookPURequest)
         # remove MessageTime for testing purpose
-        PURequest_.Request.ServiceHeader.MessageTime = None
-        PURequest_.Place.LocationType = None
-        PURequest_.Place.Address1 = None
-        PURequest_.Place.PackageLocation = None
-        PURequest_.Place.StateCode = None
-        self.assertEqual(
-            export(PURequest_).replace("dhlPickup:", ""),
-            export(self.PURequest).replace("dhlPickup:", ""),
-        )
+        serialized_request = re.sub(
+            '<MessageTime>[^>]+</MessageTime>', '', request.serialize())
+
+        self.assertEqual(serialized_request, PickupRequestXML)
 
     def test_create_modify_pickup_request(self):
-        payload = PickupUpdateRequest(**modification_data)
-        ModifyPURequest_ = proxy.mapper.modify_pickup_request(payload)
+        request = gateway.mapper.create_modify_pickup_request(self.ModifyPURequest)
         # remove MessageTime for testing purpose
-        ModifyPURequest_.Request.ServiceHeader.MessageTime = None
-        ModifyPURequest_.Place.LocationType = None
-        ModifyPURequest_.Place.Address1 = None
-        ModifyPURequest_.Place.PackageLocation = None
-        ModifyPURequest_.Place.StateCode = None
-        self.assertEqual(
-            export(ModifyPURequest_).replace("dhlPickup:", ""),
-            export(self.ModifyPURequest).replace("dhlPickup:", ""),
-        )
+        serialized_request = re.sub(
+            '<MessageTime>[^>]+</MessageTime>', '', request.serialize())
+
+        self.assertEqual(serialized_request, ModifyPURequestXML)
 
     def test_create_pickup_cancellation_request(self):
-        payload = PickupCancellationRequest(**cancellation_data)
-        CancelPURequest_ = proxy.mapper.create_pickup_cancellation_request(payload)
+        request = gateway.mapper.create_cancel_pickup_request(self.CancelPURequest)
         # remove MessageTime for testing purpose
-        CancelPURequest_.Request.ServiceHeader.MessageTime = None
-        CancelPURequest_.CancelTime = None
-        self.assertEqual(
-            export(CancelPURequest_).replace("dhlPickup:", ""),
-            export(self.CancelPURequest).replace("dhlPickup:", ""),
-        )
+        serialized_request = re.sub(
+            '<MessageTime>[^>]+</MessageTime>', '', re.sub(
+                '<CancelTime>[^>]+</CancelTime>', '', request.serialize()))
 
-    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
-    def test_request_pickup(self, http_mock):
-        proxy.request_pickup(self.PURequest)
-
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(
-            strip(xmlStr),
-            _reformat_time(
-                "CloseTime", _reformat_time("ReadyByTime", strip(PickupRequestXML))
-            ),
-        )
-
-    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
-    def test_modify_pickup(self, http_mock):
-        proxy.modify_pickup(self.ModifyPURequest)
-
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(
-            strip(xmlStr),
-            _reformat_time(
-                "CloseTime", _reformat_time("ReadyByTime", strip(ModifyPURequestXML))
-            ),
-        )
-
-    @patch("purplship.carriers.dhl.dhl_proxy.http", return_value="<a></a>")
-    def test_cancel_pickup(self, http_mock):
-        proxy.cancel_pickup(self.CancelPURequest)
-
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(CancelPURequestXML))
+        self.assertEqual(serialized_request, CancelPURequestXML)
 
     def test_parse_request_pickup_response(self):
-        parsed_response = proxy.mapper.parse_pickup_response(to_xml(PickupResponseXML))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupResponse))
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = PickupResponseXML
+            parsed_response = pickup.book(self.BookPURequest).with_(gateway).parse()
+
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupResponse))
 
     def test_parse_modify_pickup_response(self):
-        parsed_response = proxy.mapper.parse_pickup_response(to_xml(ModifyPURequestXML))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedModifyPUResponse))
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = ModifyPURequestXML
+            parsed_response = pickup.update(self.ModifyPURequest).from_(gateway).parse()
+
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedModifyPUResponse))
 
     def test_parse_cancellation_pickup_response(self):
-        parsed_response = proxy.mapper.parse_pickup_cancellation_response(
-            to_xml(CancelPUResponseXML)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedCancelPUResponse))
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = CancelPUResponseXML
+            parsed_response = pickup.cancel(self.CancelPURequest).from_(gateway).parse()
+
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedCancelPUResponse))
 
     def test_parse_request_pickup_error(self):
-        parsed_response = proxy.mapper.parse_shipment_response(
-            to_xml(PickupErrorResponseXML)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupErrorResponse))
+        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+            mock.return_value = PickupErrorResponseXML
+            parsed_response = pickup.book(self.BookPURequest).with_(gateway).parse()
+
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupErrorResponse))
 
 
 if __name__ == "__main__":
     unittest.main()
 
-request_data = {
+book_pickup_payload = {
     "date": "2013-10-19",
     "account_number": "123456789",
     "pieces": 2,
     "weight": 20,
-    "weight_unit": "L",
+    "weight_unit": "LB",
     "ready_time": "10:20:00",
     "closing_time": "09:20:00",
     "city": "Montreal",
@@ -131,8 +86,7 @@ request_data = {
     "country_code": "CA",
     "email_address": "test@mail.com",
     "instruction": "behind the front desk",
-    "address_lines": ["234 rue Hubert"],
-    "extra": {"RequestorContact": {"PersonName": "Rikhil", "Phone": "23162"}},
+    "address_lines": ["234 rue Hubert"]
 }
 
 modification_data = {
@@ -146,39 +100,39 @@ modification_data = {
     "person_name": "Rikhil",
     "phone_number": "4801313131",
     "country_code": "CA",
-    "email_address": "test@mail.com",
-    "extra": {
-        "RequestorContact": {"PersonName": "Rikhil", "Phone": "23162"},
-        "OriginSvcArea": "KUL",
-    },
+    "email_address": "test@mail.com"
 }
 
 cancellation_data = {
     "confirmation_number": "743511",
     "person_name": "Rikhil",
     "pickup_date": "2013-10-10",
-    "country_code": "BR",
-    "extra": {"Reason": "001"},
+    "country_code": "BR"
 }
 
 ParsedPickupResponse = [
     {
-        "carrier": "carrier_name",
-        "confirmation_number": "3674",
-        "pickup_charge": None,
-        "pickup_date": "2013-10-09",
-        "ref_times": [
-            {"name": "ReadyByTime", "value": "10:30"},
-            {"name": "CallInTime", "value": "08:30"},
-        ],
+        'carrier': 'carrier_name',
+        'confirmation_number': '3674',
+        'pickup_date': '2013-10-09',
+        'ref_times': [
+            {'name': 'CallInTime', 'value': '08:30:00'}
+        ]
     },
-    [],
+    [
+        {
+            'carrier': 'carrier_name',
+            'code': 'PU021',
+            'message': ' NOTICE!  Packages picked up after hours may\n                be inspected by a DHL Courier for FAA security purposes.'
+        }
+    ]
 ]
+
 
 ParsedModifyPUResponse = [
     {
         "carrier": "carrier_name",
-        "confirmation_number": 100094,
+        "confirmation_number": "100094",
         "pickup_charge": None,
         "pickup_date": None,
         "ref_times": [],
@@ -218,20 +172,26 @@ PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </res:PickupErrorResponse>
 """
 
-CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="2.0">
-	<Request>
+CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="3.">
+    <Request>
         <ServiceHeader>
+            
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>
-	    </ServiceHeader>
+        </ServiceHeader>
+        <MetaData>
+            <SoftwareName>XMLPI</SoftwareName>
+            <SoftwareVersion>1.0</SoftwareVersion>
+        </MetaData>
     </Request>
-	<RegionCode>AM</RegionCode>
-	<ConfirmationNumber>743511</ConfirmationNumber>
-	<RequestorName>Rikhil</RequestorName>
+    <RegionCode>AM</RegionCode>
+    <ConfirmationNumber>743511</ConfirmationNumber>
+    <RequestorName>Rikhil</RequestorName>
     <CountryCode>BR</CountryCode>
-	<Reason>001</Reason>
-	<PickupDate>2013-10-10</PickupDate>
+    <Reason>006</Reason>
+    <PickupDate>2013-10-10</PickupDate>
+    
 </req:CancelPURequest>
 """
 
@@ -244,7 +204,7 @@ CancelPUResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
             <SiteID>CustomerSiteID</SiteID>
         </ServiceHeader>
     </Response>
-	<RegionCode>EU</RegionCode>
+    <RegionCode>EU</RegionCode>
     <Note>
         <ActionNote>Success</ActionNote>
     </Note>
@@ -253,39 +213,44 @@ CancelPUResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </res:CancelPUResponse>
 """
 
-ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="1.0">
+ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="3.">
     <Request>
         <ServiceHeader>
+            
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>
-	    </ServiceHeader>
+        </ServiceHeader>
+        <MetaData>
+            <SoftwareName>XMLPI</SoftwareName>
+            <SoftwareVersion>1.0</SoftwareVersion>
+        </MetaData>
     </Request>
     <RegionCode>AM</RegionCode>
     <ConfirmationNumber>100094</ConfirmationNumber>
     <Requestor>
-		<AccountType>D</AccountType>
-		<AccountNumber>123456789</AccountNumber>
-		<RequestorContact>
+        <AccountType>D</AccountType>
+        <AccountNumber>123456789</AccountNumber>
+        <RequestorContact>
             <PersonName>Rikhil</PersonName>
-            <Phone>23162</Phone>
-		</RequestorContact>
+            <Phone>4801313131</Phone>
+        </RequestorContact>
     </Requestor>
-	<Place>
+    <Place>
         <City>Montreal</City>
         <CountryCode>CA</CountryCode>
         <PostalCode>H8Z2Z3</PostalCode>
-	</Place>
-	<Pickup>
+    </Place>
+    <Pickup>
         <PickupDate>2013-10-19</PickupDate>
-        <ReadyByTime>10:20:00</ReadyByTime>
-        <CloseTime>09:20:00</CloseTime>
-	</Pickup>
-	<PickupContact>
-		<PersonName>Rikhil</PersonName>
-		<Phone>4801313131</Phone>
-	</PickupContact>
-	<OriginSvcArea>KUL</OriginSvcArea>
+        <ReadyByTime>10:20</ReadyByTime>
+        <CloseTime>09:20</CloseTime>
+        <RemotePickupFlag>Y</RemotePickupFlag>
+    </Pickup>
+    <PickupContact>
+        <PersonName>Rikhil</PersonName>
+        <Phone>4801313131</Phone>
+    </PickupContact>
 </req:ModifyPURequest>
 """
 
@@ -298,7 +263,7 @@ ModifyPUResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
             <SiteID>CustomerSiteID</SiteID>
         </ServiceHeader>
     </Response>
-	<RegionCode>AM</RegionCode>
+    <RegionCode>AM</RegionCode>
     <Note>
         <ActionNote>Success</ActionNote>
     </Note>
@@ -328,28 +293,33 @@ PickupResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
         </Condition>
     </Note>
     <ConfirmationNumber>3674</ConfirmationNumber>
-    <ReadyByTime>10:30</ReadyByTime>
+    <ReadyByTime>10:30:00</ReadyByTime>
     <NextPickupDate>2013-10-09</NextPickupDate>
-    <CallInTime>08:30</CallInTime>
+    <CallInTime>08:30:00</CallInTime>
     <OriginSvcArea>BEL</OriginSvcArea>
 </res:BookPUResponse>
 """
 
-PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req.xsd" schemaVersion="1.0">
+PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req_EA.xsd" schemaVersion="3.">
     <Request>
         <ServiceHeader>
+            
             <MessageReference>1234567890123456789012345678901</MessageReference>
             <SiteID>site_id</SiteID>
             <Password>password</Password>
         </ServiceHeader>
+        <MetaData>
+            <SoftwareName>XMLPI</SoftwareName>
+            <SoftwareVersion>3.0</SoftwareVersion>
+        </MetaData>
     </Request>
     <RegionCode>AM</RegionCode>
     <Requestor>
         <AccountType>D</AccountType>
         <AccountNumber>123456789</AccountNumber>
         <RequestorContact>
-            <PersonName>Rikhil</PersonName>
-            <Phone>23162</Phone>
+            <PersonName>Subhayu</PersonName>
+            <Phone>4801313131</Phone>
         </RequestorContact>
     </Requestor>
     <Place>
@@ -359,9 +329,10 @@ PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xs
     </Place>
     <Pickup>
         <PickupDate>2013-10-19</PickupDate>
-        <ReadyByTime>10:20:00</ReadyByTime>
-        <CloseTime>09:20:00</CloseTime>
+        <ReadyByTime>10:20</ReadyByTime>
+        <CloseTime>09:20</CloseTime>
         <Pieces>2</Pieces>
+        <RemotePickupFlag>Y</RemotePickupFlag>
         <weight>
             <Weight>20.</Weight>
             <WeightUnit>L</WeightUnit>

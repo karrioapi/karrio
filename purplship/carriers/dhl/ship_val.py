@@ -13,7 +13,10 @@ from purplship.core.utils.xml import Element
 from purplship.core.models import (
     ShipmentRequest, Error, ShipmentDetails, ReferenceDetails, ChargeDetails
 )
-from purplship.carriers.dhl.units import PackageType, Service, Product, PayorType, Dimension, WeightUnit, CountryRegion
+from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit
+from purplship.carriers.dhl.units import (
+    PackageType, Service, Product, PayorType, Dimension as DHLDimension, WeightUnit as DHLWeightUnit, CountryRegion,
+)
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
 
@@ -67,6 +70,8 @@ def _extract_shipment(shipment_response_node, settings: Settings) -> Optional[Sh
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[DHLShipmentRequest]:
+    dimension_unit = payload.shipment.dimension_unit or "IN"
+    weight_unit = payload.shipment.weight_unit or "LB"
     is_dutiable = payload.shipment.declared_value is not None
     default_product_code = (
         Product.EXPRESS_WORLDWIDE_DOC if payload.shipment.is_document else Product.EXPRESS_WORLDWIDE
@@ -78,14 +83,14 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         PackageType.Document if payload.shipment.is_document else PackageType.Your_packaging
     )
     options = dict(
-        [(code, value) for code, value in payload.shipment.options.items() if code in Service.__members__] +
+        [(code, value) for code, value in payload.options.items() if code in Service.__members__] +
         ([] if not payload.shipment.insured_amount else [(Service.Shipment_Insurance.value, payload.shipment.insured_amount)])
     )
 
     request = DHLShipmentRequest(
-        schemaVersion="6.1",
-        Request=settings.Request(MetaData=MetaData(SoftwareName="3PV", SoftwareVersion="1.0")),
-        RegionCode=CountryRegion[payload.shipper.country_code],
+        schemaVersion=6.2,
+        Request=settings.Request(MetaData=MetaData(SoftwareName="3PV", SoftwareVersion=6.2)),
+        RegionCode=CountryRegion[payload.shipper.country_code].value,
         RequestedPickupTime="Y",
         LanguageCode="en",
         PiecesEnabled="Y",
@@ -164,26 +169,27 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             Pieces=Pieces(
                 Piece=[
                     Piece(
-                        PieceID=p.id,
+                        PieceID=p.id or index,
                         PackageType=(
                             PackageType[p.packaging_type] if p.packaging_type is not None else default_packaging_type
                         ).value,
-                        Weight=p.weight,
-                        DimWeight=None,
-                        Height=p.height,
-                        Width=p.width,
                         Depth=p.length,
+                        Width=Dimension(p.width, DimensionUnit[dimension_unit]).IN,
+                        Height=Dimension(p.height, DimensionUnit[dimension_unit]).IN,
+                        Weight=Weight(p.weight, WeightUnit[weight_unit]).LB,
+                        DimWeight=None,
                         PieceContents=p.content,
                     )
-                    for p in payload.shipment.items
+                    for index, p in enumerate(payload.shipment.items)
                 ]
             ),
-            Weight=(
-                payload.shipment.total_weight or sum(p.weight for p in payload.shipment.items)
-            ),
+            Weight=Weight(
+                payload.shipment.total_weight or sum(p.weight for p in payload.shipment.items),
+                WeightUnit[weight_unit]
+            ).LB,
             CurrencyCode=payload.shipment.currency or "USD",
-            WeightUnit=WeightUnit[payload.shipment.weight_unit or "KG"].value,
-            DimensionUnit=Dimension[payload.shipment.dimension_unit or "CM"].value,
+            WeightUnit=DHLWeightUnit[weight_unit].value,
+            DimensionUnit=DHLDimension[dimension_unit].value,
             Date=payload.shipment.date or time.strftime("%Y-%m-%d"),
             PackageType=(
                 PackageType[payload.shipment.packaging_type].value
@@ -220,15 +226,15 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     SpecialServiceType=Service[code].value,
                     CommunicationAddress=None,
                     CommunicationType=None,
-                    ChargeValue=value,
+                    ChargeValue=None,
                     CurrencyCode=payload.shipment.currency,
                     IsWaived=None,
                 )
-                for code, value in options.items()
+                for code, _ in options.items()
             ] if len(options) > 0 else None
         ),
         LabelImageFormat=(
-            payload.shipment.label.format if payload.shipment.label is None else None
+            payload.shipment.label.format if payload.shipment.label is not None else None
         ),
         DocImages=(
             DocImages(
@@ -257,7 +263,7 @@ def _request_serializer(request: DHLShipmentRequest) -> str:
         export(
             request,
             name_="req:ShipmentRequest",
-            namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.1"',
+            namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd"',
         )
         .replace("<Image>b'", "<Image>")
         .replace("'</Image>", "</Image>")

@@ -1,5 +1,5 @@
 from purplship.core import Settings as BaseSettings
-from pyfedex.rate_v22 import (
+from pyfedex.rate_service_v26 import (
     WebAuthenticationCredential,
     WebAuthenticationDetail,
     ClientDetail,

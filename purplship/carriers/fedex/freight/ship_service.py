@@ -85,7 +85,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
         svc for svc in payload.shipment.services if svc in ServiceType.__members__
     ]
     options = [
-        opt for opt in payload.shipment.options.keys() if opt.code in SpecialServiceType.__members__
+        opt for opt in payload.options.keys() if opt.code in SpecialServiceType.__members__
     ]
     request = ProcessShipmentRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,

@@ -3,20 +3,19 @@ from datetime import datetime
 from typing import Tuple, List, Optional
 from pyfedex.rate_service_v26 import (
     RateReplyDetail, RateRequest as FedexRateRequest, TransactionDetail, VersionId,
-    RequestedShipment, Money, TaxpayerIdentification, Party, Contact, Address, Payment,
-    Payor, ShipmentSpecialServicesRequested, FreightShipmentDetail,
-    LabelSpecification, RequestedPackageLineItem,
-    Weight, Dimensions, RatedShipmentDetail,
+    RequestedShipment, Money, TaxpayerIdentification, Party, Contact, Address,
+    LabelSpecification, RequestedPackageLineItem, RatedShipmentDetail,
+    Weight as FedexWeight, Dimensions as FedexDimensions,
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.units import Currency
+from purplship.core.units import Currency, Dimension, DimensionUnit, WeightUnit, Weight
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
     RateDetails, RateRequest, Error, ChargeDetails
 )
-from purplship.carriers.fedex.units import PackagingType, ServiceType, PaymentType, SpecialServiceType
+from purplship.carriers.fedex.units import PackagingType, ServiceType
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
@@ -76,30 +75,33 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
 
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[FedexRateRequest]:
+    dimension_unit = payload.shipment.dimension_unit or "IN"
+    weight_unit = payload.shipment.weight_unit or "LB"
     requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
-    options = [opt for opt in payload.shipment.options.keys() if opt.code in SpecialServiceType.__members__]
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
         TransactionDetail=TransactionDetail(CustomerTransactionId="FTC"),
-        Version=VersionId(ServiceId="crs", Major=22, Intermediate=0, Minor=0),
+        Version=VersionId(ServiceId="crs", Major=26, Intermediate=0, Minor=0),
         ReturnTransitAndCommit=True,
         CarrierCodes=None,
         VariableOptions=None,
         ConsolidationKey=None,
         RequestedShipment=RequestedShipment(
             ShipTimestamp=datetime.now(),
-            DropoffType=None,
+            DropoffType="REGULAR_PICKUP",
             ServiceType=(
                 ServiceType[requested_services[0]].value if len(requested_services) > 0 else None
             ),
             PackagingType=PackagingType[payload.shipment.packaging_type or "YOUR_PACKAGING"].value,
             VariationOptions=None,
-            TotalWeight=Weight(
-                Units=payload.shipment.weight_unit,
-                Value=payload.shipment.total_weight
-                or reduce(lambda r, p: r + p.weight, payload.shipment.items, 0.0),
+            TotalWeight=FedexWeight(
+                Units=weight_unit,
+                Value=Weight(
+                    payload.shipment.total_weight or sum(p.weight for p in payload.shipment.items),
+                    WeightUnit[weight_unit]
+                ).value,
             ),
             TotalInsuredValue=(
                 Money(
@@ -112,18 +114,15 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
                 AccountNumber=payload.shipper.account_number,
-                Tins=(
-                    [
-                        TaxpayerIdentification(
-                            TinType=None,
-                            Usage=None,
-                            Number=payload.shipper.tax_id,
-                            EffectiveDate=None,
-                            ExpirationDate=None,
-                        )
-                    ]
-                    if payload.shipper.tax_id is not None else None
-                ),
+                Tins=[
+                    TaxpayerIdentification(
+                        TinType=None,
+                        Usage=None,
+                        Number=payload.shipper.tax_id,
+                        EffectiveDate=None,
+                        ExpirationDate=None,
+                    )
+                ] if payload.recipient.tax_id is not None else None,
                 Contact=Contact(
                     ContactId=None,
                     PersonName=payload.shipper.person_name,
@@ -158,18 +157,15 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             ),
             Recipient=Party(
                 AccountNumber=payload.recipient.account_number,
-                Tins=(
-                    [
-                        TaxpayerIdentification(
-                            TinType=None,
-                            Usage=None,
-                            Number=payload.recipient.tax_id,
-                            EffectiveDate=None,
-                            ExpirationDate=None,
-                        )
-                    ]
-                    if payload.recipient.tax_id is not None else None
-                ),
+                Tins=[
+                    TaxpayerIdentification(
+                        TinType=None,
+                        Usage=None,
+                        Number=payload.recipient.tax_id,
+                        EffectiveDate=None,
+                        ExpirationDate=None,
+                    )
+                ] if payload.recipient.tax_id is not None else None,
                 Contact=Contact(
                     ContactId=None,
                     PersonName=payload.recipient.person_name,
@@ -205,68 +201,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             RecipientLocationNumber=None,
             Origin=None,
             SoldTo=None,
-            ShippingChargesPayment=Payment(
-                PaymentType=PaymentType[payload.shipment.paid_by or "SENDER"].value,
-                Payor=(
-                    Payor(
-                        ResponsibleParty=Party(
-                            AccountNumber=payload.shipment.payment_account_number,
-                            Tins=None,
-                            Contact=None,
-                            Address=None,
-                        )
-                    )
-                    if payload.shipment.payment_account_number is not None
-                    else None
-                ),
-            )
-            if any(
-                (payload.shipment.paid_by, payload.shipment.payment_account_number)
-            )
-            else None,
-            SpecialServicesRequested=ShipmentSpecialServicesRequested(
-                SpecialServiceTypes=[
-                    SpecialServiceType[option].value for option in options
-                ],
-                CodDetail=None,
-                DeliveryOnInvoiceAcceptanceDetail=None,
-                HoldAtLocationDetail=None,
-                EventNotificationDetail=None,
-                ReturnShipmentDetail=None,
-                PendingShipmentDetail=None,
-                InternationalControlledExportDetail=None,
-                InternationalTrafficInArmsRegulationsDetail=None,
-                ShipmentDryIceDetail=None,
-                HomeDeliveryPremiumDetail=None,
-                FlatbedTrailerDetail=None,
-                FreightGuaranteeDetail=None,
-                EtdDetail=None,
-                CustomDeliveryWindowDetail=None,
-            )
-            if len(options) > 0
-            else None,
+            ShippingChargesPayment=None,
+            SpecialServicesRequested=None,
             ExpressFreightDetail=None,
-            FreightShipmentDetail=FreightShipmentDetail(
-                FedExFreightAccountNumber=None,
-                FedExFreightBillingContactAndAddress=None,
-                AlternateBilling=None,
-                Role=None,
-                CollectTermsType=None,
-                DeclaredValuePerUnit=None,
-                DeclaredValueUnits=None,
-                LiabilityCoverageDetail=None,
-                Coupons=None,
-                TotalHandlingUnits=None,
-                ClientDiscountPercent=None,
-                PalletWeight=None,
-                ShipmentDimensions=None,
-                Comment=None,
-                SpecialServicePayments=None,
-                HazardousMaterialsOfferor=None,
-                LineItems=None,
-            )
-            if any([svc for svc in requested_services if "FREIGHT" in svc])
-            else None,
+            FreightShipmentDetail=None,
             DeliveryInstructions=None,
             VariableHandlingChargeDetail=None,
             CustomsClearanceDetail=None,
@@ -281,9 +219,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
                 LabelOrder=None,
                 PrintedLabelOrigin=None,
                 CustomerSpecifiedDetail=None,
-            )
-            if payload.shipment.label is not None
-            else None,
+            ) if payload.shipment.label is not None else None,
             ShippingDocumentSpecification=None,
             RateRequestTypes=(
                 ["LIST"] + ([] if not payload.shipment.currency else ["PREFERRED"])
@@ -294,19 +230,20 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             ConfigurationData=None,
             RequestedPackageLineItems=[
                 RequestedPackageLineItem(
-                    SequenceNumber=None,
+                    SequenceNumber=index,
                     GroupNumber=None,
-                    GroupPackageCount=index + 1,
+                    GroupPackageCount=index,
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
-                    Weight=Weight(
-                        Units=payload.shipment.weight_unit, Value=pkg.weight
+                    Weight=FedexWeight(
+                        Units=weight_unit,
+                        Value=Weight(pkg.weight, WeightUnit[weight_unit]).value,
                     ),
-                    Dimensions=Dimensions(
-                        Length=pkg.length,
-                        Width=pkg.width,
-                        Height=pkg.height,
-                        Units=payload.shipment.dimension_unit,
+                    Dimensions=FedexDimensions(
+                        Length=Dimension(pkg.length, DimensionUnit[dimension_unit]).value,
+                        Width=Dimension(pkg.width, DimensionUnit[dimension_unit]).value,
+                        Height=Dimension(pkg.height, DimensionUnit[dimension_unit]).value,
+                        Units=dimension_unit,
                     ),
                     PhysicalPackaging=None,
                     ItemDescription=pkg.content,
@@ -315,7 +252,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
-                for index, pkg in enumerate(payload.shipment.items)
+                for index, pkg in enumerate(payload.shipment.items, 1)
             ],
         ),
     )
@@ -326,7 +263,7 @@ def _request_serializer(request: FedexRateRequest) -> str:
     return clean_namespaces(
         export(
             create_envelope(body_content=request),
-            namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://fedex.com/ws/rate/v22"',
+            namespacedef_='tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26"',
         ),
         envelope_prefix="tns:",
         body_child_prefix="ns:",

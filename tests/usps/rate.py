@@ -1,7 +1,7 @@
 import unittest
 import urllib.parse
 from unittest.mock import patch
-from tests.usps.fixture import proxy
+from tests.usps.fixture import gateway
 from gds_helpers import to_dict, to_xml, export, jsonify
 from purplship.core.models import RateRequest
 from pyusps.ratev4request import RateV4Request
@@ -16,44 +16,44 @@ class TestUSPSQuote(unittest.TestCase):
         self.IntlRateRequest = IntlRateV2Request()
         self.IntlRateRequest.build(to_xml(INTL_RATE_REQUEST_STR))
 
-    def test_create_quote_request(self):
+    def test_create_rate_request(self):
         payload = RateRequest(**RATE_PAYLOAD)
 
-        rate_request = proxy.mapper.create_quote_request(payload)
+        rate_request = gateway.mapper.create_rate_request(payload)
         self.assertEqual(strip(export(rate_request)), strip(RATE_REQUEST_STR))
 
     def test_create_intl_quote_request(self):
         payload = RateRequest(**INTL_RATE_PAYLOAD)
 
-        rate_request = proxy.mapper.create_quote_request(payload)
+        rate_request = gateway.mapper.create_rate_request(payload)
         self.assertEqual(strip(export(rate_request)), strip(INTL_RATE_REQUEST_STR))
 
-    @patch("purplship.carriers.usps.usps_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.usps.usps_gateway.proxy.http", return_value="<a></a>")
     @patch("urllib.parse.urlencode", return_value="")
-    def test_get_quotes(self, encode_mock, http_mock):
-        proxy.get_quotes(self.RateRequest)
+    def test_get_rates(self, encode_mock, http_mock):
+        gateway.proxy.get_rates(self.RateRequest)
 
         data = encode_mock.call_args[0][0]
         self.assertEqual(strip(jsonify(data)), strip(jsonify(RATE_REQUEST)))
 
-    @patch("purplship.carriers.usps.usps_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.usps.usps_gateway.proxy.http", return_value="<a></a>")
     @patch("urllib.parse.urlencode", return_value="")
     def test_get_intl_quotes(self, encode_mock, http_mock):
-        proxy.get_quotes(self.IntlRateRequest)
+        gateway.proxy.get_rates(self.IntlRateRequest)
 
         data = encode_mock.call_args[0][0]
         self.assertEqual(strip(jsonify(data)), strip(jsonify(INTL_RATE_REQUEST)))
 
-    def test_parse_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(RATE_RESPONSE))
+    def test_parse_rate_response(self):
+        parsed_response = gateway.mapper.parse_rate_response(to_xml(RATE_RESPONSE))
         self.assertEqual(to_dict(parsed_response), PARSED_RATE_RESPONSE)
 
     def test_parse_intl_quote_response(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(INTL_RATE_RESPONSE))
+        parsed_response = gateway.mapper.parse_rate_response(to_xml(INTL_RATE_RESPONSE))
         self.assertEqual(to_dict(parsed_response), PARSED_INTL_RATE_RESPONSE)
 
-    def test_parse_quote_response_errors(self):
-        parsed_response = proxy.mapper.parse_quote_response(to_xml(ERRORS))
+    def test_parse_rate_response_errors(self):
+        parsed_response = gateway.mapper.parse_rate_response(to_xml(ERRORS))
         self.assertEqual(to_dict(parsed_response), PARSED_ERRORS)
 
 
@@ -356,7 +356,7 @@ ERRORS = """<?xml version="1.0" encoding="UTF-8"?>
 </Error>
 """
 
-RATE_REQUEST_STR = f"""<RateV4Request USERID="{proxy.client.username}">
+RATE_REQUEST_STR = f"""<RateV4Request USERID="{gateway.proxy.client.username}">
     <Revision>2</Revision>
     <Package ID="1ST">
         <Service>First Class</Service>
@@ -399,7 +399,7 @@ RATE_REQUEST_STR = f"""<RateV4Request USERID="{proxy.client.username}">
 
 RATE_REQUEST = {"API": "RateV4", "XML": RATE_REQUEST_STR}
 
-INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{proxy.client.username}">
+INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{gateway.proxy.client.username}">
     <Revision>2</Revision>
     <Package ID="1ST">
         <Pounds>15.12345678</Pounds>

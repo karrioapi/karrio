@@ -1,6 +1,6 @@
 from typing import List, Callable
 from functools import reduce
-from pyfedex.rate_v22 import Notification
+from pyfedex.rate_service_v26 import Notification
 from purplship.core.models import Error
 from purplship.core.utils.xml import Element
 from .utils import Settings

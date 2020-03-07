@@ -25,7 +25,7 @@ class Proxy(BaseProxy):
     def get_rates(self, request: Serializable[ShippingPriceRequest]) -> Deserializable[dict]:
         response = http(
             url=f"{self.settings.server_url}/shipping/v1/prices/shipments",
-            data=bytearray(request.serialize(), "utf-8"),
+            data=bytearray(request.serialize().replace('from_', 'from'), "utf-8"),
             headers={
                 "Content-Type": "application/json",
                 "Accept": "application/json",

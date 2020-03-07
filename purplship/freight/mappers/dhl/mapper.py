@@ -1,10 +1,10 @@
 from typing import List
-from pydhl.DCT_req_global import DCTRequest
-from pydhl.ship_val_global_req_61 import ShipmentRequest as DHLShipmentRequest
+from pydhl.dct_req_global_2_0 import DCTRequest
+from pydhl.ship_val_global_req_6_2 import ShipmentRequest as DHLShipmentRequest
 from pydhl.tracking_request_known import KnownTrackingRequest
-from pydhl.book_pickup_global_req_20 import BookPURequest
-from pydhl.modify_pickup_global_req_20 import ModifyPURequest
-from pydhl.cancel_pickup_global_req_20 import CancelPURequest
+from pydhl.book_pickup_global_req_3_0 import BookPURequest
+from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest
+from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest
 from purplship.freight.mapper import Mapper as BaseMapper
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.models import (

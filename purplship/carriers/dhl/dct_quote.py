@@ -10,7 +10,7 @@ from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit, WeightUnit, Currency
+from purplship.core.units import DimensionUnit, WeightUnit, Currency, Weight, Dimension
 from purplship.core.models import (
     RateDetails, Error, ChargeDetails, RateRequest
 )
@@ -71,6 +71,8 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 
 
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
+    dimension_unit = payload.shipment.dimension_unit or "IN"
+    weight_unit = payload.shipment.weight_unit or "LB"
     default_product_code = (
         Product.EXPRESS_WORLDWIDE_DOC
         if payload.shipment.is_document
@@ -85,7 +87,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
     default_packaging_type = (
         DCTPackageType.SM if payload.shipment.is_document else DCTPackageType.BOX
     )
-    option_codes = [code for code in payload.shipment.options.keys()]
+    option_codes = [code for code in payload.options.keys()]
     options = (
         [Service[code] for code in option_codes if code in Service.__members__] +
         (
@@ -103,9 +105,9 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
     )
 
     request = DCTRequest(
-        schemaVersion="1.0",
+        schemaVersion=2.0,
         GetQuote=GetQuoteType(
-            Request=settings.Request(MetaData=MetaData(SoftwareName="3PV", SoftwareVersion="1.0")),
+            Request=settings.Request(MetaData=MetaData(SoftwareName="3PV", SoftwareVersion=1.0)),
             From=DCTFrom(
                 CountryCode=payload.shipper.country_code,
                 Postalcode=payload.shipper.postal_code,
@@ -121,10 +123,8 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
             BkgDetails=BkgDetailsType(
                 PaymentCountryCode=payload.shipment.payment_country_code or "CA",
                 NetworkTypeCode=None,
-                WeightUnit=WeightUnit[payload.shipment.weight_unit or "KG"].value,
-                DimensionUnit=DimensionUnit[
-                    payload.shipment.dimension_unit or "CM"
-                ].value,
+                WeightUnit=WeightUnit[weight_unit].value,
+                DimensionUnit=DimensionUnit[dimension_unit].value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
                 IsDutiable="Y" if is_dutiable else "N",
@@ -133,14 +133,14 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                         PieceType(
                             PieceID=piece.id or str(index),
                             PackageTypeCode=(
-                                DCTPackageType[piece.packaging_type]
-                                if not piece.packaging_type
+                                DCTPackageType[piece.packaging_type].value
+                                if piece.packaging_type is not None
                                 else default_packaging_type
                             ).value,
-                            Height=piece.height,
-                            Width=piece.width,
-                            Weight=piece.weight,
-                            Depth=piece.length,
+                            Depth=Dimension(piece.length, DimensionUnit[dimension_unit]).IN,
+                            Width=Dimension(piece.width, DimensionUnit[dimension_unit]).IN,
+                            Height=Dimension(piece.height, DimensionUnit[dimension_unit]).IN,
+                            Weight=Weight(piece.weight, WeightUnit[weight_unit]).LB,
                         )
                         for index, piece in enumerate(payload.shipment.items)
                     ]
@@ -189,4 +189,4 @@ def _request_serializer(request: DCTRequest) -> str:
         request,
         name_="p:DCTRequest",
         namespacedef_='xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "',
-    ).replace('schemaVersion="1."', 'schemaVersion="1.0"')
+    )

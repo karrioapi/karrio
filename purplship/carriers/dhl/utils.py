@@ -1,5 +1,5 @@
 import time
-from pydhl.datatypes_global_v61 import ServiceHeader, Request
+from pydhl.datatypes_global_v62 import ServiceHeader, Request
 from purplship.core import Settings as BaseSettings
 
 

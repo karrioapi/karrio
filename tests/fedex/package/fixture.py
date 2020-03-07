@@ -1,7 +1,7 @@
-from purplship.mappers.fedex import FedexClient, FedexProxy
+import purplship.package as api
 
-proxy = FedexProxy(
-    FedexClient(
+gateway = api.gateway["fedex"].create(
+    dict(
         server_url="https://wsbeta.fedex.com:443/web-services",
         user_key="user_key",
         password="password",
@@ -10,3 +10,4 @@ proxy = FedexProxy(
         carrier_name="carrier_name",
     )
 )
+

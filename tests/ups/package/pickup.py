@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from pyups.freight_pickup import FreightPickupRequest, FreightCancelPickupRequest
-from tests.ups.package.fixture import proxy
+from tests.ups.package.fixture import gateway
 from tests.utils import strip, get_node_from_xml
 
 
@@ -19,16 +19,16 @@ class TestUPSPickup(unittest.TestCase):
             )
         )
 
-    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_request_pickup(self, http_mock):
-        proxy.request_pickup(self.PickupRequest)
+        gateway.proxy.request_pickup(self.PickupRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(PickupRequestXml))
 
-    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_cancel_pickup(self, http_mock):
-        proxy.cancel_pickup(self.CancelPickupRequest)
+        gateway.proxy.cancel_pickup(self.CancelPickupRequest)
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(PickupCancellationRequestXML))

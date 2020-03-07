@@ -3,7 +3,7 @@ from unittest.mock import patch
 from gds_helpers import to_xml, to_dict, export
 from pyups.package_track import TrackRequest
 from purplship.core.models import TrackingRequest
-from tests.ups.package.fixture import proxy
+from tests.ups.package.fixture import gateway
 from tests.utils import strip, get_node_from_xml
 
 
@@ -16,29 +16,29 @@ class TestUPSTracking(unittest.TestCase):
     def test_create_tracking_request(self):
         payload = TrackingRequest(tracking_numbers=["1Z12345E6205277936"])
 
-        TrackRequests_ = proxy.mapper.create_tracking_request(payload)
+        TrackRequests_ = gateway.mapper.create_tracking_request(payload)
 
         self.assertEqual(export(TrackRequests_[0]), export(self.TrackRequest))
 
-    @patch("purplship.carriers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        proxy.get_tracking([self.TrackRequest])
+        gateway.proxy.get_tracking([self.TrackRequest])
 
         xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
         self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
 
     def test_tracking_auth_error_parsing(self):
-        parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
+        parsed_response = gateway.mapper.parse_error_response(to_xml(AuthError))
         self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_tracking_response_parsing(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
+        parsed_response = gateway.mapper.parse_tracking_response(
             to_xml(TrackingResponseXml)
         )
         self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
+        parsed_response = gateway.mapper.parse_tracking_response(
             to_xml(InvalidTrackingNumberResponse)
         )
         self.assertEqual(
