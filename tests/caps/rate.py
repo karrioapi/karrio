@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict
-from pycaps.rating import mailing_scenario
+from purplship.core.utils.helpers import to_dict
 from purplship.package import rating
 from purplship.core.models import RateRequest
 from tests.caps.fixture import gateway
@@ -10,6 +9,7 @@ from datetime import datetime
 
 class TestCanadaPostQuote(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.RateRequest = RateRequest(**RatePayload)
 
     def test_create_rate_request(self):
@@ -46,20 +46,23 @@ class TestCanadaPostQuote(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
-RatePayload = dict(
-    shipper={
+RatePayload = {
+    "shipper": {
         "postal_code": "H8Z2Z3",
         "country_code": "CA",
         "account_number": "1234567",
     },
-    recipient={"postal_code": "H8Z2V4", "country_code": "CA"},
-    shipment={
-        "items": [{"height": 3, "length": 10, "width": 3, "weight": 4.0}],
+    "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
+    "parcel": {
+        "height": 3,
+        "length": 10,
+        "width": 3,
+        "weight": 4.0,
         "services": ["Expedited_Parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
     }
-)
+}
 
 ParsedQuoteParsingError = [
     [],

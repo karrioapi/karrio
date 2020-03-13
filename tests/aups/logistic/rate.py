@@ -1,21 +1,20 @@
 import unittest
 from unittest.mock import patch
 from tests.aups.logistic.fixture import gateway
-from gds_helpers import jsonify, to_dict
+from purplship.core.utils.helpers import jsonify, to_dict
 from purplship.core.models import RateRequest
 from purplship.package import rating
-from pyaups.shipping_price_request import ShippingPriceRequest
 
 
 class TestAustraliaPostLogisticRate(unittest.TestCase):
     def setUp(self):
-        self.ShippingPriceRequest = ShippingPriceRequest(**SHIPPING_PRICE_REQUEST)
+        self.maxDiff = None
         self.RateRequest = RateRequest(**RATE_PAYLOAD)
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         self.assertEqual(
-            to_dict(request.serialize()), to_dict(self.ShippingPriceRequest)
+            to_dict(request.serialize()), to_dict(SHIPPING_PRICE_REQUEST)
         )
 
     @patch("purplship.package.mappers.aups.proxy.http", return_value="{}")
@@ -49,7 +48,7 @@ if __name__ == "__main__":
 RATE_PAYLOAD = {
     "shipper": {
         "person_name": "John Citizen",
-        "address_lines": ["1 Main Street"],
+        "address_line_1": "1 Main Street",
         "state_code": "VIC",
         "postal_code": "3000",
         "phone_number": "0401234567",
@@ -59,41 +58,20 @@ RATE_PAYLOAD = {
     "recipient": {
         "person_name": "Jane Smith",
         "company_name": "Smith Pty Ltd",
-        "address_lines": ["123 Centre Road"],
+        "address_line_1": "123 Centre Road",
         "state_code": "NSW",
         "postal_code": "2000",
         "phone_number": "0412345678",
         "email_address": "jane.smith@smith.com",
         "suburb": "Sydney",
     },
-    "shipment": {
-        "references": ["XYZ-001-01"],
-        "items": [
-            {
-                "id": "T28S",
-                "length": 10,
-                "height": 10,
-                "width": 10,
-                "weight": 1,
-                "sku": "SKU-1",
-            },
-            {
-                "id": "T28S",
-                "length": 10,
-                "height": 10,
-                "width": 10,
-                "weight": 1,
-                "sku": "SKU-2",
-            },
-            {
-                "id": "T28S",
-                "length": 10,
-                "height": 10,
-                "width": 10,
-                "weight": 1,
-                "sku": "SKU-3",
-            },
-        ]
+    "parcel": {
+        "id": "T28S",
+        "reference": "XYZ-001-01",
+        "length": 10,
+        "height": 10,
+        "width": 10,
+        "weight": 1,
     },
 }
 
@@ -180,7 +158,7 @@ SHIPPING_PRICE_REQUEST = {
             "email_tracking_enabled": True,
             "from_": {
                 "name": "John Citizen",
-                "lines": ["1 Main Street"],
+                "lines": ["1 Main Street", ''],
                 "suburb": "MELBOURNE",
                 "state": "VIC",
                 "postcode": "3000",
@@ -190,7 +168,7 @@ SHIPPING_PRICE_REQUEST = {
             "to": {
                 "name": "Jane Smith",
                 "business_name": "Smith Pty Ltd",
-                "lines": ["123 Centre Road"],
+                "lines": ["123 Centre Road", ''],
                 "suburb": "Sydney",
                 "state": "NSW",
                 "postcode": "2000",
@@ -199,7 +177,7 @@ SHIPPING_PRICE_REQUEST = {
             },
             "items": [
                 {
-                    "item_reference": "SKU-1",
+                    "item_reference": "XYZ-001-01",
                     "product_id": "T28S",
                     "length": 10,
                     "height": 10,
@@ -207,27 +185,7 @@ SHIPPING_PRICE_REQUEST = {
                     "weight": 1,
                     "authority_to_leave": False,
                     "allow_partial_delivery": True,
-                },
-                {
-                    "item_reference": "SKU-2",
-                    "product_id": "T28S",
-                    "length": 10,
-                    "height": 10,
-                    "width": 10,
-                    "weight": 1,
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True,
-                },
-                {
-                    "item_reference": "SKU-3",
-                    "product_id": "T28S",
-                    "length": 10,
-                    "height": 10,
-                    "width": 10,
-                    "weight": 1,
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True,
-                },
+                }
             ],
         }
     ]

@@ -1,49 +1,66 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict, export
-from pyups.freight_rate import FreightRateRequest
-from purplship.domain import Types as T
+from purplship.core.utils.helpers import to_dict
+from purplship.core.models import RateRequest
 from tests.ups.freight.fixture import gateway
-from tests.utils import strip, get_node_from_xml
+from purplship.freight import rating
 
 
-class TestUPSQuote(unittest.TestCase):
+class TestUPSRating(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
+        self.RateRequest = RateRequest(**rate_req_data)
 
-        self.FreightRateRequest = FreightRateRequest()
-        self.FreightRateRequest.build(
-            get_node_from_xml(FreightRateRequestXML, "FreightRateRequest")
-        )
-
-    def test_create_rate_request(self):
-        payload = T.RateRequest(**rate_req_data)
-
-        FreightRateRequest_ = gateway.mapper.create_rate_request(payload)
-        self.assertEqual(export(FreightRateRequest_), export(self.FreightRateRequest))
+    def test_create_freight_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
+        self.assertEqual(request.serialize(), FreightRateRequestXML)
 
     @patch("purplship.freight.mappers.ups.proxy.http", return_value="<a></a>")
-    def test_freight_get_quotes(self, http_mock):
-        gateway.proxy.get_rates(self.FreightRateRequest)
+    def test_freight_get_rates(self, http_mock):
+        rating.fetch(self.RateRequest).from_(gateway)
 
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(FreightRateRequestXML))
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, f"{gateway.settings.server_url}/FreightRate")
 
-    def test_parse_freight_quote_response(self):
-        parsed_response = gateway.mapper.parse_rate_response(
-            to_xml(FreightRateResponseXML)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedFreightRateResponse))
+    def test_parse_freight_get_rates_response(self):
+        with patch("purplship.freight.mappers.ups.proxy.http") as mock:
+            mock.return_value = FreightRateResponseXML
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedFreightRateResponse))
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
+rate_req_data = {
+    "shipper": {
+        "account_number": "56GJE",
+        "postal_code": "H3N1S4",
+        "country_code": "CA",
+        "city": "Montreal",
+        "address_line_1": "Rue Fake",
+    },
+    "recipient": {
+        "postal_code": "89109", "city": "Las Vegas", "country_code": "US"
+    },
+    "parcel": {
+        "id": "1",
+        "height": 3,
+        "length": 170,
+        "width": 3,
+        "weight": 4.0,
+        "packaging_type": "BOX",
+        "description": "TV",
+    },
+}
+
+
 ParsedFreightRateResponse = [
     [
         {
             "base_charge": 909.26,
-            "carrier": "UPS",
+            "carrier": "UPS Freight",
             "currency": "USD",
             "delivery_date": None,
             "discount": 776.36,
@@ -62,102 +79,79 @@ ParsedFreightRateResponse = [
     [],
 ]
 
-FreightRateRequestXML = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0">
+FreightRateRequestXML = f"""<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0" >
     <tns:Header>
         <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
+            <UsernameToken>
+                <Username>username</Username>
+                <Password>password</Password>
+            </UsernameToken>
+            <ServiceAccessToken>
+                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
+            </ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <frt:FreightRateRequest>
             <common:Request>
-                <common:RequestOption>1</common:RequestOption>
-                <common:TransactionReference>
-                    <common:TransactionIdentifier>TransactionIdentifier</common:TransactionIdentifier>
-                </common:TransactionReference>
+                <RequestOption>1</RequestOption>
+                <TransactionReference>
+                    <TransactionIdentifier>TransactionIdentifier</TransactionIdentifier>
+                </TransactionReference>
             </common:Request>
-            <frt:ShipFrom>
-                <frt:Address>
-                    <frt:AddressLine>Rue Fake</frt:AddressLine>
-                    <frt:City>Montreal</frt:City>
-                    <frt:PostalCode>H3N1S4</frt:PostalCode>
-                    <frt:CountryCode>CA</frt:CountryCode>
-                </frt:Address>
-            </frt:ShipFrom>
-            <frt:ShipTo>
-                <frt:Address>
-                    <frt:City>Las Vegas</frt:City>
-                    <frt:PostalCode>89109</frt:PostalCode>
-                    <frt:CountryCode>US</frt:CountryCode>
-                </frt:Address>
-            </frt:ShipTo>
-            <frt:PaymentInformation>
-                <frt:Payer>
-                    <frt:Name>CA</frt:Name>
-                    <frt:Address>
-                        <frt:AddressLine>Rue Fake</frt:AddressLine>
-                        <frt:City>Montreal</frt:City>
-                        <frt:PostalCode>H3N1S4</frt:PostalCode>
-                        <frt:CountryCode>CA</frt:CountryCode>
-                    </frt:Address>
-                    <frt:ShipperNumber>56GJE</frt:ShipperNumber>
-                </frt:Payer>
-                <frt:ShipmentBillingOption>
-                    <frt:Code>10</frt:Code>
-                </frt:ShipmentBillingOption>
-            </frt:PaymentInformation>
-            <frt:Service>
-                <frt:Code>309</frt:Code>
-            </frt:Service>
-            <frt:HandlingUnitOne>
-                <frt:Quantity>1</frt:Quantity>
-                <frt:Type>
-                    <frt:Code>SKD</frt:Code>
-                </frt:Type>
-            </frt:HandlingUnitOne>
-            <frt:Commodity>
-                <frt:Description>TV</frt:Description>
-                <frt:Weight>
-                    <frt:Value>4.0</frt:Value>
-                    <frt:UnitOfMeasurement>
-                        <frt:Code>LBS</frt:Code>
-                    </frt:UnitOfMeasurement>
-                </frt:Weight>
-                <frt:Dimensions>
-                    <frt:UnitOfMeasurement>
-                        <frt:Code>IN</frt:Code>
-                    </frt:UnitOfMeasurement>
-                    <frt:Length>170</frt:Length>
-                    <frt:Width>3</frt:Width>
-                    <frt:Height>3</frt:Height>
-                </frt:Dimensions>
-                <frt:NumberOfPieces>1</frt:NumberOfPieces>
-                <frt:PackagingType>
-                    <frt:Code>BAG</frt:Code>
-                </frt:PackagingType>
-                <frt:FreightClass>50</frt:FreightClass>
-            </frt:Commodity>
-            <frt:ShipmentServiceOptions>
-                <frt:PickupOptions>
-                    <frt:WeekendPickupIndicator></frt:WeekendPickupIndicator>
-                </frt:PickupOptions>
-            </frt:ShipmentServiceOptions>
-            <frt:GFPOptions/>
-            <frt:HandlingUnitWeight>
-                <frt:Value>1</frt:Value>
-                <frt:UnitOfMeasurement>
-                    <frt:Code>LBS</frt:Code>
-                </frt:UnitOfMeasurement>
-            </frt:HandlingUnitWeight>
-            <frt:AdjustedWeightIndicator></frt:AdjustedWeightIndicator>
-            <frt:TimeInTransitIndicator></frt:TimeInTransitIndicator>
-            <frt:DensityEligibleIndicator></frt:DensityEligibleIndicator>
+            <ShipFrom>
+                <Address>
+                    <AddressLine>Rue Fake</AddressLine>
+                    <City>Montreal</City>
+                    <PostalCode>H3N1S4</PostalCode>
+                    <CountryCode>CA</CountryCode>
+                </Address>
+            </ShipFrom>
+            <ShipTo>
+                <Address>
+                    <City>Las Vegas</City>
+                    <PostalCode>89109</PostalCode>
+                    <CountryCode>US</CountryCode>
+                </Address>
+            </ShipTo>
+            <Service>
+                <Code>309</Code>
+            </Service>
+            <HandlingUnitOne>
+                <Quantity>1</Quantity>
+                <Type>
+                    <Code>SKD</Code>
+                </Type>
+            </HandlingUnitOne>
+            <Commodity>
+                <Description>TV</Description>
+                <Weight>
+                    <Value>4.0</Value>
+                    <UnitOfMeasurement>
+                        <Code>LBS</Code>
+                    </UnitOfMeasurement>
+                </Weight>
+                <Dimensions>
+                    <UnitOfMeasurement>
+                        <Code>IN</Code>
+                    </UnitOfMeasurement>
+                    <Length>170.0</Length>
+                    <Width>3.0</Width>
+                    <Height>3.0</Height>
+                </Dimensions>
+                <PackagingType>
+                    <Code>BOX</Code>
+                </PackagingType>
+                <FreightClass>50</FreightClass>
+            </Commodity>
+            <ShipmentServiceOptions>
+                <PickupOptions>
+                    <WeekendPickupIndicator></WeekendPickupIndicator>
+                </PickupOptions>
+            </ShipmentServiceOptions>
+            <AdjustedWeightIndicator></AdjustedWeightIndicator>
+            <TimeInTransitIndicator></TimeInTransitIndicator>
+            <DensityEligibleIndicator></DensityEligibleIndicator>
         </frt:FreightRateRequest>
     </tns:Body>
 </tns:Envelope>
@@ -315,30 +309,3 @@ FreightRateResponseXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmls
     </soapenv:Body>
 </soapenv:Envelope>
 """
-
-
-rate_req_data = {
-    "shipper": {
-        "account_number": "56GJE",
-        "postal_code": "H3N1S4",
-        "country_code": "CA",
-        "city": "Montreal",
-        "address_lines": ["Rue Fake"],
-    },
-    "recipient": {
-        "postal_code": "89109", "city": "Las Vegas", "country_code": "US"
-    },
-    "shipment": {
-         "items": [
-                {
-                    "id": "1",
-                    "height": 3,
-                    "length": 170,
-                    "width": 3,
-                    "weight": 4.0,
-                    "packaging_type": "Bag",
-                    "description": "TV",
-                }
-        ]
-    },
-}

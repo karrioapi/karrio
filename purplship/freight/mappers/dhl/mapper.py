@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from pydhl.dct_req_global_2_0 import DCTRequest
 from pydhl.ship_val_global_req_6_2 import ShipmentRequest as DHLShipmentRequest
 from pydhl.tracking_request_known import KnownTrackingRequest
@@ -44,20 +44,20 @@ class Mapper(BaseMapper):
     def create_cancel_pickup_request(self, payload: PickupCancellationRequest) -> Serializable[CancelPURequest]:
         return cancel_pickup_request(payload, self.settings)
 
-    def parse_rate_response(self, response: Deserializable[str]) -> (List[RateDetails], List[Error]):
+    def parse_rate_response(self, response: Deserializable[str]) -> Tuple[List[RateDetails], List[Error]]:
         return parse_dct_response(response.deserialize(), self.settings)
 
-    def parse_tracking_response(self, response: Deserializable[str]) -> (List[TrackingDetails], List[Error]):
+    def parse_tracking_response(self, response: Deserializable[str]) -> Tuple[List[TrackingDetails], List[Error]]:
         return parse_known_tracking_response(response.deserialize(), self.settings)
 
-    def parse_shipment_response(self, response: Deserializable[str]) -> (ShipmentDetails, List[Error]):
+    def parse_shipment_response(self, response: Deserializable[str]) -> Tuple[ShipmentDetails, List[Error]]:
         return parse_shipment_response(response.deserialize(), self.settings)
 
-    def parse_pickup_response(self, response: Deserializable[str]) -> (PickupDetails, List[Error]):
+    def parse_pickup_response(self, response: Deserializable[str]) -> Tuple[PickupDetails, List[Error]]:
         return parse_book_pickup_response(response.deserialize(), self.settings)
 
-    def parse_modify_pickup_response(self, response: Deserializable[str]) -> (PickupDetails, List[Error]):
+    def parse_modify_pickup_response(self, response: Deserializable[str]) -> Tuple[PickupDetails, List[Error]]:
         return parse_modify_pickup_response(response.deserialize(), self.settings)
 
-    def parse_cancel_pickup_response(self, response: Deserializable[str]) -> (dict, List[Error]):
+    def parse_cancel_pickup_response(self, response: Deserializable[str]) -> Tuple[dict, List[Error]]:
         return parse_cancel_pickup_response(response.deserialize(), self.settings)

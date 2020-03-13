@@ -17,6 +17,8 @@ class Dimension:
 
     @property
     def CM(self):
+        if self._unit is None or self._value is None:
+            return None
         if self._unit == DimensionUnit.CM:
             return float(self._value)
         else:
@@ -24,6 +26,8 @@ class Dimension:
 
     @property
     def IN(self):
+        if self._unit is None or self._value is None:
+            return None
         if self._unit == DimensionUnit.IN:
             return float(self._value)
         else:
@@ -66,6 +70,8 @@ class Weight:
 
     @property
     def KG(self):
+        if self._unit is None or self._value is None:
+            return None
         if self._unit == WeightUnit.KG:
             return float(self._value)
         else:
@@ -73,10 +79,19 @@ class Weight:
 
     @property
     def LB(self):
+        if self._unit is None or self._value is None:
+            return None
         if self._unit == WeightUnit.LB:
             return float(self._value)
         else:
             return float(self._value * 2.204620823516057)
+
+
+class Option(Enum):
+    insurance = "Insurance"  # Need to be integrated and documented
+    notification = "Notification"  # Need to be integrated and documented
+    cod = "Cash On Delivery"  # Need to be integrated and documented
+    currency = "Currency"  # Need to be integrated and documented
 
 
 class Currency(Enum):
@@ -699,9 +714,3 @@ class CountryCurrency(Enum):
     ZA = "ZAR"
     ZM = "ZMW"
     ZW = "USD"
-
-
-class Option(Enum):
-    insurance = "insurance"  # Need to be integrated and documented
-    notification = "notification"  # Need to be integrated and documented
-    payment = "payment"  # Need to be integrated and documented

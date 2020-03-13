@@ -19,7 +19,7 @@ def parse_parcel_tracking_response(response: dict, settings: Settings) -> Tuple[
     errors: List[dict] = [p.get('response') for p in response]
     return (
         [_extract_tracking(t, settings) for t in tracking],
-        parse_error_response(errors)
+        parse_error_response(errors, settings)
     )
 
 

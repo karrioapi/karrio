@@ -75,9 +75,9 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
 
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[FedexRateRequest]:
-    dimension_unit = payload.shipment.dimension_unit or "IN"
-    weight_unit = payload.shipment.weight_unit or "LB"
-    requested_services = [svc for svc in payload.shipment.services if svc in ServiceType.__members__]
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    requested_services = [svc for svc in payload.parcel.services if svc in ServiceType.__members__]
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -94,35 +94,23 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             ServiceType=(
                 ServiceType[requested_services[0]].value if len(requested_services) > 0 else None
             ),
-            PackagingType=PackagingType[payload.shipment.packaging_type or "YOUR_PACKAGING"].value,
+            PackagingType=PackagingType[payload.parcel.packaging_type or "YOUR_PACKAGING"].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
-                Units=weight_unit,
-                Value=Weight(
-                    payload.shipment.total_weight or sum(p.weight for p in payload.shipment.items),
-                    WeightUnit[weight_unit]
-                ).value,
+                Value=Weight(payload.parcel.weight, weight_unit).value,
+                Units=weight_unit.value,
             ),
-            TotalInsuredValue=(
-                Money(
-                    Currency=payload.shipment.currency,
-                    Amount=payload.shipment.insured_amount,
-                )
-                if payload.shipment.insured_amount is not None else None
-            ),
-            PreferredCurrency=payload.shipment.currency,
+            TotalInsuredValue=None,
+            PreferredCurrency=payload.parcel.options.get('currency'),
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
                 AccountNumber=payload.shipper.account_number or settings.account_number,
                 Tins=[
                     TaxpayerIdentification(
                         TinType=None,
-                        Usage=None,
-                        Number=payload.shipper.tax_id,
-                        EffectiveDate=None,
-                        ExpirationDate=None,
-                    )
-                ] if payload.recipient.tax_id is not None else None,
+                        Number=tax,
+                    ) for tax in [payload.shipper.federal_tax_id, payload.shipper.state_tax_id]
+                ],
                 Contact=Contact(
                     ContactId=None,
                     PersonName=payload.shipper.person_name,
@@ -144,7 +132,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
                 )
                 else None,
                 Address=Address(
-                    StreetLines=payload.shipper.address_lines,
+                    StreetLines=[payload.shipper.address_line_1, payload.shipper.address_line_2],
                     City=payload.shipper.city,
                     StateOrProvinceCode=payload.shipper.state_code,
                     PostalCode=payload.shipper.postal_code,
@@ -160,12 +148,9 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
                 Tins=[
                     TaxpayerIdentification(
                         TinType=None,
-                        Usage=None,
-                        Number=payload.shipper.tax_id,
-                        EffectiveDate=None,
-                        ExpirationDate=None,
-                    )
-                ] if payload.recipient.tax_id is not None else None,
+                        Number=tax,
+                    ) for tax in [payload.recipient.federal_tax_id, payload.recipient.state_tax_id]
+                ],
                 Contact=Contact(
                     ContactId=None,
                     PersonName=payload.recipient.person_name,
@@ -188,7 +173,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
                 )
                 else None,
                 Address=Address(
-                    StreetLines=payload.recipient.address_lines,
+                    StreetLines=[payload.recipient.address_line_1, payload.recipient.address_line_2],
                     City=payload.recipient.city,
                     StateOrProvinceCode=payload.recipient.state_code,
                     PostalCode=payload.recipient.postal_code,
@@ -230,19 +215,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
             PickupDetail=None,
             SmartPostDetail=None,
             BlockInsightVisibility=None,
-            LabelSpecification=LabelSpecification(
-                LabelFormatType=payload.shipment.label.format,
-                ImageType=payload.shipment.label.type,
-                LabelStockType=None,
-                LabelPrintingOrientation=None,
-                LabelOrder=None,
-                PrintedLabelOrigin=None,
-                CustomerSpecifiedDetail=None,
-            ) if payload.shipment.label is not None else None,
+            LabelSpecification=None,
             ShippingDocumentSpecification=None,
-            RateRequestTypes=["LIST"] + ([] if not payload.shipment.currency else ["PREFERRED"]),
+            RateRequestTypes=["LIST"] + ([] if 'currency' in payload.parcel.options else ["PREFERRED"]),
             EdtRequestType=None,
-            PackageCount=len(payload.shipment.items),
+            PackageCount=None,
             ShipmentOnlyFields=None,
             ConfigurationData=None,
             RequestedPackageLineItems=[
@@ -253,23 +230,23 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Fedex
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
                     Weight=FedexWeight(
-                        Units=weight_unit,
-                        Value=Weight(pkg.weight, WeightUnit[weight_unit]).value,
-                    ),
+                        Value=Weight(pkg.weight, weight_unit).value,
+                        Units=weight_unit.value,
+                    ) if pkg.weight is not None else None,
                     Dimensions=FedexDimensions(
-                        Length=Dimension(pkg.length, DimensionUnit[dimension_unit]).value,
-                        Width=Dimension(pkg.width, DimensionUnit[dimension_unit]).value,
-                        Height=Dimension(pkg.height, DimensionUnit[dimension_unit]).value,
-                        Units=dimension_unit,
-                    ),
+                        Length=Dimension(pkg.length, dimension_unit).value,
+                        Width=Dimension(pkg.width, dimension_unit).value,
+                        Height=Dimension(pkg.height, dimension_unit).value,
+                        Units=dimension_unit.value,
+                    ) if any([pkg.height, pkg.width, pkg.height]) else None,
                     PhysicalPackaging=None,
-                    ItemDescription=pkg.content,
+                    ItemDescription=None,
                     ItemDescriptionForClearance=pkg.description,
                     CustomerReferences=None,
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
-                for index, pkg in enumerate(payload.shipment.items, 1)
+                for index, pkg in enumerate(payload.parcel.items, 1)
             ],
         ),
     )

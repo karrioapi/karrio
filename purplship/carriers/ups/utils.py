@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     password: str
     access_license_number: str
 
+    @property
     def Security(self):
         return UPSSecurity(
             UsernameToken=UsernameTokenType(

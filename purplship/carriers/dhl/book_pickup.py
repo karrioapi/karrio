@@ -26,66 +26,64 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
     pickup = BookPUResponse()
     pickup.build(response)
     pickup_charge = (
-        ChargeDetails(name="Pickup Charge", amount=pickup.PickupCharge, currency=pickup.CurrencyCode)
+        ChargeDetails(name="Pickup Charge", amount=float(pickup.PickupCharge), currency=pickup.CurrencyCode)
         if pickup.PickupCharge is not None else None
     )
     ref_times = (
-        [] if pickup.ReadyByTime is None else [TimeDetails(name="ReadyByTime", value=pickup.ReadyByTime)] +
-        [] if pickup.CallInTime is None else [TimeDetails(name="CallInTime", value=pickup.CallInTime)]
+        [] if pickup.ReadyByTime is None else [TimeDetails(name="ReadyByTime", value=str(pickup.ReadyByTime))] +
+        [] if pickup.CallInTime is None else [TimeDetails(name="CallInTime", value=str(pickup.CallInTime))]
     )
     return PickupDetails(
         carrier=settings.carrier_name,
-        confirmation_number=pickup.ConfirmationNumber[0],
-        pickup_date=pickup.NextPickupDate,
+        confirmation_number=str(pickup.ConfirmationNumber[0]),
+        pickup_date=str(pickup.NextPickupDate),
         pickup_charge=pickup_charge,
         ref_times=ref_times,
     )
 
 
 def book_pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[BookPURequest]:
-    weight_unit = payload.weight_unit or "LB"
+    weight_unit = DHLWeightUnit.LB
+    weight = sum([
+        Weight(parcel.weight, WeightUnit[weight_unit.name]).LB for parcel in payload.parcels
+    ])
     request = BookPURequest(
         Request=settings.Request(MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)),
         schemaVersion=3.0,
-        RegionCode=CountryRegion[payload.country_code].value if payload.country_code else "AM",
+        RegionCode=CountryRegion[payload.address.country_code].value if payload.address.country_code else "AM",
         Requestor=Requestor(
-            AccountNumber=payload.account_number,
+            AccountNumber=payload.address.account_number,
             AccountType="D",
             RequestorContact=RequestorContact(
-                PersonName=payload.person_name,
-                Phone=payload.phone_number,
+                PersonName=payload.address.person_name,
+                Phone=payload.address.phone_number,
                 PhoneExtension=None
             ),
-            CompanyName=payload.company_name,
+            CompanyName=payload.address.company_name,
         ),
         Place=Place(
-            City=payload.city,
-            StateCode=payload.state_code,
-            PostalCode=payload.postal_code,
-            CompanyName=payload.company_name,
-            CountryCode=payload.country_code,
+            City=payload.address.city,
+            StateCode=payload.address.state_code,
+            PostalCode=payload.address.postal_code,
+            CompanyName=payload.address.company_name,
+            CountryCode=payload.address.country_code,
             PackageLocation=payload.package_location,
-            LocationType="B" if payload.is_business else "R",
-            Address1=(payload.address_lines[0] if len(payload.address_lines) > 0 else None),
-            Address2=(payload.address_lines[1] if len(payload.address_lines) > 1 else None),
+            LocationType="R" if payload.address.residential else "B",
+            Address1=payload.address.address_line_1,
+            Address2=payload.address.address_line_2,
         ),
         PickupContact=RequestorContact(
-            PersonName=payload.person_name,
-            Phone=payload.phone_number
+            PersonName=payload.address.person_name,
+            Phone=payload.address.phone_number
         ),
         Pickup=Pickup(
-            Pieces=payload.pieces,
+            Pieces=len(payload.parcels),
             PickupDate=payload.date,
             ReadyByTime=payload.ready_time,
             CloseTime=payload.closing_time,
             SpecialInstructions=[payload.instruction],
             RemotePickupFlag="Y",
-            weight=(
-                WeightSeg(
-                    Weight=Weight(payload.weight, WeightUnit[weight_unit]).LB,
-                    WeightUnit=DHLWeightUnit[weight_unit].value
-                )
-            ) if payload.weight is not None else None,
+            weight=WeightSeg(Weight=weight, WeightUnit=weight_unit.value),
         ),
         ShipmentDetails=None,
         ConsigneeDetails=None

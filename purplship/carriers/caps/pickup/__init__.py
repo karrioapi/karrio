@@ -1,1 +1,0 @@
-from pycaps.pickuprequest import Pickup

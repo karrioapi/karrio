@@ -53,7 +53,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
                 for option in data.priced_options.get_priced_option()
             ]
         ),
-        shipment_date=data.service_standard.expected_delivery_date,
+        shipment_date=str(data.service_standard.expected_delivery_date),
         services=(
             [data.service_code] + [option.option_code for option in data.priced_options.get_priced_option()]
         ),
@@ -67,9 +67,10 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[ShipmentType]:
-    package = payload.shipment.items[0]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "CM"]
     requested_services = [
-        svc for svc in payload.shipment.services if svc in ServiceType.__members__
+        svc for svc in payload.parcel.services if svc in ServiceType.__members__
     ]
     requested_options = dict(
         (opt, value) for opt, value in payload.options.items() if opt in OptionCode.__members__
@@ -97,12 +98,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     prov_state=payload.shipper.state_code,
                     country_code=payload.shipper.country_code,
                     postal_zip_code=payload.shipper.postal_code,
-                    address_line_1=payload.shipper.address_lines[0]
-                    if len(payload.shipper.address_lines) > 0
-                    else None,
-                    address_line_2=payload.shipper.address_lines[1]
-                    if len(payload.shipper.address_lines) > 1
-                    else None,
+                    address_line_1=payload.shipper.address_line_1,
+                    address_line_2=payload.shipper.address_line_2,
                 ),
             ),
             destination=DestinationType(
@@ -115,29 +112,16 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
                     postal_zip_code=payload.recipient.postal_code,
-                    address_line_1=payload.recipient.address_lines[0]
-                    if len(payload.recipient.address_lines) > 0
-                    else None,
-                    address_line_2=payload.recipient.address_lines[1]
-                    if len(payload.recipient.address_lines) > 1
-                    else None,
+                    address_line_1=payload.recipient.address_line_1,
+                    address_line_2=payload.recipient.address_line_2,
                 ),
             ),
             parcel_characteristics=ParcelCharacteristicsType(
-                weight=Weight(
-                    payload.shipment.total_weight or package.weight,
-                    WeightUnit[payload.shipment.weight_unit or "KG"],
-                ).KG,
+                weight=Weight(payload.parcel.weight, weight_unit).KG,
                 dimensions=dimensionsType(
-                    length=Dimension(
-                        package.length, DimensionUnit[payload.shipment.dimension_unit or "CM"]
-                    ).CM,
-                    width=Dimension(
-                        package.width, DimensionUnit[payload.shipment.dimension_unit or "CM"]
-                    ).CM,
-                    height=Dimension(
-                        package.height, DimensionUnit[payload.shipment.dimension_unit or "CM"]
-                    ).CM,
+                    length=Dimension(payload.parcel.length, dimension_unit).CM,
+                    width=Dimension(payload.parcel.width, dimension_unit).CM,
+                    height=Dimension(payload.parcel.height, dimension_unit).CM,
                 ),
                 unpackaged=None,
                 mailing_tube=None,
@@ -162,8 +146,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 on_delivery=True,
             ) if payload.shipper.email_address is not None else None,
             print_preferences=PrintPreferencesType(
-                output_format=payload.shipment.label.format if payload.shipment.label else "8.5x11",
-                encoding=payload.shipment.label.type if payload.shipment.label else None
+                output_format="8.5x11",
+                encoding=None
             ),
             preferences=PreferencesType(
                 service_code=None,
@@ -172,11 +156,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 show_insured_value=True,
             ),
             customs=CustomsType(
-                currency=payload.shipment.currency,
+                currency=Currency.AUD.value,
                 conversion_from_cad=None,
-                reason_for_export=payload.shipment.customs.terms_of_trade,
-                other_reason=payload.shipment.customs.description,
-                duties_and_taxes_prepaid=payload.shipment.duty_payment_account,
+                reason_for_export=payload.customs.terms_of_trade,
+                other_reason=payload.customs.description,
+                duties_and_taxes_prepaid=payload.customs.duty_payment.account_number,
                 certificate_number=None,
                 licence_number=None,
                 invoice_number=None,
@@ -190,26 +174,18 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                             unit_weight=WeightUnit.KG.value,
                             customs_value_per_unit=item.value_amount,
                             customs_unit_of_measure=DimensionUnit.CM.value,
-                            country_of_origin=item.origin_country,
+                            country_of_origin=payload.shipper.country_code,
                             province_of_origin=None,
                         )
-                        for item in payload.shipment.items
+                        for item in payload.parcel.items
                     ]
                 ),
-            )
-            if payload.shipment.customs is not None
-            else None,
+            ) if payload.customs is not None else None,
             references=ReferencesType(
                 cost_centre=None,
-                customer_ref_1=payload.shipment.references[0]
-                if len(payload.shipment.references) > 0
-                else None,
-                customer_ref_2=payload.shipment.references[1]
-                if len(payload.shipment.references) > 1
-                else None,
-            )
-            if len(payload.shipment.references) > 0
-            else None,
+                customer_ref_1=payload.parcel.reference,
+                customer_ref_2=None,
+            ),
         ),
         return_spec=None,
         pre_authorized_payment=None

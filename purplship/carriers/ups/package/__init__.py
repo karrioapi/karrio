@@ -1,6 +1,3 @@
-from .track import track_request, parse_track_response
-from .shipment import shipment_request, parse_shipment_response
-from .rate import rate_request, parse_rate_response
-from .pickup_cancel_request import pickup_cancel_request, parse_pickup_cancel_response
-from .pickup_creation_request import pickup_creation_request, parse_pickup_creation_response
-from .pickup_rate_request import pickup_rate_request, parse_pickup_rate_response
+from purplship.carriers.ups.package.track import track_request, parse_track_response
+from purplship.carriers.ups.package.shipment import shipment_request, parse_shipment_response
+from purplship.carriers.ups.package.rate import rate_request, parse_rate_response

@@ -1,60 +1,51 @@
+import re
 import unittest
-import urllib.parse
+from datetime import datetime
 from unittest.mock import patch
 from tests.usps.fixture import gateway
-from gds_helpers import to_dict, to_xml, export, jsonify
+from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from pyusps.ratev4request import RateV4Request
-from pyusps.intlratev2request import IntlRateV2Request
-from tests.utils import strip
+from purplship.package import rating
 
 
 class TestUSPSQuote(unittest.TestCase):
     def setUp(self):
-        self.RateRequest = RateV4Request()
-        self.RateRequest.build(to_xml(RATE_REQUEST_STR))
-        self.IntlRateRequest = IntlRateV2Request()
-        self.IntlRateRequest.build(to_xml(INTL_RATE_REQUEST_STR))
+        self.maxDiff = None
+        self.RateRequest = RateRequest(**RATE_PAYLOAD)
+        self.IntlRateRequest = RateRequest(**INTL_RATE_PAYLOAD)
 
     def test_create_rate_request(self):
-        payload = RateRequest(**RATE_PAYLOAD)
+        request = gateway.mapper.create_rate_request(self.RateRequest)
 
-        rate_request = gateway.mapper.create_rate_request(payload)
-        self.assertEqual(strip(export(rate_request)), strip(RATE_REQUEST_STR))
+        self.assertEqual(request.serialize().get("API"), RATE_REQUEST.get("API"))
+        self.assertEqual(request.serialize().get("XML"), RATE_REQUEST.get("XML"))
 
     def test_create_intl_quote_request(self):
-        payload = RateRequest(**INTL_RATE_PAYLOAD)
+        request = gateway.mapper.create_rate_request(self.IntlRateRequest)
+        serialized_request = request.serialize()
+        xml_str = re.sub(
+            '<AcceptanceDateTime>[^>]+</AcceptanceDateTime>', '', serialized_request.get("XML"))
 
-        rate_request = gateway.mapper.create_rate_request(payload)
-        self.assertEqual(strip(export(rate_request)), strip(INTL_RATE_REQUEST_STR))
-
-    @patch("purplship.package.mappers.usps.usps_gateway.proxy.http", return_value="<a></a>")
-    @patch("urllib.parse.urlencode", return_value="")
-    def test_get_rates(self, encode_mock, http_mock):
-        gateway.proxy.get_rates(self.RateRequest)
-
-        data = encode_mock.call_args[0][0]
-        self.assertEqual(strip(jsonify(data)), strip(jsonify(RATE_REQUEST)))
-
-    @patch("purplship.package.mappers.usps.usps_gateway.proxy.http", return_value="<a></a>")
-    @patch("urllib.parse.urlencode", return_value="")
-    def test_get_intl_quotes(self, encode_mock, http_mock):
-        gateway.proxy.get_rates(self.IntlRateRequest)
-
-        data = encode_mock.call_args[0][0]
-        self.assertEqual(strip(jsonify(data)), strip(jsonify(INTL_RATE_REQUEST)))
+        self.assertEqual(serialized_request.get("API"), INTL_RATE_REQUEST.get("API"))
+        self.assertEqual(xml_str, INTL_RATE_REQUEST.get("XML"))
 
     def test_parse_rate_response(self):
-        parsed_response = gateway.mapper.parse_rate_response(to_xml(RATE_RESPONSE))
-        self.assertEqual(to_dict(parsed_response), PARSED_RATE_RESPONSE)
+        with patch("purplship.package.mappers.usps.proxy.http") as mock:
+            mock.return_value = RATE_RESPONSE
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
 
     def test_parse_intl_quote_response(self):
-        parsed_response = gateway.mapper.parse_rate_response(to_xml(INTL_RATE_RESPONSE))
-        self.assertEqual(to_dict(parsed_response), PARSED_INTL_RATE_RESPONSE)
+        with patch("purplship.package.mappers.usps.proxy.http") as mock:
+            mock.return_value = INTL_RATE_RESPONSE
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_INTL_RATE_RESPONSE))
 
     def test_parse_rate_response_errors(self):
-        parsed_response = gateway.mapper.parse_rate_response(to_xml(ERRORS))
-        self.assertEqual(to_dict(parsed_response), PARSED_ERRORS)
+        with patch("purplship.package.mappers.usps.proxy.http") as mock:
+            mock.return_value = ERRORS
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
 if __name__ == "__main__":
@@ -64,73 +55,35 @@ if __name__ == "__main__":
 RATE_PAYLOAD = {
     "shipper": {"postal_code": "44106"},
     "recipient": {"postal_code": "20770"},
-    "shipment": {
+    "parcel": {
         "dimension_unit": "IN",
-        "items": [
-            {
-                "id": "1ST",
-                "weight": 3.123_456_78,
-                "packaging_type": "SM",
-                "extra": {"services": ["First_Class"]},
-            },
-            {
-                "id": "2ND",
-                "width": 15,
-                "height": 15,
-                "length": 30,
-                "weight": 1,
-                "value_amount": 1000,
-                "extra": {
-                    "Girth": 55,
-                    "Container": "NONRECTANGULAR",
-                    "services": ["Priority"],
-                    "options": [{"code": "Signature_Confirmation"}],
-                },
-            },
-            {
-                "id": "3RD",
-                "weight": 8,
-                "extra": {
-                    "services": ["All"],
-                    "Size": "REGULAR",
-                    "ShipDate": "2016-03-23",
-                },
-            },
-        ],
+        "id": "1ST",
+        "width": 15,
+        "height": 15,
+        "length": 30,
+        "weight": 1,
+        "services": ["Priority"],
+        "options": {"Signature_Confirmation": True},
     },
 }
 
 INTL_RATE_PAYLOAD = {
     "shipper": {"postal_code": "18701"},
     "recipient": {"postal_code": "2046", "country_code": "AU"},
-    "shipment": {
+    "parcel": {
         "dimension_unit": "IN",
-        "date": "2016-03-24T13:15:00",
+        "id": "1ST",
+        "width": 10,
+        "height": 10,
+        "length": 10,
+        "weight": 3.123,
+        "packaging_type": "SM",
         "items": [
             {
-                "id": "1ST",
-                "width": 10,
-                "height": 10,
-                "length": 15,
-                "weight": 15.123_456_78,
-                "value_amount": 200,
-                "packaging_type": "BOX",
-                "extra": {"Girth": 0, "Size": "LARGE", "Machinable": True},
-            },
-            {
-                "id": "2ND",
-                "width": 10,
-                "height": 10,
-                "length": 10,
-                "weight": 3.123_456_78,
-                "packaging_type": "SM",
                 "value_amount": 75,
-                "extra": {
-                    "Size": "REGULAR",
-                    "options": [{"code": "Insurance_Global_Express_Guaranteed"}],
-                },
             },
         ],
+        "options": {"Insurance_Global_Express_Guaranteed": True},
     },
 }
 
@@ -356,73 +309,30 @@ ERRORS = """<?xml version="1.0" encoding="UTF-8"?>
 </Error>
 """
 
-RATE_REQUEST_STR = f"""<RateV4Request USERID="{gateway.proxy.client.username}">
+RATE_REQUEST_STR = f"""<RateV4Request USERID="username">
     <Revision>2</Revision>
     <Package ID="1ST">
-        <Service>First Class</Service>
-        <FirstClassMailType>LETTER</FirstClassMailType>
-        <ZipOrigination>44106</ZipOrigination>
-        <ZipDestination>20770</ZipDestination>
-        <Pounds>3</Pounds>
-        <Ounces>48.</Ounces>
-        <Container>SM FLAT RATE ENVELOPE</Container>
-        <Size>REGULAR</Size>
-    </Package>
-    <Package ID="2ND">
-        <Service>Priority</Service>
         <ZipOrigination>44106</ZipOrigination>
         <ZipDestination>20770</ZipDestination>
         <Pounds>1</Pounds>
         <Ounces>16.</Ounces>
-        <Container>NONRECTANGULAR</Container>
         <Size>LARGE</Size>
-        <Width>15</Width>
-        <Length>30</Length>
-        <Height>15</Height>
-        <Girth>55</Girth>
-        <Value>1000</Value>
-        <SpecialServices>
-            <SpecialService>108</SpecialService>
-        </SpecialServices>
-    </Package>
-    <Package ID="3RD">
-        <Service>All</Service>
-        <ZipOrigination>44106</ZipOrigination>
-        <ZipDestination>20770</ZipDestination>
-        <Pounds>8</Pounds>
-        <Ounces>128.</Ounces>
-        <Size>REGULAR</Size>
-        <ShipDate Option="PEMSH">2016-03-23</ShipDate>
+        <Width>15.0</Width>
+        <Length>30.0</Length>
+        <Height>15.0</Height>
+        <ShipDate>{str(datetime.now().strftime("%Y-%m-%d"))}</ShipDate>
     </Package>
 </RateV4Request>
 """
 
 RATE_REQUEST = {"API": "RateV4", "XML": RATE_REQUEST_STR}
 
-INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{gateway.proxy.client.username}">
+INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="username">
     <Revision>2</Revision>
     <Package ID="1ST">
-        <Pounds>15.12345678</Pounds>
-        <Ounces>241.975308479999995</Ounces>
-        <Machinable>True</Machinable>
-        <MailType>PACKAGE</MailType>
-        <ValueOfContents>200</ValueOfContents>
-        <Country>AUSTRALIA</Country>
-        <Container>RECTANGULAR</Container>
-        <Size>LARGE</Size>
-        <Width>10</Width>
-        <Length>15</Length>
-        <Height>10</Height>
-        <Girth>0</Girth>
-        <OriginZip>18701</OriginZip>
-        <AcceptanceDateTime>2016-03-24T13:15:00</AcceptanceDateTime>
-        <DestinationPostalCode>2046</DestinationPostalCode>
-    </Package>
-    <Package ID="2ND">
-        <Pounds>3.12345678</Pounds>
-        <Ounces>49.975308480000002</Ounces>
+        <Pounds>3.123</Pounds>
+        <Ounces>49.968000000000004</Ounces>
         <MailType>ENVELOPE</MailType>
-        <ValueOfContents>75</ValueOfContents>
         <Country>AUSTRALIA</Country>
         <Container>NONRECTANGULAR</Container>
         <Size>REGULAR</Size>
@@ -430,11 +340,8 @@ INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="{gateway.proxy.client.use
         <Length>10</Length>
         <Height>10</Height>
         <OriginZip>18701</OriginZip>
-        <AcceptanceDateTime>2016-03-24T13:15:00</AcceptanceDateTime>
+        
         <DestinationPostalCode>2046</DestinationPostalCode>
-        <ExtraServices>
-            <ExtraService>106</ExtraService>
-        </ExtraServices>
     </Package>
 </IntlRateV2Request>
 """

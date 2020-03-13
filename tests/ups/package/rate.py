@@ -1,45 +1,44 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict, export
-from pyups.package_rate import RateRequest
-from purplship.domain import Types as T
+from purplship.core.utils.helpers import to_dict
+from purplship.core.models import RateRequest
 from tests.ups.package.fixture import gateway
-from tests.utils import strip, get_node_from_xml
+from purplship.package import rating
 
 
-class TestUPSQuote(unittest.TestCase):
+class TestUPSRating(unittest.TestCase):
     def setUp(self):
-        self.RateRequest = RateRequest()
-        self.RateRequest.build(get_node_from_xml(RateRequestXML, "RateRequest"))
+        self.maxDiff = None
+        self.RateRequest = RateRequest(**rate_req_data)
 
     def test_create_rate_request(self):
-        payload = T.RateRequest(**rate_req_data)
-        RateRequest_ = gateway.mapper.create_rate_request(payload)
-        self.assertEqual(
-            export(RateRequest_),
-            export(self.RateRequest).replace("common:Code", "rate:Code"),
-        )
+        request = gateway.mapper.create_rate_request(self.RateRequest)
+        self.assertEqual(request.serialize(), RateRequestXML)
 
     @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_package_get_quotes(self, http_mock):
-        gateway.proxy.get_rates(self.RateRequest)
+        rating.fetch(self.RateRequest).from_(gateway)
 
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(RateRequestXML))
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, f"{gateway.settings.server_url}/Rate")
 
     def test_parse_package_quote_response(self):
-        parsed_response = gateway.mapper.parse_rate_response(to_xml(RateResponseXML))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
+        with patch("purplship.package.mappers.ups.proxy.http") as mock:
+            mock.return_value = RateResponseXML
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_rate_error(self):
-        parsed_response = gateway.mapper.parse_rate_response(to_xml(QuoteParsingError))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
+        with patch("purplship.package.mappers.ups.proxy.http") as mock:
+            mock.return_value = RateteParsingErrorXML
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateteParsingError))
 
     def test_parse_rate_missing_args_error(self):
-        parsed_response = gateway.mapper.parse_rate_response(
-            to_xml(QuoteMissingArgsError)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
+        with patch("purplship.package.mappers.ups.proxy.http") as mock:
+            mock.return_value = RateMissingArgsErrorXML
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateMissingArgsError))
 
 
 if __name__ == "__main__":
@@ -53,44 +52,31 @@ rate_req_data = {
         "postal_code": "H3N1S4",
         "country_code": "CountryCode",
         "city": "Montreal",
-        "address_lines": ["Address Line"],
+        "address_line_1": "Address Line",
     },
     "recipient": {
         "company_name": "Ship To Name",
-        "address_lines": ["Address Line"],
+        "address_line_1": "Address Line",
         "postal_code": "89109",
         "city": "Las Vegas",
         "country_code": "US",
         "state_code": "StateProvinceCode",
     },
-    "shipment": {
-        "references": ["Your Customer Context"],
+    "parcel": {
+        "reference": "Your Customer Context",
         "services": ["UPS_Ground"],
-        "items": [
-            {
-                "id": "1",
-                "height": 3,
-                "length": 10,
-                "width": 3,
-                "weight": 4.0,
-                "packaging_type": "Package",
-                "description": "TV",
-            }
-        ],
-        "extra": {
-            "ShipFrom": {
-                "address_lines": ["Address Line"],
-                "city": "City",
-                "state_code": "StateProvinceCode",
-                "postal_code": "PostalCode",
-                "country_code": "CountryCode",
-            }
-        },
+        "height": 3,
+        "length": 10,
+        "width": 3,
+        "weight": 4.0,
+        "packaging_type": "Package",
+        "description": "TV",
+        "options": {"NegotiatedRatesIndicator": True}
     },
 }
 
 
-ParsedQuoteParsingError = [
+ParsedRateteParsingError = [
     [],
     [
         {
@@ -106,7 +92,7 @@ ParsedQuoteParsingError = [
     ],
 ]
 
-ParsedQuoteMissingArgsError = [
+ParsedRateMissingArgsError = [
     [],
     [
         {
@@ -136,7 +122,7 @@ ParsedRateResponse = [
 ]
 
 
-QuoteParsingError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+RateteParsingErrorXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
     <soapenv:Header/>
     <soapenv:Body>
         <soapenv:Fault>
@@ -165,7 +151,7 @@ QuoteParsingError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.o
 </soapenv:Envelope>
 """
 
-QuoteMissingArgsError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+RateMissingArgsErrorXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
     <soapenv:Header/>
     <soapenv:Body>
         <soapenv:Fault>
@@ -196,82 +182,73 @@ QuoteMissingArgsError = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlso
 </soapenv:Envelope>
 """
 
-RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
+RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
     <tns:Header>
         <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
+            <UsernameToken>
+                <Username>username</Username>
+                <Password>password</Password>
+            </UsernameToken>
+            <ServiceAccessToken>
+                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
+            </ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
-                <common:RequestOption>Rate</common:RequestOption>
-                <common:TransactionReference>
-                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
-                </common:TransactionReference>
+                <RequestOption>Rate</RequestOption>
+                <TransactionReference>
+                    <CustomerContext>Your Customer Context</CustomerContext>
+                </TransactionReference>
             </common:Request>
-            <rate:Shipment>
-                <rate:Shipper>
-                    <rate:Name>Shipper Name</rate:Name>
-                    <rate:ShipperNumber>Your Shipper Number</rate:ShipperNumber>
-                    <rate:Address>
-                        <rate:AddressLine>Address Line</rate:AddressLine>
-                        <rate:City>Montreal</rate:City>
-                        <rate:PostalCode>H3N1S4</rate:PostalCode>
-                        <rate:CountryCode>CountryCode</rate:CountryCode>
-                    </rate:Address>
-                </rate:Shipper>
-                <rate:ShipTo>
-                    <rate:Name>Ship To Name</rate:Name>
-                    <rate:Address>
-                        <rate:AddressLine>Address Line</rate:AddressLine>
-                        <rate:City>Las Vegas</rate:City>
-                        <rate:StateProvinceCode>StateProvinceCode</rate:StateProvinceCode>
-                        <rate:PostalCode>89109</rate:PostalCode>
-                        <rate:CountryCode>US</rate:CountryCode>
-                    </rate:Address>
-                </rate:ShipTo>
-                <rate:ShipFrom>
-                    <rate:Address>
-                        <rate:AddressLine>Address Line</rate:AddressLine>
-                        <rate:City>City</rate:City>
-                        <rate:StateProvinceCode>StateProvinceCode</rate:StateProvinceCode>
-                        <rate:PostalCode>PostalCode</rate:PostalCode>
-                        <rate:CountryCode>CountryCode</rate:CountryCode>
-                    </rate:Address>
-                </rate:ShipFrom>
-                <rate:Service>
-                    <rate:Code>03</rate:Code>
-                </rate:Service>
-                <rate:Package>
-                    <rate:PackagingType>
-                        <rate:Code>02</rate:Code>
-                    </rate:PackagingType>
-                    <rate:Dimensions>
-                        <rate:UnitOfMeasurement>
-                            <rate:Code>IN</rate:Code>
-                        </rate:UnitOfMeasurement>
-                        <rate:Length>10</rate:Length>
-                        <rate:Width>3</rate:Width>
-                        <rate:Height>3</rate:Height>
-                    </rate:Dimensions>
-                    <rate:PackageWeight>
-                        <rate:UnitOfMeasurement>
-                            <rate:Code>LBS</rate:Code>
-                        </rate:UnitOfMeasurement>
-                        <rate:Weight>4.0</rate:Weight>
-                    </rate:PackageWeight>
-                </rate:Package>
-                <rate:ShipmentRatingOptions>
-                    <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
-                </rate:ShipmentRatingOptions>
-            </rate:Shipment>
+            <Shipment>
+                <Shipper>
+                    <Name>Shipper Name</Name>
+                    <ShipperNumber>Your Shipper Number</ShipperNumber>
+                    <Address>
+                        <AddressLine>Address Line</AddressLine>
+                        <City>Montreal</City>
+                        <PostalCode>H3N1S4</PostalCode>
+                        <CountryCode>CountryCode</CountryCode>
+                    </Address>
+                </Shipper>
+                <ShipTo>
+                    <Name>Ship To Name</Name>
+                    <Address>
+                        <AddressLine>Address Line</AddressLine>
+                        <City>Las Vegas</City>
+                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
+                        <PostalCode>89109</PostalCode>
+                        <CountryCode>US</CountryCode>
+                    </Address>
+                </ShipTo>
+                <Service>
+                    <Code>03</Code>
+                </Service>
+                <Package>
+                    <PackagingType>
+                        <Code>02</Code>
+                    </PackagingType>
+                    <Dimensions>
+                        <UnitOfMeasurement>
+                            <Code>IN</Code>
+                        </UnitOfMeasurement>
+                        <Length>10.0</Length>
+                        <Width>3.0</Width>
+                        <Height>3.0</Height>
+                    </Dimensions>
+                    <PackageWeight>
+                        <UnitOfMeasurement>
+                            <Code>LBS</Code>
+                        </UnitOfMeasurement>
+                        <Weight>4.0</Weight>
+                    </PackageWeight>
+                </Package>
+                <ShipmentRatingOptions>
+                    <NegotiatedRatesIndicator></NegotiatedRatesIndicator>
+                </ShipmentRatingOptions>
+            </Shipment>
         </rate:RateRequest>
     </tns:Body>
 </tns:Envelope>

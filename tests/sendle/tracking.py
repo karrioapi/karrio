@@ -1,35 +1,38 @@
 import unittest
 from unittest.mock import patch
 from tests.sendle.fixture import gateway
-from gds_helpers import to_dict
+from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
+from purplship.package import tracking
 
 
 class TestSendleTracking(unittest.TestCase):
-    def test_create_tracking_request(self):
-        payload = TrackingRequest(tracking_numbers=TRACKING_REQUEST)
+    def setUp(self):
+        self.maxDiff = None
+        self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_REQUEST)
 
-        tracking_request = gateway.mapper.create_tracking_request(payload)
-        self.assertEqual(to_dict(tracking_request), to_dict(TRACKING_REQUEST))
+    def test_create_tracking_request(self):
+        request = gateway.mapper.create_tracking_request(self.TrackingRequest)
+        self.assertEqual(request.serialize(), TRACKING_REQUEST)
 
     @patch("purplship.package.mappers.sendle.proxy.http", return_value="{}")
     def test_get_tracking(self, http_mock):
-        gateway.proxy.get_tracking(TRACKING_REQUEST)
+        tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, TRACKING_REQUEST_QUERY_STR)
 
     def test_parse_tracking_response(self):
-        parsed_response = gateway.mapper.parse_tracking_response(TRACKING_RESPONSE)
-        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
+        with patch("purplship.package.mappers.sendle.proxy.exec_parrallel") as mock:
+            mock.return_value = TRACKING_RESPONSE
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
 
     def test_parse_tracking_response_with_errors(self):
-        parsed_response = gateway.mapper.parse_tracking_response(
-            TRACKING_RESPONSE_WITH_ERROR
-        )
-        self.assertEqual(
-            to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE_WITH_ERROR)
-        )
+        with patch("purplship.package.mappers.sendle.proxy.exec_parrallel") as mock:
+            mock.return_value = TRACKING_RESPONSE_WITH_ERROR
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE_WITH_ERROR))
 
 
 if __name__ == "__main__":

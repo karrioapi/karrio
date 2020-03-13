@@ -1,30 +1,27 @@
 import attr
-from typing import Union, Callable, Generic, TypeVar
-from purplship.core.utils.xml import Element
+from typing import Any, Callable, Generic, TypeVar
 
 XML_str = str
 T = TypeVar('T')
-SerializationSupportedTypes = Union[dict, XML_str, list]
-DeserializationSupportedTypes = Union[dict, str, Element]
 
 
-def _identity(value):
+def _identity(value: Any) -> Any:
     return value
 
 
 @attr.s(auto_attribs=True)
 class Serializable(Generic[T]):
     value: T
-    _serializer: Callable[[T], SerializationSupportedTypes] = _identity
+    _serializer: Callable[[T], Any] = _identity
 
-    def serialize(self) -> SerializationSupportedTypes:
+    def serialize(self) -> Any:
         return self._serializer(self.value)
 
 
 @attr.s(auto_attribs=True)
 class Deserializable(Generic[T]):
     value: T
-    _deserializer: Callable[[T], DeserializationSupportedTypes] = _identity
+    _deserializer: Callable[[T], Any] = _identity
 
-    def deserialize(self) -> DeserializationSupportedTypes:
+    def deserialize(self) -> Any:
         return self._deserializer(self.value)

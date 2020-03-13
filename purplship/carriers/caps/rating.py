@@ -11,8 +11,8 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.carriers.caps.utils import Settings
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country, Currency
-from purplship.core.errors import OriginNotServicedError, MultiItemShipmentSupportError
-from purplship.core.models import RateDetails, ChargeDetails, Error, ShipmentRequest
+from purplship.core.errors import OriginNotServicedError
+from purplship.core.models import RateDetails, ChargeDetails, Error, RateRequest
 from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType
 
@@ -62,7 +62,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
     )
 
 
-def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Serializable[mailing_scenario]:
+def mailing_scenario_request(payload: RateRequest, settings: Settings) -> Serializable[mailing_scenario]:
     """Create the appropriate Canada Post rate request depending on the destination
 
     :param settings: PurplShip carrier connection settings
@@ -72,16 +72,15 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
     """
     if payload.shipper.country_code and payload.shipper.country_code != Country.CA.name:
         raise OriginNotServicedError(payload.shipper.country_code, settings.carrier_name)
-    if len(payload.shipment.items) > 1:
-        raise MultiItemShipmentSupportError(settings.carrier_name)
 
-    package = payload.shipment.items[0]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "CM"]
     requested_services = [
-        svc for svc in payload.shipment.services if svc in ServiceType.__members__
+        svc for svc in payload.parcel.services if svc in ServiceType.__members__
     ]
     requested_options = {
         code: value
-        for (code, value) in payload.options.items()
+        for (code, value) in payload.parcel.options.items()
         if code in OptionCode.__members__
     }
 
@@ -90,11 +89,11 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
         contract_id=None,
         promo_code=None,
         quote_type=None,
-        expected_mailing_date=(payload.shipment.date or datetime.today().strftime('%Y-%m-%d')),
+        expected_mailing_date=datetime.today().strftime('%Y-%m-%d'),
         options=(
             optionsType(option=[
                 optionType(
-                    option_amount=value.get("option-amount"),
+                    option_amount=None,  # TODO:: correct this when integrating Options
                     option_code=OptionCode[code].value,
                 )
                 for code, value in requested_options.items()
@@ -102,20 +101,11 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
             if (len(requested_options) > 0) else None
         ),
         parcel_characteristics=parcel_characteristicsType(
-            weight=Weight(
-                (payload.shipment.total_weight or package.weight),
-                WeightUnit[payload.shipment.weight_unit or "KG"],
-            ).KG,
+            weight=Weight(payload.parcel.weight, weight_unit).KG,
             dimensions=dimensionsType(
-                length=Dimension(
-                    package.length, DimensionUnit[payload.shipment.dimension_unit]
-                ).CM,
-                width=Dimension(
-                    package.width, DimensionUnit[payload.shipment.dimension_unit]
-                ).CM,
-                height=Dimension(
-                    package.height, DimensionUnit[payload.shipment.dimension_unit]
-                ).CM,
+                length=Dimension(payload.parcel.length, dimension_unit).CM,
+                width=Dimension(payload.parcel.width, dimension_unit).CM,
+                height=Dimension(payload.parcel.height, dimension_unit).CM,
             ),
             unpackaged=None,
             mailing_tube=None,
@@ -141,11 +131,11 @@ def mailing_scenario_request(payload: ShipmentRequest, settings: Settings) -> Se
             ),
         ),
     )
+
     return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: mailing_scenario) -> str:
     return export(
-        request,
-        namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"',
+        request, namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"',
     )

@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Tuple
 from pyusps.ratev4request import RateV4Request
 from pyusps.intlratev2request import IntlRateV2Request
 from pyusps.trackfieldrequest import TrackFieldRequest
@@ -26,8 +26,8 @@ class Mapper(BaseMapper):
 
     """Response Parsers"""
 
-    def parse_rate_response(self, response: Deserializable[str]) -> (List[RateDetails], List[Error]):
+    def parse_rate_response(self, response: Deserializable[str]) -> Tuple[List[RateDetails], List[Error]]:
         return parse_rate_request(response.deserialize(), self.settings)
 
-    def parse_tracking_response(self, response: Deserializable[str]) -> (List[TrackingDetails], List[Error]):
+    def parse_tracking_response(self, response: Deserializable[str]) -> Tuple[List[TrackingDetails], List[Error]]:
         return parse_track_field_response(response.deserialize(), self.settings)

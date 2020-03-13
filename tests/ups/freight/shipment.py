@@ -1,38 +1,32 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict, export
-from pyups.freight_ship import FreightShipRequest
-from purplship.domain import Types as T
+from purplship.core.utils.helpers import to_dict
+from purplship.core.models import ShipmentRequest
 from tests.ups.freight.fixture import gateway
-from tests.utils import strip, get_node_from_xml
+from purplship.freight import shipment
 
 
 class TestUPSShipment(unittest.TestCase):
     def setUp(self):
-        self.FreightShipRequest = FreightShipRequest()
-        self.FreightShipRequest.build(
-            get_node_from_xml(FreightShipmentRequestXML, "FreightShipRequest")
-        )
+        self.maxDiff = None
+        self.ShipmentRequest = ShipmentRequest(**freight_shipment_data)
 
     def test_create_freight_shipment_request(self):
-        payload = T.ShipmentRequest(**freight_shipment_data)
-        Shipment_ = gateway.mapper.create_shipment_request(payload)
-        self.assertEqual(export(Shipment_), export(self.FreightShipRequest))
+        request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
+        self.assertEqual(request.serialize(), FreightShipmentRequestXML)
 
     @patch("purplship.freight.mappers.ups.proxy.http", return_value="<a></a>")
     def test_create_freight_shipment(self, http_mock):
-        gateway.proxy.create_shipment(self.FreightShipRequest)
+        shipment.create(self.ShipmentRequest).with_(gateway)
 
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(FreightShipmentRequestXML))
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, f"{gateway.settings.server_url}/FreightShip")
 
     def test_parse_freight_shipment_response(self):
-        parsed_response = gateway.mapper.parse_shipment_response(
-            to_xml(FreightShipmentResponseXML)
-        )
-        self.assertEqual(
-            to_dict(parsed_response), to_dict(ParsedFreightShipmentResponse)
-        )
+        with patch("purplship.freight.mappers.ups.proxy.http") as mock:
+            mock.return_value = FreightShipmentResponseXML
+            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedFreightShipmentResponse))
 
 
 if __name__ == "__main__":
@@ -42,7 +36,7 @@ if __name__ == "__main__":
 freight_shipment_data = {
     "shipper": {
         "company_name": "Ship From Name",
-        "address_lines": ["Address Line"],
+        "address_line_1": "Address Line",
         "city": "City",
         "state_code": "StateProvinceCode",
         "postal_code": "PostalCode",
@@ -53,48 +47,25 @@ freight_shipment_data = {
     },
     "recipient": {
         "company_name": "Ship To Name",
-        "address_lines": ["Address Line"],
+        "address_line_1": "Address Line",
         "city": "City",
         "state_code": "StateProvinceCode",
         "postal_code": "PostalCode",
         "country_code": "CountryCode",
         "person_name": "Attention Name",
     },
-    "shipment": {
+    "parcel": {
+        "description": "Commodity Description",
         "weight_unit": "LB",
-        "references": ["Your Customer Context"],
-        "items": [
-            {
-                "description": "Commodity Description",
-                "weight": 180,
-                "quantity": 1,
-                "extra": {"FreightClass": "FreightClass"},
-            }
-        ],
-        "extra": {
-            "Payer": {
-                "company_name": "Payer Name",
-                "address_lines": ["Address Line"],
-                "city": "City",
-                "state_code": "StateProvinceCode",
-                "postal_code": "PostalCode",
-                "country_code": "CountryCode",
-                "person_name": "Attention Name",
-                "phone_number": "Phone Number",
-                "account_number": "Payer Shipper Number",
-            },
-            "ShipmentBillingOption": {"Code": "ShipmentBillingOption"},
-            "HandlingUnitOne": {
-                "Quantity": "HandlingUnitOne quantity",
-                "Type": {"Code": "HandlingUnitOne type"},
-            },
-        },
+        "weight": 180,
+        "reference": "Your Customer Context",
+        "options": {"ups_freight_class": "ups_freight_class_50"}
     },
 }
 
 ParsedFreightShipmentResponse = [
     {
-        "carrier": "UPS",
+        "carrier": "UPS Freight",
         "charges": [
             {"amount": "Value", "currency": "UnitOfMeasurement code", "name": "DSCNT"},
             {
@@ -230,92 +201,65 @@ FreightShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </soapenv:Envelope>
 """
 
-FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fsp="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0" xmlns:IF="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
-   <tns:Header>
+FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:fsp="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0" xmlns:IF="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
+    <tns:Header>
         <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
+            <UsernameToken>
+                <Username>username</Username>
+                <Password>password</Password>
+            </UsernameToken>
+            <ServiceAccessToken>
+                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
+            </ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
-   <tns:Body>
-      <fsp:FreightShipRequest>
-         <common:Request>
-            <common:RequestOption>1</common:RequestOption>
-            <common:TransactionReference>
-               <common:CustomerContext>Your Customer Context</common:CustomerContext>
-            </common:TransactionReference>
-         </common:Request>
-         <fsp:Shipment>
-            <fsp:ShipFrom>
-               <fsp:Name>Ship From Name</fsp:Name>
-               <fsp:Address>
-                  <fsp:AddressLine>Address Line</fsp:AddressLine>
-                  <fsp:City>City</fsp:City>
-                  <fsp:StateProvinceCode>StateProvinceCode</fsp:StateProvinceCode>
-                  <fsp:PostalCode>PostalCode</fsp:PostalCode>
-                  <fsp:CountryCode>CountryCode</fsp:CountryCode>
-               </fsp:Address>
-               <fsp:AttentionName>Attention Name</fsp:AttentionName>
-               <fsp:Phone>
-                  <fsp:Number>Shipper Phone number</fsp:Number>
-               </fsp:Phone>
-            </fsp:ShipFrom>
-            <fsp:ShipperNumber>Your Shipper Number</fsp:ShipperNumber>
-            <fsp:ShipTo>
-               <fsp:Name>Ship To Name</fsp:Name>
-               <fsp:Address>
-                  <fsp:AddressLine>Address Line</fsp:AddressLine>
-                  <fsp:City>City</fsp:City>
-                  <fsp:StateProvinceCode>StateProvinceCode</fsp:StateProvinceCode>
-                  <fsp:PostalCode>PostalCode</fsp:PostalCode>
-                  <fsp:CountryCode>CountryCode</fsp:CountryCode>
-               </fsp:Address>
-               <fsp:AttentionName>Attention Name</fsp:AttentionName>
-            </fsp:ShipTo>
-            <fsp:PaymentInformation>
-               <fsp:Payer>
-                  <fsp:Name>Payer Name</fsp:Name>
-                  <fsp:Address>
-                     <fsp:AddressLine>Address Line</fsp:AddressLine>
-                     <fsp:City>City</fsp:City>
-                     <fsp:StateProvinceCode>StateProvinceCode</fsp:StateProvinceCode>
-                     <fsp:PostalCode>PostalCode</fsp:PostalCode>
-                     <fsp:CountryCode>CountryCode</fsp:CountryCode>
-                  </fsp:Address>
-                  <fsp:ShipperNumber>Payer Shipper Number</fsp:ShipperNumber>
-                  <fsp:AttentionName>Attention Name</fsp:AttentionName>
-                  <fsp:Phone>
-                     <fsp:Number>Phone Number</fsp:Number>
-                  </fsp:Phone>
-               </fsp:Payer>
-               <fsp:ShipmentBillingOption>
-                  <fsp:Code>ShipmentBillingOption</fsp:Code>
-               </fsp:ShipmentBillingOption>
-            </fsp:PaymentInformation>
-            <fsp:HandlingUnitOne>
-               <fsp:Quantity>HandlingUnitOne quantity</fsp:Quantity>
-               <fsp:Type>
-                  <fsp:Code>HandlingUnitOne type</fsp:Code>
-               </fsp:Type>
-            </fsp:HandlingUnitOne>
-            <fsp:Commodity>
-               <fsp:Description>Commodity Description</fsp:Description>
-               <fsp:Weight>
-                  <fsp:UnitOfMeasurement>
-                     <fsp:Code>LBS</fsp:Code>
-                  </fsp:UnitOfMeasurement>
-                  <fsp:Value>180</fsp:Value>
-               </fsp:Weight>
-               <fsp:NumberOfPieces>1</fsp:NumberOfPieces>
-               <fsp:FreightClass>FreightClass</fsp:FreightClass>
-            </fsp:Commodity>
-         </fsp:Shipment>
-      </fsp:FreightShipRequest>
-   </tns:Body>
+    <tns:Body>
+        <fsp:FreightShipRequest>
+            <common:Request>
+                <RequestOption>1</RequestOption>
+                <TransactionReference>
+                    <CustomerContext>Your Customer Context</CustomerContext>
+                </TransactionReference>
+            </common:Request>
+            <Shipment>
+                <ShipFrom>
+                    <Name>Ship From Name</Name>
+                    <Address>
+                        <AddressLine>Address Line</AddressLine>
+                        <City>City</City>
+                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
+                        <PostalCode>PostalCode</PostalCode>
+                        <CountryCode>CountryCode</CountryCode>
+                    </Address>
+                    <AttentionName>Attention Name</AttentionName>
+                    <Phone>
+                        <Number>Shipper Phone number</Number>
+                    </Phone>
+                </ShipFrom>
+                <ShipperNumber>Your Shipper Number</ShipperNumber>
+                <ShipTo>
+                    <Name>Ship To Name</Name>
+                    <Address>
+                        <AddressLine>Address Line</AddressLine>
+                        <City>City</City>
+                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
+                        <PostalCode>PostalCode</PostalCode>
+                        <CountryCode>CountryCode</CountryCode>
+                    </Address>
+                    <AttentionName>Attention Name</AttentionName>
+                </ShipTo>
+                <Commodity>
+                    <Description>Commodity Description</Description>
+                    <Weight>
+                        <UnitOfMeasurement>
+                            <Code>LBS</Code>
+                        </UnitOfMeasurement>
+                        <Value>180.0</Value>
+                    </Weight>
+                    <FreightClass>50</FreightClass>
+                </Commodity>
+            </Shipment>
+        </fsp:FreightShipRequest>
+    </tns:Body>
 </tns:Envelope>
 """

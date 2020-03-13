@@ -1,5 +1,4 @@
-from typing import List
-from functools import partial
+from typing import List, Tuple
 from pyups.common import RequestType, TransactionReferenceType
 from pyups.track_web_service_schema import (
     TrackRequest, ShipmentType, ActivityType
@@ -15,7 +14,7 @@ from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
 
-def parse_track_response(response: Element, settings: Settings) -> (List[TrackingDetails], List[Error]):
+def parse_track_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Error]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="Shipment")
     tracking: List[TrackingDetails] = [_extract_tracking(node, settings) for node in track_details]
     return tracking, parse_error_response(response, settings)
@@ -54,36 +53,33 @@ def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDet
 
 def track_request(payload: TrackingRequest, settings: Settings) -> Serializable[List[TrackRequest]]:
     requests = [
-        TrackRequest(
-            Request=RequestType(
-                RequestOption=[1], 
-                TransactionReference=TransactionReferenceType(
-                    TransactionIdentifier="TransactionIdentifier"
-                )
-            ),
-            InquiryNumber=number
+        create_envelope(
+            header_content=settings.Security,
+            body_content=TrackRequest(
+                Request=RequestType(
+                    RequestOption=[1],
+                    TransactionReference=TransactionReferenceType(
+                        TransactionIdentifier="TransactionIdentifier"
+                    )
+                ),
+                InquiryNumber=number
+            )
         )
         for number in payload.tracking_numbers
     ]
-    return Serializable(requests, lambda _: partial(_request_serializer, settings=settings)(_))
+    return Serializable(requests, _request_serializer)
 
 
-def _request_serializer(requests: List[TrackRequest], settings: Settings) -> List[str]:
+def _request_serializer(requests: List[Element]) -> List[str]:
     namespacedef_ = """
-                        xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" 
-                        xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
-                        xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0" 
-                        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
-                    """.replace(" ", "").replace("\n", " ")
+        xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"
+        xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0"
+        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
+    """.replace(" ", "").replace("\n", " ")
     return [
         clean_namespaces(
-            export(
-                create_envelope(
-                    header_content=settings.Security,
-                    body_content=request
-                ),
-                namespacedef_=namespacedef_,
-            ),
+            export(request, namespacedef_=namespacedef_,),
             envelope_prefix="tns:",
             header_child_prefix="upss:",
             body_child_prefix="trk:",

@@ -3,17 +3,17 @@ from purplship.core.utils.helpers import to_xml, request as http, bundle_xml, ex
 from purplship.freight.proxy import Proxy as BaseProxy
 from purplship.freight.mappers.ups.settings import Settings
 from purplship.core.utils.serializable import Serializable, Deserializable
-from pyups.rate_web_service_schema import RateRequest
+from pyups.freight_rate_web_service_schema import FreightRateRequest
 from pyups.track_web_service_schema import TrackRequest
-from pyups.ship_web_service_schema import ShipmentRequest
+from pyups.freight_ship_web_service_schema import FreightShipRequest
 
 
 class Proxy(BaseProxy):
     settings: Settings
 
-    def get_rates(self, request: Serializable[RateRequest]) -> Deserializable[str]:
+    def get_rates(self, request: Serializable[FreightRateRequest]) -> Deserializable[str]:
         response = http(
-            url=f"{self.settings.server_url}/Rate",
+            url=f"{self.settings.server_url}/FreightRate",
             data=bytearray(request.serialize(), "utf-8"),
             headers={"Content-Type": "application/xml"},
             method="POST",
@@ -32,13 +32,13 @@ class Proxy(BaseProxy):
                 method="POST",
             )
 
-        response = exec_parrallel(get_tracking, request.serialize())
+        response: List[str] = exec_parrallel(get_tracking, request.serialize())
 
         return Deserializable(bundle_xml(xml_strings=response), to_xml)
 
-    def create_shipment(self, request: Serializable[ShipmentRequest]) -> Deserializable[str]:
+    def create_shipment(self, request: Serializable[FreightShipRequest]) -> Deserializable[str]:
         response = http(
-            url=f"{self.settings.server_url}/Ship",
+            url=f"{self.settings.server_url}/FreightShip",
             data=bytearray(request.serialize(), "utf-8"),
             headers={"Content-Type": "application/xml"},
             method="POST",

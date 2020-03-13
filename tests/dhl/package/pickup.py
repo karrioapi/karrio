@@ -1,7 +1,7 @@
 import re
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, export, to_dict
+from purplship.core.utils.helpers import to_dict
 from purplship.core.models import PickupCancellationRequest, PickupRequest, PickupUpdateRequest
 from purplship.package import pickup
 from tests.dhl.package.fixture import gateway
@@ -9,6 +9,7 @@ from tests.dhl.package.fixture import gateway
 
 class TestDHLPickup(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.BookPURequest = PickupRequest(**book_pickup_payload)
         self.ModifyPURequest = PickupUpdateRequest(**modification_data)
         self.CancelPURequest = PickupCancellationRequest(**cancellation_data)
@@ -72,35 +73,44 @@ if __name__ == "__main__":
 
 book_pickup_payload = {
     "date": "2013-10-19",
-    "account_number": "123456789",
-    "pieces": 2,
-    "weight": 20,
-    "weight_unit": "LB",
     "ready_time": "10:20:00",
     "closing_time": "09:20:00",
-    "city": "Montreal",
-    "postal_code": "H8Z2Z3",
-    "person_name": "Subhayu",
-    "phone_number": "4801313131",
-    "state_code": "QC",
-    "country_code": "CA",
-    "email_address": "test@mail.com",
     "instruction": "behind the front desk",
-    "address_lines": ["234 rue Hubert"]
+    "address": {
+        "account_number": "123456789",
+        "city": "Montreal",
+        "postal_code": "H8Z2Z3",
+        "person_name": "Subhayu",
+        "phone_number": "4801313131",
+        "state_code": "QC",
+        "country_code": "CA",
+        "email_address": "test@mail.com",
+        "address_line_1": "234 rue Hubert",
+    },
+    "parcels": [{
+        "weight": 20,
+        "weight_unit": "LB",
+    }]
 }
 
 modification_data = {
     "date": "2013-10-19",
-    "account_number": "123456789",
     "confirmation_number": "100094",
     "ready_time": "10:20:00",
     "closing_time": "09:20:00",
-    "city": "Montreal",
-    "postal_code": "H8Z2Z3",
-    "person_name": "Rikhil",
-    "phone_number": "4801313131",
-    "country_code": "CA",
-    "email_address": "test@mail.com"
+    "address": {
+        "account_number": "123456789",
+        "city": "Montreal",
+        "postal_code": "H8Z2Z3",
+        "person_name": "Rikhil",
+        "phone_number": "4801313131",
+        "country_code": "CA",
+        "email_address": "test@mail.com"
+    },
+    "parcels": [{
+        "weight": 20,
+        "weight_unit": "LB",
+    }]
 }
 
 cancellation_data = {
@@ -245,7 +255,13 @@ ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmln
         <PickupDate>2013-10-19</PickupDate>
         <ReadyByTime>10:20</ReadyByTime>
         <CloseTime>09:20</CloseTime>
+        <Pieces>1</Pieces>
         <RemotePickupFlag>Y</RemotePickupFlag>
+        <weight>
+            <Weight>20.</Weight>
+            <WeightUnit>L</WeightUnit>
+        </weight>
+        <SpecialInstructions></SpecialInstructions>
     </Pickup>
     <PickupContact>
         <PersonName>Rikhil</PersonName>
@@ -331,7 +347,7 @@ PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xs
         <PickupDate>2013-10-19</PickupDate>
         <ReadyByTime>10:20</ReadyByTime>
         <CloseTime>09:20</CloseTime>
-        <Pieces>2</Pieces>
+        <Pieces>1</Pieces>
         <RemotePickupFlag>Y</RemotePickupFlag>
         <weight>
             <Weight>20.</Weight>

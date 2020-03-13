@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from purplship.package.mapper import Mapper as BaseMapper
 from purplship.package.mappers.ups.settings import Settings
 from purplship.core.utils.serializable import Deserializable, Serializable
@@ -31,11 +31,11 @@ class Mapper(BaseMapper):
 
     """Response Parsers"""
 
-    def parse_rate_response(self, response: Deserializable[str]) -> (List[RateDetails], List[Error]):
+    def parse_rate_response(self, response: Deserializable[str]) -> Tuple[List[RateDetails], List[Error]]:
         return parse_rate_response(response.deserialize(), self.settings)
 
-    def parse_tracking_response(self, response: Deserializable[str]) -> (List[TrackingDetails], List[Error]):
+    def parse_tracking_response(self, response: Deserializable[str]) -> Tuple[List[TrackingDetails], List[Error]]:
         return parse_track_response(response.deserialize(), self.settings)
 
-    def parse_shipment_response(self, response: Deserializable[str]) -> (ShipmentDetails, List[Error]):
+    def parse_shipment_response(self, response: Deserializable[str]) -> Tuple[ShipmentDetails, List[Error]]:
         return parse_shipment_response(response.deserialize(), self.settings)

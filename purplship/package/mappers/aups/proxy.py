@@ -22,7 +22,7 @@ class Proxy(BaseProxy):
 
     """ Proxy interface methods """
 
-    def get_rates(self, request: Serializable[ShippingPriceRequest]) -> Deserializable[dict]:
+    def get_rates(self, request: Serializable[ShippingPriceRequest]) -> Deserializable[str]:
         response = http(
             url=f"{self.settings.server_url}/shipping/v1/prices/shipments",
             data=bytearray(request.serialize().replace('from_', 'from'), "utf-8"),
@@ -36,7 +36,7 @@ class Proxy(BaseProxy):
         ).replace('from', 'from_')
         return Deserializable(response, to_dict)
 
-    def get_tracking(self, request: Serializable[List[str]]) -> Deserializable[dict]:
+    def get_tracking(self, request: Serializable[List[str]]) -> Deserializable[str]:
         response = http(
             url=f"{self.settings.server_url}/shipping/v1/track?tracking_ids={request.serialize()}",
             headers={

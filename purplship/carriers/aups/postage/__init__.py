@@ -1,6 +1,6 @@
 """PurplShip Australia post postage calculation service mapper module."""
 
-from typing import List, Union
+from typing import List, Union, Tuple
 import pyaups.international_parcel_postage
 import pyaups.domestic_letter_postage
 import pyaups.international_letter_postage
@@ -9,9 +9,9 @@ from pyaups.domestic_parcel_postage import ServiceResponse, Service
 from purplship.core.utils.helpers import to_dict
 from purplship.core.utils.serializable import Serializable
 from purplship.core.units import Country, PackagingUnit, Currency
-from purplship.core.models import Error, RateRequest, RateDetails, Item
+from purplship.core.models import Error, RateRequest, RateDetails
 from purplship.carriers.aups.utils import Settings
-from purplship.core.errors import OriginNotServicedError, MultiItemShipmentSupportError
+from purplship.core.errors import OriginNotServicedError
 from purplship.carriers.aups.postage.calculate_domestic_letter import calculate_domestic_letter_request
 from purplship.carriers.aups.postage.calculate_domestic_parcel import calculate_domestic_parcel_request
 from purplship.carriers.aups.postage.calculate_international_letter import calculate_international_letter_request
@@ -25,7 +25,7 @@ PostageRateRequest = Union[
 ]
 
 
-def parse_service_response(self, response: dict) -> (List[RateDetails], List[Error]):
+def parse_service_response(self, response: dict) -> Tuple[List[RateDetails], List[Error]]:
     services: List[Service] = (
         ServiceResponse(**response).services.service
         if "services" in response else []
@@ -54,14 +54,11 @@ def _extract_quote(self, service: Service) -> RateDetails:
 def calculate_postage_request(payload: RateRequest, settings: Settings) -> Serializable[PostageRateRequest]:
     if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
         raise OriginNotServicedError(payload.shipper.country_code, settings.carrier_name)
-    if len(payload.shipment.items) > 1:
-        raise MultiItemShipmentSupportError(settings.carrier_name)
 
-    item: Item = payload.shipment.items[0]
     is_letter: bool = (
-        any(svc for svc in payload.shipment.services if 'LETTER' in svc)
-        or payload.shipment.packaging_type == PackagingUnit.SM.name
-        or item.packaging_type == PackagingUnit.SM.name
+        any(svc for svc in payload.parcel.services if 'LETTER' in svc)
+        or payload.parcel.packaging_type == PackagingUnit.SM.name
+        or payload.parcel.packaging_type == PackagingUnit.SM.name
     )
     is_international = (
         payload.recipient.country_code is None or payload.recipient.country_code == Country.AU.name
@@ -74,7 +71,7 @@ def calculate_postage_request(payload: RateRequest, settings: Settings) -> Seria
         request = calculate_international_letter_request(payload)
 
     elif not is_letter and not is_international:
-        request = calculate_international_letter_request(payload)
+        request = calculate_domestic_parcel_request(payload)
 
     else:
         request = calculate_international_parcel_request(payload)

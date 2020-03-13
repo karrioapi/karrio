@@ -1,12 +1,13 @@
 from typing import Tuple, List
-from pyusps.intlratev2request import IntlRateV2Request, PackageType, ExtraServicesType, ContentType
+from datetime import datetime
+from pyusps.intlratev2request import IntlRateV2Request, PackageType
 from pyusps.intlratev2response import ServiceType, ExtraServiceType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.models import RateDetails, Error, RateRequest, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country
-from purplship.carriers.usps.units import IntlContainer, ExtraService, IntlContentType, IntlMailType
+from purplship.carriers.usps.units import IntlContainer, ExtraService, IntlMailType
 from purplship.carriers.usps.error import parse_error_response
 from purplship.carriers.usps import Settings
 
@@ -49,58 +50,45 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
 
 
 def intl_rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlRateV2Request]:
-    weight_unit = WeightUnit[payload.shipment.weight_unit or "LB"]
-    dimension_unit = DimensionUnit[payload.shipment.dimension_unit or "IN"]
-    extra_services = [
-        ExtraService[svc.code].value
-        for svc in payload.options.keys()
-        if svc.code in ExtraService.__members__
-    ]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     request = IntlRateV2Request(
         USERID=settings.username,
         Revision="2",
         Package=[
             PackageType(
-                ID=item.id or index,
-                Pounds=Weight(item.weight, weight_unit).LB,
-                Ounces=Weight(item.weight, weight_unit).LB * 16,
+                ID=payload.parcel.id or 1,
+                Pounds=Weight(payload.parcel.weight, weight_unit).LB,
+                Ounces=Weight(payload.parcel.weight, weight_unit).LB * 16,
                 Machinable=None,
-                MailType=IntlMailType[item.packaging_type].value,
+                MailType=IntlMailType[payload.parcel.packaging_type].value,
                 GXG=None,
-                ValueOfContents=item.value_amount or payload.shipment.declared_value,
-                Country=Country[payload.recipient.country_code].value
-                if payload.recipient.country_code
-                else None,
+                ValueOfContents=None,
+                Country=(
+                    Country[payload.recipient.country_code].value if payload.recipient.country_code else None
+                ),
                 Container=(
-                    IntlContainer[item.packaging_type].value
-                    if item.packaging_type
-                    else None
+                    IntlContainer[payload.parcel.packaging_type].value if payload.parcel.packaging_type else None
                 ),
                 Size="LARGE" if any(
                     dim for dim in [
-                        Dimension(item.width, dimension_unit).IN,
-                        Dimension(item.length, dimension_unit).IN,
-                        Dimension(item.height, dimension_unit).IN
+                        Dimension(payload.parcel.width, dimension_unit).IN,
+                        Dimension(payload.parcel.length, dimension_unit).IN,
+                        Dimension(payload.parcel.height, dimension_unit).IN
                     ] if dim > 12
                 ) else "REGULAR",
-                Width=Dimension(item.width, dimension_unit).IN,
-                Length=Dimension(item.length, dimension_unit).IN,
-                Height=Dimension(item.height, dimension_unit).IN,
+                Width=Dimension(payload.parcel.width, dimension_unit).IN,
+                Length=Dimension(payload.parcel.length, dimension_unit).IN,
+                Height=Dimension(payload.parcel.height, dimension_unit).IN,
                 Girth=None,
                 OriginZip=payload.shipper.postal_code,
                 CommercialFlag=None,
                 CommercialPlusFlag=None,
-                AcceptanceDateTime=payload.shipment.date,
+                AcceptanceDateTime=datetime.today().strftime('%Y-%m-%dT%H:%M:%S'),
                 DestinationPostalCode=payload.recipient.postal_code,
                 ExtraServices=None,
-                Content=ContentType(
-                    ContentType=IntlContentType[item.content].value,
-                    ContentDescription=item.content,
-                )
-                if item.content
-                else None,
+                Content=None,
             )
-            for index, item in enumerate(payload.shipment.items)
         ],
     )
     return Serializable(request, _request_serializer)

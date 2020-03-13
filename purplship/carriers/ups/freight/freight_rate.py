@@ -1,20 +1,19 @@
-from functools import reduce, partial
+from functools import reduce
 from typing import List, Tuple
 from pyups import common
 from pyups.freight_rate_web_service_schema import (
     FreightRateRequest, FreightRateResponse, ShipFromType, AddressType,
-    ShipToType, PaymentInformationType, PayerType, RateCodeDescriptionType,
+    ShipToType, RateCodeDescriptionType,
     HandlingUnitType, ShipmentServiceOptionsType, PickupOptionsType, WeightType,
-    HandlingUnitWeightType, UnitOfMeasurementType, CommodityType, OnCallInformationType,
-    DimensionsType
+    UnitOfMeasurementType, CommodityType, DimensionsType
 )
-from purplship.core.utils.helpers import export
+from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.units import DimensionUnit
+from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit
 from purplship.core.utils.xml import Element
 from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
-from purplship.carriers.ups.units import RatingServiceCode, WeightUnit, PackagingType
+from purplship.carriers.ups.units import RatingServiceCode, WeightUnit as UPSWeightUnit, PackagingType
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
@@ -22,7 +21,7 @@ from purplship.carriers.ups.utils import Settings
 def parse_freight_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
     rate_reply = response.xpath(".//*[local-name() = $name]", name="FreightRateResponse")
     rates: List[RateDetails] = [_extract_freight_rate(detail_node, settings) for detail_node in rate_reply]
-    return rates, parse_error_response(response)
+    return rates, parse_error_response(response, settings)
 
 
 def _extract_freight_rate(detail_node: Element, settings: Settings) -> RateDetails:
@@ -64,10 +63,12 @@ def _extract_freight_rate(detail_node: Element, settings: Settings) -> RateDetai
 
 
 def freight_rate_request(payload: RateRequest, settings: Settings) -> Serializable[FreightRateRequest]:
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     service = (
         [
             RatingServiceCode[svc]
-            for svc in payload.shipment.services
+            for svc in payload.parcel.services
             if svc in RatingServiceCode.__members__
         ]
         + [RatingServiceCode.UPS_Freight_LTL_Guaranteed]
@@ -82,7 +83,7 @@ def freight_rate_request(payload: RateRequest, settings: Settings) -> Serializab
         ShipFrom=ShipFromType(
             Name=payload.shipper.company_name,
             Address=AddressType(
-                AddressLine=payload.shipper.address_lines,
+                AddressLine=concat_str(payload.shipper.address_line_1, payload.shipper.address_line_2),
                 City=payload.shipper.city,
                 PostalCode=payload.shipper.postal_code,
                 CountryCode=payload.shipper.country_code,
@@ -93,7 +94,7 @@ def freight_rate_request(payload: RateRequest, settings: Settings) -> Serializab
         ShipTo=ShipToType(
             Name=payload.recipient.company_name,
             Address=AddressType(
-                AddressLine=payload.recipient.address_lines,
+                AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
                 City=payload.recipient.city,
                 PostalCode=payload.recipient.postal_code,
                 CountryCode=payload.recipient.country_code,
@@ -101,21 +102,7 @@ def freight_rate_request(payload: RateRequest, settings: Settings) -> Serializab
             ),
             AttentionName=payload.recipient.person_name,
         ),
-        PaymentInformation=PaymentInformationType(
-            Payer=PayerType(
-                Name=payload.shipment.payment_country_code
-                or payload.shipper.country_code,
-                Address=AddressType(
-                    City=payload.shipper.city,
-                    PostalCode=payload.shipper.postal_code,
-                    CountryCode=payload.shipper.country_code,
-                    AddressLine=payload.shipper.address_lines,
-                ),
-                ShipperNumber=payload.shipper.account_number
-                or payload.shipment.payment_account_number,
-            ),
-            ShipmentBillingOption=RateCodeDescriptionType(Code=10),
-        ),
+        PaymentInformation=None,
         Service=RateCodeDescriptionType(Code=service.value, Description=None),
         HandlingUnitOne=HandlingUnitType(
             Quantity=1, Type=RateCodeDescriptionType(Code="SKD")
@@ -125,62 +112,53 @@ def freight_rate_request(payload: RateRequest, settings: Settings) -> Serializab
         ),
         DensityEligibleIndicator="",
         AdjustedWeightIndicator="",
-        HandlingUnitWeight=HandlingUnitWeightType(
-            Value=1,
-            UnitOfMeasurement=UnitOfMeasurementType(
-                Code=WeightUnit[payload.shipment.weight_unit].value
-            ),
-        ),
+        HandlingUnitWeight=None,
         PickupRequest=None,
-        GFPOptions=OnCallInformationType(),
+        GFPOptions=None,
         TimeInTransitIndicator="",
         Commodity=[
             CommodityType(
-                Description=c.description or "...",
+                Description=payload.parcel.description or "...",
                 Weight=WeightType(
                     UnitOfMeasurement=UnitOfMeasurementType(
-                        Code=WeightUnit[payload.shipment.weight_unit].value
+                        Code=UPSWeightUnit[weight_unit.name].value
                     ),
-                    Value=c.weight,
+                    Value=Weight(payload.parcel.weight, weight_unit).value,
                 ),
                 Dimensions=DimensionsType(
                     UnitOfMeasurement=UnitOfMeasurementType(
-                        Code=DimensionUnit[payload.shipment.dimension_unit].value
+                        Code=dimension_unit.value
                     ),
-                    Width=c.width,
-                    Height=c.height,
-                    Length=c.length,
+                    Width=Dimension(payload.parcel.width, dimension_unit).value,
+                    Height=Dimension(payload.parcel.height, dimension_unit).value,
+                    Length=Dimension(payload.parcel.length, dimension_unit).value,
                 ),
-                NumberOfPieces=len(payload.shipment.items),
+                NumberOfPieces=None,
                 PackagingType=RateCodeDescriptionType(
-                    Code=PackagingType[c.packaging_type or "BOX"].value,
+                    Code=PackagingType[payload.parcel.packaging_type or "BOX"].value,
                     Description=None,
                 ),
                 FreightClass=50,
             )
-            for c in payload.shipment.items
         ],
     )
-    return Serializable(request, lambda _: partial(_request_serializer, settings=settings)(_))
+    return Serializable(
+        create_envelope(header_content=settings.Security, body_content=request),
+        _request_serializer
+    )
 
 
-def _request_serializer(request: FreightRateRequest, settings: Settings) -> str:
+def _request_serializer(request: Element) -> str:
     namespace_ = """
-                    xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" 
-                    xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" 
-                    xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
-                    xmlns:wsf="http://www.ups.com/schema/wsf" 
-                    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-                    xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0"
-                """.replace(" ", "").replace("\n", " ")
+        xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"
+        xmlns:wsf="http://www.ups.com/schema/wsf"
+        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
+        xmlns:frt="http://www.ups.com/XMLSchema/XOLTWS/FreightRate/v1.0"
+    """.replace(" ", "").replace("\n", " ")
     return clean_namespaces(
-        export(
-            create_envelope(
-                header_content=settings.Security,
-                body_content=request
-            ),
-            namespacedef_=namespace_,
-        ),
+        export(request, namespacedef_=namespace_),
         envelope_prefix="tns:",
         header_child_prefix="upss:",
         header_child_name="UPSSecurity",

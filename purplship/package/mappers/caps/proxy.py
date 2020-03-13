@@ -38,7 +38,7 @@ class Proxy(BaseProxy):
                 },
                 method="GET",
             )
-        response = exec_parrallel(track, request.serialize())
+        response: List[str] = exec_parrallel(track, request.serialize())
 
         return Deserializable(bundle_xml(xml_strings=response), to_xml)
 

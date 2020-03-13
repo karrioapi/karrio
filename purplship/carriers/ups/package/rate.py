@@ -1,25 +1,21 @@
-from functools import reduce, partial
+from functools import reduce
 from typing import Callable, List, Tuple
 from pyups import common
 from pyups.rate_web_service_schema import (
-    RateRequest as UPSRateRequest, PickupType, RatedShipmentType,
+    RateRequest as UPSRateRequest, PickupType, RatedShipmentType, ShipmentRatingOptionsType,
     ShipToType, ShipmentType, ShipperType, ShipAddressType, ShipToAddressType,
-    PaymentDetailsType, ShipmentChargeType, PackageType,
-    BillShipperChargeType, BillReceiverAddressType, PackageWeightType, BillReceiverChargeType,
-    ShipmentRatingOptionsType, UOMCodeDescriptionType,
-    ShipmentServiceOptionsType, DimensionsType, BillThirdPartyChargeType,
+    PackageType, PackageWeightType, UOMCodeDescriptionType, DimensionsType,
 )
-from purplship.core.utils.helpers import export
+from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit
+from purplship.core.units import DimensionUnit, Weight, WeightUnit, Dimension
 from purplship.core.models import (
     RateDetails, ChargeDetails, Error, RateRequest
 )
 from purplship.carriers.ups.units import (
-    RatingServiceCode, RatingPackagingType, WeightUnit, ServiceOption,
-    RatingOption, ShippingServiceCode
+    RatingServiceCode, RatingPackagingType, WeightUnit as UPSWeightUnit, ShippingServiceCode
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -88,44 +84,22 @@ def _extract_package_rate(settings: Settings) -> Callable[[List[RateDetails], El
 
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRateRequest]:
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     service = (
         [
             RatingServiceCode[svc]
-            for svc in payload.shipment.services
+            for svc in payload.parcel.services
             if svc in RatingServiceCode.__members__
         ]
         + [RatingServiceCode.UPS_Worldwide_Express]
     )[0]
-    payment_details_provided = (
-        all((payload.shipment.paid_by, payload.shipment.payment_account_number))
-        or (
-            payload.shipment.paid_by == "SENDER"
-            and payload.shipper.account_number is not None
-        )
-        or (
-            payload.shipment.paid_by == "RECIPIENT"
-            and payload.recipient.account_number is not None
-        )
-    )
-    is_negotiated_rate = any(
-        (payload.shipment.payment_account_number, payload.shipper.account_number)
-    )
-    service_options = [
-        opt
-        for opt in payload.options.keys()
-        if opt in ServiceOption.__members__
-    ]
-    rating_options = [
-        opt
-        for opt in payload.options.keys()
-        if opt in RatingOption.__members__
-    ]
     request = UPSRateRequest(
         Request=common.RequestType(
             RequestOption=["Rate"],
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
-                CustomerContext=", ".join(payload.shipment.references),
+                CustomerContext=payload.parcel.reference,
                 TransactionIdentifier=None,
             ),
         ),
@@ -137,7 +111,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
                 Name=payload.shipper.company_name,
                 ShipperNumber=payload.shipper.account_number,
                 Address=ShipAddressType(
-                    AddressLine=payload.shipper.address_lines,
+                    AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
                     PostalCode=payload.shipper.postal_code,
@@ -147,7 +121,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
             ShipTo=ShipToType(
                 Name=payload.recipient.company_name,
                 Address=ShipToAddressType(
-                    AddressLine=payload.recipient.address_lines,
+                    AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
                     PostalCode=payload.recipient.postal_code,
@@ -158,108 +132,48 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
             ShipFrom=None,
             AlternateDeliveryAddress=None,
             ShipmentIndicationType=None,
-            PaymentDetails=PaymentDetailsType(
-                ShipmentCharge=[
-                    ShipmentChargeType(
-                        Type=None,
-                        BillShipper=BillShipperChargeType(
-                            AccountNumber=payload.shipment.payment_account_number
-                            or payload.shipper.account_number
-                        )
-                        if payload.shipment.paid_by == "SENDER"
-                        else None,
-                        BillReceiver=BillReceiverChargeType(
-                            AccountNumber=payload.shipment.payment_account_number
-                            or payload.recipient.account_number,
-                            Address=BillReceiverAddressType(
-                                PostalCode=payload.recipient.postal_code
-                            ),
-                        )
-                        if payload.shipment.paid_by == "RECIPIENT"
-                        else None,
-                        BillThirdParty=BillThirdPartyChargeType(
-                            AccountNumber=payload.shipment.payment_account_number,
-                            Address=None,
-                        )
-                        if payload.shipment.paid_by == "THIRD_PARTY"
-                        else None,
-                        ConsigneeBilledIndicator=None,
-                    )
-                ],
-                SplitDutyVATIndicator=None,
-            )
-            if payment_details_provided
-            else None,
+            PaymentDetails=None,
             FRSPaymentInformation=None,
             FreightShipmentInformation=None,
             GoodsNotInFreeCirculationIndicator=None,
             Service=UOMCodeDescriptionType(
                 Code=service.value, Description=None
             ),
-            NumOfPieces=payload.shipment.total_items,
-            ShipmentTotalWeight=payload.shipment.total_weight,
-            DocumentsOnlyIndicator="" if payload.shipment.is_document else None,
+            NumOfPieces=None,  # Only required for Freight
+            ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
+            DocumentsOnlyIndicator="" if payload.parcel.is_document else None,
             Package=[
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
-                        Code=RatingPackagingType[pkg.packaging_type or "BOX"].value,
+                        Code=RatingPackagingType[payload.parcel.packaging_type or "BOX"].value,
                         Description=None,
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=DimensionUnit[
-                                payload.shipment.dimension_unit
-                            ].value,
+                            Code=dimension_unit.value,
                             Description=None,
                         ),
-                        Length=pkg.length,
-                        Width=pkg.width,
-                        Height=pkg.height,
+                        Length=Dimension(payload.parcel.length, dimension_unit).value,
+                        Width=Dimension(payload.parcel.width, dimension_unit).value,
+                        Height=Dimension(payload.parcel.height, dimension_unit).value,
                     ),
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=WeightUnit[payload.shipment.weight_unit].value,
+                            Code=UPSWeightUnit[weight_unit.name].value,
                             Description=None,
                         ),
-                        Weight=pkg.weight,
+                        Weight=Weight(payload.parcel.weight, weight_unit).value,
                     ),
                     Commodity=None,
                     PackageServiceOptions=None,
                     AdditionalHandlingIndicator=None,
                 )
-                for pkg in payload.shipment.items
             ],
-            ShipmentServiceOptions=ShipmentServiceOptionsType(
-                SaturdayDeliveryIndicator=None,
-                AccessPointCOD=None,
-                DeliverToAddresseeOnlyIndicator=None,
-                DirectDeliveryOnlyIndicator=None,
-                COD=None,
-                DeliveryConfirmation=None,
-                ReturnOfDocumentIndicator=None,
-                UPScarbonneutralIndicator=None,
-                CertificateOfOriginIndicator=None,
-                PickupOptions=None,
-                DeliveryOptions=None,
-                RestrictedArticles=None,
-                ShipperExportDeclarationIndicator=None,
-                CommercialInvoiceRemovalIndicator=None,
-                ImportControl=None,
-                ReturnService=None,
-                SDLShipmentIndicator=None,
-                EPRAIndicator=None,
-            )
-            if len(service_options) > 0
-            else None,
+            ShipmentServiceOptions=None,
             ShipmentRatingOptions=ShipmentRatingOptionsType(
-                NegotiatedRatesIndicator="" if is_negotiated_rate else None,
-                FRSShipmentIndicator=None,
-                RateChartIndicator=None,
-                UserLevelDiscountIndicator=None,
-            )
-            if len(rating_options) > 0 or is_negotiated_rate
-            else None,
+                NegotiatedRatesIndicator="" if 'NegotiatedRatesIndicator' in payload.parcel.options else None,
+            ) if 'NegotiatedRatesIndicator' in payload.parcel.options else None,
             InvoiceLineTotal=None,
             RatingMethodRequestedIndicator=None,
             TaxInformationIndicator=None,
@@ -267,26 +181,25 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
             DeliveryTimeInformation=None,
         ),
     )
-    return Serializable(request, lambda _: partial(_request_serializer, settings=settings)(_))
+    return Serializable(
+        create_envelope(header_content=settings.Security, body_content=request),
+        _request_serializer
+    )
 
 
-def _request_serializer(request: UPSRateRequest, settings: Settings) -> str:
+def _request_serializer(request: Element) -> str:
     namespace_ = """
-                    xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" 
-                    xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" 
-                    xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
-                    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-                    xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1"
-                """.replace(" ", "").replace("\n", " ")
+        xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
+        xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1"
+        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    """.replace(" ", "").replace("\n", " ")
     return clean_namespaces(
-        export(
-            create_envelope(
-                header_content=settings.Security,
-                body_content=request
-            ),
-            namespacedef_=namespace_,
-        ),
+        export(request, namespacedef_=namespace_),
         envelope_prefix="tns:",
         header_child_prefix="upss:",
         body_child_prefix="rate:",

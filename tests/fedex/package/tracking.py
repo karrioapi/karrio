@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_dict
+from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
 from purplship.package import tracking
 from tests.fedex.package.fixture import gateway

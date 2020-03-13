@@ -17,7 +17,7 @@ PurplShip proposes an intuitive unified API, to make multi-carrier integration s
 PurplShip helps quickly getting started with shipping services as it is easy to use:
 
 ```python
-import purplship.shipping as api
+import purplship.package as api
 
 dhl = api.gateway['dhl'].create({
     "site_id": "username",
@@ -25,12 +25,14 @@ dhl = api.gateway['dhl'].create({
 })
 
 response = api.rating.fetch({
-    "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
-    "recipient": {"city": "Lome", "country_code": "TG"},
-    "shipment": {
-        "items": [
-            {"height": 3, "length": 10, "width": 3, "weight": 4.0}
-        ]
+    "shipper": {
+        "postal_code": "H3N1S4", "country_code": "CA"
+    },
+    "recipient": {
+        "city": "Lome", "country_code": "TG"
+    },
+    "parcel": {
+        "height": 3, "length": 10, "width": 3, "weight": 4.0
     }
 }).from_(dhl)
 

@@ -1,5 +1,6 @@
 from io import StringIO
-import urllib.request
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
 from xmltodict import parse
 from attr.exceptions import NotAnAttrsClassError
 import attr
@@ -7,14 +8,18 @@ import ssl
 import json
 from json import JSONEncoder
 import asyncio
-from lxml import etree
-from purplship.core.utils.xml import Element
+from purplship.core.utils.xml import Element, fromstring, tostring
 from typing import List, TypeVar, Callable, Any, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ctx = ssl._create_unverified_context()
 T = TypeVar("T")
 S = TypeVar("S")
+
+
+def concat_str(*args, join: bool = False):
+    strings = [s for s in args if s != '']
+    return strings if not join else " ".join(strings)
 
 
 def export(xml_element: Element, **kwds) -> str:
@@ -33,10 +38,10 @@ def request(**args) -> str:
     make a http request (wrapper around Request method from built in urllib)
     """
     try:
-        req = urllib.request.Request(**args)
-        with urllib.request.urlopen(req, context=ctx) as f:
+        req = Request(**args)
+        with urlopen(req, context=ctx) as f:
             return f.read().decode("utf-8")
-    except urllib.request.HTTPError as e:
+    except HTTPError as e:
         return e.read().decode("utf-8")
 
 
@@ -45,11 +50,11 @@ def to_xml(xml_str: str) -> Element:
 
     parse xml string to node
     """
-    return etree.fromstring(bytes(bytearray(xml_str, encoding="utf-8")))
+    return fromstring(bytes(bytearray(xml_str, encoding="utf-8")))
 
 
 def xml_tostring(xml_element: Element, encoding: str = "utf-8") -> str:
-    return str(etree.tostring(xml_element), encoding)
+    return str(tostring(xml_element), encoding)
 
 
 def jsonify_xml(xml_str: str) -> dict:
@@ -60,15 +65,9 @@ def jsonify_xml(xml_str: str) -> dict:
     return parse(xml_str)
 
 
-class Encoder(JSONEncoder):
-    def default(self, o):
-        try:
-            return attr.asdict(o)
-        except NotAnAttrsClassError:
-            if hasattr(o, "__dict__"):
-                return o.__dict__
-            else:
-                return o
+@attr.s(auto_attribs=True)
+class JWrapper:
+    value: Any
 
 
 def jsonify(entity: Union[dict, T]) -> str:
@@ -77,8 +76,7 @@ def jsonify(entity: Union[dict, T]) -> str:
     recursively parse a data type using __dict__ into a JSON
     """
     return json.dumps(
-        entity,
-        cls=Encoder,
+        attr.asdict(JWrapper(value=entity)).get('value'),
         sort_keys=True,
         indent=4,
     )

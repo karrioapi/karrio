@@ -26,7 +26,7 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_dict)
 
-    def get_tracking(self, request: Serializable[List[str]]) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable[List[str]]) -> Deserializable[List[dict]]:
 
         def track(tracking_id):
             return {
@@ -42,5 +42,5 @@ class Proxy(BaseProxy):
                     )
                 )
             }
-        responses = exec_parrallel(track, request.serialize())
+        responses: List[dict] = exec_parrallel(track, request.serialize())
         return Deserializable(responses)

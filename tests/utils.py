@@ -1,4 +1,4 @@
-from gds_helpers import to_xml
+from purplship.core.utils.helpers import to_xml
 
 
 """ strip tabs, new line characters and spaces from text  """

@@ -3,7 +3,7 @@ from purplship.core.utils.helpers import to_dict
 from purplship.core.utils.serializable import Serializable
 from purplship.core.models import RateRequest, RateDetails, Error
 from purplship.core.units import Country
-from purplship.core.errors import OriginNotServicedError, MultiItemShipmentSupportError
+from purplship.core.errors import OriginNotServicedError
 from pysendle.quotes import DomesticParcelQuote, InternationalParcelQuote, ParcelQuoteResponse
 from purplship.carriers.sendle.error import parse_error_response
 from purplship.carriers.sendle.utils import Settings
@@ -49,8 +49,6 @@ def parcel_quote_request(payload: RateRequest, settings: Settings) -> Serializab
     """
     if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
         raise OriginNotServicedError(payload.shipper.country_code, settings.carrier_name)
-    if len(payload.shipment.items) > 1:
-        raise MultiItemShipmentSupportError(settings.carrier_name)
     is_international = (
         payload.recipient.country_code is None or payload.recipient.country_code == Country.AU.name
     )

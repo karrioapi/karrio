@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_dict
+from purplship.core.utils.helpers import to_dict
 from purplship.package import tracking
 from purplship.core.models import TrackingRequest
 from tests.caps.fixture import gateway
@@ -8,6 +8,7 @@ from tests.caps.fixture import gateway
 
 class TestCanadaPostTracking(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_PAYLOAD)
 
     def test_create_tracking_request(self):

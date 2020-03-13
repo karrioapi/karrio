@@ -1,7 +1,7 @@
 import re
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_dict
+from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
 from purplship.package import rating
 from tests.dhl.package.fixture import gateway
@@ -9,6 +9,7 @@ from tests.dhl.package.fixture import gateway
 
 class TestDHLQuote(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.RateRequest = RateRequest(**RatePayload)
 
     def test_create_rate_request(self):
@@ -61,16 +62,20 @@ if __name__ == "__main__":
 RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "shipment": {
+    "parcel": {
         "services": ["EXPRESS_WORLDWIDE_DOC"],
-        "currency": "CAD",
-        "insured_amount": 75,
-        "declared_value": 100,
-        "items": [
-            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
-        ],
-        "is_document": False,
-    }
+        "id": "1",
+        "height": 3,
+        "length": 10,
+        "width": 3,
+        "weight": 4.0,
+        "is_document": True,
+        "items": [{"value_amount": 100}],
+        "options": {
+            "currency": "CAD",
+            "insurance": {"amount": 75},
+        }
+    },
 }
 
 
@@ -219,8 +224,10 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
             <PaymentCountryCode>CA</PaymentCountryCode>
             
             
-            <DimensionUnit>IN</DimensionUnit>
-            <WeightUnit>LB</WeightUnit>
+            <DimensionUnit>I</DimensionUnit>
+            <WeightUnit>L</WeightUnit>
+            <NumberOfPieces>1</NumberOfPieces>
+            <ShipmentWeight>4.</ShipmentWeight>
             <Pieces>
                 <Piece>
                     <PieceID>1</PieceID>
@@ -234,19 +241,7 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
             <QtdShp>
                 <GlobalProductCode>D</GlobalProductCode>
                 <LocalProductCode>D</LocalProductCode>
-                <QtdShpExChrg>
-                    <SpecialServiceType>II</SpecialServiceType>
-                </QtdShpExChrg>
             </QtdShp>
-            <QtdShp>
-                <GlobalProductCode>P</GlobalProductCode>
-                <LocalProductCode>P</LocalProductCode>
-                <QtdShpExChrg>
-                    <SpecialServiceType>II</SpecialServiceType>
-                </QtdShpExChrg>
-            </QtdShp>
-            <InsuredValue>75</InsuredValue>
-            <InsuredCurrency>CAD</InsuredCurrency>
         </BkgDetails>
         <To>
             <CountryCode>TG</CountryCode>

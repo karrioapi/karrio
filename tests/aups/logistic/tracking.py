@@ -1,13 +1,14 @@
 import unittest
 from unittest.mock import patch
 from tests.aups.logistic.fixture import gateway
-from gds_helpers import to_dict, jsonify
+from purplship.core.utils.helpers import to_dict, jsonify
 from purplship.package import tracking
 from purplship.core.models import TrackingRequest
 
 
 class TestAustraliaPostTracking(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_PAYLOAD)
 
     def test_create_tracking_request(self):

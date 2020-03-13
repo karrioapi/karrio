@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_dict
+from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
 from purplship.package import shipment
 from tests.caps.fixture import gateway
@@ -9,7 +9,6 @@ from tests.caps.fixture import gateway
 class TestCanadaPostShipment(unittest.TestCase):
     def setUp(self):
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
-        self.maxDiff = True
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -30,6 +29,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         with patch("purplship.package.mappers.caps.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
+
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 shipment_data = {
     "shipper": {
         "company_name": "CGI",
-        "address_lines": ["502 MAIN ST N"],
+        "address_line_1": "502 MAIN ST N",
         "city": "MONTREAL",
         "postal_code": "H2B1A0",
         "country_code": "CA",
@@ -51,20 +51,23 @@ shipment_data = {
     },
     "recipient": {
         "company_name": "CGI",
-        "address_lines": ["23 jardin private"],
+        "address_line_1": "23 jardin private",
         "city": "Ottawa",
         "postal_code": "K1K4T3",
         "country_code": "CA",
         "person_name": "Jain",
         "state_code": "ON",
     },
-    "shipment": {
-        "items": [{"height": 9, "length": 6, "width": 12, "weight": 20.0}],
+    "parcel": {
+        "height": 9,
+        "length": 6,
+        "width": 12,
+        "weight": 20.0,
         "services": ["Expedited_Parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
+        "options": {"Collect_on_delivery": True},
     },
-    "options": {"Collect_on_delivery": True},
 }
 
 
@@ -124,6 +127,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <contact-phone>1 (450) 823-8432</contact-phone>
             <address-details>
                 <address-line-1>502 MAIN ST N</address-line-1>
+                <address-line-2></address-line-2>
                 <city>MONTREAL</city>
                 <prov-state>QC</prov-state>
                 <country-code>CA</country-code>
@@ -135,17 +139,13 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <company>CGI</company>
             <address-details>
                 <address-line-1>23 jardin private</address-line-1>
+                <address-line-2></address-line-2>
                 <city>Ottawa</city>
                 <prov-state>ON</prov-state>
                 <country-code>CA</country-code>
                 <postal-zip-code>K1K4T3</postal-zip-code>
             </address-details>
         </destination>
-        <options>
-            <option>
-                <option-code>COD</option-code>
-            </option>
-        </options>
         <parcel-characteristics>
             <weight>20.</weight>
             <dimensions>
@@ -162,6 +162,9 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <show-postage-rate>true</show-postage-rate>
             <show-insured-value>true</show-insured-value>
         </preferences>
+        <references>
+            <customer-ref-1></customer-ref-1>
+        </references>
     </delivery-spec>
 </shipment>
 """

@@ -5,13 +5,14 @@ from jstruct import JList, JStruct, REQUIRED
 
 
 @attr.s(auto_attribs=True)
-class Party:
+class Address:
     """shipping party (contact and address) type."""
 
     postal_code: str = None
     city: str = None
     type: str = None
-    tax_id: str = None
+    federal_tax_id: str = None
+    state_tax_id: str = None
     account_number: str = None
     person_name: str = None
     company_name: str = None
@@ -22,15 +23,32 @@ class Party:
     state: str = None
     state_code: str = None
     suburb: str = None
+    residential: bool = False
 
-    address_line_1: str = None
-    address_line_2: str = None
-    address_lines: List[str] = []
+    address_line_1: str = ""
+    address_line_2: str = ""
 
 
 @attr.s(auto_attribs=True)
 class Item:
-    """item type (can be a package or a commodity)."""
+    """item type is a commodity."""
+
+    id: str = None
+    weight: float = None
+    width: float = None
+    height: float = None
+    length: float = None
+    description: str = None
+    quantity: int = 1
+    sku: str = None
+    value_amount: float = None
+    value_currency: str = None
+    origin_country: str = None
+
+
+@attr.s(auto_attribs=True)
+class Parcel:
+    """item type."""
 
     weight: float
     id: str = None
@@ -38,26 +56,15 @@ class Item:
     height: float = None
     length: float = None
     packaging_type: str = None
+    reference: str = ""
     description: str = None
     content: str = None
-    quantity: int = 1
-    sku: str = None
-    code: str = None
-    value_amount: float = None
-    value_currency: str = None
-    origin_country: str = None
-
-
-@attr.s(auto_attribs=True)
-class Customs:
-    """customs type."""
-
-    no_eei: str = None
-    aes: str = None
-    description: str = None
-    terms_of_trade: str = None
+    is_document: bool = False
+    weight_unit: str = "LB"
+    dimension_unit: str = "IN"
+    services: List[str] = []
+    options: Dict = {}
     items: List[Item] = JList[Item]
-    commercial_invoice: bool = False
 
 
 @attr.s(auto_attribs=True)
@@ -71,6 +78,31 @@ class Invoice:
 
 
 @attr.s(auto_attribs=True)
+class Payment:
+    """payment configuration type."""
+
+    description: str = None
+    amount: float = None
+    currency: str = None
+    paid_by: str = None
+    account_number: str = None
+
+
+@attr.s(auto_attribs=True)
+class Customs:
+    """customs type."""
+
+    no_eei: str = None
+    aes: str = None
+    description: str = None
+    terms_of_trade: str = None
+    items: List[Item] = JList[Item]
+    invoice: Invoice = JStruct[Invoice]
+    duty_payment: Payment = JStruct[Payment]
+    commercial_invoice: bool = False
+
+
+@attr.s(auto_attribs=True)
 class Doc:
     """document image type."""
 
@@ -80,50 +112,26 @@ class Doc:
 
 
 @attr.s(auto_attribs=True)
-class Shipment:
-    """shipment configuration type."""
-
-    items: List[Item] = JList[Item]
-    insured_amount: float = None
-    total_items: int = None
-    packaging_type: str = None
-    is_document: bool = False
-    total_weight: float = None
-    weight_unit: str = "LB"
-    dimension_unit: str = "IN"
-
-    currency: str = None
-    paid_by: str = None
-    declared_value: float = None
-    payment_type: str = None
-    duty_paid_by: str = None
-    duty_payment_account: str = None
-    payment_country_code: str = None
-    payment_account_number: str = None
-
-    date: str = None
-    customs: Customs = JStruct[Customs]
-    invoice: Invoice = JStruct[Invoice]
-    doc_images: List[Doc] = JList[Doc]
-
-    references: List[str] = []
-    services: List[str] = []
-
-    label: Doc = JStruct[Doc]
-
-
-@attr.s(auto_attribs=True)
 class ShipmentRequest:
     """shipment request type."""
 
-    shipper: Union[Party, Dict] = JStruct[Party, REQUIRED]
-    recipient: Union[Party, Dict] = JStruct[Party, REQUIRED]
-    shipment: Union[Shipment, Dict] = JStruct[Shipment, REQUIRED]
+    shipper: Address = JStruct[Address, REQUIRED]
+    recipient: Address = JStruct[Address, REQUIRED]
+    parcel: Parcel = JStruct[Parcel, REQUIRED]
+
+    payment: Payment = JStruct[Payment]
+    customs: Customs = JStruct[Customs]
+    doc_images: List[Doc] = JList[Doc]
+    label: Doc = JStruct[Doc]
+
     options: Dict = {}
 
 
-class RateRequest(ShipmentRequest):
-    pass
+@attr.s(auto_attribs=True)
+class RateRequest:
+    shipper: Address = JStruct[Address, REQUIRED]
+    recipient: Address = JStruct[Address, REQUIRED]
+    parcel: Parcel = JStruct[Parcel, REQUIRED]
 
 
 @attr.s(auto_attribs=True)
@@ -140,37 +148,29 @@ class PickupRequest:
     """pickup request type."""
 
     date: str
-    account_number: str
-    weight: float = None
-    weight_unit: str = None
-    pieces: float = None
+
+    address: Address = JStruct[Address, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
+
     ready_time: str = None
     closing_time: str = None
     instruction: str = None
     package_location: str = None
 
-    city: str = None
-    postal_code: str = None
-    person_name: str = None
-    company_name: str = None
-    phone_number: str = None
-    email_address: str = None
-    is_business: bool = True
-
-    """ state or province """
-    state: str = None
-    state_code: str = None
-
-    country_code: str = None
-
-    address_lines: List[str] = []
-
 
 @attr.s(auto_attribs=True)
-class PickupUpdateRequest(PickupRequest):
+class PickupUpdateRequest:
     """pickup update request type."""
 
+    date: str
+    address: Address = JStruct[Address, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
+
     confirmation_number: str = None
+    ready_time: str = None
+    closing_time: str = None
+    instruction: str = None
+    package_location: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -181,6 +181,27 @@ class PickupCancellationRequest:
     confirmation_number: str
     person_name: str = None
     country_code: str = None
+
+
+""" Unified option data types """
+
+
+@attr.s(auto_attribs=True)
+class COD:
+    """cash on delivery option type."""
+
+    amount: float
+    currency: str
+
+
+@attr.s(auto_attribs=True)
+class Insurance:
+    """insurance option type."""
+
+    amount: float
+    currency: str
+    provider: str
+    description: str = None
 
 
 """ Unified response data types """

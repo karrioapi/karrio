@@ -5,7 +5,7 @@ from typing import List, Tuple, Optional
 from pydhl.ship_val_global_req_6_2 import (
     ShipmentRequest as DHLShipmentRequest, Billing, Consignee, Contact, Commodity,
     Shipper, ShipmentDetails as DHLShipmentDetails, Pieces, Piece, Reference,
-    SpecialService, DocImage, DocImages, Dutiable, MetaData
+    DocImage, DocImages, Dutiable, MetaData
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
@@ -15,7 +15,7 @@ from purplship.core.models import (
 )
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit
 from purplship.carriers.dhl.units import (
-    PackageType, Service, Product, PayorType, Dimension as DHLDimension, WeightUnit as DHLWeightUnit, CountryRegion,
+    PackageType, Product, PayorType, Dimension as DHLDimensionUnit, WeightUnit as DHLWeightUnit, CountryRegion,
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -70,22 +70,15 @@ def _extract_shipment(shipment_response_node, settings: Settings) -> Optional[Sh
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[DHLShipmentRequest]:
-    dimension_unit = payload.shipment.dimension_unit or "IN"
-    weight_unit = payload.shipment.weight_unit or "LB"
-    is_dutiable = payload.shipment.declared_value is not None
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    currency = payload.parcel.options.get('currency', "USD")
     default_product_code = (
-        Product.EXPRESS_WORLDWIDE_DOC if payload.shipment.is_document else Product.EXPRESS_WORLDWIDE
+        Product.EXPRESS_WORLDWIDE_DOC if payload.parcel.is_document else Product.EXPRESS_WORLDWIDE
     )
     product = (
-        [Product[svc] for svc in payload.shipment.services if svc in Product.__members__] + [default_product_code]
+        [Product[svc] for svc in payload.parcel.services if svc in Product.__members__] + [default_product_code]
     )[0]
-    default_packaging_type = (
-        PackageType.Document if payload.shipment.is_document else PackageType.Your_packaging
-    )
-    options = dict(
-        [(code, value) for code, value in payload.options.items() if code in Service.__members__] +
-        ([] if not payload.shipment.insured_amount else [(Service.Shipment_Insurance.value, payload.shipment.insured_amount)])
-    )
 
     request = DHLShipmentRequest(
         schemaVersion=6.2,
@@ -97,27 +90,28 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         LatinResponseInd=None,
         Billing=Billing(
             ShipperAccountNumber=payload.shipper.account_number,
-            BillingAccountNumber=payload.shipment.payment_account_number,
+            BillingAccountNumber=payload.payment.account_number,
             ShippingPaymentType=(
-                PayorType[payload.shipment.paid_by].value if payload.shipment.paid_by is not None else None
-            ),
-            DutyAccountNumber=payload.shipment.duty_payment_account,
+                PayorType[payload.payment.paid_by].value if payload.payment.paid_by is not None else None
+            ) if payload.payment is not None else None,
+            DutyAccountNumber=payload.customs.duty_payment.account_number,
             DutyPaymentType=(
-                PayorType[payload.shipment.duty_paid_by].value if payload.shipment.duty_paid_by is not None else None
-            ),
+                PayorType[payload.customs.duty_payment.paid_by].value
+                if payload.customs.duty_payment.paid_by is not None else None
+            ) if all([payload.customs, payload.customs.duty_payment]) else None,
         ),
         Consignee=Consignee(
             CompanyName=payload.recipient.company_name,
             SuiteDepartmentName=None,
-            AddressLine=payload.recipient.address_lines,
+            AddressLine=[" ".join([payload.recipient.address_line_1, payload.recipient.address_line_2])],
             City=payload.recipient.city,
             Division=payload.recipient.state,
             DivisionCode=payload.recipient.state_code,
             PostalCode=payload.recipient.postal_code,
             CountryCode=payload.recipient.country_code,
             CountryName=None,
-            FederalTaxId=payload.shipper.tax_id,
-            StateTaxId=None,
+            FederalTaxId=payload.shipper.federal_tax_id,
+            StateTaxId=payload.shipper.state_tax_id,
             Contact=(
                 Contact(
                     PersonName=payload.recipient.person_name,
@@ -135,13 +129,13 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             Suburb=None,
         ),
         Commodity=[
-            Commodity(CommodityCode=c.code, CommodityName=c.description) for c in payload.shipment.items
+            Commodity(CommodityCode=c.sku, CommodityName=c.description) for c in payload.parcel.items
         ],
         NewShipper=None,
         Shipper=Shipper(
             ShipperID=payload.shipper.account_number,
             RegisteredAccount=payload.shipper.account_number,
-            AddressLine=payload.shipper.address_lines,
+            AddressLine=[" ".join([payload.shipper.address_line_1, payload.shipper.address_line_2])],
             CompanyName=payload.shipper.company_name,
             PostalCode=payload.shipper.postal_code,
             CountryCode=payload.shipper.country_code,
@@ -160,43 +154,34 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     MobilePhoneNumber=None,
                 )
                 if any(
-                    [payload.shipper.person_name, payload.shipper.phone_number, payload.shipper.email_address,]
+                    [payload.shipper.person_name, payload.shipper.phone_number, payload.shipper.email_address]
                 ) else None
             ),
         ),
         ShipmentDetails=DHLShipmentDetails(
-            NumberOfPieces=len(payload.shipment.items),
+            NumberOfPieces=None,
             Pieces=Pieces(
                 Piece=[
                     Piece(
-                        PieceID=p.id or index,
-                        PackageType=(
-                            PackageType[p.packaging_type] if p.packaging_type is not None else default_packaging_type
-                        ).value,
-                        Depth=p.length,
-                        Width=Dimension(p.width, DimensionUnit[dimension_unit]).IN,
-                        Height=Dimension(p.height, DimensionUnit[dimension_unit]).IN,
-                        Weight=Weight(p.weight, WeightUnit[weight_unit]).LB,
+                        PieceID=payload.parcel.id,
+                        PackageType=PackageType[payload.parcel.packaging_type or "BOX"].value,
+                        Depth=Dimension(payload.parcel.length, dimension_unit).value,
+                        Width=Dimension(payload.parcel.width, dimension_unit).value,
+                        Height=Dimension(payload.parcel.height, dimension_unit).value,
+                        Weight=Weight(payload.parcel.weight, weight_unit).value,
                         DimWeight=None,
-                        PieceContents=p.content,
+                        PieceContents=payload.parcel.description,
                     )
-                    for index, p in enumerate(payload.shipment.items)
                 ]
             ),
-            Weight=Weight(
-                payload.shipment.total_weight or sum(p.weight for p in payload.shipment.items),
-                WeightUnit[weight_unit]
-            ).LB,
-            CurrencyCode=payload.shipment.currency or "USD",
-            WeightUnit=DHLWeightUnit[weight_unit].value,
-            DimensionUnit=DHLDimension[dimension_unit].value,
-            Date=payload.shipment.date or time.strftime("%Y-%m-%d"),
-            PackageType=(
-                PackageType[payload.shipment.packaging_type].value
-                if payload.shipment.packaging_type is not None else None
-            ),
-            IsDutiable="Y" if is_dutiable else "N",
-            InsuredAmount=payload.shipment.insured_amount,
+            Weight=Weight(payload.parcel.weight, weight_unit).value,
+            CurrencyCode=currency,
+            WeightUnit=DHLWeightUnit[weight_unit.name].value,
+            DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
+            Date=time.strftime("%Y-%m-%d"),
+            PackageType=PackageType[payload.parcel.packaging_type or "BOX"].value,
+            IsDutiable="Y" if payload.customs is not None else "N",
+            InsuredAmount=None,
             DoorTo=payload.options.get("DoorTo"),
             GlobalProductCode=product.value,
             LocalProductCode=product.value,
@@ -204,51 +189,32 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ),
         EProcShip=None,
         Dutiable=Dutiable(
-            DeclaredCurrency=payload.shipment.currency or "USD",
-            DeclaredValue=payload.shipment.declared_value,
-            TermsOfTrade=payload.shipment.customs.terms_of_trade,
+            DeclaredCurrency=payload.customs.duty_payment.currency or "USD",
+            DeclaredValue=payload.customs.duty_payment.amount,
+            TermsOfTrade=payload.customs.terms_of_trade,
             ScheduleB=None,
             ExportLicense=None,
             ShipperEIN=None,
             ShipperIDType=None,
             ImportLicense=None,
             ConsigneeEIN=None,
-        )
-        if is_dutiable
-        else None,
+        ) if payload.customs is not None else None,
         ExportDeclaration=None,
-        Reference=[
-            Reference(ReferenceID=r) for r in payload.shipment.references
-        ],
-        SpecialService=(
-            [
-                SpecialService(
-                    SpecialServiceType=Service[code].value,
-                    CommunicationAddress=None,
-                    CommunicationType=None,
-                    ChargeValue=None,
-                    CurrencyCode=payload.shipment.currency,
-                    IsWaived=None,
-                )
-                for code, _ in options.items()
-            ] if len(options) > 0 else None
-        ),
+        Reference=[Reference(ReferenceID=payload.parcel.reference)],
+        SpecialService=None,
         LabelImageFormat=(
-            payload.shipment.label.format if payload.shipment.label is not None else None
+            payload.label.format if payload.label is not None else None
         ),
-        DocImages=(
-            DocImages(
-                DocImage=[
-                    DocImage(
-                        Type=doc.type,
-                        ImageFormat=doc.format,
-                        Image=b64decode(doc.image + "=" * (-len(doc.image) % 4)),
-                    )
-                    for doc in payload.shipment.doc_images
-                ]
-            )
-            if len(payload.shipment.doc_images) > 0 else None
-        ),
+        DocImages=DocImages(
+            DocImage=[
+                DocImage(
+                    Type=doc.type,
+                    ImageFormat=doc.format,
+                    Image=b64decode(doc.image + "=" * (-len(doc.image) % 4)),
+                )
+                for doc in payload.doc_images
+            ]
+        ) if len(payload.doc_images) > 0 else None,
         RequestArchiveDoc=None,
         NumberOfArchiveDoc=None,
         Label=None,

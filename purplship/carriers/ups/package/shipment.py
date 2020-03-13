@@ -1,28 +1,25 @@
-from typing import List
-from functools import partial
+from typing import List, Tuple
 from pyups import common
 from pyups.ship_web_service_schema import (
     ShipmentRequest as UPSShipmentRequest, ShipmentResponse, ShipmentType, ShipperType,
-    ShipPhoneType, ShipToType, ShipAddressType,
-    PaymentInfoType, ShipmentChargeType, BillShipperType, BillReceiverType,
-    BillReceiverAddressType, BillThirdPartyChargeType, ServiceType, PackageType, PackagingType,
+    ShipPhoneType, ShipToType, ShipAddressType, ServiceType, PackageType, PackagingType,
     DimensionsType, PackageWeightType, ShipUnitOfMeasurementType, LabelSpecificationType, LabelImageFormatType
 )
-from purplship.core.utils.helpers import export
+from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.units import DimensionUnit
 from purplship.core.utils.xml import Element
+from purplship.core.units import DimensionUnit, Weight, WeightUnit, Dimension
 from purplship.core.models import (
-    ShipmentRequest, ChargeDetails, ShipmentDetails, Error, ReferenceDetails, Party
+    ShipmentRequest, ChargeDetails, ShipmentDetails, Error, ReferenceDetails
 )
-from purplship.carriers.ups.units import ShippingPackagingType, ShippingServiceCode, WeightUnit
+from purplship.carriers.ups.units import ShippingPackagingType, ShippingServiceCode, WeightUnit as UPSWeightUnit
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
 
-def parse_shipment_response(response: Element, settings: Settings) -> (ShipmentDetails, List[Error]):
-    details = response.xpath(".//*[local-name() = $name]", name="FreightShipResponse")
+def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Error]]:
+    details = response.xpath(".//*[local-name() = $name]", name="ShipmentResponse")
     shipment = _extract_shipment(details[0], settings) if len(details) > 0 else None
     return shipment, parse_error_response(response, settings)
 
@@ -32,16 +29,10 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
     shipmentResponse.build(shipment_node)
     shipment = shipmentResponse.ShipmentResults
 
-    if not shipment.NegotiatedRateCharges:
-        total_charge = (
-            shipment.ShipmentCharges.TotalChargesWithTaxes
-            or shipment.ShipmentCharges.TotalCharges
-        )
+    if shipment.NegotiatedRateCharges is None:
+        total_charge = shipment.ShipmentCharges.TotalCharges
     else:
-        total_charge = (
-            shipment.NegotiatedRateCharges.TotalChargesWithTaxes
-            or shipment.NegotiatedRateCharges.TotalCharge
-        )
+        total_charge = shipment.NegotiatedRateCharges.TotalCharge
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
@@ -76,37 +67,37 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[UPSShipmentRequest]:
-    services = [ShippingServiceCode[svc] for svc in payload.shipment.services if svc in ShippingServiceCode.__members__]
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    services = [ShippingServiceCode[svc] for svc in payload.parcel.services if svc in ShippingServiceCode.__members__]
     request = UPSShipmentRequest(
         Request=common.RequestType(
             RequestOption=["validate"],
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
-                CustomerContext=", ".join(payload.shipment.references),
+                CustomerContext=payload.parcel.reference,
                 TransactionIdentifier=None,
             ),
         ),
         Shipment=ShipmentType(
-            Description=None,
+            Description=payload.parcel.description,
             ReturnService=None,
-            DocumentsOnlyIndicator="" if payload.shipment.is_document else None,
+            DocumentsOnlyIndicator="" if payload.parcel.is_document else None,
             Shipper=ShipperType(
                 Name=payload.shipper.company_name,
                 AttentionName=payload.shipper.person_name,
                 CompanyDisplayableName=None,
-                TaxIdentificationNumber=payload.shipper.tax_id,
+                TaxIdentificationNumber=payload.shipper.federal_tax_id,
                 TaxIDType=None,
                 Phone=ShipPhoneType(
                     Number=payload.shipper.phone_number,
                     Extension=None,
-                )
-                if payload.shipper.phone_number is not None
-                else None,
+                ) if payload.shipper.phone_number is not None else None,
                 ShipperNumber=payload.shipper.account_number,
                 FaxNumber=None,
                 EMailAddress=payload.shipper.email_address,
                 Address=ShipAddressType(
-                    AddressLine=payload.shipper.address_lines,
+                    AddressLine=concat_str(payload.shipper.address_line_1, payload.shipper.address_line_2),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
                     PostalCode=payload.shipper.postal_code,
@@ -117,7 +108,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 Name=payload.recipient.company_name,
                 AttentionName=payload.recipient.person_name,
                 CompanyDisplayableName=None,
-                TaxIdentificationNumber=payload.recipient.tax_id,
+                TaxIdentificationNumber=payload.recipient.federal_tax_id,
                 TaxIDType=None,
                 Phone=ShipPhoneType(
                     Number=payload.recipient.phone_number,
@@ -128,7 +119,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 FaxNumber=None,
                 EMailAddress=payload.recipient.email_address,
                 Address=ShipAddressType(
-                    AddressLine=payload.recipient.address_lines,
+                    AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
                     PostalCode=payload.recipient.postal_code,
@@ -138,35 +129,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             ),
             AlternateDeliveryAddress=None,
             ShipFrom=None,
-            PaymentInformation=PaymentInfoType(
-                ShipmentCharge=[
-                    ShipmentChargeType(
-                        Type=None,
-                        BillShipper=BillShipperType(
-                            AccountNumber=payload.shipment.payment_account_number or payload.shipper.account_number,
-                            CreditCard=None,
-                            AlternatePaymentMethod=payload.shipment.payment_type,
-                        )
-                        if payload.shipment.paid_by == "SENDER" else None,
-                        BillReceiver=BillReceiverType(
-                            AccountNumber=payload.recipient.account_number,
-                            Address=BillReceiverAddressType(
-                                PostalCode=payload.recipient.postal_code
-                            ),
-                        )
-                        if not payload.shipment.paid_by
-                        else None,
-                        BillThirdParty=BillThirdPartyChargeType(
-                            AccountNumber=payload.shipment.payment_account_number,
-                            Address=None,
-                        )
-                        if payload.shipment.paid_by == "THIRD_PARTY"
-                        else None,
-                        ConsigneeBilledIndicator=None,
-                    )
-                ],
-                SplitDutyVATIndicator=None,
-            ),
+            PaymentInformation=None,
             FRSPaymentInformation=None,
             FreightShipmentInformation=None,
             GoodsNotInFreeCirculationIndicator=None,
@@ -177,7 +140,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             if len(services) > 0
             else None,
             InvoiceLineTotal=None,
-            NumOfPiecesInShipment=payload.shipment.total_items,
+            NumOfPiecesInShipment=None,
             USPSEndorsement=None,
             MILabelCN22Indicator=None,
             SubClassification=None,
@@ -193,31 +156,29 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             ShipmentServiceOptions=None,
             Package=[
                 PackageType(
-                    Description=pkg.description,
+                    Description=payload.parcel.description,
                     Packaging=PackagingType(
-                        Code=ShippingPackagingType[pkg.packaging_type].value,
+                        Code=ShippingPackagingType[payload.parcel.packaging_type].value,
                         Description=None,
                     )
-                    if pkg.packaging_type is not None
+                    if payload.parcel.packaging_type is not None
                     else None,
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
-                            Code=DimensionUnit[
-                                payload.shipment.dimension_unit
-                            ].value,
+                            Code=dimension_unit.value,
                             Description=None,
                         ),
-                        Length=pkg.length,
-                        Width=pkg.width,
-                        Height=pkg.height,
+                        Length=Dimension(payload.parcel.length, dimension_unit).value,
+                        Width=Dimension(payload.parcel.width, dimension_unit).value,
+                        Height=Dimension(payload.parcel.height, dimension_unit).value,
                     ),
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
-                            Code=WeightUnit[payload.shipment.weight_unit].value,
+                            Code=UPSWeightUnit[weight_unit.name].value,
                             Description=None,
                         ),
-                        Weight=pkg.weight,
+                        Weight=Weight(payload.parcel.weight, weight_unit).value,
                     ),
                     LargePackageIndicator=None,
                     ReferenceNumber=None,
@@ -226,44 +187,41 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     Commodity=None,
                     HazMatPackageInformation=None,
                 )
-                for pkg in payload.shipment.items
             ],
         ),
         LabelSpecification=LabelSpecificationType(
             LabelImageFormat=LabelImageFormatType(
-                Code=payload.shipment.label.format,
-                Description=payload.shipment.label.format,
+                Code=payload.label.format,
+                Description=payload.label.format,
             ),
             HTTPUserAgent=None,
             LabelStockSize=None,
             Instruction=None,
         )
-        if payload.shipment.label is not None
+        if payload.label is not None
         else None,
         ReceiptSpecification=None,
     )
-    return Serializable(request, lambda _: partial(_request_serializer, settings=settings)(_))
+    return Serializable(
+        create_envelope(header_content=settings.Security, body_content=request),
+        _request_serializer
+    )
 
 
-def _request_serializer(request: UPSShipmentRequest, settings: Settings) -> str:
+def _request_serializer(request: Element) -> str:
     namespace_ = """
-                    xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
-                    xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" 
-                    xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" 
-                    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" 
-                    xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" 
-                    xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"
-                """.replace(" ", "").replace("\n", " ")
+        xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"
+        xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"
+        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"
+        xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"
+        xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0"
+    """.replace(" ", "").replace("\n", " ")
     return clean_namespaces(
-        export(
-            create_envelope(
-                header_content=settings.Security,
-                body_content=request
-            ),
-            namespacedef_=namespace_,
-        ),
+        export(request, namespacedef_=namespace_),
         envelope_prefix="tns:",
         header_child_prefix="upss:",
         body_child_prefix="ship:",

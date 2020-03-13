@@ -27,9 +27,11 @@ jobs:
         pip install coverage
         pip install codecov
         pip install .
-    - name: Test with pytest
+    - name: Test with Python unittest
       run: |
         coverage run --include='purplship/*' -m unittest -v -f
         mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
         coverage report -m
         codecov
+      env:
+        CODECOV_TOKEN: f86de243-0032-429c-9fd2-254728e648e1

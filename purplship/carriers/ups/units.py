@@ -199,3 +199,24 @@ class ServiceOption(Enum):
 class WeightUnit(Enum):
     KG = "KGS"
     LB = "LBS"
+
+
+class FreightClass(Enum):
+    ups_freight_class_50 = 50
+    ups_freight_class_55 = 55
+    ups_freight_class_60 = 60
+    ups_freight_class_65 = 65
+    ups_freight_class_70 = 70
+    ups_freight_class_77_5 = 77.5
+    ups_freight_class_85 = 85
+    ups_freight_class_92_5 = 92.5
+    ups_freight_class_100 = 100
+    ups_freight_class_110 = 110
+    ups_freight_class_125 = 125
+    ups_freight_class_150 = 150
+    ups_freight_class_175 = 175
+    ups_freight_class_200 = 200
+    ups_freight_class_250 = 250
+    ups_freight_class_300 = 300
+    ups_freight_class_400 = 400
+    ups_freight_class_500 = 500

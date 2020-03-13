@@ -4,17 +4,19 @@ from functools import reduce
 from typing import List, Tuple
 from pydhl.dct_req_global_2_0 import (
     DCTRequest, DCTTo, DCTFrom, GetQuoteType, BkgDetailsType, PiecesType, MetaData,
-    PieceType, QtdShpType, QtdShpExChrgType, DCTDutiable
+    PieceType, QtdShpType
 )
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit, WeightUnit, Currency, Weight, Dimension
+from purplship.core.units import DimensionUnit, WeightUnit, Weight, Dimension
 from purplship.core.models import (
     RateDetails, Error, ChargeDetails, RateRequest
 )
-from purplship.carriers.dhl.units import Product, Service, DCTPackageType
+from purplship.carriers.dhl.units import (
+    Product, DCTPackageType, Dimension as DHLDimensionUnit, WeightUnit as DHLWeightUnit
+)
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
 
@@ -71,38 +73,11 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 
 
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
-    dimension_unit = payload.shipment.dimension_unit or "IN"
-    weight_unit = payload.shipment.weight_unit or "LB"
-    default_product_code = (
-        Product.EXPRESS_WORLDWIDE_DOC
-        if payload.shipment.is_document
-        else Product.EXPRESS_WORLDWIDE
-    )
+    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
+    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     products = [
-        Product[svc]
-        for svc in payload.shipment.services
-        if svc in Product.__members__
-    ] + [default_product_code]
-    is_dutiable = not payload.shipment.declared_value
-    default_packaging_type = (
-        DCTPackageType.SM if payload.shipment.is_document else DCTPackageType.BOX
-    )
-    option_codes = [code for code in payload.options.keys()]
-    options = (
-        [Service[code] for code in option_codes if code in Service.__members__] +
-        (
-            []
-            if not payload.shipment.insured_amount
-            or "Shipment_Insurance" in option_codes
-            else [Service.Shipment_Insurance]
-        ) +
-        (
-            []
-            if not is_dutiable
-            or "Duties_and_Taxes_Paid" in option_codes
-            else [Service.Duties_and_Taxes_Paid]
-        )
-    )
+        Product[svc].value for svc in payload.parcel.services if svc in Product.__members__
+    ]
 
     request = DCTRequest(
         schemaVersion=2.0,
@@ -121,64 +96,43 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 Suburb=payload.recipient.state_code,
             ),
             BkgDetails=BkgDetailsType(
-                PaymentCountryCode=payload.shipment.payment_country_code or "CA",
+                PaymentCountryCode=payload.shipper.country_code,
                 NetworkTypeCode=None,
-                WeightUnit=WeightUnit[weight_unit].value,
-                DimensionUnit=DimensionUnit[dimension_unit].value,
+                WeightUnit=DHLWeightUnit[weight_unit.name].value,
+                DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
-                IsDutiable="Y" if is_dutiable else "N",
+                IsDutiable='N' if payload.parcel.is_document else 'Y',  # TODO:: update this using proper options
                 Pieces=PiecesType(
                     Piece=[
                         PieceType(
-                            PieceID=piece.id or str(index),
-                            PackageTypeCode=(
-                                DCTPackageType[piece.packaging_type].value
-                                if piece.packaging_type is not None
-                                else default_packaging_type
-                            ).value,
-                            Depth=Dimension(piece.length, DimensionUnit[dimension_unit]).IN,
-                            Width=Dimension(piece.width, DimensionUnit[dimension_unit]).IN,
-                            Height=Dimension(piece.height, DimensionUnit[dimension_unit]).IN,
-                            Weight=Weight(piece.weight, WeightUnit[weight_unit]).LB,
+                            PieceID=payload.parcel.id,
+                            PackageTypeCode=DCTPackageType[payload.parcel.packaging_type or "BOX"].value,
+                            Depth=Dimension(payload.parcel.length, dimension_unit).value,
+                            Width=Dimension(payload.parcel.width, dimension_unit).value,
+                            Height=Dimension(payload.parcel.height, dimension_unit).value,
+                            Weight=Weight(payload.parcel.weight, weight_unit).value,
                         )
-                        for index, piece in enumerate(payload.shipment.items)
                     ]
                 ),
-                NumberOfPieces=payload.shipment.total_items,
-                ShipmentWeight=payload.shipment.total_weight,
+                NumberOfPieces=len(payload.parcel.items),
+                ShipmentWeight=Weight(payload.parcel.weight, weight_unit).value,
                 Volume=None,
-                PaymentAccountNumber=payload.shipment.payment_account_number,
-                InsuredCurrency=(
-                    (payload.shipment.currency or Currency.USD.name)
-                    if Service.Shipment_Insurance in options else None
-                ),
-                InsuredValue=payload.shipment.insured_amount,
-                PaymentType=payload.shipment.payment_type,
+                PaymentAccountNumber=payload.shipper.account_number,
+                InsuredCurrency=None,
+                InsuredValue=None,
+                PaymentType=None,
                 AcctPickupCloseTime=None,
                 QtdShp=[
                     QtdShpType(
-                        GlobalProductCode=product.value,
-                        LocalProductCode=product.value,
-                        QtdShpExChrg=[
-                            QtdShpExChrgType(
-                                SpecialServiceType=svc.value,
-                                LocalSpecialServiceType=None,
-                            )
-                            for svc in options
-                        ]
-                        if len(options) > 0 else None,
+                        GlobalProductCode=product,
+                        LocalProductCode=product,
+                        QtdShpExChrg=None,
                     )
                     for product in products
                 ],
             ),
-            Dutiable=(
-                DCTDutiable(
-                    DeclaredCurrency=payload.shipment.currency or Currency.USD.name,
-                    DeclaredValue=payload.shipment.declared_value or 0,
-                )
-                if is_dutiable else None
-            ),
+            Dutiable=None,
         )
     )
     return Serializable(request, _request_serializer)

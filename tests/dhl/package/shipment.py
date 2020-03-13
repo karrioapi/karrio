@@ -1,7 +1,7 @@
 import re
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_dict
+from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
 from purplship.package import shipment
 from tests.dhl.package.fixture import gateway
@@ -12,6 +12,7 @@ class TestDHLShipment(unittest.TestCase):
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
 
     def test_create_shipment_request(self):
+        self.maxDiff = None
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         # remove MessageTime, Date for testing purpose
@@ -179,9 +180,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     </Billing>
     <Consignee>
         <CompanyName>IBM Bruse Pte Ltd</CompanyName>
-        <AddressLine>9 Business Park Central 1</AddressLine>
-        <AddressLine>3th Floor</AddressLine>
-        <AddressLine>The IBM Place</AddressLine>
+        <AddressLine>9 Business Park Central 13th Floor The IBM Place </AddressLine>
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
@@ -200,8 +199,10 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <DeclaredCurrency>USD</DeclaredCurrency>
         <TermsOfTrade>DAP</TermsOfTrade>
     </Dutiable>
+    <Reference>
+        <ReferenceID></ReferenceID>
+    </Reference>
     <ShipmentDetails>
-        <NumberOfPieces>1</NumberOfPieces>
         <Pieces>
             <Piece>
                 <PieceID>1</PieceID>
@@ -219,6 +220,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         
         <Contents>...</Contents>
         <DimensionUnit>I</DimensionUnit>
+        <PackageType>EE</PackageType>
         <IsDutiable>Y</IsDutiable>
         <CurrencyCode>USD</CurrencyCode>
     </ShipmentDetails>
@@ -226,7 +228,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <ShipperID>123456789</ShipperID>
         <CompanyName>shipper company privated limited 12</CompanyName>
         <RegisteredAccount>123456789</RegisteredAccount>
-        <AddressLine>238 850925434 Drive</AddressLine>
+        <AddressLine>238 850925434 Drive </AddressLine>
         <City>Scottsdale</City>
         <Division>Arizona</Division>
         <DivisionCode>AZ</DivisionCode>
@@ -238,9 +240,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
             <Email>test@email.com</Email>
         </Contact>
     </Shipper>
-    <SpecialService>
-        <SpecialServiceType>WY</SpecialServiceType>
-    </SpecialService>
     <DocImages>
         <DocImage>
             <Type>CIN</Type>
@@ -416,7 +415,7 @@ ShipmentResponseXml = """<?xml version="1.0" encoding="UTF-8"?>
 shipment_data = {
     "shipper": {
         "company_name": "shipper company privated limited 12",
-        "address_lines": ["238 850925434 Drive"],
+        "address_line_1": "238 850925434 Drive",
         "city": "Scottsdale",
         "postal_code": "85260",
         "country_code": "US",
@@ -429,7 +428,7 @@ shipment_data = {
     },
     "recipient": {
         "company_name": "IBM Bruse Pte Ltd",
-        "address_lines": ["9 Business Park Central 1", "3th Floor", "The IBM Place"],
+        "address_line_1": "9 Business Park Central 13th Floor The IBM Place",
         "city": "Brussels",
         "postal_code": "1060",
         "country_code": "BE",
@@ -437,36 +436,35 @@ shipment_data = {
         "phone_number": "506-851-2271",
         "email_address": "c_orlander@gc.ca",
     },
-    "shipment": {
-        "items": [
-            {
-                "id": "1",
-                "height": 3,
-                "length": 10,
-                "width": 3,
-                "weight": 4.0,
-                "packaging_type": "DHL_Express_Envelope",
-                "code": "cc",
-                "description": "cn",
-            }
-        ],
+    "parcel": {
+        "id": "1",
+        "height": 3,
+        "length": 10,
+        "width": 3,
+        "weight": 4.0,
+        "packaging_type": "DHL_Express_Envelope",
+        "items": [{"description": "cn", "sku": "cc"}],
         "is_document": False,
-        "paid_by": "SENDER",
-        "payment_account_number": "123456789",
-        "duty_paid_by": "SENDER",
-        "duty_payment_account": "123456789",
-        "declared_value": 200.00,
         "services": ["EXPRESS_WORLDWIDE"],
-        "doc_images": [
-            {
-                "type": "CIN",
-                "format": "PDF",
-                "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-            }
-        ],
-        "customs": {
-            "terms_of_trade": "DAP",
+        "options": {"Paperless_Trade": True},
+    },
+    "payment": {
+        "paid_by": "SENDER",
+        "account_number": "123456789",
+    },
+    "customs": {
+        "terms_of_trade": "DAP",
+        "duty_payment": {
+            "account_number": "123456789",
+            "paid_by": "SENDER",
+            "amount": 200.00,
         },
     },
-    "options": {"Paperless_Trade": True},
+    "doc_images": [
+        {
+            "type": "CIN",
+            "format": "PDF",
+            "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
+        }
+    ],
 }

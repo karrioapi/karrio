@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     site_id: str
     password: str
+    account_number: str = None
 
     def Request(self, **kwargs) -> Request:
         return Request(

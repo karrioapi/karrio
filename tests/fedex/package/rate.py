@@ -2,7 +2,7 @@ import re
 import unittest
 from unittest.mock import patch
 from pyfedex.rate_service_v26 import RateRequest
-from gds_helpers import to_dict
+from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
 from purplship.package import rating
 from tests.fedex.package.fixture import gateway
@@ -10,6 +10,7 @@ from tests.fedex.package.fixture import gateway
 
 class TestFeDexQuote(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.RateRequest = RateRequest(**RateRequestPayload)
 
     def test_create_rate_request(self):
@@ -50,12 +51,13 @@ RateRequestPayload = {
         "account_number": "2349857",
     },
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "shipment": {
-        "currency": "USD",
-        "payment_account_number": "2349857",
-        "items": [
-            {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}
-        ],
+    "parcel": {
+        "id": "1",
+        "height": 3,
+        "length": 10,
+        "width": 3,
+        "weight": 4.0,
+        "options": {"currency": "USD"}
     }
 }
 
@@ -173,21 +175,6 @@ RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoa
                 </Recipient>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
-                <PackageCount>1</PackageCount>
-                <RequestedPackageLineItems>
-                    <SequenceNumber>1</SequenceNumber>
-                    <GroupPackageCount>1</GroupPackageCount>
-                    <Weight>
-                        <Units>LB</Units>
-                        <Value>4.</Value>
-                    </Weight>
-                    <Dimensions>
-                        <Length>10</Length>
-                        <Width>3</Width>
-                        <Height>3</Height>
-                        <Units>IN</Units>
-                    </Dimensions>
-                </RequestedPackageLineItems>
             </RequestedShipment>
         </ns:RateRequest>
     </tns:Body>

@@ -1,51 +1,51 @@
 import unittest
+import urllib.parse
 from unittest.mock import patch
 from tests.sendle.fixture import gateway
-from gds_helpers import to_dict
+from purplship.core.utils.helpers import to_dict, jsonify
 from purplship.core.models import RateRequest
-from pysendle.quotes import DomesticParcelQuote, InternationalParcelQuote
+from purplship.package import rating
 
 
 class TestSendleQuote(unittest.TestCase):
     def setUp(self):
-        self.DomesticParcelQuote = DomesticParcelQuote(**DOMESTIC_PARCEL_QUOTE)
-        self.InternationalParcelQuote = InternationalParcelQuote(
-            **INTERNATIONAL_PARCEL_QUOTE
-        )
+        self.maxDiff = None
+        self.DomesticRateRequest = RateRequest(**DOMESTIC_QUOTE_PAYLOAD)
+        self.InternationalRateRequest = RateRequest(**INTERNATIONAL_QUOTE_PAYLOAD)
 
-    def test_create_domestic_quote_request(self):
-        payload = RateRequest(**DOMESTIC_QUOTE_PAYLOAD)
+    def test_create_domestic_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.DomesticRateRequest)
+        self.assertEqual(request.serialize(), to_dict(DOMESTIC_PARCEL_QUOTE))
 
-        parcel_quote = gateway.mapper.create_rate_request(payload)
-        self.assertEqual(to_dict(parcel_quote), to_dict(self.DomesticParcelQuote))
-
-    def test_create_international_quote_request(self):
-        payload = RateRequest(**INTERNATIONAL_QUOTE_PAYLOAD)
-
-        parcel_quote = gateway.mapper.create_rate_request(payload)
-        self.assertEqual(to_dict(parcel_quote), to_dict(self.InternationalParcelQuote))
+    def test_create_international_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.InternationalRateRequest)
+        self.assertEqual(request.serialize(), to_dict(INTERNATIONAL_PARCEL_QUOTE))
 
     @patch("purplship.package.mappers.sendle.proxy.http", return_value="{}")
-    def test_get_domestic_quotes(self, http_mock):
-        gateway.proxy.get_rates(self.DomesticParcelQuote)
+    def test_get_domestic_rates(self, http_mock):
+        rating.fetch(self.DomesticRateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, DOMESTIC_PARCEL_QUOTE_QUERY_STR)
 
     @patch("purplship.package.mappers.sendle.proxy.http", return_value="{}")
-    def test_get_domestic_quotes(self, http_mock):
-        gateway.proxy.get_rates(self.InternationalParcelQuote)
+    def test_get_international_rates(self, http_mock):
+        rating.fetch(self.InternationalRateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, INTERNATIONAL_PARCEL_QUOTE_QUERY_STR)
 
     def test_parse_rate_response(self):
-        parsed_response = gateway.mapper.parse_rate_response(PARCEL_QUOTE_RESPONSE)
-        self.assertEqual(to_dict(parsed_response), PARSED_PARCEL_QUOTE_RESPONSE)
+        with patch("purplship.package.mappers.sendle.proxy.http") as mock:
+            mock.return_value = jsonify(PARCEL_QUOTE_RESPONSE)
+            parsed_response = rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_PARCEL_QUOTE_RESPONSE))
 
     def test_parse_rate_response_errors(self):
-        parsed_response = gateway.mapper.parse_rate_response(ERROR)
-        self.assertEqual(to_dict(parsed_response), PARSED_ERRORS)
+        with patch("purplship.package.mappers.sendle.proxy.http") as mock:
+            mock.return_value = jsonify(ERROR)
+            parsed_response = rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
 if __name__ == "__main__":
@@ -53,15 +53,15 @@ if __name__ == "__main__":
 
 
 DOMESTIC_QUOTE_PAYLOAD = {
-    "shipper": {"address_lines": ["Camberwell North"], "postal_code": "3124"},
-    "recipient": {"address_lines": ["Barangaroo"], "postal_code": "2000"},
-    "shipment": {"total_weight": 2.0, "extra": {"cubic_metre_volume": 0.01}},
+    "shipper": {"address_line_1": "Camberwell North", "postal_code": "3124"},
+    "recipient": {"address_line_1": "Barangaroo", "postal_code": "2000"},
+    "parcel": {"weight": 2.0, "weight_unit": "KG"},
 }
 
 INTERNATIONAL_QUOTE_PAYLOAD = {
-    "shipper": {"address_lines": ["Sydney"], "postal_code": "2000"},
+    "shipper": {"address_line_1": "Sydney", "postal_code": "2000"},
     "recipient": {"country_code": "NZ"},
-    "shipment": {"total_weight": 5},
+    "parcel": {"weight": 5, "weight_unit": "KG"},
 }
 
 
@@ -162,25 +162,25 @@ PARCEL_QUOTE_RESPONSE = [
     },
 ]
 
-DOMESTIC_PARCEL_QUOTE_QUERY_STR = f"{gateway.proxy.client.server_url}/quote?pickup_suburb=Camberwell North&pickup_postcode=3124&delivery_suburb=Barangaroo&delivery_postcode=2000&kilogram_weight=2.0&cubic_metre_volume=0.01"
-
 DOMESTIC_PARCEL_QUOTE = {
     "pickup_suburb": "Camberwell North",
     "pickup_postcode": "3124",
     "delivery_suburb": "Barangaroo",
     "delivery_postcode": "2000",
-    "kilogram_weight": 2.0,
-    "cubic_metre_volume": 0.01,
+    "kilogram_weight": '2.0',
 }
 
-INTERNATIONAL_PARCEL_QUOTE_QUERY_STR = f"{gateway.proxy.client.server_url}/quote?delivery_country=NZ&kilogram_weight=5&pickup_postcode=2000&pickup_suburb=Sydney"
+DOMESTIC_PARCEL_QUOTE_QUERY_STR = f"{gateway.settings.server_url}/quote?{urllib.parse.urlencode(to_dict(DOMESTIC_PARCEL_QUOTE))}"
+
 
 INTERNATIONAL_PARCEL_QUOTE = {
     "pickup_suburb": "Sydney",
     "pickup_postcode": "2000",
     "delivery_country": "NZ",
-    "kilogram_weight": 5,
+    "kilogram_weight": '5.0',
 }
+
+INTERNATIONAL_PARCEL_QUOTE_QUERY_STR = f"{gateway.settings.server_url}/quote?{urllib.parse.urlencode(to_dict(INTERNATIONAL_PARCEL_QUOTE))}"
 
 ERROR = {
     "messages": {

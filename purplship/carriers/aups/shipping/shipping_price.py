@@ -7,10 +7,10 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.models import (
     Error,
     ChargeDetails,
-    ShipmentRequest,
+    RateRequest,
     RateDetails
 )
-from purplship.core.units import Currency
+from purplship.core.units import Currency, Country
 from purplship.core.settings import Settings
 from purplship.core.errors import OriginNotServicedError
 from pyaups.shipping_price_response import (
@@ -59,29 +59,29 @@ def _extract_quote(rate: ResponseShipment, settings: Settings) -> RateDetails:
     )
 
 
-def shipping_price_request(payload: ShipmentRequest) -> Serializable[ShippingPriceRequest]:
+def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRequest]:
     """Create the appropriate Australia post rate request depending on the destination
 
     :param payload: PurplShip unified API rate request data
     :return: a domestic or international Australia post compatible request
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier
     """
-    if payload.shipper.country_code and payload.shipper.country_code != 'AU':
+    if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
         raise OriginNotServicedError(payload.shipper.country_code, "Australia post")
 
-    price_request = ShippingPriceRequest(
+    request = ShippingPriceRequest(
         shipments=[
             Shipment(
-                shipment_reference=" ".join(payload.shipment.references),
+                shipment_reference=payload.parcel.reference,
                 sender_references=None,
                 goods_descriptions=None,
-                despatch_date=payload.shipment.date,
+                despatch_date=None,
                 consolidate=None,
                 email_tracking_enabled=payload.shipper.email_address is not None,
                 from_=From(
                     name=payload.shipper.person_name,
                     type=None,
-                    lines=payload.shipper.address_lines,
+                    lines=[payload.shipper.address_line_1, payload.shipper.address_line_2],
                     suburb=payload.shipper.suburb,
                     state=payload.shipper.state_code,
                     postcode=payload.shipper.postal_code,
@@ -93,7 +93,7 @@ def shipping_price_request(payload: ShipmentRequest) -> Serializable[ShippingPri
                     name=payload.recipient.person_name,
                     business_name=payload.recipient.company_name,
                     type=None,
-                    lines=payload.recipient.address_lines,
+                    lines=[payload.recipient.address_line_1, payload.recipient.address_line_2],
                     suburb=payload.recipient.suburb,
                     state=payload.recipient.state_code,
                     postcode=payload.recipient.postal_code,
@@ -108,21 +108,21 @@ def shipping_price_request(payload: ShipmentRequest) -> Serializable[ShippingPri
                 authorisation_number=None,
                 items=[
                     Item(
-                        item_reference=item.sku,
-                        product_id=item.id,
-                        item_description=item.description,
-                        length=item.length,
-                        width=item.width,
-                        height=item.height,
+                        item_reference=payload.parcel.reference,
+                        product_id=payload.parcel.id,
+                        item_description=payload.parcel.description,
+                        length=payload.parcel.length,
+                        width=payload.parcel.width,
+                        height=payload.parcel.height,
                         cubic_volume=None,
-                        weight=item.weight,
+                        weight=payload.parcel.weight,
                         contains_dangerous_goods=None,
                         transportable_by_air=None,
                         dangerous_goods_declaration=None,
                         authority_to_leave=False,
                         reason_for_return=None,
                         allow_partial_delivery=True,
-                        packaging_type=item.packaging_type,
+                        packaging_type=payload.parcel.packaging_type,  # TODO: Convert packaging type
                         atl_number=None,
                         features=None,
                         tracking_details=None,
@@ -139,13 +139,13 @@ def shipping_price_request(payload: ShipmentRequest) -> Serializable[ShippingPri
                         comments=None,
                         tariff_concession=None,
                         free_trade_applicable=None
-                    ) for item in payload.shipment.items
+                    )
                 ]
             )
         ]
     )
-    return Serializable(price_request, _request_serializer)
+    return Serializable(request, _request_serializer)
 
 
-def _request_serializer(price_request: ShippingPriceRequest) -> str:
-    return jsonify(to_dict(price_request))
+def _request_serializer(request: ShippingPriceRequest) -> str:
+    return jsonify(to_dict(request))

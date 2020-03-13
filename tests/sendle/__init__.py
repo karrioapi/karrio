@@ -1,2 +1,2 @@
-# from tests.sendle.tracking import *
-# from tests.sendle.rate import *
+from tests.sendle.tracking import *
+from tests.sendle.rate import *

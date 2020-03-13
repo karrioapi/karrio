@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from pycaps.rating import mailing_scenario
 from pycaps.shipment import ShipmentType
 from purplship.core.utils.serializable import Serializable, Deserializable
@@ -17,6 +17,8 @@ from purplship.package.mappers.caps.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
+    """Request Mappers"""
+
     def create_rate_request(self, payload: RateRequest) -> Serializable[mailing_scenario]:
         return mailing_scenario_request(payload, self.settings)
 
@@ -26,11 +28,13 @@ class Mapper(BaseMapper):
     def create_shipment_request(self, payload: ShipmentRequest) -> Serializable[ShipmentType]:
         return shipment_request(payload, self.settings)
 
-    def parse_rate_response(self, response: Deserializable[str]) -> (List[RateDetails], List[Error]):
+    """Response Parsers"""
+
+    def parse_rate_response(self, response: Deserializable[str]) -> Tuple[List[RateDetails], List[Error]]:
         return parse_price_quotes(response.deserialize(), self.settings)
 
-    def parse_tracking_response(self, response: Deserializable[str]) -> (List[TrackingDetails], List[Error]):
+    def parse_tracking_response(self, response: Deserializable[str]) -> Tuple[List[TrackingDetails], List[Error]]:
         return parse_tracking_summary(response.deserialize(), self.settings)
 
-    def parse_shipment_response(self, response: Deserializable[str]) -> (ShipmentDetails, List[Error]):
+    def parse_shipment_response(self, response: Deserializable[str]) -> Tuple[ShipmentDetails, List[Error]]:
         return parse_shipment_response(response.deserialize(), self.settings)

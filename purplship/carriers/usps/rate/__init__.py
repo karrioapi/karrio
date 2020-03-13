@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Tuple
 from pyusps.ratev4request import RateV4Request
 from pyusps.intlratev2request import IntlRateV2Request
 from purplship.core.units import Country
@@ -11,7 +11,7 @@ from purplship.carriers.usps.rate.rate_v4 import rate_v4_request, parse_rate_v4_
 from purplship.carriers.usps.rate.intl_rate import intl_rate_request, parse_intl_rate_response
 
 
-def parse_rate_request(response: Element, settins: Settings) -> (List[RateDetails], List[Error]):
+def parse_rate_request(response: Element, settins: Settings) -> Tuple[List[RateDetails], List[Error]]:
     is_intl = response.tag == "IntlRateV2Response"
     return (
         parse_intl_rate_response if is_intl else parse_rate_v4_response
@@ -32,4 +32,4 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Union
     is_local = payload.recipient.country_code is None or payload.recipient.country_code == Country.US.name
     return (
         rate_v4_request if is_local else intl_rate_request
-    )(payload)
+    )(payload, settings)
