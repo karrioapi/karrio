@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 test() {
-    python -m unittest -v
+    pushd tests
+    python -m unittest -v $@
+    popd
 }
 
 typecheck() {
@@ -13,7 +15,9 @@ check() {
 }
 
 build() {
-    python setup.py bdist_wheel 
+    python setup.core.py bdist_wheel
+    python setup.freight.py bdist_wheel
+    python setup.shipping.py bdist_wheel
 }
 
 updaterelease(){

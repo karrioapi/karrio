@@ -1,57 +1,55 @@
 import unittest
 from unittest.mock import patch
-from gds_helpers import to_xml, to_dict, export
-from pyups.package_track import TrackRequest
-from purplship.domain.Types import TrackingRequest
-from tests.ups.package.fixture import proxy
-from tests.utils import strip, get_node_from_xml
+from purplship.core.utils.helpers import to_dict
+from purplship.core.models import TrackingRequest
+from tests.ups.package.fixture import gateway
+from purplship.package import tracking
 
 
 class TestUPSTracking(unittest.TestCase):
     def setUp(self):
-        tracking_request_xml = get_node_from_xml(TrackingRequestXml, "TrackRequest")
-        self.TrackRequest = TrackRequest()
-        self.TrackRequest.build(tracking_request_xml)
+        self.TrackingRequest = TrackingRequest(tracking_numbers=TrackingRequestPayload)
 
     def test_create_tracking_request(self):
-        payload = TrackingRequest(tracking_numbers=["1Z12345E6205277936"])
+        request = gateway.mapper.create_tracking_request(self.TrackingRequest)
 
-        TrackRequests_ = proxy.mapper.create_tracking_request(payload)
+        self.assertEqual(request.serialize(), [TrackingRequestXml])
 
-        self.assertEqual(export(TrackRequests_[0]), export(self.TrackRequest))
-
-    @patch("purplship.mappers.ups.ups_proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        proxy.get_tracking([self.TrackRequest])
+        tracking.fetch(self.TrackingRequest).from_(gateway)
 
-        xmlStr = http_mock.call_args[1]["data"].decode("utf-8")
-        self.assertEqual(strip(xmlStr), strip(TrackingRequestXml))
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, f"{gateway.settings.server_url}/Track")
 
     def test_tracking_auth_error_parsing(self):
-        parsed_response = proxy.mapper.parse_error_response(to_xml(AuthError))
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
+        with patch("purplship.package.mappers.ups.proxy.http") as mock:
+            mock.return_value = AuthError
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_tracking_response_parsing(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(TrackingResponseXml)
-        )
-        self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
+        with patch("purplship.package.mappers.ups.proxy.http") as mock:
+            mock.return_value = TrackingResponseXml
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
-            to_xml(InvalidTrackingNumberResponse)
-        )
-        self.assertEqual(
-            to_dict(parsed_response), to_dict(ParsedInvalidTrackingNumberResponse)
-        )
+        with patch("purplship.package.mappers.ups.proxy.http") as mock:
+            mock.return_value = InvalidTrackingNumberResponseXML
+            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedInvalidTrackingNumberResponse))
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
+TrackingRequestPayload = ["1Z12345E6205277936"]
+
 ParsedAuthError = [
-    {"carrier": "UPS", "code": "250003", "message": "Invalid Access License number"}
+    [],
+    [{"carrier": "UPS", "code": "250003", "message": "Invalid Access License number"}]
 ]
 
 ParsedTrackingResponse = [
@@ -150,27 +148,27 @@ AuthError = """<wrapper>
 </wrapper>
 """
 
-TrackingRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
+TrackingRequestXml = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" >
     <tns:Header>
         <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
+            <UsernameToken>
+                <Username>username</Username>
+                <Password>password</Password>
+            </UsernameToken>
+            <ServiceAccessToken>
+                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
+            </ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <trk:TrackRequest>
             <common:Request>
-                <common:RequestOption>1</common:RequestOption>
-                <common:TransactionReference>
-                    <common:TransactionIdentifier>TransactionIdentifier</common:TransactionIdentifier>
-                </common:TransactionReference>
+                <RequestOption>1</RequestOption>
+                <TransactionReference>
+                    <TransactionIdentifier>TransactionIdentifier</TransactionIdentifier>
+                </TransactionReference>
             </common:Request>
-            <trk:InquiryNumber>1Z12345E6205277936</trk:InquiryNumber>
+            <InquiryNumber>1Z12345E6205277936</InquiryNumber>
         </trk:TrackRequest>
     </tns:Body>
 </tns:Envelope>
@@ -317,7 +315,7 @@ TrackingResponseXml = """<wrapper>
 </wrapper>
 """
 
-InvalidTrackingNumberResponse = """<wrapper>
+InvalidTrackingNumberResponseXML = """<wrapper>
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
         <soapenv:Header/>
         <soapenv:Body>

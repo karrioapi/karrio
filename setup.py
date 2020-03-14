@@ -3,23 +3,23 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup(name='purplship',
-      version='2019.4.0',
+setup(name='purplship.core',
+      version='2020.3.0',
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/PurplShip/purplship',
-      author='DanH91',
+      author='PurplShip',
       author_email='danielk.developer@gmail.com',
       license='LGPLv3',
-      packages=find_packages(".", exclude=["tests"]),
+      packages=find_packages(".", exclude=["tests*"]),
       install_requires=[
             'attrs',
             'jstruct',
+            'xmltodict',
             'py-fedex',
             'py-dhl',
             'py-soap',
-            'gds-helpers',
             'py-ups',
             'py-caps',
             'py-aups',

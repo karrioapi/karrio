@@ -1,7 +1,8 @@
-from purplship.mappers.ups import UPSClient, UPSProxy
+import purplship.package as api
+from purplship.package.mappers.ups import Settings
 
-proxy = UPSProxy(
-    UPSClient(
+gateway = api.gateway["ups"].create(
+    Settings(
         server_url="https://wwwcie.ups.com/webservices",
         username="username",
         password="password",
