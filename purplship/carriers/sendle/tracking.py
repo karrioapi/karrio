@@ -2,28 +2,30 @@
 
 from typing import Tuple, List
 from purplship.core.utils.serializable import Serializable
-from purplship.core.models import (
-    TrackingRequest, Error, TrackingEvent, TrackingDetails
-)
+from purplship.core.models import TrackingRequest, Error, TrackingEvent, TrackingDetails
 from pysendle.tracking import TrackingResponse
 from purplship.carriers.sendle.error import parse_error_response
 from purplship.carriers.sendle.utils import Settings
 
 
-def parse_parcel_tracking_response(response: dict, settings: Settings) -> Tuple[List[TrackingDetails], List[Error]]:
+def parse_parcel_tracking_response(
+    response: dict, settings: Settings
+) -> Tuple[List[TrackingDetails], List[Error]]:
     tracking: List[Tuple[str, TrackingResponse]] = [
-        (p.get('ref'), TrackingResponse(**p.get('response')))
+        (p.get("ref"), TrackingResponse(**p.get("response")))
         for p in response
-        if 'tracking_events' in p.get('response')
+        if "tracking_events" in p.get("response")
     ]
-    errors: List[dict] = [p.get('response') for p in response]
+    errors: List[dict] = [p.get("response") for p in response]
     return (
         [_extract_tracking(t, settings) for t in tracking],
-        parse_error_response(errors, settings)
+        parse_error_response(errors, settings),
     )
 
 
-def _extract_tracking(response: Tuple[str, TrackingResponse], settings: Settings) -> TrackingDetails:
+def _extract_tracking(
+    response: Tuple[str, TrackingResponse], settings: Settings
+) -> TrackingDetails:
     tracking_number, detail = response
     return TrackingDetails(
         carrier=settings.carrier_name,
@@ -36,7 +38,8 @@ def _extract_tracking(response: Tuple[str, TrackingResponse], settings: Settings
                 code=event.event_type,
                 location=event.destination_location,
                 description=event.description,
-            ) for event in detail.tracking_events
+            )
+            for event in detail.tracking_events
         ],
     )
 

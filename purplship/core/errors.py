@@ -25,4 +25,6 @@ class MultiItemShipmentSupportError(Error):
     """Raised when a shipment is requested with multiple item."""
 
     def __init__(self, carrier_name: str):
-        super().__init__(f"Multiple items shipment request not supported by {carrier_name}")
+        super().__init__(
+            f"Multiple items shipment request not supported by {carrier_name}"
+        )

@@ -1,7 +1,15 @@
 from pycaps.rating import (
-    mailing_scenario, optionsType, optionType, dimensionsType,
-    parcel_characteristicsType, servicesType, destinationType,
-    domesticType, united_statesType, internationalType, price_quoteType,
+    mailing_scenario,
+    optionsType,
+    optionType,
+    dimensionsType,
+    parcel_characteristicsType,
+    servicesType,
+    destinationType,
+    domesticType,
+    united_statesType,
+    internationalType,
+    price_quoteType,
 )
 from functools import reduce
 from datetime import datetime
@@ -10,16 +18,27 @@ from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.carriers.caps.utils import Settings
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country, Currency
+from purplship.core.units import (
+    Weight,
+    WeightUnit,
+    Dimension,
+    DimensionUnit,
+    Country,
+    Currency,
+)
 from purplship.core.errors import OriginNotServicedError
 from purplship.core.models import RateDetails, ChargeDetails, Error, RateRequest
 from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType
 
 
-def parse_price_quotes(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_price_quotes(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Error]]:
     price_quotes = response.xpath(".//*[local-name() = $name]", name="price-quote")
-    quotes: List[RateDetails] = [_extract_quote(price_quote_node, settings) for price_quote_node in price_quotes]
+    quotes: List[RateDetails] = [
+        _extract_quote(price_quote_node, settings) for price_quote_node in price_quotes
+    ]
     return quotes, parse_error_response(response, settings)
 
 
@@ -45,9 +64,9 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         total_charge=float(price_quote.price_details.due or 0),
         discount=reduce(lambda total, d: total + d.amount, discounts, 0.0),
         duties_and_taxes=(
-            float(price_quote.price_details.taxes.gst.valueOf_ or 0) +
-            float(price_quote.price_details.taxes.pst.valueOf_ or 0) +
-            float(price_quote.price_details.taxes.hst.valueOf_ or 0)
+            float(price_quote.price_details.taxes.gst.valueOf_ or 0)
+            + float(price_quote.price_details.taxes.pst.valueOf_ or 0)
+            + float(price_quote.price_details.taxes.hst.valueOf_ or 0)
         ),
         extra_charges=list(
             map(
@@ -62,7 +81,9 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
     )
 
 
-def mailing_scenario_request(payload: RateRequest, settings: Settings) -> Serializable[mailing_scenario]:
+def mailing_scenario_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[mailing_scenario]:
     """Create the appropriate Canada Post rate request depending on the destination
 
     :param settings: PurplShip carrier connection settings
@@ -71,7 +92,9 @@ def mailing_scenario_request(payload: RateRequest, settings: Settings) -> Serial
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier
     """
     if payload.shipper.country_code and payload.shipper.country_code != Country.CA.name:
-        raise OriginNotServicedError(payload.shipper.country_code, settings.carrier_name)
+        raise OriginNotServicedError(
+            payload.shipper.country_code, settings.carrier_name
+        )
 
     weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "CM"]
@@ -89,16 +112,19 @@ def mailing_scenario_request(payload: RateRequest, settings: Settings) -> Serial
         contract_id=None,
         promo_code=None,
         quote_type=None,
-        expected_mailing_date=datetime.today().strftime('%Y-%m-%d'),
+        expected_mailing_date=datetime.today().strftime("%Y-%m-%d"),
         options=(
-            optionsType(option=[
-                optionType(
-                    option_amount=None,  # TODO:: correct this when integrating Options
-                    option_code=OptionCode[code].value,
-                )
-                for code, value in requested_options.items()
-            ])
-            if (len(requested_options) > 0) else None
+            optionsType(
+                option=[
+                    optionType(
+                        option_amount=None,  # TODO:: correct this when integrating Options
+                        option_code=OptionCode[code].value,
+                    )
+                    for code, value in requested_options.items()
+                ]
+            )
+            if (len(requested_options) > 0)
+            else None
         ),
         parcel_characteristics=parcel_characteristicsType(
             weight=Weight(payload.parcel.weight, weight_unit).KG,
@@ -112,22 +138,31 @@ def mailing_scenario_request(payload: RateRequest, settings: Settings) -> Serial
             oversized=None,
         ),
         services=(
-            servicesType(service_code=[ServiceType[code].value for code in requested_services])
-            if (len(requested_services) > 0) else None
+            servicesType(
+                service_code=[ServiceType[code].value for code in requested_services]
+            )
+            if (len(requested_services) > 0)
+            else None
         ),
         origin_postal_code=payload.shipper.postal_code,
         destination=destinationType(
             domestic=(
                 domesticType(postal_code=payload.recipient.postal_code)
-                if (payload.recipient.country_code == Country.CA.name) else None
+                if (payload.recipient.country_code == Country.CA.name)
+                else None
             ),
             united_states=(
                 united_statesType(zip_code=payload.recipient.postal_code)
-                if (payload.recipient.country_code == Country.US.name) else None
+                if (payload.recipient.country_code == Country.US.name)
+                else None
             ),
             international=(
                 internationalType(country_code=payload.recipient.country_code)
-                if (payload.recipient.country_code not in [Country.US.name, Country.CA.name])else None
+                if (
+                    payload.recipient.country_code
+                    not in [Country.US.name, Country.CA.name]
+                )
+                else None
             ),
         ),
     )
@@ -137,5 +172,5 @@ def mailing_scenario_request(payload: RateRequest, settings: Settings) -> Serial
 
 def _request_serializer(request: mailing_scenario) -> str:
     return export(
-        request, namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"',
+        request, namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"'
     )

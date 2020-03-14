@@ -29,7 +29,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def create_shipment(self, request: Serializable[ProcessShipmentRequest]) -> Deserializable[str]:
+    def create_shipment(
+        self, request: Serializable[ProcessShipmentRequest]
+    ) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
             data=bytearray(request.serialize(), "utf-8"),
@@ -38,7 +40,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def request_pickup(self, request: Serializable[CreatePickupRequest]) -> Deserializable[str]:
+    def request_pickup(
+        self, request: Serializable[CreatePickupRequest]
+    ) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
             data=bytearray(request.serialize(), "utf-8"),
@@ -47,7 +51,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def cancel_pickup(self, request: Serializable[CancelPickupRequest]) -> Deserializable[str]:
+    def cancel_pickup(
+        self, request: Serializable[CancelPickupRequest]
+    ) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
             data=bytearray(request.serialize(), "utf-8"),

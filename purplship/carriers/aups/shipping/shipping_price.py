@@ -4,34 +4,25 @@ from typing import List, Tuple
 from purplship.carriers.aups.error import parse_error_response
 from purplship.core.utils.helpers import jsonify, to_dict
 from purplship.core.utils.serializable import Serializable
-from purplship.core.models import (
-    Error,
-    ChargeDetails,
-    RateRequest,
-    RateDetails
-)
+from purplship.core.models import Error, ChargeDetails, RateRequest, RateDetails
 from purplship.core.units import Currency, Country
 from purplship.core.settings import Settings
 from purplship.core.errors import OriginNotServicedError
 from pyaups.shipping_price_response import (
     ShippingPriceResponse,
     Shipment as ResponseShipment,
-    ShipmentSummary
+    ShipmentSummary,
 )
-from pyaups.shipping_price_request import (
-    ShippingPriceRequest,
-    Shipment,
-    From,
-    To,
-    Item
-)
+from pyaups.shipping_price_request import ShippingPriceRequest, Shipment, From, To, Item
 
 
-def parse_shipping_price_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_shipping_price_response(
+    response: dict, settings: Settings
+) -> Tuple[List[RateDetails], List[Error]]:
     price_response: ShippingPriceResponse = ShippingPriceResponse(**response)
     return (
         [_extract_quote(rate, settings) for rate in price_response.shipments],
-        parse_error_response({"errors": response.get('errors', [])}, settings)
+        parse_error_response({"errors": response.get("errors", [])}, settings),
     )
 
 
@@ -50,12 +41,17 @@ def _extract_quote(rate: ResponseShipment, settings: Settings) -> RateDetails:
         extra_charges=[
             ChargeDetails(**details)
             for details in (
-                [] if not summary.fuel_surcharge else [{"name": 'Fuel', "amount": summary.fuel_surcharge}] +
-                [] if not summary.security_surcharge else [{"name": 'Fuel', "amount": summary.security_surcharge}] +
-                [] if not summary.transit_cover else [{"name": 'Fuel', "amount": summary.transit_cover}] +
-                [] if not summary.freight_charge else [{"name": 'Fuel', "amount": summary.freight_charge}]
+                []
+                if not summary.fuel_surcharge
+                else [{"name": "Fuel", "amount": summary.fuel_surcharge}] + []
+                if not summary.security_surcharge
+                else [{"name": "Fuel", "amount": summary.security_surcharge}] + []
+                if not summary.transit_cover
+                else [{"name": "Fuel", "amount": summary.transit_cover}] + []
+                if not summary.freight_charge
+                else [{"name": "Fuel", "amount": summary.freight_charge}]
             )
-        ]
+        ],
     )
 
 
@@ -81,26 +77,32 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                 from_=From(
                     name=payload.shipper.person_name,
                     type=None,
-                    lines=[payload.shipper.address_line_1, payload.shipper.address_line_2],
+                    lines=[
+                        payload.shipper.address_line_1,
+                        payload.shipper.address_line_2,
+                    ],
                     suburb=payload.shipper.suburb,
                     state=payload.shipper.state_code,
                     postcode=payload.shipper.postal_code,
                     country=payload.shipper.country_code,
                     phone=payload.shipper.phone_number,
-                    email=payload.shipper.email_address
+                    email=payload.shipper.email_address,
                 ),
                 to=To(
                     name=payload.recipient.person_name,
                     business_name=payload.recipient.company_name,
                     type=None,
-                    lines=[payload.recipient.address_line_1, payload.recipient.address_line_2],
+                    lines=[
+                        payload.recipient.address_line_1,
+                        payload.recipient.address_line_2,
+                    ],
                     suburb=payload.recipient.suburb,
                     state=payload.recipient.state_code,
                     postcode=payload.recipient.postal_code,
                     country=payload.recipient.country_code,
                     phone=payload.recipient.phone_number,
                     email=payload.recipient.email_address,
-                    delivery_instructions=None
+                    delivery_instructions=None,
                 ),
                 dangerous_goods=None,
                 movement_type=None,
@@ -138,9 +140,9 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                         invoice_number=None,
                         comments=None,
                         tariff_concession=None,
-                        free_trade_applicable=None
+                        free_trade_applicable=None,
                     )
-                ]
+                ],
             )
         ]
     )

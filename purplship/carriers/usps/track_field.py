@@ -9,7 +9,9 @@ from purplship.carriers.usps.error import parse_error_response
 from purplship.carriers.usps import Settings
 
 
-def parse_track_field_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Error]]:
+def parse_track_field_response(
+    response: Element, settings: Settings
+) -> Tuple[List[TrackingDetails], List[Error]]:
     tracks_info = response.xpath(".//*[local-name() = $name]", name="TrackInfo")
     return (
         [_extract_tracking(tracking_node, settings) for tracking_node in tracks_info],
@@ -20,9 +22,12 @@ def parse_track_field_response(response: Element, settings: Settings) -> Tuple[L
 def _extract_tracking(tracking_node: Element, settings) -> TrackingDetails:
     tracking: TrackInfoType = TrackInfoType()
     tracking.build(tracking_node)
-    track_detail_nodes = tracking_node.xpath(".//*[local-name() = $name]", name="TrackDetail")
+    track_detail_nodes = tracking_node.xpath(
+        ".//*[local-name() = $name]", name="TrackDetail"
+    )
     details: List[TrackDetailType] = [
-        (lambda t: (t, t.build(detail)))(TrackDetailType())[0] for detail in track_detail_nodes
+        (lambda t: (t, t.build(detail)))(TrackDetailType())[0]
+        for detail in track_detail_nodes
     ]
     return TrackingDetails(
         carrier=settings.carrier_name,
@@ -53,18 +58,16 @@ def _extract_tracking(tracking_node: Element, settings) -> TrackingDetails:
     )
 
 
-def track_field_request(payload: TrackingRequest, settings: Settings) -> Serializable[TrackFieldRequest]:
+def track_field_request(
+    payload: TrackingRequest, settings: Settings
+) -> Serializable[TrackFieldRequest]:
     request = TrackFieldRequest(
         USERID=settings.username,
         Revision="1",
         ClientIp=None,
         SourceID=None,
         TrackID=[
-            TrackIDType(
-                ID=tracking_number,
-                DestinationZipCode=None,
-                MailingDate=None
-            )
+            TrackIDType(ID=tracking_number, DestinationZipCode=None, MailingDate=None)
             for tracking_number in payload.tracking_numbers
         ],
     )
@@ -72,4 +75,4 @@ def track_field_request(payload: TrackingRequest, settings: Settings) -> Seriali
 
 
 def _request_serializer(request: TrackFieldRequest) -> dict:
-    return {'API': 'TrackV2', 'XML': export(request)}
+    return {"API": "TrackV2", "XML": export(request)}

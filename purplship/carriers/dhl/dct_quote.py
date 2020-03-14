@@ -3,27 +3,39 @@ from datetime import datetime
 from functools import reduce
 from typing import List, Tuple
 from pydhl.dct_req_global_2_0 import (
-    DCTRequest, DCTTo, DCTFrom, GetQuoteType, BkgDetailsType, PiecesType, MetaData,
-    PieceType, QtdShpType
+    DCTRequest,
+    DCTTo,
+    DCTFrom,
+    GetQuoteType,
+    BkgDetailsType,
+    PiecesType,
+    MetaData,
+    PieceType,
+    QtdShpType,
 )
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.units import DimensionUnit, WeightUnit, Weight, Dimension
-from purplship.core.models import (
-    RateDetails, Error, ChargeDetails, RateRequest
-)
+from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
 from purplship.carriers.dhl.units import (
-    Product, DCTPackageType, Dimension as DHLDimensionUnit, WeightUnit as DHLWeightUnit
+    Product,
+    DCTPackageType,
+    Dimension as DHLDimensionUnit,
+    WeightUnit as DHLWeightUnit,
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
 
 
-def parse_dct_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_dct_response(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Error]]:
     qtdshp_list = response.xpath(".//*[local-name() = $name]", name="QtdShp")
-    quotes: List[RateDetails] = [_extract_quote(qtdshp_node, settings) for qtdshp_node in qtdshp_list]
+    quotes: List[RateDetails] = [
+        _extract_quote(qtdshp_node, settings) for qtdshp_node in qtdshp_list
+    ]
     return quotes, parse_error_response(response, settings)
 
 
@@ -32,28 +44,27 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     qtdshp.build(qtdshp_node)
     ExtraCharges = list(
         map(
-            lambda s: ChargeDetails(name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)),
+            lambda s: ChargeDetails(
+                name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)
+            ),
             qtdshp.QtdShpExChrg,
         )
     )
     Discount_ = reduce(
-        lambda d, ec: d + ec.amount if "Discount" in ec.name else d,
-        ExtraCharges,
-        0.0,
+        lambda d, ec: d + ec.amount if "Discount" in ec.name else d, ExtraCharges, 0.0
     )
     DutiesAndTaxes_ = reduce(
-        lambda d, ec: d + ec.amount if "TAXES PAID" in ec.name else d,
-        ExtraCharges,
-        0.0,
+        lambda d, ec: d + ec.amount if "TAXES PAID" in ec.name else d, ExtraCharges, 0.0
     )
     delivery_ = str(qtdshp.DeliveryDate[0].DlvyDateTime)
     return RateDetails(
         carrier=settings.carrier_name,
         currency=qtdshp.CurrencyCode,
-        delivery_date=datetime.strptime(
-            delivery_,
-            "%Y-%m-%d %H:%M:%S"
-        ).strftime("%Y-%m-%d") if delivery_ else None,
+        delivery_date=datetime.strptime(delivery_, "%Y-%m-%d %H:%M:%S").strftime(
+            "%Y-%m-%d"
+        )
+        if delivery_
+        else None,
         service_name=qtdshp.LocalProductName,
         service_type=qtdshp.NetworkTypeCode,
         base_charge=float(qtdshp.WeightCharge or 0),
@@ -63,8 +74,7 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
         extra_charges=list(
             map(
                 lambda s: ChargeDetails(
-                    name=s.LocalServiceTypeName,
-                    amount=float(s.ChargeValue or 0),
+                    name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)
                 ),
                 qtdshp.QtdShpExChrg,
             )
@@ -76,13 +86,17 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     products = [
-        Product[svc].value for svc in payload.parcel.services if svc in Product.__members__
+        Product[svc].value
+        for svc in payload.parcel.services
+        if svc in Product.__members__
     ]
 
     request = DCTRequest(
         schemaVersion=2.0,
         GetQuote=GetQuoteType(
-            Request=settings.Request(MetaData=MetaData(SoftwareName="3PV", SoftwareVersion=1.0)),
+            Request=settings.Request(
+                MetaData=MetaData(SoftwareName="3PV", SoftwareVersion=1.0)
+            ),
             From=DCTFrom(
                 CountryCode=payload.shipper.country_code,
                 Postalcode=payload.shipper.postal_code,
@@ -102,15 +116,23 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
-                IsDutiable='N' if payload.parcel.is_document else 'Y',  # TODO:: update this using proper options
+                IsDutiable="N"
+                if payload.parcel.is_document
+                else "Y",  # TODO:: update this using proper options
                 Pieces=PiecesType(
                     Piece=[
                         PieceType(
                             PieceID=payload.parcel.id,
-                            PackageTypeCode=DCTPackageType[payload.parcel.packaging_type or "BOX"].value,
-                            Depth=Dimension(payload.parcel.length, dimension_unit).value,
+                            PackageTypeCode=DCTPackageType[
+                                payload.parcel.packaging_type or "BOX"
+                            ].value,
+                            Depth=Dimension(
+                                payload.parcel.length, dimension_unit
+                            ).value,
                             Width=Dimension(payload.parcel.width, dimension_unit).value,
-                            Height=Dimension(payload.parcel.height, dimension_unit).value,
+                            Height=Dimension(
+                                payload.parcel.height, dimension_unit
+                            ).value,
                             Weight=Weight(payload.parcel.weight, weight_unit).value,
                         )
                     ]
@@ -133,7 +155,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 ],
             ),
             Dutiable=None,
-        )
+        ),
     )
     return Serializable(request, _request_serializer)
 

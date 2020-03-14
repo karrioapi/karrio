@@ -1,22 +1,22 @@
 from typing import List, Tuple
 from pyups.common import RequestType, TransactionReferenceType
-from pyups.track_web_service_schema import (
-    TrackRequest, ShipmentType, ActivityType
-)
+from pyups.track_web_service_schema import TrackRequest, ShipmentType, ActivityType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.models import (
-    TrackingEvent, TrackingRequest, TrackingDetails, Error
-)
+from purplship.core.models import TrackingEvent, TrackingRequest, TrackingDetails, Error
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
 
-def parse_track_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Error]]:
+def parse_track_response(
+    response: Element, settings: Settings
+) -> Tuple[List[TrackingDetails], List[Error]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="Shipment")
-    tracking: List[TrackingDetails] = [_extract_tracking(node, settings) for node in track_details]
+    tracking: List[TrackingDetails] = [
+        _extract_tracking(node, settings) for node in track_details
+    ]
     return tracking, parse_error_response(response, settings)
 
 
@@ -51,7 +51,9 @@ def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDet
     )
 
 
-def track_request(payload: TrackingRequest, settings: Settings) -> Serializable[List[TrackRequest]]:
+def track_request(
+    payload: TrackingRequest, settings: Settings
+) -> Serializable[List[TrackRequest]]:
     requests = [
         create_envelope(
             header_content=settings.Security,
@@ -60,10 +62,10 @@ def track_request(payload: TrackingRequest, settings: Settings) -> Serializable[
                     RequestOption=[1],
                     TransactionReference=TransactionReferenceType(
                         TransactionIdentifier="TransactionIdentifier"
-                    )
+                    ),
                 ),
-                InquiryNumber=number
-            )
+                InquiryNumber=number,
+            ),
         )
         for number in payload.tracking_numbers
     ]
@@ -76,10 +78,14 @@ def _request_serializer(requests: List[Element]) -> List[str]:
         xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"
         xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0"
         xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
-    """.replace(" ", "").replace("\n", " ")
+    """.replace(
+        " ", ""
+    ).replace(
+        "\n", " "
+    )
     return [
         clean_namespaces(
-            export(request, namespacedef_=namespacedef_,),
+            export(request, namespacedef_=namespacedef_),
             envelope_prefix="tns:",
             header_child_prefix="upss:",
             body_child_prefix="trk:",

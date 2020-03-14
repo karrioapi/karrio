@@ -7,6 +7,7 @@ from purplship.carriers.fedex.utils import Settings as BaseSettings
 @attr.s(auto_attribs=True)
 class Settings(BaseSettings):
     """FedEx connection settings."""
+
     user_key: str
     password: str
     meter_number: str

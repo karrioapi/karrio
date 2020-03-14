@@ -14,7 +14,9 @@ class Proxy(BaseProxy):
 
     """ Proxy interface methods """
 
-    def get_rates(self, request: Serializable[ParcelQuoteRequest]) -> Deserializable[str]:
+    def get_rates(
+        self, request: Serializable[ParcelQuoteRequest]
+    ) -> Deserializable[str]:
         query_string = urllib.parse.urlencode(request.serialize())
         response = http(
             url=f"{self.settings.server_url}/quote?{query_string}",
@@ -26,8 +28,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_dict)
 
-    def get_tracking(self, request: Serializable[List[str]]) -> Deserializable[List[dict]]:
-
+    def get_tracking(
+        self, request: Serializable[List[str]]
+    ) -> Deserializable[List[dict]]:
         def track(tracking_id):
             return {
                 "ref": tracking_id,
@@ -40,7 +43,8 @@ class Proxy(BaseProxy):
                         },
                         method="GET",
                     )
-                )
+                ),
             }
+
         responses: List[dict] = exec_parrallel(track, request.serialize())
         return Deserializable(responses)

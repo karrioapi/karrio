@@ -18,7 +18,7 @@ S = TypeVar("S")
 
 
 def concat_str(*args, join: bool = False):
-    strings = [s for s in args if s != '']
+    strings = [s for s in args if s != ""]
     return strings if not join else " ".join(strings)
 
 
@@ -76,9 +76,7 @@ def jsonify(entity: Union[dict, T]) -> str:
     recursively parse a data type using __dict__ into a JSON
     """
     return json.dumps(
-        attr.asdict(JWrapper(value=entity)).get('value'),
-        sort_keys=True,
-        indent=4,
+        attr.asdict(JWrapper(value=entity)).get("value"), sort_keys=True, indent=4
     )
 
 
@@ -89,7 +87,7 @@ def to_dict(entity: Any) -> dict:
     """
     return json.loads(
         jsonify(entity) if not isinstance(entity, str) else entity,
-        object_hook=lambda d: {k: v for k, v in d.items() if v not in(None, [], "")}
+        object_hook=lambda d: {k: v for k, v in d.items() if v not in (None, [], "")},
     )
 
 
@@ -102,14 +100,18 @@ def bundle_xml(xml_strings: List[str]) -> str:
     return f"<wrapper>{bundle}</wrapper>"
 
 
-def exec_parrallel(function: Callable, sequence: List[S], max_workers: int = None) -> List[T]:
+def exec_parrallel(
+    function: Callable, sequence: List[S], max_workers: int = None
+) -> List[T]:
     """Return a list of result for function execution on each element of the sequence."""
     with ThreadPoolExecutor(max_workers=max_workers or len(sequence)) as executor:
         requests = {executor.submit(function, item): item for item in sequence}
         return [response.result() for response in as_completed(requests)]
 
 
-def exec_async(function: Callable, sequence: List[tuple], max_workers: int = None) -> List[T]:
+def exec_async(
+    function: Callable, sequence: List[tuple], max_workers: int = None
+) -> List[T]:
     def async_function(args):
         return function(*args)
 
@@ -117,11 +119,8 @@ def exec_async(function: Callable, sequence: List[tuple], max_workers: int = Non
         with ThreadPoolExecutor(max_workers=max_workers or len(sequence)) as executor:
             event_loop = asyncio.get_event_loop()
             requests = [
-                event_loop.run_in_executor(
-                    executor,
-                    async_function,
-                    params
-                ) for params in sequence
+                event_loop.run_in_executor(executor, async_function, params)
+                for params in sequence
             ]
             return [r for r in await asyncio.gather(*requests)]
 

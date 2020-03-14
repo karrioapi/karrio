@@ -22,4 +22,5 @@ def _extract_error(settings: Settings) -> Callable[[List[Error], Element], List[
                 carrier=settings.carrier_name,
             )
         ]
+
     return extract

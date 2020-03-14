@@ -12,8 +12,7 @@ def international_quote_request(payload: RateRequest) -> InternationalParcelQuot
     weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
     return InternationalParcelQuote(
         pickup_suburb=concat_str(
-            payload.shipper.address_line_1, payload.shipper.address_line_2,
-            join=True
+            payload.shipper.address_line_1, payload.shipper.address_line_2, join=True
         ),
         pickup_postcode=payload.shipper.postal_code,
         delivery_country=payload.recipient.country_code,
@@ -22,6 +21,6 @@ def international_quote_request(payload: RateRequest) -> InternationalParcelQuot
         plan_name=reduce(
             lambda plan, s: Plan[s].value if s in Plan.__members__ else None,
             payload.parcel.services,
-            None
-        )
+            None,
+        ),
     )

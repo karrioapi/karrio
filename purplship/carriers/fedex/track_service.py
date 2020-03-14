@@ -1,7 +1,12 @@
 from typing import List, Tuple, Optional
 from pyfedex.track_service_v18 import (
-    TrackDetail, TrackRequest, TransactionDetail, Localization,
-    VersionId, TrackSelectionDetail, TrackPackageIdentifier,
+    TrackDetail,
+    TrackRequest,
+    TransactionDetail,
+    Localization,
+    VersionId,
+    TrackSelectionDetail,
+    TrackPackageIdentifier,
 )
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
@@ -12,16 +17,23 @@ from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
 
-def parse_track_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Error]]:
+def parse_track_response(
+    response: Element, settings: Settings
+) -> Tuple[List[TrackingDetails], List[Error]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="TrackDetails")
-    tracking_details = [_extract_tracking(track_detail_node, settings) for track_detail_node in track_details]
+    tracking_details = [
+        _extract_tracking(track_detail_node, settings)
+        for track_detail_node in track_details
+    ]
     return (
         [details for details in tracking_details if details is not None],
-        parse_error_response(response, settings)
+        parse_error_response(response, settings),
     )
 
 
-def _extract_tracking(track_detail_node: Element, settings: Settings) -> Optional[TrackingDetails]:
+def _extract_tracking(
+    track_detail_node: Element, settings: Settings
+) -> Optional[TrackingDetails]:
     track_detail = TrackDetail()
     track_detail.build(track_detail_node)
     if track_detail.Notification.Severity == "ERROR":
@@ -44,7 +56,9 @@ def _extract_tracking(track_detail_node: Element, settings: Settings) -> Optiona
     )
 
 
-def track_request(payload: TrackingRequest, settings: Settings) -> Serializable[TrackRequest]:
+def track_request(
+    payload: TrackingRequest, settings: Settings
+) -> Serializable[TrackRequest]:
     request = TrackRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,

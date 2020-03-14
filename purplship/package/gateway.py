@@ -39,11 +39,15 @@ class _ProviderMapper:
         def initializer(settings: Union[Settings, dict]) -> Gateway:
             try:
                 provider = Providers[key].value
-                settings_value = provider.Settings(**settings) if isinstance(settings, dict) else settings
+                settings_value = (
+                    provider.Settings(**settings)
+                    if isinstance(settings, dict)
+                    else settings
+                )
                 return Gateway(
                     settings=settings_value,
                     proxy=provider.Proxy(settings_value),
-                    mapper=provider.Mapper(settings_value)
+                    mapper=provider.Mapper(settings_value),
                 )
             except KeyError as e:
                 raise Exception(f"Unknown provider id '{key}'") from e

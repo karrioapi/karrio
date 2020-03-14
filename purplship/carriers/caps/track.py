@@ -3,15 +3,17 @@ from pycaps.track import pin_summary
 from purplship.core.settings import Settings
 from purplship.core.utils.xml import Element
 from purplship.core.utils.serializable import Serializable
-from purplship.core.models import (
-    TrackingRequest, TrackingDetails, TrackingEvent, Error
-)
+from purplship.core.models import TrackingRequest, TrackingDetails, TrackingEvent, Error
 from purplship.carriers.caps.error import parse_error_response
 
 
-def parse_tracking_summary(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Error]]:
+def parse_tracking_summary(
+    response: Element, settings: Settings
+) -> Tuple[List[TrackingDetails], List[Error]]:
     pin_summaries = response.xpath(".//*[local-name() = $name]", name="pin-summary")
-    tracking: List[TrackingDetails] = [_extract_tracking(pin, settings) for pin in pin_summaries]
+    tracking: List[TrackingDetails] = [
+        _extract_tracking(pin, settings) for pin in pin_summaries
+    ]
     return tracking, parse_error_response(response, settings)
 
 

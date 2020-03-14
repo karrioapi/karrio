@@ -1,9 +1,19 @@
 from typing import List, Tuple
 from pyups import common
 from pyups.freight_ship_web_service_schema import (
-    FreightShipRequest, FreightShipResponse, ShipToType, ShipFromType, ShipmentType,
-    FreightShipAddressType, FreightShipPhoneType, PhoneType, CommodityType,
-    ShipCodeDescriptionType, FreightShipUnitOfMeasurementType, WeightType, DimensionsType
+    FreightShipRequest,
+    FreightShipResponse,
+    ShipToType,
+    ShipFromType,
+    ShipmentType,
+    FreightShipAddressType,
+    FreightShipPhoneType,
+    PhoneType,
+    CommodityType,
+    ShipCodeDescriptionType,
+    FreightShipUnitOfMeasurementType,
+    WeightType,
+    DimensionsType,
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -11,14 +21,24 @@ from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit
 from purplship.core.models import (
-    ShipmentRequest, ShipmentDetails, ChargeDetails, ReferenceDetails, Error
+    ShipmentRequest,
+    ShipmentDetails,
+    ChargeDetails,
+    ReferenceDetails,
+    Error,
 )
-from purplship.carriers.ups.units import ShippingServiceCode, WeightUnit as UPSWeightUnit, FreightClass
+from purplship.carriers.ups.units import (
+    ShippingServiceCode,
+    WeightUnit as UPSWeightUnit,
+    FreightClass,
+)
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
 
-def parse_freight_ship_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Error]]:
+def parse_freight_ship_response(
+    response: Element, settings: Settings
+) -> Tuple[ShipmentDetails, List[Error]]:
     details = response.xpath(".//*[local-name() = $name]", name="FreightShipResponse")
     shipment = _extract_shipment(details[0], settings) if len(details) > 0 else None
     return shipment, parse_error_response(response, settings)
@@ -55,7 +75,9 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
     )
 
 
-def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serializable[FreightShipRequest]:
+def freight_ship_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[FreightShipRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     services = [
@@ -68,8 +90,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
             RequestOption="1",
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
-                CustomerContext=payload.parcel.reference,
-                TransactionIdentifier=None,
+                CustomerContext=payload.parcel.reference, TransactionIdentifier=None
             ),
         ),
         Shipment=ShipmentType(
@@ -79,7 +100,9 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 TaxIDType=None,
                 TariffPoint=None,
                 Address=FreightShipAddressType(
-                    AddressLine=concat_str(payload.shipper.address_line_1, payload.shipper.address_line_2),
+                    AddressLine=concat_str(
+                        payload.shipper.address_line_1, payload.shipper.address_line_2
+                    ),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
                     Town=None,
@@ -88,8 +111,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 ),
                 AttentionName=payload.shipper.person_name,
                 Phone=FreightShipPhoneType(
-                    Number=payload.shipper.phone_number,
-                    Extension=None,
+                    Number=payload.shipper.phone_number, Extension=None
                 )
                 if payload.shipper.phone_number is not None
                 else None,
@@ -101,7 +123,10 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 Name=payload.recipient.company_name,
                 TaxIdentificationNumber=payload.recipient.federal_tax_id,
                 Address=FreightShipAddressType(
-                    AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
+                    AddressLine=concat_str(
+                        payload.recipient.address_line_1,
+                        payload.recipient.address_line_2,
+                    ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
                     Town=None,
@@ -110,10 +135,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 ),
                 TariffPoint=None,
                 AttentionName=payload.recipient.person_name,
-                Phone=PhoneType(
-                    Number=payload.recipient.phone_number,
-                    Extension=None,
-                )
+                Phone=PhoneType(Number=payload.recipient.phone_number, Extension=None)
                 if payload.recipient.phone_number is not None
                 else None,
                 FaxNumber=None,
@@ -137,20 +159,34 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                     CommodityID=payload.parcel.id,
                     Description=payload.parcel.description,
                     Weight=WeightType(
-                        UnitOfMeasurement=FreightShipUnitOfMeasurementType(Code=UPSWeightUnit[weight_unit.name].value),
+                        UnitOfMeasurement=FreightShipUnitOfMeasurementType(
+                            Code=UPSWeightUnit[weight_unit.name].value
+                        ),
                         Value=Weight(payload.parcel.weight, weight_unit).value,
                     ),
                     Dimensions=DimensionsType(
-                        UnitOfMeasurement=FreightShipUnitOfMeasurementType(Code=dimension_unit.value),
+                        UnitOfMeasurement=FreightShipUnitOfMeasurementType(
+                            Code=dimension_unit.value
+                        ),
                         Width=Dimension(payload.parcel.width, dimension_unit).value,
                         Height=Dimension(payload.parcel.height, dimension_unit).value,
                         Length=Dimension(payload.parcel.length, dimension_unit).value,
-                    ) if any([payload.parcel.width, payload.parcel.height, payload.parcel.length]) else None,
+                    )
+                    if any(
+                        [
+                            payload.parcel.width,
+                            payload.parcel.height,
+                            payload.parcel.length,
+                        ]
+                    )
+                    else None,
                     NumberOfPieces=None,
                     PackagingType=None,
                     DangerousGoodsIndicator=None,
                     CommodityValue=None,
-                    FreightClass=FreightClass[payload.parcel.options.get('ups_freight_class')].value,
+                    FreightClass=FreightClass[
+                        payload.parcel.options.get("ups_freight_class")
+                    ].value,
                     NMFCCommodityCode=None,
                     NMFCCommodity=None,
                 )
@@ -170,7 +206,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
     )
     return Serializable(
         create_envelope(header_content=settings.Security, body_content=request),
-        _request_serializer
+        _request_serializer,
     )
 
 
@@ -183,7 +219,11 @@ def _request_serializer(request: Element) -> str:
         xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
         xmlns:fsp="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0"
         xmlns:IF="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0"
-    """.replace(" ", "").replace("\n", " ")
+    """.replace(
+        " ", ""
+    ).replace(
+        "\n", " "
+    )
     return clean_namespaces(
         export(request, namespacedef_=namespace_),
         envelope_prefix="tns:",

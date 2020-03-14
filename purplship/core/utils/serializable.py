@@ -2,7 +2,7 @@ import attr
 from typing import Any, Callable, Generic, TypeVar
 
 XML_str = str
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def _identity(value: Any) -> Any:

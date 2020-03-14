@@ -15,6 +15,8 @@ class Settings(BaseSettings):
 
     @property
     def authorization(self):
-        return b64encode(
-            f"{self.api_key}:{self.password}".encode("utf-8")
-        ).decode("ascii") if self.password else None
+        return (
+            b64encode(f"{self.api_key}:{self.password}".encode("utf-8")).decode("ascii")
+            if self.password
+            else None
+        )

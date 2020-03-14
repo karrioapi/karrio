@@ -3,10 +3,23 @@ from datetime import datetime
 from typing import List, Tuple
 from functools import reduce
 from pyfedex.ship_service_v25 import (
-    CompletedShipmentDetail, ShipmentRateDetail, CompletedPackageDetail, ProcessShipmentRequest,
-    TransactionDetail, VersionId, RequestedShipment, RequestedPackageLineItem, Party,
-    Contact, Address, TaxpayerIdentification, ExpressFreightDetail, Weight as FedexWeight,
-    FreightShipmentDetail, LabelSpecification, Dimensions as FedexDimensions
+    CompletedShipmentDetail,
+    ShipmentRateDetail,
+    CompletedPackageDetail,
+    ProcessShipmentRequest,
+    TransactionDetail,
+    VersionId,
+    RequestedShipment,
+    RequestedPackageLineItem,
+    Party,
+    Contact,
+    Address,
+    TaxpayerIdentification,
+    ExpressFreightDetail,
+    Weight as FedexWeight,
+    FreightShipmentDetail,
+    LabelSpecification,
+    Dimensions as FedexDimensions,
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -16,18 +29,24 @@ from purplship.core.units import Dimension, DimensionUnit, WeightUnit, Weight
 from purplship.core.models import ShipmentDetails, Error, ChargeDetails, ShipmentRequest
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
-from purplship.carriers.fedex.units import (
-    PackagingType, ServiceType,
-)
+from purplship.carriers.fedex.units import PackagingType, ServiceType
 
 
-def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Error]]:
-    details = response.xpath(".//*[local-name() = $name]", name="CompletedShipmentDetail")
-    shipment: ShipmentDetails = _extract_shipment(details[0], settings) if len(details) > 0 else None
+def parse_shipment_response(
+    response: Element, settings: Settings
+) -> Tuple[ShipmentDetails, List[Error]]:
+    details = response.xpath(
+        ".//*[local-name() = $name]", name="CompletedShipmentDetail"
+    )
+    shipment: ShipmentDetails = _extract_shipment(details[0], settings) if len(
+        details
+    ) > 0 else None
     return shipment, parse_error_response(response, settings)
 
 
-def _extract_shipment(shipment_detail_node: Element, settings: Settings) -> ShipmentDetails:
+def _extract_shipment(
+    shipment_detail_node: Element, settings: Settings
+) -> ShipmentDetails:
     detail = CompletedShipmentDetail()
     detail.build(shipment_detail_node)
 
@@ -38,7 +57,8 @@ def _extract_shipment(shipment_detail_node: Element, settings: Settings) -> Ship
         carrier=settings.carrier_name,
         tracking_numbers=reduce(
             lambda ids, pkg: ids + [_id.TrackingNumber for _id in pkg.TrackingIds],
-            items, [],
+            items,
+            [],
         ),
         total_charge=ChargeDetails(
             name="Shipment charge",
@@ -67,21 +87,23 @@ def _extract_shipment(shipment_detail_node: Element, settings: Settings) -> Ship
         ]
         + [
             ChargeDetails(
-                name=fee.Type,
-                amount=fee.Amount.Amount,
-                currency=fee.Amount.Currency,
+                name=fee.Type, amount=fee.Amount.Amount, currency=fee.Amount.Currency
             )
             for fee in shipment.AncillaryFeesAndTaxes
         ],
         services=[detail.ServiceTypeDescription],
         documents=reduce(
-            lambda labels, pkg: labels + [str(b64encode(part.Image), "utf-8") for part in pkg.Label.Parts],
-            items, [],
+            lambda labels, pkg: labels
+            + [str(b64encode(part.Image), "utf-8") for part in pkg.Label.Parts],
+            items,
+            [],
         ),
     )
 
 
-def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[ProcessShipmentRequest]:
+def process_shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[ProcessShipmentRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     requested_services = [
@@ -98,22 +120,25 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
             ServiceType=ServiceType[requested_services[0]].value
             if len(requested_services) > 0
             else None,
-            PackagingType=PackagingType[payload.parcel.packaging_type or "YOUR_PACKAGING"].value,
+            PackagingType=PackagingType[
+                payload.parcel.packaging_type or "YOUR_PACKAGING"
+            ].value,
             ManifestDetail=None,
             TotalWeight=FedexWeight(
                 Units=weight_unit.value,
                 Value=Weight(payload.parcel.weight, weight_unit),
             ),
             TotalInsuredValue=None,
-            PreferredCurrency=payload.parcel.options.get('currency'),
+            PreferredCurrency=payload.parcel.options.get("currency"),
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
                 AccountNumber=payload.shipper.account_number,
                 Tins=[
-                    TaxpayerIdentification(
-                        TinType=None,
-                        Number=tax,
-                    ) for tax in [payload.shipper.federal_tax_id, payload.shipper.state_tax_id]
+                    TaxpayerIdentification(TinType=None, Number=tax)
+                    for tax in [
+                        payload.shipper.federal_tax_id,
+                        payload.shipper.state_tax_id,
+                    ]
                 ],
                 Contact=Contact(
                     ContactId=None,
@@ -137,7 +162,9 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
                 )
                 else None,
                 Address=Address(
-                    StreetLines=concat_str(payload.shipper.address_line_1, payload.shipper.address_line_2),
+                    StreetLines=concat_str(
+                        payload.shipper.address_line_1, payload.shipper.address_line_2
+                    ),
                     City=payload.shipper.city,
                     StateOrProvinceCode=payload.shipper.state_code,
                     PostalCode=payload.shipper.postal_code,
@@ -151,10 +178,11 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
             Recipient=Party(
                 AccountNumber=payload.recipient.account_number,
                 Tins=[
-                    TaxpayerIdentification(
-                        TinType=None,
-                        Number=tax,
-                    ) for tax in [payload.recipient.federal_tax_id, payload.recipient.state_tax_id]
+                    TaxpayerIdentification(TinType=None, Number=tax)
+                    for tax in [
+                        payload.recipient.federal_tax_id,
+                        payload.recipient.state_tax_id,
+                    ]
                 ],
                 Contact=Contact(
                     ContactId=None,
@@ -178,7 +206,10 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
                 )
                 else None,
                 Address=Address(
-                    StreetLines=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
+                    StreetLines=concat_str(
+                        payload.recipient.address_line_1,
+                        payload.recipient.address_line_2,
+                    ),
                     City=payload.recipient.city,
                     StateOrProvinceCode=payload.recipient.state_code,
                     PostalCode=payload.recipient.postal_code,
@@ -242,7 +273,8 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
             else None,
             ShippingDocumentSpecification=None,
             RateRequestTypes=(
-                ["LIST"] + ([] if 'currency' not in payload.parcel.options else ["PREFERRED"])
+                ["LIST"]
+                + ([] if "currency" not in payload.parcel.options else ["PREFERRED"])
             ),
             EdtRequestType=None,
             MasterTrackingId=None,
@@ -258,13 +290,23 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
                     Weight=FedexWeight(
                         Value=Weight(pkg.weight, weight_unit).value,
                         Units=weight_unit.value,
-                    ) if pkg.weight is not None else None,
+                    )
+                    if pkg.weight is not None
+                    else None,
                     Dimensions=FedexDimensions(
-                        Length=Dimension(pkg.length, dimension_unit).value if pkg.length is not None else None,
-                        Width=Dimension(pkg.width, dimension_unit).value if pkg.width is not None else None,
-                        Height=Dimension(pkg.height, dimension_unit).value if pkg.height is not None else None,
+                        Length=Dimension(pkg.length, dimension_unit).value
+                        if pkg.length is not None
+                        else None,
+                        Width=Dimension(pkg.width, dimension_unit).value
+                        if pkg.width is not None
+                        else None,
+                        Height=Dimension(pkg.height, dimension_unit).value
+                        if pkg.height is not None
+                        else None,
                         Units=dimension_unit.value,
-                    ) if any([pkg.height, pkg.width, pkg.height]) else None,
+                    )
+                    if any([pkg.height, pkg.width, pkg.height])
+                    else None,
                     PhysicalPackaging=None,
                     ItemDescription=None,
                     ItemDescriptionForClearance=pkg.description,

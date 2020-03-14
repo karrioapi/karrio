@@ -5,13 +5,16 @@ from typing import Callable, TypeVar, Union
 from purplship.freight.gateway import Gateway
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.models import (
-    RateRequest, ShipmentRequest,
-    TrackingRequest, PickupRequest,
-    PickupCancellationRequest, PickupUpdateRequest
+    RateRequest,
+    ShipmentRequest,
+    TrackingRequest,
+    PickupRequest,
+    PickupCancellationRequest,
+    PickupUpdateRequest,
 )
 
-T = TypeVar('T')
-S = TypeVar('S')
+T = TypeVar("T")
+S = TypeVar("S")
 
 
 @attr.s(auto_attribs=True)
@@ -39,10 +42,8 @@ class IRequestWith:
 
 
 class pickup:
-
     @staticmethod
     def book(args: Union[PickupRequest, dict]):
-
         def action(gateway: Gateway):
             payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
             request: Serializable = gateway.mapper.create_pickup_request(payload)
@@ -57,10 +58,10 @@ class pickup:
 
     @staticmethod
     def cancel(args: Union[PickupCancellationRequest, dict]):
-
         def action(gateway: Gateway):
             payload = (
-                args if isinstance(args, PickupCancellationRequest)
+                args
+                if isinstance(args, PickupCancellationRequest)
                 else PickupCancellationRequest(**args)
             )
             request: Serializable = gateway.mapper.create_cancel_pickup_request(payload)
@@ -75,10 +76,10 @@ class pickup:
 
     @staticmethod
     def update(args: Union[PickupUpdateRequest, dict]):
-
         def action(gateway: Gateway):
             payload = (
-                args if isinstance(args, PickupUpdateRequest)
+                args
+                if isinstance(args, PickupUpdateRequest)
                 else PickupUpdateRequest(**args)
             )
             request: Serializable = gateway.mapper.create_modify_pickup_request(payload)
@@ -93,15 +94,10 @@ class pickup:
 
 
 class rating:
-
     @staticmethod
     def fetch(args: Union[RateRequest, dict]):
-
         def action(gateway: Gateway):
-            payload = (
-                args if isinstance(args, RateRequest)
-                else RateRequest(**args)
-            )
+            payload = args if isinstance(args, RateRequest) else RateRequest(**args)
             request: Serializable = gateway.mapper.create_rate_request(payload)
             response: Deserializable = gateway.proxy.get_rates(request)
 
@@ -114,14 +110,11 @@ class rating:
 
 
 class shipment:
-
     @staticmethod
     def create(args: Union[ShipmentRequest, dict]):
-
         def action(gateway: Gateway):
             payload = (
-                args if isinstance(args, ShipmentRequest)
-                else ShipmentRequest(**args)
+                args if isinstance(args, ShipmentRequest) else ShipmentRequest(**args)
             )
             request: Serializable = gateway.mapper.create_shipment_request(payload)
             response: Deserializable = gateway.proxy.create_shipment(request)
@@ -135,14 +128,11 @@ class shipment:
 
 
 class tracking:
-
     @staticmethod
     def fetch(args: Union[TrackingRequest, dict]) -> IRequestFrom:
-
         def action(gateway: Gateway) -> IDeserialize:
             payload = (
-                args if isinstance(args, TrackingRequest)
-                else TrackingRequest(**args)
+                args if isinstance(args, TrackingRequest) else TrackingRequest(**args)
             )
             request: Serializable = gateway.mapper.create_tracking_request(payload)
             response: Deserializable = gateway.proxy.get_tracking(request)

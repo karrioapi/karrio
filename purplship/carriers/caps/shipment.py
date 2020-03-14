@@ -4,21 +4,42 @@ from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType
 from purplship.carriers.caps.utils import Settings
 from purplship.core.models import (
-    Error, ShipmentDetails, ChargeDetails, ReferenceDetails, ShipmentRequest
+    Error,
+    ShipmentDetails,
+    ChargeDetails,
+    ReferenceDetails,
+    ShipmentRequest,
 )
 from purplship.core.units import Currency, Weight, WeightUnit, DimensionUnit, Dimension
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from pycaps.shipment import (
-    ShipmentType, ShipmentInfoType, ShipmentPriceType, DeliverySpecType,
-    SenderType, AddressDetailsType, DestinationType, DestinationAddressDetailsType,
-    ParcelCharacteristicsType, optionsType, ReferencesType, NotificationType, PrintPreferencesType,
-    sku_listType, SkuType, dimensionsType, OptionType, CustomsType, PreferencesType
+    ShipmentType,
+    ShipmentInfoType,
+    ShipmentPriceType,
+    DeliverySpecType,
+    SenderType,
+    AddressDetailsType,
+    DestinationType,
+    DestinationAddressDetailsType,
+    ParcelCharacteristicsType,
+    optionsType,
+    ReferencesType,
+    NotificationType,
+    PrintPreferencesType,
+    sku_listType,
+    SkuType,
+    dimensionsType,
+    OptionType,
+    CustomsType,
+    PreferencesType,
 )
 
 
-def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Error]]:
+def parse_shipment_response(
+    response: Element, settings: Settings
+) -> Tuple[ShipmentDetails, List[Error]]:
     shipment = (
         _extract_shipment(response, settings)
         if len(response.xpath(".//*[local-name() = $name]", name="shipment-id")) > 0
@@ -36,26 +57,45 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     return ShipmentDetails(
         carrier=settings.carrier_name,
         tracking_numbers=[info.tracking_pin],
-        total_charge=ChargeDetails(name="Shipment charge", amount=data.due_amount, currency=currency_),
+        total_charge=ChargeDetails(
+            name="Shipment charge", amount=data.due_amount, currency=currency_
+        ),
         charges=(
             [
-                ChargeDetails(name="base-amount", amount=data.base_amount, currency=currency_),
-                ChargeDetails(name="gst-amount", amount=data.gst_amount, currency=currency_),
-                ChargeDetails(name="pst-amount", amount=data.pst_amount, currency=currency_),
-                ChargeDetails(name="hst-amount", amount=data.hst_amount, currency=currency_),
+                ChargeDetails(
+                    name="base-amount", amount=data.base_amount, currency=currency_
+                ),
+                ChargeDetails(
+                    name="gst-amount", amount=data.gst_amount, currency=currency_
+                ),
+                ChargeDetails(
+                    name="pst-amount", amount=data.pst_amount, currency=currency_
+                ),
+                ChargeDetails(
+                    name="hst-amount", amount=data.hst_amount, currency=currency_
+                ),
             ]
             + [
-                ChargeDetails(name=adjustment.adjustment_code, amount=adjustment.adjustment_amount, currency=currency_)
+                ChargeDetails(
+                    name=adjustment.adjustment_code,
+                    amount=adjustment.adjustment_amount,
+                    currency=currency_,
+                )
                 for adjustment in data.adjustments.get_adjustment()
             ]
             + [
-                ChargeDetails(name=option.option_code, amount=option.option_price, currency=currency_)
+                ChargeDetails(
+                    name=option.option_code,
+                    amount=option.option_price,
+                    currency=currency_,
+                )
                 for option in data.priced_options.get_priced_option()
             ]
         ),
         shipment_date=str(data.service_standard.expected_delivery_date),
         services=(
-            [data.service_code] + [option.option_code for option in data.priced_options.get_priced_option()]
+            [data.service_code]
+            + [option.option_code for option in data.priced_options.get_priced_option()]
         ),
         documents=[
             link.get("href")
@@ -66,14 +106,18 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[ShipmentType]:
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[ShipmentType]:
     weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "CM"]
     requested_services = [
         svc for svc in payload.parcel.services if svc in ServiceType.__members__
     ]
     requested_options = dict(
-        (opt, value) for opt, value in payload.options.items() if opt in OptionCode.__members__
+        (opt, value)
+        for opt, value in payload.options.items()
+        if opt in OptionCode.__members__
     )
     request = ShipmentType(
         customer_request_id=payload.shipper.account_number or settings.customer_number,
@@ -144,10 +188,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 on_shipment=True,
                 on_exception=True,
                 on_delivery=True,
-            ) if payload.shipper.email_address is not None else None,
+            )
+            if payload.shipper.email_address is not None
+            else None,
             print_preferences=PrintPreferencesType(
-                output_format="8.5x11",
-                encoding=None
+                output_format="8.5x11", encoding=None
             ),
             preferences=PreferencesType(
                 service_code=None,
@@ -180,7 +225,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         for item in payload.parcel.items
                     ]
                 ),
-            ) if payload.customs is not None else None,
+            )
+            if payload.customs is not None
+            else None,
             references=ReferencesType(
                 cost_centre=None,
                 customer_ref_1=payload.parcel.reference,
@@ -188,7 +235,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             ),
         ),
         return_spec=None,
-        pre_authorized_payment=None
+        pre_authorized_payment=None,
     )
     return Serializable(request, _request_serializer)
 
@@ -197,5 +244,5 @@ def _request_serializer(request: ShipmentType) -> str:
     return export(
         request,
         name_="shipment",
-        namespacedef_='xmlns="http://www.canadapost.ca/ws/shipment-v8"'
+        namespacedef_='xmlns="http://www.canadapost.ca/ws/shipment-v8"',
     )

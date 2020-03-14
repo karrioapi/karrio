@@ -7,7 +7,9 @@ from .utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Error]:
-    notifications = response.xpath(".//*[local-name() = $name]", name="PrimaryErrorCode")
+    notifications = response.xpath(
+        ".//*[local-name() = $name]", name="PrimaryErrorCode"
+    )
     return reduce(_extract_error(settings), notifications, [])
 
 

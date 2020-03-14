@@ -2,36 +2,51 @@ from functools import reduce
 from typing import Callable, List, Tuple
 from pyups import common
 from pyups.rate_web_service_schema import (
-    RateRequest as UPSRateRequest, PickupType, RatedShipmentType, ShipmentRatingOptionsType,
-    ShipToType, ShipmentType, ShipperType, ShipAddressType, ShipToAddressType,
-    PackageType, PackageWeightType, UOMCodeDescriptionType, DimensionsType,
+    RateRequest as UPSRateRequest,
+    PickupType,
+    RatedShipmentType,
+    ShipmentRatingOptionsType,
+    ShipToType,
+    ShipmentType,
+    ShipperType,
+    ShipAddressType,
+    ShipToAddressType,
+    PackageType,
+    PackageWeightType,
+    UOMCodeDescriptionType,
+    DimensionsType,
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import DimensionUnit, Weight, WeightUnit, Dimension
-from purplship.core.models import (
-    RateDetails, ChargeDetails, Error, RateRequest
-)
+from purplship.core.models import RateDetails, ChargeDetails, Error, RateRequest
 from purplship.carriers.ups.units import (
-    RatingServiceCode, RatingPackagingType, WeightUnit as UPSWeightUnit, ShippingServiceCode
+    RatingServiceCode,
+    RatingPackagingType,
+    WeightUnit as UPSWeightUnit,
+    ShippingServiceCode,
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
 
-def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_rate_response(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Error]]:
     rate_reply = response.xpath(".//*[local-name() = $name]", name="RatedShipment")
     rates: List[RateDetails] = reduce(_extract_package_rate(settings), rate_reply, [])
     return rates, parse_error_response(response, settings)
 
 
-def _extract_package_rate(settings: Settings) -> Callable[[List[RateDetails], Element], List[RateDetails]]:
+def _extract_package_rate(
+    settings: Settings
+) -> Callable[[List[RateDetails], Element], List[RateDetails]]:
     def extract(rates: List[RateDetails], detail_node: Element) -> List[RateDetails]:
         rate = RatedShipmentType()
         rate.build(detail_node)
-    
+
         if rate.NegotiatedRateCharges is not None:
             total_charges = (
                 rate.NegotiatedRateCharges.TotalChargesWithTaxes
@@ -43,18 +58,23 @@ def _extract_package_rate(settings: Settings) -> Callable[[List[RateDetails], El
             total_charges = rate.TotalChargesWithTaxes or rate.TotalCharges
             taxes = rate.TaxCharges
             itemized_charges = rate.ItemizedCharges + taxes
-    
+
         extra_charges = itemized_charges + [rate.ServiceOptionsCharges]
-    
+
         arrival = PickupType()
         [
-            arrival.build(arrival) for arrival in
-            detail_node.xpath(".//*[local-name() = $name]", name="Arrival")
+            arrival.build(arrival)
+            for arrival in detail_node.xpath(
+                ".//*[local-name() = $name]", name="Arrival"
+            )
         ]
-        currency_ = next(c.text for c in detail_node.xpath(
-            ".//*[local-name() = $name]", name="CurrencyCode"
-        ))
-    
+        currency_ = next(
+            c.text
+            for c in detail_node.xpath(
+                ".//*[local-name() = $name]", name="CurrencyCode"
+            )
+        )
+
         return rates + [
             RateDetails(
                 carrier=settings.carrier_name,
@@ -70,20 +90,29 @@ def _extract_package_rate(settings: Settings) -> Callable[[List[RateDetails], El
                 ),
                 discount=None,
                 extra_charges=reduce(
-                    lambda total, charge: (total + [
-                      ChargeDetails(name=charge.Code, amount=float(charge.MonetaryValue), currency=charge.CurrencyCode)
-                    ]),
+                    lambda total, charge: (
+                        total
+                        + [
+                            ChargeDetails(
+                                name=charge.Code,
+                                amount=float(charge.MonetaryValue),
+                                currency=charge.CurrencyCode,
+                            )
+                        ]
+                    ),
                     [charge for charge in extra_charges if charge is not None],
                     [],
                 ),
-                delivery_date=str(arrival.Date)
+                delivery_date=str(arrival.Date),
             )
         ]
-    
+
     return extract
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRateRequest]:
+def rate_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[UPSRateRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     service = (
@@ -99,8 +128,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
             RequestOption=["Rate"],
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
-                CustomerContext=payload.parcel.reference,
-                TransactionIdentifier=None,
+                CustomerContext=payload.parcel.reference, TransactionIdentifier=None
             ),
         ),
         PickupType=None,
@@ -111,7 +139,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
                 Name=payload.shipper.company_name,
                 ShipperNumber=payload.shipper.account_number,
                 Address=ShipAddressType(
-                    AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
+                    AddressLine=concat_str(
+                        payload.recipient.address_line_1,
+                        payload.recipient.address_line_2,
+                    ),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
                     PostalCode=payload.shipper.postal_code,
@@ -121,7 +152,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
             ShipTo=ShipToType(
                 Name=payload.recipient.company_name,
                 Address=ShipToAddressType(
-                    AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
+                    AddressLine=concat_str(
+                        payload.recipient.address_line_1,
+                        payload.recipient.address_line_2,
+                    ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
                     PostalCode=payload.recipient.postal_code,
@@ -136,22 +170,21 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
             FRSPaymentInformation=None,
             FreightShipmentInformation=None,
             GoodsNotInFreeCirculationIndicator=None,
-            Service=UOMCodeDescriptionType(
-                Code=service.value, Description=None
-            ),
+            Service=UOMCodeDescriptionType(Code=service.value, Description=None),
             NumOfPieces=None,  # Only required for Freight
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
             DocumentsOnlyIndicator="" if payload.parcel.is_document else None,
             Package=[
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
-                        Code=RatingPackagingType[payload.parcel.packaging_type or "BOX"].value,
+                        Code=RatingPackagingType[
+                            payload.parcel.packaging_type or "BOX"
+                        ].value,
                         Description=None,
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=dimension_unit.value,
-                            Description=None,
+                            Code=dimension_unit.value, Description=None
                         ),
                         Length=Dimension(payload.parcel.length, dimension_unit).value,
                         Width=Dimension(payload.parcel.width, dimension_unit).value,
@@ -160,8 +193,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=UPSWeightUnit[weight_unit.name].value,
-                            Description=None,
+                            Code=UPSWeightUnit[weight_unit.name].value, Description=None
                         ),
                         Weight=Weight(payload.parcel.weight, weight_unit).value,
                     ),
@@ -172,8 +204,12 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
             ],
             ShipmentServiceOptions=None,
             ShipmentRatingOptions=ShipmentRatingOptionsType(
-                NegotiatedRatesIndicator="" if 'NegotiatedRatesIndicator' in payload.parcel.options else None,
-            ) if 'NegotiatedRatesIndicator' in payload.parcel.options else None,
+                NegotiatedRatesIndicator=""
+                if "NegotiatedRatesIndicator" in payload.parcel.options
+                else None
+            )
+            if "NegotiatedRatesIndicator" in payload.parcel.options
+            else None,
             InvoiceLineTotal=None,
             RatingMethodRequestedIndicator=None,
             TaxInformationIndicator=None,
@@ -183,7 +219,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[UPSRa
     )
     return Serializable(
         create_envelope(header_content=settings.Security, body_content=request),
-        _request_serializer
+        _request_serializer,
     )
 
 
@@ -197,7 +233,11 @@ def _request_serializer(request: Element) -> str:
         xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1"
         xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    """.replace(" ", "").replace("\n", " ")
+    """.replace(
+        " ", ""
+    ).replace(
+        "\n", " "
+    )
     return clean_namespaces(
         export(request, namespacedef_=namespace_),
         envelope_prefix="tns:",

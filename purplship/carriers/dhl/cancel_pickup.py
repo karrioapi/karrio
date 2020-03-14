@@ -10,18 +10,32 @@ from purplship.carriers.dhl.units import CountryRegion
 
 
 def parse_cancel_pickup_response(response, settings) -> Tuple[dict, List[Error]]:
-    successful = len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
-    cancellation = dict(
-        confirmation_number=response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")[0].text
-    ) if successful else None
+    successful = (
+        len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
+    )
+    cancellation = (
+        dict(
+            confirmation_number=response.xpath(
+                ".//*[local-name() = $name]", name="ConfirmationNumber"
+            )[0].text
+        )
+        if successful
+        else None
+    )
     return cancellation, parse_error_response(response, settings)
 
 
-def cancel_pickup_request(payload: PickupCancellationRequest, settings: Settings) -> Serializable[CancelPURequest]:
+def cancel_pickup_request(
+    payload: PickupCancellationRequest, settings: Settings
+) -> Serializable[CancelPURequest]:
     request = CancelPURequest(
-        Request=settings.Request(MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)),
+        Request=settings.Request(
+            MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
+        ),
         schemaVersion=3.0,
-        RegionCode=CountryRegion[payload.country_code].value if payload.country_code else "AM",
+        RegionCode=CountryRegion[payload.country_code].value
+        if payload.country_code
+        else "AM",
         ConfirmationNumber=payload.confirmation_number,
         RequestorName=payload.person_name,
         CountryCode=payload.country_code,
@@ -33,12 +47,10 @@ def cancel_pickup_request(payload: PickupCancellationRequest, settings: Settings
 
 
 def _request_serializer(request: CancelPURequest) -> str:
-    xml_str = (
-        export(
-            request,
-            name_="req:CancelPURequest",
-            namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd"',
-        )
+    xml_str = export(
+        request,
+        name_="req:CancelPURequest",
+        namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd"',
     )
 
     xml_str = reformat_time("CancelTime", xml_str)

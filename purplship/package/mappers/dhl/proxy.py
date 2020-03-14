@@ -22,7 +22,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def get_tracking(self, request: Serializable[KnownTrackingRequest]) -> Deserializable[str]:
+    def get_tracking(
+        self, request: Serializable[KnownTrackingRequest]
+    ) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
             data=bytearray(request.serialize(), "utf-8"),
@@ -31,7 +33,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def create_shipment(self, request: Serializable[ShipmentRequest]) -> Deserializable[str]:
+    def create_shipment(
+        self, request: Serializable[ShipmentRequest]
+    ) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
             data=bytearray(request.serialize(), "utf-8"),
@@ -40,7 +44,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def request_pickup(self, request: Serializable[BookPURequest]) -> Deserializable[str]:
+    def request_pickup(
+        self, request: Serializable[BookPURequest]
+    ) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
             data=bytearray(request.serialize(), "utf-8"),
@@ -49,7 +55,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def modify_pickup(self, request: Serializable[ModifyPURequest]) -> Deserializable[str]:
+    def modify_pickup(
+        self, request: Serializable[ModifyPURequest]
+    ) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
             data=bytearray(request.serialize(), "utf-8"),
@@ -58,7 +66,9 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def cancel_pickup(self, request: Serializable[CancelPURequest]) -> Deserializable[str]:
+    def cancel_pickup(
+        self, request: Serializable[CancelPURequest]
+    ) -> Deserializable[str]:
         response = http(
             url=self.settings.server_url,
             data=bytearray(request.serialize(), "utf-8"),

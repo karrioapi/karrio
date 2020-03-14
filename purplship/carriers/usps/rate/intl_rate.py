@@ -12,10 +12,12 @@ from purplship.carriers.usps.error import parse_error_response
 from purplship.carriers.usps import Settings
 
 
-def parse_intl_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_intl_rate_response(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Error]]:
     quotes: List[RateDetails] = [
         _extract_intl_rates(package, settings)
-        for package in response.xpath(".//*[local-name() = $name]", name="Service",)
+        for package in response.xpath(".//*[local-name() = $name]", name="Service")
     ]
     return quotes, parse_error_response(response, settings)
 
@@ -49,7 +51,9 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
     )
 
 
-def intl_rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlRateV2Request]:
+def intl_rate_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[IntlRateV2Request]:
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     request = IntlRateV2Request(
@@ -65,18 +69,26 @@ def intl_rate_request(payload: RateRequest, settings: Settings) -> Serializable[
                 GXG=None,
                 ValueOfContents=None,
                 Country=(
-                    Country[payload.recipient.country_code].value if payload.recipient.country_code else None
+                    Country[payload.recipient.country_code].value
+                    if payload.recipient.country_code
+                    else None
                 ),
                 Container=(
-                    IntlContainer[payload.parcel.packaging_type].value if payload.parcel.packaging_type else None
+                    IntlContainer[payload.parcel.packaging_type].value
+                    if payload.parcel.packaging_type
+                    else None
                 ),
-                Size="LARGE" if any(
-                    dim for dim in [
+                Size="LARGE"
+                if any(
+                    dim
+                    for dim in [
                         Dimension(payload.parcel.width, dimension_unit).IN,
                         Dimension(payload.parcel.length, dimension_unit).IN,
-                        Dimension(payload.parcel.height, dimension_unit).IN
-                    ] if dim > 12
-                ) else "REGULAR",
+                        Dimension(payload.parcel.height, dimension_unit).IN,
+                    ]
+                    if dim > 12
+                )
+                else "REGULAR",
                 Width=Dimension(payload.parcel.width, dimension_unit).IN,
                 Length=Dimension(payload.parcel.length, dimension_unit).IN,
                 Height=Dimension(payload.parcel.height, dimension_unit).IN,
@@ -84,7 +96,7 @@ def intl_rate_request(payload: RateRequest, settings: Settings) -> Serializable[
                 OriginZip=payload.shipper.postal_code,
                 CommercialFlag=None,
                 CommercialPlusFlag=None,
-                AcceptanceDateTime=datetime.today().strftime('%Y-%m-%dT%H:%M:%S'),
+                AcceptanceDateTime=datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
                 DestinationPostalCode=payload.recipient.postal_code,
                 ExtraServices=None,
                 Content=None,
@@ -95,4 +107,4 @@ def intl_rate_request(payload: RateRequest, settings: Settings) -> Serializable[
 
 
 def _request_serializer(request: IntlRateV2Request) -> dict:
-    return {'API': "IntlRateV2", 'XML': export(request)}
+    return {"API": "IntlRateV2", "XML": export(request)}

@@ -18,7 +18,7 @@ class Settings(BaseSettings):
                 SiteID=self.site_id,
                 Password=self.password,
             ),
-            **kwargs
+            **kwargs,
         )
 
 

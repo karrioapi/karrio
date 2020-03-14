@@ -14,19 +14,28 @@ def create_envelope(body_content, header_content=None) -> Envelope:
 
 
 def clean_namespaces(
-        envelope_str: str,
-        envelope_prefix: str,
-        body_child_name: str,
-        header_child_name: str = 'UnspecifiedTag',
-        header_child_prefix: str = '',
-        body_child_prefix: str = ''
+    envelope_str: str,
+    envelope_prefix: str,
+    body_child_name: str,
+    header_child_name: str = "UnspecifiedTag",
+    header_child_prefix: str = "",
+    body_child_prefix: str = "",
 ):
-    return envelope_str.replace(
-        '<%s%s' % (envelope_prefix, header_child_name), '<%s%s' % (header_child_prefix, header_child_name)
-    ).replace(
-        '</%s%s' % (envelope_prefix, header_child_name), '</%s%s' % (header_child_prefix, header_child_name)
-    ).replace(
-        '<%s%s' % (envelope_prefix, body_child_name), '<%s%s' % (body_child_prefix, body_child_name)
-    ).replace(
-        '</%s%s' % (envelope_prefix, body_child_name), '</%s%s' % (body_child_prefix, body_child_name)
+    return (
+        envelope_str.replace(
+            "<%s%s" % (envelope_prefix, header_child_name),
+            "<%s%s" % (header_child_prefix, header_child_name),
+        )
+        .replace(
+            "</%s%s" % (envelope_prefix, header_child_name),
+            "</%s%s" % (header_child_prefix, header_child_name),
+        )
+        .replace(
+            "<%s%s" % (envelope_prefix, body_child_name),
+            "<%s%s" % (body_child_prefix, body_child_name),
+        )
+        .replace(
+            "</%s%s" % (envelope_prefix, body_child_name),
+            "</%s%s" % (body_child_prefix, body_child_name),
+        )
     )

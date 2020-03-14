@@ -12,27 +12,36 @@ from purplship.core.units import Country, PackagingUnit, Currency
 from purplship.core.models import Error, RateRequest, RateDetails
 from purplship.carriers.aups.utils import Settings
 from purplship.core.errors import OriginNotServicedError
-from purplship.carriers.aups.postage.calculate_domestic_letter import calculate_domestic_letter_request
-from purplship.carriers.aups.postage.calculate_domestic_parcel import calculate_domestic_parcel_request
-from purplship.carriers.aups.postage.calculate_international_letter import calculate_international_letter_request
-from purplship.carriers.aups.postage.calculate_international_parcel import calculate_international_parcel_request
+from purplship.carriers.aups.postage.calculate_domestic_letter import (
+    calculate_domestic_letter_request,
+)
+from purplship.carriers.aups.postage.calculate_domestic_parcel import (
+    calculate_domestic_parcel_request,
+)
+from purplship.carriers.aups.postage.calculate_international_letter import (
+    calculate_international_letter_request,
+)
+from purplship.carriers.aups.postage.calculate_international_parcel import (
+    calculate_international_parcel_request,
+)
 
 PostageRateRequest = Union[
     pyaups.international_parcel_postage.ServiceRequest,
     pyaups.domestic_letter_postage.ServiceRequest,
     pyaups.international_letter_postage.ServiceRequest,
-    pyaups.domestic_parcel_postage.ServiceRequest
+    pyaups.domestic_parcel_postage.ServiceRequest,
 ]
 
 
-def parse_service_response(self, response: dict) -> Tuple[List[RateDetails], List[Error]]:
+def parse_service_response(
+    self, response: dict
+) -> Tuple[List[RateDetails], List[Error]]:
     services: List[Service] = (
-        ServiceResponse(**response).services.service
-        if "services" in response else []
+        ServiceResponse(**response).services.service if "services" in response else []
     )
     return (
         [self._extract_quote(svc) for svc in services],
-        self.parse_error_response(response)
+        self.parse_error_response(response),
     )
 
 
@@ -47,21 +56,26 @@ def _extract_quote(self, service: Service) -> RateDetails:
         currency=Currency.AUD.name,
         delivery_date=None,
         discount=0,
-        extra_charges=None
+        extra_charges=None,
     )
 
 
-def calculate_postage_request(payload: RateRequest, settings: Settings) -> Serializable[PostageRateRequest]:
+def calculate_postage_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[PostageRateRequest]:
     if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
-        raise OriginNotServicedError(payload.shipper.country_code, settings.carrier_name)
+        raise OriginNotServicedError(
+            payload.shipper.country_code, settings.carrier_name
+        )
 
     is_letter: bool = (
-        any(svc for svc in payload.parcel.services if 'LETTER' in svc)
+        any(svc for svc in payload.parcel.services if "LETTER" in svc)
         or payload.parcel.packaging_type == PackagingUnit.SM.name
         or payload.parcel.packaging_type == PackagingUnit.SM.name
     )
     is_international = (
-        payload.recipient.country_code is None or payload.recipient.country_code == Country.AU.name
+        payload.recipient.country_code is None
+        or payload.recipient.country_code == Country.AU.name
     )
 
     if is_letter and not is_international:

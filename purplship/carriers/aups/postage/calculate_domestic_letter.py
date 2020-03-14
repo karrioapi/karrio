@@ -10,6 +10,6 @@ def calculate_domestic_letter_request(payload: RateRequest) -> ServiceRequest:
         length=Dimension(payload.parcel.length, dimension_unit).CM,
         width=Dimension(payload.parcel.width, dimension_unit).CM,
         thickness=Dimension(payload.parcel.height, dimension_unit).CM,
-        weight=Weight(payload.parcel.weight, weight_unit).KG
+        weight=Weight(payload.parcel.weight, weight_unit).KG,
     )
     return request

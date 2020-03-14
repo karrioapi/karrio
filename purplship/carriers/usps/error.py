@@ -7,14 +7,18 @@ from purplship.carriers.usps.utils import Settings
 
 def parse_error_response(response: Element, settings: Settings) -> List[Error]:
     error_nodes: List[USPSError] = [
-        (lambda error: (error, error.build(node)))(USPSError())[0] for node in
-        ([response] if response.tag == "Error" else response.xpath(".//*[local-name() = $name]", name="Error"))
+        (lambda error: (error, error.build(node)))(USPSError())[0]
+        for node in (
+            [response]
+            if response.tag == "Error"
+            else response.xpath(".//*[local-name() = $name]", name="Error")
+        )
     ]
     return [
         Error(
             carrier=settings.carrier_name,
             code=str(error.Number),
-            message=error.Description
+            message=error.Description,
         )
         for error in error_nodes
     ]

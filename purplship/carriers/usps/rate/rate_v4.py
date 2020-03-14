@@ -13,7 +13,9 @@ from purplship.carriers.usps.error import parse_error_response
 from purplship.carriers.usps import Settings
 
 
-def parse_rate_v4_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_rate_v4_response(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Error]]:
     rates: List[RateDetails] = [
         _extract_quote(package, settings)
         for package in response.xpath(".//*[local-name() = $name]", name="Postage")
@@ -56,7 +58,9 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
     )
 
 
-def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[RateV4Request]:
+def rate_v4_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[RateV4Request]:
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     request = RateV4Request(
@@ -78,13 +82,17 @@ def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[Ra
                     if payload.parcel.packaging_type
                     else None
                 ),
-                Size="LARGE" if any(
-                    dim for dim in [
+                Size="LARGE"
+                if any(
+                    dim
+                    for dim in [
                         Dimension(payload.parcel.width, dimension_unit).IN,
                         Dimension(payload.parcel.length, dimension_unit).IN,
-                        Dimension(payload.parcel.height, dimension_unit).IN
-                    ] if dim > 12
-                ) else "REGULAR",
+                        Dimension(payload.parcel.height, dimension_unit).IN,
+                    ]
+                    if dim > 12
+                )
+                else "REGULAR",
                 Width=Dimension(payload.parcel.width, dimension_unit).IN,
                 Length=Dimension(payload.parcel.length, dimension_unit).IN,
                 Height=Dimension(payload.parcel.height, dimension_unit).IN,
@@ -99,7 +107,7 @@ def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[Ra
                 ReturnLocations=None,
                 ReturnServiceInfo=None,
                 DropOffTime=None,
-                ShipDate=ShipDateType(valueOf_=datetime.today().strftime('%Y-%m-%d')),
+                ShipDate=ShipDateType(valueOf_=datetime.today().strftime("%Y-%m-%d")),
             )
         ],
     )
@@ -107,4 +115,4 @@ def rate_v4_request(payload: RateRequest, settings: Settings) -> Serializable[Ra
 
 
 def _request_serializer(request: RateV4Request) -> dict:
-    return {'API': "RateV4", 'XML': export(request)}
+    return {"API": "RateV4", "XML": export(request)}
