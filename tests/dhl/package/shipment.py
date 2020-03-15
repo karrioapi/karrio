@@ -17,8 +17,10 @@ class TestDHLShipment(unittest.TestCase):
 
         # remove MessageTime, Date for testing purpose
         serialized_request = re.sub(
-            '<MessageTime>[^>]+</MessageTime>', '', re.sub(
-                '<Date>[^>]+</Date>', '', request.serialize()))
+            "<MessageTime>[^>]+</MessageTime>",
+            "",
+            re.sub("<Date>[^>]+</Date>", "", request.serialize()),
+        )
 
         self.assertEqual(serialized_request, ShipmentRequestXml)
 
@@ -32,19 +34,29 @@ class TestDHLShipment(unittest.TestCase):
     def test_parse_shipment_error(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentParsingError
-            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentParsingError))
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedShipmentParsingError)
+            )
 
     def test_shipment_missing_args_error_parsing(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentMissingArgsError
-            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentMissingArgsError))
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedShipmentMissingArgsError)
+            )
 
     def test_parse_shipment_response(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentResponseXml
-            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
 
@@ -230,7 +242,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <RegisteredAccount>123456789</RegisteredAccount>
         <AddressLine>238 850925434 Drive </AddressLine>
         <City>Scottsdale</City>
-        <Division>Arizona</Division>
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
         <CountryCode>US</CountryCode>
@@ -422,7 +433,6 @@ shipment_data = {
         "person_name": "Ms Lucian",
         "phone_number": "1 23 8613402",
         "email_address": "test@email.com",
-        "state": "Arizona",
         "state_code": "AZ",
         "account_number": "123456789",
     },
@@ -448,10 +458,7 @@ shipment_data = {
         "services": ["EXPRESS_WORLDWIDE"],
         "options": {"Paperless_Trade": True},
     },
-    "payment": {
-        "paid_by": "SENDER",
-        "account_number": "123456789",
-    },
+    "payment": {"paid_by": "SENDER", "account_number": "123456789"},
     "customs": {
         "terms_of_trade": "DAP",
         "duty_payment": {

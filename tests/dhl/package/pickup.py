@@ -2,7 +2,11 @@ import re
 import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
-from purplship.core.models import PickupCancellationRequest, PickupRequest, PickupUpdateRequest
+from purplship.core.models import (
+    PickupCancellationRequest,
+    PickupRequest,
+    PickupUpdateRequest,
+)
 from purplship.package import pickup
 from tests.dhl.package.fixture import gateway
 
@@ -18,7 +22,8 @@ class TestDHLPickup(unittest.TestCase):
         request = gateway.mapper.create_pickup_request(self.BookPURequest)
         # remove MessageTime for testing purpose
         serialized_request = re.sub(
-            '<MessageTime>[^>]+</MessageTime>', '', request.serialize())
+            "<MessageTime>[^>]+</MessageTime>", "", request.serialize()
+        )
 
         self.assertEqual(serialized_request, PickupRequestXML)
 
@@ -26,7 +31,8 @@ class TestDHLPickup(unittest.TestCase):
         request = gateway.mapper.create_modify_pickup_request(self.ModifyPURequest)
         # remove MessageTime for testing purpose
         serialized_request = re.sub(
-            '<MessageTime>[^>]+</MessageTime>', '', request.serialize())
+            "<MessageTime>[^>]+</MessageTime>", "", request.serialize()
+        )
 
         self.assertEqual(serialized_request, ModifyPURequestXML)
 
@@ -34,8 +40,10 @@ class TestDHLPickup(unittest.TestCase):
         request = gateway.mapper.create_cancel_pickup_request(self.CancelPURequest)
         # remove MessageTime for testing purpose
         serialized_request = re.sub(
-            '<MessageTime>[^>]+</MessageTime>', '', re.sub(
-                '<CancelTime>[^>]+</CancelTime>', '', request.serialize()))
+            "<MessageTime>[^>]+</MessageTime>",
+            "",
+            re.sub("<CancelTime>[^>]+</CancelTime>", "", request.serialize()),
+        )
 
         self.assertEqual(serialized_request, CancelPURequestXML)
 
@@ -65,7 +73,9 @@ class TestDHLPickup(unittest.TestCase):
             mock.return_value = PickupErrorResponseXML
             parsed_response = pickup.book(self.BookPURequest).with_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupErrorResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedPickupErrorResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -87,10 +97,7 @@ book_pickup_payload = {
         "email_address": "test@mail.com",
         "address_line_1": "234 rue Hubert",
     },
-    "parcels": [{
-        "weight": 20,
-        "weight_unit": "LB",
-    }]
+    "parcels": [{"weight": 20, "weight_unit": "LB"}],
 }
 
 modification_data = {
@@ -105,37 +112,32 @@ modification_data = {
         "person_name": "Rikhil",
         "phone_number": "4801313131",
         "country_code": "CA",
-        "email_address": "test@mail.com"
+        "email_address": "test@mail.com",
     },
-    "parcels": [{
-        "weight": 20,
-        "weight_unit": "LB",
-    }]
+    "parcels": [{"weight": 20, "weight_unit": "LB"}],
 }
 
 cancellation_data = {
     "confirmation_number": "743511",
     "person_name": "Rikhil",
     "pickup_date": "2013-10-10",
-    "country_code": "BR"
+    "country_code": "BR",
 }
 
 ParsedPickupResponse = [
     {
-        'carrier': 'carrier_name',
-        'confirmation_number': '3674',
-        'pickup_date': '2013-10-09',
-        'ref_times': [
-            {'name': 'CallInTime', 'value': '08:30:00'}
-        ]
+        "carrier": "carrier_name",
+        "confirmation_number": "3674",
+        "pickup_date": "2013-10-09",
+        "ref_times": [{"name": "CallInTime", "value": "08:30:00"}],
     },
     [
         {
-            'carrier': 'carrier_name',
-            'code': 'PU021',
-            'message': ' NOTICE!  Packages picked up after hours may\n                be inspected by a DHL Courier for FAA security purposes.'
+            "carrier": "carrier_name",
+            "code": "PU021",
+            "message": " NOTICE!  Packages picked up after hours may\n                be inspected by a DHL Courier for FAA security purposes.",
         }
-    ]
+    ],
 ]
 
 

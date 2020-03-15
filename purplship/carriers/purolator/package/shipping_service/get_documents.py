@@ -1,5 +1,5 @@
 from pypurolator.shipping_documents_service import (
-    GetDocumentsRequestContainer, RequestContext, DocumentCriteria, ArrayOfDocumentCriteria, PIN
+    GetDocumentsRequest, RequestContext, DocumentCriteria, ArrayOfDocumentCriteria, PIN
 )
 from purplship.core.utils.soap import Envelope, Body, Header
 from purplship.core.utils.serializable import Serializable
@@ -10,7 +10,7 @@ from purplship.carriers.purolator.utils import Settings
 
 def get_shipping_documents_request(pin: str, settings: Settings) -> Serializable[Element]:
     request = Envelope(
-        Header=Header(
+        Header=Header([
             RequestContext(
                 Version='1.3',
                 Language=settings.language,
@@ -18,9 +18,9 @@ def get_shipping_documents_request(pin: str, settings: Settings) -> Serializable
                 RequestReference=None,
                 UserToken=settings.user_token
             )
-        ),
-        Body=Body(
-            GetDocumentsRequestContainer(
+        ]),
+        Body=Body([
+            GetDocumentsRequest(
                 OutputType="PDF",
                 Synchronous=True,
                 DocumentCriterium=ArrayOfDocumentCriteria(
@@ -32,7 +32,7 @@ def get_shipping_documents_request(pin: str, settings: Settings) -> Serializable
                     ]
                 )
             )
-        )
+        ])
     )
     return Serializable(request, _request_serializer)
 

@@ -14,6 +14,7 @@ class Providers(Enum):
     caps = caps
     dhl = dhl
     fedex = fedex
+    purolator = purolator
     sendle = sendle
     ups = ups
     usps = usps

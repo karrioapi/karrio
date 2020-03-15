@@ -15,8 +15,8 @@ class TestDHLTracking(unittest.TestCase):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
         # remove MessageTime, Date and ReadyTime for testing purpose
         self.assertEqual(
-            re.sub('<MessageTime>[^>]+</MessageTime>', '', request.serialize()),
-            TrackingRequestXML
+            re.sub("<MessageTime>[^>]+</MessageTime>", "", request.serialize()),
+            TrackingRequestXML,
         )
 
     @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
@@ -29,20 +29,28 @@ class TestDHLTracking(unittest.TestCase):
     def test_tracking_auth_error_parsing(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = AuthError
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = TrackingResponseXML
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_single_not_found_parsing(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = TrackingSingleNotFound
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingSingNotFound))
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedTrackingSingNotFound)
+            )
 
 
 if __name__ == "__main__":
@@ -58,7 +66,7 @@ ParsedAuthError = [
             "code": "111",
             "message": " Error Parsing incoming request XML\n                    Error: Datatype error: In element\n                    'Password' : Value 'testPwd'\n                    with length '7' is less than minimum\n                    length facet of '8'.. at line 11, column 33",
         }
-    ]
+    ],
 ]
 
 ParsedTrackingSingNotFound = [

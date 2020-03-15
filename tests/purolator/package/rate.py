@@ -1,10 +1,10 @@
-import re
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
 from purplship.package import rating
-from tests.dhl.package.fixture import gateway
+from tests.purolator.package.fixture import gateway
 
 
 class TestDHLQuote(unittest.TestCase):
@@ -12,92 +12,123 @@ class TestDHLQuote(unittest.TestCase):
         self.maxDiff = None
         self.RateRequest = RateRequest(**RATE_REQUEST_PAYLOAD)
 
+    def test_create_shipment_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
+
+        self.assertEqual(request.serialize(), RATE_REQUEST_XML)
+
+    @patch("purplship.package.mappers.purolator.proxy.http", return_value="<a></a>")
+    def test_create_shipment(self, http_mock):
+        rating.fetch(self.RateRequest).from_(gateway)
+
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(
+            url,
+            f"{gateway.settings.server_url}/EWS/V2/Estimating/EstimatingService.asmx",
+        )
+
+    def test_parse_shipment_response(self):
+        with patch("purplship.package.mappers.purolator.proxy.http") as mock:
+            mock.return_value = RATE_RESPONSE_XML
+            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
+
 
 if __name__ == "__main__":
     unittest.main()
 
 
-RATE_REQUEST_PAYLOAD = {}
+RATE_REQUEST_PAYLOAD = {
+    "shipper": {
+        "person_name": "Aaron Summer",
+        "state_code": "ON",
+        "city": "Mississauga",
+        "country_code": "CA",
+        "postal_code": "L4W5M8",
+        "address_line_1": "Main Street",
+        "phone_number": "5555555",
+    },
+    "recipient": {
+        "person_name": "Aaron Summer",
+        "state_code": "BC",
+        "city": "Burnaby",
+        "country_code": "CA",
+        "postal_code": "V5C5A9",
+        "address_line_1": "Douglas Road",
+        "phone_number": "2982181",
+    },
+    "parcel": {
+        "reference": "Reference For Shipment",
+        "weight": 10,
+        "weight_unit": "LB",
+        "services": ["purolator_express"],
+    },
+}
 
-RATE_REQUEST_XML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" 
-    xmlns:ns1="http://purolator.com/pws/datatypes/v1">
+PARSED_RATE_RESPONSE = [[{'base_charge': 62.35, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-17', 'discount': 0.0, 'duties_and_taxes': 5.15, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 5.15, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.81, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'PurolatorExpress9AM', 'service_type': 'PurolatorExpress9AM', 'total_charge': 108.16}, {'base_charge': 55.0, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-17', 'discount': 0.0, 'duties_and_taxes': 4.77, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 4.77, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.48, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'PurolatorExpress10:30AM', 'service_type': 'PurolatorExpress10:30AM', 'total_charge': 100.1}, {'base_charge': 46.15, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-17', 'discount': 0.0, 'duties_and_taxes': 4.3, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 4.3, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.08, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'PurolatorExpress', 'service_type': 'PurolatorExpress', 'total_charge': 90.38}, {'base_charge': 29.6, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-22', 'discount': 0.0, 'duties_and_taxes': 3.44, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 3.44, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 1.33, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'PurolatorGround', 'service_type': 'PurolatorGround', 'total_charge': 72.22}, {'base_charge': 87.69, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-22', 'discount': 0.0, 'duties_and_taxes': 6.47, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 6.47, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 3.95, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'PurolatorGroundDistribution', 'service_type': 'PurolatorGroundDistribution', 'total_charge': 135.96}], []]
+
+RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
     <SOAP-ENV:Header>
         <ns1:RequestContext>
-            <ns1:Version>1.0</ns1:Version>
-            <ns1:Language>en</ns1:Language>
-            <ns1:GroupID>xxx</ns1:GroupID>
-            <ns1:RequestReference>Rating Example</ns1:RequestReference>
+            <Version>2.1</Version>
+            <Language>en</Language>
+            <UserToken>token</UserToken>
         </ns1:RequestContext>
     </SOAP-ENV:Header>
     <SOAP-ENV:Body>
         <ns1:GetFullEstimateRequest>
-            <ns1:Shipment>
-                <ns1:SenderInformation>
-                    <ns1:Address>
-                        <ns1:Name>Aaron Summer</ns1:Name>
-                        <ns1:StreetNumber>1234</ns1:StreetNumber>
-                        <ns1:StreetName>Main Street</ns1:StreetName>
-                        <ns1:City>Mississauga</ns1:City>
-                        <ns1:Province>ON</ns1:Province>
-                        <ns1:Country>CA</ns1:Country>
-                        <ns1:PostalCode>L4W5M8</ns1:PostalCode>
-                        <ns1:PhoneNumber>
-                            <ns1:CountryCode>1</ns1:CountryCode>
-                            <ns1:AreaCode>905</ns1:AreaCode>
-                            <ns1:Phone>5555555</ns1:Phone>
-                        </ns1:PhoneNumber>
-                    </ns1:Address>
-                </ns1:SenderInformation>
-                <ns1:ReceiverInformation>
-                    <ns1:Address>
-                        <ns1:Name>Aaron Summer</ns1:Name>
-                        <ns1:StreetNumber>2245</ns1:StreetNumber>
-                        <ns1:StreetName>Douglas Road</ns1:StreetName>
-                        <ns1:City>Burnaby</ns1:City>
-                        <ns1:Province>BC</ns1:Province>
-                        <ns1:Country>CA</ns1:Country>
-                        <ns1:PostalCode>V5C5A9</ns1:PostalCode>
-                        <ns1:PhoneNumber>
-                            <ns1:CountryCode>1</ns1:CountryCode>
-                            <ns1:AreaCode>604</ns1:AreaCode>
-                            <ns1:Phone>2982181</ns1:Phone>
-                        </ns1:PhoneNumber>
-                    </ns1:Address>
-                </ns1:ReceiverInformation>
-                <ns1:PackageInformation>
-                    <ns1:ServiceID>PurolatorExpress</ns1:ServiceID>
-                    <ns1:TotalWeight>
-                        <ns1:Value>10</ns1:Value>
-                        <ns1:WeightUnit>lb</ns1:WeightUnit>
-                    </ns1:TotalWeight>
-                    <ns1:TotalPieces>1</ns1:TotalPieces>
-                    <ns1:OptionsInformation>
-                        <ns1:Options>
-                            <ns1:OptionIDValuePair>
-                                <ns1:ID>DangerousGoods</ns1:ID>
-                                <ns1:Value>true</ns1:Value>
-                            </ns1:OptionIDValuePair>
-                            <ns1:OptionIDValuePair>
-                                <ns1:ID>DangerousGoodsMode</ns1:ID>
-                                <ns1:Value>Air</ns1:Value>
-                            </ns1:OptionIDValuePair>
-                            <ns1:OptionIDValuePair>
-                                <ns1:ID>DangerousGoodsClass</ns1:ID>
-                                <ns1:Value>FullyRegulated</ns1:Value>
-                            </ns1:OptionIDValuePair>
-                        </ns1:Options>
-                    </ns1:OptionsInformation>
-                </ns1:PackageInformation>
-                <ns1:PaymentInformation>
-                    <ns1:PaymentType>Sender</ns1:PaymentType>
-                    <ns1:RegisteredAccountNumber>YOUR_ACCOUNT_HERE</ns1:RegisteredAccountNumber>
-                    <ns1:BillingAccountNumber>YOUR_ACCOUNT_HERE</ns1:BillingAccountNumber>
-                </ns1:PaymentInformation>
-                <ns1:PickupInformation>
-                    <ns1:PickupType>DropOff</ns1:PickupType>
-                </ns1:PickupInformation>
-            </ns1:Shipment>
-            <ns1:ShowAlternativeServicesIndicator>true</ns1:ShowAlternativeServicesIndicator>
+            <Shipment>
+                <SenderInformation>
+                    <Address>
+                        <Name>Aaron Summer</Name>
+                        <StreetName>Main Street</StreetName>
+                        <City>Mississauga</City>
+                        <Province>ON</Province>
+                        <Country>CA</Country>
+                        <PostalCode>L4W5M8</PostalCode>
+                        <PhoneNumber>
+                            <Phone>5555555</Phone>
+                        </PhoneNumber>
+                    </Address>
+                </SenderInformation>
+                <ReceiverInformation>
+                    <Address>
+                        <Name>Aaron Summer</Name>
+                        <StreetName>Douglas Road</StreetName>
+                        <City>Burnaby</City>
+                        <Province>BC</Province>
+                        <Country>CA</Country>
+                        <PostalCode>V5C5A9</PostalCode>
+                        <PhoneNumber>
+                            <Phone>2982181</Phone>
+                        </PhoneNumber>
+                    </Address>
+                </ReceiverInformation>
+                <ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</ShipmentDate>
+                <PackageInformation>
+                    <ServiceID>PurolatorExpress</ServiceID>
+                    <TotalWeight>
+                        <Value>10</Value>
+                        <WeightUnit>lb</WeightUnit>
+                    </TotalWeight>
+                    <TotalPieces>1</TotalPieces>
+                    <PiecesInformation>
+                        <Piece>
+                            <Weight>
+                                <Value>10.</Value>
+                                <WeightUnit>lb</WeightUnit>
+                            </Weight>
+                        </Piece>
+                    </PiecesInformation>
+                </PackageInformation>
+                <PickupInformation>
+                    <PickupType>DropOff</PickupType>
+                </PickupInformation>
+                <TrackingReferenceInformation>
+                    <Reference1>Reference For Shipment</Reference1>
+                </TrackingReferenceInformation>
+            </Shipment>
+            <ShowAlternativeServicesIndicator>true</ShowAlternativeServicesIndicator>
         </ns1:GetFullEstimateRequest>
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>

@@ -17,7 +17,8 @@ class TestFeDexQuote(unittest.TestCase):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         # Remove timeStamp for testing
         serialized_request = re.sub(
-            '<ShipTimestamp>[^>]+</ShipTimestamp>', '', request.serialize())
+            "<ShipTimestamp>[^>]+</ShipTimestamp>", "", request.serialize()
+        )
 
         self.assertEqual(serialized_request, RateRequestXml)
 
@@ -57,8 +58,8 @@ RateRequestPayload = {
         "length": 10,
         "width": 3,
         "weight": 4.0,
-        "options": {"currency": "USD"}
-    }
+        "options": {"currency": "USD"},
+    },
 }
 
 ParsedRateResponse = [

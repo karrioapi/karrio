@@ -17,9 +17,14 @@ class TestDHLQuote(unittest.TestCase):
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         serialized_request = re.sub(
-            '<MessageTime>[^>]+</MessageTime>', '', re.sub(
-                '<Date>[^>]+</Date>', '', re.sub(
-                    '<ReadyTime>[^>]+</ReadyTime>', '', request.serialize())))
+            "<MessageTime>[^>]+</MessageTime>",
+            "",
+            re.sub(
+                "<Date>[^>]+</Date>",
+                "",
+                re.sub("<ReadyTime>[^>]+</ReadyTime>", "", request.serialize()),
+            ),
+        )
 
         self.assertEqual(serialized_request, RateRequestXML)
 
@@ -46,13 +51,17 @@ class TestDHLQuote(unittest.TestCase):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = QuoteMissingArgsError
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError)
+            )
 
     def test_parse_rate_vol_weight_higher_response(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = QuoteVolWeightHigher
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteVolWeightHigher))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedQuoteVolWeightHigher)
+            )
 
 
 if __name__ == "__main__":
@@ -71,10 +80,7 @@ RatePayload = {
         "weight": 4.0,
         "is_document": True,
         "items": [{"value_amount": 100}],
-        "options": {
-            "currency": "CAD",
-            "insurance": {"amount": 75},
-        }
+        "options": {"currency": "CAD", "insurance": {"amount": 75}},
     },
 }
 

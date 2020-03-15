@@ -1,88 +1,145 @@
 import re
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
 from purplship.package import shipment
-from tests.dhl.package.fixture import gateway
+from tests.purolator.package.fixture import gateway
 
 
 class TestDHLShipment(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**SHIPMENT_REQUEST_PAYLOAD)
+
+    def test_create_shipment_request(self):
+        request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
+
+        self.assertEqual(request.serialize(), SHIPMENT_REQUEST_XML)
+
+    @patch("purplship.package.mappers.purolator.proxy.http", return_value="<a></a>")
+    def test_create_shipment(self, http_mock):
+        shipment.create(self.ShipmentRequest).with_(gateway)
+
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(
+            url, f"{gateway.settings.server_url}/EWS/V2/Shipping/ShippingService.asmx"
+        )
+
+    def test_parse_shipment_response(self):
+        with patch("purplship.package.mappers.purolator.proxy.http") as mock:
+            mock.return_value = SHIPMENT_RESPONSE_XML
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_SHIPMENT_RESPONSE)
+            )
 
 
 if __name__ == "__main__":
     unittest.main()
 
-SHIPMENT_REQUEST_PAYLOAD = {}
+SHIPMENT_REQUEST_PAYLOAD = {
+    "shipper": {
+        "person_name": "Aaron Summer",
+        "state_code": "ON",
+        "city": "Mississauga",
+        "country_code": "CA",
+        "postal_code": "L4W5M8",
+        "address_line_1": "Main Street",
+        "phone_number": "5555555",
+    },
+    "recipient": {
+        "person_name": "Aaron Summer",
+        "state_code": "BC",
+        "city": "Burnaby",
+        "country_code": "CA",
+        "postal_code": "V5C5A9",
+        "address_line_1": "Douglas Road",
+        "phone_number": "2982181",
+    },
+    "parcel": {
+        "reference": "Reference For Shipment",
+        "weight": 10,
+        "weight_unit": "LB",
+        "services": ["purolator_express"],
+        "options": {"printing": "THERMAL"},
+    },
+}
 
-SHIPMENT_REQUEST_XML = """SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" 
-    xmlns:ns1="http://purolator.com/pws/datatypes/v1">
+PARSED_SHIPMENT_RESPONSE = [
+    {
+        "carrier": "purolator",
+        "shipment_date": "2020-03-15",
+        "tracking_numbers": ["329014521622"],
+    },
+    [],
+]
+
+SHIPMENT_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
     <SOAP-ENV:Header>
         <ns1:RequestContext>
-            <ns1:Version>1.0</ns1:Version>
-            <ns1:Language>en</ns1:Language>
-            <ns1:GroupID>xxx</ns1:GroupID>
-            <ns1:RequestReference>Rating Example</ns1:RequestReference>
+            <Version>2.1</Version>
+            <Language>en</Language>
+            <UserToken>token</UserToken>
         </ns1:RequestContext>
     </SOAP-ENV:Header>
     <SOAP-ENV:Body>
         <ns1:CreateShipmentRequest>
-            <ns1:Shipment>
-                <ns1:SenderInformation>
-                    <ns1:Address>
-                        <ns1:Name>Aaron Summer</ns1:Name>
-                        <ns1:StreetNumber>1234</ns1:StreetNumber>
-                        <ns1:StreetName>Main Street</ns1:StreetName>
-                        <ns1:City>Mississauga</ns1:City>
-                        <ns1:Province>ON</ns1:Province>
-                        <ns1:Country>CA</ns1:Country>
-                        <ns1:PostalCode>L4W5M8</ns1:PostalCode>
-                        <ns1:PhoneNumber>
-                            <ns1:CountryCode>1</ns1:CountryCode>
-                            <ns1:AreaCode>905</ns1:AreaCode>
-                            <ns1:Phone>5555555</ns1:Phone>
-                        </ns1:PhoneNumber>
-                    </ns1:Address>
-                </ns1:SenderInformation>
-                <ns1:ReceiverInformation>
-                    <ns1:Address>
-                        <ns1:Name>Aaron Summer</ns1:Name>
-                        <ns1:StreetNumber>2245</ns1:StreetNumber>
-                        <ns1:StreetName>Douglas Road</ns1:StreetName>
-                        <ns1:City>Burnaby</ns1:City>
-                        <ns1:Province>BC</ns1:Province>
-                        <ns1:Country>CA</ns1:Country>
-                        <ns1:PostalCode>V5C5A9</ns1:PostalCode>
-                        <ns1:PhoneNumber>
-                            <ns1:CountryCode>1</ns1:CountryCode>
-                            <ns1:AreaCode>604</ns1:AreaCode>
-                            <ns1:Phone>2982181</ns1:Phone>
-                        </ns1:PhoneNumber>
-                    </ns1:Address>
-                </ns1:ReceiverInformation>
-                <ns1:PackageInformation>
-                    <ns1:ServiceID>PurolatorExpress</ns1:ServiceID>
-                    <ns1:TotalWeight>
-                        <ns1:Value>10</ns1:Value>
-                        <ns1:WeightUnit>lb</ns1:WeightUnit>
-                    </ns1:TotalWeight>
-                    <ns1:TotalPieces>1</ns1:TotalPieces>
-                </ns1:PackageInformation>
-                <ns1:PaymentInformation>
-                    <ns1:PaymentType>Sender</ns1:PaymentType>
-                    <ns1:RegisteredAccountNumber>YOUR_ACCOUNT_HERE</ns1:RegisteredAccountNumber>
-                    <ns1:BillingAccountNumber>YOUR_ACCOUNT_HERE</ns1:BillingAccountNumber>
-                </ns1:PaymentInformation>
-                <ns1:PickupInformation>
-                    <ns1:PickupType>DropOff</ns1:PickupType>
-                </ns1:PickupInformation>
-                <ns1:TrackingReferenceInformation>
-                    <ns1:Reference1>Reference For Shipment</ns1:Reference1>
-                </ns1:TrackingReferenceInformation>
-            </ns1:Shipment>
-            <ns1:PrinterType>Thermal</ns1:PrinterType>
+            <Shipment>
+                <SenderInformation>
+                    <Address>
+                        <Name>Aaron Summer</Name>
+                        <StreetName>Main Street</StreetName>
+                        <City>Mississauga</City>
+                        <Province>ON</Province>
+                        <Country>CA</Country>
+                        <PostalCode>L4W5M8</PostalCode>
+                        <PhoneNumber>
+                            <Phone>5555555</Phone>
+                        </PhoneNumber>
+                    </Address>
+                </SenderInformation>
+                <ReceiverInformation>
+                    <Address>
+                        <Name>Aaron Summer</Name>
+                        <StreetName>Douglas Road</StreetName>
+                        <City>Burnaby</City>
+                        <Province>BC</Province>
+                        <Country>CA</Country>
+                        <PostalCode>V5C5A9</PostalCode>
+                        <PhoneNumber>
+                            <Phone>2982181</Phone>
+                        </PhoneNumber>
+                    </Address>
+                </ReceiverInformation>
+                <ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</ShipmentDate>
+                <PackageInformation>
+                    <ServiceID>PurolatorExpress</ServiceID>
+                    <TotalWeight>
+                        <Value>10</Value>
+                        <WeightUnit>lb</WeightUnit>
+                    </TotalWeight>
+                    <TotalPieces>1</TotalPieces>
+                    <PiecesInformation>
+                        <Piece>
+                            <Weight>
+                                <Value>10.</Value>
+                                <WeightUnit>lb</WeightUnit>
+                            </Weight>
+                        </Piece>
+                    </PiecesInformation>
+                </PackageInformation>
+                <PickupInformation>
+                    <PickupType>DropOff</PickupType>
+                </PickupInformation>
+                <TrackingReferenceInformation>
+                    <Reference1>Reference For Shipment</Reference1>
+                </TrackingReferenceInformation>
+            </Shipment>
+            <PrinterType>Thermal</PrinterType>
         </ns1:CreateShipmentRequest>
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>

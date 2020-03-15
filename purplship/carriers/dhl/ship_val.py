@@ -167,7 +167,7 @@ def shipment_request(
                 )
             ],
             City=payload.recipient.city,
-            Division=payload.recipient.state,
+            Division=None,
             DivisionCode=payload.recipient.state_code,
             PostalCode=payload.recipient.postal_code,
             CountryCode=payload.recipient.country_code,
@@ -213,7 +213,7 @@ def shipment_request(
             CountryCode=payload.shipper.country_code,
             City=payload.shipper.city,
             CountryName=None,
-            Division=payload.shipper.state,
+            Division=None,
             DivisionCode=payload.shipper.state_code,
             Contact=(
                 Contact(

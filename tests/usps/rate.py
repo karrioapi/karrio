@@ -24,7 +24,10 @@ class TestUSPSQuote(unittest.TestCase):
         request = gateway.mapper.create_rate_request(self.IntlRateRequest)
         serialized_request = request.serialize()
         xml_str = re.sub(
-            '<AcceptanceDateTime>[^>]+</AcceptanceDateTime>', '', serialized_request.get("XML"))
+            "<AcceptanceDateTime>[^>]+</AcceptanceDateTime>",
+            "",
+            serialized_request.get("XML"),
+        )
 
         self.assertEqual(serialized_request.get("API"), INTL_RATE_REQUEST.get("API"))
         self.assertEqual(xml_str, INTL_RATE_REQUEST.get("XML"))
@@ -39,7 +42,9 @@ class TestUSPSQuote(unittest.TestCase):
         with patch("purplship.package.mappers.usps.proxy.http") as mock:
             mock.return_value = INTL_RATE_RESPONSE
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_INTL_RATE_RESPONSE))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_INTL_RATE_RESPONSE)
+            )
 
     def test_parse_rate_response_errors(self):
         with patch("purplship.package.mappers.usps.proxy.http") as mock:
@@ -78,11 +83,7 @@ INTL_RATE_PAYLOAD = {
         "length": 10,
         "weight": 3.123,
         "packaging_type": "SM",
-        "items": [
-            {
-                "value_amount": 75,
-            },
-        ],
+        "items": [{"value_amount": 75}],
         "options": {"Insurance_Global_Express_Guaranteed": True},
     },
 }

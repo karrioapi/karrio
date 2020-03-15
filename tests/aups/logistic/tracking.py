@@ -22,25 +22,33 @@ class TestAustraliaPostTracking(unittest.TestCase):
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(
             reqUrl,
-            f'{gateway.proxy.settings.server_url}/shipping/v1/track?tracking_ids={TRACKING_REQUEST}',
+            f"{gateway.proxy.settings.server_url}/shipping/v1/track?tracking_ids={TRACKING_REQUEST}",
         )
 
     def test_parse_tracking_response(self):
         with patch("purplship.package.mappers.aups.proxy.http") as mock:
             mock.return_value = jsonify(TRACKING_RESPONSE)
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
+            )
 
     def test_parse_tracking_response_with_errors(self):
         with patch("purplship.package.mappers.aups.proxy.http") as mock:
             mock.return_value = jsonify(TRACKING_ERROR)
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_ERROR))
 
     def test_parse_tracking_response_errors(self):
         with patch("purplship.package.mappers.aups.proxy.http") as mock:
             mock.return_value = jsonify(ERRORS)
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
@@ -73,7 +81,10 @@ PARSED_TRACKING_RESPONSE = [
     [{"carrier": "Australia Post Shipping", "code": "ESB-10001"}],
 ]
 
-PARSED_TRACKING_ERROR = [[], [{"carrier": "Australia Post Shipping", "code": "ESB-10001"}]]
+PARSED_TRACKING_ERROR = [
+    [],
+    [{"carrier": "Australia Post Shipping", "code": "ESB-10001"}],
+]
 
 PARSED_ERRORS = [
     [],

@@ -20,7 +20,6 @@ class Address:
     email_address: str = None
     phone_number: str = None
 
-    state: str = None
     state_code: str = None
     suburb: str = None
     residential: bool = False

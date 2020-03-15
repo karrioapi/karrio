@@ -26,19 +26,25 @@ class TestCanadaPostTracking(unittest.TestCase):
     def test_tracking_auth_error_parsing(self):
         with patch("purplship.package.mappers.caps.proxy.http") as mock:
             mock.return_value = AuthError
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
         with patch("purplship.package.mappers.caps.proxy.http") as mock:
             mock.return_value = TrackingResponseXml
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
         with patch("purplship.package.mappers.caps.proxy.http") as mock:
             mock.return_value = UnknownTrackingNumberResponse
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedUnknownTrackingNumberResponse)
             )
@@ -51,7 +57,13 @@ TRACKING_PAYLOAD = ["1Z12345E6205277936"]
 
 ParsedAuthError = [
     [],
-    [{"carrier": "CanadaPost", "code": "E002", "message": "AAA Authentication Failure"}]
+    [
+        {
+            "carrier": "CanadaPost",
+            "code": "E002",
+            "message": "AAA Authentication Failure",
+        }
+    ],
 ]
 
 ParsedTrackingResponse = [

@@ -40,7 +40,9 @@ class TestCanadaPostQuote(unittest.TestCase):
         with patch("purplship.package.mappers.caps.proxy.http") as mock:
             mock.return_value = QuoteMissingArgsError
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError)
+            )
 
 
 if __name__ == "__main__":
@@ -61,7 +63,7 @@ RatePayload = {
         "services": ["Expedited_Parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
-    }
+    },
 }
 
 ParsedQuoteParsingError = [

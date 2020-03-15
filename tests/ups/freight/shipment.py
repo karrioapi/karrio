@@ -25,8 +25,12 @@ class TestUPSShipment(unittest.TestCase):
     def test_parse_freight_shipment_response(self):
         with patch("purplship.freight.mappers.ups.proxy.http") as mock:
             mock.return_value = FreightShipmentResponseXML
-            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedFreightShipmentResponse))
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedFreightShipmentResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -59,7 +63,7 @@ freight_shipment_data = {
         "weight_unit": "LB",
         "weight": 180,
         "reference": "Your Customer Context",
-        "options": {"ups_freight_class": "ups_freight_class_50"}
+        "options": {"ups_freight_class": "ups_freight_class_50"},
     },
 }
 

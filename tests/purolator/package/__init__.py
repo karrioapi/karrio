@@ -1,4 +1,3 @@
-from tests.dhl.package.tracking import *
-from tests.dhl.package.rate import *
-from tests.dhl.package.shipment import *
-from tests.dhl.package.pickup import *
+from tests.purolator.package.shipment import *
+from tests.purolator.package.rate import *
+from tests.purolator.package.tracking import *

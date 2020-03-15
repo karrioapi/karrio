@@ -10,4 +10,3 @@ gateway = api.gateway["fedex"].create(
         carrier_name="carrier_name",
     )
 )
-
