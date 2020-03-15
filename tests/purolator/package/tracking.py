@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
 TRACKING_REQUEST_PAYLOAD = ["m123"]
 
-PARSED_TRACKING_RESPONSE = [[{'carrier': 'purolator', 'events': [{'code': 'Other', 'date': '2004-01-13', 'description': 'New Tracking Number Assigned -', 'location': 'MONTREAL SORT CTR/CTR TRIE, PQ', 'time': '18:51'}, {'code': 'Other', 'date': '2004-01-13', 'description': 'New Tracking Number Assigned -', 'location': 'MONTREAL SORT CTR/CTR TRIE, PQ', 'time': '18:51'}], 'tracking_number': 'M123'}], []]
+PARSED_TRACKING_RESPONSE = [[{'carrier': 'purolator', 'events': [{'code': 'Other', 'date': '2004-01-13', 'description': 'New Tracking Number Assigned -', 'location': 'MONTREAL SORT CTR/CTR TRIE, PQ', 'time': '23:51'}, {'code': 'Other', 'date': '2004-01-13', 'description': 'New Tracking Number Assigned -', 'location': 'MONTREAL SORT CTR/CTR TRIE, PQ', 'time': '23:51'}], 'tracking_number': 'M123'}], []]
 
 TRACKING_REQUEST_XML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
     <SOAP-ENV:Header>

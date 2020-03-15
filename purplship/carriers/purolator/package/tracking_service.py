@@ -33,7 +33,7 @@ def _extract_tracking(node: Element, settings: Settings) -> TrackingDetails:
                 description=cast(Scan, scan).Description,
                 location=cast(Depot, cast(Scan, scan).Depot).Name,
                 code=cast(Scan, scan).ScanType,
-                time=datetime.fromtimestamp(int(cast(Scan, scan).ScanTime)).strftime('%H:%M'),
+                time=datetime.utcfromtimestamp(int(cast(Scan, scan).ScanTime)).strftime('%H:%M'),
             ) for scan in track.Scans.Scan
         ]
     )

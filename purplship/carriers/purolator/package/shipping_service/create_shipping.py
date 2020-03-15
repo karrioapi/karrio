@@ -1,4 +1,4 @@
-from typing import List, Tuple, cast
+from typing import List, Tuple, cast, Union, Type, Dict
 from datetime import datetime
 from pysoap.envelope import Envelope
 from pypurolator.shipping_service import (
@@ -6,7 +6,8 @@ from pypurolator.shipping_service import (
     TrackingReferenceInformation, Address, InternationalInformation, PickupInformation, PickupType,
     ArrayOfPiece, Piece, Weight as PurolatorWeight, WeightUnit as PurolatorWeightUnit, RequestContext,
     Dimension as PurolatorDimension, DimensionUnit as PurolatorDimensionUnit, TotalWeight, PhoneNumber,
-    PrinterType, CreateShipmentResponse, PIN,
+    PrinterType, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
+    Error as PurolatorError, ArrayOfError
 )
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit
@@ -17,6 +18,8 @@ from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings
 from purplship.carriers.purolator.units import Product
 from purplship.carriers.purolator.error import parse_error_response
+
+ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
 
 
 def parse_shipment_creation_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Error]]:
@@ -43,7 +46,17 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Envelope]:
+def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Dict[str, Envelope]]:
+    requests = dict(
+        validate=_shipment_request(payload, settings, validate=True),
+        create=_shipment_request(payload, settings),
+        error=_validation_error(settings)
+    )
+    return Serializable(requests, _request_serializer)
+
+
+def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bool = False) -> Envelope:
+    RequestType: ShipmentRequestType = ValidateShipmentRequest if validate else CreateShipmentRequest
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     dimension_unit: DimensionUnit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     service = next((svc for svc in payload.parcel.services if svc in Product.__members__), None)
@@ -56,7 +69,7 @@ def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Ser
             RequestReference=None,
             UserToken=settings.user_token
         ),
-        body_content=CreateShipmentRequest(
+        body_content=RequestType(
             Shipment=Shipment(
                 SenderInformation=SenderInformation(
                     Address=Address(
@@ -163,14 +176,40 @@ def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Ser
             PrinterType=PrinterType[payload.parcel.options.get('printing', "REGULAR")].value
         )
     )
-    return Serializable(request, _request_serializer)
+    return request
 
 
-def _request_serializer(envelope: Envelope) -> str:
+def _request_serializer(requests: Dict[str, Envelope]) -> Dict[str, str]:
     namespacedef_ = 'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1"'
-    envelope.ns_prefix_ = "SOAP-ENV"
-    envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    envelope.Header.ns_prefix_ = envelope.ns_prefix_
-    envelope.Body.anytypeobjs_[0].ns_prefix_ = "ns1"
-    envelope.Header.anytypeobjs_[0].ns_prefix_ = "ns1"
-    return export(envelope, namespacedef_=namespacedef_)
+
+    def serialize(envelope):
+        envelope.ns_prefix_ = "SOAP-ENV"
+        envelope.Body.ns_prefix_ = envelope.ns_prefix_
+        envelope.Header.ns_prefix_ = envelope.ns_prefix_
+        envelope.Body.anytypeobjs_[0].ns_prefix_ = "ns1"
+        envelope.Header.anytypeobjs_[0].ns_prefix_ = "ns1"
+        return export(envelope, namespacedef_=namespacedef_)
+
+    return {request: serialize(envelope) for request, envelope in requests.items()}
+
+
+def _validation_error(settings: Settings):
+    return create_envelope(
+        header_content=RequestContext(
+            Version='2.1',
+            Language=settings.language,
+            GroupID=None,
+            RequestReference=None,
+            UserToken=settings.user_token
+        ),
+        body_content=ResponseInformation(
+            Errors=ArrayOfError(
+                Error=[
+                    PurolatorError(
+                        Description="Invalid Shipment Request",
+                        Code='000000'
+                    )
+                ]
+            )
+        )
+    )

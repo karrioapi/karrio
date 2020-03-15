@@ -16,25 +16,37 @@ class TestDHLShipment(unittest.TestCase):
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
-        self.assertEqual(request.serialize(), SHIPMENT_REQUEST_XML)
+        self.assertEqual(request.serialize()['validate'], SHIPMENT_REQUEST_PIPELINE['validate'])
+        self.assertEqual(request.serialize()['create'], SHIPMENT_REQUEST_PIPELINE['create'])
 
-    @patch("purplship.package.mappers.purolator.proxy.http", return_value="<a></a>")
-    def test_create_shipment(self, http_mock):
-        shipment.create(self.ShipmentRequest).with_(gateway)
+    def test_create_shipment(self):
+        with patch("purplship.package.mappers.purolator.proxy.http") as mocks:
+            mocks.side_effect = [False, '']
+            shipment.create(self.ShipmentRequest).with_(gateway)
 
-        url = http_mock.call_args[1]["url"]
-        self.assertEqual(
-            url, f"{gateway.settings.server_url}/EWS/V2/Shipping/ShippingService.asmx"
-        )
+            url = mocks.call_args[1]["url"]
+            self.assertEqual(
+                url, f"{gateway.settings.server_url}/EWS/V2/Shipping/ShippingService.asmx"
+            )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.package.mappers.purolator.proxy.http") as mock:
-            mock.return_value = SHIPMENT_RESPONSE_XML
+        with patch("purplship.package.mappers.purolator.proxy.http") as mocks:
+            mocks.side_effect = ['true', SHIPMENT_RESPONSE_XML]
             parsed_response = (
                 shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_SHIPMENT_RESPONSE)
+            )
+
+    def test_parse_invalid_shipment_response(self):
+        with patch("purplship.package.mappers.purolator.proxy.http") as mocks:
+            mocks.side_effect = ['false']
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_INVALID_SHIPMENT_RESPONSE)
             )
 
 
@@ -77,6 +89,8 @@ PARSED_SHIPMENT_RESPONSE = [
     },
     [],
 ]
+
+PARSED_INVALID_SHIPMENT_RESPONSE = [None, [{'carrier': 'purolator', 'code': '000000', 'message': 'Invalid Shipment Request'}]]
 
 SHIPMENT_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
     <SOAP-ENV:Header>
@@ -144,6 +158,18 @@ SHIPMENT_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xml
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 """
+
+VALIDATE_SHIPMENT_REQUEST_XML = (
+    re.sub(
+        "<PrinterType>[^>]+</PrinterType>", "<removal-anchor>",
+        SHIPMENT_REQUEST_XML.replace('CreateShipmentRequest', 'ValidateShipmentRequest')
+    ).replace('            <removal-anchor>\n', '')
+)
+
+SHIPMENT_REQUEST_PIPELINE = dict(
+    validate=VALIDATE_SHIPMENT_REQUEST_XML,
+    create=SHIPMENT_REQUEST_XML,
+)
 
 SHIPMENT_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
     <s:Header>
