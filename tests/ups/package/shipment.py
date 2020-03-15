@@ -25,13 +25,19 @@ class TestUPSShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = NegotiatedShipmentResponseXML
-            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(NegotiatedParsedShipmentResponse))
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(NegotiatedParsedShipmentResponse)
+            )
 
     def test_parse_publish_rate_shipment_response(self):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
-            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
 

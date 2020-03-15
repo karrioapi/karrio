@@ -22,13 +22,15 @@ class TestCanadaPostShipment(unittest.TestCase):
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
             url,
-            f"{gateway.settings.server_url}/rs/{gateway.settings.customer_number}/{self.ShipmentRequest.shipper.account_number}/shipment"
+            f"{gateway.settings.server_url}/rs/{gateway.settings.customer_number}/{self.ShipmentRequest.shipper.account_number}/shipment",
         )
 
     def test_parse_shipment_response(self):
         with patch("purplship.package.mappers.caps.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
-            parsed_response = shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            parsed_response = (
+                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+            )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 

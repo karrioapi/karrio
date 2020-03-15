@@ -32,13 +32,17 @@ class TestUPSRating(unittest.TestCase):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = RateteParsingErrorXML
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateteParsingError))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedRateteParsingError)
+            )
 
     def test_parse_rate_missing_args_error(self):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = RateMissingArgsErrorXML
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateMissingArgsError))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedRateMissingArgsError)
+            )
 
 
 if __name__ == "__main__":
@@ -71,7 +75,7 @@ rate_req_data = {
         "weight": 4.0,
         "packaging_type": "Package",
         "description": "TV",
-        "options": {"NegotiatedRatesIndicator": True}
+        "options": {"NegotiatedRatesIndicator": True},
     },
 }
 

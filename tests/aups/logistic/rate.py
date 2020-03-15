@@ -13,9 +13,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
-        self.assertEqual(
-            to_dict(request.serialize()), to_dict(SHIPPING_PRICE_REQUEST)
-        )
+        self.assertEqual(to_dict(request.serialize()), to_dict(SHIPPING_PRICE_REQUEST))
 
     @patch("purplship.package.mappers.aups.proxy.http", return_value="{}")
     def test_get_rates(self, http_mock):
@@ -158,7 +156,7 @@ SHIPPING_PRICE_REQUEST = {
             "email_tracking_enabled": True,
             "from_": {
                 "name": "John Citizen",
-                "lines": ["1 Main Street", ''],
+                "lines": ["1 Main Street", ""],
                 "suburb": "MELBOURNE",
                 "state": "VIC",
                 "postcode": "3000",
@@ -168,7 +166,7 @@ SHIPPING_PRICE_REQUEST = {
             "to": {
                 "name": "Jane Smith",
                 "business_name": "Smith Pty Ltd",
-                "lines": ["123 Centre Road", ''],
+                "lines": ["123 Centre Road", ""],
                 "suburb": "Sydney",
                 "state": "NSW",
                 "postcode": "2000",

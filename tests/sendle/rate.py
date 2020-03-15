@@ -38,13 +38,19 @@ class TestSendleQuote(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.sendle.proxy.http") as mock:
             mock.return_value = jsonify(PARCEL_QUOTE_RESPONSE)
-            parsed_response = rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_PARCEL_QUOTE_RESPONSE))
+            parsed_response = (
+                rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_PARCEL_QUOTE_RESPONSE)
+            )
 
     def test_parse_rate_response_errors(self):
         with patch("purplship.package.mappers.sendle.proxy.http") as mock:
             mock.return_value = jsonify(ERROR)
-            parsed_response = rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
+            parsed_response = (
+                rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
@@ -167,7 +173,7 @@ DOMESTIC_PARCEL_QUOTE = {
     "pickup_postcode": "3124",
     "delivery_suburb": "Barangaroo",
     "delivery_postcode": "2000",
-    "kilogram_weight": '2.0',
+    "kilogram_weight": "2.0",
 }
 
 DOMESTIC_PARCEL_QUOTE_QUERY_STR = f"{gateway.settings.server_url}/quote?{urllib.parse.urlencode(to_dict(DOMESTIC_PARCEL_QUOTE))}"
@@ -177,7 +183,7 @@ INTERNATIONAL_PARCEL_QUOTE = {
     "pickup_suburb": "Sydney",
     "pickup_postcode": "2000",
     "delivery_country": "NZ",
-    "kilogram_weight": '5.0',
+    "kilogram_weight": "5.0",
 }
 
 INTERNATIONAL_PARCEL_QUOTE_QUERY_STR = f"{gateway.settings.server_url}/quote?{urllib.parse.urlencode(to_dict(INTERNATIONAL_PARCEL_QUOTE))}"

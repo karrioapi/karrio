@@ -92,6 +92,13 @@ class Option(Enum):
     notification = "Notification"  # Need to be integrated and documented
     cod = "Cash On Delivery"  # Need to be integrated and documented
     currency = "Currency"  # Need to be integrated and documented
+    printing = "Printing"  # Need to be integrated and documented
+
+
+class PrinterType(Enum):
+    """PrinterType - enum"""
+    REGULAR = 'Regular'  # Regular
+    THERMAL = 'Thermal'  # Thermal
 
 
 class Currency(Enum):

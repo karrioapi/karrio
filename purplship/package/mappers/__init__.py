@@ -15,6 +15,10 @@ try:
 except ImportError:
     pass
 try:
+    import purplship.package.mappers.purolator as purolator
+except ImportError:
+    pass
+try:
     import purplship.package.mappers.ups as ups
 except ImportError:
     pass

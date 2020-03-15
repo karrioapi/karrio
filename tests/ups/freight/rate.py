@@ -26,7 +26,9 @@ class TestUPSRating(unittest.TestCase):
         with patch("purplship.freight.mappers.ups.proxy.http") as mock:
             mock.return_value = FreightRateResponseXML
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedFreightRateResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedFreightRateResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -41,9 +43,7 @@ rate_req_data = {
         "city": "Montreal",
         "address_line_1": "Rue Fake",
     },
-    "recipient": {
-        "postal_code": "89109", "city": "Las Vegas", "country_code": "US"
-    },
+    "recipient": {"postal_code": "89109", "city": "Las Vegas", "country_code": "US"},
     "parcel": {
         "id": "1",
         "height": 3,

@@ -25,20 +25,28 @@ class TestUPSTracking(unittest.TestCase):
     def test_tracking_auth_error_parsing(self):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = AuthError
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_tracking_response_parsing(self):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = TrackingResponseXml
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = InvalidTrackingNumberResponseXML
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedInvalidTrackingNumberResponse))
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedInvalidTrackingNumberResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -49,7 +57,7 @@ TrackingRequestPayload = ["1Z12345E6205277936"]
 
 ParsedAuthError = [
     [],
-    [{"carrier": "UPS", "code": "250003", "message": "Invalid Access License number"}]
+    [{"carrier": "UPS", "code": "250003", "message": "Invalid Access License number"}],
 ]
 
 ParsedTrackingResponse = [

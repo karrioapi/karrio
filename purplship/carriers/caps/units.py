@@ -39,3 +39,8 @@ class OptionCode(Enum):
     Return_at_Senders_Expense = "RASE"
     Return_to_Sender = "RTS"
     Abandon = "ABAN"
+
+
+class PrinterType(Enum):
+    REGULAR = '8.5x11'
+    THERMAL = '4x6'

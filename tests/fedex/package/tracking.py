@@ -42,7 +42,9 @@ class TestFeDexTracking(unittest.TestCase):
             mock.return_value = TrackingErrorResponseXML
             parsed_response = tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponseError))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedTrackingResponseError)
+            )
 
 
 if __name__ == "__main__":
@@ -51,7 +53,7 @@ if __name__ == "__main__":
 
 ParsedAuthError = [
     [],
-    [{'carrier': 'carrier_name', 'code': '1000', 'message': 'Authentication Failed'}]
+    [{"carrier": "carrier_name", "code": "1000", "message": "Authentication Failed"}],
 ]
 
 ParsedTrackingResponse = [

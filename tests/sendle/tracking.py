@@ -25,14 +25,22 @@ class TestSendleTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("purplship.package.mappers.sendle.proxy.exec_parrallel") as mock:
             mock.return_value = TRACKING_RESPONSE
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
+            )
 
     def test_parse_tracking_response_with_errors(self):
         with patch("purplship.package.mappers.sendle.proxy.exec_parrallel") as mock:
             mock.return_value = TRACKING_RESPONSE_WITH_ERROR
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE_WITH_ERROR))
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE_WITH_ERROR)
+            )
 
 
 if __name__ == "__main__":

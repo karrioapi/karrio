@@ -18,8 +18,12 @@ class TestUSPSTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("purplship.package.mappers.usps.proxy.http") as mock:
             mock.return_value = TRACKING_RESPONSE
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
+            )
 
 
 if __name__ == "__main__":
