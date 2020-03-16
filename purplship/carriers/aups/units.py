@@ -4,17 +4,17 @@ from enum import Enum
 
 
 class Service(Enum):
-    AUS_LETTER_REGULAR_LARGE = "Large Letter"
-    AUS_LETTER_EXPRESS_SMALL = "Express Post Small Envelope"
-    AUS_PARCEL_REGULAR = "Parcel Post"
-    AUS_PARCEL_REGULAR_SATCHEL_3KG = "Parcel Post Medium (3Kg) Satchel"
-    AUS_PARCEL_EXPRESS = "Express Post"
-    AUS_PARCEL_EXPRESS_SATCHEL_3KG = "Express Post Medium (3Kg) Satchel"
+    aus_letter_regular_large = "Large Letter"
+    aus_letter_express_small = "Express Post Small Envelope"
+    aus_parcel_regular = "Parcel Post"
+    aus_parcel_regular_satchel_3_kg = "Parcel Post Medium (3Kg) Satchel"
+    aus_parcel_express = "Express Post"
+    aus_parcel_express_satchel_3_kg = "Express Post Medium (3Kg) Satchel"
 
 
 class Option(Enum):
-    AUS_SERVICE_OPTION_REGISTERED_POST = "Registered Post"
-    AUS_SERVICE_OPTION_COD_POSTAGE_FEES = "C.O.D - Postage & Fees"
-    AUS_SERVICE_OPTION_COD_MONEY_COLLECTION = "C.O.D - Money Collection, Postage & Fees"
-    AUS_SERVICE_OPTION_STANDARD = "Standard Service"
-    AUS_SERVICE_OPTION_SIGNATURE_ON_DELIVERY = "Signature on Delivery"
+    aus_service_option_registered_post = "Registered Post"
+    aus_service_option_cod_postage_fees = "C.O.D - Postage & Fees"
+    aus_service_option_cod_money_collection = "C.O.D - Money Collection, Postage & Fees"
+    aus_service_option_standard = "Standard Service"
+    aus_service_option_signature_on_delivery = "Signature on Delivery"

@@ -70,17 +70,17 @@ package_shipment_data = {
     },
     "parcel": {
         "reference": "Your Customer Context",
-        "services": ["UPS_Express"],
+        "services": ["ups_express"],
         "dimension_unit": "IN",
         "weight_unit": "LB",
-        "packaging_type": "Customer_Supplied_Package",
+        "packaging_type": "customer_supplied_package",
         "description": "Description",
         "length": 7,
         "width": 5,
         "height": 2,
         "weight": 10,
     },
-    "payment": {"paid_by": "SENDER"},
+    "payment": {"paid_by": "sender"},
     "label": {"format": "GIF"},
 }
 

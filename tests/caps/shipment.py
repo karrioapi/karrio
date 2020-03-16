@@ -65,10 +65,10 @@ shipment_data = {
         "length": 6,
         "width": 12,
         "weight": 20.0,
-        "services": ["Expedited_Parcel"],
+        "services": ["caps_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
-        "options": {"Collect_on_delivery": True},
+        "options": {"collect_on_delivery": True},
     },
 }
 

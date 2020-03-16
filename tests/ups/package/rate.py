@@ -68,14 +68,14 @@ rate_req_data = {
     },
     "parcel": {
         "reference": "Your Customer Context",
-        "services": ["UPS_Ground"],
+        "services": ["ups_ground"],
         "height": 3,
         "length": 10,
         "width": 3,
         "weight": 4.0,
-        "packaging_type": "Package",
+        "packaging_type": "package",
         "description": "TV",
-        "options": {"NegotiatedRatesIndicator": True},
+        "options": {"negotiated_rates_indicator": True},
     },
 }
 
@@ -117,8 +117,7 @@ ParsedRateResponse = [
             "discount": None,
             "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 0.0, "currency": "USD", "name": None}],
-            "service_name": "UPS_Ground",
-            "service_type": "03",
+            "service_name": "ups_ground",
             "total_charge": 9.86,
         }
     ],

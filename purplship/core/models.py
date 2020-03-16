@@ -29,7 +29,7 @@ class Address:
 
 
 @attr.s(auto_attribs=True)
-class Item:
+class Commodity:
     """item type is a commodity."""
 
     id: str = None
@@ -63,7 +63,6 @@ class Parcel:
     dimension_unit: str = "IN"
     services: List[str] = []
     options: Dict = {}
-    items: List[Item] = JList[Item]
 
 
 @attr.s(auto_attribs=True)
@@ -80,10 +79,10 @@ class Invoice:
 class Payment:
     """payment configuration type."""
 
+    paid_by: str = None
     description: str = None
     amount: float = None
     currency: str = None
-    paid_by: str = None
     account_number: str = None
 
 
@@ -95,9 +94,9 @@ class Customs:
     aes: str = None
     description: str = None
     terms_of_trade: str = None
-    items: List[Item] = JList[Item]
+    commodities: List[Commodity] = JList[Commodity]
+    duty: Payment = JStruct[Payment]
     invoice: Invoice = JStruct[Invoice]
-    duty_payment: Payment = JStruct[Payment]
     commercial_invoice: bool = False
 
 
@@ -118,10 +117,10 @@ class ShipmentRequest:
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
 
+    label: Doc = JStruct[Doc]
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
     doc_images: List[Doc] = JList[Doc]
-    label: Doc = JStruct[Doc]
 
     options: Dict = {}
 
@@ -259,8 +258,8 @@ class RateDetails:
 
     carrier: str
     service_name: str
-    service_type: str
     currency: str
+    service_type: str = None
     discount: float = 0.0
     base_charge: float = 0.0
     delivery_date: str = None

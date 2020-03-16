@@ -205,7 +205,7 @@ def shipment_request(
                 conversion_from_cad=None,
                 reason_for_export=payload.customs.terms_of_trade,
                 other_reason=payload.customs.description,
-                duties_and_taxes_prepaid=payload.customs.duty_payment.account_number,
+                duties_and_taxes_prepaid=payload.customs.duty.account_number,
                 certificate_number=None,
                 licence_number=None,
                 invoice_number=None,
@@ -218,11 +218,11 @@ def shipment_request(
                             hs_tariff_code=None,
                             unit_weight=WeightUnit.KG.value,
                             customs_value_per_unit=item.value_amount,
-                            customs_unit_of_measure=DimensionUnit.CM.value,
+                            customs_unit_of_measure=DimensionUnit.cm.value,
                             country_of_origin=payload.shipper.country_code,
                             province_of_origin=None,
                         )
-                        for item in payload.parcel.items
+                        for item in payload.customs.commodities
                     ]
                 ),
             )

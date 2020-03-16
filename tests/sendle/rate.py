@@ -41,6 +41,7 @@ class TestSendleQuote(unittest.TestCase):
             parsed_response = (
                 rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
             )
+
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_PARCEL_QUOTE_RESPONSE)
             )
@@ -71,41 +72,7 @@ INTERNATIONAL_QUOTE_PAYLOAD = {
 }
 
 
-PARSED_PARCEL_QUOTE_RESPONSE = [
-    [
-        {
-            "base_charge": 14.95,
-            "carrier": "Sendle",
-            "currency": "AUD",
-            "delivery_date": "2018-02-19",
-            "duties_and_taxes": 1.36,
-            "service_name": "Easy",
-            "service_type": "Easy",
-            "total_charge": 13.59,
-        },
-        {
-            "base_charge": 13.95,
-            "carrier": "Sendle",
-            "currency": "AUD",
-            "delivery_date": "2018-02-19",
-            "duties_and_taxes": 1.27,
-            "service_name": "Premium",
-            "service_type": "Premium",
-            "total_charge": 12.68,
-        },
-        {
-            "base_charge": 13.95,
-            "carrier": "Sendle",
-            "currency": "AUD",
-            "delivery_date": "2018-02-14",
-            "duties_and_taxes": 1.27,
-            "service_name": "Pro",
-            "service_type": "Pro",
-            "total_charge": 12.68,
-        },
-    ],
-    [],
-]
+PARSED_PARCEL_QUOTE_RESPONSE = [[{'base_charge': 14.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-19', 'duties_and_taxes': 1.36, 'service_name': 'sendle_easy', 'total_charge': 13.59}, {'base_charge': 13.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-19', 'duties_and_taxes': 1.27, 'service_name': 'sendle_premium', 'total_charge': 12.68}, {'base_charge': 13.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-14', 'duties_and_taxes': 1.27, 'service_name': 'sendle_pro', 'total_charge': 12.68}], []]
 
 PARSED_ERRORS = [
     [],

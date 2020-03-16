@@ -26,11 +26,7 @@ dhl = purplship.gateway['dhl'].create({
 response = purplship.rating.fetch({
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "shipment": {
-        "items": [
-            {"height": 3, "length": 10, "width": 3, "weight": 4.0}
-        ]
-    }
+    "parcel": {"height": 3, "length": 10, "width": 3, "weight": 4.0}
 }).from_(dhl)
 
 rates = response.parse()

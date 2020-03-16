@@ -63,6 +63,60 @@ class TestDHLShipment(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
+shipment_data = {
+    "shipper": {
+        "company_name": "shipper company privated limited 12",
+        "address_line_1": "238 850925434 Drive",
+        "city": "Scottsdale",
+        "postal_code": "85260",
+        "country_code": "US",
+        "person_name": "Ms Lucian",
+        "phone_number": "1 23 8613402",
+        "email_address": "test@email.com",
+        "state_code": "AZ",
+        "account_number": "123456789",
+    },
+    "recipient": {
+        "company_name": "IBM Bruse Pte Ltd",
+        "address_line_1": "9 Business Park Central 13th Floor The IBM Place",
+        "city": "Brussels",
+        "postal_code": "1060",
+        "country_code": "BE",
+        "person_name": "Mrs Orlander",
+        "phone_number": "506-851-2271",
+        "email_address": "c_orlander@gc.ca",
+    },
+    "parcel": {
+        "id": "1",
+        "height": 3,
+        "length": 10,
+        "width": 3,
+        "weight": 4.0,
+        "packaging_type": "dhl_express_envelope",
+        "is_document": False,
+        "services": ["express_worldwide"],
+        "options": {"paperless_trade": True},
+    },
+    "payment": {"paid_by": "sender", "account_number": "123456789"},
+    "customs": {
+        "commodities": [{"description": "cn", "sku": "cc"}],
+        "terms_of_trade": "DAP",
+        "duty": {
+            "account_number": "123456789",
+            "paid_by": "sender",
+            "amount": 200.00,
+        },
+    },
+    "doc_images": [
+        {
+            "type": "CIN",
+            "format": "PDF",
+            "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
+        }
+    ],
+}
+
 ParsedShipmentMissingArgsError = [
     None,
     [
@@ -422,56 +476,3 @@ ShipmentResponseXml = """<?xml version="1.0" encoding="UTF-8"?>
     </QtdSInAdCur>
 </res:ShipmentResponse>
 """
-
-shipment_data = {
-    "shipper": {
-        "company_name": "shipper company privated limited 12",
-        "address_line_1": "238 850925434 Drive",
-        "city": "Scottsdale",
-        "postal_code": "85260",
-        "country_code": "US",
-        "person_name": "Ms Lucian",
-        "phone_number": "1 23 8613402",
-        "email_address": "test@email.com",
-        "state_code": "AZ",
-        "account_number": "123456789",
-    },
-    "recipient": {
-        "company_name": "IBM Bruse Pte Ltd",
-        "address_line_1": "9 Business Park Central 13th Floor The IBM Place",
-        "city": "Brussels",
-        "postal_code": "1060",
-        "country_code": "BE",
-        "person_name": "Mrs Orlander",
-        "phone_number": "506-851-2271",
-        "email_address": "c_orlander@gc.ca",
-    },
-    "parcel": {
-        "id": "1",
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-        "packaging_type": "DHL_Express_Envelope",
-        "items": [{"description": "cn", "sku": "cc"}],
-        "is_document": False,
-        "services": ["EXPRESS_WORLDWIDE"],
-        "options": {"Paperless_Trade": True},
-    },
-    "payment": {"paid_by": "SENDER", "account_number": "123456789"},
-    "customs": {
-        "terms_of_trade": "DAP",
-        "duty_payment": {
-            "account_number": "123456789",
-            "paid_by": "SENDER",
-            "amount": 200.00,
-        },
-    },
-    "doc_images": [
-        {
-            "type": "CIN",
-            "format": "PDF",
-            "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-        }
-    ],
-}

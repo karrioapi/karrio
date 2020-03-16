@@ -41,6 +41,52 @@ class TestFedExShipment(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+shipment_data = {
+    "shipper": {
+        "account_number": "2349857",
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "Input Your Information",
+        "email_address": "Input Your Information",
+        "address_line_1": "Input Your Information",
+        "address_line_2": "Input Your Information",
+        "city": "MEMPHIS",
+        "state_code": "TN",
+        "postal_code": "38117",
+        "country_code": "US",
+    },
+    "recipient": {
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "Input Your Information",
+        "email_address": "Input Your Information",
+        "address_line_1": "Input Your Information",
+        "address_line_2": "Input Your Information",
+        "city": "RICHMOND",
+        "state_code": "BC",
+        "postal_code": "V7C4v7",
+        "country_code": "CA",
+    },
+    "parcel": {
+        "packaging_type": "your_packaging",
+        "weight_unit": "LB",
+        "dimension_unit": "IN",
+        "services": ["international_priority"],
+        "weight": 20.0,
+        "length": 12,
+        "width": 12,
+        "height": 12,
+        "options": {
+            "currency": "USD",
+            "international_traffic_in_arms_regulations": True,
+        },
+    },
+    "payment": {"paid_by": "THIRD_PARTY", "account_number": "Input Your Information"},
+    "customs": {
+        "duty": {"paid_by": "sender", "amount": "100."},
+    },
+    "label": {"format": "COMMON2D", "type": "PNG"},
+}
 
 ParsedShipmentResponse = [
     {
@@ -637,57 +683,3 @@ ShipmentRequestXml = """<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xml
     </tns:Body>
 </tns:Envelope>
 """
-
-shipment_data = {
-    "shipper": {
-        "account_number": "2349857",
-        "person_name": "Input Your Information",
-        "company_name": "Input Your Information",
-        "phone_number": "Input Your Information",
-        "email_address": "Input Your Information",
-        "address_line_1": "Input Your Information",
-        "address_line_2": "Input Your Information",
-        "city": "MEMPHIS",
-        "state_code": "TN",
-        "postal_code": "38117",
-        "country_code": "US",
-    },
-    "recipient": {
-        "person_name": "Input Your Information",
-        "company_name": "Input Your Information",
-        "phone_number": "Input Your Information",
-        "email_address": "Input Your Information",
-        "address_line_1": "Input Your Information",
-        "address_line_2": "Input Your Information",
-        "city": "RICHMOND",
-        "state_code": "BC",
-        "postal_code": "V7C4v7",
-        "country_code": "CA",
-    },
-    "parcel": {
-        "packaging_type": "YOUR_PACKAGING",
-        "weight_unit": "LB",
-        "dimension_unit": "IN",
-        "services": ["INTERNATIONAL_PRIORITY"],
-        "weight": 20.0,
-        "length": 12,
-        "width": 12,
-        "height": 12,
-        "items": [
-            {
-                "id": "1",
-                "quantity": 1,
-                "origin_country": "US",
-                "value_amount": 100.0,
-                "value_currency": "USD",
-            }
-        ],
-        "options": {
-            "currency": "USD",
-            "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS": True,
-        },
-    },
-    "payment": {"paid_by": "THIRD_PARTY", "account_number": "Input Your Information"},
-    "customs": {"duty_payment": {"paid_by": "SENDER", "amount": "100."}},
-    "label": {"format": "COMMON2D", "type": "PNG"},
-}

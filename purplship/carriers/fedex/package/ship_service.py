@@ -135,7 +135,7 @@ def process_shipment_request(
                 else None
             ),
             PackagingType=PackagingType[
-                payload.parcel.packaging_type or "YOUR_PACKAGING"
+                payload.parcel.packaging_type or "your_packaging"
             ].value,
             ManifestDetail=None,
             TotalWeight=FedexWeight(
@@ -282,13 +282,13 @@ def process_shipment_request(
                     Weight=FedexWeight(
                         Units=weight_unit.value,
                         Value=Weight(pkg.weight, weight_unit).value,
-                    ),
+                    ) if pkg.weight else None,
                     Dimensions=FedexDimensions(
                         Length=Dimension(pkg.length, dimension_unit).value,
                         Width=Dimension(pkg.width, dimension_unit).value,
                         Height=Dimension(pkg.height, dimension_unit).value,
                         Units=dimension_unit.value,
-                    ),
+                    ) if any([pkg.length, pkg.width, pkg.height]) else None,
                     PhysicalPackaging=None,
                     ItemDescription=pkg.description,
                     ItemDescriptionForClearance=None,
@@ -296,7 +296,7 @@ def process_shipment_request(
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
-                for index, pkg in enumerate(payload.customs.items, 1)
+                for index, pkg in enumerate(payload.customs.commodities, 1)
             ]
             if payload.customs is not None
             else None,

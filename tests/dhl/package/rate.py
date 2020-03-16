@@ -7,7 +7,7 @@ from purplship.package import rating
 from tests.dhl.package.fixture import gateway
 
 
-class TestDHLQuote(unittest.TestCase):
+class TestDHLRate(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.RateRequest = RateRequest(**RatePayload)
@@ -72,18 +72,16 @@ RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
-        "services": ["EXPRESS_WORLDWIDE_DOC"],
+        "services": ["express_worldwide_doc"],
         "id": "1",
         "height": 3,
         "length": 10,
         "width": 3,
         "weight": 4.0,
         "is_document": True,
-        "items": [{"value_amount": 100}],
         "options": {"currency": "CAD", "insurance": {"amount": 75}},
     },
 }
-
 
 ParsedQuoteParsingError = [
     [],
@@ -114,26 +112,26 @@ ParsedQuoteResponse = [
             "base_charge": 195.32,
             "carrier": "carrier_name",
             "currency": "CAD",
-            "delivery_date": "2018-06-26",
+            'delivery_date': '2018-06-26',
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [
                 {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
             ],
-            "service_name": "EXPRESS WORLDWIDE DOC",
-            "service_type": "TD",
+            "service_name": "express_worldwide_doc",
+            "service_type": "time_definite",
             "total_charge": 208.02,
         },
         {
             "base_charge": 213.47,
             "carrier": "carrier_name",
             "currency": "CAD",
-            "delivery_date": "2018-06-26",
+            'delivery_date': '2018-06-26',
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [],
-            "service_name": "EXPRESS EASY DOC",
-            "service_type": "TD",
+            "service_name": "express_easy_doc",
+            "service_type": "time_definite",
             "total_charge": 213.47,
         },
     ],
@@ -146,12 +144,12 @@ ParsedQuoteVolWeightHigher = [
             "base_charge": 0.0,
             "carrier": "carrier_name",
             "currency": None,
-            "delivery_date": "2017-11-13",
+            'delivery_date': '2017-11-13',
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [],
-            "service_name": "EXPRESS WORLDWIDE NONDOC",
-            "service_type": "TD",
+            "service_name": "express_worldwide_nondoc",
+            "service_type": "time_definite",
             "total_charge": 0.0,
         }
     ],

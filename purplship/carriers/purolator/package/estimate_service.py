@@ -52,10 +52,10 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
             currency=currency
         ) for charge in estimate.OptionPrices.OptionPrice
     ]
+    service = next((p.name for p in Product if p.value in estimate.ServiceID), estimate.ServiceID)
     return RateDetails(
         carrier=settings.carrier_name,
-        service_type=estimate.ServiceID,
-        service_name=estimate.ServiceID,
+        service_name=service,
         currency=currency,
         base_charge=float(estimate.BasePrice),
         delivery_date=str(estimate.ExpectedDeliveryDate),

@@ -58,7 +58,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         carrier=settings.carrier_name,
         currency=currency,
         delivery_date=str(price_quote.service_standard.expected_delivery_date),
-        service_name=price_quote.service_name,
+        service_name=ServiceType(price_quote.service_code).name,
         service_type=price_quote.service_code,
         base_charge=float(price_quote.price_details.base or 0),
         total_charge=float(price_quote.price_details.due or 0),

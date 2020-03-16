@@ -32,6 +32,7 @@ from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit
 from purplship.carriers.dhl.units import (
     PackageType,
     Product,
+    ProductCode,
     PayorType,
     Dimension as DHLDimensionUnit,
     WeightUnit as DHLWeightUnit,
@@ -120,12 +121,12 @@ def shipment_request(
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     currency = payload.parcel.options.get("currency", "USD")
     default_product_code = (
-        Product.EXPRESS_WORLDWIDE_DOC
+        ProductCode.express_worldwide_doc
         if payload.parcel.is_document
-        else Product.EXPRESS_WORLDWIDE
+        else ProductCode.express_worldwide_nondoc
     )
     product = (
-        [Product[svc] for svc in payload.parcel.services if svc in Product.__members__]
+        [ProductCode[svc] for svc in payload.parcel.services if svc in ProductCode.__members__]
         + [default_product_code]
     )[0]
 
@@ -149,13 +150,13 @@ def shipment_request(
             )
             if payload.payment is not None
             else None,
-            DutyAccountNumber=payload.customs.duty_payment.account_number,
+            DutyAccountNumber=payload.customs.duty.account_number,
             DutyPaymentType=(
-                PayorType[payload.customs.duty_payment.paid_by].value
-                if payload.customs.duty_payment.paid_by is not None
+                PayorType[payload.customs.duty.paid_by].value
+                if payload.customs.duty.paid_by is not None
                 else None
             )
-            if all([payload.customs, payload.customs.duty_payment])
+            if all([payload.customs, payload.customs.duty])
             else None,
         ),
         Consignee=Consignee(
@@ -197,7 +198,7 @@ def shipment_request(
         ),
         Commodity=[
             Commodity(CommodityCode=c.sku, CommodityName=c.description)
-            for c in payload.parcel.items
+            for c in payload.customs.commodities
         ],
         NewShipper=None,
         Shipper=Shipper(
@@ -242,7 +243,7 @@ def shipment_request(
                     Piece(
                         PieceID=payload.parcel.id,
                         PackageType=PackageType[
-                            payload.parcel.packaging_type or "BOX"
+                            payload.parcel.packaging_type or "box"
                         ].value,
                         Depth=Dimension(payload.parcel.length, dimension_unit).value,
                         Width=Dimension(payload.parcel.width, dimension_unit).value,
@@ -258,7 +259,7 @@ def shipment_request(
             WeightUnit=DHLWeightUnit[weight_unit.name].value,
             DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
             Date=time.strftime("%Y-%m-%d"),
-            PackageType=PackageType[payload.parcel.packaging_type or "BOX"].value,
+            PackageType=PackageType[payload.parcel.packaging_type or "box"].value,
             IsDutiable="Y" if payload.customs is not None else "N",
             InsuredAmount=None,
             DoorTo=payload.options.get("DoorTo"),
@@ -268,8 +269,8 @@ def shipment_request(
         ),
         EProcShip=None,
         Dutiable=Dutiable(
-            DeclaredCurrency=payload.customs.duty_payment.currency or "USD",
-            DeclaredValue=payload.customs.duty_payment.amount,
+            DeclaredCurrency=payload.customs.duty.currency or "USD",
+            DeclaredValue=payload.customs.duty.amount,
             TermsOfTrade=payload.customs.terms_of_trade,
             ScheduleB=None,
             ExportLicense=None,

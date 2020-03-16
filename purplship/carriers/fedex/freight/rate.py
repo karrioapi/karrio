@@ -124,7 +124,7 @@ def rate_request(
                 else None
             ),
             PackagingType=PackagingType[
-                payload.parcel.packaging_type or "YOUR_PACKAGING"
+                payload.parcel.packaging_type or "your_packaging"
             ].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
@@ -291,7 +291,7 @@ def rate_request(
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
-                for index, pkg in enumerate(payload.parcel.items, 1)
+                for index, pkg in enumerate(payload.customs.commodities, 1)
             ],
         ),
     )

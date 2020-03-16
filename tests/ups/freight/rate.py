@@ -50,7 +50,7 @@ rate_req_data = {
         "length": 170,
         "width": 3,
         "weight": 4.0,
-        "packaging_type": "BOX",
+        "packaging_type": "box",
         "description": "TV",
     },
 }

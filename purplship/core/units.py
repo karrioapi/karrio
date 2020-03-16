@@ -13,7 +13,7 @@ class Dimension:
 
     @property
     def value(self):
-        return self.__getattribute__(str(self._unit.value))
+        return self.__getattribute__(str(self._unit.name))
 
     @property
     def CM(self):
@@ -35,23 +35,23 @@ class Dimension:
 
 
 class DocFormat(Enum):
-    GIF = "GIF"
-    JPG = "JPG"
-    PDF = "PDF"
-    PNG = "PNG"
+    gif = "GIF"
+    jpg = "JPG"
+    pdf = "PDF"
+    png = "PNG"
 
 
 class PackagingUnit(Enum):
-    SM = "Small"
-    BOX = "Box"
-    PC = "Pieces"
-    PAL = "Pallet"
+    sm = "Small"
+    box = "Box"
+    pc = "Pieces"
+    pal = "Pallet"
 
 
 class PayorType(Enum):
-    SENDER = "SENDER"
-    RECIPIENT = "RECIPIENT"
-    THIRD_PARTY = "THIRD_PARTY"
+    sender = "SENDER"
+    recipient = "RECIPIENT"
+    third_party = "THIRD_PARTY"
 
 
 class WeightUnit(Enum):
@@ -66,7 +66,7 @@ class Weight:
 
     @property
     def value(self):
-        return self.__getattribute__(str(self._unit.value))
+        return self.__getattribute__(str(self._unit.name))
 
     @property
     def KG(self):
@@ -86,19 +86,28 @@ class Weight:
         else:
             return float(self._value * 2.204620823516057)
 
+    @property
+    def OZ(self):
+        if self._unit is None or self._value is None:
+            return None
+        if self._unit == WeightUnit.LB:
+            return float(self._value * 16)
+        elif self._unit == WeightUnit.KG:
+            return float(self._value * 35.274)
+        return None
+
 
 class Option(Enum):
-    insurance = "Insurance"  # Need to be integrated and documented
-    notification = "Notification"  # Need to be integrated and documented
-    cod = "Cash On Delivery"  # Need to be integrated and documented
-    currency = "Currency"  # Need to be integrated and documented
-    printing = "Printing"  # Need to be integrated and documented
+    insurance = "insurance"  # Need to be integrated and documented
+    notification = "notification"  # Need to be integrated and documented
+    cash_on_delivery = "COD"  # Need to be integrated and documented
+    currency = "currency"  # Need to be integrated and documented
+    printing = "printing"  # Need to be integrated and documented
 
 
 class PrinterType(Enum):
-    """PrinterType - enum"""
-    REGULAR = 'Regular'  # Regular
-    THERMAL = 'Thermal'  # Thermal
+    regular = 'Regular'  # Regular
+    thermal = 'Thermal'  # Thermal
 
 
 class Currency(Enum):

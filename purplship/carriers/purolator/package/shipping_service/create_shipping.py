@@ -6,11 +6,11 @@ from pypurolator.shipping_service import (
     TrackingReferenceInformation, Address, InternationalInformation, PickupInformation, PickupType,
     ArrayOfPiece, Piece, Weight as PurolatorWeight, WeightUnit as PurolatorWeightUnit, RequestContext,
     Dimension as PurolatorDimension, DimensionUnit as PurolatorDimensionUnit, TotalWeight, PhoneNumber,
-    PrinterType, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
+    PrinterType as PurolatorPrinterType, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
     Error as PurolatorError, ArrayOfError
 )
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit
+from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, PrinterType
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.utils.helpers import export, concat_str
@@ -61,6 +61,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
     dimension_unit: DimensionUnit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     service = next((svc for svc in payload.parcel.services if svc in Product.__members__), None)
     is_international = payload.shipper.country_code != payload.recipient.country_code
+    printing = PrinterType[payload.parcel.options.get('printing', "regular")]
     request = create_envelope(
         header_content=RequestContext(
             Version='2.1',
@@ -173,7 +174,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                 OtherInformation=None,
                 ProactiveNotification=None
             ),
-            PrinterType=PrinterType[payload.parcel.options.get('printing', "REGULAR")].value
+            PrinterType=PurolatorPrinterType(printing.value).value
         )
     )
     return request

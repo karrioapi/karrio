@@ -51,13 +51,13 @@ def _extract_shipment(
     detail.build(shipment_detail_node)
 
     shipment: ShipmentRateDetail = detail.ShipmentRating.ShipmentRateDetails[0]
-    items: CompletedPackageDetail = detail.CompletedPackageDetails
+    tracks: CompletedPackageDetail = detail.CompletedPackageDetails
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
         tracking_numbers=reduce(
             lambda ids, pkg: ids + [_id.TrackingNumber for _id in pkg.TrackingIds],
-            items,
+            tracks,
             [],
         ),
         total_charge=ChargeDetails(
@@ -95,7 +95,7 @@ def _extract_shipment(
         documents=reduce(
             lambda labels, pkg: labels
             + [str(b64encode(part.Image), "utf-8") for part in pkg.Label.Parts],
-            items,
+            tracks,
             [],
         ),
     )
@@ -121,7 +121,7 @@ def process_shipment_request(
             if len(requested_services) > 0
             else None,
             PackagingType=PackagingType[
-                payload.parcel.packaging_type or "YOUR_PACKAGING"
+                payload.parcel.packaging_type or "your_packaging"
             ].value,
             ManifestDetail=None,
             TotalWeight=FedexWeight(
@@ -314,7 +314,7 @@ def process_shipment_request(
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
-                for index, pkg in enumerate(payload.parcel.items, 1)
+                for index, pkg in enumerate(payload.customs.commodities, 1)
             ],
         ),
     )
