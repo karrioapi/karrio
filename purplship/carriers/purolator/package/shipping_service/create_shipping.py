@@ -33,14 +33,11 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     shipment.build(node)
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_numbers=(
-            [cast(PIN, pin).Value for pin in shipment.PiecePINs.PIN] +
-            [cast(PIN, pin).Value for pin in shipment.ReturnShipmentPINs.PIN]
-        ),
+        service=None,
+        tracking_number=cast(PIN, shipment.ShipmentPIN).Value,
         total_charge=None,
         charges=[],
         shipment_date=str(datetime.today().strftime("%Y-%m-%d")),
-        services=None,
         documents=[],
         reference=None
     )

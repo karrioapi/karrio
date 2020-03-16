@@ -94,14 +94,14 @@ NegotiatedParsedShipmentResponse = [
         ],
         "documents": ["R0lGODdheAUgA+cAAAAAAAEBAQIC (Truncated)"],
         "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
-        "services": None,
+        "service": None,
         "shipment_date": None,
         "total_charge": {
             "amount": "70.00",
             "currency": "USD",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["1ZWA82900191640782"],
+        "tracking_number": "1ZWA82900191640782",
     },
     [],
 ]
@@ -115,14 +115,14 @@ ParsedShipmentResponse = [
         ],
         "documents": ["R0lGODdheAUgA+c(Truncated)"],
         "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
-        "services": None,
+        "service": None,
         "shipment_date": None,
         "total_charge": {
             "amount": "88.12",
             "currency": "USD",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["1ZWA82900191640782"],
+        "tracking_number": "1ZWA82900191640782",
     },
     [],
 ]

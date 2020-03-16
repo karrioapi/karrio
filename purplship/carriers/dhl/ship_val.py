@@ -83,22 +83,16 @@ def _extract_shipment(
         else None
     )
     currency_ = get("CurrencyCode")
+    service = next(
+        (p.name for p in ProductCode if p.value == get("ProductShortName")),
+        get("ProductShortName")
+    )
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_numbers=[tracking_number],
+        tracking_number=tracking_number,
         shipment_date=get("ShipmentDate"),
-        services=(
-            [get("ProductShortName")]
-            + [
-                service.text
-                for service in shipment_response_node.xpath("//SpecialServiceDesc")
-            ]
-            + [
-                service.text
-                for service in shipment_response_node.xpath("//InternalServiceCode")
-            ]
-        ),
+        service=service,
         charges=[
             ChargeDetails(
                 name="PackageCharge",

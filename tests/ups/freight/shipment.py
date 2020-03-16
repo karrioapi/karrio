@@ -91,14 +91,14 @@ ParsedFreightShipmentResponse = [
         ],
         "documents": [],
         "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
-        "services": ["Service code"],
+        "service": "ups_worldwide_express",
         "shipment_date": None,
         "total_charge": {
             "amount": "MonetaryValue",
             "currency": "CurrencyCode",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["Shipment Number"],
+        "tracking_number": "Shipment Number",
     },
     [],
 ]
@@ -194,7 +194,7 @@ FreightShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
                     <freightShip:Value>BillableShipmentWeight</freightShip:Value>
                 </freightShip:BillableShipmentWeight>
                 <freightShip:Service>
-                    <freightShip:Code>Service code</freightShip:Code>
+                    <freightShip:Code>07</freightShip:Code>
                 </freightShip:Service>
                 <freightShip:TimeInTransit>
                     <freightShip:DaysInTransit>DaysInTransit</freightShip:DaysInTransit>

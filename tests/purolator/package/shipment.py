@@ -85,7 +85,7 @@ PARSED_SHIPMENT_RESPONSE = [
     {
         "carrier": "purolator",
         "shipment_date": str(datetime.now().strftime("%Y-%m-%d")),
-        "tracking_numbers": ["329014521622"],
+        "tracking_number": "329014521622",
     },
     [],
 ]

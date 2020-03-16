@@ -16,6 +16,7 @@ from pyups.ship_web_service_schema import (
     ShipUnitOfMeasurementType,
     LabelSpecificationType,
     LabelImageFormatType,
+    ShipmentResultsType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -49,7 +50,7 @@ def parse_shipment_response(
 def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDetails:
     shipmentResponse = ShipmentResponse()
     shipmentResponse.build(shipment_node)
-    shipment = shipmentResponse.ShipmentResults
+    shipment: ShipmentResultsType = shipmentResponse.ShipmentResults
 
     if shipment.NegotiatedRateCharges is None:
         total_charge = shipment.ShipmentCharges.TotalCharges
@@ -58,7 +59,7 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_numbers=[pkg.TrackingNumber for pkg in shipment.PackageResults],
+        tracking_number=shipment.ShipmentIdentificationNumber,
         total_charge=ChargeDetails(
             name="Shipment charge",
             amount=total_charge.MonetaryValue,

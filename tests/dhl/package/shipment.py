@@ -152,21 +152,14 @@ ParsedShipmentResponse = [
             "iVBORw0KGgoAAAANSUhEUgAAAawAAABeAQMAAABFK7JJAAAABlBMVEX///8AAABVwtN+AAAAaUlEQVR42u3LoRVAUACG0Z/gKLKjOK+YhRlMIOko7xUDSBqSUQyhaFYgsYMkfLdfT1ITdUdcL+PtNpuEqYrJJjZ3g06XXZ7Rs1cKZil2TV+ubW4kX5/QaDQajUaj0Wg0Go1Go9FotH+3F1GxE7xDV+SvAAAAAElFTkSuQmCC",
         ],
         "reference": {"type": "St", "value": "reference"},
-        "services": [
-            "EXPRESS WORLDWIDE",
-            "DUTIES & TAXES PAID ",
-            "PAPERLESS TRADE ",
-            "C",
-            "DTP",
-            "PLT",
-        ],
+        "service": "EXPRESS WORLDWIDE",
         "shipment_date": "2017-11-10",
         "total_charge": {
             "amount": "155.160",
             "currency": "USD",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["0044650491"],
+        "tracking_number": "0044650491",
     },
     [],
 ]

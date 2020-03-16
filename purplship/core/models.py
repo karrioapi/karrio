@@ -1,6 +1,6 @@
 """PurplShip Unified datatypes module."""
 import attr
-from typing import List, Dict, Union
+from typing import List, Dict
 from jstruct import JList, JStruct, REQUIRED
 
 
@@ -283,11 +283,11 @@ class ShipmentDetails:
     """PurplShip shipment details type."""
 
     carrier: str
-    tracking_numbers: List[str]
+    tracking_number: List[str]
     total_charge: ChargeDetails
     charges: List[ChargeDetails]
     shipment_date: str = None
-    services: List[str] = None
+    service: str = None
     documents: List[str] = []
     reference: ReferenceDetails = None
 

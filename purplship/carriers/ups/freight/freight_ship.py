@@ -14,6 +14,7 @@ from pyups.freight_ship_web_service_schema import (
     FreightShipUnitOfMeasurementType,
     WeightType,
     DimensionsType,
+    ShipmentResultsType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -47,11 +48,16 @@ def parse_freight_ship_response(
 def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDetails:
     shipmentResponse = FreightShipResponse()
     shipmentResponse.build(shipment_node)
-    shipment = shipmentResponse.ShipmentResults
+    shipment: ShipmentResultsType = shipmentResponse.ShipmentResults
+    service = (
+        ShippingServiceCode(shipment.Service.Code).name
+        if shipment.Service is not None and shipment.Service.Code is not None
+        else None
+    )
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_numbers=[shipment.ShipmentNumber],
+        tracking_number=shipment.ShipmentNumber,
         total_charge=ChargeDetails(
             name="Shipment charge",
             amount=shipment.TotalShipmentCharge.MonetaryValue,
@@ -65,8 +71,7 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
             )
             for rate in shipment.Rate
         ],
-        shipment_date=None,
-        services=[shipment.Service.Code],
+        service=service,
         documents=[image.GraphicImage for image in (shipment.Documents or [])],
         reference=ReferenceDetails(
             value=shipmentResponse.Response.TransactionReference.CustomerContext,

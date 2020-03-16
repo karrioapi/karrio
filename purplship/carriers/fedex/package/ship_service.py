@@ -1,6 +1,6 @@
 from base64 import b64encode
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from functools import reduce
 from pyfedex.ship_service_v25 import (
     CompletedShipmentDetail,
@@ -18,6 +18,8 @@ from pyfedex.ship_service_v25 import (
     Weight as FedexWeight,
     LabelSpecification,
     Dimensions as FedexDimensions,
+    ServiceDescription,
+    TrackingId
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -62,14 +64,12 @@ def _extract_shipment(
         item = CompletedPackageDetail()
         item.build(node)
         items.append(item)
-
+    tracking_number = cast(TrackingId, detail.MasterTrackingId).TrackingNumber
+    service = ServiceType(cast(ServiceDescription, detail.ServiceDescription).ServiceType).name
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_numbers=reduce(
-            lambda ids, pkg: ids + [_id.TrackingNumber for _id in pkg.TrackingIds],
-            items,
-            [],
-        ),
+        service=service,
+        tracking_number=tracking_number,
         total_charge=ChargeDetails(
             name="Shipment charge",
             amount=float(shipment.TotalNetChargeWithDutiesAndTaxes.Amount),
@@ -80,11 +80,6 @@ def _extract_shipment(
                 name="base_charge",
                 amount=float(shipment.TotalBaseCharge.Amount),
                 currency=shipment.TotalBaseCharge.Currency,
-            ),
-            ChargeDetails(
-                name="discount",
-                amount=float(detail.ShipmentRating.EffectiveNetDiscount.Amount),
-                currency=detail.ShipmentRating.EffectiveNetDiscount.Currency,
             ),
         ]
         + [
@@ -103,7 +98,6 @@ def _extract_shipment(
             )
             for fee in shipment.AncillaryFeesAndTaxes
         ],
-        services=[],
         documents=reduce(
             lambda labels, pkg: labels
             + [str(b64encode(part.Image), "utf-8") for part in pkg.Label.Parts],

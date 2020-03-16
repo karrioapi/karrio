@@ -88,14 +88,14 @@ ParsedShipmentResponse = [
         ],
         "documents": ["https://XX/rs/artifact/11111111/5555555/0"],
         "reference": {"type": "Shipment Id", "value": "347881315405043891"},
-        "services": ["DOM.EP", "DC", "UP"],
+        "service": "caps_expedited_parcel",
         "shipment_date": "2011-10-07",
         "total_charge": {
             "amount": "19.88",
             "currency": "CAD",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["12345"],
+        "tracking_number": "12345",
     },
     [],
 ]

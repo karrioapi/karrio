@@ -56,7 +56,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_numbers=[info.tracking_pin],
+        tracking_number=info.tracking_pin,
         total_charge=ChargeDetails(
             name="Shipment charge", amount=data.due_amount, currency=currency_
         ),
@@ -93,10 +93,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
             ]
         ),
         shipment_date=str(data.service_standard.expected_delivery_date),
-        services=(
-            [data.service_code]
-            + [option.option_code for option in data.priced_options.get_priced_option()]
-        ),
+        service=ServiceType(data.service_code).name,
         documents=[
             link.get("href")
             for link in response.xpath(".//*[local-name() = $name]", name="link")
@@ -218,7 +215,7 @@ def shipment_request(
                             hs_tariff_code=None,
                             unit_weight=WeightUnit.KG.value,
                             customs_value_per_unit=item.value_amount,
-                            customs_unit_of_measure=DimensionUnit.cm.value,
+                            customs_unit_of_measure=DimensionUnit.CM.value,
                             country_of_origin=payload.shipper.country_code,
                             province_of_origin=None,
                         )
