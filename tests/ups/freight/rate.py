@@ -37,7 +37,6 @@ if __name__ == "__main__":
 
 rate_req_data = {
     "shipper": {
-        "account_number": "56GJE",
         "postal_code": "H3N1S4",
         "country_code": "CA",
         "city": "Montreal",

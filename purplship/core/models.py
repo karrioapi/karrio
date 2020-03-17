@@ -13,7 +13,6 @@ class Address:
     type: str = None
     federal_tax_id: str = None
     state_tax_id: str = None
-    account_number: str = None
     person_name: str = None
     company_name: str = None
     country_code: str = None

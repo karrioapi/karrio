@@ -150,7 +150,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 NumberOfPieces=1,
                 ShipmentWeight=Weight(payload.parcel.weight, weight_unit).value,
                 Volume=None,
-                PaymentAccountNumber=payload.shipper.account_number,
+                PaymentAccountNumber=None,
                 InsuredCurrency=None,
                 InsuredValue=None,
                 PaymentType=None,

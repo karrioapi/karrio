@@ -49,7 +49,6 @@ RateRequestPayload = {
     "shipper": {
         "postal_code": "H3N1S4",
         "country_code": "CA",
-        "account_number": "2349857",
     },
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {

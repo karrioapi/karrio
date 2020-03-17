@@ -108,7 +108,7 @@ def mailing_scenario_request(
     }
 
     request = mailing_scenario(
-        customer_number=payload.shipper.account_number or settings.customer_number,
+        customer_number=settings.account_number,
         contract_id=None,
         promo_code=None,
         quote_type=None,

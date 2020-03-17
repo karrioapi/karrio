@@ -53,7 +53,7 @@ class Proxy(BaseProxy):
         self, request: Serializable[ShipmentType]
     ) -> Deserializable[str]:
         response = http(
-            url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{request.value.customer_request_id}/shipment",
+            url=f"{self.settings.server_url}/rs/{self.settings.account_number}/{request.value.customer_request_id}/shipment",
             data=bytearray(request.serialize(), "utf-8"),
             headers={
                 "Content-Type": "application/vnd.cpc.shipment-v8+xml",

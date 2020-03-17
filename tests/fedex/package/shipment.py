@@ -43,7 +43,6 @@ if __name__ == "__main__":
 
 shipment_data = {
     "shipper": {
-        "account_number": "2349857",
         "person_name": "Input Your Information",
         "company_name": "Input Your Information",
         "phone_number": "Input Your Information",
@@ -81,7 +80,7 @@ shipment_data = {
             "international_traffic_in_arms_regulations": True,
         },
     },
-    "payment": {"paid_by": "THIRD_PARTY", "account_number": "Input Your Information"},
+    "payment": {"paid_by": "THIRD_PARTY", "account_number": "2349857"},
     "customs": {
         "duty": {"paid_by": "sender", "amount": "100."},
     },

@@ -75,7 +75,6 @@ shipment_data = {
         "phone_number": "1 23 8613402",
         "email_address": "test@email.com",
         "state_code": "AZ",
-        "account_number": "123456789",
     },
     "recipient": {
         "company_name": "IBM Bruse Pte Ltd",
@@ -284,7 +283,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <CurrencyCode>USD</CurrencyCode>
     </ShipmentDetails>
     <Shipper>
-        <ShipperID>123456789</ShipperID>
         <CompanyName>shipper company privated limited 12</CompanyName>
         <RegisteredAccount>123456789</RegisteredAccount>
         <AddressLine>238 850925434 Drive </AddressLine>

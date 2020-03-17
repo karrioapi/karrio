@@ -135,7 +135,7 @@ def shipment_request(
         PiecesEnabled="Y",
         LatinResponseInd=None,
         Billing=Billing(
-            ShipperAccountNumber=payload.shipper.account_number,
+            ShipperAccountNumber=settings.account_number,
             BillingAccountNumber=payload.payment.account_number,
             ShippingPaymentType=(
                 PayorType[payload.payment.paid_by].value
@@ -196,8 +196,8 @@ def shipment_request(
         ],
         NewShipper=None,
         Shipper=Shipper(
-            ShipperID=payload.shipper.account_number,
-            RegisteredAccount=payload.shipper.account_number,
+            ShipperID=None,
+            RegisteredAccount=settings.account_number,
             AddressLine=[
                 " ".join(
                     [payload.shipper.address_line_1, payload.shipper.address_line_2]

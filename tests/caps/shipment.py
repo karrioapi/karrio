@@ -8,6 +8,7 @@ from tests.caps.fixture import gateway
 
 class TestCanadaPostShipment(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
 
     def test_create_shipment_request(self):
@@ -22,7 +23,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
             url,
-            f"{gateway.settings.server_url}/rs/{gateway.settings.customer_number}/{self.ShipmentRequest.shipper.account_number}/shipment",
+            f"{gateway.settings.server_url}/rs/{gateway.settings.account_number}/{gateway.settings.account_number}/shipment",
         )
 
     def test_parse_shipment_response(self):
@@ -49,7 +50,6 @@ shipment_data = {
         "person_name": "Bob",
         "phone_number": "1 (450) 823-8432",
         "state_code": "QC",
-        "account_number": "123456789",
     },
     "recipient": {
         "company_name": "CGI",
@@ -118,7 +118,7 @@ ShipmentPriceLinkXML = """
 
 
 ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
-    <customer-request-id>123456789</customer-request-id>
+    <customer-request-id>1234567</customer-request-id>
     <requested-shipping-point>H2B1A0</requested-shipping-point>
     <provide-pricing-info>true</provide-pricing-info>
     <delivery-spec>

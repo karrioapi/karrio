@@ -87,7 +87,6 @@ book_pickup_payload = {
     "closing_time": "09:20:00",
     "instruction": "behind the front desk",
     "address": {
-        "account_number": "123456789",
         "city": "Montreal",
         "postal_code": "H8Z2Z3",
         "person_name": "Subhayu",
@@ -106,7 +105,6 @@ modification_data = {
     "ready_time": "10:20:00",
     "closing_time": "09:20:00",
     "address": {
-        "account_number": "123456789",
         "city": "Montreal",
         "postal_code": "H8Z2Z3",
         "person_name": "Rikhil",

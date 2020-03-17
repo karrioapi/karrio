@@ -52,7 +52,6 @@ if __name__ == "__main__":
 rate_req_data = {
     "shipper": {
         "company_name": "Shipper Name",
-        "account_number": "Your Shipper Number",
         "postal_code": "H3N1S4",
         "country_code": "CountryCode",
         "city": "Montreal",
@@ -208,7 +207,7 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
             <Shipment>
                 <Shipper>
                     <Name>Shipper Name</Name>
-                    <ShipperNumber>Your Shipper Number</ShipperNumber>
+                    <ShipperNumber>Your Account Number</ShipperNumber>
                     <Address>
                         <AddressLine>Address Line</AddressLine>
                         <City>Montreal</City>

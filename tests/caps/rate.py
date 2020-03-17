@@ -52,7 +52,6 @@ RatePayload = {
     "shipper": {
         "postal_code": "H8Z2Z3",
         "country_code": "CA",
-        "account_number": "1234567",
     },
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
     "parcel": {

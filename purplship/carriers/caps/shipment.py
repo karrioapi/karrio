@@ -117,7 +117,7 @@ def shipment_request(
         if opt in OptionCode.__members__
     )
     request = ShipmentType(
-        customer_request_id=payload.shipper.account_number or settings.customer_number,
+        customer_request_id=settings.account_number,
         groupIdOrTransmitShipment=None,
         quickship_label_requested=None,
         cpc_pickup_indicator=None,

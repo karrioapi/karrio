@@ -5,6 +5,6 @@ gateway = api.gateway["caps"].create(
         server_url="https://ct.soa-gw.canadapost.ca",
         username="username",
         password="password",
-        customer_number="1234567",
+        account_number="1234567",
     )
 )

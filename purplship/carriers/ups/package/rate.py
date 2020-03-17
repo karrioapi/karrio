@@ -136,7 +136,7 @@ def rate_request(
             OriginRecordTransactionTimestamp=None,
             Shipper=ShipperType(
                 Name=payload.shipper.company_name,
-                ShipperNumber=payload.shipper.account_number,
+                ShipperNumber=settings.account_number,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
                         payload.recipient.address_line_1,

@@ -51,7 +51,6 @@ package_shipment_data = {
         "person_name": "Shipper Attn Name",
         "federal_tax_id": "123456",
         "phone_number": "1234567890",
-        "account_number": "Your Shipper Number",
         "address_line_1": "Address Line",
         "city": "City",
         "state_code": "StateProvinceCode",
@@ -279,7 +278,7 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                     <Phone>
                         <Number>1234567890</Number>
                     </Phone>
-                    <ShipperNumber>Your Shipper Number</ShipperNumber>
+                    <ShipperNumber>Your Account Number</ShipperNumber>
                     <Address>
                         <AddressLine>Address Line</AddressLine>
                         <City>City</City>

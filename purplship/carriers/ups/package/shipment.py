@@ -119,7 +119,7 @@ def shipment_request(
                 Phone=ShipPhoneType(Number=payload.shipper.phone_number, Extension=None)
                 if payload.shipper.phone_number is not None
                 else None,
-                ShipperNumber=payload.shipper.account_number,
+                ShipperNumber=settings.account_number,
                 FaxNumber=None,
                 EMailAddress=payload.shipper.email_address,
                 Address=ShipAddressType(

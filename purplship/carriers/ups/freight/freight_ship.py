@@ -123,7 +123,7 @@ def freight_ship_request(
                 FaxNumber=None,
                 EMailAddress=payload.shipper.email_address,
             ),
-            ShipperNumber=payload.shipper.account_number,
+            ShipperNumber=settings.account_number,
             ShipTo=ShipToType(
                 Name=payload.recipient.company_name,
                 TaxIdentificationNumber=payload.recipient.federal_tax_id,

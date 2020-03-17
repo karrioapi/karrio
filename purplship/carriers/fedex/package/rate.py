@@ -129,7 +129,7 @@ def rate_request(
             PreferredCurrency=payload.parcel.options.get("currency"),
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
-                AccountNumber=payload.shipper.account_number,
+                AccountNumber=settings.account_number,
                 Tins=[
                     TaxpayerIdentification(TinType=None, Number=tax)
                     for tax in [
@@ -175,7 +175,7 @@ def rate_request(
                 ),
             ),
             Recipient=Party(
-                AccountNumber=payload.recipient.account_number,
+                AccountNumber=None,
                 Tins=[
                     TaxpayerIdentification(TinType=None, Number=tax)
                     for tax in [

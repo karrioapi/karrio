@@ -47,7 +47,6 @@ freight_shipment_data = {
         "country_code": "CountryCode",
         "person_name": "Attention Name",
         "phone_number": "Shipper Phone number",
-        "account_number": "Your Shipper Number",
     },
     "recipient": {
         "company_name": "Ship To Name",
@@ -205,7 +204,7 @@ FreightShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </soapenv:Envelope>
 """
 
-FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:fsp="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0" xmlns:IF="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
+FreightShipmentRequestXML = f"""<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:fsp="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0" xmlns:IF="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
     <tns:Header>
         <upss:UPSSecurity>
             <UsernameToken>
@@ -240,7 +239,7 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
                         <Number>Shipper Phone number</Number>
                     </Phone>
                 </ShipFrom>
-                <ShipperNumber>Your Shipper Number</ShipperNumber>
+                <ShipperNumber>{gateway.settings.account_number}</ShipperNumber>
                 <ShipTo>
                     <Name>Ship To Name</Name>
                     <Address>
