@@ -18,7 +18,8 @@ from pyups.ship_web_service_schema import (
     LabelImageFormatType,
     ShipmentResultsType,
     ShipmentServiceOptionsType,
-    NotificationType
+    NotificationType,
+    EmailDetailsType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -194,7 +195,9 @@ def shipment_request(
                 Notification=[
                     NotificationType(
                         NotificationCode=event,
-                        EMail=options.notification.email or payload.shipper.email,
+                        EMail=EmailDetailsType(
+                            EMailAddress=[options.notification.email or payload.shipper.email],
+                        ),
                         VoiceMessage=None,
                         TextMessage=None,
                         Locale=None

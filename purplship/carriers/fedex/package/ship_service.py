@@ -147,7 +147,7 @@ def process_shipment_request(
                 Units=weight_unit.value,
                 Value=Weight(payload.parcel.weight, weight_unit).value,
             ),
-            TotalInsuredValue=None,
+            TotalInsuredValue=options.insurance.amount if options.insurance else None,
             PreferredCurrency=options.currency,
             ShipmentAuthorizationDetail=None,
             Shipper=Party(

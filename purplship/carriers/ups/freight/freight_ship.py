@@ -92,6 +92,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
         (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
         None
     )
+    freight_class = FreightClass[payload.parcel.options.get("ups_freight_class", "ups_freight_class_50")].value
 
     request = FreightShipRequest(
         Request=common.RequestType(
@@ -190,9 +191,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                     PackagingType=None,
                     DangerousGoodsIndicator=None,
                     CommodityValue=None,
-                    FreightClass=FreightClass[
-                        payload.parcel.options.get("ups_freight_class", "ups_freight_class_50")
-                    ].value,
+                    FreightClass=freight_class,
                     NMFCCommodityCode=None,
                     NMFCCommodity=None,
                 )
@@ -202,9 +201,8 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 EMailInformation=[
                     EMailNotificationType(
                         EMailAddress=options.notification.email or payload.shipper.email,
-                        EventType=event
+                        EventType=NOTIFICATION_EVENT_TYPES
                     )
-                    for event in NOTIFICATION_EVENT_TYPES
                 ] if options.notification else None,
                 PickupOptions=None,
                 DeliveryOptions=None,

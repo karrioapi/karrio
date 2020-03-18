@@ -98,12 +98,12 @@ class Weight:
         return None
 
 
-class OptionCode(Enum):
-    cash_on_delivery = "COD"  # TODO:: Need to be integrated and documented
-    currency = "currency"  # TODO:: Need to be documented
-    insurance = "insurance"  # TODO:: Need to be integrated and documented
-    notification = "notification"  # TODO:: Need to be documented
-    printing = "printing"  # TODO:: Need to be documented
+class OptionCode(Enum):  # TODO:: Need to be documented
+    cash_on_delivery = "COD"
+    currency = "currency"
+    insurance = "insurance"
+    notification = "notification"
+    printing = "printing"
 
 
 class Options:

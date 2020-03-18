@@ -49,3 +49,6 @@ class OptionCode(Enum):
     caps_return_at_senders_expense = "RASE"
     caps_return_to_sender = "RTS"
     caps_abandon = "ABAN"
+
+    """ Unified Option type mapping """
+    insurance = caps_coverage

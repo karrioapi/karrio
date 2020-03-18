@@ -62,7 +62,12 @@ freight_shipment_data = {
         "weight_unit": "LB",
         "weight": 180,
         "reference": "Your Customer Context",
-        "options": {"ups_freight_class": "ups_freight_class_50"},
+        "options": {
+            "ups_freight_class": "ups_freight_class_50",
+            "notification": {
+                "email": "test@mail.com"
+            }
+        },
     },
 }
 
@@ -261,6 +266,15 @@ FreightShipmentRequestXML = f"""<tns:Envelope  xmlns:tns="http://schemas.xmlsoap
                     </Weight>
                     <FreightClass>50</FreightClass>
                 </Commodity>
+                <ShipmentServiceOptions>
+                    <EMailInformation>
+                        <EMailAddress>test@mail.com</EMailAddress>
+                        <EventType>001</EventType>
+                        <EventType>002</EventType>
+                        <EventType>003</EventType>
+                        <EventType>004</EventType>
+                    </EMailInformation>
+                </ShipmentServiceOptions>
             </Shipment>
         </fsp:FreightShipRequest>
     </tns:Body>

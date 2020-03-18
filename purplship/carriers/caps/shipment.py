@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Any
 from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType
 from purplship.carriers.caps.utils import Settings
@@ -118,6 +118,11 @@ def shipment_request(
         if name in OptionCode.__members__
     }
 
+    def compute_amount(code: str, _: Any):
+        if code == OptionCode.insurance.value:
+            return options.insurance.amount
+        return None
+
     request = ShipmentType(
         customer_request_id=settings.account_number,
         groupIdOrTransmitShipment=None,
@@ -170,12 +175,12 @@ def shipment_request(
             options=optionsType(
                 option=[
                     OptionType(
-                        option_code=option,
-                        option_amount=None,
+                        option_code=code,
+                        option_amount=compute_amount(code, amount),
                         option_qualifier_1=None,
                         option_qualifier_2=None,
                     )
-                    for option, _ in special_services.items()
+                    for code, amount in special_services.items()
                 ]
             ) if len(special_services) > 0 else None,
             notification=NotificationType(

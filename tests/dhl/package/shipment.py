@@ -95,7 +95,12 @@ shipment_data = {
         "packaging_type": "dhl_express_envelope",
         "is_document": False,
         "services": ["express_worldwide"],
-        "options": {"paperless_trade": True},
+        "options": {
+            "paperless_trade": True,
+            "insurance": {
+                "amount": 148.0
+            }
+        },
     },
     "payment": {"paid_by": "sender", "account_number": "123456789"},
     "customs": {
@@ -278,6 +283,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         
         <Contents>...</Contents>
         <DimensionUnit>I</DimensionUnit>
+        <InsuredAmount>148.</InsuredAmount>
         <PackageType>EE</PackageType>
         <IsDutiable>Y</IsDutiable>
         <CurrencyCode>USD</CurrencyCode>
@@ -298,6 +304,9 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     </Shipper>
     <SpecialService>
         <SpecialServiceType>WY</SpecialServiceType>
+    </SpecialService>
+    <SpecialService>
+        <SpecialServiceType>II</SpecialServiceType>
     </SpecialService>
     <DocImages>
         <DocImage>

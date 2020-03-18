@@ -204,8 +204,6 @@ class Insurance:
     """insurance option type."""
 
     amount: float
-    currency: str
-    provider: str
     description: str = None
 
 

@@ -258,7 +258,7 @@ def shipment_request(
             Date=time.strftime("%Y-%m-%d"),
             PackageType=PackageType[payload.parcel.packaging_type or "box"].value,
             IsDutiable="Y" if payload.customs is not None else "N",
-            InsuredAmount=None,
+            InsuredAmount=options.insurance.amount if options.insurance is not None else None,
             DoorTo=delivery_type,
             GlobalProductCode=product.value,
             LocalProductCode=product.value,

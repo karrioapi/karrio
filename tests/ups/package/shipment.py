@@ -78,6 +78,11 @@ package_shipment_data = {
         "width": 5,
         "height": 2,
         "weight": 10,
+        "options": {
+            "notification": {
+                "email": "test@mail.com"
+            }
+        }
     },
     "payment": {"paid_by": "sender"},
     "label": {"format": "GIF"},
@@ -304,6 +309,14 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                 <Service>
                     <Code>01</Code>
                 </Service>
+                <ShipmentServiceOptions>
+                    <Notification>
+                        <NotificationCode>8</NotificationCode>
+                        <EMail>
+                            <EMailAddress>test@mail.com</EMailAddress>
+                        </EMail>
+                    </Notification>
+                </ShipmentServiceOptions>
                 <Package>
                     <Description>Description</Description>
                     <Packaging>

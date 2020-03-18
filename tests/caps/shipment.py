@@ -68,7 +68,13 @@ shipment_data = {
         "services": ["caps_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
-        "options": {"collect_on_delivery": True},
+        "options": {
+            "caps_signature": True,
+            "collect_on_delivery": True,
+            "insurance": {
+                "amount": 70.0
+            }
+        },
     },
 }
 
@@ -148,6 +154,15 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
                 <postal-zip-code>K1K4T3</postal-zip-code>
             </address-details>
         </destination>
+        <options>
+            <option>
+                <option-code>SO</option-code>
+            </option>
+            <option>
+                <option-code>COV</option-code>
+                <option-amount>70.0</option-amount>
+            </option>
+        </options>
         <parcel-characteristics>
             <weight>20.</weight>
             <dimensions>
