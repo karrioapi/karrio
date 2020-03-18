@@ -93,7 +93,7 @@ book_pickup_payload = {
         "phone_number": "4801313131",
         "state_code": "QC",
         "country_code": "CA",
-        "email_address": "test@mail.com",
+        "email": "test@mail.com",
         "address_line_1": "234 rue Hubert",
     },
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
@@ -110,7 +110,7 @@ modification_data = {
         "person_name": "Rikhil",
         "phone_number": "4801313131",
         "country_code": "CA",
-        "email_address": "test@mail.com",
+        "email": "test@mail.com",
     },
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
 }

@@ -46,7 +46,7 @@ shipment_data = {
         "person_name": "Input Your Information",
         "company_name": "Input Your Information",
         "phone_number": "Input Your Information",
-        "email_address": "Input Your Information",
+        "email": "Input Your Information",
         "address_line_1": "Input Your Information",
         "address_line_2": "Input Your Information",
         "city": "MEMPHIS",
@@ -58,7 +58,7 @@ shipment_data = {
         "person_name": "Input Your Information",
         "company_name": "Input Your Information",
         "phone_number": "Input Your Information",
-        "email_address": "Input Your Information",
+        "email": "Input Your Information",
         "address_line_1": "Input Your Information",
         "address_line_2": "Input Your Information",
         "city": "RICHMOND",
@@ -122,7 +122,7 @@ ShipmentRequestXml = """<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xml
             </TransactionDetail>
             <Version>
                 <ServiceId>ship</ServiceId>
-                <Major>21</Major>
+                <Major>25</Major>
                 <Intermediate>0</Intermediate>
                 <Minor>0</Minor>
             </Version>
@@ -169,6 +169,9 @@ ShipmentRequestXml = """<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xml
                         <CountryCode>CA</CountryCode>
                     </Address>
                 </Recipient>
+                <SpecialServicesRequested>
+                    <SpecialServiceTypes>INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS</SpecialServiceTypes>
+                </SpecialServicesRequested>
                 <LabelSpecification>
                     <LabelFormatType>COMMON2D</LabelFormatType>
                     <ImageType>PNG</ImageType>

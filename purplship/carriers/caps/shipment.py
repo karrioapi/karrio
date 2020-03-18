@@ -9,6 +9,7 @@ from purplship.core.models import (
     ChargeDetails,
     ReferenceDetails,
     ShipmentRequest,
+    Option
 )
 from purplship.core.units import Currency, Weight, WeightUnit, DimensionUnit, Dimension
 from purplship.core.utils.helpers import export
@@ -108,14 +109,20 @@ def shipment_request(
 ) -> Serializable[ShipmentType]:
     weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "CM"]
-    requested_services = [
-        svc for svc in payload.parcel.services if svc in ServiceType.__members__
-    ]
-    requested_options = dict(
-        (opt, value)
-        for opt, value in payload.options.items()
-        if opt in OptionCode.__members__
+    service = next(
+        (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
+        None
     )
+    options: dict = {}
+    requested_options = []
+    for name, value in payload.parcel.options.items():
+        if name in Option.__members__:
+            options.update({
+                name: Option[name].value(**value if isinstance(value, dict) else value)
+            })
+        if name in OptionCode.__members__:
+            requested_options.append(OptionCode[name].value)
+
     request = ShipmentType(
         customer_request_id=settings.account_number,
         groupIdOrTransmitShipment=None,
@@ -127,9 +134,7 @@ def shipment_request(
         provide_pricing_info=True,
         provide_receipt_info=None,
         delivery_spec=DeliverySpecType(
-            service_code=ServiceType[requested_services[0]].value
-            if len(requested_services) > 0
-            else None,
+            service_code=service,
             sender=SenderType(
                 name=payload.shipper.person_name,
                 company=payload.shipper.company_name,
@@ -170,24 +175,20 @@ def shipment_request(
             options=optionsType(
                 option=[
                     OptionType(
-                        option_code=OptionCode[code].value,
+                        option_code=option,
                         option_amount=None,
                         option_qualifier_1=None,
                         option_qualifier_2=None,
                     )
-                    for code, value in requested_options.items()
+                    for option in requested_options
                 ]
-            )
-            if len(requested_options) > 0
-            else None,
+            ) if len(requested_options) > 0 else None,
             notification=NotificationType(
-                email=payload.shipper.email_address,
+                email=options['notification'].email or payload.shipper.email,
                 on_shipment=True,
                 on_exception=True,
                 on_delivery=True,
-            )
-            if payload.shipper.email_address is not None
-            else None,
+            ) if 'notification' in options else None,
             print_preferences=PrintPreferencesType(
                 output_format="8.5x11", encoding=None
             ),

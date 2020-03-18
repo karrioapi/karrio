@@ -17,8 +17,10 @@ from pydhl.ship_val_global_req_6_2 import (
     DocImages,
     Dutiable,
     MetaData,
+    Notification,
+    SpecialService
 )
-from purplship.core.utils.helpers import export
+from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
@@ -27,16 +29,17 @@ from purplship.core.models import (
     ShipmentDetails,
     ReferenceDetails,
     ChargeDetails,
+    Option,
 )
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit
 from purplship.carriers.dhl.units import (
     PackageType,
-    Product,
     ProductCode,
     PayorType,
     Dimension as DHLDimensionUnit,
     WeightUnit as DHLWeightUnit,
     CountryRegion,
+    ServiceCode
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -113,16 +116,26 @@ def shipment_request(
 ) -> Serializable[DHLShipmentRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    currency = payload.parcel.options.get("currency", "USD")
     default_product_code = (
         ProductCode.express_worldwide_doc
         if payload.parcel.is_document
         else ProductCode.express_worldwide_nondoc
     )
-    product = (
-        [ProductCode[svc] for svc in payload.parcel.services if svc in ProductCode.__members__]
-        + [default_product_code]
-    )[0]
+    product = next(
+        (ProductCode[svc] for svc in payload.parcel.services if svc in ProductCode.__members__),
+        default_product_code
+    )
+    options: dict = {}
+    requested_options = []
+    for name, value in payload.parcel.options.items():
+        if name in Option.__members__:
+            options.update({
+                name: (
+                    Option[name].value(**value) if isinstance(value, dict) else Option[name].value(value)
+                )
+            })
+        if name in ServiceCode.__members__:
+            requested_options.append(ServiceCode[name].value)
 
     request = DHLShipmentRequest(
         schemaVersion=6.2,
@@ -156,11 +169,7 @@ def shipment_request(
         Consignee=Consignee(
             CompanyName=payload.recipient.company_name,
             SuiteDepartmentName=None,
-            AddressLine=[
-                " ".join(
-                    [payload.recipient.address_line_1, payload.recipient.address_line_2]
-                )
-            ],
+            AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
             City=payload.recipient.city,
             Division=None,
             DivisionCode=payload.recipient.state_code,
@@ -173,7 +182,7 @@ def shipment_request(
                 Contact(
                     PersonName=payload.recipient.person_name,
                     PhoneNumber=payload.recipient.phone_number,
-                    Email=payload.recipient.email_address,
+                    Email=payload.recipient.email,
                     FaxNumber=None,
                     Telex=None,
                     PhoneExtension=None,
@@ -183,7 +192,7 @@ def shipment_request(
                     [
                         payload.recipient.person_name,
                         payload.recipient.phone_number,
-                        payload.recipient.email_address,
+                        payload.recipient.email,
                     ]
                 )
                 else None
@@ -198,11 +207,7 @@ def shipment_request(
         Shipper=Shipper(
             ShipperID=None,
             RegisteredAccount=settings.account_number,
-            AddressLine=[
-                " ".join(
-                    [payload.shipper.address_line_1, payload.shipper.address_line_2]
-                )
-            ],
+            AddressLine=concat_str(payload.shipper.address_line_1, payload.shipper.address_line_2),
             CompanyName=payload.shipper.company_name,
             PostalCode=payload.shipper.postal_code,
             CountryCode=payload.shipper.country_code,
@@ -214,7 +219,7 @@ def shipment_request(
                 Contact(
                     PersonName=payload.shipper.person_name,
                     PhoneNumber=payload.shipper.phone_number,
-                    Email=payload.shipper.email_address,
+                    Email=payload.shipper.email,
                     FaxNumber=None,
                     Telex=None,
                     PhoneExtension=None,
@@ -224,7 +229,7 @@ def shipment_request(
                     [
                         payload.shipper.person_name,
                         payload.shipper.phone_number,
-                        payload.shipper.email_address,
+                        payload.shipper.email,
                     ]
                 )
                 else None
@@ -249,14 +254,14 @@ def shipment_request(
                 ]
             ),
             Weight=Weight(payload.parcel.weight, weight_unit).value,
-            CurrencyCode=currency,
+            CurrencyCode=options.get("currency", "USD"),
             WeightUnit=DHLWeightUnit[weight_unit.name].value,
             DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
             Date=time.strftime("%Y-%m-%d"),
             PackageType=PackageType[payload.parcel.packaging_type or "box"].value,
             IsDutiable="Y" if payload.customs is not None else "N",
             InsuredAmount=None,
-            DoorTo=payload.options.get("DoorTo"),
+            DoorTo=options.get("DoorTo"),
             GlobalProductCode=product.value,
             LocalProductCode=product.value,
             Contents="...",
@@ -273,11 +278,26 @@ def shipment_request(
             ImportLicense=None,
             ConsigneeEIN=None,
         )
-        if payload.customs is not None
+        if payload.customs is not None and payload.customs.duty is not None
         else None,
         ExportDeclaration=None,
         Reference=[Reference(ReferenceID=payload.parcel.reference)],
-        SpecialService=None,
+        SpecialService=[
+            SpecialService(
+                SpecialServiceType=service,
+                SpecialServiceDesc=None,
+                CommunicationAddress=None,
+                CommunicationType=None,
+                ChargeValue=None,
+                CurrencyCode=None,
+                IsWaived=None
+            )
+            for service in requested_options
+        ],
+        Notification=Notification(
+            EmailAddress=options['notification'].email or payload.shipper.email,
+            Message=None
+        ) if 'notification' in options else None,
         LabelImageFormat=(payload.label.format if payload.label is not None else None),
         DocImages=DocImages(
             DocImage=[

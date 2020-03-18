@@ -14,7 +14,9 @@ from pyups.freight_ship_web_service_schema import (
     FreightShipUnitOfMeasurementType,
     WeightType,
     DimensionsType,
-    ShipmentResultsType
+    ShipmentResultsType,
+    ShipmentServiceOptionsType,
+    EMailNotificationType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -27,6 +29,7 @@ from purplship.core.models import (
     ChargeDetails,
     ReferenceDetails,
     Error,
+    Option
 )
 from purplship.carriers.ups.units import (
     ShippingServiceCode,
@@ -35,6 +38,8 @@ from purplship.carriers.ups.units import (
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
+
+NOTIFICATION_EVENT_TYPES = ['001', '002', '003', '004']
 
 
 def parse_freight_ship_response(
@@ -80,16 +85,20 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
     )
 
 
-def freight_ship_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[FreightShipRequest]:
+def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serializable[FreightShipRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    services = [
-        ShippingServiceCode[svc]
-        for svc in payload.parcel.services
-        if svc in ShippingServiceCode.__members__
-    ]
+    service = next(
+        (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
+        None
+    )
+    options: dict = {}
+    for name, value in payload.parcel.options.items():
+        if name in Option.__members__:
+            options.update({
+                name: Option[name].value(**value if isinstance(value, dict) else value)
+            })
+
     request = FreightShipRequest(
         Request=common.RequestType(
             RequestOption="1",
@@ -121,7 +130,7 @@ def freight_ship_request(
                 if payload.shipper.phone_number is not None
                 else None,
                 FaxNumber=None,
-                EMailAddress=payload.shipper.email_address,
+                EMailAddress=payload.shipper.email,
             ),
             ShipperNumber=settings.account_number,
             ShipTo=ShipToType(
@@ -144,13 +153,11 @@ def freight_ship_request(
                 if payload.recipient.phone_number is not None
                 else None,
                 FaxNumber=None,
-                EMailAddress=payload.recipient.email_address,
+                EMailAddress=payload.recipient.email,
             ),
             PaymentInformation=None,
             ManufactureInformation=None,
-            Service=ShipCodeDescriptionType(Code=services[0].value)
-            if len(services) > 0
-            else None,
+            Service=ShipCodeDescriptionType(Code=service) if service is not None else None,
             HandlingUnitOne=None,
             HandlingUnitTwo=None,
             ExistingShipmentID=None,
@@ -190,14 +197,38 @@ def freight_ship_request(
                     DangerousGoodsIndicator=None,
                     CommodityValue=None,
                     FreightClass=FreightClass[
-                        payload.parcel.options.get("ups_freight_class")
+                        payload.parcel.options.get("ups_freight_class", "ups_freight_class_50")
                     ].value,
                     NMFCCommodityCode=None,
                     NMFCCommodity=None,
                 )
             ],
             Reference=None,
-            ShipmentServiceOptions=None,
+            ShipmentServiceOptions=ShipmentServiceOptionsType(
+                EMailInformation=[
+                    EMailNotificationType(
+                        EMailAddress=options['notification'].email_address or payload.shipper.email,
+                        EventType=event
+                    )
+                    for event in NOTIFICATION_EVENT_TYPES
+                ] if 'notification' in options else None,
+                PickupOptions=None,
+                DeliveryOptions=None,
+                OverSeasLeg=None,
+                COD=None,
+                DangerousGoods=None,
+                SortingAndSegregating=None,
+                DeclaredValue=None,
+                ExcessDeclaredValue=None,
+                CustomsValue=None,
+                DeliveryDutiesPaidIndicator=None,
+                DeliveryDutiesUnpaidIndicator=None,
+                HandlingCharge=None,
+                CustomsClearanceIndicator=None,
+                FreezableProtectionIndicator=None,
+                ExtremeLengthIndicator=None,
+                LinearFeet=None,
+            ) if options != {} else None,
             PickupRequest=None,
             Documents=None,
             ITNNumber=None,

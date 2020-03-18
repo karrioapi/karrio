@@ -97,14 +97,6 @@ class Weight:
         return None
 
 
-class Option(Enum):
-    insurance = "insurance"  # Need to be integrated and documented
-    notification = "notification"  # Need to be integrated and documented
-    cash_on_delivery = "COD"  # Need to be integrated and documented
-    currency = "currency"  # Need to be integrated and documented
-    printing = "printing"  # Need to be integrated and documented
-
-
 class PrinterType(Enum):
     regular = 'Regular'  # Regular
     thermal = 'Thermal'  # Thermal

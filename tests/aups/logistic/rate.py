@@ -50,7 +50,7 @@ RATE_PAYLOAD = {
         "state_code": "VIC",
         "postal_code": "3000",
         "phone_number": "0401234567",
-        "email_address": "john.citizen@citizen.com",
+        "email": "john.citizen@citizen.com",
         "suburb": "MELBOURNE",
     },
     "recipient": {
@@ -60,7 +60,7 @@ RATE_PAYLOAD = {
         "state_code": "NSW",
         "postal_code": "2000",
         "phone_number": "0412345678",
-        "email_address": "jane.smith@smith.com",
+        "email": "jane.smith@smith.com",
         "suburb": "Sydney",
     },
     "parcel": {

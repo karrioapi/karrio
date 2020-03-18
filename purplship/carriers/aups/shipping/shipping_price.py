@@ -73,7 +73,7 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                 goods_descriptions=None,
                 despatch_date=None,
                 consolidate=None,
-                email_tracking_enabled=payload.shipper.email_address is not None,
+                email_tracking_enabled=payload.shipper.email is not None,
                 from_=From(
                     name=payload.shipper.person_name,
                     type=None,
@@ -86,7 +86,7 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                     postcode=payload.shipper.postal_code,
                     country=payload.shipper.country_code,
                     phone=payload.shipper.phone_number,
-                    email=payload.shipper.email_address,
+                    email=payload.shipper.email,
                 ),
                 to=To(
                     name=payload.recipient.person_name,
@@ -101,7 +101,7 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                     postcode=payload.recipient.postal_code,
                     country=payload.recipient.country_code,
                     phone=payload.recipient.phone_number,
-                    email=payload.recipient.email_address,
+                    email=payload.recipient.email,
                     delivery_instructions=None,
                 ),
                 dangerous_goods=None,

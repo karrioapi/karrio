@@ -73,7 +73,7 @@ shipment_data = {
         "country_code": "US",
         "person_name": "Ms Lucian",
         "phone_number": "1 23 8613402",
-        "email_address": "test@email.com",
+        "email": "test@email.com",
         "state_code": "AZ",
     },
     "recipient": {
@@ -84,7 +84,7 @@ shipment_data = {
         "country_code": "BE",
         "person_name": "Mrs Orlander",
         "phone_number": "506-851-2271",
-        "email_address": "c_orlander@gc.ca",
+        "email": "c_orlander@gc.ca",
     },
     "parcel": {
         "id": "1",
@@ -238,7 +238,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     </Billing>
     <Consignee>
         <CompanyName>IBM Bruse Pte Ltd</CompanyName>
-        <AddressLine>9 Business Park Central 13th Floor The IBM Place </AddressLine>
+        <AddressLine>9 Business Park Central 13th Floor The IBM Place</AddressLine>
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
@@ -285,7 +285,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     <Shipper>
         <CompanyName>shipper company privated limited 12</CompanyName>
         <RegisteredAccount>123456789</RegisteredAccount>
-        <AddressLine>238 850925434 Drive </AddressLine>
+        <AddressLine>238 850925434 Drive</AddressLine>
         <City>Scottsdale</City>
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
@@ -296,6 +296,9 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
             <Email>test@email.com</Email>
         </Contact>
     </Shipper>
+    <SpecialService>
+        <SpecialServiceType>WY</SpecialServiceType>
+    </SpecialService>
     <DocImages>
         <DocImage>
             <Type>CIN</Type>

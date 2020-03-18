@@ -19,17 +19,26 @@ from pyfedex.ship_service_v25 import (
     LabelSpecification,
     Dimensions as FedexDimensions,
     ServiceDescription,
-    TrackingId
+    TrackingId,
+    ShipmentSpecialServicesRequested,
+    ShipmentEventNotificationDetail,
+    ShipmentEventNotificationSpecification,
+    NotificationDetail,
+    EMailDetail,
+    Localization
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Weight, WeightUnit, DimensionUnit, Dimension
-from purplship.core.models import ShipmentDetails, Error, ChargeDetails, ShipmentRequest
+from purplship.core.models import ShipmentDetails, Error, ChargeDetails, ShipmentRequest, Option
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
-from purplship.carriers.fedex.units import PackagingType, ServiceType
+from purplship.carriers.fedex.units import PackagingType, ServiceType, SpecialServiceType
+
+
+NOTIFICATION_EVENTS = ['ON_DELIVERY', 'ON_ESTIMATED_DELIVERY', 'ON_EXCEPTION', 'ON_SHIPMENT', 'ON_TENDER']
 
 
 def parse_shipment_response(
@@ -112,32 +121,39 @@ def process_shipment_request(
 ) -> Serializable[ProcessShipmentRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    requested_services = [
-        svc for svc in payload.parcel.services if svc in ServiceType.__members__
-    ]
+    service = next(
+        (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
+        None
+    )
+    options: dict = {}
+    special_services = []
+    for name, value in payload.parcel.options.items():
+        if name in Option.__members__:
+            options.update({
+                name: (
+                    Option[name].value(**value) if isinstance(value, dict) else Option[name].value(value)
+                )
+            })
+        if name in SpecialServiceType.__members__:
+            special_services.append(SpecialServiceType[name].value)
+
     request = ProcessShipmentRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
         TransactionDetail=TransactionDetail(CustomerTransactionId="IE_v18_Ship"),
-        Version=VersionId(ServiceId="ship", Major=21, Intermediate=0, Minor=0),
+        Version=VersionId(ServiceId="ship", Major=25, Intermediate=0, Minor=0),
         RequestedShipment=RequestedShipment(
             ShipTimestamp=datetime.now(),
             DropoffType="REGULAR_PICKUP",
-            ServiceType=(
-                ServiceType[requested_services[0]].value
-                if len(requested_services) > 0
-                else None
-            ),
-            PackagingType=PackagingType[
-                payload.parcel.packaging_type or "your_packaging"
-            ].value,
+            ServiceType=service,
+            PackagingType=PackagingType[payload.parcel.packaging_type or "box"].value,
             ManifestDetail=None,
             TotalWeight=FedexWeight(
                 Units=weight_unit.value,
                 Value=Weight(payload.parcel.weight, weight_unit).value,
             ),
             TotalInsuredValue=None,
-            PreferredCurrency=payload.parcel.options.get("currency"),
+            PreferredCurrency=options.get("currency"),
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
                 AccountNumber=settings.account_number,
@@ -160,14 +176,14 @@ def process_shipment_request(
                     TollFreePhoneNumber=None,
                     PagerNumber=None,
                     FaxNumber=None,
-                    EMailAddress=payload.shipper.email_address,
+                    EMailAddress=payload.shipper.email,
                 )
                 if any(
                     (
                         payload.shipper.company_name,
                         payload.shipper.phone_number,
                         payload.shipper.person_name,
-                        payload.shipper.email_address,
+                        payload.shipper.email,
                     )
                 )
                 else None,
@@ -208,14 +224,14 @@ def process_shipment_request(
                     TollFreePhoneNumber=None,
                     PagerNumber=None,
                     FaxNumber=None,
-                    EMailAddress=payload.recipient.email_address,
+                    EMailAddress=payload.recipient.email,
                 )
                 if any(
                     (
                         payload.recipient.company_name,
                         payload.recipient.phone_number,
                         payload.recipient.person_name,
-                        payload.recipient.email_address,
+                        payload.recipient.email,
                     )
                 )
                 else None,
@@ -238,7 +254,42 @@ def process_shipment_request(
             Origin=None,
             SoldTo=None,
             ShippingChargesPayment=None,
-            SpecialServicesRequested=None,
+            SpecialServicesRequested=ShipmentSpecialServicesRequested(
+                SpecialServiceTypes=special_services,
+                CodDetail=None,
+                DeliveryOnInvoiceAcceptanceDetail=None,
+                HoldAtLocationDetail=None,
+                EventNotificationDetail=ShipmentEventNotificationDetail(
+                    AggregationType=None,
+                    PersonalMessage=None,
+                    EventNotifications=[
+                        ShipmentEventNotificationSpecification(
+                            Role=None,
+                            Events=NOTIFICATION_EVENTS,
+                            NotificationDetail=NotificationDetail(
+                                NotificationType="EMAIL",
+                                EmailDetail=EMailDetail(
+                                    EmailAddress=options['notification'].email or payload.shipper.email,
+                                    Name=payload.shipper.person_name
+                                ),
+                                Localization=Localization(
+                                    LanguageCode="EN",
+                                    LocaleCode=None
+                                )
+                            ),
+                            FormatSpecification='TEXT'
+                        )
+                    ]
+                ) if 'notification' in options else None,
+                ReturnShipmentDetail=None,
+                PendingShipmentDetail=None,
+                InternationalControlledExportDetail=None,
+                InternationalTrafficInArmsRegulationsDetail=None,
+                ShipmentDryIceDetail=None,
+                HomeDeliveryPremiumDetail=None,
+                EtdDetail=None,
+                CustomDeliveryWindowDetail=None
+            ) if options != {} else None,
             ExpressFreightDetail=None,
             FreightShipmentDetail=None,
             DeliveryInstructions=None,

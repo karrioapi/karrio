@@ -147,7 +147,7 @@ class PayorType(Enum):
     third_party = "T"
 
 
-class Service(Enum):
+class ServiceCode(Enum):
     logistics_services = "0A"
     mailroom_management = "0B"
     pallet_administration = "0C"
@@ -373,6 +373,9 @@ class Service(Enum):
     loss_compensation = "ZC"
     customer_rebate = "ZD"
     e_com_discount = "ZE"
+
+    """ Unified Option type mapping """
+    insurance = shipment_insurance
 
 
 class CountryRegion(Enum):

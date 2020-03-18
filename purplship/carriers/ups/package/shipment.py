@@ -16,7 +16,9 @@ from pyups.ship_web_service_schema import (
     ShipUnitOfMeasurementType,
     LabelSpecificationType,
     LabelImageFormatType,
-    ShipmentResultsType
+    ShipmentResultsType,
+    ShipmentServiceOptionsType,
+    NotificationType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -29,6 +31,7 @@ from purplship.core.models import (
     ShipmentDetails,
     Error,
     ReferenceDetails,
+    Option,
 )
 from purplship.carriers.ups.units import (
     ShippingPackagingType,
@@ -93,11 +96,17 @@ def shipment_request(
 ) -> Serializable[UPSShipmentRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    services = [
-        ShippingServiceCode[svc]
-        for svc in payload.parcel.services
-        if svc in ShippingServiceCode.__members__
-    ]
+    service = next(
+        (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
+        None
+    )
+    options: dict = {}
+    for name, value in payload.parcel.options.items():
+        if name in Option.__members__:
+            options.update({
+                name: Option[name].value(**value if isinstance(value, dict) else value)
+            })
+
     request = UPSShipmentRequest(
         Request=common.RequestType(
             RequestOption=["validate"],
@@ -121,7 +130,7 @@ def shipment_request(
                 else None,
                 ShipperNumber=settings.account_number,
                 FaxNumber=None,
-                EMailAddress=payload.shipper.email_address,
+                EMailAddress=payload.shipper.email,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
                         payload.shipper.address_line_1, payload.shipper.address_line_2
@@ -144,7 +153,7 @@ def shipment_request(
                 if payload.recipient.phone_number is not None
                 else None,
                 FaxNumber=None,
-                EMailAddress=payload.recipient.email_address,
+                EMailAddress=payload.recipient.email,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
                         payload.recipient.address_line_1,
@@ -166,7 +175,7 @@ def shipment_request(
             ShipmentRatingOptions=None,
             MovementReferenceNumber=None,
             ReferenceNumber=None,
-            Service=ServiceType(Code=services[0].value) if len(services) > 0 else None,
+            Service=ServiceType(Code=service) if service is not None else None,
             InvoiceLineTotal=None,
             NumOfPiecesInShipment=None,
             USPSEndorsement=None,
@@ -181,7 +190,42 @@ def shipment_request(
             RatingMethodRequestedIndicator=None,
             TaxInformationIndicator=None,
             PromotionalDiscountInformation=None,
-            ShipmentServiceOptions=None,
+            ShipmentServiceOptions=ShipmentServiceOptionsType(
+                SaturdayDeliveryIndicator=None,
+                SaturdayPickupIndicator=None,
+                COD=None,
+                AccessPointCOD=None,
+                DeliverToAddresseeOnlyIndicator=None,
+                DirectDeliveryOnlyIndicator=None,
+                Notification=[
+                    NotificationType(
+                        NotificationCode=event,
+                        EMail=options['notification'].email or payload.shipper.email,
+                        VoiceMessage=None,
+                        TextMessage=None,
+                        Locale=None
+                    ) for event in [8]
+                ] if 'notification' in options else None,
+                LabelDelivery=None,
+                InternationalForms=None,
+                DeliveryConfirmation=None,
+                ReturnOfDocumentIndicator=None,
+                ImportControlIndicator=None,
+                LabelMethod=None,
+                CommercialInvoiceRemovalIndicator=None,
+                UPScarbonneutralIndicator=None,
+                PreAlertNotification=None,
+                ExchangeForwardIndicator=None,
+                HoldForPickupIndicator=None,
+                DropoffAtUPSFacilityIndicator=None,
+                LiftGateForPickUpIndicator=None,
+                LiftGateForDeliveryIndicator=None,
+                SDLShipmentIndicator=None,
+                EPRAReleaseCode=None,
+                RestrictedArticles=None,
+                InsideDelivery=None,
+                ItemDisposal=None
+            ) if options != {} else None,
             Package=[
                 PackageType(
                     Description=payload.parcel.description,

@@ -149,14 +149,14 @@ def rate_request(
                     TollFreePhoneNumber=None,
                     PagerNumber=None,
                     FaxNumber=None,
-                    EMailAddress=payload.shipper.email_address,
+                    EMailAddress=payload.shipper.email,
                 )
                 if any(
                     (
                         payload.shipper.company_name,
                         payload.shipper.person_name,
                         payload.shipper.phone_number,
-                        payload.shipper.email_address,
+                        payload.shipper.email,
                     )
                 )
                 else None,
@@ -197,14 +197,14 @@ def rate_request(
                     TollFreePhoneNumber=None,
                     PagerNumber=None,
                     FaxNumber=None,
-                    EMailAddress=payload.recipient.email_address,
+                    EMailAddress=payload.recipient.email,
                 )
                 if any(
                     (
                         payload.recipient.company_name,
                         payload.recipient.person_name,
                         payload.recipient.phone_number,
-                        payload.recipient.email_address,
+                        payload.recipient.email,
                     )
                 )
                 else None,

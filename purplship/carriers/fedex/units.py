@@ -113,7 +113,7 @@ class PhysicalPackagingType(Flag):
     pal = pallet
 
 
-class SpecialServiceType(Enum):
+class SpecialServiceType(Flag):
     blind_shipment = "BLIND_SHIPMENT"
     broker_select_option = "BROKER_SELECT_OPTION"
     call_before_delivery = "CALL_BEFORE_DELIVERY"
@@ -193,6 +193,10 @@ class SpecialServiceType(Enum):
     usps_delivery = "USPS_DELIVERY"
     usps_pickup = "USPS_PICKUP"
     weighing = "WEIGHING"
+
+    """ Unified Option type mapping """
+    notification = event_notification
+    cash_on_delivery = cod
 
 
 class RateType(Enum):

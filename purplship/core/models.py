@@ -1,5 +1,6 @@
 """PurplShip Unified datatypes module."""
 import attr
+from enum import Enum
 from typing import List, Dict
 from jstruct import JList, JStruct, REQUIRED
 
@@ -16,7 +17,7 @@ class Address:
     person_name: str = None
     company_name: str = None
     country_code: str = None
-    email_address: str = None
+    email: str = None
     phone_number: str = None
 
     state_code: str = None
@@ -192,6 +193,14 @@ class COD:
 
 
 @attr.s(auto_attribs=True)
+class Notification:
+    """notification option type."""
+
+    email: str = None  # Only defined if other email than shipper
+    locale: str = 'en'
+
+
+@attr.s(auto_attribs=True)
 class Insurance:
     """insurance option type."""
 
@@ -199,6 +208,14 @@ class Insurance:
     currency: str
     provider: str
     description: str = None
+
+
+class Option(Enum):
+    insurance = Insurance  # Need to be integrated and documented
+    notification = Notification  # Need to be integrated and documented
+    cash_on_delivery = COD  # Need to be integrated and documented
+    currency = str  # Need to be integrated and documented
+    printing = str  # Need to be integrated and documented
 
 
 """ Unified response data types """

@@ -7,16 +7,16 @@ from pypurolator.shipping_service import (
     ArrayOfPiece, Piece, Weight as PurolatorWeight, WeightUnit as PurolatorWeightUnit, RequestContext,
     Dimension as PurolatorDimension, DimensionUnit as PurolatorDimensionUnit, TotalWeight, PhoneNumber,
     PrinterType as PurolatorPrinterType, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
-    Error as PurolatorError, ArrayOfError
+    Error as PurolatorError, ArrayOfError, NotificationInformation, ArrayOfOptionIDValuePair, OptionIDValuePair
 )
-from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
+from purplship.core.models import ShipmentRequest, ShipmentDetails, Error, Option
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, PrinterType
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings
-from purplship.carriers.purolator.units import Product
+from purplship.carriers.purolator.units import Product, Service
 from purplship.carriers.purolator.error import parse_error_response
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
@@ -58,7 +58,20 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
     dimension_unit: DimensionUnit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     service = next((svc for svc in payload.parcel.services if svc in Product.__members__), None)
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    printing = PrinterType[payload.parcel.options.get('printing', "regular")]
+    options: dict = {}
+    info: dict = {}
+    for name, value in payload.parcel.options.items():
+        if name in Option.__members__:
+            options.update({
+                name: (
+                    Option[name].value(**value) if isinstance(value, dict) else Option[name].value(value)
+                )
+            })
+        if name in Service.__members__:
+            info.update({name: value})
+
+    printing = PrinterType[options.get("printing", "regular")].value
+
     request = create_envelope(
         header_content=RequestContext(
             Version='2.1',
@@ -150,7 +163,15 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                         ]
                     ),
                     DangerousGoodsDeclarationDocumentIndicator=None,
-                    OptionsInformation=None
+                    OptionsInformation=ArrayOfOptionIDValuePair(
+                        OptionIDValuePair=[
+                            OptionIDValuePair(
+                                ID=key,
+                                Value=value
+                            )
+                            for key, value in info.items()
+                        ]
+                    ) if info != {} else None
                 ),
                 InternationalInformation=InternationalInformation(
                     DocumentsOnlyIndicator=payload.parcel.is_document,
@@ -164,14 +185,17 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                 ReturnShipmentInformation=None,
                 PaymentInformation=None,
                 PickupInformation=PickupInformation(PickupType=PickupType.DROP_OFF.value),
-                NotificationInformation=None,
+                NotificationInformation=NotificationInformation(
+                    ConfirmationEmailAddress=options['notification'].email or payload.shipper.email,
+                    AdvancedShippingNotificationMessage=None
+                ) if 'notification' in options else None,
                 TrackingReferenceInformation=TrackingReferenceInformation(
                     Reference1=payload.parcel.reference
                 ),
                 OtherInformation=None,
                 ProactiveNotification=None
             ),
-            PrinterType=PurolatorPrinterType(printing.value).value
+            PrinterType=PurolatorPrinterType(printing).value
         )
     )
     return request
