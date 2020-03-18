@@ -22,14 +22,13 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit
+from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit, Options
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
     ChargeDetails,
     ReferenceDetails,
     Error,
-    Option
 )
 from purplship.carriers.ups.units import (
     ShippingServiceCode,
@@ -88,16 +87,11 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
 def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serializable[FreightShipRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    options = Options(payload.parcel.options)
     service = next(
         (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
         None
     )
-    options: dict = {}
-    for name, value in payload.parcel.options.items():
-        if name in Option.__members__:
-            options.update({
-                name: Option[name].value(**value if isinstance(value, dict) else value)
-            })
 
     request = FreightShipRequest(
         Request=common.RequestType(
@@ -207,11 +201,11 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
             ShipmentServiceOptions=ShipmentServiceOptionsType(
                 EMailInformation=[
                     EMailNotificationType(
-                        EMailAddress=options['notification'].email_address or payload.shipper.email,
+                        EMailAddress=options.notification.email or payload.shipper.email,
                         EventType=event
                     )
                     for event in NOTIFICATION_EVENT_TYPES
-                ] if 'notification' in options else None,
+                ] if options.notification else None,
                 PickupOptions=None,
                 DeliveryOptions=None,
                 OverSeasLeg=None,
@@ -228,7 +222,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 FreezableProtectionIndicator=None,
                 ExtremeLengthIndicator=None,
                 LinearFeet=None,
-            ) if options != {} else None,
+            ) if options.has_content else None,
             PickupRequest=None,
             Documents=None,
             ITNNumber=None,

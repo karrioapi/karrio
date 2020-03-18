@@ -9,8 +9,8 @@ from pypurolator.shipping_service import (
     PrinterType as PurolatorPrinterType, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
     Error as PurolatorError, ArrayOfError, NotificationInformation, ArrayOfOptionIDValuePair, OptionIDValuePair
 )
-from purplship.core.models import ShipmentRequest, ShipmentDetails, Error, Option
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, PrinterType
+from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
+from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, PrinterType, Options
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.utils.helpers import export, concat_str
@@ -58,19 +58,13 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
     dimension_unit: DimensionUnit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     service = next((svc for svc in payload.parcel.services if svc in Product.__members__), None)
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    options: dict = {}
-    info: dict = {}
-    for name, value in payload.parcel.options.items():
-        if name in Option.__members__:
-            options.update({
-                name: (
-                    Option[name].value(**value) if isinstance(value, dict) else Option[name].value(value)
-                )
-            })
-        if name in Service.__members__:
-            info.update({name: value})
-
-    printing = PrinterType[options.get("printing", "regular")].value
+    options = Options(payload.parcel.options)
+    printing = PrinterType[options.printing or "regular"].value
+    special_services = [
+        Service[name].value
+        for name, _ in payload.parcel.options.items()
+        if name in Service.__members__
+    ]
 
     request = create_envelope(
         header_content=RequestContext(
@@ -169,9 +163,9 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                                 ID=key,
                                 Value=value
                             )
-                            for key, value in info.items()
+                            for key, value in special_services
                         ]
-                    ) if info != {} else None
+                    ) if len(special_services) > 0 else None
                 ),
                 InternationalInformation=InternationalInformation(
                     DocumentsOnlyIndicator=payload.parcel.is_document,
@@ -186,9 +180,9 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                 PaymentInformation=None,
                 PickupInformation=PickupInformation(PickupType=PickupType.DROP_OFF.value),
                 NotificationInformation=NotificationInformation(
-                    ConfirmationEmailAddress=options['notification'].email or payload.shipper.email,
+                    ConfirmationEmailAddress=options.notification.email or payload.shipper.email,
                     AdvancedShippingNotificationMessage=None
-                ) if 'notification' in options else None,
+                ) if options.notification else None,
                 TrackingReferenceInformation=TrackingReferenceInformation(
                     Reference1=payload.parcel.reference
                 ),

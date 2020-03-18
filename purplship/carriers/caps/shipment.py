@@ -1,5 +1,4 @@
 from typing import Tuple, List
-
 from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType
 from purplship.carriers.caps.utils import Settings
@@ -9,9 +8,8 @@ from purplship.core.models import (
     ChargeDetails,
     ReferenceDetails,
     ShipmentRequest,
-    Option
 )
-from purplship.core.units import Currency, Weight, WeightUnit, DimensionUnit, Dimension
+from purplship.core.units import Currency, Weight, WeightUnit, DimensionUnit, Dimension, Options
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
@@ -113,15 +111,12 @@ def shipment_request(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
         None
     )
-    options: dict = {}
-    requested_options = []
-    for name, value in payload.parcel.options.items():
-        if name in Option.__members__:
-            options.update({
-                name: Option[name].value(**value if isinstance(value, dict) else value)
-            })
-        if name in OptionCode.__members__:
-            requested_options.append(OptionCode[name].value)
+    options = Options(payload.parcel.options)
+    special_services = {
+        OptionCode[name].value: value
+        for name, value in payload.parcel.options.items()
+        if name in OptionCode.__members__
+    }
 
     request = ShipmentType(
         customer_request_id=settings.account_number,
@@ -180,15 +175,15 @@ def shipment_request(
                         option_qualifier_1=None,
                         option_qualifier_2=None,
                     )
-                    for option in requested_options
+                    for option, _ in special_services.items()
                 ]
-            ) if len(requested_options) > 0 else None,
+            ) if len(special_services) > 0 else None,
             notification=NotificationType(
-                email=options['notification'].email or payload.shipper.email,
+                email=options.notification.email or payload.shipper.email,
                 on_shipment=True,
                 on_exception=True,
                 on_delivery=True,
-            ) if 'notification' in options else None,
+            ) if options.notification else None,
             print_preferences=PrintPreferencesType(
                 output_format="8.5x11", encoding=None
             ),

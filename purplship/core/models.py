@@ -1,6 +1,5 @@
 """PurplShip Unified datatypes module."""
 import attr
-from enum import Enum
 from typing import List, Dict
 from jstruct import JList, JStruct, REQUIRED
 
@@ -208,14 +207,6 @@ class Insurance:
     currency: str
     provider: str
     description: str = None
-
-
-class Option(Enum):
-    insurance = Insurance  # Need to be integrated and documented
-    notification = Notification  # Need to be integrated and documented
-    cash_on_delivery = COD  # Need to be integrated and documented
-    currency = str  # Need to be integrated and documented
-    printing = str  # Need to be integrated and documented
 
 
 """ Unified response data types """

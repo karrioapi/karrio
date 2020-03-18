@@ -31,8 +31,8 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import Weight, WeightUnit, DimensionUnit, Dimension
-from purplship.core.models import ShipmentDetails, Error, ChargeDetails, ShipmentRequest, Option
+from purplship.core.units import Weight, WeightUnit, DimensionUnit, Dimension, Options
+from purplship.core.models import ShipmentDetails, Error, ChargeDetails, ShipmentRequest
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 from purplship.carriers.fedex.units import PackagingType, ServiceType, SpecialServiceType
@@ -125,17 +125,12 @@ def process_shipment_request(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
         None
     )
-    options: dict = {}
-    special_services = []
-    for name, value in payload.parcel.options.items():
-        if name in Option.__members__:
-            options.update({
-                name: (
-                    Option[name].value(**value) if isinstance(value, dict) else Option[name].value(value)
-                )
-            })
-        if name in SpecialServiceType.__members__:
-            special_services.append(SpecialServiceType[name].value)
+    options = Options(payload.parcel.options)
+    special_services = [
+        SpecialServiceType[name].value
+        for name, value in payload.parcel.options.items()
+        if name in SpecialServiceType.__members__
+    ]
 
     request = ProcessShipmentRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -153,7 +148,7 @@ def process_shipment_request(
                 Value=Weight(payload.parcel.weight, weight_unit).value,
             ),
             TotalInsuredValue=None,
-            PreferredCurrency=options.get("currency"),
+            PreferredCurrency=options.currency,
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
                 AccountNumber=settings.account_number,
@@ -269,7 +264,7 @@ def process_shipment_request(
                             NotificationDetail=NotificationDetail(
                                 NotificationType="EMAIL",
                                 EmailDetail=EMailDetail(
-                                    EmailAddress=options['notification'].email or payload.shipper.email,
+                                    EmailAddress=options.notification.email or payload.shipper.email,
                                     Name=payload.shipper.person_name
                                 ),
                                 Localization=Localization(
@@ -280,7 +275,7 @@ def process_shipment_request(
                             FormatSpecification='TEXT'
                         )
                     ]
-                ) if 'notification' in options else None,
+                ) if options.notification else None,
                 ReturnShipmentDetail=None,
                 PendingShipmentDetail=None,
                 InternationalControlledExportDetail=None,
@@ -289,7 +284,7 @@ def process_shipment_request(
                 HomeDeliveryPremiumDetail=None,
                 EtdDetail=None,
                 CustomDeliveryWindowDetail=None
-            ) if options != {} else None,
+            ) if options.has_content else None,
             ExpressFreightDetail=None,
             FreightShipmentDetail=None,
             DeliveryInstructions=None,

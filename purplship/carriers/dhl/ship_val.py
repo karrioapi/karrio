@@ -29,9 +29,8 @@ from purplship.core.models import (
     ShipmentDetails,
     ReferenceDetails,
     ChargeDetails,
-    Option,
 )
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit
+from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Options
 from purplship.carriers.dhl.units import (
     PackageType,
     ProductCode,
@@ -39,7 +38,8 @@ from purplship.carriers.dhl.units import (
     Dimension as DHLDimensionUnit,
     WeightUnit as DHLWeightUnit,
     CountryRegion,
-    ServiceCode
+    ServiceCode,
+    DeliveryType
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -116,6 +116,7 @@ def shipment_request(
 ) -> Serializable[DHLShipmentRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    options = Options(payload.parcel.options)
     default_product_code = (
         ProductCode.express_worldwide_doc
         if payload.parcel.is_document
@@ -125,17 +126,14 @@ def shipment_request(
         (ProductCode[svc] for svc in payload.parcel.services if svc in ProductCode.__members__),
         default_product_code
     )
-    options: dict = {}
-    requested_options = []
-    for name, value in payload.parcel.options.items():
-        if name in Option.__members__:
-            options.update({
-                name: (
-                    Option[name].value(**value) if isinstance(value, dict) else Option[name].value(value)
-                )
-            })
-        if name in ServiceCode.__members__:
-            requested_options.append(ServiceCode[name].value)
+    delivery_type = next(
+        (DeliveryType[d] for d in payload.parcel.options.keys() if d in DeliveryType.__members__),
+        None
+    )
+    special_services = [
+        ServiceCode[name].value for name, _ in payload.parcel.options.items()
+        if name in ServiceCode.__members__
+    ]
 
     request = DHLShipmentRequest(
         schemaVersion=6.2,
@@ -254,14 +252,14 @@ def shipment_request(
                 ]
             ),
             Weight=Weight(payload.parcel.weight, weight_unit).value,
-            CurrencyCode=options.get("currency", "USD"),
+            CurrencyCode=options.currency or "USD",
             WeightUnit=DHLWeightUnit[weight_unit.name].value,
             DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
             Date=time.strftime("%Y-%m-%d"),
             PackageType=PackageType[payload.parcel.packaging_type or "box"].value,
             IsDutiable="Y" if payload.customs is not None else "N",
             InsuredAmount=None,
-            DoorTo=options.get("DoorTo"),
+            DoorTo=delivery_type,
             GlobalProductCode=product.value,
             LocalProductCode=product.value,
             Contents="...",
@@ -292,12 +290,12 @@ def shipment_request(
                 CurrencyCode=None,
                 IsWaived=None
             )
-            for service in requested_options
+            for service in special_services
         ],
         Notification=Notification(
-            EmailAddress=options['notification'].email or payload.shipper.email,
+            EmailAddress=options.notification.email or payload.shipper.email,
             Message=None
-        ) if 'notification' in options else None,
+        ) if options.notification else None,
         LabelImageFormat=(payload.label.format if payload.label is not None else None),
         DocImages=DocImages(
             DocImage=[

@@ -1,4 +1,5 @@
 from enum import Enum
+from purplship.core.models import Insurance, COD, Notification
 
 
 class DimensionUnit(Enum):
@@ -95,6 +96,49 @@ class Weight:
         elif self._unit == WeightUnit.KG:
             return float(self._value * 35.274)
         return None
+
+
+class OptionCode(Enum):
+    cash_on_delivery = "COD"  # TODO:: Need to be integrated and documented
+    currency = "currency"  # TODO:: Need to be documented
+    insurance = "insurance"  # TODO:: Need to be integrated and documented
+    notification = "notification"  # TODO:: Need to be documented
+    printing = "printing"  # TODO:: Need to be documented
+
+
+class Options:
+    def __init__(self, payload: dict):
+        self._payload = payload
+
+    @property
+    def has_content(self):
+        return any(o for o in self._payload if o in OptionCode.__members__)
+
+    @property
+    def cash_on_delivery(self):
+        if OptionCode.cash_on_delivery.name in self._payload:
+            return COD(**self._payload[OptionCode.cash_on_delivery.name])
+        return None
+
+    @property
+    def currency(self):
+        return self._payload.get(OptionCode.currency.name)
+
+    @property
+    def insurance(self):
+        if OptionCode.insurance.name in self._payload:
+            return Insurance(**self._payload[OptionCode.insurance.name])
+        return None
+
+    @property
+    def notification(self):
+        if OptionCode.notification.name in self._payload:
+            return Notification(**self._payload[OptionCode.notification.name])
+        return None
+
+    @property
+    def printing(self):
+        return self._payload.get(OptionCode.printing.name)
 
 
 class PrinterType(Enum):

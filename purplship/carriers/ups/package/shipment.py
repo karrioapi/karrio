@@ -24,14 +24,13 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit, Weight, WeightUnit, Dimension
+from purplship.core.units import DimensionUnit, Weight, WeightUnit, Dimension, Options
 from purplship.core.models import (
     ShipmentRequest,
     ChargeDetails,
     ShipmentDetails,
     Error,
     ReferenceDetails,
-    Option,
 )
 from purplship.carriers.ups.units import (
     ShippingPackagingType,
@@ -96,16 +95,11 @@ def shipment_request(
 ) -> Serializable[UPSShipmentRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    options = Options(payload.parcel.options)
     service = next(
         (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
         None
     )
-    options: dict = {}
-    for name, value in payload.parcel.options.items():
-        if name in Option.__members__:
-            options.update({
-                name: Option[name].value(**value if isinstance(value, dict) else value)
-            })
 
     request = UPSShipmentRequest(
         Request=common.RequestType(
@@ -200,12 +194,12 @@ def shipment_request(
                 Notification=[
                     NotificationType(
                         NotificationCode=event,
-                        EMail=options['notification'].email or payload.shipper.email,
+                        EMail=options.notification.email or payload.shipper.email,
                         VoiceMessage=None,
                         TextMessage=None,
                         Locale=None
                     ) for event in [8]
-                ] if 'notification' in options else None,
+                ] if options.notification else None,
                 LabelDelivery=None,
                 InternationalForms=None,
                 DeliveryConfirmation=None,
@@ -225,7 +219,7 @@ def shipment_request(
                 RestrictedArticles=None,
                 InsideDelivery=None,
                 ItemDisposal=None
-            ) if options != {} else None,
+            ) if options.has_content else None,
             Package=[
                 PackageType(
                     Description=payload.parcel.description,
