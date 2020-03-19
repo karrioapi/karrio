@@ -60,11 +60,11 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
     is_international = payload.shipper.country_code != payload.recipient.country_code
     options = Options(payload.parcel.options)
     printing = PrinterType[options.printing or "regular"].value
-    special_services = [
-        Service[name].value
-        for name, _ in payload.parcel.options.items()
+    special_services = {
+        Service[name].value: value
+        for name, value in payload.parcel.options.items()
         if name in Service.__members__
-    ]
+    }
 
     request = create_envelope(
         header_content=RequestContext(
@@ -163,7 +163,7 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                                 ID=key,
                                 Value=value
                             )
-                            for key, value in special_services
+                            for key, value in special_services.items()
                         ]
                     ) if len(special_services) > 0 else None
                 ),

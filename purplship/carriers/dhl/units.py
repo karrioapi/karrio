@@ -147,7 +147,7 @@ class PayorType(Enum):
     third_party = "T"
 
 
-class ServiceCode(Enum):
+class ServiceCode(Flag):
     logistics_services = "0A"
     mailroom_management = "0B"
     pallet_administration = "0C"

@@ -70,7 +70,9 @@ shipment_data = {
         "weight_unit": "KG",
         "options": {
             "caps_signature": True,
-            "collect_on_delivery": True,
+            "cash_on_delivery":  {
+                "amount": 10.5
+            },
             "insurance": {
                 "amount": 70.0
             }
@@ -157,6 +159,10 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
         <options>
             <option>
                 <option-code>SO</option-code>
+            </option>
+            <option>
+                <option-code>COD</option-code>
+                <option-amount>10.5</option-amount>
             </option>
             <option>
                 <option-code>COV</option-code>

@@ -25,7 +25,10 @@ from pyfedex.ship_service_v25 import (
     ShipmentEventNotificationSpecification,
     NotificationDetail,
     EMailDetail,
-    Localization
+    Localization,
+    CodDetail,
+    CodCollectionType,
+    Money
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -251,7 +254,19 @@ def process_shipment_request(
             ShippingChargesPayment=None,
             SpecialServicesRequested=ShipmentSpecialServicesRequested(
                 SpecialServiceTypes=special_services,
-                CodDetail=None,
+                CodDetail=CodDetail(
+                    CodCollectionAmount=Money(
+                        Currency=options.currency or "USD",
+                        Amount=options.cash_on_delivery.amount
+                    ),
+                    AddTransportationChargesDetail=None,
+                    CollectionType=CodCollectionType.CASH,
+                    CodRecipient=None,
+                    FinancialInstitutionContactAndAddress=None,
+                    RemitToName=None,
+                    ReferenceIndicator=None,
+                    ReturnTrackingId=None
+                ) if options.cash_on_delivery else None,
                 DeliveryOnInvoiceAcceptanceDetail=None,
                 HoldAtLocationDetail=None,
                 EventNotificationDetail=ShipmentEventNotificationDetail(

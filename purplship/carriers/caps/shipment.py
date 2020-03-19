@@ -112,16 +112,19 @@ def shipment_request(
         None
     )
     options = Options(payload.parcel.options)
-    special_services = {
-        OptionCode[name].value: value
-        for name, value in payload.parcel.options.items()
-        if name in OptionCode.__members__
-    }
 
     def compute_amount(code: str, _: Any):
         if code == OptionCode.insurance.value:
             return options.insurance.amount
+        if code == OptionCode.cash_on_delivery.value:
+            return options.cash_on_delivery.amount
         return None
+
+    special_services = {
+        OptionCode[name].value: compute_amount(OptionCode[name].value, value)
+        for name, value in payload.parcel.options.items()
+        if name in OptionCode.__members__
+    }
 
     request = ShipmentType(
         customer_request_id=settings.account_number,
@@ -176,7 +179,7 @@ def shipment_request(
                 option=[
                     OptionType(
                         option_code=code,
-                        option_amount=compute_amount(code, amount),
+                        option_amount=amount,
                         option_qualifier_1=None,
                         option_qualifier_2=None,
                     )

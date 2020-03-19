@@ -16,7 +16,9 @@ from pyups.freight_ship_web_service_schema import (
     DimensionsType,
     ShipmentResultsType,
     ShipmentServiceOptionsType,
-    EMailNotificationType
+    EMailNotificationType,
+    CODType,
+    CODValueType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -207,7 +209,15 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 PickupOptions=None,
                 DeliveryOptions=None,
                 OverSeasLeg=None,
-                COD=None,
+                COD=CODType(
+                    CODValue=CODValueType(
+                        CurrencyCode=options.currency or "USD",
+                        MonetaryValue=options.cash_on_delivery.amount
+                    ),
+                    CODPaymentMethod=None,
+                    CODBillingOption=None,
+                    RemitTo=None
+                ) if options.cash_on_delivery else None,
                 DangerousGoods=None,
                 SortingAndSegregating=None,
                 DeclaredValue=None,

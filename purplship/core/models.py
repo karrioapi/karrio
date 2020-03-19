@@ -188,7 +188,6 @@ class COD:
     """cash on delivery option type."""
 
     amount: float
-    currency: str
 
 
 @attr.s(auto_attribs=True)
@@ -204,7 +203,6 @@ class Insurance:
     """insurance option type."""
 
     amount: float
-    description: str = None
 
 
 """ Unified response data types """

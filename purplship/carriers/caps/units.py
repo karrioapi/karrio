@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, Flag
 
 
 class PrinterType(Enum):
@@ -36,7 +36,7 @@ class ServiceType(Enum):
     caps_tracked_packet_international = "INT.TP"
 
 
-class OptionCode(Enum):
+class OptionCode(Flag):
     caps_signature = "SO"
     caps_coverage = "COV"
     caps_collect_on_delivery = "COD"
@@ -52,3 +52,4 @@ class OptionCode(Enum):
 
     """ Unified Option type mapping """
     insurance = caps_coverage
+    cash_on_delivery = caps_collect_on_delivery

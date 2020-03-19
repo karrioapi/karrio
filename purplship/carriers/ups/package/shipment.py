@@ -19,7 +19,9 @@ from pyups.ship_web_service_schema import (
     ShipmentResultsType,
     ShipmentServiceOptionsType,
     NotificationType,
-    EmailDetailsType
+    EmailDetailsType,
+    CODType,
+    CurrencyMonetaryType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -188,7 +190,13 @@ def shipment_request(
             ShipmentServiceOptions=ShipmentServiceOptionsType(
                 SaturdayDeliveryIndicator=None,
                 SaturdayPickupIndicator=None,
-                COD=None,
+                COD=CODType(
+                    CODFundsCode=None,
+                    CODAmount=CurrencyMonetaryType(
+                        CurrencyCode=options.currency or "USD",
+                        MonetaryValue=options.cash_on_delivery.amount
+                    )
+                ) if options.cash_on_delivery else None,
                 AccessPointCOD=None,
                 DeliverToAddresseeOnlyIndicator=None,
                 DirectDeliveryOnlyIndicator=None,
