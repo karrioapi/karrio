@@ -20,7 +20,7 @@ from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.units import Currency, WeightUnit, Weight
 from purplship.core.utils.xml import Element
 from purplship.core.models import RateDetails, RateRequest, Error, ChargeDetails
-from purplship.carriers.fedex.units import PackagingType, ServiceType
+from purplship.carriers.fedex.units import PackagingType, ServiceType, RateType
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
@@ -76,8 +76,8 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
     )
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=detail.ServiceType,
-        service_type=detail.ActualRateType,
+        service_name=ServiceType(detail.ServiceType).name,
+        service_type=RateType(detail.ActualRateType).name,
         currency=currency_,
         delivery_date=(
             datetime.strptime(delivery_, "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
@@ -118,7 +118,7 @@ def rate_request(
                 else None
             ),
             PackagingType=PackagingType[
-                payload.parcel.packaging_type or "YOUR_PACKAGING"
+                payload.parcel.packaging_type or "your_packaging"
             ].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
@@ -129,7 +129,7 @@ def rate_request(
             PreferredCurrency=payload.parcel.options.get("currency"),
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
-                AccountNumber=payload.shipper.account_number,
+                AccountNumber=settings.account_number,
                 Tins=[
                     TaxpayerIdentification(TinType=None, Number=tax)
                     for tax in [
@@ -149,14 +149,14 @@ def rate_request(
                     TollFreePhoneNumber=None,
                     PagerNumber=None,
                     FaxNumber=None,
-                    EMailAddress=payload.shipper.email_address,
+                    EMailAddress=payload.shipper.email,
                 )
                 if any(
                     (
                         payload.shipper.company_name,
                         payload.shipper.person_name,
                         payload.shipper.phone_number,
-                        payload.shipper.email_address,
+                        payload.shipper.email,
                     )
                 )
                 else None,
@@ -175,7 +175,7 @@ def rate_request(
                 ),
             ),
             Recipient=Party(
-                AccountNumber=payload.recipient.account_number,
+                AccountNumber=None,
                 Tins=[
                     TaxpayerIdentification(TinType=None, Number=tax)
                     for tax in [
@@ -197,14 +197,14 @@ def rate_request(
                     TollFreePhoneNumber=None,
                     PagerNumber=None,
                     FaxNumber=None,
-                    EMailAddress=payload.recipient.email_address,
+                    EMailAddress=payload.recipient.email,
                 )
                 if any(
                     (
                         payload.recipient.company_name,
                         payload.recipient.person_name,
                         payload.recipient.phone_number,
-                        payload.recipient.email_address,
+                        payload.recipient.email,
                     )
                 )
                 else None,

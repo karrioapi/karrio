@@ -47,7 +47,6 @@ freight_shipment_data = {
         "country_code": "CountryCode",
         "person_name": "Attention Name",
         "phone_number": "Shipper Phone number",
-        "account_number": "Your Shipper Number",
     },
     "recipient": {
         "company_name": "Ship To Name",
@@ -63,7 +62,12 @@ freight_shipment_data = {
         "weight_unit": "LB",
         "weight": 180,
         "reference": "Your Customer Context",
-        "options": {"ups_freight_class": "ups_freight_class_50"},
+        "options": {
+            "ups_freight_class": "ups_freight_class_50",
+            "notification": {
+                "email": "test@mail.com"
+            }
+        },
     },
 }
 
@@ -91,14 +95,14 @@ ParsedFreightShipmentResponse = [
         ],
         "documents": [],
         "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
-        "services": ["Service code"],
+        "service": "ups_worldwide_express",
         "shipment_date": None,
         "total_charge": {
             "amount": "MonetaryValue",
             "currency": "CurrencyCode",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["Shipment Number"],
+        "tracking_number": "Shipment Number",
     },
     [],
 ]
@@ -194,7 +198,7 @@ FreightShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
                     <freightShip:Value>BillableShipmentWeight</freightShip:Value>
                 </freightShip:BillableShipmentWeight>
                 <freightShip:Service>
-                    <freightShip:Code>Service code</freightShip:Code>
+                    <freightShip:Code>07</freightShip:Code>
                 </freightShip:Service>
                 <freightShip:TimeInTransit>
                     <freightShip:DaysInTransit>DaysInTransit</freightShip:DaysInTransit>
@@ -205,7 +209,7 @@ FreightShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </soapenv:Envelope>
 """
 
-FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:fsp="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0" xmlns:IF="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
+FreightShipmentRequestXML = f"""<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:wsf="http://www.ups.com/schema/wsf" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:fsp="http://www.ups.com/XMLSchema/XOLTWS/FreightShip/v1.0" xmlns:IF="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
     <tns:Header>
         <upss:UPSSecurity>
             <UsernameToken>
@@ -240,7 +244,7 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
                         <Number>Shipper Phone number</Number>
                     </Phone>
                 </ShipFrom>
-                <ShipperNumber>Your Shipper Number</ShipperNumber>
+                <ShipperNumber>{gateway.settings.account_number}</ShipperNumber>
                 <ShipTo>
                     <Name>Ship To Name</Name>
                     <Address>
@@ -262,6 +266,15 @@ FreightShipmentRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.
                     </Weight>
                     <FreightClass>50</FreightClass>
                 </Commodity>
+                <ShipmentServiceOptions>
+                    <EMailInformation>
+                        <EMailAddress>test@mail.com</EMailAddress>
+                        <EventType>001</EventType>
+                        <EventType>002</EventType>
+                        <EventType>003</EventType>
+                        <EventType>004</EventType>
+                    </EMailInformation>
+                </ShipmentServiceOptions>
             </Shipment>
         </fsp:FreightShipRequest>
     </tns:Body>

@@ -7,7 +7,7 @@ from purplship.package import rating
 from tests.dhl.package.fixture import gateway
 
 
-class TestDHLQuote(unittest.TestCase):
+class TestDHLRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.RateRequest = RateRequest(**RatePayload)
@@ -37,30 +37,30 @@ class TestDHLQuote(unittest.TestCase):
 
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
-            mock.return_value = QuoteResponseXml
+            mock.return_value = RateResponseXML
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_rate_parsing_error(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
-            mock.return_value = QuoteParsingError
+            mock.return_value = RateParsingError
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateParsingError))
 
     def test_parse_rate_missing_args_error(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
-            mock.return_value = QuoteMissingArgsError
+            mock.return_value = RateMissingArgsError
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError)
+                to_dict(parsed_response), to_dict(ParsedRateMissingArgsError)
             )
 
     def test_parse_rate_vol_weight_higher_response(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
-            mock.return_value = QuoteVolWeightHigher
+            mock.return_value = RateVolWeightHigher
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedQuoteVolWeightHigher)
+                to_dict(parsed_response), to_dict(ParsedRateVolWeightHigher)
             )
 
 
@@ -72,20 +72,18 @@ RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
-        "services": ["EXPRESS_WORLDWIDE_DOC"],
+        "services": ["express_worldwide_doc"],
         "id": "1",
         "height": 3,
         "length": 10,
         "width": 3,
         "weight": 4.0,
         "is_document": True,
-        "items": [{"value_amount": 100}],
         "options": {"currency": "CAD", "insurance": {"amount": 75}},
     },
 }
 
-
-ParsedQuoteParsingError = [
+ParsedRateParsingError = [
     [],
     [
         {
@@ -96,7 +94,7 @@ ParsedQuoteParsingError = [
     ],
 ]
 
-ParsedQuoteMissingArgsError = [
+ParsedRateMissingArgsError = [
     [],
     [
         {
@@ -108,50 +106,50 @@ ParsedQuoteMissingArgsError = [
     ],
 ]
 
-ParsedQuoteResponse = [
+ParsedRateResponse = [
     [
         {
             "base_charge": 195.32,
             "carrier": "carrier_name",
             "currency": "CAD",
-            "delivery_date": "2018-06-26",
+            'delivery_date': '2018-06-26',
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [
                 {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
             ],
-            "service_name": "EXPRESS WORLDWIDE DOC",
-            "service_type": "TD",
+            "service_name": "express_worldwide_doc",
+            "service_type": "time_definite",
             "total_charge": 208.02,
         },
         {
             "base_charge": 213.47,
             "carrier": "carrier_name",
             "currency": "CAD",
-            "delivery_date": "2018-06-26",
+            'delivery_date': '2018-06-26',
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [],
-            "service_name": "EXPRESS EASY DOC",
-            "service_type": "TD",
+            "service_name": "express_easy_doc",
+            "service_type": "time_definite",
             "total_charge": 213.47,
         },
     ],
     [],
 ]
 
-ParsedQuoteVolWeightHigher = [
+ParsedRateVolWeightHigher = [
     [
         {
             "base_charge": 0.0,
             "carrier": "carrier_name",
             "currency": None,
-            "delivery_date": "2017-11-13",
+            'delivery_date': '2017-11-13',
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [],
-            "service_name": "EXPRESS WORLDWIDE NONDOC",
-            "service_type": "TD",
+            "service_name": "express_worldwide_nondoc",
+            "service_type": "time_definite",
             "total_charge": 0.0,
         }
     ],
@@ -159,7 +157,7 @@ ParsedQuoteVolWeightHigher = [
 ]
 
 
-QuoteParsingError = """<?xml version="1.0" encoding="UTF-8"?>
+RateParsingError = """<?xml version="1.0" encoding="UTF-8"?>
 <res:ErrorResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com err-res.xsd'>
     <Response>
         <ServiceHeader>
@@ -183,7 +181,7 @@ QuoteParsingError = """<?xml version="1.0" encoding="UTF-8"?>
 </res:ErrorResponse><!-- ServiceInvocationId:20180622045531_96ab_f3e91245-69d2-422e-b943-83fbe8f8181b -->
 """
 
-QuoteMissingArgsError = """<?xml version="1.0" ?>
+RateMissingArgsError = """<?xml version="1.0" ?>
 <DCTResponse>
     <GetQuoteResponse>
         <Response>
@@ -257,7 +255,7 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
 </p:DCTRequest>
 """
 
-QuoteResponseXml = """<?xml version="1.0" ?>
+RateResponseXML = """<?xml version="1.0" ?>
 <DCTResponse>
     <GetQuoteResponse>
         <Response>
@@ -433,7 +431,7 @@ QuoteResponseXml = """<?xml version="1.0" ?>
 </DCTResponse>
 """
 
-QuoteVolWeightHigher = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+RateVolWeightHigher = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <res:DCTResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com DCT-Response.xsd'>
     <GetQuoteResponse>
         <Response>

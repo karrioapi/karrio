@@ -77,15 +77,15 @@ SHIPMENT_REQUEST_PAYLOAD = {
         "weight": 10,
         "weight_unit": "LB",
         "services": ["purolator_express"],
-        "options": {"printing": "THERMAL"},
+        "options": {"printing": "thermal"},
     },
 }
 
 PARSED_SHIPMENT_RESPONSE = [
     {
         "carrier": "purolator",
-        "shipment_date": "2020-03-15",
-        "tracking_numbers": ["329014521622"],
+        "shipment_date": str(datetime.now().strftime("%Y-%m-%d")),
+        "tracking_number": "329014521622",
     },
     [],
 ]

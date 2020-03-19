@@ -1,5 +1,4 @@
-from typing import Tuple, List
-
+from typing import Tuple, List, Any
 from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType
 from purplship.carriers.caps.utils import Settings
@@ -10,7 +9,7 @@ from purplship.core.models import (
     ReferenceDetails,
     ShipmentRequest,
 )
-from purplship.core.units import Currency, Weight, WeightUnit, DimensionUnit, Dimension
+from purplship.core.units import Currency, Weight, WeightUnit, DimensionUnit, Dimension, Options
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
@@ -56,7 +55,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_numbers=[info.tracking_pin],
+        tracking_number=info.tracking_pin,
         total_charge=ChargeDetails(
             name="Shipment charge", amount=data.due_amount, currency=currency_
         ),
@@ -93,10 +92,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
             ]
         ),
         shipment_date=str(data.service_standard.expected_delivery_date),
-        services=(
-            [data.service_code]
-            + [option.option_code for option in data.priced_options.get_priced_option()]
-        ),
+        service=ServiceType(data.service_code).name,
         documents=[
             link.get("href")
             for link in response.xpath(".//*[local-name() = $name]", name="link")
@@ -111,16 +107,27 @@ def shipment_request(
 ) -> Serializable[ShipmentType]:
     weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "CM"]
-    requested_services = [
-        svc for svc in payload.parcel.services if svc in ServiceType.__members__
-    ]
-    requested_options = dict(
-        (opt, value)
-        for opt, value in payload.options.items()
-        if opt in OptionCode.__members__
+    service = next(
+        (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
+        None
     )
+    options = Options(payload.parcel.options)
+
+    def compute_amount(code: str, _: Any):
+        if code == OptionCode.insurance.value:
+            return options.insurance.amount
+        if code == OptionCode.cash_on_delivery.value:
+            return options.cash_on_delivery.amount
+        return None
+
+    special_services = {
+        OptionCode[name].value: compute_amount(OptionCode[name].value, value)
+        for name, value in payload.parcel.options.items()
+        if name in OptionCode.__members__
+    }
+
     request = ShipmentType(
-        customer_request_id=payload.shipper.account_number or settings.customer_number,
+        customer_request_id=settings.account_number,
         groupIdOrTransmitShipment=None,
         quickship_label_requested=None,
         cpc_pickup_indicator=None,
@@ -130,9 +137,7 @@ def shipment_request(
         provide_pricing_info=True,
         provide_receipt_info=None,
         delivery_spec=DeliverySpecType(
-            service_code=ServiceType[requested_services[0]].value
-            if len(requested_services) > 0
-            else None,
+            service_code=service,
             sender=SenderType(
                 name=payload.shipper.person_name,
                 company=payload.shipper.company_name,
@@ -173,24 +178,20 @@ def shipment_request(
             options=optionsType(
                 option=[
                     OptionType(
-                        option_code=OptionCode[code].value,
-                        option_amount=None,
+                        option_code=code,
+                        option_amount=amount,
                         option_qualifier_1=None,
                         option_qualifier_2=None,
                     )
-                    for code, value in requested_options.items()
+                    for code, amount in special_services.items()
                 ]
-            )
-            if len(requested_options) > 0
-            else None,
+            ) if len(special_services) > 0 else None,
             notification=NotificationType(
-                email=payload.shipper.email_address,
+                email=options.notification.email or payload.shipper.email,
                 on_shipment=True,
                 on_exception=True,
                 on_delivery=True,
-            )
-            if payload.shipper.email_address is not None
-            else None,
+            ) if options.notification else None,
             print_preferences=PrintPreferencesType(
                 output_format="8.5x11", encoding=None
             ),
@@ -205,7 +206,7 @@ def shipment_request(
                 conversion_from_cad=None,
                 reason_for_export=payload.customs.terms_of_trade,
                 other_reason=payload.customs.description,
-                duties_and_taxes_prepaid=payload.customs.duty_payment.account_number,
+                duties_and_taxes_prepaid=payload.customs.duty.account_number,
                 certificate_number=None,
                 licence_number=None,
                 invoice_number=None,
@@ -222,7 +223,7 @@ def shipment_request(
                             country_of_origin=payload.shipper.country_code,
                             province_of_origin=None,
                         )
-                        for item in payload.parcel.items
+                        for item in payload.customs.commodities
                     ]
                 ),
             )

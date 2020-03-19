@@ -8,6 +8,7 @@ from tests.caps.fixture import gateway
 
 class TestCanadaPostShipment(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
 
     def test_create_shipment_request(self):
@@ -22,7 +23,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
             url,
-            f"{gateway.settings.server_url}/rs/{gateway.settings.customer_number}/{self.ShipmentRequest.shipper.account_number}/shipment",
+            f"{gateway.settings.server_url}/rs/{gateway.settings.account_number}/{gateway.settings.account_number}/shipment",
         )
 
     def test_parse_shipment_response(self):
@@ -49,7 +50,6 @@ shipment_data = {
         "person_name": "Bob",
         "phone_number": "1 (450) 823-8432",
         "state_code": "QC",
-        "account_number": "123456789",
     },
     "recipient": {
         "company_name": "CGI",
@@ -65,10 +65,18 @@ shipment_data = {
         "length": 6,
         "width": 12,
         "weight": 20.0,
-        "services": ["Expedited_Parcel"],
+        "services": ["caps_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
-        "options": {"Collect_on_delivery": True},
+        "options": {
+            "caps_signature": True,
+            "cash_on_delivery":  {
+                "amount": 10.5
+            },
+            "insurance": {
+                "amount": 70.0
+            }
+        },
     },
 }
 
@@ -88,14 +96,14 @@ ParsedShipmentResponse = [
         ],
         "documents": ["https://XX/rs/artifact/11111111/5555555/0"],
         "reference": {"type": "Shipment Id", "value": "347881315405043891"},
-        "services": ["DOM.EP", "DC", "UP"],
+        "service": "caps_expedited_parcel",
         "shipment_date": "2011-10-07",
         "total_charge": {
             "amount": "19.88",
             "currency": "CAD",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["12345"],
+        "tracking_number": "12345",
     },
     [],
 ]
@@ -118,7 +126,7 @@ ShipmentPriceLinkXML = """
 
 
 ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
-    <customer-request-id>123456789</customer-request-id>
+    <customer-request-id>1234567</customer-request-id>
     <requested-shipping-point>H2B1A0</requested-shipping-point>
     <provide-pricing-info>true</provide-pricing-info>
     <delivery-spec>
@@ -148,6 +156,19 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
                 <postal-zip-code>K1K4T3</postal-zip-code>
             </address-details>
         </destination>
+        <options>
+            <option>
+                <option-code>SO</option-code>
+            </option>
+            <option>
+                <option-code>COD</option-code>
+                <option-amount>10.5</option-amount>
+            </option>
+            <option>
+                <option-code>COV</option-code>
+                <option-amount>70.0</option-amount>
+            </option>
+        </options>
         <parcel-characteristics>
             <weight>20.</weight>
             <dimensions>

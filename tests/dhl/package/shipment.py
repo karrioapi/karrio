@@ -63,6 +63,64 @@ class TestDHLShipment(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
+shipment_data = {
+    "shipper": {
+        "company_name": "shipper company privated limited 12",
+        "address_line_1": "238 850925434 Drive",
+        "city": "Scottsdale",
+        "postal_code": "85260",
+        "country_code": "US",
+        "person_name": "Ms Lucian",
+        "phone_number": "1 23 8613402",
+        "email": "test@email.com",
+        "state_code": "AZ",
+    },
+    "recipient": {
+        "company_name": "IBM Bruse Pte Ltd",
+        "address_line_1": "9 Business Park Central 13th Floor The IBM Place",
+        "city": "Brussels",
+        "postal_code": "1060",
+        "country_code": "BE",
+        "person_name": "Mrs Orlander",
+        "phone_number": "506-851-2271",
+        "email": "c_orlander@gc.ca",
+    },
+    "parcel": {
+        "id": "1",
+        "height": 3,
+        "length": 10,
+        "width": 3,
+        "weight": 4.0,
+        "packaging_type": "dhl_express_envelope",
+        "is_document": False,
+        "services": ["express_worldwide"],
+        "options": {
+            "paperless_trade": True,
+            "insurance": {
+                "amount": 148.0
+            }
+        },
+    },
+    "payment": {"paid_by": "sender", "account_number": "123456789"},
+    "customs": {
+        "commodities": [{"description": "cn", "sku": "cc"}],
+        "terms_of_trade": "DAP",
+        "duty": {
+            "account_number": "123456789",
+            "paid_by": "sender",
+            "amount": 200.00,
+        },
+    },
+    "doc_images": [
+        {
+            "type": "CIN",
+            "format": "PDF",
+            "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
+        }
+    ],
+}
+
 ParsedShipmentMissingArgsError = [
     None,
     [
@@ -98,21 +156,14 @@ ParsedShipmentResponse = [
             "iVBORw0KGgoAAAANSUhEUgAAAawAAABeAQMAAABFK7JJAAAABlBMVEX///8AAABVwtN+AAAAaUlEQVR42u3LoRVAUACG0Z/gKLKjOK+YhRlMIOko7xUDSBqSUQyhaFYgsYMkfLdfT1ITdUdcL+PtNpuEqYrJJjZ3g06XXZ7Rs1cKZil2TV+ubW4kX5/QaDQajUaj0Wg0Go1Go9FotH+3F1GxE7xDV+SvAAAAAElFTkSuQmCC",
         ],
         "reference": {"type": "St", "value": "reference"},
-        "services": [
-            "EXPRESS WORLDWIDE",
-            "DUTIES & TAXES PAID ",
-            "PAPERLESS TRADE ",
-            "C",
-            "DTP",
-            "PLT",
-        ],
+        "service": "EXPRESS WORLDWIDE",
         "shipment_date": "2017-11-10",
         "total_charge": {
             "amount": "155.160",
             "currency": "USD",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["0044650491"],
+        "tracking_number": "0044650491",
     },
     [],
 ]
@@ -192,7 +243,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     </Billing>
     <Consignee>
         <CompanyName>IBM Bruse Pte Ltd</CompanyName>
-        <AddressLine>9 Business Park Central 13th Floor The IBM Place </AddressLine>
+        <AddressLine>9 Business Park Central 13th Floor The IBM Place</AddressLine>
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
@@ -232,15 +283,15 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         
         <Contents>...</Contents>
         <DimensionUnit>I</DimensionUnit>
+        <InsuredAmount>148.</InsuredAmount>
         <PackageType>EE</PackageType>
         <IsDutiable>Y</IsDutiable>
         <CurrencyCode>USD</CurrencyCode>
     </ShipmentDetails>
     <Shipper>
-        <ShipperID>123456789</ShipperID>
         <CompanyName>shipper company privated limited 12</CompanyName>
         <RegisteredAccount>123456789</RegisteredAccount>
-        <AddressLine>238 850925434 Drive </AddressLine>
+        <AddressLine>238 850925434 Drive</AddressLine>
         <City>Scottsdale</City>
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
@@ -251,6 +302,12 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
             <Email>test@email.com</Email>
         </Contact>
     </Shipper>
+    <SpecialService>
+        <SpecialServiceType>WY</SpecialServiceType>
+    </SpecialService>
+    <SpecialService>
+        <SpecialServiceType>II</SpecialServiceType>
+    </SpecialService>
     <DocImages>
         <DocImage>
             <Type>CIN</Type>
@@ -422,56 +479,3 @@ ShipmentResponseXml = """<?xml version="1.0" encoding="UTF-8"?>
     </QtdSInAdCur>
 </res:ShipmentResponse>
 """
-
-shipment_data = {
-    "shipper": {
-        "company_name": "shipper company privated limited 12",
-        "address_line_1": "238 850925434 Drive",
-        "city": "Scottsdale",
-        "postal_code": "85260",
-        "country_code": "US",
-        "person_name": "Ms Lucian",
-        "phone_number": "1 23 8613402",
-        "email_address": "test@email.com",
-        "state_code": "AZ",
-        "account_number": "123456789",
-    },
-    "recipient": {
-        "company_name": "IBM Bruse Pte Ltd",
-        "address_line_1": "9 Business Park Central 13th Floor The IBM Place",
-        "city": "Brussels",
-        "postal_code": "1060",
-        "country_code": "BE",
-        "person_name": "Mrs Orlander",
-        "phone_number": "506-851-2271",
-        "email_address": "c_orlander@gc.ca",
-    },
-    "parcel": {
-        "id": "1",
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-        "packaging_type": "DHL_Express_Envelope",
-        "items": [{"description": "cn", "sku": "cc"}],
-        "is_document": False,
-        "services": ["EXPRESS_WORLDWIDE"],
-        "options": {"Paperless_Trade": True},
-    },
-    "payment": {"paid_by": "SENDER", "account_number": "123456789"},
-    "customs": {
-        "terms_of_trade": "DAP",
-        "duty_payment": {
-            "account_number": "123456789",
-            "paid_by": "SENDER",
-            "amount": 200.00,
-        },
-    },
-    "doc_images": [
-        {
-            "type": "CIN",
-            "format": "PDF",
-            "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-        }
-    ],
-}

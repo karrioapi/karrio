@@ -1,6 +1,6 @@
 """PurplShip Unified datatypes module."""
 import attr
-from typing import List, Dict, Union
+from typing import List, Dict
 from jstruct import JList, JStruct, REQUIRED
 
 
@@ -13,11 +13,10 @@ class Address:
     type: str = None
     federal_tax_id: str = None
     state_tax_id: str = None
-    account_number: str = None
     person_name: str = None
     company_name: str = None
     country_code: str = None
-    email_address: str = None
+    email: str = None
     phone_number: str = None
 
     state_code: str = None
@@ -29,7 +28,7 @@ class Address:
 
 
 @attr.s(auto_attribs=True)
-class Item:
+class Commodity:
     """item type is a commodity."""
 
     id: str = None
@@ -63,7 +62,6 @@ class Parcel:
     dimension_unit: str = "IN"
     services: List[str] = []
     options: Dict = {}
-    items: List[Item] = JList[Item]
 
 
 @attr.s(auto_attribs=True)
@@ -80,10 +78,10 @@ class Invoice:
 class Payment:
     """payment configuration type."""
 
+    paid_by: str = None
     description: str = None
     amount: float = None
     currency: str = None
-    paid_by: str = None
     account_number: str = None
 
 
@@ -95,9 +93,9 @@ class Customs:
     aes: str = None
     description: str = None
     terms_of_trade: str = None
-    items: List[Item] = JList[Item]
+    commodities: List[Commodity] = JList[Commodity]
+    duty: Payment = JStruct[Payment]
     invoice: Invoice = JStruct[Invoice]
-    duty_payment: Payment = JStruct[Payment]
     commercial_invoice: bool = False
 
 
@@ -118,10 +116,10 @@ class ShipmentRequest:
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
 
+    label: Doc = JStruct[Doc]
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
     doc_images: List[Doc] = JList[Doc]
-    label: Doc = JStruct[Doc]
 
     options: Dict = {}
 
@@ -190,7 +188,14 @@ class COD:
     """cash on delivery option type."""
 
     amount: float
-    currency: str
+
+
+@attr.s(auto_attribs=True)
+class Notification:
+    """notification option type."""
+
+    email: str = None  # Only defined if other email than shipper
+    locale: str = 'en'
 
 
 @attr.s(auto_attribs=True)
@@ -198,9 +203,6 @@ class Insurance:
     """insurance option type."""
 
     amount: float
-    currency: str
-    provider: str
-    description: str = None
 
 
 """ Unified response data types """
@@ -259,8 +261,8 @@ class RateDetails:
 
     carrier: str
     service_name: str
-    service_type: str
     currency: str
+    service_type: str = None
     discount: float = 0.0
     base_charge: float = 0.0
     delivery_date: str = None
@@ -284,11 +286,11 @@ class ShipmentDetails:
     """PurplShip shipment details type."""
 
     carrier: str
-    tracking_numbers: List[str]
+    tracking_number: List[str]
     total_charge: ChargeDetails
     charges: List[ChargeDetails]
     shipment_date: str = None
-    services: List[str] = None
+    service: str = None
     documents: List[str] = []
     reference: ReferenceDetails = None
 

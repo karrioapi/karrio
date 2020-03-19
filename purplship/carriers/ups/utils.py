@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     username: str
     password: str
     access_license_number: str
+    account_number: str = None
 
     @property
     def Security(self):

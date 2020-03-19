@@ -21,6 +21,8 @@ from purplship.core.units import DimensionUnit, WeightUnit, Weight, Dimension
 from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
 from purplship.carriers.dhl.units import (
     Product,
+    ProductCode,
+    NetworkType,
     DCTPackageType,
     Dimension as DHLDimensionUnit,
     WeightUnit as DHLWeightUnit,
@@ -56,17 +58,25 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     DutiesAndTaxes_ = reduce(
         lambda d, ec: d + ec.amount if "TAXES PAID" in ec.name else d, ExtraCharges, 0.0
     )
-    delivery_ = str(qtdshp.DeliveryDate[0].DlvyDateTime)
+    DlvyDateTime = qtdshp.DeliveryDate[0].DlvyDateTime
+    delivery_date = (
+        datetime.strptime(str(DlvyDateTime), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+        if DlvyDateTime is not None else None
+    )
+    service_name = next(
+        (p.name for p in Product if p.value in qtdshp.LocalProductName),
+        qtdshp.LocalProductName
+    )
+    service_type = next(
+        (s.name for s in NetworkType if s.value in qtdshp.NetworkTypeCode),
+        qtdshp.NetworkTypeCode
+    )
     return RateDetails(
         carrier=settings.carrier_name,
         currency=qtdshp.CurrencyCode,
-        delivery_date=datetime.strptime(delivery_, "%Y-%m-%d %H:%M:%S").strftime(
-            "%Y-%m-%d"
-        )
-        if delivery_
-        else None,
-        service_name=qtdshp.LocalProductName,
-        service_type=qtdshp.NetworkTypeCode,
+        delivery_date=delivery_date,
+        service_name=service_name,
+        service_type=service_type,
         base_charge=float(qtdshp.WeightCharge or 0),
         total_charge=float(qtdshp.ShippingCharge or 0),
         duties_and_taxes=DutiesAndTaxes_,
@@ -86,9 +96,9 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     products = [
-        Product[svc].value
+        ProductCode[svc].value
         for svc in payload.parcel.services
-        if svc in Product.__members__
+        if svc in ProductCode.__members__
     ]
 
     request = DCTRequest(
@@ -124,7 +134,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                         PieceType(
                             PieceID=payload.parcel.id,
                             PackageTypeCode=DCTPackageType[
-                                payload.parcel.packaging_type or "BOX"
+                                payload.parcel.packaging_type or "box"
                             ].value,
                             Depth=Dimension(
                                 payload.parcel.length, dimension_unit
@@ -137,10 +147,10 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                         )
                     ]
                 ),
-                NumberOfPieces=len(payload.parcel.items),
+                NumberOfPieces=1,
                 ShipmentWeight=Weight(payload.parcel.weight, weight_unit).value,
                 Volume=None,
-                PaymentAccountNumber=payload.shipper.account_number,
+                PaymentAccountNumber=None,
                 InsuredCurrency=None,
                 InsuredValue=None,
                 PaymentType=None,

@@ -6,17 +6,17 @@ from pypurolator.shipping_service import (
     TrackingReferenceInformation, Address, InternationalInformation, PickupInformation, PickupType,
     ArrayOfPiece, Piece, Weight as PurolatorWeight, WeightUnit as PurolatorWeightUnit, RequestContext,
     Dimension as PurolatorDimension, DimensionUnit as PurolatorDimensionUnit, TotalWeight, PhoneNumber,
-    PrinterType, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
-    Error as PurolatorError, ArrayOfError
+    PrinterType as PurolatorPrinterType, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
+    Error as PurolatorError, ArrayOfError, NotificationInformation, ArrayOfOptionIDValuePair, OptionIDValuePair
 )
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit
+from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, PrinterType, Options
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings
-from purplship.carriers.purolator.units import Product
+from purplship.carriers.purolator.units import Product, Service
 from purplship.carriers.purolator.error import parse_error_response
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
@@ -33,14 +33,11 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     shipment.build(node)
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_numbers=(
-            [cast(PIN, pin).Value for pin in shipment.PiecePINs.PIN] +
-            [cast(PIN, pin).Value for pin in shipment.ReturnShipmentPINs.PIN]
-        ),
+        service=None,
+        tracking_number=cast(PIN, shipment.ShipmentPIN).Value,
         total_charge=None,
         charges=[],
         shipment_date=str(datetime.today().strftime("%Y-%m-%d")),
-        services=None,
         documents=[],
         reference=None
     )
@@ -61,6 +58,14 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
     dimension_unit: DimensionUnit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     service = next((svc for svc in payload.parcel.services if svc in Product.__members__), None)
     is_international = payload.shipper.country_code != payload.recipient.country_code
+    options = Options(payload.parcel.options)
+    printing = PrinterType[options.printing or "regular"].value
+    special_services = {
+        Service[name].value: value
+        for name, value in payload.parcel.options.items()
+        if name in Service.__members__
+    }
+
     request = create_envelope(
         header_content=RequestContext(
             Version='2.1',
@@ -152,7 +157,15 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                         ]
                     ),
                     DangerousGoodsDeclarationDocumentIndicator=None,
-                    OptionsInformation=None
+                    OptionsInformation=ArrayOfOptionIDValuePair(
+                        OptionIDValuePair=[
+                            OptionIDValuePair(
+                                ID=key,
+                                Value=value
+                            )
+                            for key, value in special_services.items()
+                        ]
+                    ) if len(special_services) > 0 else None
                 ),
                 InternationalInformation=InternationalInformation(
                     DocumentsOnlyIndicator=payload.parcel.is_document,
@@ -166,14 +179,17 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                 ReturnShipmentInformation=None,
                 PaymentInformation=None,
                 PickupInformation=PickupInformation(PickupType=PickupType.DROP_OFF.value),
-                NotificationInformation=None,
+                NotificationInformation=NotificationInformation(
+                    ConfirmationEmailAddress=options.notification.email or payload.shipper.email,
+                    AdvancedShippingNotificationMessage=None
+                ) if options.notification else None,
                 TrackingReferenceInformation=TrackingReferenceInformation(
                     Reference1=payload.parcel.reference
                 ),
                 OtherInformation=None,
                 ProactiveNotification=None
             ),
-            PrinterType=PrinterType[payload.parcel.options.get('printing', "REGULAR")].value
+            PrinterType=PurolatorPrinterType(printing).value
         )
     )
     return request

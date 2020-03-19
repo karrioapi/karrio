@@ -84,7 +84,7 @@ def modify_pickup_request(
         else "AM",
         ConfirmationNumber=payload.confirmation_number,
         Requestor=Requestor(
-            AccountNumber=payload.address.account_number,
+            AccountNumber=settings.account_number,
             AccountType="D",
             RequestorContact=RequestorContact(
                 PersonName=payload.address.person_name,

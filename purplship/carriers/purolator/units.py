@@ -75,4 +75,3 @@ class Product(Enum):
     purolator_express_international_box_9_am = "PurolatorExpressInternationalBox9AM"
     purolator_express_international_box_10_30_am = "PurolatorExpressInternationalBox10:30AM"
     purolator_express_international_box_12_00 = "PurolatorExpressInternationalBox12:00"
-

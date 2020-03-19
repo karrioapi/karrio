@@ -11,8 +11,9 @@ from pysendle.quotes import (
 )
 from purplship.carriers.sendle.error import parse_error_response
 from purplship.carriers.sendle.utils import Settings
-from .domestic import domestic_quote_request
-from .international import international_quote_request
+from purplship.carriers.sendle.units import Plan
+from purplship.carriers.sendle.quote.domestic import domestic_quote_request
+from purplship.carriers.sendle.quote.international import international_quote_request
 
 
 ParcelQuoteRequest = Union[DomesticParcelQuote, InternationalParcelQuote]
@@ -35,8 +36,7 @@ def _extract_quote(
 ) -> RateDetails:
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=parcel_quote.plan_name,
-        service_type=parcel_quote.plan_name,
+        service_name=Plan(parcel_quote.plan_name).name,
         base_charge=parcel_quote.quote.gross.amount,
         duties_and_taxes=parcel_quote.quote.tax.amount,
         total_charge=parcel_quote.quote.net.amount,

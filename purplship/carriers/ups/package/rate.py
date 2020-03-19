@@ -74,13 +74,12 @@ def _extract_package_rate(
                 ".//*[local-name() = $name]", name="CurrencyCode"
             )
         )
-
+        service = ShippingServiceCode(rate.Service.Code).name
         return rates + [
             RateDetails(
                 carrier=settings.carrier_name,
                 currency=currency_,
-                service_name=str(ShippingServiceCode(rate.Service.Code).name),
-                service_type=rate.Service.Code,
+                service_name=service,
                 base_charge=float(rate.TransportationCharges.MonetaryValue),
                 total_charge=float(total_charges.MonetaryValue),
                 duties_and_taxes=reduce(
@@ -121,7 +120,7 @@ def rate_request(
             for svc in payload.parcel.services
             if svc in RatingServiceCode.__members__
         ]
-        + [RatingServiceCode.UPS_Worldwide_Express]
+        + [RatingServiceCode.ups_worldwide_express]
     )[0]
     request = UPSRateRequest(
         Request=common.RequestType(
@@ -137,7 +136,7 @@ def rate_request(
             OriginRecordTransactionTimestamp=None,
             Shipper=ShipperType(
                 Name=payload.shipper.company_name,
-                ShipperNumber=payload.shipper.account_number,
+                ShipperNumber=settings.account_number,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
                         payload.recipient.address_line_1,
@@ -205,11 +204,7 @@ def rate_request(
             ShipmentServiceOptions=None,
             ShipmentRatingOptions=ShipmentRatingOptionsType(
                 NegotiatedRatesIndicator=""
-                if "NegotiatedRatesIndicator" in payload.parcel.options
-                else None
-            )
-            if "NegotiatedRatesIndicator" in payload.parcel.options
-            else None,
+            ),
             InvoiceLineTotal=None,
             RatingMethodRequestedIndicator=None,
             TaxInformationIndicator=None,

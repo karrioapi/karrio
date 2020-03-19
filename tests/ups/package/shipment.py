@@ -51,7 +51,6 @@ package_shipment_data = {
         "person_name": "Shipper Attn Name",
         "federal_tax_id": "123456",
         "phone_number": "1234567890",
-        "account_number": "Your Shipper Number",
         "address_line_1": "Address Line",
         "city": "City",
         "state_code": "StateProvinceCode",
@@ -70,17 +69,22 @@ package_shipment_data = {
     },
     "parcel": {
         "reference": "Your Customer Context",
-        "services": ["UPS_Express"],
+        "services": ["ups_express"],
         "dimension_unit": "IN",
         "weight_unit": "LB",
-        "packaging_type": "Customer_Supplied_Package",
+        "packaging_type": "customer_supplied_package",
         "description": "Description",
         "length": 7,
         "width": 5,
         "height": 2,
         "weight": 10,
+        "options": {
+            "notification": {
+                "email": "test@mail.com"
+            }
+        }
     },
-    "payment": {"paid_by": "SENDER"},
+    "payment": {"paid_by": "sender"},
     "label": {"format": "GIF"},
 }
 
@@ -94,14 +98,14 @@ NegotiatedParsedShipmentResponse = [
         ],
         "documents": ["R0lGODdheAUgA+cAAAAAAAEBAQIC (Truncated)"],
         "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
-        "services": None,
+        "service": None,
         "shipment_date": None,
         "total_charge": {
             "amount": "70.00",
             "currency": "USD",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["1ZWA82900191640782"],
+        "tracking_number": "1ZWA82900191640782",
     },
     [],
 ]
@@ -115,14 +119,14 @@ ParsedShipmentResponse = [
         ],
         "documents": ["R0lGODdheAUgA+c(Truncated)"],
         "reference": {"type": "CustomerContext", "value": "Your Customer Context"},
-        "services": None,
+        "service": None,
         "shipment_date": None,
         "total_charge": {
             "amount": "88.12",
             "currency": "USD",
             "name": "Shipment charge",
         },
-        "tracking_numbers": ["1ZWA82900191640782"],
+        "tracking_number": "1ZWA82900191640782",
     },
     [],
 ]
@@ -279,7 +283,7 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                     <Phone>
                         <Number>1234567890</Number>
                     </Phone>
-                    <ShipperNumber>Your Shipper Number</ShipperNumber>
+                    <ShipperNumber>Your Account Number</ShipperNumber>
                     <Address>
                         <AddressLine>Address Line</AddressLine>
                         <City>City</City>
@@ -305,6 +309,14 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                 <Service>
                     <Code>01</Code>
                 </Service>
+                <ShipmentServiceOptions>
+                    <Notification>
+                        <NotificationCode>8</NotificationCode>
+                        <EMail>
+                            <EMailAddress>test@mail.com</EMailAddress>
+                        </EMail>
+                    </Notification>
+                </ShipmentServiceOptions>
                 <Package>
                     <Description>Description</Description>
                     <Packaging>

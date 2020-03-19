@@ -1,46 +1,55 @@
-from enum import Enum
-
-
-class ServiceType(Enum):
-    Regular_Parcel = "DOM.RP"
-    Expedited_Parcel = "DOM.EP"
-    Xpresspost = "DOM.XP"
-    Priority = "DOM.PC"
-    Library_Books = "DOM.LIB"
-    Expedited_Parcel_USA = "USA.EP"
-    Priority_Worldwide_Envelope_USA = "USA.PW.ENV"
-    Priority_Worldwide_pak_USA = "USA.PW.PAK"
-    Priority_Worldwide_Parcel_USA = "USA.PW.PARCEL"
-    Small_Packet_USA_Air = "USA.SP.AIR"
-    Tracked_Packet_USA = "USA.TP"
-    Tracked_Packet_USA_LVM = "USA.TP.LVM"
-    Xpresspost_USA = "USA.XP"
-    Xpresspost_International = "INT.XP"
-    International_Parcel_Air = "INT.IP.AIR"
-    International_Parcel_Surface = "INT.IP.SURF"
-    Priority_Worldwide_Envelope_Intl = "INT.PW.ENV"
-    Priority_Worldwide_pak_Intl = "INT.PW.PAK"
-    Priority_Worldwide_parcel_Intl = "INT.PW.PARCEL"
-    Small_Packet_International_Air = "INT.SP.AIR"
-    Small_Packet_International_Surface = "INT.SP.SURF"
-    Tracked_Packet_International = "INT.TP"
-
-
-class OptionCode(Enum):
-    Signature = "SO"
-    Coverage = "COV"
-    Collect_on_delivery = "COD"
-    Proof_of_Age_Required_18 = "PA18"
-    Proof_of_Age_Required_19 = "PA19"
-    Card_for_pickup = "HFP"
-    Do_not_safe_drop = "DNS"
-    Leave_at_door = "LAD"
-    Deliver_to_Post_Office = "D2PO"
-    Return_at_Senders_Expense = "RASE"
-    Return_to_Sender = "RTS"
-    Abandon = "ABAN"
+from enum import Enum, Flag
 
 
 class PrinterType(Enum):
-    REGULAR = '8.5x11'
-    THERMAL = '4x6'
+    regular = '8.5x11'
+    thermal = '4x6'
+
+
+class LablelEncoding(Enum):
+    pdf = 'PDF'
+    zpl = 'ZPL'
+
+
+class ServiceType(Enum):
+    caps_regular_parcel = "DOM.RP"
+    caps_expedited_parcel = "DOM.EP"
+    caps_xpresspost = "DOM.XP"
+    caps_priority = "DOM.PC"
+    caps_library_books = "DOM.LIB"
+    caps_expedited_parcel_usa = "USA.EP"
+    caps_priority_worldwide_envelope_usa = "USA.PW.ENV"
+    caps_priority_worldwide_pak_usa = "USA.PW.PAK"
+    caps_priority_worldwide_parcel_usa = "USA.PW.PARCEL"
+    caps_small_packet_usa_air = "USA.SP.AIR"
+    caps_tracked_packet_usa = "USA.TP"
+    caps_tracked_packet_usa_lvm = "USA.TP.LVM"
+    caps_xpresspost_usa = "USA.XP"
+    caps_xpresspost_international = "INT.XP"
+    caps_international_parcel_air = "INT.IP.AIR"
+    caps_international_parcel_surface = "INT.IP.SURF"
+    caps_priority_worldwide_envelope_intl = "INT.PW.ENV"
+    caps_priority_worldwide_pak_intl = "INT.PW.PAK"
+    caps_priority_worldwide_parcel_intl = "INT.PW.PARCEL"
+    caps_small_packet_international_air = "INT.SP.AIR"
+    caps_small_packet_international_surface = "INT.SP.SURF"
+    caps_tracked_packet_international = "INT.TP"
+
+
+class OptionCode(Flag):
+    caps_signature = "SO"
+    caps_coverage = "COV"
+    caps_collect_on_delivery = "COD"
+    caps_proof_of_age_required_18 = "PA18"
+    caps_proof_of_age_required_19 = "PA19"
+    caps_card_for_pickup = "HFP"
+    caps_do_not_safe_drop = "DNS"
+    caps_leave_at_door = "LAD"
+    caps_deliver_to_post_office = "D2PO"
+    caps_return_at_senders_expense = "RASE"
+    caps_return_to_sender = "RTS"
+    caps_abandon = "ABAN"
+
+    """ Unified Option type mapping """
+    insurance = caps_coverage
+    cash_on_delivery = caps_collect_on_delivery

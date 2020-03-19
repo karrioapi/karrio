@@ -3,172 +3,177 @@
 from enum import Enum
 
 
+class Size(Enum):
+    regular = "REGULAR"
+    large = "LARGE"
+
+
 class SortationLevel(Enum):
-    Digit_3 = "3D"
-    Digit_5 = "5D"
-    Basic = "BAS"
-    Carrier_Route = "CR"
-    Mixed_NDC = "MIX"
-    NDC = "NDC"
-    Presort = "PST"
-    SCG = "SCF"
-    EMM_Tray_Box = "TBE"
-    Full_Tray_Box = "TBF"
-    Half_Tray_Box = "TBH"
-    Full_Tub_Tray_Box = "TBT"
+    digit_3 = "3D"
+    digit_5 = "5D"
+    basic = "BAS"
+    carrier_route = "CR"
+    mixed_ndc = "MIX"
+    ndc = "NDC"
+    presort = "PST"
+    scg = "SCF"
+    emm_tray_box = "TBE"
+    full_tray_box = "TBF"
+    half_tray_box = "TBH"
+    full_tub_tray_box = "TBT"
 
 
 class Service(Enum):
-    First_Class = "First Class"
-    First_Class_Commercial = "First Class Commercial"
-    First_Class__HFPCommercial = "First Class HFPCommercial"
-    Priority = "Priority"
-    Priority_Commercial = "Priority Commercial"
-    Priority_Cpp = "Priority Cpp"
-    Priority_HFP_Commercial = "Priority HFP Commercial"
-    Priority_HFP_CPP = "Priority HFP CPP"
-    Priority_Mail_Express = "Priority Mail Express"
-    Priority_Mail_Express_Commercial = "Priority Mail Express Commercial"
-    Priority_Mail_Express_CPP = "Priority Mail Express CPP"
-    Priority_Mail_Express_Sh = "Priority Mail Express Sh"
-    Priority_Mail_Express_ShCommercial = "Priority Mail Express ShCommercial"
-    Priority_Mail_Express_HFP = "Priority Mail Express HFP"
-    Priority_Mail_Express_HFP_Commercial = "Priority Mail Express HFP Commercial"
-    Priority_Mail_Express_HFP_CPP = "Priority Mail Express HFP CPP"
-    Priority_Mail_Cubic = "Priority Mail Cubic"
-    Retail_Ground = "Retail Ground"
-    Media = "Media"
-    Library = "Library"
-    All = "All"
-    Online = "Online"
-    Plus = "Plus"
-    BPM = "BPM"
+    first_class = "First Class"
+    first_class_commercial = "First Class Commercial"
+    first_class_hfp_commercial = "First Class HFPCommercial"
+    priority = "Priority"
+    priority_commercial = "Priority Commercial"
+    priority_cpp = "Priority Cpp"
+    priority_hfp_commercial = "Priority HFP Commercial"
+    priority_hfp_cpp = "Priority HFP CPP"
+    priority_mail_express = "Priority Mail Express"
+    priority_mail_express_commercial = "Priority Mail Express Commercial"
+    priority_mail_express_cpp = "Priority Mail Express CPP"
+    priority_mail_express_sh = "Priority Mail Express Sh"
+    priority_mail_express_sh_commercial = "Priority Mail Express ShCommercial"
+    priority_mail_express_hfp = "Priority Mail Express HFP"
+    priority_mail_express_hfp_commercial = "Priority Mail Express HFP Commercial"
+    priority_mail_express_hfp_cpp = "Priority Mail Express HFP CPP"
+    priority_mail_cubic = "Priority Mail Cubic"
+    retail_ground = "Retail Ground"
+    media = "Media"
+    library = "Library"
+    all = "All"
+    online = "Online"
+    plus = "Plus"
+    bpm = "BPM"
 
 
 class FirstClassMailType(Enum):
-    LETTER = "LETTER"
-    FLAT = "FLAT"
-    PACKAGE_SERVICE_RETAIL = "PACKAGE SERVICE RETAIL"
-    POSTCARD = "POSTCARD"
-    PACKAGE_SERVICE = "PACKAGE SERVICE"
+    letter = "LETTER"
+    flat = "FLAT"
+    package_service_retail = "PACKAGE SERVICE RETAIL"
+    postcard = "POSTCARD"
+    package_service = "PACKAGE SERVICE"
 
     """ Unified Packaging type mapping """
-    SM = LETTER
-    BOX = PACKAGE_SERVICE
-    PC = POSTCARD
-    PAL = PACKAGE_SERVICE_RETAIL
+    sm = letter
+    box = package_service
+    pc = postcard
+    pal = package_service_retail
 
 
 class IntlMailType(Enum):
-    ALL = "ALL"
-    PACKAGE = "PACKAGE"
-    POSTCARDS = "POSTCARDS"
-    ENVELOPE = "ENVELOPE"
-    LETTER = "LETTER"
-    LARGEENVELOPE = "LARGEENVELOPE"
-    FLATRATE = "FLATRATE"
+    all = "ALL"
+    package = "PACKAGE"
+    postcards = "POSTCARDS"
+    envelope = "ENVELOPE"
+    letter = "LETTER"
+    largeenvelope = "LARGEENVELOPE"
+    flatrate = "FLATRATE"
 
     """ Unified Packaging type mapping """
-    SM = ENVELOPE
-    BOX = PACKAGE
-    PC = POSTCARDS
-    PAL = ALL
+    sm = envelope
+    box = package
+    pc = postcards
+    pal = all
 
 
 class Container(Enum):
-    VARIABLE = "VARIABLE"
-    FLAT_RATE_ENVELOPE = "FLAT RATE ENVELOPE"
-    PADDED_FLAT_RATE_ENVELOPE = "PADDED FLAT RATE ENVELOPE"
-    LEGAL_FLAT_RATE_ENVELOPE = "LEGAL FLAT RATE ENVELOPE"
-    SM_FLAT_RATE_ENVELOPE = "SM FLAT RATE ENVELOPE"
-    WINDOW_FLAT_RATE_ENVELOPE = "WINDOW FLAT RATE ENVELOPE"
-    GIFT_CARD_FLAT_RATE_ENVELOPE = "GIFT CARD FLAT RATE ENVELOPE"
-    SM_FLAT_RATE_BOX = "SM FLAT RATE BOX"
-    MD_FLAT_RATE_BOX = "MD FLAT RATE BOX"
-    LG_FLAT_RATE_BOX = "LG FLAT RATE BOX"
-    REGIONALRATEBOXA = "REGIONALRATEBOXA"
-    REGIONALRATEBOXB = "REGIONALRATEBOXB"
-    RECTANGULAR = "RECTANGULAR"
-    NONRECTANGULAR = "NONRECTANGULAR"
-    CUBIC_PARCELS = "CUBIC PARCELS"
-    CUBIC_SOFT_PACK = "CUBIC SOFT PACK"
+    variable = "VARIABLE"
+    flat_rate_envelope = "FLAT RATE ENVELOPE"
+    padded_flat_rate_envelope = "PADDED FLAT RATE ENVELOPE"
+    legal_flat_rate_envelope = "LEGAL FLAT RATE ENVELOPE"
+    sm_flat_rate_envelope = "SM FLAT RATE ENVELOPE"
+    window_flat_rate_envelope = "WINDOW FLAT RATE ENVELOPE"
+    gift_card_flat_rate_envelope = "GIFT CARD FLAT RATE ENVELOPE"
+    sm_flat_rate_box = "SM FLAT RATE BOX"
+    md_flat_rate_box = "MD FLAT RATE BOX"
+    lg_flat_rate_box = "LG FLAT RATE BOX"
+    regionalrateboxa = "REGIONALRATEBOXA"
+    regionalrateboxb = "REGIONALRATEBOXB"
+    rectangular = "RECTANGULAR"
+    nonrectangular = "NONRECTANGULAR"
+    cubic_parcels = "CUBIC PARCELS"
+    cubic_soft_pack = "CUBIC SOFT PACK"
 
     """ Unified Packaging type mapping """
-    SM = SM_FLAT_RATE_ENVELOPE
-    BOX = SM_FLAT_RATE_BOX
-    PC = VARIABLE
-    PAL = CUBIC_PARCELS
+    sm = sm_flat_rate_envelope
+    box = sm_flat_rate_box
+    pc = variable
+    pal = cubic_parcels
 
 
 class IntlContainer(Enum):
-    RECTANGULAR = "RECTANGULAR"
-    NONRECTANGULAR = "NONRECTANGULAR"
+    rectangular = "RECTANGULAR"
+    nonrectangular = "NONRECTANGULAR"
 
     """ Unified Packaging type mapping """
-    SM = NONRECTANGULAR
-    BOX = RECTANGULAR
-    PC = NONRECTANGULAR
-    PAL = RECTANGULAR
+    sm = nonrectangular
+    box = rectangular
+    pc = nonrectangular
+    pal = rectangular
 
 
 class SpecialService(Enum):
-    Insurance = "100"
-    Insurance_Priority_Mail_Express = "101"
-    Return_Receipt = "102"
-    Collect_on_Delivery = "103"
-    Certificate_of_Mailing_Form_3665 = "104"
-    Certified_Mail = "105"
-    USPS_Tracking = "106"
-    Return_Receipt_for_Merchandise = "107"
-    Signature_Confirmation = "108"
-    Registered_Mail = "109"
-    Return_Receipt_Electronic = "110"
-    Registered_mail_COD_collection_Charge = "112"
-    Return_Receipt_Priority_Mail_Express = "118"
-    Adult_Signature_Required = "119"
-    Adult_Signature_Restricted_Delivery = "120"
-    Insurance_Priority_Mail = "125"
-    USPS_Tracking_Electronic = "155"
-    Signature_Confirmation_Electronic = "156"
-    Certificate_of_Mailing_Form_3817 = "160"
-    Priority_Mail_Express_1030_AM_Delivery = "161"
-    Certified_Mail_Restricted_Delivery = "170"
-    Certified_Mail_Adult_Signature_Required = "171"
-    Certified_Mail_Adult_Signature_Restricted_Delivery = "172"
-    Signature_Confirm_Restrict_Delivery = "173"
-    Signature_Confirmation_Electronic_Restricted_Delivery = "174"
-    Collect_on_Delivery_Restricted_Delivery = "175"
-    Registered_Mail_Restricted_Delivery = "176"
-    Insurance_Restricted_Delivery = "177"
-    Insurance_Restrict_Delivery_Priority_Mail = "179"
-    Insurance_Restrict_Delivery_Priority_Mail_Express = "178"
-    Insurance_Restrict_Delivery_Bulk_Only = "180"
-    Special_Handling_Fragile = "190"
+    insurance = "100"
+    insurance_priority_mail_express = "101"
+    return_receipt = "102"
+    collect_on_delivery = "103"
+    certificate_of_mailing_form_3665 = "104"
+    certified_mail = "105"
+    usps_tracking = "106"
+    return_receipt_for_merchandise = "107"
+    signature_confirmation = "108"
+    registered_mail = "109"
+    return_receipt_electronic = "110"
+    registered_mail_cod_collection_charge = "112"
+    return_receipt_priority_mail_express = "118"
+    adult_signature_required = "119"
+    adult_signature_restricted_delivery = "120"
+    insurance_priority_mail = "125"
+    usps_tracking_electronic = "155"
+    signature_confirmation_electronic = "156"
+    certificate_of_mailing_form_3817 = "160"
+    priority_mail_express_1030_am_delivery = "161"
+    certified_mail_restricted_delivery = "170"
+    certified_mail_adult_signature_required = "171"
+    certified_mail_adult_signature_restricted_delivery = "172"
+    signature_confirm_restrict_delivery = "173"
+    signature_confirmation_electronic_restricted_delivery = "174"
+    collect_on_delivery_restricted_delivery = "175"
+    registered_mail_restricted_delivery = "176"
+    insurance_restricted_delivery = "177"
+    insurance_restrict_delivery_priority_mail = "179"
+    insurance_restrict_delivery_priority_mail_express = "178"
+    insurance_restrict_delivery_bulk_only = "180"
+    special_handling_fragile = "190"
 
 
 class ExtraService(Enum):
-    Registered_Mail = "103"
-    Insurance_Global_Express_Guaranteed = "106"
-    Insurance_Express_Mail_International = "107"
-    Insurance_Priority_Mail_International = "108"
-    Return_Receipt = "105"
-    Certificate_of_Mailing = "100"
-    Electronic_USPS_Delivery_Confirmation_International = "109"
+    registered_mail = "103"
+    insurance_global_express_guaranteed = "106"
+    insurance_express_mail_international = "107"
+    insurance_priority_mail_international = "108"
+    return_receipt = "105"
+    certificate_of_mailing = "100"
+    electronic_usps_delivery_confirmation_international = "109"
 
 
 class ContentType(Enum):
-    HAZMAT = "HAZMAT"
-    CREMATEDREMAINS = "CREMATEDREMAINS"
-    FRAGILE = "FRAGILE"
-    PERISHABLE = "PERISHABLE"
-    PHARMACEUTICALS = "PHARMACEUTICALS"
-    MEDICALSUPPLIES = "MEDICALSUPPLIES"
-    LIVES = "LIVES"
+    hazmat = "HAZMAT"
+    crematedremains = "CREMATEDREMAINS"
+    fragile = "FRAGILE"
+    perishable = "PERISHABLE"
+    pharmaceuticals = "PHARMACEUTICALS"
+    medicalsupplies = "MEDICALSUPPLIES"
+    lives = "LIVES"
 
 
 class IntlContentType(Enum):
-    CrematedRemains = "CrematedRemains"
-    NonnegotiableDocument = "NonnegotiableDocument"
-    Pharmaceuticals = "Pharmaceuticals"
-    MedicalSupplies = "MedicalSupplies"
-    Documents = "Documents"
+    cremated_remains = "CrematedRemains"
+    nonnegotiable_document = "NonnegotiableDocument"
+    pharmaceuticals = "Pharmaceuticals"
+    medical_supplies = "MedicalSupplies"
+    documents = "Documents"

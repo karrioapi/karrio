@@ -52,7 +52,6 @@ RatePayload = {
     "shipper": {
         "postal_code": "H8Z2Z3",
         "country_code": "CA",
-        "account_number": "1234567",
     },
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
     "parcel": {
@@ -60,7 +59,7 @@ RatePayload = {
         "length": 10,
         "width": 3,
         "weight": 4.0,
-        "services": ["Expedited_Parcel"],
+        "services": ["caps_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
     },
@@ -87,72 +86,8 @@ ParsedQuoteMissingArgsError = [
         }
     ],
 ]
+ParsedQuoteResponse = [[{'base_charge': 9.59, 'carrier': 'CanadaPost', 'currency': 'CAD', 'delivery_date': '2011-10-24', 'discount': 0.6200000000000001, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': -0.29, 'currency': 'CAD', 'name': 'Automation discount'}, {'amount': 0.91, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service_name': 'caps_expedited_parcel', 'service_type': 'DOM.EP', 'total_charge': 10.21}, {'base_charge': 22.64, 'carrier': 'CanadaPost', 'currency': 'CAD', 'delivery_date': '2011-10-21', 'discount': 2.56, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': -0.68, 'currency': 'CAD', 'name': 'Automation discount'}, {'amount': 3.24, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service_name': 'caps_priority', 'service_type': 'DOM.PC', 'total_charge': 25.2}, {'base_charge': 9.59, 'carrier': 'CanadaPost', 'currency': 'CAD', 'delivery_date': '2011-10-26', 'discount': 0.6200000000000001, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': -0.29, 'currency': 'CAD', 'name': 'Automation discount'}, {'amount': 0.91, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service_name': 'caps_regular_parcel', 'service_type': 'DOM.RP', 'total_charge': 10.21}, {'base_charge': 12.26, 'carrier': 'CanadaPost', 'currency': 'CAD', 'delivery_date': '2011-10-24', 'discount': 1.38, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': -0.37, 'currency': 'CAD', 'name': 'Automation discount'}, {'amount': 1.75, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service_name': 'caps_xpresspost', 'service_type': 'DOM.XP', 'total_charge': 13.64}], []]
 
-ParsedQuoteResponse = [
-    [
-        {
-            "base_charge": 9.59,
-            "carrier": "CanadaPost",
-            "currency": "CAD",
-            "delivery_date": "2011-10-24",
-            "discount": 0.620_000_000_000_000_1,
-            "duties_and_taxes": 0.0,
-            "extra_charges": [
-                {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
-                {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
-            ],
-            "service_name": "Expedited Parcel",
-            "service_type": "DOM.EP",
-            "total_charge": 10.21,
-        },
-        {
-            "base_charge": 22.64,
-            "carrier": "CanadaPost",
-            "currency": "CAD",
-            "delivery_date": "2011-10-21",
-            "discount": 2.56,
-            "duties_and_taxes": 0.0,
-            "extra_charges": [
-                {"amount": -0.68, "currency": "CAD", "name": "Automation discount"},
-                {"amount": 3.24, "currency": "CAD", "name": "Fuel surcharge"},
-            ],
-            "service_name": "Priority Courier",
-            "service_type": "DOM.PC",
-            "total_charge": 25.2,
-        },
-        {
-            "base_charge": 9.59,
-            "carrier": "CanadaPost",
-            "currency": "CAD",
-            "delivery_date": "2011-10-26",
-            "discount": 0.620_000_000_000_000_1,
-            "duties_and_taxes": 0.0,
-            "extra_charges": [
-                {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
-                {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
-            ],
-            "service_name": "Regular Parcel",
-            "service_type": "DOM.RP",
-            "total_charge": 10.21,
-        },
-        {
-            "base_charge": 12.26,
-            "carrier": "CanadaPost",
-            "currency": "CAD",
-            "delivery_date": "2011-10-24",
-            "discount": 1.38,
-            "duties_and_taxes": 0.0,
-            "extra_charges": [
-                {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
-                {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"},
-            ],
-            "service_name": "Xpresspost",
-            "service_type": "DOM.XP",
-            "total_charge": 13.64,
-        },
-    ],
-    [],
-]
 
 
 QuoteParsingError = """<messages xmlns="http://www.canadapost.ca/ws/messages">

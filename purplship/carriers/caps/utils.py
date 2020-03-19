@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 
     username: str
     password: str
-    customer_number: str
+    account_number: str
 
     @property
     def authorization(self):

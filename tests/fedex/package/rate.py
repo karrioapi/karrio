@@ -49,7 +49,6 @@ RateRequestPayload = {
     "shipper": {
         "postal_code": "H3N1S4",
         "country_code": "CA",
-        "account_number": "2349857",
     },
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
@@ -72,8 +71,8 @@ ParsedRateResponse = [
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 9.22, "currency": "USD", "name": "FUEL"}],
-            "service_name": "INTERNATIONAL_PRIORITY",
-            "service_type": "PAYOR_ACCOUNT_SHIPMENT",
+            "service_name": "international_priority",
+            "service_type": "payor_account_shipment",
             "total_charge": 239.71,
         },
         {
@@ -84,8 +83,8 @@ ParsedRateResponse = [
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 8.3, "currency": "USD", "name": "FUEL"}],
-            "service_name": "INTERNATIONAL_ECONOMY",
-            "service_type": "PAYOR_ACCOUNT_SHIPMENT",
+            "service_name": "international_economy",
+            "service_type": "payor_account_shipment",
             "total_charge": 215.77,
         },
     ],

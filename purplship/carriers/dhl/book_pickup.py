@@ -81,7 +81,7 @@ def book_pickup_request(
         if payload.address.country_code
         else "AM",
         Requestor=Requestor(
-            AccountNumber=payload.address.account_number,
+            AccountNumber=settings.account_number,
             AccountType="D",
             RequestorContact=RequestorContact(
                 PersonName=payload.address.person_name,

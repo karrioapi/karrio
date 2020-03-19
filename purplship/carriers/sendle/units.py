@@ -4,6 +4,6 @@ from enum import Enum
 
 
 class Plan(Enum):
-    Easy = "Easy"
-    Premium = "Premium"
-    Pro = "Pro"
+    sendle_easy = "Easy"
+    sendle_premium = "Premium"
+    sendle_pro = "Pro"

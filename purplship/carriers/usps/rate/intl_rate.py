@@ -30,16 +30,17 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
         (lambda s: (s, s.build(svc)))(ExtraServiceType())[0]
         for svc in service_node.xpath(".//*[local-name() = $name]", name="ExtraService")
     ]
+    delivery_date = (
+        str(datetime.strptime(service.GuaranteeAvailability, '%m/%d/%Y').strftime('%Y-%m-%d'))
+        if service.GuaranteeAvailability is not None else None
+    )
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=None,
-        service_type=service.MailType,
-        base_charge=None,
-        duties_and_taxes=None,
+        service_name=service.SvcDescription,
+        base_charge=float(service.Postage),
         total_charge=service.Postage,
         currency=currency,
-        delivery_date=service.GuaranteeAvailability,
-        discount=None,
+        delivery_date=delivery_date,
         extra_charges=[
             ChargeDetails(
                 name=ExtraService(special.ServiceID).name,
@@ -63,7 +64,7 @@ def intl_rate_request(
             PackageType(
                 ID=payload.parcel.id or 1,
                 Pounds=Weight(payload.parcel.weight, weight_unit).LB,
-                Ounces=Weight(payload.parcel.weight, weight_unit).LB * 16,
+                Ounces=Weight(payload.parcel.weight, weight_unit).OZ,
                 Machinable=None,
                 MailType=IntlMailType[payload.parcel.packaging_type].value,
                 GXG=None,
