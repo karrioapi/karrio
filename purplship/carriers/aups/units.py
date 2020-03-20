@@ -1,29 +1,29 @@
 """PurplShip Australia Post domain"""
-import attr
 from enum import Enum, Flag
+from purplship.core.units import PackagePreset as BasePackagePreset
+from dataclasses import dataclass
 
 
-@attr.s(auto_attribs=True)
-class Template:
-    width: float  # CM
-    height: float  # CM
-    length: float = None  # CM
+@dataclass
+class PackagePreset(BasePackagePreset):
+    dimension_unit: str = "CM"
+    weight_unit: str = "KG"
 
 
-class PostagePackageTemplate(Flag):
-    aus_letter_size_dl = Template(width=11.0, height=22.0)
-    aus_letter_size_c6 = Template(width=11.4, height=16.2)
-    aus_letter_size_c5 = Template(width=16.2, height=22.9)
-    aus_letter_size_c4 = Template(width=32.4, height=22.9)
-    aus_letter_size_b4 = Template(width=35.3, height=25.0)
-    aus_parcel_type_boxed_bc = Template(width=22.0, height=16.0, length=7.7)
-    aus_parcel_type_boxed_bm = Template(width=31.0, height=22.5, length=10.2)
-    aus_parcel_type_boxed_bp = Template(width=40.0, height=20.0, length=18.0)
-    aus_parcel_type_boxed_bt = Template(width=43.0, height=30.5, length=14.0)
-    aus_parcel_type_boxed_bw = Template(width=40.5, height=30.0, length=25.5)
-    aus_parcel_type_boxed_vcb = Template(width=22.0, height=14.5, length=3.5)
-    aus_parcel_type_boxed_cd = Template(width=14.5, height=12.7, length=1.0)
-    aus_parcel_type_boxed_toughpak = Template(width=36.3, height=21.2, length=6.5)
+class PostagePackagingTemplate(Flag):
+    aus_letter_size_dl = PackagePreset(width=11.0, height=22.0)
+    aus_letter_size_c6 = PackagePreset(width=11.4, height=16.2)
+    aus_letter_size_c5 = PackagePreset(width=16.2, height=22.9)
+    aus_letter_size_c4 = PackagePreset(width=32.4, height=22.9)
+    aus_letter_size_b4 = PackagePreset(width=35.3, height=25.0)
+    aus_parcel_type_boxed_bc = PackagePreset(width=22.0, height=16.0, length=7.7)
+    aus_parcel_type_boxed_bm = PackagePreset(width=31.0, height=22.5, length=10.2)
+    aus_parcel_type_boxed_bp = PackagePreset(width=40.0, height=20.0, length=18.0)
+    aus_parcel_type_boxed_bt = PackagePreset(width=43.0, height=30.5, length=14.0)
+    aus_parcel_type_boxed_bw = PackagePreset(width=40.5, height=30.0, length=25.5)
+    aus_parcel_type_boxed_vcb = PackagePreset(width=22.0, height=14.5, length=3.5)
+    aus_parcel_type_boxed_cd = PackagePreset(width=14.5, height=12.7, length=1.0)
+    aus_parcel_type_boxed_toughpak = PackagePreset(width=36.3, height=21.2, length=6.5)
 
 
 class PostagePackagingType(Flag):

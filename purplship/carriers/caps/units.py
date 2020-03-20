@@ -1,30 +1,28 @@
-import attr
 from enum import Enum, Flag
+from purplship.core.units import PackagePreset as BasePackagePreset
+from dataclasses import dataclass
 
 
-@attr.s(auto_attribs=True)
-class Template:
-    width: float  # CM
-    height: float  # CM
-    length: float = None  # CM
-    weight: float = None  # KG
-    thickness: float = None  # CM
+@dataclass
+class PackagePreset(BasePackagePreset):
+    dimension_unit: str = "CM"
+    weight_unit: str = "KG"
 
 
-class PackageTemplate(Flag):
-    caps_mailing_box = Template(width=10.2, height=15.2)
-    caps_extra_small_mailing_box = Template(width=14.0, height=14.0, length=14.0)
-    caps_small_mailing_box = Template(width=28.6, height=22.9, length=6.4)
-    caps_medium_mailing_box = Template(width=31.0, height=23.5, length=13.3)
-    caps_large_mailing_box = Template(width=38.1, height=30.5, length=9.5)
-    caps_extra_large_mailing_box = Template(width=40.0, height=30.5, length=21.6)
-    caps_corrugated_small_box = Template(width=42.0, height=32.0, length=32.0)
-    caps_corrugated_medium_box = Template(width=46.0, height=38.0, length=32.0)
-    caps_corrugated_large_box = Template(width=46.0, height=46.0, length=40.6)
-    caps_xexpresspost_certified_envelope = Template(width=26.0, height=15.9, weight=0.5, thickness=1.5)
-    caps_xexpresspost_national_large_envelope = Template(width=40.0, height=29.2, weight=1.36, thickness=1.5)
-    caps_xexpresspost_regional_small_envelope = Template(width=26.0, height=15.9, weight=0.5, thickness=1.5)
-    caps_xexpresspost_regional_large_envelope = Template(width=40.0, height=29.2, weight=1.36, thickness=1.5)
+class PackagingTemplate(Flag):
+    caps_mailing_box = PackagePreset(width=10.2, height=15.2)
+    caps_extra_small_mailing_box = PackagePreset(width=14.0, height=14.0, length=14.0)
+    caps_small_mailing_box = PackagePreset(width=28.6, height=22.9, length=6.4)
+    caps_medium_mailing_box = PackagePreset(width=31.0, height=23.5, length=13.3)
+    caps_large_mailing_box = PackagePreset(width=38.1, height=30.5, length=9.5)
+    caps_extra_large_mailing_box = PackagePreset(width=40.0, height=30.5, length=21.6)
+    caps_corrugated_small_box = PackagePreset(width=42.0, height=32.0, length=32.0)
+    caps_corrugated_medium_box = PackagePreset(width=46.0, height=38.0, length=32.0)
+    caps_corrugated_large_box = PackagePreset(width=46.0, height=46.0, length=40.6)
+    caps_xexpresspost_certified_envelope = PackagePreset(width=26.0, height=15.9, weight=0.5, thickness=1.5)
+    caps_xexpresspost_national_large_envelope = PackagePreset(width=40.0, height=29.2, weight=1.36, thickness=1.5)
+    caps_xexpresspost_regional_small_envelope = PackagePreset(width=26.0, height=15.9, weight=0.5, thickness=1.5)
+    caps_xexpresspost_regional_large_envelope = PackagePreset(width=40.0, height=29.2, weight=1.36, thickness=1.5)
 
 
 class PrinterType(Enum):

@@ -1,23 +1,21 @@
-import attr
 from enum import Enum, Flag
+from purplship.core.units import PackagePreset as BasePackagePreset
+from dataclasses import dataclass
 
 
-@attr.s(auto_attribs=True)
-class Template:
-    width: float  # IN
-    height: float  # IN
-    length: float = None  # IN
-    depth: float = None  # IN
-    weight: float = None  # LB
+@dataclass
+class PackagePreset(BasePackagePreset):
+    dimension_unit: str = "IN"
+    weight_unit: str = "LB"
 
 
-class PackageTemplate(Flag):
-    ups_small_express_box = Template(weight=30, width=13, height=11, length=2)
-    ups_medium_express_box = Template(weight=30, width=16, height=11, length=3)
-    ups_large_express_box = Template(weight=30, width=18, height=13, length=3)
-    ups_express_tube = Template(width=38, height=6, length=6, depth=6)
-    ups_express_pak = Template(width=16, height=11.75)
-    ups_world_document_box = Template(width=17.5, height=12.5, length=3)
+class PackagingTemplate(Flag):
+    ups_small_express_box = PackagePreset(weight=30, width=13, height=11, length=2)
+    ups_medium_express_box = PackagePreset(weight=30, width=16, height=11, length=3)
+    ups_large_express_box = PackagePreset(weight=30, width=18, height=13, length=3)
+    ups_express_tube = PackagePreset(width=38, height=6, length=6, depth=6)
+    ups_express_pak = PackagePreset(width=16, height=11.75)
+    ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3)
 
 
 class WeightUnit(Enum):

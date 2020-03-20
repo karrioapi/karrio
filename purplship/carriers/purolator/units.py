@@ -1,16 +1,18 @@
-import attr
 from enum import Enum, Flag
+from purplship.core.units import PackagePreset as BasePackagePreset
+from dataclasses import dataclass
 
 
-@attr.s(auto_attribs=True)
-class Template:
-    weight: float  # LB
+@dataclass
+class PackagePreset(BasePackagePreset):
+    dimension_unit: str = "IN"
+    weight_unit: str = "LB"
 
 
 class PackageTemplate(Flag):
-    purolator_express_envelope = Template(weight=1)
-    purolator_express_pack = Template(weight=3)
-    purolator_express_box = Template(weight=7)
+    purolator_express_envelope = PackagePreset(weight=1)
+    purolator_express_pack = PackagePreset(weight=3)
+    purolator_express_box = PackagePreset(weight=7)
 
 
 class PackagingType(Enum):

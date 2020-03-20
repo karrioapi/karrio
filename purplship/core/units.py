@@ -1,5 +1,19 @@
+from dataclasses import dataclass
 from enum import Enum
-from purplship.core.models import Insurance, COD, Notification
+from purplship.core.models import Insurance, COD, Notification, Parcel
+
+
+@dataclass
+class PackagePreset:
+    width: float = None
+    height: float = None
+    depth: float = None
+    length: float = None
+    weight: float = None
+    volume: float = None
+    thickness: float = None
+    weight_unit: str = "LB"
+    dimension_unit: str = "IN"
 
 
 class DimensionUnit(Enum):
@@ -100,12 +114,46 @@ class Weight:
         return None
 
 
-class OptionCode(Enum):  # TODO:: Need to be documented
-    cash_on_delivery = "COD"
-    currency = "currency"
-    insurance = "insurance"
-    notification = "notification"
-    printing = "printing"
+class Dimensions:
+    def __init__(self, parcel: Parcel, template: PackagePreset):
+        self._parcel = parcel
+        self._template = template
+
+    @property
+    def dimension_unit(self):
+        return DimensionUnit[self._parcel.dimension_unit or "IN"].value
+
+    @property
+    def weight_unit(self):
+        return WeightUnit[self._parcel.weight_unit or "LB"].value
+
+    @property
+    def weight(self):
+        return Weight(self._parcel.weight, self.weight_unit)
+
+    @property
+    def width(self):
+        return Dimension(self._parcel.width, self.dimension_unit)
+
+    @property
+    def height(self):
+        return Dimension(self._parcel.height, self.dimension_unit)
+
+    @property
+    def length(self):
+        return Dimension(self._parcel.length, self.dimension_unit)
+
+    @property
+    def girth(self):
+        return None
+
+    @property
+    def volume(self):
+        return None
+
+    @property
+    def thickness(self):
+        return None
 
 
 class Options:
@@ -114,33 +162,40 @@ class Options:
 
     @property
     def has_content(self):
-        return any(o for o in self._payload if o in OptionCode.__members__)
+        return any(o for o in self._payload if o in Options.Code.__members__)
 
     @property
     def cash_on_delivery(self):
-        if OptionCode.cash_on_delivery.name in self._payload:
-            return COD(**self._payload[OptionCode.cash_on_delivery.name])
+        if Options.Code.cash_on_delivery.name in self._payload:
+            return COD(**self._payload[Options.Code.cash_on_delivery.name])
         return None
 
     @property
     def currency(self):
-        return self._payload.get(OptionCode.currency.name)
+        return self._payload.get(Options.Code.currency.name)
 
     @property
     def insurance(self):
-        if OptionCode.insurance.name in self._payload:
-            return Insurance(**self._payload[OptionCode.insurance.name])
+        if Options.Code.insurance.name in self._payload:
+            return Insurance(**self._payload[Options.Code.insurance.name])
         return None
 
     @property
     def notification(self):
-        if OptionCode.notification.name in self._payload:
-            return Notification(**self._payload[OptionCode.notification.name])
+        if Options.Code.notification.name in self._payload:
+            return Notification(**self._payload[Options.Code.notification.name])
         return None
 
     @property
     def printing(self):
-        return self._payload.get(OptionCode.printing.name)
+        return self._payload.get(Options.Code.printing.name)
+
+    class Code(Enum):  # TODO:: Need to be documented
+        cash_on_delivery = "COD"
+        currency = "currency"
+        insurance = "insurance"
+        notification = "notification"
+        printing = "printing"
 
 
 class PrinterType(Enum):

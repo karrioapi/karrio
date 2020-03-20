@@ -54,6 +54,7 @@ class Parcel:
     height: float = None
     length: float = None
     packaging_type: str = None
+    template: str = None
     reference: str = ""
     description: str = None
     content: str = None
