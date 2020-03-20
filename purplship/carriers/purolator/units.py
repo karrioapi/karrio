@@ -9,7 +9,7 @@ class PackagePreset(BasePackagePreset):
     weight_unit: str = "LB"
 
 
-class PackageTemplate(Flag):
+class PackagePresets(Flag):
     purolator_express_envelope = PackagePreset(weight=1)
     purolator_express_pack = PackagePreset(weight=3)
     purolator_express_box = PackagePreset(weight=7)

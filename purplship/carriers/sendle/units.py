@@ -10,7 +10,7 @@ class PackagePreset(BasePackagePreset):
     weight_unit: str = "LB"
 
 
-class PackageTemplate(Flag):
+class PackagePresets(Flag):
     sendle_satchel = PackagePreset(weight=0.5, volume=0.002)
     sendle_shoebox = PackagePreset(weight=2, volume=0.008)
     sendle_briefcase = PackagePreset(weight=5, volume=0.02)

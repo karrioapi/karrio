@@ -7,21 +7,22 @@ from dataclasses import dataclass
 class PackagePreset(BasePackagePreset):
     dimension_unit: str = "IN"
     weight_unit: str = "LB"
+    packaging_type: str = "medium_box"
 
 
-class PackagingTemplate(Flag):
-    fedex_envelope_legal_size = PackagePreset(weight=1, width=9.5, height=15.5)
-    fedex_envelope_without_pouch = PackagePreset(weight=1, width=9.5, height=15.5)
-    fedex_padded_pak = PackagePreset(weight=2.2, width=11.75, height=14.75)
-    fedex_polyethylene_pak = PackagePreset(weight=2.2, width=12, height=15.5)
-    fedex_clinical_pak = PackagePreset(weight=2.2, width=13.5, height=18)
-    fedex_un_3373_pak = PackagePreset(weight=2.2, width=13.5, height=18)
-    fedex_small_box = PackagePreset(weight=20, width=12.25, height=10.9, length=1.5)
+class PackagePresets(Flag):
+    fedex_envelope_legal_size = PackagePreset(weight=1, width=9.5, height=15.5, packaging_type="envelope")
+    fedex_envelope_without_pouch = PackagePreset(weight=1, width=9.5, height=15.5, packaging_type="envelope")
+    fedex_padded_pak = PackagePreset(weight=2.2, width=11.75, height=14.75, packaging_type="pak")
+    fedex_polyethylene_pak = PackagePreset(weight=2.2, width=12, height=15.5, packaging_type="pak")
+    fedex_clinical_pak = PackagePreset(weight=2.2, width=13.5, height=18, packaging_type="pak")
+    fedex_un_3373_pak = PackagePreset(weight=2.2, width=13.5, height=18, packaging_type="pak")
+    fedex_small_box = PackagePreset(weight=20, width=12.25, height=10.9, length=1.5, packaging_type="small_box")
     fedex_medium_box = PackagePreset(weight=20, width=13.25, height=11.5, length=2.38)
-    fedex_large_box = PackagePreset(weight=20, width=17.88, height=12.38, length=3)
+    fedex_large_box = PackagePreset(weight=20, width=17.88, height=12.38, length=3, packaging_type="large_box")
     fedex_10_kg_box = PackagePreset(weight=10, width=15.81, height=12.94, length=10.19)
     fedex_25_kg_box = PackagePreset(weight=25, width=21.56, height=16.56, length=13.19)
-    fedex_tube = PackagePreset(weight=20, width=38, height=6, length=6, depth=6)
+    fedex_tube = PackagePreset(weight=20, width=38, height=6, length=6, packaging_type="tube")
     fedex_envelope = fedex_envelope_legal_size
     fedex_pak = fedex_padded_pak
 

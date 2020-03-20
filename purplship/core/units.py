@@ -7,13 +7,40 @@ from purplship.core.models import Insurance, COD, Notification, Parcel
 class PackagePreset:
     width: float = None
     height: float = None
-    depth: float = None
     length: float = None
     weight: float = None
     volume: float = None
     thickness: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
+    packaging_type: str = None
+
+
+class DocFormat(Enum):
+    gif = "GIF"
+    jpg = "JPG"
+    pdf = "PDF"
+    png = "PNG"
+
+
+class PackagingUnit(Enum):
+    envelope = "Small Envelope"
+    pak = "Pak"
+    tube = "Tube"
+    pallet = "Pallet"
+    small_box = "Small Box"
+    medium_box = "Medium Box"
+
+
+class PayorType(Enum):
+    sender = "SENDER"
+    recipient = "RECIPIENT"
+    third_party = "THIRD_PARTY"
+
+
+class WeightUnit(Enum):
+    KG = "KG"
+    LB = "LB"
 
 
 class DimensionUnit(Enum):
@@ -48,32 +75,49 @@ class Dimension:
         else:
             return float(self._value * 2.54)
 
-
-class DocFormat(Enum):
-    gif = "GIF"
-    jpg = "JPG"
-    pdf = "PDF"
-    png = "PNG"
-
-
-class PackagingUnit(Enum):
-    envelope = "Small Envelope"
-    pak = "Pak"
-    tube = "Tube"
-    pallet = "Pallet"
-    small_box = "Small Box"
-    medium_box = "Medium Box"
+    @property
+    def M(self):
+        if self._unit is None or self._value is None:
+            return None
+        else:
+            return self.CM / 100
 
 
-class PayorType(Enum):
-    sender = "SENDER"
-    recipient = "RECIPIENT"
-    third_party = "THIRD_PARTY"
+class Volume:
+    def __init__(self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None):
+        self._side1 = side1
+        self._side2 = side2
+        self._side3 = side3
+
+    @property
+    def value(self):
+        if not any([self._side1.value, self._side2.value, self._side3.value]):
+            return None
+
+        return self._side1.M * self._side2.M * self._side3.M
+
+    @property
+    def cubic_meter(self):
+        if self.value is None:
+            return None
+        return self.value * 250
 
 
-class WeightUnit(Enum):
-    KG = "KG"
-    LB = "LB"
+class Girth:
+    def __init__(self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None):
+        self._side1 = side1
+        self._side2 = side2
+        self._side3 = side3
+
+    @property
+    def value(self):
+        sides = [self._side1.CM, self._side2.CM, self._side3.CM]
+        if not any(sides):
+            return None
+
+        sides.sort()
+        small_side1, small_side2, _ = sides
+        return (small_side1 + small_side2) * 2
 
 
 class Weight:
@@ -114,46 +158,72 @@ class Weight:
         return None
 
 
-class Dimensions:
-    def __init__(self, parcel: Parcel, template: PackagePreset):
+class Package:
+    def __init__(self, parcel: Parcel, template: PackagePreset = None):
         self._parcel = parcel
-        self._template = template
+        self._preset = template or PackagePreset()
 
     @property
     def dimension_unit(self):
-        return DimensionUnit[self._parcel.dimension_unit or "IN"].value
+        return DimensionUnit[
+            self._parcel.dimension_unit or self._preset.dimension_unit
+        ]
 
     @property
     def weight_unit(self):
-        return WeightUnit[self._parcel.weight_unit or "LB"].value
+        return WeightUnit[
+            self._parcel.weight_unit or self._preset.weight_unit
+        ]
+
+    @property
+    def packaging_type(self):
+        return self._parcel.packaging_type or self._preset.packaging_type
 
     @property
     def weight(self):
-        return Weight(self._parcel.weight, self.weight_unit)
+        return Weight(
+            self._parcel.weight or self._preset.weight,
+            self.weight_unit
+        )
 
     @property
     def width(self):
-        return Dimension(self._parcel.width, self.dimension_unit)
+        return Dimension(
+            self._preset.width or self._parcel.width,
+            self.dimension_unit
+        )
 
     @property
     def height(self):
-        return Dimension(self._parcel.height, self.dimension_unit)
+        return Dimension(
+            self._preset.height or self._parcel.height,
+            self.dimension_unit
+        )
 
     @property
     def length(self):
-        return Dimension(self._parcel.length, self.dimension_unit)
+        return Dimension(
+            self._preset.length or self._parcel.length,
+            self.dimension_unit
+        )
 
     @property
     def girth(self):
-        return None
+        return Girth(
+            self.width, self.length, self.height
+        )
 
     @property
     def volume(self):
-        return None
+        return Volume(
+            self.width, self.length, self.height
+        )
 
     @property
     def thickness(self):
-        return None
+        return Dimension(
+            self._preset.thickness, self.dimension_unit
+        )
 
 
 class Options:

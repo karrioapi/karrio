@@ -10,7 +10,7 @@ class PackagePreset(BasePackagePreset):
     weight_unit: str = "KG"
 
 
-class PostagePackagingTemplate(Flag):
+class PackagePresets(Flag):
     aus_letter_size_dl = PackagePreset(width=11.0, height=22.0)
     aus_letter_size_c6 = PackagePreset(width=11.4, height=16.2)
     aus_letter_size_c5 = PackagePreset(width=16.2, height=22.9)

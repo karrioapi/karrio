@@ -9,11 +9,11 @@ class PackagePreset(BasePackagePreset):
     weight_unit: str = "LB"
 
 
-class PackagingTemplate(Flag):
+class PackagePresets(Flag):
     ups_small_express_box = PackagePreset(weight=30, width=13, height=11, length=2)
     ups_medium_express_box = PackagePreset(weight=30, width=16, height=11, length=3)
     ups_large_express_box = PackagePreset(weight=30, width=18, height=13, length=3)
-    ups_express_tube = PackagePreset(width=38, height=6, length=6, depth=6)
+    ups_express_tube = PackagePreset(width=38, height=6, length=6)
     ups_express_pak = PackagePreset(width=16, height=11.75)
     ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3)
 

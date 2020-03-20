@@ -48,13 +48,13 @@ class Commodity:
 class Parcel:
     """item type."""
 
-    weight: float
     id: str = None
+    weight: float = None
     width: float = None
     height: float = None
     length: float = None
     packaging_type: str = None
-    template: str = None
+    package_preset: str = None
     reference: str = ""
     description: str = None
     content: str = None

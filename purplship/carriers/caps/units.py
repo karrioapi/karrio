@@ -9,7 +9,7 @@ class PackagePreset(BasePackagePreset):
     weight_unit: str = "KG"
 
 
-class PackagingTemplate(Flag):
+class PackagePresets(Flag):
     caps_mailing_box = PackagePreset(width=10.2, height=15.2)
     caps_extra_small_mailing_box = PackagePreset(width=14.0, height=14.0, length=14.0)
     caps_small_mailing_box = PackagePreset(width=28.6, height=22.9, length=6.4)

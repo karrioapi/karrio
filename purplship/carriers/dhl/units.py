@@ -9,20 +9,21 @@ from dataclasses import dataclass
 class PackagePreset(BasePackagePreset):
     dimension_unit: str = "IN"
     weight_unit: str = "LB"
+    packaging_type: str = "medium_box"
 
 
-class PackagingTemplate(Flag):
-    dhl_express_envelope = PackagePreset(weight=0.5, width=35.0, height=27.5, length=1.0)
-    dhl_express_standard_flyer = PackagePreset(weight=2, width=40.0, height=30.0)
-    dhl_express_large_flyer = PackagePreset(weight=3, width=47.5, height=37.5)
+class PackagePresets(Flag):
+    dhl_express_envelope = PackagePreset(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope")
+    dhl_express_standard_flyer = PackagePreset(weight=2, width=40.0, height=30.0, packaging_type="pak")
+    dhl_express_large_flyer = PackagePreset(weight=3, width=47.5, height=37.5, packaging_type="pack")
     dhl_express_box_2 = PackagePreset(weight=1, width=33.7, height=18.2, length=10.0)
     dhl_express_box_3 = PackagePreset(weight=2, width=33.6, height=32.0, length=5.2)
     dhl_express_box_4 = PackagePreset(weight=5, width=33.7, height=32.2, length=18.0)
     dhl_express_box_5 = PackagePreset(weight=10, width=33.7, height=32.2, length=34.5)
-    dhl_express_box_6 = PackagePreset(weight=15, width=41.7, height=35.9, length=36.9)
-    dhl_express_box_7 = PackagePreset(weight=20, width=48.1, height=40.4, length=38.9)
-    dhl_express_box_8 = PackagePreset(weight=25, width=54.2, height=44.4, length=40.9)
-    dhl_express_tube = PackagePreset(weight=5, width=96.0, height=15.0, length=15.0)
+    dhl_express_box_6 = PackagePreset(weight=15, width=41.7, height=35.9, length=36.9, packaging_type="large_box")
+    dhl_express_box_7 = PackagePreset(weight=20, width=48.1, height=40.4, length=38.9, packaging_type="large_box")
+    dhl_express_box_8 = PackagePreset(weight=25, width=54.2, height=44.4, length=40.9, packaging_type="large_box")
+    dhl_express_tube = PackagePreset(weight=5, width=96.0, height=15.0, length=15.0, packaging_type="tube")
     dhl_didgeridoo_box = PackagePreset(weight=10, width=13.0, height=13.0, length=162.0)
     dhl_jumbo_box = PackagePreset(weight=30, width=45.0, height=42.7, length=33.0)
     dhl_jumbo_box_junior = PackagePreset(weight=20, width=39.9, height=34.0, length=24.1)
