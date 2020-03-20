@@ -3,6 +3,7 @@ from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.package import rating
 from purplship.core.models import RateRequest
+from purplship.core.errors import RequiredFieldError
 from tests.caps.fixture import gateway
 from datetime import datetime
 
@@ -15,18 +16,28 @@ class TestCanadaPostQuote(unittest.TestCase):
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
 
-        self.assertEqual(request.serialize(), QuoteRequestXml)
+        self.assertEqual(request.serialize(), RateRequestXML)
+
+    def test_create_rate_request_with_package_preset(self):
+        request = gateway.mapper.create_rate_request(
+            RateRequest(**RateWithPresetPayload))
+
+        self.assertEqual(request.serialize(), RateRequestUsingPackagePresetXML)
+
+    def test_create_rate_request_with_package_preset_missing_weight(self):
+        with self.assertRaises(RequiredFieldError):
+            gateway.mapper.create_rate_request(RateRequest(**RateWithPresetMissingWeightPayload))
 
     @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         rating.fetch(self.RateRequest).from_(gateway)
 
-        reqUrl = http_mock.call_args[1]["url"]
-        self.assertEqual(reqUrl, f"{gateway.proxy.settings.server_url}/rs/ship/price")
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, f"{gateway.proxy.settings.server_url}/rs/ship/price")
 
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.caps.proxy.http") as mock:
-            mock.return_value = QuoteResponseXml
+            mock.return_value = RateResponseXml
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
@@ -49,10 +60,7 @@ if __name__ == "__main__":
     unittest.main()
 
 RatePayload = {
-    "shipper": {
-        "postal_code": "H8Z2Z3",
-        "country_code": "CA",
-    },
+    "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
     "parcel": {
         "height": 3,
@@ -62,6 +70,24 @@ RatePayload = {
         "services": ["caps_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
+    },
+}
+
+RateWithPresetPayload = {
+    "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
+    "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
+    "parcel": {
+        "package_preset": "caps_xexpresspost_certified_envelope",
+        "services": ["caps_xpresspost"],
+    },
+}
+
+RateWithPresetMissingWeightPayload = {
+    "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
+    "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
+    "parcel": {
+        "package_preset": "caps_corrugated_small_box",
+        "services": ["caps_regular_parcel"],
     },
 }
 
@@ -106,7 +132,7 @@ QuoteMissingArgsError = """<messages xmlns="http://www.canadapost.ca/ws/messages
 </messages>
 """
 
-QuoteRequestXml = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
+RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>1234567</customer-number>
     <expected-mailing-date>{datetime.today().strftime('%Y-%m-%d')}</expected-mailing-date>
     <parcel-characteristics>
@@ -129,7 +155,29 @@ QuoteRequestXml = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/
 </mailing-scenario>
 """
 
-QuoteResponseXml = """<price-quotes>
+RateRequestUsingPackagePresetXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
+    <customer-number>1234567</customer-number>
+    <expected-mailing-date>{datetime.today().strftime('%Y-%m-%d')}</expected-mailing-date>
+    <parcel-characteristics>
+        <weight>0.5</weight>
+        <dimensions>
+            <width>26.</width>
+            <height>15.9</height>
+        </dimensions>
+    </parcel-characteristics>
+    <services>
+        <service-code>DOM.XP</service-code>
+    </services>
+    <origin-postal-code>H8Z2Z3</origin-postal-code>
+    <destination>
+        <domestic>
+            <postal-code>H8Z2V4</postal-code>
+        </domestic>
+    </destination>
+</mailing-scenario>
+"""
+
+RateResponseXml = """<price-quotes>
    <price-quote>
       <service-code>DOM.EP</service-code>
       <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.EP?country=CA" media-type="application/vnd.cpc.ship.rate-v4+xml" />

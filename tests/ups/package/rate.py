@@ -15,6 +15,11 @@ class TestUPSRating(unittest.TestCase):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         self.assertEqual(request.serialize(), RateRequestXML)
 
+    def test_create_rate_with_package_preset_request(self):
+        request = gateway.mapper.create_rate_request(
+            RateRequest(**rate_req_with_package_preset_data))
+        self.assertEqual(request.serialize(), RateRequestWithPackagePresetXML)
+
     @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_package_get_quotes(self, http_mock):
         rating.fetch(self.RateRequest).from_(gateway)
@@ -67,11 +72,38 @@ rate_req_data = {
     },
     "parcel": {
         "reference": "Your Customer Context",
-        "services": ["ups_ground"],
+        "services": ["ups_standard"],
         "height": 3,
         "length": 10,
         "width": 3,
         "weight": 4.0,
+        "packaging_type": "ups_package",
+        "description": "TV",
+        "options": {"negotiated_rates_indicator": True},
+    },
+}
+
+
+rate_req_with_package_preset_data = {
+    "shipper": {
+        "company_name": "Shipper Name",
+        "postal_code": "H3N1S4",
+        "country_code": "CountryCode",
+        "city": "Montreal",
+        "address_line_1": "Address Line",
+    },
+    "recipient": {
+        "company_name": "Ship To Name",
+        "address_line_1": "Address Line",
+        "postal_code": "89109",
+        "city": "Las Vegas",
+        "country_code": "US",
+        "state_code": "StateProvinceCode",
+    },
+    "parcel": {
+        "reference": "Your Customer Context",
+        "services": ["ups_standard"],
+        "package_preset": "ups_express_pak",
         "packaging_type": "ups_package",
         "description": "TV",
         "options": {"negotiated_rates_indicator": True},
@@ -226,7 +258,7 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
                     </Address>
                 </ShipTo>
                 <Service>
-                    <Code>03</Code>
+                    <Code>11</Code>
                 </Service>
                 <Package>
                     <PackagingType>
@@ -246,6 +278,71 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
                         </UnitOfMeasurement>
                         <Weight>4.0</Weight>
                     </PackageWeight>
+                </Package>
+                <ShipmentRatingOptions>
+                    <NegotiatedRatesIndicator></NegotiatedRatesIndicator>
+                </ShipmentRatingOptions>
+            </Shipment>
+        </rate:RateRequest>
+    </tns:Body>
+</tns:Envelope>
+"""
+
+RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+    <tns:Header>
+        <upss:UPSSecurity>
+            <UsernameToken>
+                <Username>username</Username>
+                <Password>password</Password>
+            </UsernameToken>
+            <ServiceAccessToken>
+                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
+            </ServiceAccessToken>
+        </upss:UPSSecurity>
+    </tns:Header>
+    <tns:Body>
+        <rate:RateRequest>
+            <common:Request>
+                <RequestOption>Rate</RequestOption>
+                <TransactionReference>
+                    <CustomerContext>Your Customer Context</CustomerContext>
+                </TransactionReference>
+            </common:Request>
+            <Shipment>
+                <Shipper>
+                    <Name>Shipper Name</Name>
+                    <ShipperNumber>Your Account Number</ShipperNumber>
+                    <Address>
+                        <AddressLine>Address Line</AddressLine>
+                        <City>Montreal</City>
+                        <PostalCode>H3N1S4</PostalCode>
+                        <CountryCode>CountryCode</CountryCode>
+                    </Address>
+                </Shipper>
+                <ShipTo>
+                    <Name>Ship To Name</Name>
+                    <Address>
+                        <AddressLine>Address Line</AddressLine>
+                        <City>Las Vegas</City>
+                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
+                        <PostalCode>89109</PostalCode>
+                        <CountryCode>US</CountryCode>
+                    </Address>
+                </ShipTo>
+                <Service>
+                    <Code>11</Code>
+                </Service>
+                <Package>
+                    <PackagingType>
+                        <Code>02</Code>
+                    </PackagingType>
+                    <Dimensions>
+                        <UnitOfMeasurement>
+                            <Code>IN</Code>
+                        </UnitOfMeasurement>
+                        <Width>16.0</Width>
+                        <Height>11.75</Height>
+                    </Dimensions>
                 </Package>
                 <ShipmentRatingOptions>
                     <NegotiatedRatesIndicator></NegotiatedRatesIndicator>

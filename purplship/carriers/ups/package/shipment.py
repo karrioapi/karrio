@@ -28,6 +28,7 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Options, Package
+from purplship.core.errors import RequiredFieldError
 from purplship.core.models import (
     ShipmentRequest,
     ChargeDetails,
@@ -104,6 +105,9 @@ def shipment_request(
         (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
         None
     )
+
+    if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
+        raise RequiredFieldError("parcel.weight")
 
     request = UPSShipmentRequest(
         Request=common.RequestType(
@@ -231,7 +235,7 @@ def shipment_request(
                 RestrictedArticles=None,
                 InsideDelivery=None,
                 ItemDisposal=None
-            ) if options.has_content else None,
+            ) if any([options.cash_on_delivery, options.notification]) else None,
             Package=[
                 PackageType(
                     Description=payload.parcel.description,

@@ -13,6 +13,7 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.soap import create_envelope
+from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateRequest, RateDetails, Error, ChargeDetails
 from purplship.carriers.purolator.utils import Settings
 from purplship.carriers.purolator.error import parse_error_response
@@ -68,6 +69,10 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
 def get_full_estimate_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     service = next(
         (Product[s].value for s in payload.parcel.services if s in Product.__members__),
         Product.purolator_express.value

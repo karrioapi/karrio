@@ -165,15 +165,24 @@ class Package:
 
     @property
     def dimension_unit(self):
-        return DimensionUnit[
-            self._parcel.dimension_unit or self._preset.dimension_unit
-        ]
+        dimensions = [self._parcel.height, self._parcel.width, self._parcel.length]
+        unit = (
+            (self._parcel.dimension_unit or self._preset.dimension_unit)
+            if any(dimensions) else
+            self._preset.dimension_unit
+        )
+
+        return DimensionUnit[unit]
 
     @property
     def weight_unit(self):
-        return WeightUnit[
-            self._parcel.weight_unit or self._preset.weight_unit
-        ]
+        unit = (
+            self._preset.weight_unit
+            if self._parcel.weight is None else
+            (self._parcel.weight_unit or self._preset.weight_unit)
+        )
+
+        return WeightUnit[unit]
 
     @property
     def packaging_type(self):

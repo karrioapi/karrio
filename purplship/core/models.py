@@ -59,8 +59,8 @@ class Parcel:
     description: str = None
     content: str = None
     is_document: bool = False
-    weight_unit: str = "LB"
-    dimension_unit: str = "IN"
+    weight_unit: str = None
+    dimension_unit: str = None
     services: List[str] = []
     options: Dict = {}
 

@@ -13,6 +13,7 @@ from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
 from purplship.core.units import PrinterType, Options, Package
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
+from purplship.core.errors import RequiredFieldError
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings
@@ -56,6 +57,10 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
     RequestType: ShipmentRequestType = ValidateShipmentRequest if validate else CreateShipmentRequest
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     service = next(
         (Product[s].value for s in payload.parcel.services if s in Product.__members__),
         Product.purolator_express.value

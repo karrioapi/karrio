@@ -66,6 +66,32 @@ RATE_REQUEST_PAYLOAD = {
     },
 }
 
+RATE_REQUEST_WITH_PRESET_PAYLOAD = {
+    "shipper": {
+        "person_name": "Aaron Summer",
+        "state_code": "ON",
+        "city": "Mississauga",
+        "country_code": "CA",
+        "postal_code": "L4W5M8",
+        "address_line_1": "Main Street",
+        "phone_number": "5555555",
+    },
+    "recipient": {
+        "person_name": "Aaron Summer",
+        "state_code": "BC",
+        "city": "Burnaby",
+        "country_code": "CA",
+        "postal_code": "V5C5A9",
+        "address_line_1": "Douglas Road",
+        "phone_number": "2982181",
+    },
+    "parcel": {
+        "reference": "Reference For Shipment",
+        "package_preset": "purolator_express_box",
+        "services": ["purolator_express"],
+    },
+}
+
 PARSED_RATE_RESPONSE = [[{'base_charge': 62.35, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-17', 'discount': 0.0, 'duties_and_taxes': 5.15, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 5.15, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.81, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'purolator_express_9_am', 'total_charge': 108.16}, {'base_charge': 55.0, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-17', 'discount': 0.0, 'duties_and_taxes': 4.77, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 4.77, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.48, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'purolator_express_10_30_am', 'total_charge': 100.1}, {'base_charge': 46.15, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-17', 'discount': 0.0, 'duties_and_taxes': 4.3, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 4.3, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.08, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'purolator_express', 'total_charge': 90.38}, {'base_charge': 29.6, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-22', 'discount': 0.0, 'duties_and_taxes': 3.44, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 3.44, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 1.33, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'purolator_ground', 'total_charge': 72.22}, {'base_charge': 87.69, 'carrier': 'purolator', 'currency': 'CAD', 'delivery_date': '2009-04-22', 'discount': 0.0, 'duties_and_taxes': 6.47, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 6.47, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 3.95, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service_name': 'purolator_ground', 'total_charge': 135.96}], []]
 
 RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
@@ -117,6 +143,73 @@ RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap
                         <Piece>
                             <Weight>
                                 <Value>10.</Value>
+                                <WeightUnit>lb</WeightUnit>
+                            </Weight>
+                        </Piece>
+                    </PiecesInformation>
+                </PackageInformation>
+                <PickupInformation>
+                    <PickupType>DropOff</PickupType>
+                </PickupInformation>
+                <TrackingReferenceInformation>
+                    <Reference1>Reference For Shipment</Reference1>
+                </TrackingReferenceInformation>
+            </Shipment>
+            <ShowAlternativeServicesIndicator>true</ShowAlternativeServicesIndicator>
+        </ns1:GetFullEstimateRequest>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+"""
+
+RATE_REQUEST_WITH_PRESET_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
+    <SOAP-ENV:Header>
+        <ns1:RequestContext>
+            <Version>2.1</Version>
+            <Language>en</Language>
+            <UserToken>token</UserToken>
+        </ns1:RequestContext>
+    </SOAP-ENV:Header>
+    <SOAP-ENV:Body>
+        <ns1:GetFullEstimateRequest>
+            <Shipment>
+                <SenderInformation>
+                    <Address>
+                        <Name>Aaron Summer</Name>
+                        <StreetName>Main Street</StreetName>
+                        <City>Mississauga</City>
+                        <Province>ON</Province>
+                        <Country>CA</Country>
+                        <PostalCode>L4W5M8</PostalCode>
+                        <PhoneNumber>
+                            <Phone>5555555</Phone>
+                        </PhoneNumber>
+                    </Address>
+                </SenderInformation>
+                <ReceiverInformation>
+                    <Address>
+                        <Name>Aaron Summer</Name>
+                        <StreetName>Douglas Road</StreetName>
+                        <City>Burnaby</City>
+                        <Province>BC</Province>
+                        <Country>CA</Country>
+                        <PostalCode>V5C5A9</PostalCode>
+                        <PhoneNumber>
+                            <Phone>2982181</Phone>
+                        </PhoneNumber>
+                    </Address>
+                </ReceiverInformation>
+                <ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</ShipmentDate>
+                <PackageInformation>
+                    <ServiceID>PurolatorExpress</ServiceID>
+                    <TotalWeight>
+                        <Value>10</Value>
+                        <WeightUnit>lb</WeightUnit>
+                    </TotalWeight>
+                    <TotalPieces>1</TotalPieces>
+                    <PiecesInformation>
+                        <Piece>
+                            <Weight>
+                                <Value>7.</Value>
                                 <WeightUnit>lb</WeightUnit>
                             </Weight>
                         </Piece>

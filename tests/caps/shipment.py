@@ -16,6 +16,12 @@ class TestCanadaPostShipment(unittest.TestCase):
 
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
+    def test_create_shipment_with_package_preset_request(self):
+        request = gateway.mapper.create_shipment_request(
+            ShipmentRequest(**shipment_with_package_preset_data))
+
+        self.assertEqual(request.serialize(), ShipmentRequestWithPackagePresetXML)
+
     @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         shipment.create(self.ShipmentRequest).with_(gateway)
@@ -75,6 +81,40 @@ shipment_data = {
             },
             "insurance": {
                 "amount": 70.0
+            }
+        },
+    },
+}
+
+
+shipment_with_package_preset_data = {
+    "shipper": {
+        "company_name": "CGI",
+        "address_line_1": "502 MAIN ST N",
+        "city": "MONTREAL",
+        "postal_code": "H2B1A0",
+        "country_code": "CA",
+        "person_name": "Bob",
+        "phone_number": "1 (450) 823-8432",
+        "state_code": "QC",
+    },
+    "recipient": {
+        "company_name": "CGI",
+        "address_line_1": "23 jardin private",
+        "city": "Ottawa",
+        "postal_code": "K1K4T3",
+        "country_code": "CA",
+        "person_name": "Jain",
+        "state_code": "ON",
+    },
+    "parcel": {
+        "weight": 20.0,
+        "weight_unit": "LB",
+        "package_preset": "caps_corrugated_large_box",
+        "services": ["caps_expedited_parcel"],
+        "options": {
+            "cash_on_delivery":  {
+                "amount": 25.5
             }
         },
     },
@@ -175,6 +215,67 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
                 <length>6.0</length>
                 <width>12.0</width>
                 <height>9.0</height>
+            </dimensions>
+        </parcel-characteristics>
+        <print-preferences>
+            <output-format>8.5x11</output-format>
+        </print-preferences>
+        <preferences>
+            <show-packing-instructions>true</show-packing-instructions>
+            <show-postage-rate>true</show-postage-rate>
+            <show-insured-value>true</show-insured-value>
+        </preferences>
+        <references>
+            <customer-ref-1></customer-ref-1>
+        </references>
+    </delivery-spec>
+</shipment>
+"""
+
+
+ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
+    <customer-request-id>1234567</customer-request-id>
+    <requested-shipping-point>H2B1A0</requested-shipping-point>
+    <provide-pricing-info>true</provide-pricing-info>
+    <delivery-spec>
+        <service-code>DOM.EP</service-code>
+        <sender>
+            <name>Bob</name>
+            <company>CGI</company>
+            <contact-phone>1 (450) 823-8432</contact-phone>
+            <address-details>
+                <address-line-1>502 MAIN ST N</address-line-1>
+                <address-line-2></address-line-2>
+                <city>MONTREAL</city>
+                <prov-state>QC</prov-state>
+                <country-code>CA</country-code>
+                <postal-zip-code>H2B1A0</postal-zip-code>
+            </address-details>
+        </sender>
+        <destination>
+            <name>Jain</name>
+            <company>CGI</company>
+            <address-details>
+                <address-line-1>23 jardin private</address-line-1>
+                <address-line-2></address-line-2>
+                <city>Ottawa</city>
+                <prov-state>ON</prov-state>
+                <country-code>CA</country-code>
+                <postal-zip-code>K1K4T3</postal-zip-code>
+            </address-details>
+        </destination>
+        <options>
+            <option>
+                <option-code>COD</option-code>
+                <option-amount>25.5</option-amount>
+            </option>
+        </options>
+        <parcel-characteristics>
+            <weight>9.07184</weight>
+            <dimensions>
+                <length>40.6</length>
+                <width>46.0</width>
+                <height>46.0</height>
             </dimensions>
         </parcel-characteristics>
         <print-preferences>

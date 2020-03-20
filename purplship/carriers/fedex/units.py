@@ -100,11 +100,6 @@ class PhysicalPackagingType(Flag):
     tank = "TNK"
     tube = "TBE"
 
-    """ Unified Packaging type mapping """
-    sm = envelope
-    pc = piece
-    pal = pallet
-
 
 class ServiceType(Enum):
     europe_first_international_priority = "EUROPE_FIRST_INTERNATIONAL_PRIORITY"

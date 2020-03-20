@@ -97,6 +97,10 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     products = [
         ProductCode[svc].value
         for svc in payload.parcel.services

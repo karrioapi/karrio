@@ -118,6 +118,10 @@ def shipment_request(
 ) -> Serializable[DHLShipmentRequest]:
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     options = Options(payload.parcel.options)
     default_product_code = (
         ProductCode.dhl_express_worldwide_doc

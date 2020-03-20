@@ -22,6 +22,17 @@ class TestFeDexQuote(unittest.TestCase):
 
         self.assertEqual(serialized_request, RateRequestXml)
 
+    def test_create_rate_request_with_preset_package(self):
+        request = gateway.mapper.create_rate_request(
+            RateRequest(**RateWithPresetPayload)
+        )
+        # Remove timeStamp for testing
+        serialized_request = re.sub(
+            "<ShipTimestamp>[^>]+</ShipTimestamp>", "", request.serialize()
+        )
+
+        self.assertEqual(serialized_request, RateRequestUsingPackagePresetXML)
+
     @patch("purplship.package.mappers.fedex.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         rating.fetch(self.RateRequest).from_(gateway)
@@ -57,6 +68,16 @@ RateRequestPayload = {
         "length": 10,
         "width": 3,
         "weight": 4.0,
+        "options": {"currency": "USD"},
+    },
+}
+
+RateWithPresetPayload = {
+    "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
+    "recipient": {"city": "Lome", "country_code": "TG"},
+    "parcel": {
+        "id": "1",
+        "package_preset": "fedex_pak",
         "options": {"currency": "USD"},
     },
 }
@@ -158,6 +179,59 @@ RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoa
                 <TotalWeight>
                     <Units>LB</Units>
                     <Value>4.</Value>
+                </TotalWeight>
+                <PreferredCurrency>USD</PreferredCurrency>
+                <Shipper>
+                    <AccountNumber>2349857</AccountNumber>
+                    <Address>
+                        <PostalCode>H3N1S4</PostalCode>
+                        <CountryCode>CA</CountryCode>
+                    </Address>
+                </Shipper>
+                <Recipient>
+                    <Address>
+                        <City>Lome</City>
+                        <CountryCode>TG</CountryCode>
+                    </Address>
+                </Recipient>
+                <RateRequestTypes>LIST</RateRequestTypes>
+                <RateRequestTypes>PREFERRED</RateRequestTypes>
+            </RequestedShipment>
+        </ns:RateRequest>
+    </tns:Body>
+</tns:Envelope>
+"""
+
+RateRequestUsingPackagePresetXML = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
+    <tns:Body>
+        <ns:RateRequest>
+            <WebAuthenticationDetail>
+                <UserCredential>
+                    <Key>user_key</Key>
+                    <Password>password</Password>
+                </UserCredential>
+            </WebAuthenticationDetail>
+            <ClientDetail>
+                <AccountNumber>2349857</AccountNumber>
+                <MeterNumber>1293587</MeterNumber>
+            </ClientDetail>
+            <TransactionDetail>
+                <CustomerTransactionId>FTC</CustomerTransactionId>
+            </TransactionDetail>
+            <Version>
+                <ServiceId>crs</ServiceId>
+                <Major>26</Major>
+                <Intermediate>0</Intermediate>
+                <Minor>0</Minor>
+            </Version>
+            <ReturnTransitAndCommit>true</ReturnTransitAndCommit>
+            <RequestedShipment>
+                
+                <DropoffType>REGULAR_PICKUP</DropoffType>
+                <PackagingType>FEDEX_PAK</PackagingType>
+                <TotalWeight>
+                    <Units>LB</Units>
+                    <Value>2.2</Value>
                 </TotalWeight>
                 <PreferredCurrency>USD</PreferredCurrency>
                 <Shipper>

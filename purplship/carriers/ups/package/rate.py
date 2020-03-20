@@ -22,6 +22,7 @@ from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Package
 from purplship.core.models import RateDetails, ChargeDetails, Error, RateRequest
+from purplship.core.errors import RequiredFieldError
 from purplship.carriers.ups.units import (
     RatingServiceCode,
     RatingPackagingType,
@@ -115,10 +116,13 @@ def rate_request(
 ) -> Serializable[UPSRateRequest]:
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
-    service = next(
+    service: str = next(
         (RatingServiceCode[s].value for s in payload.parcel.services if s in RatingServiceCode.__members__),
-        RatingServiceCode.ups_express
+        RatingServiceCode.ups_express.value
     )
+
+    if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
+        raise RequiredFieldError("parcel.weight")
 
     request = UPSRateRequest(
         Request=common.RequestType(
@@ -186,14 +190,14 @@ def rate_request(
                         Length=package.length.value,
                         Width=package.width.value,
                         Height=package.height.value,
-                    ),
+                    ) if any([package.length.value, package.height.value, package.width.value]) else None,
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
                             Code=UPSWeightUnit[package.weight_unit.name].value, Description=None
                         ),
                         Weight=package.weight.value,
-                    ),
+                    ) if package.weight.value else None,
                     Commodity=None,
                     PackageServiceOptions=None,
                     AdditionalHandlingIndicator=None,

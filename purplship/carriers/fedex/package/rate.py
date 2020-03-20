@@ -19,6 +19,7 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.units import Currency, Package, Options
 from purplship.core.utils.xml import Element
+from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateDetails, RateRequest, Error, ChargeDetails
 from purplship.carriers.fedex.units import PackagingType, ServiceType, RateType, PackagePresets
 from purplship.carriers.fedex.error import parse_error_response
@@ -97,6 +98,10 @@ def rate_request(
 ) -> Serializable[FedexRateRequest]:
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     service = next(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
         None
