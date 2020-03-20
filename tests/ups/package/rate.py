@@ -72,7 +72,7 @@ rate_req_data = {
         "length": 10,
         "width": 3,
         "weight": 4.0,
-        "packaging_type": "package",
+        "packaging_type": "ups_package",
         "description": "TV",
         "options": {"negotiated_rates_indicator": True},
     },

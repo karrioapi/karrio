@@ -177,7 +177,7 @@ def rate_request(
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
                         Code=RatingPackagingType[
-                            payload.parcel.packaging_type or "BOX"
+                            payload.parcel.packaging_type or "small_box"
                         ].value,
                         Description=None,
                     ),

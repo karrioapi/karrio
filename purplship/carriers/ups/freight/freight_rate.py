@@ -25,7 +25,7 @@ from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
 from purplship.carriers.ups.units import (
     RatingServiceCode,
     WeightUnit as UPSWeightUnit,
-    PackagingType,
+    FreightPackagingType,
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -161,7 +161,7 @@ def freight_rate_request(
                 ),
                 NumberOfPieces=None,
                 PackagingType=RateCodeDescriptionType(
-                    Code=PackagingType[payload.parcel.packaging_type or "box"].value,
+                    Code=FreightPackagingType[payload.parcel.packaging_type or "small_box"].value,
                     Description=None,
                 ),
                 FreightClass=50,

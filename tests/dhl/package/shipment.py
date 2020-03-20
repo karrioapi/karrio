@@ -94,7 +94,7 @@ shipment_data = {
         "weight": 4.0,
         "packaging_type": "dhl_express_envelope",
         "is_document": False,
-        "services": ["express_worldwide"],
+        "services": ["dhl_express_worldwide"],
         "options": {
             "paperless_trade": True,
             "insurance": {

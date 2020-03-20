@@ -1,4 +1,23 @@
+import attr
 from enum import Enum, Flag
+
+
+@attr.s(auto_attribs=True)
+class Template:
+    width: float  # IN
+    height: float  # IN
+    length: float = None  # IN
+    depth: float = None  # IN
+    weight: float = None  # LB
+
+
+class PackageTemplate(Flag):
+    ups_small_express_box = Template(weight=30, width=13, height=11, length=2)
+    ups_medium_express_box = Template(weight=30, width=16, height=11, length=3)
+    ups_large_express_box = Template(weight=30, width=18, height=13, length=3)
+    ups_express_tube = Template(width=38, height=6, length=6, depth=6)
+    ups_express_pak = Template(width=16, height=11.75)
+    ups_world_document_box = Template(width=17.5, height=12.5, length=3)
 
 
 class WeightUnit(Enum):
@@ -6,7 +25,7 @@ class WeightUnit(Enum):
     LB = "LBS"
 
 
-class PackagingType(Flag):
+class FreightPackagingType(Flag):
     bag = "BAG"
     bale = "BAL"
     barrel = "BAR"
@@ -30,7 +49,7 @@ class PackagingType(Flag):
     other = "OTH"
     pail = "PAL"
     pieces = "PCS"
-    package = "PKG"
+    package = "PKG"  # equivalent of user custom packaging
     pipe_line = "PLN"
     pallet = "PLT"
     rack = "RCK"
@@ -45,30 +64,35 @@ class PackagingType(Flag):
     wrapped = "WRP"
 
     """ unified Packaging type mapping  """
-    sm = wrapped
-    pc = pieces
-    pal = pallet
+    envelope = package
+    pak = van_pack
+    small_box = box
+    medium_box = box
+    your_packaging = package
 
 
 class RatingPackagingType(Flag):
-    unknown = "00"
+    ups_unknown = "00"
     ups_letter = "01"
-    package = "02"
-    tube = "03"
-    pak = "04"
-    express_box = "21"
-    box_25_kg = "24"
-    box_10_kg = "25"
-    pallet = "30"
-    small_express_box = "2a"
-    medium_express_box = "2b"
-    large_express_box = "2c"
+    ups_package = "02"  # equivalent of user custom packaging
+    ups_tube = "03"
+    ups_pak = "04"
+    ups_express_box = "21"
+    ups_box_25_kg = "24"
+    ups_box_10_kg = "25"
+    ups_pallet = "30"
+    ups_small_express_box = "2a"
+    ups_medium_express_box = "2b"
+    ups_large_express_box = "2c"
 
     """ unified Packaging type mapping  """
-    sm = ups_letter
-    box = express_box
-    pc = package
-    pal = pallet
+    envelope = ups_letter
+    pak = ups_pak
+    tube = ups_tube
+    pallet = ups_pallet
+    small_box = ups_small_express_box
+    medium_box = ups_medium_express_box
+    your_packaging = ups_package
 
 
 class RatingServiceCode(Enum):
@@ -114,34 +138,37 @@ class RatingOption(Enum):
 
 class ShippingPackagingType(Flag):
     ups_letter = "01"
-    customer_supplied_package = "02"
-    tube = "03"
-    pak = "04"
-    ups_express_box = "21"
-    ups_25_kg_box = "24"
-    ups_10_kg_box = "25"
-    pallet = "30"
-    small_express_box = "2a"
-    medium_express_box = "2b"
-    large_express_box = "2c"
-    flats = "56"
-    parcels = "57"
-    bpm = "58"
-    first_class = "59"
-    priority = "60"
-    machineables = "61"
-    irregulars = "62"
-    parcel_post = "63"
-    bpm_parcel = "64"
-    media_mail = "65"
-    bpm_flat = "66"
-    standard_flat = "67"
+    ups_customer_supplied_package = "02"
+    ups_tube = "03"
+    ups_pak = "04"
+    ups_ups_express_box = "21"
+    ups_ups_25_kg_box = "24"
+    ups_ups_10_kg_box = "25"
+    ups_pallet = "30"
+    ups_small_express_box = "2a"
+    ups_medium_express_box = "2b"
+    ups_large_express_box = "2c"
+    ups_flats = "56"
+    ups_parcels = "57"
+    ups_bpm = "58"
+    ups_first_class = "59"
+    ups_priority = "60"
+    ups_machineables = "61"
+    ups_irregulars = "62"
+    ups_parcel_post = "63"
+    ups_bpm_parcel = "64"
+    ups_media_mail = "65"
+    ups_bpm_flat = "66"
+    ups_standard_flat = "67"
 
     """ unified Packaging type mapping  """
-    sm = ups_letter
-    box = ups_express_box
-    pc = pak
-    pal = pallet
+    envelope = ups_letter
+    pak = ups_pak
+    tube = ups_tube
+    pallet = ups_pallet
+    small_box = ups_small_express_box
+    medium_box = ups_medium_express_box
+    your_packaging = ups_customer_supplied_package
 
 
 class ShippingServiceCode(Enum):

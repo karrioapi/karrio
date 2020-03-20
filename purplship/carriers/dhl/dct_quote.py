@@ -126,15 +126,15 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
-                IsDutiable="N"
-                if payload.parcel.is_document
-                else "Y",  # TODO:: update this using proper options
+                IsDutiable=(
+                    "N" if payload.parcel.is_document else "Y"
+                ),
                 Pieces=PiecesType(
                     Piece=[
                         PieceType(
                             PieceID=payload.parcel.id,
                             PackageTypeCode=DCTPackageType[
-                                payload.parcel.packaging_type or "box"
+                                payload.parcel.packaging_type or "small_box"
                             ].value,
                             Depth=Dimension(
                                 payload.parcel.length, dimension_unit

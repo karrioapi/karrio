@@ -1,5 +1,31 @@
 """ DHL Native Types """
+import attr
 from enum import Enum, Flag
+
+
+@attr.s(auto_attribs=True)
+class Template:
+    weight: float  # KG
+    width: float  # CM
+    height: float  # CM
+    length: float = None  # CM
+
+
+class PackageTemplate(Flag):
+    dhl_express_envelope = Template(weight=0.5, width=35.0, height=27.5, length=1.0)
+    dhl_express_standard_flyer = Template(weight=2, width=40.0, height=30.0)
+    dhl_express_large_flyer = Template(weight=3, width=47.5, height=37.5)
+    dhl_express_box_2 = Template(weight=1, width=33.7, height=18.2, length=10.0)
+    dhl_express_box_3 = Template(weight=2, width=33.6, height=32.0, length=5.2)
+    dhl_express_box_4 = Template(weight=5, width=33.7, height=32.2, length=18.0)
+    dhl_express_box_5 = Template(weight=10, width=33.7, height=32.2, length=34.5)
+    dhl_express_box_6 = Template(weight=15, width=41.7, height=35.9, length=36.9)
+    dhl_express_box_7 = Template(weight=20, width=48.1, height=40.4, length=38.9)
+    dhl_express_box_8 = Template(weight=25, width=54.2, height=44.4, length=40.9)
+    dhl_express_tube = Template(weight=5, width=96.0, height=15.0, length=15.0)
+    dhl_didgeridoo_box = Template(weight=10, width=13.0, height=13.0, length=162.0)
+    dhl_jumbo_box = Template(weight=30, width=45.0, height=42.7, length=33.0)
+    dhl_jumbo_box_junior = Template(weight=20, width=39.9, height=34.0, length=24.1)
 
 
 class Dimension(Enum):
@@ -20,18 +46,22 @@ class DeliveryType(Enum):
 
 
 class DCTPackageType(Enum):
-    flyer_smalls = "FLY"
-    parcels_conveyables = "COY"
-    non_conveyables = "NCY"
-    pallets = "PAL"
-    double_pallets = "DBL"
-    parcels = "BOX"
+    dhl_flyer_smalls = "FLY"
+    dhl_parcels_conveyables = "COY"
+    dhl_non_conveyables = "NCY"
+    dhl_pallets = "PAL"
+    dhl_double_pallets = "DBL"
+    dhl_box = "BOX"
 
     """ Unified Packaging type mapping """
-    sm = flyer_smalls
-    box = parcels
-    pc = non_conveyables
-    pal = pallets
+    envelope = dhl_flyer_smalls
+    pak = dhl_flyer_smalls
+    tube = dhl_parcels_conveyables
+    pallet = dhl_pallets
+    small_box = dhl_box
+    medium_box = dhl_box
+    large_box = dhl_box
+    your_packaging = dhl_box
 
 
 class NetworkType(Enum):
@@ -41,104 +71,108 @@ class NetworkType(Enum):
 
 
 class PackageType(Flag):
-    jumbo_document = "BD"
-    jumbo_parcel = "BP"
-    customer_provided = "CP"
-    document = "DC"
+    dhl_jumbo_document = "BD"
+    dhl_jumbo_parcel = "BP"
+    dhl_customer_provided = "CP"
+    dhl_document = "DC"
     dhl_flyer = "DF"
-    domestic = "DM"
-    express_document = "ED"
+    dhl_domestic = "DM"
+    dhl_express_document = "ED"
     dhl_express_envelope = "EE"
-    freight = "FR"
-    jumbo_box = "JB"
-    jumbo_junior_document = "JD"
-    junior_jumbo_box = "JJ"
-    jumbo_junior_parcel = "JP"
-    other_dhl_packaging = "OD"
-    parcel = "PA"
-    your_packaging = "YP"
+    dhl_freight = "FR"
+    dhl_jumbo_box = "JB"
+    dhl_jumbo_junior_document = "JD"
+    dhl_junior_jumbo_box = "JJ"
+    dhl_jumbo_junior_parcel = "JP"
+    dhl_other_dhl_packaging = "OD"
+    dhl_parcel = "PA"
+    dhl_your_packaging = "YP"
 
     """ Unified Packaging type mapping """
-    sm = document
-    box = parcel
-    pc = your_packaging
-    pal = freight
+    envelope = dhl_express_envelope
+    pak = dhl_flyer
+    tube = dhl_other_dhl_packaging
+    pallet = dhl_freight
+    small_box = dhl_junior_jumbo_box
+    medium_box = dhl_jumbo_box
+    large_box = dhl_jumbo_parcel
+    your_packaging = dhl_your_packaging
 
 
 class Product(Enum):
-    logistics_services = "LOGISTICS SERVICES"
-    domestic_express_12_00_doc = "DOMESTIC EXPRESS 12:00 DOC"
-    b2_c_doc = "B2C DOC"
-    b2_c_nondoc = "B2C NONDOC"
-    jetline = "JETLINE"
-    sprintline = "SPRINTLINE"
-    express_easy_doc = "EXPRESS EASY DOC"
-    express_easy_nondoc = "EXPRESS EASY NONDOC"
-    europack_doc = "EUROPACK DOC"
-    auto_reversals = "AUTO REVERSALS"
-    breakbulk_express_doc = "BREAKBULK EXPRESS DOC"
-    medical_express_doc = "MEDICAL EXPRESS DOC"
-    express_worldwide_doc = "EXPRESS WORLDWIDE DOC"
-    express_9_00_nondoc = "EXPRESS 9:00 NONDOC"
-    freight_worldwide_nondoc = "FREIGHT WORLDWIDE NONDOC"
-    domestic_economy_select_doc = "DOMESTIC ECONOMY SELECT DOC"
-    economy_select_nondoc = "ECONOMY SELECT NONDOC"
-    domestic_express_9_00_doc = "DOMESTIC EXPRESS 9:00 DOC"
-    jumbo_box_nondoc = "JUMBO BOX NONDOC"
-    express_9_00_doc = "EXPRESS 9:00 DOC"
-    express_10_30_doc = "EXPRESS 10:30 DOC"
-    express_10_30_nondoc = "EXPRESS 10:30 NONDOC"
-    domestic_express_doc = "DOMESTIC EXPRESS DOC"
-    domestic_express_10_30_doc = "DOMESTIC EXPRESS 10:30 DOC"
-    express_worldwide_nondoc = "EXPRESS WORLDWIDE NONDOC"
-    medical_express_nondoc = "MEDICAL EXPRESS NONDOC"
-    globalmail_business_doc = "GLOBALMAIL BUSINESS DOC"
-    same_day_doc = "SAME DAY DOC"
-    express_12_00_doc = "EXPRESS 12:00 DOC"
-    express_worldwide_ecx_doc = "EXPRESS WORLDWIDE DOC"
-    europack_nondoc = "EUROPACK NONDOC"
-    economy_select_doc = "ECONOMY SELECT DOC"
-    express_envelope_doc = "EXPRESS ENVELOPE DOC"
-    express_12_00_nondoc = "EXPRESS 12:00 NONDOC"
-    destination_charges = "Destination Charges"
+    dhl_logistics_services = "LOGISTICS SERVICES"
+    dhl_domestic_express_12_00_doc = "DOMESTIC EXPRESS 12:00 DOC"
+    dhl_b2_c_doc = "B2C DOC"
+    dhl_b2_c_nondoc = "B2C NONDOC"
+    dhl_jetline = "JETLINE"
+    dhl_sprintline = "SPRINTLINE"
+    dhl_express_easy_doc = "EXPRESS EASY DOC"
+    dhl_express_easy_nondoc = "EXPRESS EASY NONDOC"
+    dhl_europack_doc = "EUROPACK DOC"
+    dhl_auto_reversals = "AUTO REVERSALS"
+    dhl_breakbulk_express_doc = "BREAKBULK EXPRESS DOC"
+    dhl_medical_express_doc = "MEDICAL EXPRESS DOC"
+    dhl_express_worldwide_doc = "EXPRESS WORLDWIDE DOC"
+    dhl_express_9_00_nondoc = "EXPRESS 9:00 NONDOC"
+    dhl_freight_worldwide_nondoc = "FREIGHT WORLDWIDE NONDOC"
+    dhl_domestic_economy_select_doc = "DOMESTIC ECONOMY SELECT DOC"
+    dhl_economy_select_nondoc = "ECONOMY SELECT NONDOC"
+    dhl_domestic_express_9_00_doc = "DOMESTIC EXPRESS 9:00 DOC"
+    dhl_jumbo_box_nondoc = "JUMBO BOX NONDOC"
+    dhl_express_9_00_doc = "EXPRESS 9:00 DOC"
+    dhl_express_10_30_doc = "EXPRESS 10:30 DOC"
+    dhl_express_10_30_nondoc = "EXPRESS 10:30 NONDOC"
+    dhl_domestic_express_doc = "DOMESTIC EXPRESS DOC"
+    dhl_domestic_express_10_30_doc = "DOMESTIC EXPRESS 10:30 DOC"
+    dhl_express_worldwide_nondoc = "EXPRESS WORLDWIDE NONDOC"
+    dhl_medical_express_nondoc = "MEDICAL EXPRESS NONDOC"
+    dhl_globalmail_business_doc = "GLOBALMAIL BUSINESS DOC"
+    dhl_same_day_doc = "SAME DAY DOC"
+    dhl_express_12_00_doc = "EXPRESS 12:00 DOC"
+    dhl_express_worldwide_ecx_doc = "EXPRESS WORLDWIDE DOC"
+    dhl_europack_nondoc = "EUROPACK NONDOC"
+    dhl_economy_select_doc = "ECONOMY SELECT DOC"
+    dhl_express_envelope_doc = "EXPRESS ENVELOPE DOC"
+    dhl_express_12_00_nondoc = "EXPRESS 12:00 NONDOC"
+    dhl_destination_charges = "Destination Charges"
 
 
 class ProductCode(Enum):
-    logistics_services = "0"
-    domestic_express_12_00_doc = "1"
-    b2_c_doc = "2"
-    b2_c_nondoc = "3"
-    jetline = "4"
-    sprintline = "5"
-    express_easy_doc = "7"
-    express_easy_nondoc = "8"
-    europack_doc = "9"
-    auto_reversals = "A"
-    breakbulk_express_doc = "B"
-    medical_express_doc = "C"
-    express_worldwide_doc = "D"
-    express_9_00_nondoc = "E"
-    freight_worldwide_nondoc = "F"
-    domestic_economy_select_doc = "G"
-    economy_select_nondoc = "H"
-    domestic_express_9_00_doc = "I"
-    jumbo_box_nondoc = "J"
-    express_9_00_doc = "K"
-    express_10_30_doc = "L"
-    express_10_30_nondoc = "M"
-    domestic_express_doc = "N"
-    domestic_express_10_30_doc = "O"
-    express_worldwide_nondoc = "P"
-    medical_express_nondoc = "Q"
-    globalmail_business_doc = "R"
-    same_day_doc = "S"
-    express_12_00_doc = "T"
-    express_worldwide_ecx_doc = "U"
-    europack_nondoc = "V"
-    economy_select_doc = "W"
-    express_envelope_doc = "X"
-    express_12_00_nondoc = "Y"
-    destination_charges = "Z"
+    dhl_logistics_services = "0"
+    dhl_domestic_express_12_00_doc = "1"
+    dhl_b2_c_doc = "2"
+    dhl_b2_c_nondoc = "3"
+    dhl_jetline = "4"
+    dhl_sprintline = "5"
+    dhl_express_easy_doc = "7"
+    dhl_express_easy_nondoc = "8"
+    dhl_europack_doc = "9"
+    dhl_auto_reversals = "A"
+    dhl_breakbulk_express_doc = "B"
+    dhl_medical_express_doc = "C"
+    dhl_express_worldwide_doc = "D"
+    dhl_express_9_00_nondoc = "E"
+    dhl_freight_worldwide_nondoc = "F"
+    dhl_domestic_economy_select_doc = "G"
+    dhl_economy_select_nondoc = "H"
+    dhl_domestic_express_9_00_doc = "I"
+    dhl_jumbo_box_nondoc = "J"
+    dhl_express_9_00_doc = "K"
+    dhl_express_10_30_doc = "L"
+    dhl_express_10_30_nondoc = "M"
+    dhl_domestic_express_doc = "N"
+    dhl_domestic_express_10_30_doc = "O"
+    dhl_express_worldwide_nondoc = "P"
+    dhl_medical_express_nondoc = "Q"
+    dhl_globalmail_business_doc = "R"
+    dhl_same_day_doc = "S"
+    dhl_express_12_00_doc = "T"
+    dhl_express_worldwide_ecx_doc = "U"
+    dhl_europack_nondoc = "V"
+    dhl_economy_select_doc = "W"
+    dhl_express_envelope_doc = "X"
+    dhl_express_12_00_nondoc = "Y"
+    dhl_destination_charges = "Z"
 
 
 class PayorType(Enum):

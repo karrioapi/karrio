@@ -72,7 +72,7 @@ package_shipment_data = {
         "services": ["ups_express"],
         "dimension_unit": "IN",
         "weight_unit": "LB",
-        "packaging_type": "customer_supplied_package",
+        "packaging_type": "ups_customer_supplied_package",
         "description": "Description",
         "length": 7,
         "width": 5,

@@ -144,7 +144,7 @@ def process_shipment_request(
             ShipTimestamp=datetime.now(),
             DropoffType="REGULAR_PICKUP",
             ServiceType=service,
-            PackagingType=PackagingType[payload.parcel.packaging_type or "box"].value,
+            PackagingType=PackagingType[payload.parcel.packaging_type or "small_box"].value,
             ManifestDetail=None,
             TotalWeight=FedexWeight(
                 Units=weight_unit.value,

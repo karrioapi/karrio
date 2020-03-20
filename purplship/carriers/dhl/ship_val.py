@@ -118,9 +118,9 @@ def shipment_request(
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     options = Options(payload.parcel.options)
     default_product_code = (
-        ProductCode.express_worldwide_doc
+        ProductCode.dhl_express_worldwide_doc
         if payload.parcel.is_document
-        else ProductCode.express_worldwide_nondoc
+        else ProductCode.dhl_express_worldwide_nondoc
     )
     product = next(
         (ProductCode[svc] for svc in payload.parcel.services if svc in ProductCode.__members__),
@@ -240,7 +240,7 @@ def shipment_request(
                     Piece(
                         PieceID=payload.parcel.id,
                         PackageType=PackageType[
-                            payload.parcel.packaging_type or "box"
+                            payload.parcel.packaging_type or "small_box"
                         ].value,
                         Depth=Dimension(payload.parcel.length, dimension_unit).value,
                         Width=Dimension(payload.parcel.width, dimension_unit).value,
@@ -256,7 +256,7 @@ def shipment_request(
             WeightUnit=DHLWeightUnit[weight_unit.name].value,
             DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
             Date=time.strftime("%Y-%m-%d"),
-            PackageType=PackageType[payload.parcel.packaging_type or "box"].value,
+            PackageType=PackageType[payload.parcel.packaging_type or "small_box"].value,
             IsDutiable="Y" if payload.customs is not None else "N",
             InsuredAmount=options.insurance.amount if options.insurance else None,
             ShipmentCharges=options.cash_on_delivery.amount if options.cash_on_delivery else None,

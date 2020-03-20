@@ -1,4 +1,110 @@
+import attr
 from enum import Enum, Flag
+
+
+@attr.s(auto_attribs=True)
+class Template:
+    weight: float  # LB
+    width: float  # IN
+    height: float  # IN
+    length: float = None  # IN
+    depth: float = None  # IN
+
+
+class PackageTemplate(Flag):
+    fedex_envelope_legal_size = Template(weight=1, width=9.5, height=15.5)
+    fedex_envelope_without_pouch = Template(weight=1, width=9.5, height=15.5)
+    fedex_padded_pak = Template(weight=2.2, width=11.75, height=14.75)
+    fedex_polyethylene_pak = Template(weight=2.2, width=12, height=15.5)
+    fedex_clinical_pak = Template(weight=2.2, width=13.5, height=18)
+    fedex_un_3373_pak = Template(weight=2.2, width=13.5, height=18)
+    fedex_small_box = Template(weight=20, width=12.25, height=10.9, length=1.5)
+    fedex_medium_box = Template(weight=20, width=13.25, height=11.5, length=2.38)
+    fedex_large_box = Template(weight=20, width=17.88, height=12.38, length=3)
+    fedex_10_kg_box = Template(weight=10, width=15.81, height=12.94, length=10.19)
+    fedex_25_kg_box = Template(weight=25, width=21.56, height=16.56, length=13.19)
+    fedex_tube = Template(weight=20, width=38, height=6, length=6, depth=6)
+    fedex_envelope = fedex_envelope_legal_size
+    fedex_pak = fedex_padded_pak
+
+
+class PackagingType(Flag):
+    fedex_envelope = "FEDEX_ENVELOPE"
+    fedex_pak = "FEDEX_PAK"
+    fedex_box = "FEDEX_BOX"
+    fedex_10_kg_box = "FEDEX_10KG_BOX"
+    fedex_25_kg_box = "FEDEX_25KG_BOX"
+    fedex_tube = "FEDEX_TUBE"
+    your_packaging = "YOUR_PACKAGING"
+
+    """ Unified Packaging type mapping """
+    envelope = fedex_envelope
+    pak = fedex_pak
+    tube = fedex_tube
+    pallet = your_packaging
+    small_box = fedex_10_kg_box
+    medium_box = fedex_box
+    large_box = fedex_25_kg_box
+
+
+class FreightPackagingType(Flag):
+    fedex_10_kg_box = "FEDEX_10KG_BOX"
+    fedex_25_kg_box = "FEDEX_25KG_BOX"
+    fedex_box = "FEDEX_BOX"
+    fedex_envelope = "FEDEX_ENVELOPE"
+    fedex_extra_large_box = "FEDEX_EXTRA_LARGE_BOX"
+    fedex_large_box = "FEDEX_LARGE_BOX"
+    fedex_medium_box = "FEDEX_MEDIUM_BOX"
+    fedex_pak = "FEDEX_PAK"
+    fedex_small_box = "FEDEX_SMALL_BOX"
+    fedex_tube = "FEDEX_TUBE"
+    your_packaging = "YOUR_PACKAGING"
+
+    """ Unified Packaging type mapping """
+    envelope = fedex_envelope
+    pak = fedex_pak
+    tube = fedex_tube
+    pallet = fedex_extra_large_box
+    small_box = fedex_small_box
+    medium_box = fedex_medium_box
+    large_box = fedex_large_box
+
+
+class PaymentType(Flag):
+    account = "ACCOUNT"
+    collect = "COLLECT"
+    recipient = "RECIPIENT"
+    sender = "SENDER"
+    third_party = "THIRD_PARTY"
+
+
+class PhysicalPackagingType(Flag):
+    bag = "BAG"
+    barrel = "BBL"
+    basket = "BSK"
+    box = "BOX"
+    bucket = "BXT"
+    bundle = "BDL"
+    carton = "CTN"
+    case = "CAS"
+    container = "CNT"
+    crate = "CRT"
+    cylinder = "CYL"
+    drum = "DRM"
+    envelope = "ENV"
+    pail = "PAL"
+    pallet = "PLT"
+    piece = "PC "
+    reel = "REL"
+    roll = "ROL"
+    skid = "SKD"
+    tank = "TNK"
+    tube = "TBE"
+
+    """ Unified Packaging type mapping """
+    sm = envelope
+    pc = piece
+    pal = pallet
 
 
 class ServiceType(Enum):
@@ -58,59 +164,6 @@ class ServiceType(Enum):
     smart_post = "SMART_POST"
     standard_overnight = "STANDARD_OVERNIGHT"
     transborder_distribution_consolidation = "TRANSBORDER_DISTRIBUTION_CONSOLIDATION"
-
-
-class PackagingType(Flag):
-    fedex_10_kg_box = "FEDEX_10KG_BOX"
-    fedex_25_kg_box = "FEDEX_25KG_BOX"
-    fedex_box = "FEDEX_BOX"
-    fedex_envelope = "FEDEX_ENVELOPE"
-    fedex_pak = "FEDEX_PAK"
-    fedex_tube = "FEDEX_TUBE"
-    your_packaging = "YOUR_PACKAGING"
-
-    """ Unified Packaging type mapping """
-    sm = fedex_envelope
-    box = fedex_box
-    pc = your_packaging
-    pal = fedex_pak
-
-
-class PaymentType(Flag):
-    account = "ACCOUNT"
-    collect = "COLLECT"
-    recipient = "RECIPIENT"
-    sender = "SENDER"
-    third_party = "THIRD_PARTY"
-
-
-class PhysicalPackagingType(Flag):
-    bag = "BAG"
-    barrel = "BBL"
-    basket = "BSK"
-    box = "BOX"
-    bucket = "BXT"
-    bundle = "BDL"
-    carton = "CTN"
-    case = "CAS"
-    container = "CNT"
-    crate = "CRT"
-    cylinder = "CYL"
-    drum = "DRM"
-    envelope = "ENV"
-    pail = "PAL"
-    pallet = "PLT"
-    piece = "PC "
-    reel = "REL"
-    roll = "ROL"
-    skid = "SKD"
-    tank = "TNK"
-    tube = "TBE"
-
-    """ Unified Packaging type mapping """
-    sm = envelope
-    pc = piece
-    pal = pallet
 
 
 class SpecialServiceType(Flag):

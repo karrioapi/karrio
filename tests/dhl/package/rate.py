@@ -72,7 +72,7 @@ RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
-        "services": ["express_worldwide_doc"],
+        "services": ["dhl_express_worldwide_doc"],
         "id": "1",
         "height": 3,
         "length": 10,
@@ -118,7 +118,7 @@ ParsedRateResponse = [
             "extra_charges": [
                 {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
             ],
-            "service_name": "express_worldwide_doc",
+            "service_name": "dhl_express_worldwide_doc",
             "service_type": "time_definite",
             "total_charge": 208.02,
         },
@@ -130,7 +130,7 @@ ParsedRateResponse = [
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [],
-            "service_name": "express_easy_doc",
+            "service_name": "dhl_express_easy_doc",
             "service_type": "time_definite",
             "total_charge": 213.47,
         },
@@ -148,7 +148,7 @@ ParsedRateVolWeightHigher = [
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [],
-            "service_name": "express_worldwide_nondoc",
+            "service_name": "dhl_express_worldwide_nondoc",
             "service_type": "time_definite",
             "total_charge": 0.0,
         }

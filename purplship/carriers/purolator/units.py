@@ -1,4 +1,33 @@
-from enum import Enum
+import attr
+from enum import Enum, Flag
+
+
+@attr.s(auto_attribs=True)
+class Template:
+    weight: float  # LB
+
+
+class PackageTemplate(Flag):
+    purolator_express_envelope = Template(weight=1)
+    purolator_express_pack = Template(weight=3)
+    purolator_express_box = Template(weight=7)
+
+
+class PackagingType(Enum):
+    purolator_express_envelope = "Envelop"
+    purolator_express_pack = "Pack"
+    purolator_express_box = "Box"
+    purolator_customer_packaging = "Customer Packaging"
+
+    """ Unified Packaging type mapping """
+    envelope = purolator_express_envelope
+    pak = purolator_express_pack
+    tube = purolator_customer_packaging
+    pallet = purolator_customer_packaging
+    small_box = purolator_express_box
+    medium_box = purolator_express_box
+    large_box = purolator_express_box
+    your_packaging = purolator_customer_packaging
 
 
 class Service(Enum):

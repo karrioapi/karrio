@@ -43,10 +43,12 @@ class DocFormat(Enum):
 
 
 class PackagingUnit(Enum):
-    sm = "Small"
-    box = "Box"
-    pc = "Pieces"
-    pal = "Pallet"
+    envelope = "Small Envelope"
+    pak = "Pak"
+    tube = "Tube"
+    pallet = "Pallet"
+    small_box = "Small Box"
+    medium_box = "Medium Box"
 
 
 class PayorType(Enum):
