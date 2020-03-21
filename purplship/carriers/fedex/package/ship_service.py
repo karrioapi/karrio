@@ -1,11 +1,8 @@
-from base64 import b64encode
 from datetime import datetime
+from base64 import encodebytes
 from typing import List, Tuple, cast
-from functools import reduce
 from pyfedex.ship_service_v25 import (
     CompletedShipmentDetail,
-    ShipmentRateDetail,
-    CompletedPackageDetail,
     ProcessShipmentRequest,
     TransactionDetail,
     VersionId,
@@ -18,7 +15,7 @@ from pyfedex.ship_service_v25 import (
     Weight as FedexWeight,
     LabelSpecification,
     Dimensions as FedexDimensions,
-    ServiceDescription,
+    CompletedPackageDetail,
     TrackingId,
     ShipmentSpecialServicesRequested,
     ShipmentEventNotificationDetail,
@@ -28,7 +25,8 @@ from pyfedex.ship_service_v25 import (
     Localization,
     CodDetail,
     CodCollectionType,
-    Money
+    Money,
+    ShippingDocumentPart
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -36,7 +34,7 @@ from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.errors import RequiredFieldError
 from purplship.core.units import Weight, Dimension, Options, Package
-from purplship.core.models import ShipmentDetails, Error, ChargeDetails, ShipmentRequest
+from purplship.core.models import ShipmentDetails, Error, ShipmentRequest
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 from purplship.carriers.fedex.units import PackagingType, ServiceType, SpecialServiceType, PackagePresets
@@ -48,12 +46,8 @@ NOTIFICATION_EVENTS = ['ON_DELIVERY', 'ON_ESTIMATED_DELIVERY', 'ON_EXCEPTION', '
 def parse_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Error]]:
-    details = response.xpath(
-        ".//*[local-name() = $name]", name="CompletedShipmentDetail"
-    )
-    shipment: ShipmentDetails = _extract_shipment(details[0], settings) if len(
-        details
-    ) > 0 else None
+    detail = next(iter(response.xpath(".//*[local-name() = $name]", name="CompletedShipmentDetail")), None)
+    shipment: ShipmentDetails = _extract_shipment(detail, settings) if detail is not None else None
     return shipment, parse_error_response(response, settings)
 
 
@@ -63,60 +57,15 @@ def _extract_shipment(
     detail = CompletedShipmentDetail()
     detail.build(shipment_detail_node)
 
-    shipment_node = shipment_detail_node.xpath(
-        ".//*[local-name() = $name]", name="ShipmentRateDetails"
-    )[0]
-    shipment = ShipmentRateDetail()
-    shipment.build(shipment_node)
-
-    items_nodes = shipment_detail_node.xpath(
-        ".//*[local-name() = $name]", name="CompletedPackageDetails"
-    )
-    items: List[CompletedPackageDetail] = []
-    for node in items_nodes:
-        item = CompletedPackageDetail()
-        item.build(node)
-        items.append(item)
     tracking_number = cast(TrackingId, detail.MasterTrackingId).TrackingNumber
-    service = ServiceType(cast(ServiceDescription, detail.ServiceDescription).ServiceType).name
+    package: CompletedPackageDetail = next(iter(detail.CompletedPackageDetails), None)
+    part: ShippingDocumentPart = next(iter(package.Label.Parts)) if package is not None else None
+    label = encodebytes(cast(ShippingDocumentPart, part).Image).decode('utf-8') if part is not None else None
+
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        service=service,
         tracking_number=tracking_number,
-        total_charge=ChargeDetails(
-            name="Shipment charge",
-            amount=float(shipment.TotalNetChargeWithDutiesAndTaxes.Amount),
-            currency=shipment.TotalNetChargeWithDutiesAndTaxes.Currency,
-        ),
-        charges=[
-            ChargeDetails(
-                name="base_charge",
-                amount=float(shipment.TotalBaseCharge.Amount),
-                currency=shipment.TotalBaseCharge.Currency,
-            ),
-        ]
-        + [
-            ChargeDetails(
-                name=surcharge.SurchargeType,
-                amount=float(surcharge.Amount.Amount),
-                currency=surcharge.Amount.Currency,
-            )
-            for surcharge in shipment.Surcharges
-        ]
-        + [
-            ChargeDetails(
-                name=fee.Type,
-                amount=float(fee.Amount.Amount),
-                currency=fee.Amount.Currency,
-            )
-            for fee in shipment.AncillaryFeesAndTaxes
-        ],
-        documents=reduce(
-            lambda labels, pkg: labels
-            + [str(b64encode(part.Image), "utf-8") for part in pkg.Label.Parts],
-            items,
-            [],
-        ),
+        label=label,
     )
 
 

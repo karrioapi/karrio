@@ -1,3 +1,4 @@
+from base64 import b64encode
 from typing import Tuple, List, Any
 from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets
@@ -34,6 +35,7 @@ from pycaps.shipment import (
     OptionType,
     CustomsType,
     PreferencesType,
+    SettlementInfoType, groupIdOrTransmitShipment
 )
 
 
@@ -49,57 +51,16 @@ def parse_shipment_response(
 
 
 def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
+    info_node = next(iter(response.xpath(".//*[local-name() = $name]", name="shipment-info")))
+    label = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
+    errors = parse_error_response(label, settings)
     info: ShipmentInfoType = ShipmentInfoType()
-    info.build(response)
-    data: ShipmentPriceType = info.shipment_price
-    currency_ = Currency.CAD.name
+    info.build(info_node)
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
         tracking_number=info.tracking_pin,
-        total_charge=ChargeDetails(
-            name="Shipment charge", amount=data.due_amount, currency=currency_
-        ),
-        charges=(
-            [
-                ChargeDetails(
-                    name="base-amount", amount=data.base_amount, currency=currency_
-                ),
-                ChargeDetails(
-                    name="gst-amount", amount=data.gst_amount, currency=currency_
-                ),
-                ChargeDetails(
-                    name="pst-amount", amount=data.pst_amount, currency=currency_
-                ),
-                ChargeDetails(
-                    name="hst-amount", amount=data.hst_amount, currency=currency_
-                ),
-            ]
-            + [
-                ChargeDetails(
-                    name=adjustment.adjustment_code,
-                    amount=adjustment.adjustment_amount,
-                    currency=currency_,
-                )
-                for adjustment in data.adjustments.get_adjustment()
-            ]
-            + [
-                ChargeDetails(
-                    name=option.option_code,
-                    amount=option.option_price,
-                    currency=currency_,
-                )
-                for option in data.priced_options.get_priced_option()
-            ]
-        ),
-        shipment_date=str(data.service_standard.expected_delivery_date),
-        service=ServiceType(data.service_code).name,
-        documents=[
-            link.get("href")
-            for link in response.xpath(".//*[local-name() = $name]", name="link")
-            if link.get("rel") == "label"
-        ],
-        reference=ReferenceDetails(value=info.shipment_id, type="Shipment Id"),
+        label=label.text if len(errors) == 0 else None,
     )
 
 
@@ -132,8 +93,8 @@ def shipment_request(
     }
 
     request = ShipmentType(
-        customer_request_id=settings.account_number,
-        groupIdOrTransmitShipment=None,
+        customer_request_id=settings.customer_number,
+        groupIdOrTransmitShipment=groupIdOrTransmitShipment(),
         quickship_label_requested=None,
         cpc_pickup_indicator=None,
         requested_shipping_point=payload.shipper.postal_code,
@@ -239,6 +200,13 @@ def shipment_request(
                 customer_ref_1=payload.parcel.reference,
                 customer_ref_2=None,
             ),
+            settlement_info=SettlementInfoType(
+                paid_by_customer=None,
+                contract_id=settings.contract_id,
+                cif_shipment=None,
+                intended_method_of_payment=None,
+                promo_code=None
+            )
         ),
         return_spec=None,
         pre_authorized_payment=None,
@@ -247,6 +215,7 @@ def shipment_request(
 
 
 def _request_serializer(request: ShipmentType) -> str:
+    request.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
     return export(
         request,
         name_="shipment",

@@ -1,3 +1,4 @@
+import base64
 from typing import List
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.utils.helpers import (
@@ -53,7 +54,7 @@ class Proxy(BaseProxy):
         self, request: Serializable[ShipmentType]
     ) -> Deserializable[str]:
         response = http(
-            url=f"{self.settings.server_url}/rs/{self.settings.account_number}/{request.value.customer_request_id}/shipment",
+            url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{request.value.customer_request_id}/shipment",
             data=bytearray(request.serialize(), "utf-8"),
             headers={
                 "Content-Type": "application/vnd.cpc.shipment-v8+xml",
@@ -63,4 +64,24 @@ class Proxy(BaseProxy):
             },
             method="POST",
         )
-        return Deserializable(response, to_xml)
+
+        def fetch_label():
+            url = next(
+                (
+                    link.get("href")
+                    for link in to_xml(response).xpath(".//*[local-name() = $name]", name="link")
+                    if link.get("rel") == "label"
+                ),
+                None
+            )
+            return http(
+                decoder=lambda b: base64.encodebytes(b).decode('utf-8'),
+                url=url,
+                headers={
+                    "Accept": "application/pdf",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                },
+                method="GET",
+            ) if url else ""
+
+        return Deserializable(bundle_xml([response, f"<label>{fetch_label()}</label>"]), to_xml)

@@ -1,4 +1,4 @@
-from typing import List, Tuple, cast, Union, Type, Dict
+from typing import Union, Type
 from datetime import datetime
 from pysoap.envelope import Envelope
 from pypurolator.shipping_service import (
@@ -6,54 +6,22 @@ from pypurolator.shipping_service import (
     TrackingReferenceInformation, Address, InternationalInformation, PickupInformation, PickupType,
     ArrayOfPiece, Piece, Weight as PurolatorWeight, WeightUnit as PurolatorWeightUnit, RequestContext,
     Dimension as PurolatorDimension, DimensionUnit as PurolatorDimensionUnit, TotalWeight, PhoneNumber,
-    PrinterType as PurolatorPrinterType, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
-    Error as PurolatorError, ArrayOfError, NotificationInformation, ArrayOfOptionIDValuePair, OptionIDValuePair
+    PrinterType as PurolatorPrinterType, ValidateShipmentRequest,
+    NotificationInformation, ArrayOfOptionIDValuePair, OptionIDValuePair
 )
-from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
+from purplship.core.models import ShipmentRequest
 from purplship.core.units import PrinterType, Options, Package
 from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.xml import Element
 from purplship.core.errors import RequiredFieldError
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings
 from purplship.carriers.purolator.units import Product, Service, PackagePresets
-from purplship.carriers.purolator.error import parse_error_response
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
 
 
-def parse_shipment_creation_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Error]]:
-    details = response.xpath(".//*[local-name() = $name]", name="CreateShipmentResponse")
-    shipment = _extract_shipment(details[0], settings) if len(details) > 0 else None
-    return shipment, parse_error_response(response, settings)
-
-
-def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
-    shipment = CreateShipmentResponse()
-    shipment.build(node)
-    return ShipmentDetails(
-        carrier=settings.carrier_name,
-        service=None,
-        tracking_number=cast(PIN, shipment.ShipmentPIN).Value,
-        total_charge=None,
-        charges=[],
-        shipment_date=str(datetime.today().strftime("%Y-%m-%d")),
-        documents=[],
-        reference=None
-    )
-
-
-def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Dict[str, Envelope]]:
-    requests = dict(
-        validate=_shipment_request(payload, settings, validate=True),
-        create=_shipment_request(payload, settings),
-        error=_validation_error(settings)
-    )
-    return Serializable(requests, _request_serializer)
-
-
-def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bool = False) -> Envelope:
+def create_shipping_request(payload: ShipmentRequest, settings: Settings, validate: bool = False) -> Serializable[Envelope]:
     RequestType: ShipmentRequestType = ValidateShipmentRequest if validate else CreateShipmentRequest
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
@@ -200,40 +168,14 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
             PrinterType=PurolatorPrinterType(printing).value
         )
     )
-    return request
+    return Serializable(request, _request_serializer)
 
 
-def _request_serializer(requests: Dict[str, Envelope]) -> Dict[str, str]:
+def _request_serializer(request: Envelope) -> str:
     namespacedef_ = 'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1"'
-
-    def serialize(envelope):
-        envelope.ns_prefix_ = "SOAP-ENV"
-        envelope.Body.ns_prefix_ = envelope.ns_prefix_
-        envelope.Header.ns_prefix_ = envelope.ns_prefix_
-        envelope.Body.anytypeobjs_[0].ns_prefix_ = "ns1"
-        envelope.Header.anytypeobjs_[0].ns_prefix_ = "ns1"
-        return export(envelope, namespacedef_=namespacedef_)
-
-    return {request: serialize(envelope) for request, envelope in requests.items()}
-
-
-def _validation_error(settings: Settings):
-    return create_envelope(
-        header_content=RequestContext(
-            Version='2.1',
-            Language=settings.language,
-            GroupID=None,
-            RequestReference=None,
-            UserToken=settings.user_token
-        ),
-        body_content=ResponseInformation(
-            Errors=ArrayOfError(
-                Error=[
-                    PurolatorError(
-                        Description="Invalid Shipment Request",
-                        Code='000000'
-                    )
-                ]
-            )
-        )
-    )
+    request.ns_prefix_ = "SOAP-ENV"
+    request.Body.ns_prefix_ = request.ns_prefix_
+    request.Header.ns_prefix_ = request.ns_prefix_
+    request.Body.anytypeobjs_[0].ns_prefix_ = "ns1"
+    request.Header.anytypeobjs_[0].ns_prefix_ = "ns1"
+    return export(request, namespacedef_=namespacedef_)

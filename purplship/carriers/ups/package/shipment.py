@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from pyups import common
 from pyups.ship_web_service_schema import (
     ShipmentRequest as UPSShipmentRequest,
@@ -21,7 +21,9 @@ from pyups.ship_web_service_schema import (
     NotificationType,
     EmailDetailsType,
     CODType,
-    CurrencyMonetaryType
+    CurrencyMonetaryType,
+    PackageResultsType,
+    LabelType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -31,10 +33,9 @@ from purplship.core.units import Options, Package
 from purplship.core.errors import RequiredFieldError
 from purplship.core.models import (
     ShipmentRequest,
-    ChargeDetails,
     ShipmentDetails,
     Error,
-    ReferenceDetails,
+    RateDetails
 )
 from purplship.carriers.ups.units import (
     ShippingPackagingType,
@@ -49,49 +50,20 @@ from purplship.carriers.ups.utils import Settings
 def parse_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Error]]:
-    details = response.xpath(".//*[local-name() = $name]", name="ShipmentResponse")
-    shipment = _extract_shipment(details[0], settings) if len(details) > 0 else None
+    details = next(iter(response.xpath(".//*[local-name() = $name]", name="ShipmentResults")), None)
+    shipment = _extract_shipment(details, settings) if details is not None else None
     return shipment, parse_error_response(response, settings)
 
 
-def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDetails:
-    shipmentResponse = ShipmentResponse()
-    shipmentResponse.build(shipment_node)
-    shipment: ShipmentResultsType = shipmentResponse.ShipmentResults
-
-    if shipment.NegotiatedRateCharges is None:
-        total_charge = shipment.ShipmentCharges.TotalCharges
-    else:
-        total_charge = shipment.NegotiatedRateCharges.TotalCharge
+def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
+    shipment = ShipmentResultsType()
+    shipment.build(node)
+    package: PackageResultsType = next(iter(shipment.PackageResults), None)
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
         tracking_number=shipment.ShipmentIdentificationNumber,
-        total_charge=ChargeDetails(
-            name="Shipment charge",
-            amount=total_charge.MonetaryValue,
-            currency=total_charge.CurrencyCode,
-        ),
-        charges=[
-            ChargeDetails(
-                name=charge.Code,
-                amount=charge.MonetaryValue,
-                currency=charge.CurrencyCode,
-            )
-            for charge in [
-                shipment.ShipmentCharges.TransportationCharges,
-                shipment.ShipmentCharges.ServiceOptionsCharges,
-                shipment.ShipmentCharges.BaseServiceCharge,
-            ]
-            if charge is not None
-        ],
-        documents=[
-            pkg.ShippingLabel.GraphicImage for pkg in (shipment.PackageResults or [])
-        ],
-        reference=ReferenceDetails(
-            value=shipmentResponse.Response.TransactionReference.CustomerContext,
-            type="CustomerContext",
-        ),
+        label=cast(LabelType, package.ShippingLabel).GraphicImage,
     )
 
 

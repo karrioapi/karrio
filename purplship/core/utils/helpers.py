@@ -1,13 +1,12 @@
+import attr
+import ssl
+import json
+import asyncio
+import base64
 from io import StringIO
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 from xmltodict import parse
-from attr.exceptions import NotAnAttrsClassError
-import attr
-import ssl
-import json
-from json import JSONEncoder
-import asyncio
 from purplship.core.utils.xml import Element, fromstring, tostring
 from typing import List, TypeVar, Callable, Any, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -34,7 +33,11 @@ def export(xml_element: Element, **kwds) -> str:
     return output.getvalue()
 
 
-def request(**args) -> str:
+def decode_bytes(byte):
+    return byte.decode("utf-8")
+
+
+def request(decoder: Callable = decode_bytes, **args) -> str:
     """Return an HTTP response body.
 
     make a http request (wrapper around Request method from built in urllib)
@@ -42,7 +45,11 @@ def request(**args) -> str:
     try:
         req = Request(**args)
         with urlopen(req, context=ctx) as f:
-            return f.read().decode("utf-8")
+            res = f.read()
+            try:
+                return decoder(res)
+            except Exception as de:
+                return res
     except HTTPError as e:
         return e.read().decode("utf-8")
 
@@ -98,7 +105,7 @@ def bundle_xml(xml_strings: List[str]) -> str:
 
     <wrapper>{all the XML trees concatenated}</wrapper>
     """
-    bundle = "".join([xml_tostring(to_xml(x)) for x in xml_strings])
+    bundle = "".join([xml_tostring(to_xml(x)) for x in xml_strings if x != ""])
     return f"<wrapper>{bundle}</wrapper>"
 
 

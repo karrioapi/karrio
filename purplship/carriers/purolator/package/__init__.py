@@ -1,4 +1,4 @@
-from purplship.carriers.purolator.package.shipping_service.create_shipping import (
+from purplship.carriers.purolator.package.shipping_service import (
     create_shipment_request, parse_shipment_creation_response
 )
 from purplship.carriers.purolator.package.estimate_service import (
