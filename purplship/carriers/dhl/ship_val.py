@@ -22,6 +22,7 @@ from pydhl.ship_val_global_req_6_2 import (
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
+from purplship.core.errors import RequiredFieldError
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
     ShipmentRequest,
@@ -30,7 +31,7 @@ from purplship.core.models import (
     ReferenceDetails,
     ChargeDetails,
 )
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Options
+from purplship.core.units import Options, Package
 from purplship.carriers.dhl.units import (
     PackageType,
     ProductCode,
@@ -39,7 +40,8 @@ from purplship.carriers.dhl.units import (
     WeightUnit as DHLWeightUnit,
     CountryRegion,
     ServiceCode,
-    DeliveryType
+    DeliveryType,
+    PackagePresets
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -114,13 +116,17 @@ def _extract_shipment(
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[DHLShipmentRequest]:
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     options = Options(payload.parcel.options)
     default_product_code = (
-        ProductCode.express_worldwide_doc
+        ProductCode.dhl_express_worldwide_doc
         if payload.parcel.is_document
-        else ProductCode.express_worldwide_nondoc
+        else ProductCode.dhl_express_worldwide_nondoc
     )
     product = next(
         (ProductCode[svc] for svc in payload.parcel.services if svc in ProductCode.__members__),
@@ -239,24 +245,22 @@ def shipment_request(
                 Piece=[
                     Piece(
                         PieceID=payload.parcel.id,
-                        PackageType=PackageType[
-                            payload.parcel.packaging_type or "box"
-                        ].value,
-                        Depth=Dimension(payload.parcel.length, dimension_unit).value,
-                        Width=Dimension(payload.parcel.width, dimension_unit).value,
-                        Height=Dimension(payload.parcel.height, dimension_unit).value,
-                        Weight=Weight(payload.parcel.weight, weight_unit).value,
+                        PackageType=PackageType[package.packaging_type or "your_packaging"].value,
+                        Depth=package.length.value,
+                        Width=package.width.value,
+                        Height=package.height.value,
+                        Weight=package.weight.value,
                         DimWeight=None,
                         PieceContents=payload.parcel.description,
                     )
                 ]
             ),
-            Weight=Weight(payload.parcel.weight, weight_unit).value,
+            Weight=package.weight.value,
             CurrencyCode=options.currency or "USD",
-            WeightUnit=DHLWeightUnit[weight_unit.name].value,
-            DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
+            WeightUnit=DHLWeightUnit[package.weight_unit.name].value,
+            DimensionUnit=DHLDimensionUnit[package.dimension_unit.name].value,
             Date=time.strftime("%Y-%m-%d"),
-            PackageType=PackageType[payload.parcel.packaging_type or "box"].value,
+            PackageType=PackageType[package.packaging_type].value,
             IsDutiable="Y" if payload.customs is not None else "N",
             InsuredAmount=options.insurance.amount if options.insurance else None,
             ShipmentCharges=options.cash_on_delivery.amount if options.cash_on_delivery else None,

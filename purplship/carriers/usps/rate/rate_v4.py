@@ -161,7 +161,7 @@ class RateRequestExtensionV4:
     @property
     def mail_type(self):
         return (
-            FirstClassMailType[self.parcel.packaging_type or "box"].value
+            FirstClassMailType[self.parcel.packaging_type or "small_box"].value
             if Service(self.service) in REQUIRED_MAIL_TYPE_SERVICES else None
         )
 

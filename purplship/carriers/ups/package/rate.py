@@ -20,13 +20,15 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit, Weight, WeightUnit, Dimension
+from purplship.core.units import Package
 from purplship.core.models import RateDetails, ChargeDetails, Error, RateRequest
+from purplship.core.errors import RequiredFieldError
 from purplship.carriers.ups.units import (
     RatingServiceCode,
     RatingPackagingType,
     WeightUnit as UPSWeightUnit,
     ShippingServiceCode,
+    PackagePresets
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -112,16 +114,16 @@ def _extract_package_rate(
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[UPSRateRequest]:
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    service = (
-        [
-            RatingServiceCode[svc]
-            for svc in payload.parcel.services
-            if svc in RatingServiceCode.__members__
-        ]
-        + [RatingServiceCode.ups_worldwide_express]
-    )[0]
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
+    service: str = next(
+        (RatingServiceCode[s].value for s in payload.parcel.services if s in RatingServiceCode.__members__),
+        RatingServiceCode.ups_express.value
+    )
+
+    if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
+        raise RequiredFieldError("parcel.weight")
+
     request = UPSRateRequest(
         Request=common.RequestType(
             RequestOption=["Rate"],
@@ -169,7 +171,7 @@ def rate_request(
             FRSPaymentInformation=None,
             FreightShipmentInformation=None,
             GoodsNotInFreeCirculationIndicator=None,
-            Service=UOMCodeDescriptionType(Code=service.value, Description=None),
+            Service=UOMCodeDescriptionType(Code=service, Description=None),
             NumOfPieces=None,  # Only required for Freight
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
             DocumentsOnlyIndicator="" if payload.parcel.is_document else None,
@@ -177,25 +179,25 @@ def rate_request(
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
                         Code=RatingPackagingType[
-                            payload.parcel.packaging_type or "BOX"
+                            payload.parcel.packaging_type or "small_box"
                         ].value,
                         Description=None,
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=dimension_unit.value, Description=None
+                            Code=package.dimension_unit.value, Description=None
                         ),
-                        Length=Dimension(payload.parcel.length, dimension_unit).value,
-                        Width=Dimension(payload.parcel.width, dimension_unit).value,
-                        Height=Dimension(payload.parcel.height, dimension_unit).value,
-                    ),
+                        Length=package.length.value,
+                        Width=package.width.value,
+                        Height=package.height.value,
+                    ) if any([package.length.value, package.height.value, package.width.value]) else None,
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=UPSWeightUnit[weight_unit.name].value, Description=None
+                            Code=UPSWeightUnit[package.weight_unit.name].value, Description=None
                         ),
-                        Weight=Weight(payload.parcel.weight, weight_unit).value,
-                    ),
+                        Weight=package.weight.value,
+                    ) if package.weight.value else None,
                     Commodity=None,
                     PackageServiceOptions=None,
                     AdditionalHandlingIndicator=None,

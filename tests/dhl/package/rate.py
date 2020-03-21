@@ -28,6 +28,22 @@ class TestDHLRating(unittest.TestCase):
 
         self.assertEqual(serialized_request, RateRequestXML)
 
+    def test_create_rate_request_with_package_preset(self):
+        request = gateway.mapper.create_rate_request(RateRequest(**RateWithPresetPayload))
+
+        # remove MessageTime, Date and ReadyTime for testing purpose
+        serialized_request = re.sub(
+            "<MessageTime>[^>]+</MessageTime>",
+            "",
+            re.sub(
+                "<Date>[^>]+</Date>",
+                "",
+                re.sub("<ReadyTime>[^>]+</ReadyTime>", "", request.serialize()),
+            ),
+        )
+
+        self.assertEqual(serialized_request, RateRequestFromPresetXML)
+
     @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         rating.fetch(self.RateRequest).from_(gateway)
@@ -72,7 +88,7 @@ RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
-        "services": ["express_worldwide_doc"],
+        "services": ["dhl_express_worldwide_doc"],
         "id": "1",
         "height": 3,
         "length": 10,
@@ -80,6 +96,17 @@ RatePayload = {
         "weight": 4.0,
         "is_document": True,
         "options": {"currency": "CAD", "insurance": {"amount": 75}},
+    },
+}
+
+
+RateWithPresetPayload = {
+    "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
+    "recipient": {"city": "Lome", "country_code": "TG"},
+    "parcel": {
+        "package_preset": "dhl_express_tube",
+        "services": ["dhl_express_worldwide_nondoc"],
+        "options": {"currency": "CAD"},
     },
 }
 
@@ -118,7 +145,7 @@ ParsedRateResponse = [
             "extra_charges": [
                 {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
             ],
-            "service_name": "express_worldwide_doc",
+            "service_name": "dhl_express_worldwide_doc",
             "service_type": "time_definite",
             "total_charge": 208.02,
         },
@@ -130,7 +157,7 @@ ParsedRateResponse = [
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [],
-            "service_name": "express_easy_doc",
+            "service_name": "dhl_express_easy_doc",
             "service_type": "time_definite",
             "total_charge": 213.47,
         },
@@ -148,7 +175,7 @@ ParsedRateVolWeightHigher = [
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [],
-            "service_name": "express_worldwide_nondoc",
+            "service_name": "dhl_express_worldwide_nondoc",
             "service_type": "time_definite",
             "total_charge": 0.0,
         }
@@ -245,6 +272,55 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
             <QtdShp>
                 <GlobalProductCode>D</GlobalProductCode>
                 <LocalProductCode>D</LocalProductCode>
+            </QtdShp>
+        </BkgDetails>
+        <To>
+            <CountryCode>TG</CountryCode>
+            <City>Lome</City>
+        </To>
+    </GetQuote>
+</p:DCTRequest>
+"""
+
+RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.">
+    <GetQuote>
+        <Request>
+            <ServiceHeader>
+                
+                <MessageReference>1234567890123456789012345678901</MessageReference>
+                <SiteID>site_id</SiteID>
+                <Password>password</Password>
+            </ServiceHeader>
+            <MetaData>
+                <SoftwareName>3PV</SoftwareName>
+                <SoftwareVersion>1.0</SoftwareVersion>
+            </MetaData>
+        </Request>
+        <From>
+            <CountryCode>CA</CountryCode>
+            <Postalcode>H3N1S4</Postalcode>
+        </From>
+        <BkgDetails>
+            <PaymentCountryCode>CA</PaymentCountryCode>
+            
+            
+            <DimensionUnit>I</DimensionUnit>
+            <WeightUnit>L</WeightUnit>
+            <NumberOfPieces>1</NumberOfPieces>
+            <ShipmentWeight>5.</ShipmentWeight>
+            <Pieces>
+                <Piece>
+                    <PackageTypeCode>COY</PackageTypeCode>
+                    <Height>15.</Height>
+                    <Depth>15.</Depth>
+                    <Width>96.</Width>
+                    <Weight>5.</Weight>
+                </Piece>
+            </Pieces>
+            <IsDutiable>Y</IsDutiable>
+            <QtdShp>
+                <GlobalProductCode>P</GlobalProductCode>
+                <LocalProductCode>P</LocalProductCode>
             </QtdShp>
         </BkgDetails>
         <To>

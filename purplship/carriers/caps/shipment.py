@@ -1,6 +1,6 @@
 from typing import Tuple, List, Any
 from purplship.carriers.caps.error import parse_error_response
-from purplship.carriers.caps.units import OptionCode, ServiceType
+from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets
 from purplship.carriers.caps.utils import Settings
 from purplship.core.models import (
     Error,
@@ -9,10 +9,11 @@ from purplship.core.models import (
     ReferenceDetails,
     ShipmentRequest,
 )
-from purplship.core.units import Currency, Weight, WeightUnit, DimensionUnit, Dimension, Options
+from purplship.core.units import Currency, WeightUnit, DimensionUnit, Options, Package
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
+from purplship.core.errors import RequiredFieldError
 from pycaps.shipment import (
     ShipmentType,
     ShipmentInfoType,
@@ -105,8 +106,12 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ShipmentType]:
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "CM"]
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     service = next(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
         None
@@ -166,11 +171,11 @@ def shipment_request(
                 ),
             ),
             parcel_characteristics=ParcelCharacteristicsType(
-                weight=Weight(payload.parcel.weight, weight_unit).KG,
+                weight=package.weight.KG,
                 dimensions=dimensionsType(
-                    length=Dimension(payload.parcel.length, dimension_unit).CM,
-                    width=Dimension(payload.parcel.width, dimension_unit).CM,
-                    height=Dimension(payload.parcel.height, dimension_unit).CM,
+                    length=package.length.CM,
+                    width=package.width.CM,
+                    height=package.height.CM,
                 ),
                 unpackaged=None,
                 mailing_tube=None,

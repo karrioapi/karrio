@@ -27,7 +27,8 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit, Weight, WeightUnit, Dimension, Options
+from purplship.core.units import Options, Package
+from purplship.core.errors import RequiredFieldError
 from purplship.core.models import (
     ShipmentRequest,
     ChargeDetails,
@@ -39,6 +40,7 @@ from purplship.carriers.ups.units import (
     ShippingPackagingType,
     ShippingServiceCode,
     WeightUnit as UPSWeightUnit,
+    PackagePresets
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -96,13 +98,16 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[UPSShipmentRequest]:
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
     options = Options(payload.parcel.options)
     service = next(
         (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
         None
     )
+
+    if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
+        raise RequiredFieldError("parcel.weight")
 
     request = UPSShipmentRequest(
         Request=common.RequestType(
@@ -230,7 +235,7 @@ def shipment_request(
                 RestrictedArticles=None,
                 InsideDelivery=None,
                 ItemDisposal=None
-            ) if options.has_content else None,
+            ) if any([options.cash_on_delivery, options.notification]) else None,
             Package=[
                 PackageType(
                     Description=payload.parcel.description,
@@ -242,18 +247,18 @@ def shipment_request(
                     else None,
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
-                            Code=dimension_unit.value, Description=None
+                            Code=package.dimension_unit.value, Description=None
                         ),
-                        Length=Dimension(payload.parcel.length, dimension_unit).value,
-                        Width=Dimension(payload.parcel.width, dimension_unit).value,
-                        Height=Dimension(payload.parcel.height, dimension_unit).value,
+                        Length=package.length.value,
+                        Width=package.width.value,
+                        Height=package.height.value,
                     ),
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
-                            Code=UPSWeightUnit[weight_unit.name].value, Description=None
+                            Code=UPSWeightUnit[package.weight_unit.name].value, Description=None
                         ),
-                        Weight=Weight(payload.parcel.weight, weight_unit).value,
+                        Weight=package.weight.value,
                     ),
                     LargePackageIndicator=None,
                     ReferenceNumber=None,

@@ -15,6 +15,10 @@ class TestUPSShipment(unittest.TestCase):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
+    def test_create_package_shipment_with_package_preset_request(self):
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**package_shipment_with_package_preset_data))
+        self.assertEqual(request.serialize(), ShipmentRequestWithPresetXML)
+
     @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         shipment.create(self.ShipmentRequest).with_(gateway)
@@ -72,12 +76,51 @@ package_shipment_data = {
         "services": ["ups_express"],
         "dimension_unit": "IN",
         "weight_unit": "LB",
-        "packaging_type": "customer_supplied_package",
+        "packaging_type": "ups_customer_supplied_package",
         "description": "Description",
         "length": 7,
         "width": 5,
         "height": 2,
         "weight": 10,
+        "options": {
+            "notification": {
+                "email": "test@mail.com"
+            }
+        }
+    },
+    "payment": {"paid_by": "sender"},
+    "label": {"format": "GIF"},
+}
+
+
+package_shipment_with_package_preset_data = {
+    "shipper": {
+        "company_name": "Shipper Name",
+        "person_name": "Shipper Attn Name",
+        "federal_tax_id": "123456",
+        "phone_number": "1234567890",
+        "address_line_1": "Address Line",
+        "city": "City",
+        "state_code": "StateProvinceCode",
+        "postal_code": "PostalCode",
+        "country_code": "CountryCode",
+    },
+    "recipient": {
+        "company_name": "Ship To Name",
+        "person_name": "Ship To Attn Name",
+        "phone_number": "1234567890",
+        "address_line_1": "Address Line",
+        "city": "City",
+        "state_code": "StateProvinceCode",
+        "postal_code": "PostalCode",
+        "country_code": "CountryCode",
+    },
+    "parcel": {
+        "reference": "Your Customer Context",
+        "services": ["ups_express"],
+        "packaging_type": "ups_customer_supplied_package",
+        "description": "Description",
+        "package_preset": "ups_medium_express_box",
         "options": {
             "notification": {
                 "email": "test@mail.com"
@@ -335,6 +378,101 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                             <Code>LBS</Code>
                         </UnitOfMeasurement>
                         <Weight>10.0</Weight>
+                    </PackageWeight>
+                </Package>
+            </Shipment>
+            <LabelSpecification>
+                <LabelImageFormat>
+                    <Code>GIF</Code>
+                    <Description>GIF</Description>
+                </LabelImageFormat>
+            </LabelSpecification>
+        </ship:ShipmentRequest>
+    </tns:Body>
+</tns:Envelope>
+"""
+
+ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth" xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
+    <tns:Header>
+        <upss:UPSSecurity>
+            <UsernameToken>
+                <Username>username</Username>
+                <Password>password</Password>
+            </UsernameToken>
+            <ServiceAccessToken>
+                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
+            </ServiceAccessToken>
+        </upss:UPSSecurity>
+    </tns:Header>
+    <tns:Body>
+        <ship:ShipmentRequest>
+            <common:Request>
+                <RequestOption>validate</RequestOption>
+                <TransactionReference>
+                    <CustomerContext>Your Customer Context</CustomerContext>
+                </TransactionReference>
+            </common:Request>
+            <Shipment>
+                <Description>Description</Description>
+                <Shipper>
+                    <Name>Shipper Name</Name>
+                    <AttentionName>Shipper Attn Name</AttentionName>
+                    <TaxIdentificationNumber>123456</TaxIdentificationNumber>
+                    <Phone>
+                        <Number>1234567890</Number>
+                    </Phone>
+                    <ShipperNumber>Your Account Number</ShipperNumber>
+                    <Address>
+                        <AddressLine>Address Line</AddressLine>
+                        <City>City</City>
+                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
+                        <PostalCode>PostalCode</PostalCode>
+                        <CountryCode>CountryCode</CountryCode>
+                    </Address>
+                </Shipper>
+                <ShipTo>
+                    <Name>Ship To Name</Name>
+                    <AttentionName>Ship To Attn Name</AttentionName>
+                    <Phone>
+                        <Number>1234567890</Number>
+                    </Phone>
+                    <Address>
+                        <AddressLine>Address Line</AddressLine>
+                        <City>City</City>
+                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
+                        <PostalCode>PostalCode</PostalCode>
+                        <CountryCode>CountryCode</CountryCode>
+                    </Address>
+                </ShipTo>
+                <Service>
+                    <Code>01</Code>
+                </Service>
+                <ShipmentServiceOptions>
+                    <Notification>
+                        <NotificationCode>8</NotificationCode>
+                        <EMail>
+                            <EMailAddress>test@mail.com</EMailAddress>
+                        </EMail>
+                    </Notification>
+                </ShipmentServiceOptions>
+                <Package>
+                    <Description>Description</Description>
+                    <Packaging>
+                        <Code>02</Code>
+                    </Packaging>
+                    <Dimensions>
+                        <UnitOfMeasurement>
+                            <Code>IN</Code>
+                        </UnitOfMeasurement>
+                        <Length>3.0</Length>
+                        <Width>16.0</Width>
+                        <Height>11.0</Height>
+                    </Dimensions>
+                    <PackageWeight>
+                        <UnitOfMeasurement>
+                            <Code>LBS</Code>
+                        </UnitOfMeasurement>
+                        <Weight>30.0</Weight>
                     </PackageWeight>
                 </Package>
             </Shipment>

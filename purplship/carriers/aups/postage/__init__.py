@@ -70,8 +70,8 @@ def calculate_postage_request(
 
     is_letter: bool = (
         any(svc for svc in payload.parcel.services if "letter" in svc)
-        or payload.parcel.packaging_type == PackagingUnit.sm.name
-        or payload.parcel.packaging_type == PackagingUnit.sm.name
+        or payload.parcel.packaging_type == PackagingUnit.envelope.name
+        or payload.parcel.packaging_type == PackagingUnit.pak.name
     )
     is_international = (
         payload.recipient.country_code is None

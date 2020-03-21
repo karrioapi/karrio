@@ -1,7 +1,9 @@
 """PurplShip Australia post rate mapper module."""
 
 from typing import List, Tuple
+from pyaups.shipping_price_request import ShippingPriceRequest, Shipment, From, To, Item
 from purplship.carriers.aups.error import parse_error_response
+from purplship.carriers.aups.units import PackagingType
 from purplship.core.utils.helpers import jsonify, to_dict
 from purplship.core.utils.serializable import Serializable
 from purplship.core.models import Error, ChargeDetails, RateRequest, RateDetails
@@ -13,7 +15,6 @@ from pyaups.shipping_price_response import (
     Shipment as ResponseShipment,
     ShipmentSummary,
 )
-from pyaups.shipping_price_request import ShippingPriceRequest, Shipment, From, To, Item
 
 
 def parse_shipping_price_response(
@@ -64,6 +65,11 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
     """
     if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
         raise OriginNotServicedError(payload.shipper.country_code, "Australia post")
+
+    packaging_type = next(
+        (t.value for t in PackagingType if t.name == payload.parcel.packaging_type),
+        None
+    )
 
     request = ShippingPriceRequest(
         shipments=[
@@ -124,7 +130,7 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                         authority_to_leave=False,
                         reason_for_return=None,
                         allow_partial_delivery=True,
-                        packaging_type=payload.parcel.packaging_type,  # TODO: Convert packaging type
+                        packaging_type=packaging_type,
                         atl_number=None,
                         features=None,
                         tracking_details=None,

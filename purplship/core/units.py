@@ -1,5 +1,46 @@
+from dataclasses import dataclass
 from enum import Enum
-from purplship.core.models import Insurance, COD, Notification
+from purplship.core.models import Insurance, COD, Notification, Parcel
+
+
+@dataclass
+class PackagePreset:
+    width: float = None
+    height: float = None
+    length: float = None
+    weight: float = None
+    volume: float = None
+    thickness: float = None
+    weight_unit: str = "LB"
+    dimension_unit: str = "IN"
+    packaging_type: str = None
+
+
+class DocFormat(Enum):
+    gif = "GIF"
+    jpg = "JPG"
+    pdf = "PDF"
+    png = "PNG"
+
+
+class PackagingUnit(Enum):
+    envelope = "Small Envelope"
+    pak = "Pak"
+    tube = "Tube"
+    pallet = "Pallet"
+    small_box = "Small Box"
+    medium_box = "Medium Box"
+
+
+class PayorType(Enum):
+    sender = "SENDER"
+    recipient = "RECIPIENT"
+    third_party = "THIRD_PARTY"
+
+
+class WeightUnit(Enum):
+    KG = "KG"
+    LB = "LB"
 
 
 class DimensionUnit(Enum):
@@ -34,30 +75,49 @@ class Dimension:
         else:
             return float(self._value * 2.54)
 
-
-class DocFormat(Enum):
-    gif = "GIF"
-    jpg = "JPG"
-    pdf = "PDF"
-    png = "PNG"
-
-
-class PackagingUnit(Enum):
-    sm = "Small"
-    box = "Box"
-    pc = "Pieces"
-    pal = "Pallet"
+    @property
+    def M(self):
+        if self._unit is None or self._value is None:
+            return None
+        else:
+            return self.CM / 100
 
 
-class PayorType(Enum):
-    sender = "SENDER"
-    recipient = "RECIPIENT"
-    third_party = "THIRD_PARTY"
+class Volume:
+    def __init__(self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None):
+        self._side1 = side1
+        self._side2 = side2
+        self._side3 = side3
+
+    @property
+    def value(self):
+        if not any([self._side1.value, self._side2.value, self._side3.value]):
+            return None
+
+        return self._side1.M * self._side2.M * self._side3.M
+
+    @property
+    def cubic_meter(self):
+        if self.value is None:
+            return None
+        return self.value * 250
 
 
-class WeightUnit(Enum):
-    KG = "KG"
-    LB = "LB"
+class Girth:
+    def __init__(self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None):
+        self._side1 = side1
+        self._side2 = side2
+        self._side3 = side3
+
+    @property
+    def value(self):
+        sides = [self._side1.CM, self._side2.CM, self._side3.CM]
+        if not any(sides):
+            return None
+
+        sides.sort()
+        small_side1, small_side2, _ = sides
+        return (small_side1 + small_side2) * 2
 
 
 class Weight:
@@ -98,12 +158,81 @@ class Weight:
         return None
 
 
-class OptionCode(Enum):  # TODO:: Need to be documented
-    cash_on_delivery = "COD"
-    currency = "currency"
-    insurance = "insurance"
-    notification = "notification"
-    printing = "printing"
+class Package:
+    def __init__(self, parcel: Parcel, template: PackagePreset = None):
+        self._parcel = parcel
+        self._preset = template or PackagePreset()
+
+    @property
+    def dimension_unit(self):
+        dimensions = [self._parcel.height, self._parcel.width, self._parcel.length]
+        unit = (
+            (self._parcel.dimension_unit or self._preset.dimension_unit)
+            if any(dimensions) else
+            self._preset.dimension_unit
+        )
+
+        return DimensionUnit[unit]
+
+    @property
+    def weight_unit(self):
+        unit = (
+            self._preset.weight_unit
+            if self._parcel.weight is None else
+            (self._parcel.weight_unit or self._preset.weight_unit)
+        )
+
+        return WeightUnit[unit]
+
+    @property
+    def packaging_type(self):
+        return self._parcel.packaging_type or self._preset.packaging_type
+
+    @property
+    def weight(self):
+        return Weight(
+            self._parcel.weight or self._preset.weight,
+            self.weight_unit
+        )
+
+    @property
+    def width(self):
+        return Dimension(
+            self._preset.width or self._parcel.width,
+            self.dimension_unit
+        )
+
+    @property
+    def height(self):
+        return Dimension(
+            self._preset.height or self._parcel.height,
+            self.dimension_unit
+        )
+
+    @property
+    def length(self):
+        return Dimension(
+            self._preset.length or self._parcel.length,
+            self.dimension_unit
+        )
+
+    @property
+    def girth(self):
+        return Girth(
+            self.width, self.length, self.height
+        )
+
+    @property
+    def volume(self):
+        return Volume(
+            self.width, self.length, self.height
+        )
+
+    @property
+    def thickness(self):
+        return Dimension(
+            self._preset.thickness, self.dimension_unit
+        )
 
 
 class Options:
@@ -112,33 +241,40 @@ class Options:
 
     @property
     def has_content(self):
-        return any(o for o in self._payload if o in OptionCode.__members__)
+        return any(o for o in self._payload if o in Options.Code.__members__)
 
     @property
     def cash_on_delivery(self):
-        if OptionCode.cash_on_delivery.name in self._payload:
-            return COD(**self._payload[OptionCode.cash_on_delivery.name])
+        if Options.Code.cash_on_delivery.name in self._payload:
+            return COD(**self._payload[Options.Code.cash_on_delivery.name])
         return None
 
     @property
     def currency(self):
-        return self._payload.get(OptionCode.currency.name)
+        return self._payload.get(Options.Code.currency.name)
 
     @property
     def insurance(self):
-        if OptionCode.insurance.name in self._payload:
-            return Insurance(**self._payload[OptionCode.insurance.name])
+        if Options.Code.insurance.name in self._payload:
+            return Insurance(**self._payload[Options.Code.insurance.name])
         return None
 
     @property
     def notification(self):
-        if OptionCode.notification.name in self._payload:
-            return Notification(**self._payload[OptionCode.notification.name])
+        if Options.Code.notification.name in self._payload:
+            return Notification(**self._payload[Options.Code.notification.name])
         return None
 
     @property
     def printing(self):
-        return self._payload.get(OptionCode.printing.name)
+        return self._payload.get(Options.Code.printing.name)
+
+    class Code(Enum):  # TODO:: Need to be documented
+        cash_on_delivery = "COD"
+        currency = "currency"
+        insurance = "insurance"
+        notification = "notification"
+        printing = "printing"
 
 
 class PrinterType(Enum):

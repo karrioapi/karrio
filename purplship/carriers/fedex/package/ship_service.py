@@ -34,11 +34,12 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import Weight, WeightUnit, DimensionUnit, Dimension, Options
+from purplship.core.errors import RequiredFieldError
+from purplship.core.units import Weight, Dimension, Options, Package
 from purplship.core.models import ShipmentDetails, Error, ChargeDetails, ShipmentRequest
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
-from purplship.carriers.fedex.units import PackagingType, ServiceType, SpecialServiceType
+from purplship.carriers.fedex.units import PackagingType, ServiceType, SpecialServiceType, PackagePresets
 
 
 NOTIFICATION_EVENTS = ['ON_DELIVERY', 'ON_ESTIMATED_DELIVERY', 'ON_EXCEPTION', 'ON_SHIPMENT', 'ON_TENDER']
@@ -122,8 +123,12 @@ def _extract_shipment(
 def process_shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ProcessShipmentRequest]:
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     service = next(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
         None
@@ -144,11 +149,11 @@ def process_shipment_request(
             ShipTimestamp=datetime.now(),
             DropoffType="REGULAR_PICKUP",
             ServiceType=service,
-            PackagingType=PackagingType[payload.parcel.packaging_type or "box"].value,
+            PackagingType=PackagingType[payload.parcel.packaging_type or "small_box"].value,
             ManifestDetail=None,
             TotalWeight=FedexWeight(
-                Units=weight_unit.value,
-                Value=Weight(payload.parcel.weight, weight_unit).value,
+                Units=package.weight_unit.value,
+                Value=package.weight.value,
             ),
             TotalInsuredValue=options.insurance.amount if options.insurance else None,
             PreferredCurrency=options.currency,
@@ -335,14 +340,14 @@ def process_shipment_request(
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
                     Weight=FedexWeight(
-                        Units=weight_unit.value,
-                        Value=Weight(pkg.weight, weight_unit).value,
+                        Units=package.weight_unit.value,
+                        Value=Weight(pkg.weight, package.weight_unit).value,
                     ) if pkg.weight else None,
                     Dimensions=FedexDimensions(
-                        Length=Dimension(pkg.length, dimension_unit).value,
-                        Width=Dimension(pkg.width, dimension_unit).value,
-                        Height=Dimension(pkg.height, dimension_unit).value,
-                        Units=dimension_unit.value,
+                        Length=Dimension(pkg.length, package.dimension_unit).value,
+                        Width=Dimension(pkg.width, package.dimension_unit).value,
+                        Height=Dimension(pkg.height, package.dimension_unit).value,
+                        Units=package.dimension_unit.value,
                     ) if any([pkg.length, pkg.width, pkg.height]) else None,
                     PhysicalPackaging=None,
                     ItemDescription=pkg.description,

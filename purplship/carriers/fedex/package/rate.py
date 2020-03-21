@@ -17,10 +17,11 @@ from pyfedex.rate_service_v26 import (
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.units import Currency, WeightUnit, Weight
+from purplship.core.units import Currency, Package, Options
 from purplship.core.utils.xml import Element
+from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateDetails, RateRequest, Error, ChargeDetails
-from purplship.carriers.fedex.units import PackagingType, ServiceType, RateType
+from purplship.carriers.fedex.units import PackagingType, ServiceType, RateType, PackagePresets
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
@@ -95,10 +96,17 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[FedexRateRequest]:
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    requested_services = [
-        svc for svc in payload.parcel.services if svc in ServiceType.__members__
-    ]
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
+    service = next(
+        (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
+        None
+    )
+    options = Options(payload.parcel.options)
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -112,21 +120,15 @@ def rate_request(
         RequestedShipment=RequestedShipment(
             ShipTimestamp=datetime.now(),
             DropoffType="REGULAR_PICKUP",
-            ServiceType=(
-                ServiceType[requested_services[0]].value
-                if len(requested_services) > 0
-                else None
-            ),
-            PackagingType=PackagingType[
-                payload.parcel.packaging_type or "your_packaging"
-            ].value,
+            ServiceType=service,
+            PackagingType=PackagingType[package.packaging_type or "your_packaging"].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
-                Units=weight_unit.value,
-                Value=Weight(payload.parcel.weight, weight_unit).value,
+                Units=package.weight_unit.value,
+                Value=package.weight.value,
             ),
             TotalInsuredValue=None,
-            PreferredCurrency=payload.parcel.options.get("currency"),
+            PreferredCurrency=options.currency,
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
                 AccountNumber=settings.account_number,

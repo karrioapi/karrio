@@ -10,13 +10,14 @@ from pypurolator.shipping_service import (
     Error as PurolatorError, ArrayOfError, NotificationInformation, ArrayOfOptionIDValuePair, OptionIDValuePair
 )
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, PrinterType, Options
+from purplship.core.units import PrinterType, Options, Package
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
+from purplship.core.errors import RequiredFieldError
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings
-from purplship.carriers.purolator.units import Product, Service
+from purplship.carriers.purolator.units import Product, Service, PackagePresets
 from purplship.carriers.purolator.error import parse_error_response
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
@@ -54,9 +55,16 @@ def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Ser
 
 def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bool = False) -> Envelope:
     RequestType: ShipmentRequestType = ValidateShipmentRequest if validate else CreateShipmentRequest
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    dimension_unit: DimensionUnit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
-    service = next((svc for svc in payload.parcel.services if svc in Product.__members__), None)
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
+    service = next(
+        (Product[s].value for s in payload.parcel.services if s in Product.__members__),
+        Product.purolator_express.value
+    )
     is_international = payload.shipper.country_code != payload.recipient.country_code
     options = Options(payload.parcel.options)
     printing = PrinterType[options.printing or "regular"].value
@@ -126,32 +134,32 @@ def _shipment_request(payload: ShipmentRequest, settings: Settings, validate: bo
                 FromOnLabelInformation=None,
                 ShipmentDate=datetime.today().strftime("%Y-%m-%d"),
                 PackageInformation=PackageInformation(
-                    ServiceID=Product[service or "purolator_express"].value,
+                    ServiceID=service,
                     Description=payload.parcel.description,
                     TotalWeight=TotalWeight(
-                        Value=Weight(payload.parcel.weight, weight_unit).value,
-                        WeightUnit=PurolatorWeightUnit[weight_unit.value].value
-                    ) if payload.parcel.weight else None,
+                        Value=package.weight.value,
+                        WeightUnit=PurolatorWeightUnit[package.weight_unit.value].value
+                    ) if package.weight.value else None,
                     TotalPieces=1,
                     PiecesInformation=ArrayOfPiece(
                         Piece=[
                             Piece(
                                 Weight=PurolatorWeight(
-                                    Value=Weight(payload.parcel.weight, weight_unit).value,
-                                    WeightUnit=PurolatorWeightUnit[weight_unit.value].value
-                                ) if payload.parcel.weight else None,
+                                    Value=package.weight.value,
+                                    WeightUnit=PurolatorWeightUnit[package.weight_unit.value].value
+                                ) if package.weight.value else None,
                                 Length=PurolatorDimension(
-                                    Value=Dimension(payload.parcel.length, dimension_unit).value,
-                                    DimensionUnit=PurolatorDimensionUnit[dimension_unit.value].value
-                                ) if payload.parcel.length else None,
+                                    Value=package.length.value,
+                                    DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value
+                                ) if package.length.value else None,
                                 Width=PurolatorDimension(
-                                    Value=Dimension(payload.parcel.width, dimension_unit).value,
-                                    DimensionUnit=PurolatorDimensionUnit[dimension_unit.value].value
-                                ) if payload.parcel.width else None,
+                                    Value=package.width.value,
+                                    DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value
+                                ) if package.width.value else None,
                                 Height=PurolatorDimension(
-                                    Value=Dimension(payload.parcel.height, dimension_unit).value,
-                                    DimensionUnit=PurolatorDimensionUnit[dimension_unit.value].value
-                                ) if payload.parcel.height else None,
+                                    Value=package.height.value,
+                                    DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value
+                                ) if package.height.value else None,
                                 Options=None
                             )
                         ]

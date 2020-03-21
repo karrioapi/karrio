@@ -20,16 +20,15 @@ from purplship.core.utils.xml import Element
 from purplship.carriers.caps.utils import Settings
 from purplship.core.units import (
     Weight,
-    WeightUnit,
     Dimension,
-    DimensionUnit,
     Country,
     Currency,
+    Package
 )
-from purplship.core.errors import OriginNotServicedError
+from purplship.core.errors import OriginNotServicedError, RequiredFieldError
 from purplship.core.models import RateDetails, ChargeDetails, Error, RateRequest
 from purplship.carriers.caps.error import parse_error_response
-from purplship.carriers.caps.units import OptionCode, ServiceType
+from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets
 
 
 def parse_price_quotes(
@@ -96,8 +95,12 @@ def mailing_scenario_request(
             payload.shipper.country_code, settings.carrier_name
         )
 
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "KG"]
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "CM"]
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     requested_services = [
         svc for svc in payload.parcel.services if svc in ServiceType.__members__
     ]
@@ -127,11 +130,11 @@ def mailing_scenario_request(
             else None
         ),
         parcel_characteristics=parcel_characteristicsType(
-            weight=Weight(payload.parcel.weight, weight_unit).KG,
+            weight=package.weight.KG,
             dimensions=dimensionsType(
-                length=Dimension(payload.parcel.length, dimension_unit).CM,
-                width=Dimension(payload.parcel.width, dimension_unit).CM,
-                height=Dimension(payload.parcel.height, dimension_unit).CM,
+                length=package.length.CM,
+                width=package.width.CM,
+                height=package.height.CM,
             ),
             unpackaged=None,
             mailing_tube=None,

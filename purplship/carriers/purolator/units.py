@@ -1,4 +1,35 @@
-from enum import Enum
+from enum import Enum, Flag
+from purplship.core.units import PackagePreset as BasePackagePreset
+from dataclasses import dataclass
+
+
+@dataclass
+class PackagePreset(BasePackagePreset):
+    dimension_unit: str = "IN"
+    weight_unit: str = "LB"
+
+
+class PackagePresets(Flag):
+    purolator_express_envelope = PackagePreset(weight=1)
+    purolator_express_pack = PackagePreset(weight=3)
+    purolator_express_box = PackagePreset(weight=7)
+
+
+class PackagingType(Enum):
+    purolator_express_envelope = "Envelop"
+    purolator_express_pack = "Pack"
+    purolator_express_box = "Box"
+    purolator_customer_packaging = "Customer Packaging"
+
+    """ Unified Packaging type mapping """
+    envelope = purolator_express_envelope
+    pak = purolator_express_pack
+    tube = purolator_customer_packaging
+    pallet = purolator_customer_packaging
+    small_box = purolator_express_box
+    medium_box = purolator_express_box
+    large_box = purolator_express_box
+    your_packaging = purolator_customer_packaging
 
 
 class Service(Enum):

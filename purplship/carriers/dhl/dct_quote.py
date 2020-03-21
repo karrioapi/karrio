@@ -17,15 +17,17 @@ from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit, WeightUnit, Weight, Dimension
+from purplship.core.errors import RequiredFieldError
+from purplship.core.units import Package
 from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
 from purplship.carriers.dhl.units import (
     Product,
     ProductCode,
     NetworkType,
     DCTPackageType,
-    Dimension as DHLDimensionUnit,
-    WeightUnit as DHLWeightUnit,
+    Dimension,
+    WeightUnit,
+    PackagePresets
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -93,8 +95,12 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 
 
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    package = Package(payload.parcel, parcel_preset)
+
+    if package.weight.value is None:
+        raise RequiredFieldError("parcel.weight")
+
     products = [
         ProductCode[svc].value
         for svc in payload.parcel.services
@@ -122,33 +128,27 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
             BkgDetails=BkgDetailsType(
                 PaymentCountryCode=payload.shipper.country_code,
                 NetworkTypeCode=None,
-                WeightUnit=DHLWeightUnit[weight_unit.name].value,
-                DimensionUnit=DHLDimensionUnit[dimension_unit.name].value,
+                WeightUnit=WeightUnit[package.weight_unit.name].value,
+                DimensionUnit=Dimension[package.dimension_unit.name].value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
-                IsDutiable="N"
-                if payload.parcel.is_document
-                else "Y",  # TODO:: update this using proper options
+                IsDutiable=(
+                    "N" if payload.parcel.is_document else "Y"
+                ),
                 Pieces=PiecesType(
                     Piece=[
                         PieceType(
                             PieceID=payload.parcel.id,
-                            PackageTypeCode=DCTPackageType[
-                                payload.parcel.packaging_type or "box"
-                            ].value,
-                            Depth=Dimension(
-                                payload.parcel.length, dimension_unit
-                            ).value,
-                            Width=Dimension(payload.parcel.width, dimension_unit).value,
-                            Height=Dimension(
-                                payload.parcel.height, dimension_unit
-                            ).value,
-                            Weight=Weight(payload.parcel.weight, weight_unit).value,
+                            PackageTypeCode=DCTPackageType[package.packaging_type or "your_packaging"].value,
+                            Depth=package.length.value,
+                            Width=package.width.value,
+                            Height=package.height.value,
+                            Weight=package.weight.value,
                         )
                     ]
                 ),
                 NumberOfPieces=1,
-                ShipmentWeight=Weight(payload.parcel.weight, weight_unit).value,
+                ShipmentWeight=package.weight.value,
                 Volume=None,
                 PaymentAccountNumber=None,
                 InsuredCurrency=None,

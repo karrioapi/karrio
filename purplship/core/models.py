@@ -48,18 +48,19 @@ class Commodity:
 class Parcel:
     """item type."""
 
-    weight: float
     id: str = None
+    weight: float = None
     width: float = None
     height: float = None
     length: float = None
     packaging_type: str = None
+    package_preset: str = None
     reference: str = ""
     description: str = None
     content: str = None
     is_document: bool = False
-    weight_unit: str = "LB"
-    dimension_unit: str = "IN"
+    weight_unit: str = None
+    dimension_unit: str = None
     services: List[str] = []
     options: Dict = {}
 
