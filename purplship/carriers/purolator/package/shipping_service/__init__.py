@@ -1,4 +1,4 @@
-from typing import List, Tuple, cast, Union, Type, Dict, Callable
+from typing import List, Tuple, cast, Union, Type, Dict
 from functools import partial
 from pypurolator.shipping_service import (
     CreateShipmentRequest, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,

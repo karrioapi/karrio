@@ -1,4 +1,3 @@
-from base64 import b64encode
 from typing import Tuple, List, Any
 from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets
@@ -6,8 +5,6 @@ from purplship.carriers.caps.utils import Settings
 from purplship.core.models import (
     Error,
     ShipmentDetails,
-    ChargeDetails,
-    ReferenceDetails,
     ShipmentRequest,
 )
 from purplship.core.units import Currency, WeightUnit, DimensionUnit, Options, Package
@@ -18,7 +15,6 @@ from purplship.core.errors import RequiredFieldError
 from pycaps.shipment import (
     ShipmentType,
     ShipmentInfoType,
-    ShipmentPriceType,
     DeliverySpecType,
     SenderType,
     AddressDetailsType,

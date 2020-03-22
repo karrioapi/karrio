@@ -2,7 +2,6 @@ from typing import List, Tuple, cast
 from pyups import common
 from pyups.ship_web_service_schema import (
     ShipmentRequest as UPSShipmentRequest,
-    ShipmentResponse,
     ShipmentType,
     ShipperType,
     ShipPhoneType,
@@ -35,7 +34,6 @@ from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
     Error,
-    RateDetails
 )
 from purplship.carriers.ups.units import (
     ShippingPackagingType,
