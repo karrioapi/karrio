@@ -7,7 +7,7 @@ from purplship.package import rating
 from tests.purolator.package.fixture import gateway
 
 
-class TestDHLQuote(unittest.TestCase):
+class TestPurolatorQuote(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.RateRequest = RateRequest(**RATE_REQUEST_PAYLOAD)

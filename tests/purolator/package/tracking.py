@@ -6,7 +6,7 @@ from purplship.package import tracking
 from tests.purolator.package.fixture import gateway
 
 
-class TestDHLTracking(unittest.TestCase):
+class TestPurolatorTracking(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.TrackingRequest = TrackingRequest(

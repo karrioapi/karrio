@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from pyups import common
 from pyups.freight_ship_web_service_schema import (
     FreightShipRequest,
@@ -18,7 +18,9 @@ from pyups.freight_ship_web_service_schema import (
     ShipmentServiceOptionsType,
     EMailNotificationType,
     CODType,
-    CODValueType
+    CODValueType,
+    DocumentType,
+    ImageFormsType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -28,8 +30,6 @@ from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit, O
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
-    ChargeDetails,
-    ReferenceDetails,
     Error,
 )
 from purplship.carriers.ups.units import (
@@ -55,34 +55,13 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
     shipmentResponse = FreightShipResponse()
     shipmentResponse.build(shipment_node)
     shipment: ShipmentResultsType = shipmentResponse.ShipmentResults
-    service = (
-        ShippingServiceCode(shipment.Service.Code).name
-        if shipment.Service is not None and shipment.Service.Code is not None
-        else None
-    )
+    document = cast(DocumentType, shipment.Documents)
+    label = cast(ImageFormsType, document.Image).GraphicImage if document is not None else None
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
         tracking_number=shipment.ShipmentNumber,
-        total_charge=ChargeDetails(
-            name="Shipment charge",
-            amount=shipment.TotalShipmentCharge.MonetaryValue,
-            currency=shipment.TotalShipmentCharge.CurrencyCode,
-        ),
-        charges=[
-            ChargeDetails(
-                name=rate.Type.Code,
-                amount=rate.Factor.Value,
-                currency=rate.Factor.UnitOfMeasurement.Code,
-            )
-            for rate in shipment.Rate
-        ],
-        service=service,
-        documents=[image.GraphicImage for image in (shipment.Documents or [])],
-        reference=ReferenceDetails(
-            value=shipmentResponse.Response.TransactionReference.CustomerContext,
-            type="CustomerContext",
-        ),
+        label=label,
     )
 
 

@@ -9,7 +9,8 @@ class Settings(BaseSettings):
 
     username: str
     password: str
-    account_number: str
+    customer_number: str
+    contract_id: str = None
 
     @property
     def authorization(self):

@@ -1,9 +1,14 @@
-from typing import Dict
-from purplship.core.utils.helpers import to_xml, request as http, to_dict
+from typing import Dict, Callable
+from purplship.core.utils.helpers import to_xml, request as http, bundle_xml
 from purplship.package.proxy import Proxy as BaseProxy
 from purplship.package.mappers.ups.settings import Settings
 from purplship.core.utils.serializable import Serializable, Deserializable
 from pysoap.envelope import Envelope
+
+SHIPPING_SERVICES = dict(
+    shipping="/EWS/V2/Shipping/ShippingService.asmx",
+    document="/PWS/V1/ShippingDocuments/ShippingDocumentsService.asmx"
+)
 
 
 class Proxy(BaseProxy):
@@ -27,19 +32,24 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def create_shipment(self, request: Serializable[Dict[str, Envelope]]) -> Deserializable[str]:
-        def apply(data):
-            return http(
-                url=f"{self.settings.server_url}/EWS/V2/Shipping/ShippingService.asmx",
-                data=bytearray(data, "utf-8"),
-                headers={"Content-Type": "application/xml"},
-                method="POST",
+    def create_shipment(self, request: Serializable[Dict[str, Callable]]) -> Deserializable[str]:
+        def apply(data: str = None, fallback: str = None, service: str = "shipping") -> str:
+            return (
+                http(
+                    url=f"{self.settings.server_url}{SHIPPING_SERVICES[service]}",
+                    data=bytearray(data, "utf-8"),
+                    headers={"Content-Type": "application/xml"},
+                    method="POST",
+                )
+                if data else fallback
             )
-        serialized_requests: Dict[str, str] = request.serialize()
-        valid = apply(serialized_requests.get('validate'))
 
-        if str(to_dict(valid)) == str(True):
-            response = apply(serialized_requests.get('create'))
-            return Deserializable(response, to_xml)
+        requests: Dict[str, Callable] = request.serialize()
+        validate_response = apply(**requests.get('validate')())
+        create_response = apply(**requests.get('create')(validate_response))
+        document_response = apply(**requests.get('document')(create_response))
 
-        return Deserializable(serialized_requests.get('error'), to_xml)
+        return Deserializable(
+            bundle_xml([create_response, document_response]),
+            to_xml
+        )

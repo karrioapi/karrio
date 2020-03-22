@@ -11,11 +11,11 @@ from pypurolator.estimate_service import (
 from purplship.core.units import Currency, Package
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
-from purplship.core.utils.helpers import export, concat_str
+from purplship.core.utils.helpers import concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateRequest, RateDetails, Error, ChargeDetails
-from purplship.carriers.purolator.utils import Settings
+from purplship.carriers.purolator.utils import Settings, standard_request_serializer
 from purplship.carriers.purolator.error import parse_error_response
 from purplship.carriers.purolator.units import Product, PackagePresets
 
@@ -187,14 +187,4 @@ def get_full_estimate_request(payload: RateRequest, settings: Settings) -> Seria
             ShowAlternativeServicesIndicator=True
         )
     )
-    return Serializable(request, _request_serializer)
-
-
-def _request_serializer(envelope: Envelope) -> str:
-    namespacedef_ = 'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1"'
-    envelope.ns_prefix_ = "SOAP-ENV"
-    envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    envelope.Header.ns_prefix_ = envelope.ns_prefix_
-    envelope.Body.anytypeobjs_[0].ns_prefix_ = "ns1"
-    envelope.Header.anytypeobjs_[0].ns_prefix_ = "ns1"
-    return export(envelope, namespacedef_=namespacedef_)
+    return Serializable(request, standard_request_serializer)

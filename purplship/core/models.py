@@ -287,13 +287,9 @@ class ShipmentDetails:
     """PurplShip shipment details type."""
 
     carrier: str
-    tracking_number: List[str]
-    total_charge: ChargeDetails
-    charges: List[ChargeDetails]
-    shipment_date: str = None
-    service: str = None
-    documents: List[str] = []
-    reference: ReferenceDetails = None
+    label: str
+    tracking_number: str
+    selected_rate: RateDetails = None
 
 
 @attr.s(auto_attribs=True)

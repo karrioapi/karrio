@@ -1,7 +1,6 @@
 import time
-from base64 import b64decode
-from functools import reduce
-from typing import List, Tuple, Optional
+from base64 import b64decode, encodebytes
+from typing import List, Tuple, Optional, cast
 from pydhl.ship_val_global_req_6_2 import (
     ShipmentRequest as DHLShipmentRequest,
     Billing,
@@ -18,8 +17,9 @@ from pydhl.ship_val_global_req_6_2 import (
     Dutiable,
     MetaData,
     Notification,
-    SpecialService
+    SpecialService,
 )
+from pydhl.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.errors import RequiredFieldError
@@ -28,8 +28,6 @@ from purplship.core.models import (
     ShipmentRequest,
     Error,
     ShipmentDetails,
-    ReferenceDetails,
-    ChargeDetails,
 )
 from purplship.core.units import Options, Package
 from purplship.carriers.dhl.units import (
@@ -50,66 +48,23 @@ from purplship.carriers.dhl.error import parse_error_response
 def parse_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Error]]:
+    air_way_bill = next(iter(response.xpath(".//*[local-name() = $name]", name="AirwayBillNumber")), None)
     return (
-        _extract_shipment(response, settings),
+        _extract_shipment(response, settings) if air_way_bill is not None else None,
         parse_error_response(response, settings),
     )
 
 
-def _extract_shipment(
-    shipment_response_node, settings: Settings
-) -> Optional[ShipmentDetails]:
-    """
-        Shipment extraction is implemented using lxml queries instead of generated ShipmentResponse type
-        because the type construction fail during validation out of our control
-    """
-
-    def get_value(query):
-        return query[0].text if len(query) > 0 else None
-
-    def get(key: str):
-        return get_value(shipment_response_node.xpath("//%s" % key))
-
-    tracking_number = get("AirwayBillNumber")
-    if not tracking_number:
-        return None
-
-    plates = [p.text for p in shipment_response_node.xpath("//LicensePlateBarCode")]
-    barcodes = [
-        child.text
-        for child in shipment_response_node.xpath("//Barcodes")[0].getchildren()
-    ]
-    documents: List[str] = reduce(
-        lambda r, i: (r + [i] if i else r), [get("AWBBarCode")] + plates + barcodes, []
-    )
-    reference = (
-        ReferenceDetails(value=get("ReferenceID"), type=get("ReferenceType"))
-        if len(shipment_response_node.xpath("//Reference")) > 0
-        else None
-    )
-    currency_ = get("CurrencyCode")
-    service = next(
-        (p.name for p in ProductCode if p.value == get("ProductShortName")),
-        get("ProductShortName")
-    )
+def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDetails]:
+    shipment = ShipmentResponse()
+    shipment.build(shipment_node)
+    label_image = next(iter(shipment.LabelImage), None)
+    label = encodebytes(cast(LabelImage, label_image).OutputImage).decode('utf-8')
 
     return ShipmentDetails(
         carrier=settings.carrier_name,
-        tracking_number=tracking_number,
-        shipment_date=get("ShipmentDate"),
-        service=service,
-        charges=[
-            ChargeDetails(
-                name="PackageCharge",
-                amount=float(get("PackageCharge")),
-                currency=currency_,
-            )
-        ],
-        documents=documents,
-        reference=reference,
-        total_charge=ChargeDetails(
-            name="Shipment charge", amount=get("ShippingCharge"), currency=currency_
-        ),
+        tracking_number=shipment.AirwayBillNumber,
+        label=label,
     )
 
 

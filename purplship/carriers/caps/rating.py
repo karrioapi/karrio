@@ -111,7 +111,7 @@ def mailing_scenario_request(
     }
 
     request = mailing_scenario(
-        customer_number=settings.account_number,
+        customer_number=settings.customer_number,
         contract_id=None,
         promo_code=None,
         quote_type=None,
