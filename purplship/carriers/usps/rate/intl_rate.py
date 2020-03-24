@@ -2,9 +2,7 @@ from typing import Tuple, List
 from datetime import datetime
 from pyusps.intlratev2request import IntlRateV2Request, PackageType
 from pyusps.intlratev2response import ServiceType, ExtraServiceType
-from purplship.core.utils.helpers import export
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.xml import Element
+from purplship.core.utils import export, Serializable, Element, format_date
 from purplship.core.models import RateDetails, Error, RateRequest, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country
 from purplship.carriers.usps.units import IntlContainer, ExtraService, IntlMailType
@@ -31,16 +29,17 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
         for svc in service_node.xpath(".//*[local-name() = $name]", name="ExtraService")
     ]
     delivery_date = (
-        str(datetime.strptime(service.GuaranteeAvailability, '%m/%d/%Y').strftime('%Y-%m-%d'))
+        format_date(service.GuaranteeAvailability, '%m/%d/%Y')
         if service.GuaranteeAvailability is not None else None
     )
+
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=service.SvcDescription,
+        service=service.SvcDescription,
         base_charge=float(service.Postage),
         total_charge=service.Postage,
         currency=currency,
-        delivery_date=delivery_date,
+        estimated_delivery=delivery_date,
         extra_charges=[
             ChargeDetails(
                 name=ExtraService(special.ServiceID).name,

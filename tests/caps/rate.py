@@ -8,7 +8,7 @@ from tests.caps.fixture import gateway
 from datetime import datetime
 
 
-class TestCanadaPostQuote(unittest.TestCase):
+class TestCanadaPostRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.RateRequest = RateRequest(**RatePayload)
@@ -20,13 +20,16 @@ class TestCanadaPostQuote(unittest.TestCase):
 
     def test_create_rate_request_with_package_preset(self):
         request = gateway.mapper.create_rate_request(
-            RateRequest(**RateWithPresetPayload))
+            RateRequest(**RateWithPresetPayload)
+        )
 
         self.assertEqual(request.serialize(), RateRequestUsingPackagePresetXML)
 
     def test_create_rate_request_with_package_preset_missing_weight(self):
         with self.assertRaises(RequiredFieldError):
-            gateway.mapper.create_rate_request(RateRequest(**RateWithPresetMissingWeightPayload))
+            gateway.mapper.create_rate_request(
+                RateRequest(**RateWithPresetMissingWeightPayload)
+            )
 
     @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
@@ -39,6 +42,7 @@ class TestCanadaPostQuote(unittest.TestCase):
         with patch("purplship.package.mappers.caps.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
     def test_parse_rate_parsing_error(self):
@@ -112,8 +116,68 @@ ParsedQuoteMissingArgsError = [
         }
     ],
 ]
-ParsedQuoteResponse = [[{'base_charge': 9.59, 'carrier': 'CanadaPost', 'currency': 'CAD', 'delivery_date': '2011-10-24', 'discount': 0.6200000000000001, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': -0.29, 'currency': 'CAD', 'name': 'Automation discount'}, {'amount': 0.91, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service_name': 'caps_expedited_parcel', 'service_type': 'DOM.EP', 'total_charge': 10.21}, {'base_charge': 22.64, 'carrier': 'CanadaPost', 'currency': 'CAD', 'delivery_date': '2011-10-21', 'discount': 2.56, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': -0.68, 'currency': 'CAD', 'name': 'Automation discount'}, {'amount': 3.24, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service_name': 'caps_priority', 'service_type': 'DOM.PC', 'total_charge': 25.2}, {'base_charge': 9.59, 'carrier': 'CanadaPost', 'currency': 'CAD', 'delivery_date': '2011-10-26', 'discount': 0.6200000000000001, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': -0.29, 'currency': 'CAD', 'name': 'Automation discount'}, {'amount': 0.91, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service_name': 'caps_regular_parcel', 'service_type': 'DOM.RP', 'total_charge': 10.21}, {'base_charge': 12.26, 'carrier': 'CanadaPost', 'currency': 'CAD', 'delivery_date': '2011-10-24', 'discount': 1.38, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': -0.37, 'currency': 'CAD', 'name': 'Automation discount'}, {'amount': 1.75, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service_name': 'caps_xpresspost', 'service_type': 'DOM.XP', 'total_charge': 13.64}], []]
 
+ParsedQuoteResponse = [
+    [
+        {
+            "base_charge": 9.59,
+            "carrier": "CanadaPost",
+            "currency": "CAD",
+            'discount': 0.6200000000000001,
+            'duties_and_taxes': 0.0,
+            "estimated_delivery": "2011-10-24",
+            "extra_charges": [
+                {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
+                {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
+            ],
+            "service": "caps_expedited_parcel",
+            "total_charge": 10.21,
+        },
+        {
+            "base_charge": 22.64,
+            "carrier": "CanadaPost",
+            "currency": "CAD",
+            "discount": 2.56,
+            'duties_and_taxes': 0.0,
+            "estimated_delivery": "2011-10-21",
+            "extra_charges": [
+                {"amount": -0.68, "currency": "CAD", "name": "Automation discount"},
+                {"amount": 3.24, "currency": "CAD", "name": "Fuel surcharge"},
+            ],
+            "service": "caps_priority",
+            "total_charge": 25.2,
+        },
+        {
+            "base_charge": 9.59,
+            "carrier": "CanadaPost",
+            "currency": "CAD",
+            'discount': 0.6200000000000001,
+            'duties_and_taxes': 0.0,
+            "estimated_delivery": "2011-10-26",
+            "extra_charges": [
+                {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
+                {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
+            ],
+            "service": "caps_regular_parcel",
+            "total_charge": 10.21,
+        },
+        {
+            "base_charge": 12.26,
+            "carrier": "CanadaPost",
+            "currency": "CAD",
+            "discount": 1.38,
+            'duties_and_taxes': 0.0,
+            "estimated_delivery": "2011-10-24",
+            "extra_charges": [
+                {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
+                {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"},
+            ],
+            "service": "caps_xpresspost",
+            "total_charge": 13.64,
+        },
+    ],
+    [],
+]
 
 
 QuoteParsingError = """<messages xmlns="http://www.canadapost.ca/ws/messages">

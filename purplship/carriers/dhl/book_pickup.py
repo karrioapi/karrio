@@ -8,15 +8,12 @@ from pydhl.pickupdatatypes_global_3_0 import (
     WeightSeg,
     RequestorContact,
 )
-from purplship.core.utils.helpers import export
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.xml import Element
+from purplship.core.utils import export, Serializable, Element, format_time, format_date
 from purplship.core.models import (
     PickupRequest,
     Error,
     PickupDetails,
     ChargeDetails,
-    TimeDetails,
 )
 from purplship.core.units import WeightUnit, Weight
 from purplship.carriers.dhl.units import CountryRegion, WeightUnit as DHLWeightUnit
@@ -46,19 +43,13 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
         if pickup.PickupCharge is not None
         else None
     )
-    ref_times = (
-        []
-        if pickup.ReadyByTime is None
-        else [TimeDetails(name="ReadyByTime", value=str(pickup.ReadyByTime))] + []
-        if pickup.CallInTime is None
-        else [TimeDetails(name="CallInTime", value=str(pickup.CallInTime))]
-    )
     return PickupDetails(
         carrier=settings.carrier_name,
         confirmation_number=str(pickup.ConfirmationNumber[0]),
-        pickup_date=str(pickup.NextPickupDate),
+        pickup_date=format_date(pickup.NextPickupDate),
         pickup_charge=pickup_charge,
-        ref_times=ref_times,
+        pickup_time=format_time(pickup.ReadyByTime),
+        pickup_max_time=format_time(pickup.CallInTime),
     )
 
 

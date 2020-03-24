@@ -31,6 +31,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
+
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
             )
@@ -65,14 +66,16 @@ PARSED_TRACKING_RESPONSE = [
             "carrier": "Australia Post Shipping",
             "events": [
                 {
-                    "date": "2017-09-18T14:35:07+10:00",
+                    "date": "2017-09-18",
                     "description": "Item Delivered",
                     "location": "MEL",
+                    "time": "14:35",
                 },
                 {
-                    "date": "2017-09-18T09:50:05+10:00",
+                    "date": "2017-09-18",
                     "description": "On Board for Delivery",
                     "location": "MEL",
+                    "time": "09:50",
                 },
             ],
             "tracking_number": "7XX1000634011427",

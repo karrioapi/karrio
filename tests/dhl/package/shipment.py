@@ -291,6 +291,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
             <ImageFormat>PDF</ImageFormat>
         </DocImage>
     </DocImages>
+    <LabelImageFormat>PDF</LabelImageFormat>
 </req:ShipmentRequest>
 """
 

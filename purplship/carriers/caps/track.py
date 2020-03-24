@@ -1,8 +1,7 @@
 from typing import Tuple, List
 from pycaps.track import pin_summary
 from purplship.core.settings import Settings
-from purplship.core.utils.xml import Element
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import Element, Serializable, format_date, format_time
 from purplship.core.models import TrackingRequest, TrackingDetails, TrackingEvent, Error
 from purplship.carriers.caps.error import parse_error_response
 
@@ -23,10 +22,10 @@ def _extract_tracking(pin_summary_node: Element, settings: Settings) -> Tracking
     return TrackingDetails(
         carrier=settings.carrier_name,
         tracking_number=pin_summary_.pin,
-        shipment_date=str(pin_summary_.mailed_on_date),
         events=[
             TrackingEvent(
-                date=str(pin_summary_.event_date_time),
+                date=format_date(pin_summary_.event_date_time, '%Y%m%d:%H%M%S'),
+                time=format_time(pin_summary_.event_date_time, '%Y%m%d:%H%M%S'),
                 signatory=pin_summary_.signatory_name,
                 code=pin_summary_.event_type,
                 location=pin_summary_.event_location,

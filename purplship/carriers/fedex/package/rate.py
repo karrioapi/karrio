@@ -14,21 +14,18 @@ from pyfedex.rate_service_v26 import (
     RatedShipmentDetail,
     Weight as FedexWeight,
 )
-from purplship.core.utils.helpers import export, concat_str
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import export, concat_str, Serializable, format_date
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.units import Currency, Package, Options
 from purplship.core.utils.xml import Element
 from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateDetails, RateRequest, Error, ChargeDetails
-from purplship.carriers.fedex.units import PackagingType, ServiceType, RateType, PackagePresets
+from purplship.carriers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
 
-def parse_rate_response(
-    response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
     rate_reply = response.xpath(".//*[local-name() = $name]", name="RateReplyDetails")
     rate_details: List[RateDetails] = [
         _extract_quote(detail_node, settings) for detail_node in rate_reply
@@ -77,13 +74,10 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
     )
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=ServiceType(detail.ServiceType).name,
-        service_type=RateType(detail.ActualRateType).name,
+        service=ServiceType(detail.ServiceType).name,
         currency=currency_,
-        delivery_date=(
-            datetime.strptime(delivery_, "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
-            if delivery_
-            else None
+        estimated_delivery=(
+            format_date(delivery_, "%Y-%m-%dT%H:%M:%S") if delivery_ is not None else None
         ),
         base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
         total_charge=float(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),

@@ -32,10 +32,17 @@ class PackagingUnit(Enum):
     medium_box = "Medium Box"
 
 
-class PayorType(Enum):
+class PaymentType(Enum):
     sender = "SENDER"
     recipient = "RECIPIENT"
     third_party = "THIRD_PARTY"
+    credit_card = "CARD"
+
+
+class CreditCardType(Enum):
+    visa = "Visa"
+    mastercard = "Mastercard"
+    american_express = "AmericanExpress"
 
 
 class WeightUnit(Enum):

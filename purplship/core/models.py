@@ -76,14 +76,27 @@ class Invoice:
 
 
 @attr.s(auto_attribs=True)
+class Card:
+    """Credit Card type."""
+
+    type: str
+    number: str
+    expiry_month: str
+    expiry_year: str
+    security_code: str
+    name: str = None
+    postal_code: str = None
+
+
+@attr.s(auto_attribs=True)
 class Payment:
     """payment configuration type."""
 
-    paid_by: str = None
-    description: str = None
+    paid_by: str = "sender"
     amount: float = None
     currency: str = None
     account_number: str = None
+    credit_card: Card = JStruct[Card]
 
 
 @attr.s(auto_attribs=True)
@@ -117,7 +130,6 @@ class ShipmentRequest:
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
 
-    label: Doc = JStruct[Doc]
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
     doc_images: List[Doc] = JList[Doc]
@@ -229,29 +241,13 @@ class ChargeDetails:
 
 
 @attr.s(auto_attribs=True)
-class ReferenceDetails:
-    """PurplShip reference details type."""
-
-    value: str
-    type: str = None
-
-
-@attr.s(auto_attribs=True)
-class TimeDetails:
-    """PurplShip time details type."""
-
-    value: str
-    name: str = None
-
-
-@attr.s(auto_attribs=True)
 class TrackingEvent:
     """PurplShip tracking event type."""
 
     date: str
     description: str
     location: str
-    code: str
+    code: str = None
     time: str = None
     signatory: str = None
 
@@ -261,14 +257,13 @@ class RateDetails:
     """PurplShip rate (quote) details type."""
 
     carrier: str
-    service_name: str
     currency: str
-    service_type: str = None
-    discount: float = 0.0
+    service: str = None
+    discount: float = None
     base_charge: float = 0.0
-    delivery_date: str = None
     total_charge: float = 0.0
-    duties_and_taxes: float = 0.0
+    duties_and_taxes: float = None
+    estimated_delivery: str = None
     extra_charges: List[ChargeDetails] = []
 
 
@@ -278,7 +273,6 @@ class TrackingDetails:
 
     carrier: str
     tracking_number: str
-    shipment_date: str = None
     events: List[TrackingEvent] = []
 
 
@@ -300,4 +294,5 @@ class PickupDetails:
     confirmation_number: str
     pickup_date: str = None
     pickup_charge: ChargeDetails = None
-    ref_times: List[TimeDetails] = None
+    pickup_time: str = None
+    pickup_max_time: str = None

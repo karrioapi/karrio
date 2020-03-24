@@ -1,9 +1,7 @@
 from typing import List, Optional, Tuple
 from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.tracking_response import AWBInfo
-from purplship.core.utils.helpers import export
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.xml import Element
+from purplship.core.utils import export, Serializable, Element, format_datetime, format_time
 from purplship.core.models import TrackingEvent, TrackingDetails, TrackingRequest, Error
 from .utils import Settings
 from .error import parse_error_response
@@ -33,12 +31,11 @@ def _extract_tracking(
     return TrackingDetails(
         carrier=settings.carrier_name,
         tracking_number=info.AWBNumber,
-        shipment_date=str(info.ShipmentInfo.ShipmentDate),
         events=list(
             map(
                 lambda e: TrackingEvent(
-                    date=str(e.Date),
-                    time=str(e.Time),
+                    date=format_datetime(e.Date),
+                    time=format_time(e.Time),
                     signatory=e.Signatory,
                     code=e.ServiceEvent.EventCode,
                     location=e.ServiceArea.Description,

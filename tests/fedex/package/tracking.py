@@ -63,14 +63,12 @@ ParsedTrackingResponse = [
             "events": [
                 {
                     "code": "OC",
-                    "date": "2016-11-17 03:13:01-06:00",
+                    "date": "2016-11-17",
                     "description": "Shipment information sent to FedEx",
                     "location": "CUSTOMER",
-                    "signatory": None,
-                    "time": None,
+                    "time": "03:13",
                 }
             ],
-            "shipment_date": "2016-11-17 00:00:00",
             "tracking_number": "794887075005",
         }
     ],

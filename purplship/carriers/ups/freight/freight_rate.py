@@ -74,8 +74,7 @@ def _extract_freight_rate(detail_node: Element, settings: Settings) -> RateDetai
     return RateDetails(
         carrier=settings.carrier_name,
         currency=currency_,
-        service_name=detail.Service.Description,
-        service_type=detail.Service.Code,
+        service=detail.Service.Description,
         base_charge=float(detail.TotalShipmentCharge.MonetaryValue),
         total_charge=float(total_charge.Factor.Value or 0.0),
         duties_and_taxes=reduce(lambda r, c: r + c.amount, Surcharges_, 0.0),

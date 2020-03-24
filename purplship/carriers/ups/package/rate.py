@@ -16,8 +16,7 @@ from pyups.rate_web_service_schema import (
     UOMCodeDescriptionType,
     DimensionsType,
 )
-from purplship.core.utils.helpers import export, concat_str
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import export, concat_str, Serializable, format_date
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Package
@@ -81,7 +80,7 @@ def _extract_package_rate(
             RateDetails(
                 carrier=settings.carrier_name,
                 currency=currency_,
-                service_name=service,
+                service=service,
                 base_charge=float(rate.TransportationCharges.MonetaryValue),
                 total_charge=float(total_charges.MonetaryValue),
                 duties_and_taxes=reduce(
@@ -89,7 +88,6 @@ def _extract_package_rate(
                     taxes or [],
                     0.0,
                 ),
-                discount=None,
                 extra_charges=reduce(
                     lambda total, charge: (
                         total
@@ -104,7 +102,7 @@ def _extract_package_rate(
                     [charge for charge in extra_charges if charge is not None],
                     [],
                 ),
-                delivery_date=str(arrival.Date),
+                estimated_delivery=format_date(arrival.Date),
             )
         ]
 

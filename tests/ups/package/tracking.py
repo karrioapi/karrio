@@ -8,6 +8,7 @@ from purplship.package import tracking
 
 class TestUPSTracking(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.TrackingRequest = TrackingRequest(tracking_numbers=TrackingRequestPayload)
 
     def test_create_tracking_request(self):
@@ -36,6 +37,7 @@ class TestUPSTracking(unittest.TestCase):
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
+
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
@@ -67,54 +69,47 @@ ParsedTrackingResponse = [
             "events": [
                 {
                     "code": "KB",
-                    "date": "20100830",
+                    "date": "2010-08-30",
                     "description": "UPS INTERNAL ACTIVITY CODE",
                     "location": "BONN",
-                    "signatory": None,
-                    "time": "103900",
+                    "time": "10:39",
                 },
                 {
                     "code": "DJ",
-                    "date": "20100830",
+                    "date": "2010-08-30",
                     "description": "ADVERSE WEATHER CONDITIONS CAUSED THIS DELAY",
                     "location": "BONN",
-                    "signatory": None,
-                    "time": "103200",
+                    "time": "10:32",
                 },
                 {
                     "code": "X",
-                    "date": "20100910",
+                    "date": "2010-09-10",
                     "description": "THE RECEIVER'S LOCATION WAS CLOSED ON THE 2ND DELIVERY ATTEMPT. A 3RD DELIVERY ATTEMPT WILL BE MADE",
                     "location": "ANYTOWN",
-                    "signatory": None,
-                    "time": "180300",
+                    "time": "18:03",
                 },
                 {
                     "code": "FS",
-                    "date": "20100912",
+                    "date": "2010-09-12",
                     "description": "DELIVERED",
                     "location": "ANYTOWN",
-                    "signatory": None,
-                    "time": "115700",
+                    "time": "11:57",
                 },
                 {
                     "code": "PU",
-                    "date": "20100404",
+                    "date": "2010-04-04",
                     "description": "PICKUP SCAN",
                     "location": "WEST CHESTER-MALVERN",
-                    "signatory": None,
-                    "time": "144000",
+                    "time": "14:40",
                 },
                 {
                     "code": "KB",
-                    "date": "20100830",
+                    "date": "2010-08-30",
                     "description": "UPS INTERNAL ACTIVITY CODE",
                     "location": "BONN",
-                    "signatory": None,
-                    "time": "131300",
+                    "time": "13:13",
                 },
             ],
-            "shipment_date": None,
             "tracking_number": "1Z12345E6205277936",
         }
     ],

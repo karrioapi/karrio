@@ -37,6 +37,7 @@ class TestCanadaPostTracking(unittest.TestCase):
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
+
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
@@ -73,14 +74,11 @@ ParsedTrackingResponse = [
             "events": [
                 {
                     "code": "INDUCTION",
-                    "date": "20110404:133457",
+                    "date": "2011-04-04",
                     "description": "Order information received by Canada Post",
-                    "location": "",
-                    "signatory": "",
-                    "time": None,
+                    "time": "13:34",
                 }
             ],
-            "shipment_date": "2011-04-04",
             "tracking_number": "7023210039414604",
         }
     ],

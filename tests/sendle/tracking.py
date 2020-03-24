@@ -28,6 +28,7 @@ class TestSendleTracking(unittest.TestCase):
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
+
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
             )
@@ -56,44 +57,52 @@ PARSED_TRACKING_RESPONSE = [
             "events": [
                 {
                     "code": "Pickup Attempted",
-                    "date": "2015-11-23T01:04:00Z",
+                    "date": "2015-11-23",
                     "description": "We attempted to pick up the parcel but were unsuccessful",
+                    "time": "01:04",
                 },
                 {
                     "code": "Pickup",
-                    "date": "2015-11-24T20:31:00Z",
+                    "date": "2015-11-24",
                     "description": "Parcel picked up",
+                    "time": "20:31",
                 },
                 {
                     "code": "Info",
-                    "date": "2015-11-25T01:04:00Z",
+                    "date": "2015-11-25",
                     "description": "In transit between locations",
+                    "time": "01:04",
                 },
                 {
                     "code": "In Transit",
-                    "date": "2015-11-25T01:14:00Z",
+                    "date": "2015-11-25",
                     "description": "In transit",
                     "location": "Brisbane",
+                    "time": "01:14",
                 },
                 {
                     "code": "Info",
-                    "date": "2015-11-26T19:46:00Z",
+                    "date": "2015-11-26",
                     "description": "Arrived at the depot for processing",
+                    "time": "19:46",
                 },
                 {
                     "code": "Info",
-                    "date": "2015-11-26T23:00:00Z",
+                    "date": "2015-11-26",
                     "description": "Parcel is loaded for delivery",
+                    "time": "23:00",
                 },
                 {
                     "code": "Delivered",
-                    "date": "2015-11-27T23:46:00Z",
+                    "date": "2015-11-27",
                     "description": "Parcel delivered",
+                    "time": "23:46",
                 },
                 {
                     "code": "Info",
-                    "date": "2015-11-27T23:47:00Z",
+                    "date": "2015-11-27",
                     "description": "Your parcel was signed for by JIMMY",
+                    "time": "23:47",
                 },
             ],
             "tracking_number": "S3ND73",
@@ -101,6 +110,7 @@ PARSED_TRACKING_RESPONSE = [
     ],
     [],
 ]
+
 
 PARSED_TRACKING_RESPONSE_WITH_ERROR = [
     [],

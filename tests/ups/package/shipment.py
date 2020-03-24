@@ -16,7 +16,9 @@ class TestUPSShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
     def test_create_package_shipment_with_package_preset_request(self):
-        request = gateway.mapper.create_shipment_request(ShipmentRequest(**package_shipment_with_package_preset_data))
+        request = gateway.mapper.create_shipment_request(
+            ShipmentRequest(**package_shipment_with_package_preset_data)
+        )
         self.assertEqual(request.serialize(), ShipmentRequestWithPresetXML)
 
     @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
@@ -82,14 +84,9 @@ package_shipment_data = {
         "width": 5,
         "height": 2,
         "weight": 10,
-        "options": {
-            "notification": {
-                "email": "test@mail.com"
-            }
-        }
+        "options": {"notification": {"email": "test@mail.com"}},
     },
     "payment": {"paid_by": "sender"},
-    "label": {"format": "GIF"},
 }
 
 
@@ -121,14 +118,9 @@ package_shipment_with_package_preset_data = {
         "packaging_type": "ups_customer_supplied_package",
         "description": "Description",
         "package_preset": "ups_medium_express_box",
-        "options": {
-            "notification": {
-                "email": "test@mail.com"
-            }
-        }
+        "options": {"notification": {"email": "test@mail.com"}},
     },
     "payment": {"paid_by": "sender"},
-    "label": {"format": "GIF"},
 }
 
 
@@ -325,6 +317,14 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                         <CountryCode>CountryCode</CountryCode>
                     </Address>
                 </ShipTo>
+                <PaymentInformation>
+                    <ShipmentCharge>
+                        <Type>01</Type>
+                        <BillShipper>
+                            <AccountNumber>Your Account Number</AccountNumber>
+                        </BillShipper>
+                    </ShipmentCharge>
+                </PaymentInformation>
                 <Service>
                     <Code>01</Code>
                 </Service>
@@ -357,12 +357,6 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                     </PackageWeight>
                 </Package>
             </Shipment>
-            <LabelSpecification>
-                <LabelImageFormat>
-                    <Code>GIF</Code>
-                    <Description>GIF</Description>
-                </LabelImageFormat>
-            </LabelSpecification>
         </ship:ShipmentRequest>
     </tns:Body>
 </tns:Envelope>
@@ -420,6 +414,14 @@ ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/
                         <CountryCode>CountryCode</CountryCode>
                     </Address>
                 </ShipTo>
+                <PaymentInformation>
+                    <ShipmentCharge>
+                        <Type>01</Type>
+                        <BillShipper>
+                            <AccountNumber>Your Account Number</AccountNumber>
+                        </BillShipper>
+                    </ShipmentCharge>
+                </PaymentInformation>
                 <Service>
                     <Code>01</Code>
                 </Service>
@@ -452,12 +454,6 @@ ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/
                     </PackageWeight>
                 </Package>
             </Shipment>
-            <LabelSpecification>
-                <LabelImageFormat>
-                    <Code>GIF</Code>
-                    <Description>GIF</Description>
-                </LabelImageFormat>
-            </LabelSpecification>
         </ship:ShipmentRequest>
     </tns:Body>
 </tns:Envelope>

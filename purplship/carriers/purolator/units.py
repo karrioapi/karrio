@@ -32,6 +32,25 @@ class PackagingType(Enum):
     your_packaging = purolator_customer_packaging
 
 
+class PaymentType(Flag):
+    sender = 'Sender'
+    recipient = 'Receiver'
+    third_party = 'ThirdParty'
+    credit_card = 'CreditCard'
+
+
+class DutyPaymentType(Enum):
+    sender = 'Sender'
+    recipient = 'Receiver'
+    third_party = 'Buyer'
+
+
+class CreditCardType(Flag):
+    visa = "Visa"
+    mastercard = "Mastercard"
+    american_express = "AmericanExpress"
+
+
 class Service(Enum):
     dangerous_goods = "Dangerous Goods"
     chain_of_signature = "Chain of Signature"

@@ -23,20 +23,32 @@ class TestSendleQuote(unittest.TestCase):
         self.assertEqual(request.serialize(), to_dict(INTERNATIONAL_PARCEL_RATE))
 
     def test_create_domestic_rate_with_package_preset_request(self):
-        request = gateway.mapper.create_rate_request(RateRequest(**DOMESTIC_RATE_WITH_PACKAGE_PRESET_PAYLOAD))
-        self.assertEqual(request.serialize(), to_dict(DOMESTIC_PARCEL_WITH_PACKAGE_REQUEST_RATE))
+        request = gateway.mapper.create_rate_request(
+            RateRequest(**DOMESTIC_RATE_WITH_PACKAGE_PRESET_PAYLOAD)
+        )
+        self.assertEqual(
+            request.serialize(), to_dict(DOMESTIC_PARCEL_WITH_PACKAGE_REQUEST_RATE)
+        )
 
     def test_create_international_with_package_rate_request(self):
-        request = gateway.mapper.create_rate_request(RateRequest(**INTERNATIONAL_RATE_WITH_PACKAGE_PRESET_PAYLOAD))
-        self.assertEqual(request.serialize(), to_dict(INTERNATIONAL_PARCEL_WITH_PACKAGE_REQUEST_RATE))
+        request = gateway.mapper.create_rate_request(
+            RateRequest(**INTERNATIONAL_RATE_WITH_PACKAGE_PRESET_PAYLOAD)
+        )
+        self.assertEqual(
+            request.serialize(), to_dict(INTERNATIONAL_PARCEL_WITH_PACKAGE_REQUEST_RATE)
+        )
 
     def test_create_domestic_rate_missing_weight_request(self):
         with self.assertRaises(RequiredFieldError):
-            gateway.mapper.create_rate_request(RateRequest(**DOMESTIC_RATE_MISSING_WEIGHT_PAYLOAD))
+            gateway.mapper.create_rate_request(
+                RateRequest(**DOMESTIC_RATE_MISSING_WEIGHT_PAYLOAD)
+            )
 
     def test_create_international_rate_missing_weight_request(self):
         with self.assertRaises(RequiredFieldError):
-            gateway.mapper.create_rate_request(RateRequest(**INTERNATIONAL_RATE_MISSING_WEIGHT_PAYLOAD))
+            gateway.mapper.create_rate_request(
+                RateRequest(**INTERNATIONAL_RATE_MISSING_WEIGHT_PAYLOAD)
+            )
 
     @patch("purplship.package.mappers.sendle.proxy.http", return_value="{}")
     def test_get_domestic_rates(self, http_mock):
@@ -113,7 +125,38 @@ INTERNATIONAL_RATE_MISSING_WEIGHT_PAYLOAD = {
 }
 
 
-PARSED_PARCEL_RATE_RESPONSE = [[{'base_charge': 14.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-19', 'duties_and_taxes': 1.36, 'service_name': 'sendle_easy', 'total_charge': 13.59}, {'base_charge': 13.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-19', 'duties_and_taxes': 1.27, 'service_name': 'sendle_premium', 'total_charge': 12.68}, {'base_charge': 13.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-14', 'duties_and_taxes': 1.27, 'service_name': 'sendle_pro', 'total_charge': 12.68}], []]
+PARSED_PARCEL_RATE_RESPONSE = [
+    [
+        {
+            "base_charge": 14.95,
+            "carrier": "Sendle",
+            "currency": "AUD",
+            "duties_and_taxes": 1.36,
+            "estimated_delivery": "2018-02-19",
+            "service": "sendle_easy",
+            "total_charge": 13.59,
+        },
+        {
+            "base_charge": 13.95,
+            "carrier": "Sendle",
+            "currency": "AUD",
+            "duties_and_taxes": 1.27,
+            "estimated_delivery": "2018-02-19",
+            "service": "sendle_premium",
+            "total_charge": 12.68,
+        },
+        {
+            "base_charge": 13.95,
+            "carrier": "Sendle",
+            "currency": "AUD",
+            "duties_and_taxes": 1.27,
+            "estimated_delivery": "2018-02-14",
+            "service": "sendle_pro",
+            "total_charge": 12.68,
+        },
+    ],
+    [],
+]
 
 
 PARSED_ERRORS = [

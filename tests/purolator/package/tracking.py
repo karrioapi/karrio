@@ -23,14 +23,20 @@ class TestPurolatorTracking(unittest.TestCase):
         tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, f"{gateway.settings.server_url}/PWS/V1/Tracking/TrackingService.asmx")
+        self.assertEqual(
+            url, f"{gateway.settings.server_url}/PWS/V1/Tracking/TrackingService.asmx"
+        )
 
     def test_tracking_response_parsing(self):
         with patch("purplship.package.mappers.purolator.proxy.http") as mock:
             mock.return_value = TRACKING_RESPONSE_XML
-            parsed_response = tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
+            )
 
 
 if __name__ == "__main__":
@@ -38,7 +44,31 @@ if __name__ == "__main__":
 
 TRACKING_REQUEST_PAYLOAD = ["m123"]
 
-PARSED_TRACKING_RESPONSE = [[{'carrier': 'purolator', 'events': [{'code': 'Other', 'date': '2004-01-13', 'description': 'New Tracking Number Assigned -', 'location': 'MONTREAL SORT CTR/CTR TRIE, PQ', 'time': '23:51'}, {'code': 'Other', 'date': '2004-01-13', 'description': 'New Tracking Number Assigned -', 'location': 'MONTREAL SORT CTR/CTR TRIE, PQ', 'time': '23:51'}], 'tracking_number': 'M123'}], []]
+PARSED_TRACKING_RESPONSE = [
+    [
+        {
+            "carrier": "purolator",
+            "events": [
+                {
+                    "code": "Other",
+                    "date": "2004-01-13",
+                    "description": "New Tracking Number Assigned -",
+                    "location": "MONTREAL SORT CTR/CTR TRIE, PQ",
+                    "time": "23:51",
+                },
+                {
+                    "code": "Other",
+                    "date": "2004-01-13",
+                    "description": "New Tracking Number Assigned -",
+                    "location": "MONTREAL SORT CTR/CTR TRIE, PQ",
+                    "time": "23:51",
+                },
+            ],
+            "tracking_number": "M123",
+        }
+    ],
+    [],
+]
 
 TRACKING_REQUEST_XML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
     <SOAP-ENV:Header>

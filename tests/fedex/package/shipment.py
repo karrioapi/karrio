@@ -82,7 +82,6 @@ shipment_data = {
     },
     "payment": {"paid_by": "THIRD_PARTY", "account_number": "2349857"},
     "customs": {"duty": {"paid_by": "sender", "amount": "100."}},
-    "label": {"format": "COMMON2D", "type": "PNG"},
 }
 
 ParsedShipmentResponse = [
@@ -159,14 +158,16 @@ ShipmentRequestXml = """<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xml
                         <CountryCode>CA</CountryCode>
                     </Address>
                 </Recipient>
+                <ShippingChargesPayment>
+                    <Payor>
+                        <ResponsibleParty>
+                            <AccountNumber>2349857</AccountNumber>
+                        </ResponsibleParty>
+                    </Payor>
+                </ShippingChargesPayment>
                 <SpecialServicesRequested>
                     <SpecialServiceTypes>INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS</SpecialServiceTypes>
                 </SpecialServicesRequested>
-                <LabelSpecification>
-                    <LabelFormatType>COMMON2D</LabelFormatType>
-                    <ImageType>PNG</ImageType>
-                    <LabelStockType>PAPER_7X4.75</LabelStockType>
-                </LabelSpecification>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
             </RequestedShipment>

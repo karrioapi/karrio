@@ -2,7 +2,6 @@ import attr
 import ssl
 import json
 import asyncio
-import base64
 from io import StringIO
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError

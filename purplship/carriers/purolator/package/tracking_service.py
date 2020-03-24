@@ -1,10 +1,9 @@
-from datetime import datetime
 from typing import List, Tuple, cast
 from pypurolator.tracking_service import (
     TrackPackagesByPinRequest, PIN, ArrayOfPIN, RequestContext, TrackingInformation, Scan, Depot
 )
 from purplship.core.models import TrackingRequest, TrackingDetails, Error, TrackingEvent
-from purplship.core.utils.xml import Element
+from purplship.core.utils import Element, format_date, format_timestamp
 from purplship.core.utils.soap import create_envelope
 from pysoap.envelope import Envelope
 from purplship.core.utils.serializable import Serializable
@@ -28,11 +27,11 @@ def _extract_tracking(node: Element, settings: Settings) -> TrackingDetails:
         tracking_number=str(track.PIN.Value),
         events=[
             TrackingEvent(
-                date=str(cast(Scan, scan).ScanDate),
+                date=format_date(cast(Scan, scan).ScanDate),
+                time=format_timestamp(cast(Scan, scan).ScanTime),
                 description=cast(Scan, scan).Description,
                 location=cast(Depot, cast(Scan, scan).Depot).Name,
                 code=cast(Scan, scan).ScanType,
-                time=datetime.utcfromtimestamp(int(cast(Scan, scan).ScanTime)).strftime('%H:%M'),
             ) for scan in track.Scans.Scan
         ]
     )

@@ -57,10 +57,7 @@ if __name__ == "__main__":
     unittest.main()
 
 RateRequestPayload = {
-    "shipper": {
-        "postal_code": "H3N1S4",
-        "country_code": "CA",
-    },
+    "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
         "id": "1",
@@ -88,24 +85,20 @@ ParsedRateResponse = [
             "base_charge": 230.49,
             "carrier": "carrier_name",
             "currency": "USD",
-            "delivery_date": None,
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
+            'discount': 0.0,
+            'duties_and_taxes': 0.0,
             "extra_charges": [{"amount": 9.22, "currency": "USD", "name": "FUEL"}],
-            "service_name": "international_priority",
-            "service_type": "payor_account_shipment",
+            "service": "international_priority",
             "total_charge": 239.71,
         },
         {
             "base_charge": 207.47,
             "carrier": "carrier_name",
             "currency": "USD",
-            "delivery_date": None,
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
+            'discount': 0.0,
+            'duties_and_taxes': 0.0,
             "extra_charges": [{"amount": 8.3, "currency": "USD", "name": "FUEL"}],
-            "service_name": "international_economy",
-            "service_type": "payor_account_shipment",
+            "service": "international_economy",
             "total_charge": 215.77,
         },
     ],

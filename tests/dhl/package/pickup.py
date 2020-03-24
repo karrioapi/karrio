@@ -127,7 +127,8 @@ ParsedPickupResponse = [
         "carrier": "carrier_name",
         "confirmation_number": "3674",
         "pickup_date": "2013-10-09",
-        "ref_times": [{"name": "CallInTime", "value": "08:30:00"}],
+        "pickup_max_time": "08:30",
+        "pickup_time": "10:30",
     },
     [
         {

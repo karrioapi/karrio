@@ -29,7 +29,9 @@ class TestDHLRating(unittest.TestCase):
         self.assertEqual(serialized_request, RateRequestXML)
 
     def test_create_rate_request_with_package_preset(self):
-        request = gateway.mapper.create_rate_request(RateRequest(**RateWithPresetPayload))
+        request = gateway.mapper.create_rate_request(
+            RateRequest(**RateWithPresetPayload)
+        )
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         serialized_request = re.sub(
@@ -139,26 +141,24 @@ ParsedRateResponse = [
             "base_charge": 195.32,
             "carrier": "carrier_name",
             "currency": "CAD",
-            'delivery_date': '2018-06-26',
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
+            'discount': 0.0,
+            'duties_and_taxes': 0.0,
+            "estimated_delivery": "2018-06-26",
             "extra_charges": [
                 {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
             ],
-            "service_name": "dhl_express_worldwide_doc",
-            "service_type": "time_definite",
+            "service": "dhl_express_worldwide_doc",
             "total_charge": 208.02,
         },
         {
             "base_charge": 213.47,
             "carrier": "carrier_name",
             "currency": "CAD",
-            'delivery_date': '2018-06-26',
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
+            'discount': 0.0,
+            'duties_and_taxes': 0.0,
+            "estimated_delivery": "2018-06-26",
             "extra_charges": [],
-            "service_name": "dhl_express_easy_doc",
-            "service_type": "time_definite",
+            "service": "dhl_express_easy_doc",
             "total_charge": 213.47,
         },
     ],
@@ -170,13 +170,11 @@ ParsedRateVolWeightHigher = [
         {
             "base_charge": 0.0,
             "carrier": "carrier_name",
-            "currency": None,
-            'delivery_date': '2017-11-13',
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
+            'discount': 0.0,
+            'duties_and_taxes': 0.0,
+            "estimated_delivery": "2017-11-13",
             "extra_charges": [],
-            "service_name": "dhl_express_worldwide_nondoc",
-            "service_type": "time_definite",
+            "service": "dhl_express_worldwide_nondoc",
             "total_charge": 0.0,
         }
     ],

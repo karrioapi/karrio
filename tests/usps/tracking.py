@@ -39,9 +39,9 @@ PARSED_TRACKING_RESPONSE = [
             "events": [
                 {
                     "code": "03",
-                    "date": "January 6, 2016",
+                    "date": "2016-01-06",
                     "location": "LAKE CHARLES, IL, 12345",
-                    "time": "9:10 am",
+                    "time": "09:10",
                 }
             ],
         }

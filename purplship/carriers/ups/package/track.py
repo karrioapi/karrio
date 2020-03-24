@@ -1,10 +1,8 @@
 from typing import List, Tuple
 from pyups.common import RequestType, TransactionReferenceType
 from pyups.track_web_service_schema import TrackRequest, ShipmentType, ActivityType
-from purplship.core.utils.helpers import export
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import export, Serializable, Element, format_date, format_time
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.utils.xml import Element
 from purplship.core.models import TrackingEvent, TrackingRequest, TrackingDetails, Error
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -21,28 +19,30 @@ def parse_track_response(
 
 
 def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDetails:
-    trackDetail = ShipmentType()
-    trackDetail.build(shipment_node)
-    activityNodes = shipment_node.xpath(".//*[local-name() = $name]", name="Activity")
+    track_detail = ShipmentType()
+    track_detail.build(shipment_node)
+    activity_nodes = shipment_node.xpath(".//*[local-name() = $name]", name="Activity")
 
-    def build_activity(node):
+    def build_activity(node) -> ActivityType:
         activity = ActivityType()
         activity.build(node)
         return activity
 
-    activities = map(build_activity, activityNodes)
+    activities: List[ActivityType] = list(map(build_activity, activity_nodes))
     return TrackingDetails(
         carrier=settings.carrier_name,
-        tracking_number=trackDetail.InquiryNumber.Value,
+        tracking_number=track_detail.InquiryNumber.Value,
         events=list(
             map(
                 lambda a: TrackingEvent(
-                    date=str(a.Date),
-                    time=str(a.Time),
+                    date=format_date(a.Date, '%Y%m%d'),
+                    time=format_time(a.Time, '%H%M%S'),
                     code=a.Status.Code if a.Status else None,
-                    location=a.ActivityLocation.Address.City
-                    if a.ActivityLocation and a.ActivityLocation.Address
-                    else None,
+                    location=(
+                        a.ActivityLocation.Address.City
+                        if a.ActivityLocation and a.ActivityLocation.Address
+                        else None
+                    ),
                     description=a.Status.Description if a.Status else None,
                 ),
                 activities,
