@@ -35,6 +35,17 @@ class LablelEncoding(Enum):
     zpl = 'ZPL'
 
 
+class PaymentType(Flag):
+    account = "Account"
+    card = "CreditCard"
+    supplier_account = "SupplierAccount"
+
+    sender = supplier_account
+    recipient = account
+    third_party = account
+    credit_card = card
+
+
 class ServiceType(Enum):
     caps_regular_parcel = "DOM.RP"
     caps_expedited_parcel = "DOM.EP"

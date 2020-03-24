@@ -13,7 +13,6 @@ from pyfedex.ship_service_v25 import (
     Address,
     TaxpayerIdentification,
     Weight as FedexWeight,
-    LabelSpecification,
     Dimensions as FedexDimensions,
     CompletedPackageDetail,
     TrackingId,
@@ -26,7 +25,9 @@ from pyfedex.ship_service_v25 import (
     CodDetail,
     CodCollectionType,
     Money,
-    ShippingDocumentPart
+    ShippingDocumentPart,
+    Payment,
+    Payor
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -205,7 +206,17 @@ def process_shipment_request(
             RecipientLocationNumber=None,
             Origin=None,
             SoldTo=None,
-            ShippingChargesPayment=None,
+            ShippingChargesPayment=Payment(
+                PaymentType=None,
+                Payor=Payor(
+                    ResponsibleParty=Party(
+                        AccountNumber=payload.payment.account_number,
+                        Tins=None,
+                        Contact=None,
+                        Address=None
+                    )
+                ),
+            ),
             SpecialServicesRequested=ShipmentSpecialServicesRequested(
                 SpecialServiceTypes=special_services,
                 CodDetail=CodDetail(
@@ -262,21 +273,11 @@ def process_shipment_request(
             PickupDetail=None,
             SmartPostDetail=None,
             BlockInsightVisibility=None,
-            LabelSpecification=LabelSpecification(
-                Dispositions=None,
-                LabelFormatType=payload.label.format,
-                ImageType=payload.label.type,
-                LabelStockType="PAPER_7X4.75",
-                LabelPrintingOrientation=None,
-                LabelOrder=None,
-                PrintedLabelOrigin=None,
-                CustomerSpecifiedDetail=None,
-            )
-            if payload.label is not None
-            else None,
+            LabelSpecification=None,
             ShippingDocumentSpecification=None,
-            RateRequestTypes=["LIST"]
-            + ([] if "currency" not in payload.parcel.options else ["PREFERRED"]),
+            RateRequestTypes=(
+                ["LIST"] + ([] if options.currency is None else ["PREFERRED"])
+            ),
             EdtRequestType=None,
             MasterTrackingId=None,
             PackageCount=None,

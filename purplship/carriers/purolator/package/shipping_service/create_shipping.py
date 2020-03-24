@@ -6,8 +6,9 @@ from pypurolator.shipping_service import (
     TrackingReferenceInformation, Address, InternationalInformation, PickupInformation, PickupType,
     ArrayOfPiece, Piece, Weight as PurolatorWeight, WeightUnit as PurolatorWeightUnit, RequestContext,
     Dimension as PurolatorDimension, DimensionUnit as PurolatorDimensionUnit, TotalWeight, PhoneNumber,
-    PrinterType as PurolatorPrinterType, ValidateShipmentRequest,
-    NotificationInformation, ArrayOfOptionIDValuePair, OptionIDValuePair
+    PrinterType as PurolatorPrinterType, ValidateShipmentRequest, PaymentInformation, DutyInformation,
+    NotificationInformation, ArrayOfOptionIDValuePair, OptionIDValuePair, CreditCardInformation,
+    BusinessRelationship
 )
 from purplship.core.models import ShipmentRequest
 from purplship.core.units import PrinterType, Options, Package
@@ -16,7 +17,7 @@ from purplship.core.errors import RequiredFieldError
 from purplship.core.utils.helpers import concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings, standard_request_serializer
-from purplship.carriers.purolator.units import Product, Service, PackagePresets
+from purplship.carriers.purolator.units import Product, Service, PackagePresets, PaymentType, DutyPaymentType
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
 
@@ -30,7 +31,7 @@ def create_shipping_request(payload: ShipmentRequest, settings: Settings, valida
         raise RequiredFieldError("parcel.weight")
 
     service = next(
-        (Product[s].value for s in payload.parcel.services if s in Product.__members__),
+        (s.value for s in Product if s in payload.parcel.services),
         Product.purolator_express.value
     )
     is_international = payload.shipper.country_code != payload.recipient.country_code
@@ -148,12 +149,29 @@ def create_shipping_request(payload: ShipmentRequest, settings: Settings, valida
                     ContentDetails=payload.parcel.description,
                     BuyerInformation=None,
                     PreferredCustomsBroker=None,
-                    DutyInformation=None,
+                    DutyInformation=DutyInformation(
+                        BillDutiesToParty=DutyPaymentType[payload.customs.duty.paid_by].value,
+                        BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
+                        Currency=payload.customs.duty.currency
+                    ) if payload.customs is not None else None,
                     ImportExportType=None,
                     CustomsInvoiceDocumentIndicator=None
                 ) if is_international else None,
                 ReturnShipmentInformation=None,
-                PaymentInformation=None,
+                PaymentInformation=PaymentInformation(
+                    PaymentType=PaymentType[payload.payment.paid_by].value,
+                    RegisteredAccountNumber=payload.payment.account_number,
+                    BillingAccountNumber=payload.payment.account_number,
+                    CreditCardInformation=CreditCardInformation(
+                        Type=payload.payment.credit_card.type,
+                        Number=payload.payment.credit_card.number,
+                        Name=payload.payment.credit_card.name,
+                        ExpiryMonth=payload.payment.credit_card.expiry_month,
+                        ExpiryYear=payload.payment.credit_card.expiry_year,
+                        CVV=payload.payment.credit_card.security_code,
+                        BillingPostalCode=payload.payment.credit_card.postal_code
+                    ) if payload.payment.credit_card is not None else None,
+                ) if payload.payment is not None else None,
                 PickupInformation=PickupInformation(PickupType=PickupType.DROP_OFF.value),
                 NotificationInformation=NotificationInformation(
                     ConfirmationEmailAddress=options.notification.email or payload.shipper.email,

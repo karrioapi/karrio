@@ -1,6 +1,6 @@
 from typing import Tuple, List, Any
 from purplship.carriers.caps.error import parse_error_response
-from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets
+from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets, PaymentType
 from purplship.carriers.caps.utils import Settings
 from purplship.core.models import (
     Error,
@@ -12,9 +12,9 @@ from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.errors import RequiredFieldError
-from pycaps.shipment import (
-    ShipmentType,
-    ShipmentInfoType,
+from pycaps.ncshipment import (
+    NonContractShipmentType,
+    NonContractShipmentInfoType,
     DeliverySpecType,
     SenderType,
     AddressDetailsType,
@@ -24,18 +24,17 @@ from pycaps.shipment import (
     optionsType,
     ReferencesType,
     NotificationType,
-    PrintPreferencesType,
     sku_listType,
     SkuType,
     dimensionsType,
     OptionType,
     CustomsType,
     PreferencesType,
-    SettlementInfoType, groupIdOrTransmitShipment
+    SettlementInfoType,
 )
 
 
-def parse_shipment_response(
+def parse_non_contract_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Error]]:
     shipment = (
@@ -50,7 +49,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     info_node = next(iter(response.xpath(".//*[local-name() = $name]", name="shipment-info")))
     label = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
     errors = parse_error_response(label, settings)
-    info: ShipmentInfoType = ShipmentInfoType()
+    info: NonContractShipmentInfoType = NonContractShipmentInfoType()
     info.build(info_node)
 
     return ShipmentDetails(
@@ -60,9 +59,9 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def shipment_request(
+def non_contract_shipment_request(
     payload: ShipmentRequest, settings: Settings
-) -> Serializable[ShipmentType]:
+) -> Serializable[NonContractShipmentType]:
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
 
@@ -87,17 +86,12 @@ def shipment_request(
         for name, value in payload.parcel.options.items()
         if name in OptionCode.__members__
     }
+    payment_type = (
+        PaymentType[payload.payment.paid_by].value if payload.payment is not None else None
+    )
 
-    request = ShipmentType(
-        customer_request_id=settings.customer_number,
-        groupIdOrTransmitShipment=groupIdOrTransmitShipment(),
-        quickship_label_requested=None,
-        cpc_pickup_indicator=None,
-        requested_shipping_point=payload.shipper.postal_code,
-        shipping_point_id=None,
-        expected_mailing_date=None,
-        provide_pricing_info=True,
-        provide_receipt_info=None,
+    request = NonContractShipmentType(
+        requested_shipping_point=None,
         delivery_spec=DeliverySpecType(
             service_code=service,
             sender=SenderType(
@@ -105,13 +99,13 @@ def shipment_request(
                 company=payload.shipper.company_name,
                 contact_phone=payload.shipper.phone_number,
                 address_details=AddressDetailsType(
+                    address_line_1=payload.shipper.address_line_1,
+                    address_line_2=payload.shipper.address_line_2,
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
                     country_code=payload.shipper.country_code,
-                    postal_zip_code=payload.shipper.postal_code,
-                    address_line_1=payload.shipper.address_line_1,
-                    address_line_2=payload.shipper.address_line_2,
-                ),
+                    postal_zip_code=payload.shipper.postal_code
+                )
             ),
             destination=DestinationType(
                 name=payload.recipient.person_name,
@@ -119,23 +113,13 @@ def shipment_request(
                 additional_address_info=None,
                 client_voice_number=None,
                 address_details=DestinationAddressDetailsType(
+                    address_line_1=payload.recipient.address_line_1,
+                    address_line_2=payload.recipient.address_line_2,
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=payload.recipient.postal_code,
-                    address_line_1=payload.recipient.address_line_1,
-                    address_line_2=payload.recipient.address_line_2,
-                ),
-            ),
-            parcel_characteristics=ParcelCharacteristicsType(
-                weight=package.weight.KG,
-                dimensions=dimensionsType(
-                    length=package.length.CM,
-                    width=package.width.CM,
-                    height=package.height.CM,
-                ),
-                unpackaged=None,
-                mailing_tube=None,
+                    postal_zip_code=payload.recipient.postal_code
+                )
             ),
             options=optionsType(
                 option=[
@@ -148,20 +132,32 @@ def shipment_request(
                     for code, amount in special_services.items()
                 ]
             ) if len(special_services) > 0 else None,
+            parcel_characteristics=ParcelCharacteristicsType(
+                weight=package.weight.KG,
+                dimensions=dimensionsType(
+                    length=package.length.CM,
+                    width=package.width.CM,
+                    height=package.height.CM,
+                ),
+                unpackaged=None,
+                mailing_tube=None,
+            ),
             notification=NotificationType(
                 email=options.notification.email or payload.shipper.email,
                 on_shipment=True,
                 on_exception=True,
                 on_delivery=True,
             ) if options.notification else None,
-            print_preferences=PrintPreferencesType(
-                output_format="8.5x11", encoding=None
-            ),
             preferences=PreferencesType(
                 service_code=None,
                 show_packing_instructions=True,
                 show_postage_rate=True,
                 show_insured_value=True,
+            ),
+            references=ReferencesType(
+                cost_centre=None,
+                customer_ref_1=payload.parcel.reference,
+                customer_ref_2=None,
             ),
             customs=CustomsType(
                 currency=Currency.AUD.value,
@@ -191,29 +187,21 @@ def shipment_request(
             )
             if payload.customs is not None
             else None,
-            references=ReferencesType(
-                cost_centre=None,
-                customer_ref_1=payload.parcel.reference,
-                customer_ref_2=None,
-            ),
             settlement_info=SettlementInfoType(
-                paid_by_customer=None,
+                paid_by_customer=payload.payment.account_number if payload.payment is not None else None,
                 contract_id=settings.contract_id,
                 cif_shipment=None,
-                intended_method_of_payment=None,
+                intended_method_of_payment=payment_type,
                 promo_code=None
             )
-        ),
-        return_spec=None,
-        pre_authorized_payment=None,
+        )
     )
     return Serializable(request, _request_serializer)
 
 
-def _request_serializer(request: ShipmentType) -> str:
-    request.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
+def _request_serializer(request: NonContractShipmentType) -> str:
     return export(
         request,
         name_="shipment",
-        namespacedef_='xmlns="http://www.canadapost.ca/ws/shipment-v8"',
+        namespacedef_='xmlns=”http://www.canadapost.ca/ws/shipment-v8”',
     )

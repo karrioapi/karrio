@@ -76,14 +76,27 @@ class Invoice:
 
 
 @attr.s(auto_attribs=True)
+class Card:
+    """Credit Card type."""
+
+    type: str
+    number: str
+    expiry_month: str
+    expiry_year: str
+    security_code: str
+    name: str = None
+    postal_code: str = None
+
+
+@attr.s(auto_attribs=True)
 class Payment:
     """payment configuration type."""
 
-    paid_by: str = None
-    description: str = None
+    paid_by: str = "sender"
     amount: float = None
     currency: str = None
     account_number: str = None
+    credit_card: Card = JStruct[Card]
 
 
 @attr.s(auto_attribs=True)
@@ -117,7 +130,6 @@ class ShipmentRequest:
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
 
-    label: Doc = JStruct[Doc]
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
     doc_images: List[Doc] = JList[Doc]

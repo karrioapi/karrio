@@ -1,4 +1,4 @@
-from typing import List, Tuple, cast
+from typing import List, Tuple, Dict, cast
 from pyups import common
 from pyups.ship_web_service_schema import (
     ShipmentRequest as UPSShipmentRequest,
@@ -13,8 +13,6 @@ from pyups.ship_web_service_schema import (
     DimensionsType,
     PackageWeightType,
     ShipUnitOfMeasurementType,
-    LabelSpecificationType,
-    LabelImageFormatType,
     ShipmentResultsType,
     ShipmentServiceOptionsType,
     NotificationType,
@@ -22,24 +20,33 @@ from pyups.ship_web_service_schema import (
     CODType,
     CurrencyMonetaryType,
     PackageResultsType,
-    LabelType
+    LabelType,
+    PaymentInfoType,
+    ShipmentChargeType,
+    BillShipperType,
+    BillReceiverType,
+    BillThirdPartyChargeType,
+    CreditCardType,
+    CreditCardAddressType,
+    BillReceiverAddressType,
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import Options, Package
+from purplship.core.units import Options, Package, PaymentType
 from purplship.core.errors import RequiredFieldError
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
     Error,
+    Payment
 )
 from purplship.carriers.ups.units import (
     ShippingPackagingType,
     ShippingServiceCode,
     WeightUnit as UPSWeightUnit,
-    PackagePresets
+    PackagePresets,
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -65,9 +72,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[UPSShipmentRequest]:
+def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[UPSShipmentRequest]:
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
     options = Options(payload.parcel.options)
@@ -79,6 +84,11 @@ def shipment_request(
     if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
         raise RequiredFieldError("parcel.weight")
 
+    charges: Dict[str, Payment] = {
+        '01': payload.payment,
+        '02': payload.customs.duty if payload.customs is not None else None
+    }
+
     request = UPSShipmentRequest(
         Request=common.RequestType(
             RequestOption=["validate"],
@@ -89,7 +99,6 @@ def shipment_request(
         ),
         Shipment=ShipmentType(
             Description=payload.parcel.description,
-            ReturnService=None,
             DocumentsOnlyIndicator="" if payload.parcel.is_document else None,
             Shipper=ShipperType(
                 Name=payload.shipper.company_name,
@@ -97,9 +106,11 @@ def shipment_request(
                 CompanyDisplayableName=None,
                 TaxIdentificationNumber=payload.shipper.federal_tax_id,
                 TaxIDType=None,
-                Phone=ShipPhoneType(Number=payload.shipper.phone_number, Extension=None)
-                if payload.shipper.phone_number is not None
-                else None,
+                Phone=(
+                    ShipPhoneType(Number=payload.shipper.phone_number, Extension=None)
+                    if payload.shipper.phone_number is not None
+                    else None
+                ),
                 ShipperNumber=settings.account_number,
                 FaxNumber=None,
                 EMailAddress=payload.shipper.email,
@@ -119,52 +130,67 @@ def shipment_request(
                 CompanyDisplayableName=None,
                 TaxIdentificationNumber=payload.recipient.federal_tax_id,
                 TaxIDType=None,
-                Phone=ShipPhoneType(
-                    Number=payload.recipient.phone_number, Extension=None
-                )
-                if payload.recipient.phone_number is not None
-                else None,
+                Phone=(
+                    ShipPhoneType(Number=payload.recipient.phone_number, Extension=None)
+                    if payload.recipient.phone_number is not None
+                    else None
+                ),
                 FaxNumber=None,
                 EMailAddress=payload.recipient.email,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
-                        payload.recipient.address_line_1,
-                        payload.recipient.address_line_2,
+                        payload.recipient.address_line_1, payload.recipient.address_line_2,
                     ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
                     PostalCode=payload.recipient.postal_code,
                     CountryCode=payload.recipient.country_code,
                 ),
-                LocationID=None,
             ),
-            AlternateDeliveryAddress=None,
-            ShipFrom=None,
-            PaymentInformation=None,
-            FRSPaymentInformation=None,
-            FreightShipmentInformation=None,
-            GoodsNotInFreeCirculationIndicator=None,
-            ShipmentRatingOptions=None,
-            MovementReferenceNumber=None,
-            ReferenceNumber=None,
-            Service=ServiceType(Code=service) if service is not None else None,
-            InvoiceLineTotal=None,
-            NumOfPiecesInShipment=None,
-            USPSEndorsement=None,
-            MILabelCN22Indicator=None,
-            SubClassification=None,
-            CostCenter=None,
-            PackageID=None,
-            IrregularIndicator=None,
-            ShipmentIndicationType=None,
-            MIDualReturnShipmentKey=None,
-            MIDualReturnShipmentIndicator=None,
-            RatingMethodRequestedIndicator=None,
-            TaxInformationIndicator=None,
-            PromotionalDiscountInformation=None,
+            PaymentInformation=PaymentInfoType(
+                ShipmentCharge=[
+                    ShipmentChargeType(
+                        Type=charge_type,
+                        BillShipper=BillShipperType(
+                            AccountNumber=settings.account_number,
+                            CreditCard=CreditCardType(
+                                Type=payment.credit_card.type,
+                                Number=payment.credit_card.number,
+                                ExpirationDate=(
+                                    f"{payment.credit_card.expiry_year}{payment.credit_card.expiry_month}"
+                                ),
+                                SecurityCode=payment.credit_card.security_code,
+                                Address=CreditCardAddressType(
+                                    AddressLine=concat_str(
+                                        payload.shipper.address_line_1, payload.shipper.address_line_2
+                                    ),
+                                    City=payload.shipper.city,
+                                    StateProvinceCode=payload.shipper.state_code,
+                                    PostalCode=payload.payment.credit_card.postal_code or payload.shipper.postal_code,
+                                    CountryCode=payload.shipper.country_code,
+                                )
+                            ) if payment.credit_card is not None else None,
+                            AlternatePaymentMethod=None
+                        ) if payment.paid_by == PaymentType.sender.name else None,
+                        BillReceiver=BillReceiverType(
+                            AccountNumber=payment.account_number,
+                            Address=BillReceiverAddressType(
+                                PostalCode=payload.recipient.postal_code
+                            )
+                        ) if payment.paid_by == PaymentType.recipient.name else None,
+                        BillThirdParty=BillThirdPartyChargeType(
+                            AccountNumber=payment.account_number,
+                        ) if payment.paid_by == PaymentType.third_party.name else None,
+                        ConsigneeBilledIndicator=None
+                    )
+                    for charge_type, payment in charges.items() if payment is not None
+                ],
+                SplitDutyVATIndicator=None
+            ) if any(charges.values()) else None,
+            Service=(
+                ServiceType(Code=service) if service is not None else None
+            ),
             ShipmentServiceOptions=ShipmentServiceOptionsType(
-                SaturdayDeliveryIndicator=None,
-                SaturdayPickupIndicator=None,
                 COD=CODType(
                     CODFundsCode=None,
                     CODAmount=CurrencyMonetaryType(
@@ -172,9 +198,6 @@ def shipment_request(
                         MonetaryValue=options.cash_on_delivery.amount
                     )
                 ) if options.cash_on_delivery else None,
-                AccessPointCOD=None,
-                DeliverToAddresseeOnlyIndicator=None,
-                DirectDeliveryOnlyIndicator=None,
                 Notification=[
                     NotificationType(
                         NotificationCode=event,
@@ -186,69 +209,34 @@ def shipment_request(
                         Locale=None
                     ) for event in [8]
                 ] if options.notification else None,
-                LabelDelivery=None,
-                InternationalForms=None,
-                DeliveryConfirmation=None,
-                ReturnOfDocumentIndicator=None,
-                ImportControlIndicator=None,
-                LabelMethod=None,
-                CommercialInvoiceRemovalIndicator=None,
-                UPScarbonneutralIndicator=None,
-                PreAlertNotification=None,
-                ExchangeForwardIndicator=None,
-                HoldForPickupIndicator=None,
-                DropoffAtUPSFacilityIndicator=None,
-                LiftGateForPickUpIndicator=None,
-                LiftGateForDeliveryIndicator=None,
-                SDLShipmentIndicator=None,
-                EPRAReleaseCode=None,
-                RestrictedArticles=None,
-                InsideDelivery=None,
-                ItemDisposal=None
             ) if any([options.cash_on_delivery, options.notification]) else None,
             Package=[
                 PackageType(
                     Description=payload.parcel.description,
-                    Packaging=PackagingType(
-                        Code=ShippingPackagingType[payload.parcel.packaging_type].value,
-                        Description=None,
-                    )
-                    if payload.parcel.packaging_type is not None
-                    else None,
+                    Packaging=(
+                        PackagingType(
+                            Code=ShippingPackagingType[payload.parcel.packaging_type].value,
+                        )
+                        if payload.parcel.packaging_type is not None else None
+                    ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
-                            Code=package.dimension_unit.value, Description=None
+                            Code=package.dimension_unit.value,
                         ),
                         Length=package.length.value,
                         Width=package.width.value,
                         Height=package.height.value,
                     ),
-                    DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
-                            Code=UPSWeightUnit[package.weight_unit.name].value, Description=None
+                            Code=UPSWeightUnit[package.weight_unit.name].value,
                         ),
                         Weight=package.weight.value,
                     ),
-                    LargePackageIndicator=None,
-                    ReferenceNumber=None,
-                    AdditionalHandlingIndicator=None,
-                    PackageServiceOptions=None,
-                    Commodity=None,
-                    HazMatPackageInformation=None,
                 )
             ],
         ),
-        LabelSpecification=LabelSpecificationType(
-            LabelImageFormat=LabelImageFormatType(
-                Code=payload.label.format, Description=payload.label.format
-            ),
-            HTTPUserAgent=None,
-            LabelStockSize=None,
-            Instruction=None,
-        )
-        if payload.label is not None
-        else None,
+        LabelSpecification=None,
         ReceiptSpecification=None,
     )
     return Serializable(

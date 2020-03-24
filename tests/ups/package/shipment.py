@@ -89,7 +89,6 @@ package_shipment_data = {
         }
     },
     "payment": {"paid_by": "sender"},
-    "label": {"format": "GIF"},
 }
 
 
@@ -128,7 +127,6 @@ package_shipment_with_package_preset_data = {
         }
     },
     "payment": {"paid_by": "sender"},
-    "label": {"format": "GIF"},
 }
 
 
@@ -325,6 +323,14 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                         <CountryCode>CountryCode</CountryCode>
                     </Address>
                 </ShipTo>
+                <PaymentInformation>
+                    <ShipmentCharge>
+                        <Type>01</Type>
+                        <BillShipper>
+                            <AccountNumber>Your Account Number</AccountNumber>
+                        </BillShipper>
+                    </ShipmentCharge>
+                </PaymentInformation>
                 <Service>
                     <Code>01</Code>
                 </Service>
@@ -357,12 +363,6 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                     </PackageWeight>
                 </Package>
             </Shipment>
-            <LabelSpecification>
-                <LabelImageFormat>
-                    <Code>GIF</Code>
-                    <Description>GIF</Description>
-                </LabelImageFormat>
-            </LabelSpecification>
         </ship:ShipmentRequest>
     </tns:Body>
 </tns:Envelope>
@@ -420,6 +420,14 @@ ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/
                         <CountryCode>CountryCode</CountryCode>
                     </Address>
                 </ShipTo>
+                <PaymentInformation>
+                    <ShipmentCharge>
+                        <Type>01</Type>
+                        <BillShipper>
+                            <AccountNumber>Your Account Number</AccountNumber>
+                        </BillShipper>
+                    </ShipmentCharge>
+                </PaymentInformation>
                 <Service>
                     <Code>01</Code>
                 </Service>
@@ -452,12 +460,6 @@ ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/
                     </PackageWeight>
                 </Package>
             </Shipment>
-            <LabelSpecification>
-                <LabelImageFormat>
-                    <Code>GIF</Code>
-                    <Description>GIF</Description>
-                </LabelImageFormat>
-            </LabelSpecification>
         </ship:ShipmentRequest>
     </tns:Body>
 </tns:Envelope>

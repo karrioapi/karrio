@@ -176,7 +176,7 @@ class ProductCode(Enum):
     dhl_destination_charges = "Z"
 
 
-class PayorType(Enum):
+class PaymentType(Enum):
     sender = "S"
     recipient = "R"
     third_party = "T"

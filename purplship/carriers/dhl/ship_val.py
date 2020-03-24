@@ -33,13 +33,13 @@ from purplship.core.units import Options, Package
 from purplship.carriers.dhl.units import (
     PackageType,
     ProductCode,
-    PayorType,
+    PaymentType,
     Dimension as DHLDimensionUnit,
     WeightUnit as DHLWeightUnit,
     CountryRegion,
     ServiceCode,
     DeliveryType,
-    PackagePresets
+    PackagePresets,
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -84,17 +84,18 @@ def shipment_request(
         else ProductCode.dhl_express_worldwide_nondoc
     )
     product = next(
-        (ProductCode[svc] for svc in payload.parcel.services if svc in ProductCode.__members__),
+        (s for s in ProductCode if s.name in payload.parcel.services),
         default_product_code
     )
     delivery_type = next(
-        (DeliveryType[d] for d in payload.parcel.options.keys() if d in DeliveryType.__members__),
+        (d for d in DeliveryType if d.name in payload.parcel.options.keys()),
         None
     )
     special_services = [
-        ServiceCode[name].value for name, _ in payload.parcel.options.items()
-        if name in ServiceCode.__members__
+        ServiceCode[s].value for s in payload.parcel.options.keys() if s in ServiceCode.__members__
     ]
+    has_payment_config = payload.payment is not None
+    has_customs_config = payload.customs is not None
 
     request = DHLShipmentRequest(
         schemaVersion=6.2,
@@ -108,22 +109,10 @@ def shipment_request(
         LatinResponseInd=None,
         Billing=Billing(
             ShipperAccountNumber=settings.account_number,
-            BillingAccountNumber=payload.payment.account_number,
-            ShippingPaymentType=(
-                PayorType[payload.payment.paid_by].value
-                if payload.payment.paid_by is not None
-                else None
-            )
-            if payload.payment is not None
-            else None,
-            DutyAccountNumber=payload.customs.duty.account_number,
-            DutyPaymentType=(
-                PayorType[payload.customs.duty.paid_by].value
-                if payload.customs.duty.paid_by is not None
-                else None
-            )
-            if all([payload.customs, payload.customs.duty])
-            else None,
+            BillingAccountNumber=payload.payment.account_number if has_payment_config else None,
+            ShippingPaymentType=PaymentType[payload.payment.paid_by].value if has_payment_config else None,
+            DutyAccountNumber=payload.customs.duty.account_number if has_customs_config else None,
+            DutyPaymentType=PaymentType[payload.customs.duty.paid_by].value if has_customs_config else None,
         ),
         Consignee=Consignee(
             CompanyName=payload.recipient.company_name,
@@ -142,10 +131,6 @@ def shipment_request(
                     PersonName=payload.recipient.person_name,
                     PhoneNumber=payload.recipient.phone_number,
                     Email=payload.recipient.email,
-                    FaxNumber=None,
-                    Telex=None,
-                    PhoneExtension=None,
-                    MobilePhoneNumber=None,
                 )
                 if any(
                     [
@@ -179,10 +164,6 @@ def shipment_request(
                     PersonName=payload.shipper.person_name,
                     PhoneNumber=payload.shipper.phone_number,
                     Email=payload.shipper.email,
-                    FaxNumber=None,
-                    Telex=None,
-                    PhoneExtension=None,
-                    MobilePhoneNumber=None,
                 )
                 if any(
                     [
@@ -229,34 +210,18 @@ def shipment_request(
             DeclaredCurrency=payload.customs.duty.currency or "USD",
             DeclaredValue=payload.customs.duty.amount,
             TermsOfTrade=payload.customs.terms_of_trade,
-            ScheduleB=None,
-            ExportLicense=None,
-            ShipperEIN=None,
-            ShipperIDType=None,
-            ImportLicense=None,
-            ConsigneeEIN=None,
         )
         if payload.customs is not None and payload.customs.duty is not None
         else None,
         ExportDeclaration=None,
         Reference=[Reference(ReferenceID=payload.parcel.reference)],
         SpecialService=[
-            SpecialService(
-                SpecialServiceType=service,
-                SpecialServiceDesc=None,
-                CommunicationAddress=None,
-                CommunicationType=None,
-                ChargeValue=None,
-                CurrencyCode=None,
-                IsWaived=None
-            )
-            for service in special_services
+            SpecialService(SpecialServiceType=service) for service in special_services
         ],
         Notification=Notification(
             EmailAddress=options.notification.email or payload.shipper.email,
-            Message=None
         ) if options.notification else None,
-        LabelImageFormat=(payload.label.format if payload.label is not None else None),
+        LabelImageFormat="PDF",
         DocImages=DocImages(
             DocImage=[
                 DocImage(
