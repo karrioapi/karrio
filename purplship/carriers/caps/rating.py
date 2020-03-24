@@ -14,13 +14,9 @@ from pycaps.rating import (
 from functools import reduce
 from datetime import datetime
 from typing import List, Tuple
-from purplship.core.utils.helpers import export
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.xml import Element
+from purplship.core.utils import Serializable, export, Element, format_date
 from purplship.carriers.caps.utils import Settings
 from purplship.core.units import (
-    Weight,
-    Dimension,
     Country,
     Currency,
     Package
@@ -56,7 +52,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
     return RateDetails(
         carrier=settings.carrier_name,
         currency=currency,
-        estimated_delivery=str(price_quote.service_standard.expected_delivery_date),
+        estimated_delivery=format_date(price_quote.service_standard.expected_delivery_date),
         service=ServiceType(price_quote.service_code).name,
         base_charge=float(price_quote.price_details.base or 0),
         total_charge=float(price_quote.price_details.due or 0),

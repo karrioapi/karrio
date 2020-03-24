@@ -64,19 +64,13 @@ freight_shipment_data = {
         "reference": "Your Customer Context",
         "options": {
             "ups_freight_class": "ups_freight_class_50",
-            "notification": {
-                "email": "test@mail.com"
-            }
+            "notification": {"email": "test@mail.com"},
         },
     },
 }
 
 ParsedFreightShipmentResponse = [
-    {
-        "carrier": "UPS Freight",
-        "tracking_number": "Shipment Number",
-        "label": ""
-    },
+    {"carrier": "UPS Freight", "tracking_number": "Shipment Number", "label": ""},
     [],
 ]
 

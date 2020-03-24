@@ -16,7 +16,9 @@ class TestUPSShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
     def test_create_package_shipment_with_package_preset_request(self):
-        request = gateway.mapper.create_shipment_request(ShipmentRequest(**package_shipment_with_package_preset_data))
+        request = gateway.mapper.create_shipment_request(
+            ShipmentRequest(**package_shipment_with_package_preset_data)
+        )
         self.assertEqual(request.serialize(), ShipmentRequestWithPresetXML)
 
     @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
@@ -82,11 +84,7 @@ package_shipment_data = {
         "width": 5,
         "height": 2,
         "weight": 10,
-        "options": {
-            "notification": {
-                "email": "test@mail.com"
-            }
-        }
+        "options": {"notification": {"email": "test@mail.com"}},
     },
     "payment": {"paid_by": "sender"},
 }
@@ -120,11 +118,7 @@ package_shipment_with_package_preset_data = {
         "packaging_type": "ups_customer_supplied_package",
         "description": "Description",
         "package_preset": "ups_medium_express_box",
-        "options": {
-            "notification": {
-                "email": "test@mail.com"
-            }
-        }
+        "options": {"notification": {"email": "test@mail.com"}},
     },
     "payment": {"paid_by": "sender"},
 }

@@ -92,7 +92,116 @@ RATE_REQUEST_WITH_PRESET_PAYLOAD = {
     },
 }
 
-PARSED_RATE_RESPONSE = [[{'base_charge': 62.35, 'carrier': 'purolator', 'currency': 'CAD', 'discount': 0.0, 'duties_and_taxes': 5.15, 'estimated_delivery': '2009-04-17', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 5.15, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.81, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service': 'purolator_express_9_am', 'total_charge': 108.16}, {'base_charge': 55.0, 'carrier': 'purolator', 'currency': 'CAD', 'discount': 0.0, 'duties_and_taxes': 4.77, 'estimated_delivery': '2009-04-17', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 4.77, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.48, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service': 'purolator_express_10_30_am', 'total_charge': 100.1}, {'base_charge': 46.15, 'carrier': 'purolator', 'currency': 'CAD', 'discount': 0.0, 'duties_and_taxes': 4.3, 'estimated_delivery': '2009-04-17', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 4.3, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 2.08, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service': 'purolator_express', 'total_charge': 90.38}, {'base_charge': 29.6, 'carrier': 'purolator', 'currency': 'CAD', 'discount': 0.0, 'duties_and_taxes': 3.44, 'estimated_delivery': '2009-04-22', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 3.44, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 1.33, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service': 'purolator_ground', 'total_charge': 72.22}, {'base_charge': 87.69, 'carrier': 'purolator', 'currency': 'CAD', 'discount': 0.0, 'duties_and_taxes': 6.47, 'estimated_delivery': '2009-04-22', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'PST/QST'}, {'amount': 0.0, 'currency': 'CAD', 'name': 'HST'}, {'amount': 6.47, 'currency': 'CAD', 'name': 'GST'}, {'amount': 1.85, 'currency': 'CAD', 'name': 'Residential Delivery'}, {'amount': 3.95, 'currency': 'CAD', 'name': 'Fuel'}, {'amount': 36.0, 'currency': 'CAD', 'name': 'Dangerous Goods Classification'}], 'service': 'purolator_ground', 'total_charge': 135.96}], []]
+PARSED_RATE_RESPONSE = [
+    [
+        {
+            "base_charge": 62.35,
+            "carrier": "purolator",
+            "currency": "CAD",
+            "duties_and_taxes": 5.15,
+            "estimated_delivery": "2009-04-17",
+            "extra_charges": [
+                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 5.15, "currency": "CAD", "name": "GST"},
+                {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
+                {"amount": 2.81, "currency": "CAD", "name": "Fuel"},
+                {
+                    "amount": 36.0,
+                    "currency": "CAD",
+                    "name": "Dangerous Goods Classification",
+                },
+            ],
+            "service": "purolator_express_9_am",
+            "total_charge": 108.16,
+        },
+        {
+            "base_charge": 55.0,
+            "carrier": "purolator",
+            "currency": "CAD",
+            "duties_and_taxes": 4.77,
+            "estimated_delivery": "2009-04-17",
+            "extra_charges": [
+                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 4.77, "currency": "CAD", "name": "GST"},
+                {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
+                {"amount": 2.48, "currency": "CAD", "name": "Fuel"},
+                {
+                    "amount": 36.0,
+                    "currency": "CAD",
+                    "name": "Dangerous Goods Classification",
+                },
+            ],
+            "service": "purolator_express_10_30_am",
+            "total_charge": 100.1,
+        },
+        {
+            "base_charge": 46.15,
+            "carrier": "purolator",
+            "currency": "CAD",
+            "duties_and_taxes": 4.3,
+            "estimated_delivery": "2009-04-17",
+            "extra_charges": [
+                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 4.3, "currency": "CAD", "name": "GST"},
+                {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
+                {"amount": 2.08, "currency": "CAD", "name": "Fuel"},
+                {
+                    "amount": 36.0,
+                    "currency": "CAD",
+                    "name": "Dangerous Goods Classification",
+                },
+            ],
+            "service": "purolator_express",
+            "total_charge": 90.38,
+        },
+        {
+            "base_charge": 29.6,
+            "carrier": "purolator",
+            "currency": "CAD",
+            "duties_and_taxes": 3.44,
+            "estimated_delivery": "2009-04-22",
+            "extra_charges": [
+                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 3.44, "currency": "CAD", "name": "GST"},
+                {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
+                {"amount": 1.33, "currency": "CAD", "name": "Fuel"},
+                {
+                    "amount": 36.0,
+                    "currency": "CAD",
+                    "name": "Dangerous Goods Classification",
+                },
+            ],
+            "service": "purolator_ground",
+            "total_charge": 72.22,
+        },
+        {
+            "base_charge": 87.69,
+            "carrier": "purolator",
+            "currency": "CAD",
+            "duties_and_taxes": 6.47,
+            "estimated_delivery": "2009-04-22",
+            "extra_charges": [
+                {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
+                {"amount": 0.0, "currency": "CAD", "name": "HST"},
+                {"amount": 6.47, "currency": "CAD", "name": "GST"},
+                {"amount": 1.85, "currency": "CAD", "name": "Residential Delivery"},
+                {"amount": 3.95, "currency": "CAD", "name": "Fuel"},
+                {
+                    "amount": 36.0,
+                    "currency": "CAD",
+                    "name": "Dangerous Goods Classification",
+                },
+            ],
+            "service": "purolator_ground",
+            "total_charge": 135.96,
+        },
+    ],
+    [],
+]
 
 
 RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">

@@ -50,10 +50,8 @@ def _extract_quote(self, service: Service) -> RateDetails:
         carrier=self.client.carrier_name,
         service=service.name,
         base_charge=float(service.price),
-        duties_and_taxes=0,
         total_charge=float(service.price),
         currency=Currency.AUD.name,
-        discount=0,
     )
 
 

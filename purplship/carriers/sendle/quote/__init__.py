@@ -1,6 +1,5 @@
 from typing import List, Tuple, Union
-from purplship.core.utils.helpers import to_dict
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import to_dict, Serializable, format_date
 from purplship.core.models import RateRequest, RateDetails, Error
 from purplship.core.units import Country
 from purplship.core.errors import OriginNotServicedError
@@ -41,7 +40,7 @@ def _extract_quote(
         duties_and_taxes=parcel_quote.quote.tax.amount,
         total_charge=parcel_quote.quote.net.amount,
         currency=parcel_quote.quote.net.currency,
-        estimated_delivery=parcel_quote.eta.date_range[-1],
+        estimated_delivery=format_date(parcel_quote.eta.date_range[-1]),
         extra_charges=[],
     )
 

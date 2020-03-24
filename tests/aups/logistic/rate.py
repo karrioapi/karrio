@@ -81,7 +81,7 @@ PARSED_SHIPPING_PRICE_RESPONSE = [
             "carrier": "Australia Post Shipping",
             "currency": "AUD",
             "duties_and_taxes": 5.87,
-            "extra_charges": [{"amount": 4.51, 'currency': 'AUD', "name": "Fuel"}],
+            "extra_charges": [{"amount": 4.51, "currency": "AUD", "name": "Fuel"}],
             "total_charge": 64.61,
         }
     ],

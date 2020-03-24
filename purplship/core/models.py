@@ -241,29 +241,13 @@ class ChargeDetails:
 
 
 @attr.s(auto_attribs=True)
-class ReferenceDetails:
-    """PurplShip reference details type."""
-
-    value: str
-    type: str = None
-
-
-@attr.s(auto_attribs=True)
-class TimeDetails:
-    """PurplShip time details type."""
-
-    value: str
-    name: str = None
-
-
-@attr.s(auto_attribs=True)
 class TrackingEvent:
     """PurplShip tracking event type."""
 
     date: str
     description: str
     location: str
-    code: str
+    code: str = None
     time: str = None
     signatory: str = None
 
@@ -275,10 +259,10 @@ class RateDetails:
     carrier: str
     currency: str
     service: str = None
-    discount: float = 0.0
+    discount: float = None
     base_charge: float = 0.0
     total_charge: float = 0.0
-    duties_and_taxes: float = 0.0
+    duties_and_taxes: float = None
     estimated_delivery: str = None
     extra_charges: List[ChargeDetails] = []
 
@@ -289,7 +273,6 @@ class TrackingDetails:
 
     carrier: str
     tracking_number: str
-    shipment_date: str = None
     events: List[TrackingEvent] = []
 
 
@@ -311,4 +294,5 @@ class PickupDetails:
     confirmation_number: str
     pickup_date: str = None
     pickup_charge: ChargeDetails = None
-    ref_times: List[TimeDetails] = None
+    pickup_time: str = None
+    pickup_max_time: str = None

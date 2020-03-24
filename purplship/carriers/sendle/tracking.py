@@ -1,7 +1,7 @@
 """PurplShip Sendle Tracking service mapper module."""
 
 from typing import Tuple, List
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import Serializable, format_date, format_time
 from purplship.core.models import TrackingRequest, Error, TrackingEvent, TrackingDetails
 from pysendle.tracking import TrackingResponse
 from purplship.carriers.sendle.error import parse_error_response
@@ -30,11 +30,10 @@ def _extract_tracking(
     return TrackingDetails(
         carrier=settings.carrier_name,
         tracking_number=tracking_number,
-        shipment_date=None,
         events=[
             TrackingEvent(
-                date=event.scan_time,
-                signatory=None,
+                date=format_date(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
+                time=format_time(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
                 code=event.event_type,
                 location=event.destination_location,
                 description=event.description,

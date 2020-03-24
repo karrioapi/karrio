@@ -14,9 +14,7 @@ from pydhl.dct_req_global_2_0 import (
     QtdShpType,
 )
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
-from purplship.core.utils.helpers import export
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.xml import Element
+from purplship.core.utils import export, Serializable, Element, format_date
 from purplship.core.errors import RequiredFieldError
 from purplship.core.units import Package
 from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
@@ -71,7 +69,7 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     return RateDetails(
         carrier=settings.carrier_name,
         currency=qtdshp.CurrencyCode,
-        estimated_delivery=delivery_date,
+        estimated_delivery=format_date(delivery_date),
         service=service_name,
         base_charge=float(qtdshp.WeightCharge or 0),
         total_charge=float(qtdshp.ShippingCharge or 0),
