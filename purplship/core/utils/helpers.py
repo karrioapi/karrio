@@ -1,5 +1,4 @@
 import attr
-import ssl
 import json
 import asyncio
 from io import StringIO
@@ -10,7 +9,6 @@ from purplship.core.utils.xml import Element, fromstring, tostring
 from typing import List, TypeVar, Callable, Any, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-ctx = ssl._create_unverified_context()
 T = TypeVar("T")
 S = TypeVar("S")
 
@@ -43,11 +41,11 @@ def request(decoder: Callable = decode_bytes, **args) -> str:
     """
     try:
         req = Request(**args)
-        with urlopen(req, context=ctx) as f:
+        with urlopen(req) as f:
             res = f.read()
             try:
                 return decoder(res)
-            except Exception as de:
+            except Exception as _:
                 return res
     except HTTPError as e:
         return e.read().decode("utf-8")
