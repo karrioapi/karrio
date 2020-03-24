@@ -77,10 +77,9 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
     )
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=ServiceType(detail.ServiceType).name,
-        service_type=RateType(detail.ActualRateType).name,
+        service=ServiceType(detail.ServiceType).name,
         currency=currency_,
-        delivery_date=(
+        estimated_delivery=(
             datetime.strptime(delivery_, "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
             if delivery_
             else None

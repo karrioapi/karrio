@@ -36,11 +36,11 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
     )
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=service.SvcDescription,
+        service=service.SvcDescription,
         base_charge=float(service.Postage),
         total_charge=service.Postage,
         currency=currency,
-        delivery_date=delivery_date,
+        estimated_delivery=delivery_date,
         extra_charges=[
             ChargeDetails(
                 name=ExtraService(special.ServiceID).name,

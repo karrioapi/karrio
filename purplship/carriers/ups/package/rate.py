@@ -81,7 +81,7 @@ def _extract_package_rate(
             RateDetails(
                 carrier=settings.carrier_name,
                 currency=currency_,
-                service_name=service,
+                service=service,
                 base_charge=float(rate.TransportationCharges.MonetaryValue),
                 total_charge=float(total_charges.MonetaryValue),
                 duties_and_taxes=reduce(
@@ -104,7 +104,7 @@ def _extract_package_rate(
                     [charge for charge in extra_charges if charge is not None],
                     [],
                 ),
-                delivery_date=str(arrival.Date),
+                estimated_delivery=str(arrival.Date),
             )
         ]
 

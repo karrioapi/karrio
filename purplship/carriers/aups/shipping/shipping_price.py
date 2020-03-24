@@ -31,26 +31,23 @@ def _extract_quote(rate: ResponseShipment, settings: Settings) -> RateDetails:
     summary = rate.shipment_summary or ShipmentSummary()
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=None,
-        service_type=None,
         base_charge=summary.total_cost_ex_gst,
         duties_and_taxes=summary.total_gst,
         total_charge=summary.total_cost,
         currency=Currency.AUD.name,
-        delivery_date=None,
         discount=summary.discount,
         extra_charges=[
             ChargeDetails(**details)
             for details in (
                 []
                 if not summary.fuel_surcharge
-                else [{"name": "Fuel", "amount": summary.fuel_surcharge}] + []
+                else [{"name": "Fuel", "amount": summary.fuel_surcharge, "currency": "AUD"}] + []
                 if not summary.security_surcharge
-                else [{"name": "Fuel", "amount": summary.security_surcharge}] + []
+                else [{"name": "Fuel", "amount": summary.security_surcharge, "currency": "AUD"}] + []
                 if not summary.transit_cover
-                else [{"name": "Fuel", "amount": summary.transit_cover}] + []
+                else [{"name": "Fuel", "amount": summary.transit_cover, "currency": "AUD"}] + []
                 if not summary.freight_charge
-                else [{"name": "Fuel", "amount": summary.freight_charge}]
+                else [{"name": "Fuel", "amount": summary.freight_charge, "currency": "AUD"}]
             )
         ],
     )

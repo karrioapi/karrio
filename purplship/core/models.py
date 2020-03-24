@@ -273,14 +273,13 @@ class RateDetails:
     """PurplShip rate (quote) details type."""
 
     carrier: str
-    service_name: str
     currency: str
-    service_type: str = None
+    service: str = None
     discount: float = 0.0
     base_charge: float = 0.0
-    delivery_date: str = None
     total_charge: float = 0.0
     duties_and_taxes: float = 0.0
+    estimated_delivery: str = None
     extra_charges: List[ChargeDetails] = []
 
 

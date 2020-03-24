@@ -23,7 +23,6 @@ from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
 from purplship.carriers.dhl.units import (
     Product,
     ProductCode,
-    NetworkType,
     DCTPackageType,
     Dimension,
     WeightUnit,
@@ -69,16 +68,11 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
         (p.name for p in Product if p.value in qtdshp.LocalProductName),
         qtdshp.LocalProductName
     )
-    service_type = next(
-        (s.name for s in NetworkType if s.value in qtdshp.NetworkTypeCode),
-        qtdshp.NetworkTypeCode
-    )
     return RateDetails(
         carrier=settings.carrier_name,
         currency=qtdshp.CurrencyCode,
-        delivery_date=delivery_date,
-        service_name=service_name,
-        service_type=service_type,
+        estimated_delivery=delivery_date,
+        service=service_name,
         base_charge=float(qtdshp.WeightCharge or 0),
         total_charge=float(qtdshp.ShippingCharge or 0),
         duties_and_taxes=DutiesAndTaxes_,

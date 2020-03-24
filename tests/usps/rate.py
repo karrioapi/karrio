@@ -8,7 +8,7 @@ from purplship.package import rating
 from tests.usps.fixture import gateway
 
 
-class TestUSPSQuote(unittest.TestCase):
+class TestUSPSRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.RateRequest = RateRequest(**RATE_PAYLOAD)
@@ -36,6 +36,7 @@ class TestUSPSQuote(unittest.TestCase):
         with patch("purplship.package.mappers.usps.proxy.http") as mock:
             mock.return_value = RATE_RESPONSE
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
 
     def test_parse_intl_quote_response(self):
@@ -88,153 +89,7 @@ INTL_RATE_PAYLOAD = {
 }
 
 
-PARSED_RATE_RESPONSE = [
-    [
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "extra_charges": [
-                {
-                    "amount": 1.3,
-                    "currency": "USD",
-                    "name": "certificate_of_mailing_form_3665",
-                },
-                {"amount": 3.3, "currency": "USD", "name": "certified_mail"},
-                {
-                    "amount": 8.25,
-                    "currency": "USD",
-                    "name": "certified_mail_restricted_delivery",
-                },
-                {
-                    "amount": 8.25,
-                    "currency": "USD",
-                    "name": "certified_mail_adult_signature_required",
-                },
-                {
-                    "amount": 8.25,
-                    "currency": "USD",
-                    "name": "certified_mail_adult_signature_restricted_delivery",
-                },
-                {"amount": 6.95, "currency": "USD", "name": "collect_on_delivery"},
-                {
-                    "amount": 11.9,
-                    "currency": "USD",
-                    "name": "collect_on_delivery_restricted_delivery",
-                },
-                {"amount": 2.1, "currency": "USD", "name": "insurance"},
-                {
-                    "amount": 14.0,
-                    "currency": "USD",
-                    "name": "insurance_restricted_delivery",
-                },
-                {"amount": 11.7, "currency": "USD", "name": "registered_mail"},
-                {
-                    "amount": 16.65,
-                    "currency": "USD",
-                    "name": "registered_mail_restricted_delivery",
-                },
-            ],
-            "service_name": "First-Class Mail<sup>®</sup> Stamped Letter",
-            "total_charge": 1.1,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "extra_charges": [
-                {"amount": 5.7, "currency": "USD", "name": "adult_signature_required"},
-                {
-                    "amount": 5.95,
-                    "currency": "USD",
-                    "name": "adult_signature_restricted_delivery",
-                },
-                {"amount": 14.05, "currency": "USD", "name": "insurance"},
-                {"amount": 2.7, "currency": "USD", "name": "return_receipt"},
-                {"amount": 0.0, "currency": "USD", "name": "usps_tracking_electronic"},
-            ],
-            "service_name": "Priority Mail 2-Day<sup>™</sup>",
-            "total_charge": 20.7,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup>",
-            "total_charge": 14.9,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Medium Flat Rate Box",
-            "total_charge": 13.45,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Small Flat Rate Box",
-            "total_charge": 6.8,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Large Flat Rate Box "
-            "APO/FPO/DPO",
-            "total_charge": 16.75,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Flat Rate Envelope",
-            "total_charge": 6.45,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Legal Flat Rate "
-            "Envelope",
-            "total_charge": 6.45,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Padded Flat Rate "
-            "Envelope",
-            "total_charge": 6.8,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Gift Card Flat Rate "
-            "Envelope",
-            "total_charge": 6.45,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Small Flat Rate "
-            "Envelope",
-            "total_charge": 6.45,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Priority Mail Military<sup>™</sup> Window Flat Rate "
-            "Envelope",
-            "total_charge": 6.45,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Media Mail Parcel",
-            "total_charge": 6.93,
-        },
-        {
-            "carrier": "USPS",
-            "currency": "USD",
-            "service_name": "Library Mail Parcel",
-            "total_charge": 6.62,
-        },
-    ],
-    [],
-]
+PARSED_RATE_RESPONSE = [[{'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': 1.3, 'currency': 'USD', 'name': 'certificate_of_mailing_form_3665'}, {'amount': 3.3, 'currency': 'USD', 'name': 'certified_mail'}, {'amount': 8.25, 'currency': 'USD', 'name': 'certified_mail_restricted_delivery'}, {'amount': 8.25, 'currency': 'USD', 'name': 'certified_mail_adult_signature_required'}, {'amount': 8.25, 'currency': 'USD', 'name': 'certified_mail_adult_signature_restricted_delivery'}, {'amount': 6.95, 'currency': 'USD', 'name': 'collect_on_delivery'}, {'amount': 11.9, 'currency': 'USD', 'name': 'collect_on_delivery_restricted_delivery'}, {'amount': 2.1, 'currency': 'USD', 'name': 'insurance'}, {'amount': 14.0, 'currency': 'USD', 'name': 'insurance_restricted_delivery'}, {'amount': 11.7, 'currency': 'USD', 'name': 'registered_mail'}, {'amount': 16.65, 'currency': 'USD', 'name': 'registered_mail_restricted_delivery'}], 'service': 'First-Class Mail<sup>®</sup> Stamped Letter', 'total_charge': 1.1}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'extra_charges': [{'amount': 5.7, 'currency': 'USD', 'name': 'adult_signature_required'}, {'amount': 5.95, 'currency': 'USD', 'name': 'adult_signature_restricted_delivery'}, {'amount': 14.05, 'currency': 'USD', 'name': 'insurance'}, {'amount': 2.7, 'currency': 'USD', 'name': 'return_receipt'}, {'amount': 0.0, 'currency': 'USD', 'name': 'usps_tracking_electronic'}], 'service': 'Priority Mail 2-Day<sup>™</sup>', 'total_charge': 20.7}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup>', 'total_charge': 14.9}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Medium Flat Rate Box', 'total_charge': 13.45}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Small Flat Rate Box', 'total_charge': 6.8}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Large Flat Rate Box APO/FPO/DPO', 'total_charge': 16.75}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Flat Rate Envelope', 'total_charge': 6.45}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Legal Flat Rate Envelope', 'total_charge': 6.45}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Padded Flat Rate Envelope', 'total_charge': 6.8}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Gift Card Flat Rate Envelope', 'total_charge': 6.45}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Small Flat Rate Envelope', 'total_charge': 6.45}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Priority Mail Military<sup>™</sup> Window Flat Rate Envelope', 'total_charge': 6.45}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Media Mail Parcel', 'total_charge': 6.93}, {'base_charge': 0.0, 'carrier': 'USPS', 'currency': 'USD', 'discount': 0.0, 'duties_and_taxes': 0.0, 'service': 'Library Mail Parcel', 'total_charge': 6.62}], []]
 
 PARSED_INTL_RATE_RESPONSE = [
     [
@@ -251,14 +106,14 @@ PARSED_INTL_RATE_RESPONSE = [
                     "name": "insurance_global_express_guaranteed",
                 }
             ],
-            "service_name": "USPS GXG<sup>™</sup> Envelopes",
+            "service": "USPS GXG<sup>™</sup> Envelopes",
             "total_charge": 211.5,
         },
         {
             "base_charge": 158.7,
             "carrier": "USPS",
             "currency": "USD",
-            "delivery_date": "2016-03-30",
+            "estimated_delivery": "2016-03-30",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [
@@ -268,7 +123,7 @@ PARSED_INTL_RATE_RESPONSE = [
                     "name": "insurance_global_express_guaranteed",
                 }
             ],
-            "service_name": "Priority Mail Express International<sup>™</sup>",
+            "service": "Priority Mail Express International<sup>™</sup>",
             "total_charge": 158.7,
         },
         {
@@ -286,7 +141,7 @@ PARSED_INTL_RATE_RESPONSE = [
                 {"amount": 1.35, "currency": "USD", "name": "certificate_of_mailing"},
                 {"amount": 3.85, "currency": "USD", "name": "return_receipt"},
             ],
-            "service_name": "Priority Mail International<sup>®</sup>",
+            "service": "Priority Mail International<sup>®</sup>",
             "total_charge": 118.55,
         },
         {
@@ -298,7 +153,7 @@ PARSED_INTL_RATE_RESPONSE = [
             "extra_charges": [
                 {"amount": 1.3, "currency": "USD", "name": "certificate_of_mailing"}
             ],
-            "service_name": "First-Class Mail<sup>®</sup> International Letter",
+            "service": "First-Class Mail<sup>®</sup> International Letter",
             "total_charge": 3.64,
         },
     ],

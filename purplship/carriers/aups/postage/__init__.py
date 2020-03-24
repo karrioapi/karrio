@@ -48,15 +48,12 @@ def parse_service_response(
 def _extract_quote(self, service: Service) -> RateDetails:
     return RateDetails(
         carrier=self.client.carrier_name,
-        service_name=service.name,
-        service_type=service.code,
+        service=service.name,
         base_charge=float(service.price),
         duties_and_taxes=0,
         total_charge=float(service.price),
         currency=Currency.AUD.name,
-        delivery_date=None,
         discount=0,
-        extra_charges=None,
     )
 
 

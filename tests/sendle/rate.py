@@ -113,7 +113,7 @@ INTERNATIONAL_RATE_MISSING_WEIGHT_PAYLOAD = {
 }
 
 
-PARSED_PARCEL_RATE_RESPONSE = [[{'base_charge': 14.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-19', 'duties_and_taxes': 1.36, 'service_name': 'sendle_easy', 'total_charge': 13.59}, {'base_charge': 13.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-19', 'duties_and_taxes': 1.27, 'service_name': 'sendle_premium', 'total_charge': 12.68}, {'base_charge': 13.95, 'carrier': 'Sendle', 'currency': 'AUD', 'delivery_date': '2018-02-14', 'duties_and_taxes': 1.27, 'service_name': 'sendle_pro', 'total_charge': 12.68}], []]
+PARSED_PARCEL_RATE_RESPONSE = [[{'base_charge': 14.95, 'carrier': 'Sendle', 'currency': 'AUD', 'discount': 0.0, 'duties_and_taxes': 1.36, 'estimated_delivery': '2018-02-19', 'service': 'sendle_easy', 'total_charge': 13.59}, {'base_charge': 13.95, 'carrier': 'Sendle', 'currency': 'AUD', 'discount': 0.0, 'duties_and_taxes': 1.27, 'estimated_delivery': '2018-02-19', 'service': 'sendle_premium', 'total_charge': 12.68}, {'base_charge': 13.95, 'carrier': 'Sendle', 'currency': 'AUD', 'discount': 0.0, 'duties_and_taxes': 1.27, 'estimated_delivery': '2018-02-14', 'service': 'sendle_pro', 'total_charge': 12.68}], []]
 
 
 PARSED_ERRORS = [

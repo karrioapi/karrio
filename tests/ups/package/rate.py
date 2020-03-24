@@ -144,11 +144,10 @@ ParsedRateResponse = [
             "base_charge": 9.86,
             "carrier": "UPS",
             "currency": "USD",
-            "delivery_date": "None",
-            "discount": None,
+            "estimated_delivery": "None",
             "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 0.0, "currency": "USD", "name": None}],
-            "service_name": "ups_ground",
+            "service": "ups_ground",
             "total_charge": 9.86,
         }
     ],

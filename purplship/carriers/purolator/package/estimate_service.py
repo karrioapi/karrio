@@ -56,10 +56,10 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     service = next((p.name for p in Product if p.value in estimate.ServiceID), estimate.ServiceID)
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=service,
+        service=service,
         currency=currency,
         base_charge=float(estimate.BasePrice),
-        delivery_date=str(estimate.ExpectedDeliveryDate),
+        estimated_delivery=str(estimate.ExpectedDeliveryDate),
         total_charge=float(estimate.TotalPrice),
         duties_and_taxes=sum(c.amount for c in duties_and_taxes),
         extra_charges=(duties_and_taxes + surcharges + option_charges)

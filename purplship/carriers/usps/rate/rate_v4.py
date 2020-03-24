@@ -44,13 +44,10 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
 
     return RateDetails(
         carrier=settings.carrier_name,
-        service_name=get("MailService"),
-        base_charge=None,
-        duties_and_taxes=None,
+        service=get("MailService"),
         total_charge=float(postage_node.find("Rate").text),
         currency=currency,
-        delivery_date=postage.CommitmentDate,
-        discount=None,
+        estimated_delivery=postage.CommitmentDate,
         extra_charges=[
             ChargeDetails(
                 name=SpecialService(str(svc.ServiceID)).name,
