@@ -3,8 +3,8 @@ from setuptools import setup, find_packages
 with open("builds/package/README.md", "r") as fh:
     long_description = fh.read()
 
-setup(name='purplship.shipping',
-      version='2020.3.0',
+setup(name='purplship.package',
+      version='2020.3.0-beta',
       description='Multi-carrier shipping Library',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -12,7 +12,7 @@ setup(name='purplship.shipping',
       author='PurplShip',
       author_email='danielk.developer@gmail.com',
       license='LGPLv3',
-      packages=find_packages(".", exclude=["purplship.freight*", "tests*"]),
+      packages=find_packages(".", exclude=["*freight*", "tests*"]),
       install_requires=[
             'attrs',
             'jstruct',
