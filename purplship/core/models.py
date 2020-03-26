@@ -97,6 +97,7 @@ class Payment:
     currency: str = None
     account_number: str = None
     credit_card: Card = JStruct[Card]
+    contact: Address = JStruct[Address]
 
 
 @attr.s(auto_attribs=True)

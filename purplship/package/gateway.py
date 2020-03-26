@@ -1,23 +1,11 @@
 """PurplShip Shipping Gateway modules."""
 
 import attr
-from enum import Enum
 from typing import Callable, Union
 from purplship.core import Settings
 from purplship.package.proxy import Proxy
 from purplship.package.mapper import Mapper
-from purplship.package.mappers import *
-
-
-class Providers(Enum):
-    aups = aups
-    caps = caps
-    dhl = dhl
-    fedex = fedex
-    purolator = purolator
-    sendle = sendle
-    ups = ups
-    usps = usps
+from purplship.package.mappers import Providers
 
 
 @attr.s(auto_attribs=True)
@@ -39,8 +27,8 @@ class _ProviderMapper:
     def __getitem__(self, key) -> GatewayInitializer:
         def initializer(settings: Union[Settings, dict]) -> Gateway:
             try:
-                provider = Providers[key].value
-                settings_value = (
+                provider = Providers[key]
+                settings_value: Settings = (
                     provider.Settings(**settings)
                     if isinstance(settings, dict)
                     else settings

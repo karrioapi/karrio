@@ -30,6 +30,7 @@ class PackagingUnit(Enum):
     pallet = "Pallet"
     small_box = "Small Box"
     medium_box = "Medium Box"
+    your_packaging = "Your Packaging"
 
 
 class PaymentType(Enum):

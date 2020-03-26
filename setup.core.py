@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup(name='purplship',
+setup(name='purplship.core',
       version='2020.3.0',
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
@@ -12,21 +12,23 @@ setup(name='purplship',
       author='PurplShip',
       author_email='danielk.developer@gmail.com',
       license='LGPLv3',
-      packages=find_packages(".", exclude=["tests*"]),
+      packages=find_packages(
+            ".",
+            exclude=["*mappers.*"],
+            include=[
+                  "purplship",
+                  "purplship.core*",
+                  "purplship.freight*",
+                  "purplship.package*",
+                  "purplship.extension*"
+            ]
+      ),
       install_requires=[
             'attrs',
             'jstruct',
             'xmltodict',
             'lxml',
-            'py-fedex',
-            'py-purolator',
-            'py-dhl',
             'py-soap',
-            'py-ups',
-            'py-caps',
-            'py-aups',
-            'py-sendle',
-            'py-usps',
       ],
       dependency_links=[
             'https://git.io/purplship',

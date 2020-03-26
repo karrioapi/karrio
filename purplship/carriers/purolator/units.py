@@ -15,7 +15,7 @@ class PackagePresets(Flag):
     purolator_express_box = PackagePreset(weight=7)
 
 
-class PackagingType(Enum):
+class PackagingType(Flag):
     purolator_express_envelope = "Envelop"
     purolator_express_pack = "Pack"
     purolator_express_box = "Box"
