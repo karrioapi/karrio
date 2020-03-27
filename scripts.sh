@@ -44,6 +44,14 @@ install_all() {
     pip install -e "${ROOT:?}/purpleserver"
 }
 
+
+alias env:new=create_env
+alias env:on=activate_env
+alias env:reset=init
+
+
+# Project helpers
+
 run_server() {
   if [[ "$1" == "-i" ]]; then
     install_all
@@ -58,6 +66,8 @@ clean_builds() {
     find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; || true
     find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; || true
     find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; || true
+    (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'password')" | python manage.py shell);
+    python manage.py makemigrations && python manage.py migrate && python manage.py runserver
 }
 
 backup_wheels() {
