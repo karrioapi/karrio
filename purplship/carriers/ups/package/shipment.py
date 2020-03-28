@@ -75,7 +75,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[UPSShipmentRequest]:
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
-    options = Options(payload.parcel.options)
+    options = Options(payload.options)
     service = next(
         (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
         None

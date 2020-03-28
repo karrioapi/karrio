@@ -103,8 +103,8 @@ SHIPMENT_REQUEST_PAYLOAD = {
         "weight": 10,
         "weight_unit": "LB",
         "services": ["purolator_express"],
-        "options": {"printing": "thermal"},
     },
+    "options": {"printing": "thermal"},
 }
 
 PARSED_SHIPMENT_RESPONSE = [

@@ -75,11 +75,11 @@ shipment_data = {
         "services": ["caps_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
-        "options": {
-            "caps_signature": True,
-            "cash_on_delivery": {"amount": 10.5},
-            "insurance": {"amount": 70.0},
-        },
+    },
+    "options": {
+        "caps_signature": True,
+        "cash_on_delivery": {"amount": 10.5},
+        "insurance": {"amount": 70.0},
     },
 }
 
@@ -109,8 +109,8 @@ shipment_with_package_preset_data = {
         "weight_unit": "LB",
         "package_preset": "caps_corrugated_large_box",
         "services": ["caps_expedited_parcel"],
-        "options": {"cash_on_delivery": {"amount": 25.5}},
     },
+    "options": {"cash_on_delivery": {"amount": 25.5}},
 }
 
 

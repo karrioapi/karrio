@@ -77,7 +77,7 @@ def shipment_request(
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
-    options = Options(payload.parcel.options)
+    options = Options(payload.options)
     default_product_code = (
         ProductCode.dhl_express_worldwide_doc
         if payload.parcel.is_document
@@ -88,11 +88,11 @@ def shipment_request(
         default_product_code
     )
     delivery_type = next(
-        (d for d in DeliveryType if d.name in payload.parcel.options.keys()),
+        (d for d in DeliveryType if d.name in payload.options.keys()),
         None
     )
     special_services = [
-        ServiceCode[s].value for s in payload.parcel.options.keys() if s in ServiceCode.__members__
+        ServiceCode[s].value for s in payload.options.keys() if s in ServiceCode.__members__
     ]
     has_payment_config = payload.payment is not None
     has_customs_config = payload.customs is not None

@@ -101,7 +101,7 @@ def mailing_scenario_request(
     ]
     requested_options = {
         code: value
-        for (code, value) in payload.parcel.options.items()
+        for (code, value) in payload.options.items()
         if code in OptionCode.__members__
     }
 

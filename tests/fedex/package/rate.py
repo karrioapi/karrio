@@ -65,8 +65,8 @@ RateRequestPayload = {
         "length": 10,
         "width": 3,
         "weight": 4.0,
-        "options": {"currency": "USD"},
     },
+    "options": {"currency": "USD"},
 }
 
 RateWithPresetPayload = {
@@ -75,8 +75,8 @@ RateWithPresetPayload = {
     "parcel": {
         "id": "1",
         "package_preset": "fedex_pak",
-        "options": {"currency": "USD"},
     },
+    "options": {"currency": "USD"},
 }
 
 ParsedRateResponse = [

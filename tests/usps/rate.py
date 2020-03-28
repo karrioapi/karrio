@@ -69,8 +69,8 @@ RATE_PAYLOAD = {
         "length": 30,
         "weight": 1,
         "services": ["priority"],
-        "options": {"signature_confirmation": True},
     },
+    "options": {"signature_confirmation": True},
 }
 
 INTL_RATE_PAYLOAD = {
@@ -84,8 +84,8 @@ INTL_RATE_PAYLOAD = {
         "length": 10,
         "weight": 3.123,
         "packaging_type": "sm",
-        "options": {"insurance_global_express_guaranteed": True},
     },
+    "options": {"insurance_global_express_guaranteed": True},
 }
 
 

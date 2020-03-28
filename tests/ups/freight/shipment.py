@@ -62,10 +62,10 @@ freight_shipment_data = {
         "weight_unit": "LB",
         "weight": 180,
         "reference": "Your Customer Context",
-        "options": {
-            "ups_freight_class": "ups_freight_class_50",
-            "notification": {"email": "test@mail.com"},
-        },
+    },
+    "options": {
+        "ups_freight_class": "ups_freight_class_50",
+        "notification": {"email": "test@mail.com"},
     },
 }
 

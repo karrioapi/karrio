@@ -96,8 +96,8 @@ shipment_data = {
         "packaging_type": "dhl_express_envelope",
         "is_document": False,
         "services": ["dhl_express_worldwide"],
-        "options": {"paperless_trade": True, "insurance": {"amount": 148.0}},
     },
+    "options": {"paperless_trade": True, "insurance": {"amount": 148.0}},
     "payment": {"paid_by": "sender", "account_number": "123456789"},
     "customs": {
         "commodities": [{"description": "cn", "sku": "cc"}],

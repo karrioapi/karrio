@@ -83,10 +83,10 @@ def process_shipment_request(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
         None
     )
-    options = Options(payload.parcel.options)
+    options = Options(payload.options)
     special_services = [
         SpecialServiceType[name].value
-        for name, value in payload.parcel.options.items()
+        for name, value in payload.options.items()
         if name in SpecialServiceType.__members__
     ]
 

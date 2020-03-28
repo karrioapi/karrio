@@ -35,11 +35,11 @@ def create_shipping_request(payload: ShipmentRequest, settings: Settings, valida
         Product.purolator_express.value
     )
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    options = Options(payload.parcel.options)
+    options = Options(payload.options)
     printing = PrinterType[options.printing or "regular"].value
     special_services = {
         Service[name].value: value
-        for name, value in payload.parcel.options.items()
+        for name, value in payload.options.items()
         if name in Service.__members__
     }
 

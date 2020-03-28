@@ -62,7 +62,6 @@ class Parcel:
     weight_unit: str = None
     dimension_unit: str = None
     services: List[str] = []
-    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -143,6 +142,8 @@ class RateRequest:
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
+
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)

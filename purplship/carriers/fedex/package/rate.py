@@ -100,7 +100,7 @@ def rate_request(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
         None
     )
-    options = Options(payload.parcel.options)
+    options = Options(payload.options)
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -235,7 +235,7 @@ def rate_request(
             LabelSpecification=None,
             ShippingDocumentSpecification=None,
             RateRequestTypes=["LIST"]
-            + ([] if "currency" not in payload.parcel.options else ["PREFERRED"]),
+            + ([] if "currency" not in payload.options else ["PREFERRED"]),
             EdtRequestType=None,
             PackageCount=None,
             ShipmentOnlyFields=None,

@@ -84,8 +84,8 @@ package_shipment_data = {
         "width": 5,
         "height": 2,
         "weight": 10,
-        "options": {"notification": {"email": "test@mail.com"}},
     },
+    "options": {"notification": {"email": "test@mail.com"}},
     "payment": {"paid_by": "sender"},
 }
 
@@ -118,9 +118,9 @@ package_shipment_with_package_preset_data = {
         "packaging_type": "ups_customer_supplied_package",
         "description": "Description",
         "package_preset": "ups_medium_express_box",
-        "options": {"notification": {"email": "test@mail.com"}},
     },
     "payment": {"paid_by": "sender"},
+    "options": {"notification": {"email": "test@mail.com"}},
 }
 
 

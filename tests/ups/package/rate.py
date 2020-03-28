@@ -80,8 +80,8 @@ rate_req_data = {
         "weight": 4.0,
         "packaging_type": "ups_package",
         "description": "TV",
-        "options": {"negotiated_rates_indicator": True},
     },
+    "options": {"negotiated_rates_indicator": True},
 }
 
 
@@ -107,8 +107,8 @@ rate_req_with_package_preset_data = {
         "package_preset": "ups_express_pak",
         "packaging_type": "ups_package",
         "description": "TV",
-        "options": {"negotiated_rates_indicator": True},
     },
+    "options": {"negotiated_rates_indicator": True},
 }
 
 

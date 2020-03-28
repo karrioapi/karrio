@@ -74,7 +74,7 @@ def contract_shipment_request(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
         None
     )
-    options = Options(payload.parcel.options)
+    options = Options(payload.options)
 
     def compute_amount(code: str, _: Any):
         if code == OptionCode.insurance.value:
@@ -85,7 +85,7 @@ def contract_shipment_request(
 
     special_services = {
         OptionCode[name].value: compute_amount(OptionCode[name].value, value)
-        for name, value in payload.parcel.options.items()
+        for name, value in payload.options.items()
         if name in OptionCode.__members__
     }
     payment_type = (

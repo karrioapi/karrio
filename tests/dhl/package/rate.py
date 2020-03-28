@@ -97,8 +97,8 @@ RatePayload = {
         "width": 3,
         "weight": 4.0,
         "is_document": True,
-        "options": {"currency": "CAD", "insurance": {"amount": 75}},
     },
+    "options": {"currency": "CAD", "insurance": {"amount": 75}},
 }
 
 
@@ -108,8 +108,8 @@ RateWithPresetPayload = {
     "parcel": {
         "package_preset": "dhl_express_tube",
         "services": ["dhl_express_worldwide_nondoc"],
-        "options": {"currency": "CAD"},
     },
+    "options": {"currency": "CAD"},
 }
 
 ParsedRateParsingError = [

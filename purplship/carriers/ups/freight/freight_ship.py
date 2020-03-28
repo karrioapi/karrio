@@ -68,12 +68,12 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
 def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serializable[FreightShipRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    options = Options(payload.parcel.options)
+    options = Options(payload.options)
     service = next(
         (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
         None
     )
-    freight_class = FreightClass[payload.parcel.options.get("ups_freight_class", "ups_freight_class_50")].value
+    freight_class = FreightClass[payload.options.get("ups_freight_class", "ups_freight_class_50")].value
 
     request = FreightShipRequest(
         Request=common.RequestType(

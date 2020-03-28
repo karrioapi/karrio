@@ -84,8 +84,8 @@ def rate_v4_request(request_payload: RateRequest, settings: Settings) -> Seriali
                 Value=None,
                 AmountToCollect=None,  # TODO:: compute this with COD option
                 SpecialServices=SpecialServicesType(
-                    SpecialService=payload.options.keys()
-                ) if payload.options is not None else None,
+                    SpecialService=payload.special_services.keys()
+                ) if payload.special_services is not None else None,
                 Content=None,
                 GroundOnly=None,
                 SortBy=None,
@@ -122,6 +122,10 @@ class RateRequestExtensionV4:
     @property
     def recipient(self):
         return self.request.recipient
+
+    @property
+    def options(self):
+        return self.request.options
 
     @property
     def dimension_unit(self):
@@ -180,9 +184,9 @@ class RateRequestExtensionV4:
         return None
 
     @property
-    def options(self) -> Optional[dict]:
+    def special_services(self) -> Optional[dict]:
         options = {}
-        for option, value in self.parcel.options.items():
+        for option, value in self.options.items():
             if option in SpecialService.__members__:
                 options.update({SpecialService[option].value: True})
 

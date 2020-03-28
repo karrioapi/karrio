@@ -75,10 +75,10 @@ shipment_data = {
         "length": 12,
         "width": 12,
         "height": 12,
-        "options": {
-            "currency": "USD",
-            "international_traffic_in_arms_regulations": True,
-        },
+    },
+    "options": {
+        "currency": "USD",
+        "international_traffic_in_arms_regulations": True,
     },
     "payment": {"paid_by": "THIRD_PARTY", "account_number": "2349857"},
     "customs": {"duty": {"paid_by": "sender", "amount": "100."}},
