@@ -6,7 +6,7 @@ from purplship.package.mapper import Mapper as BaseMapper
 from purplship.core.models import (
     ShipmentRequest,
     TrackingRequest,
-    Error,
+    Message,
     TrackingDetails,
     RateDetails,
     RateRequest,
@@ -47,15 +47,15 @@ class Mapper(BaseMapper):
 
     def parse_rate_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[RateDetails], List[Error]]:
+    ) -> Tuple[List[RateDetails], List[Message]]:
         return parse_price_quotes(response.deserialize(), self.settings)
 
     def parse_tracking_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[TrackingDetails], List[Error]]:
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
         return parse_tracking_summary(response.deserialize(), self.settings)
 
     def parse_shipment_response(
         self, response: Deserializable[str]
-    ) -> Tuple[ShipmentDetails, List[Error]]:
+    ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_response(response.deserialize(), self.settings)

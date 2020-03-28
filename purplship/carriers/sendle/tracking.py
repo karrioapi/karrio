@@ -2,7 +2,7 @@
 
 from typing import Tuple, List
 from purplship.core.utils import Serializable, format_date, format_time
-from purplship.core.models import TrackingRequest, Error, TrackingEvent, TrackingDetails
+from purplship.core.models import TrackingRequest, Message, TrackingEvent, TrackingDetails
 from pysendle.tracking import TrackingResponse
 from purplship.carriers.sendle.error import parse_error_response
 from purplship.carriers.sendle.utils import Settings
@@ -10,7 +10,7 @@ from purplship.carriers.sendle.utils import Settings
 
 def parse_parcel_tracking_response(
     response: dict, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Error]]:
+) -> Tuple[List[TrackingDetails], List[Message]]:
     tracking: List[Tuple[str, TrackingResponse]] = [
         (p.get("ref"), TrackingResponse(**p.get("response")))
         for p in response

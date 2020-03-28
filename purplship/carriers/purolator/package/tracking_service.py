@@ -2,7 +2,7 @@ from typing import List, Tuple, cast
 from pypurolator.tracking_service import (
     TrackPackagesByPinRequest, PIN, ArrayOfPIN, RequestContext, TrackingInformation, Scan, Depot
 )
-from purplship.core.models import TrackingRequest, TrackingDetails, Error, TrackingEvent
+from purplship.core.models import TrackingRequest, TrackingDetails, Message, TrackingEvent
 from purplship.core.utils import Element, format_date, format_timestamp
 from purplship.core.utils.soap import create_envelope
 from pysoap.envelope import Envelope
@@ -11,7 +11,7 @@ from purplship.carriers.purolator.utils import Settings, standard_request_serial
 from purplship.carriers.purolator.error import parse_error_response
 
 
-def parse_track_package_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Error]]:
+def parse_track_package_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     track_infos = response.xpath(".//*[local-name() = $name]", name="TrackingInformation")
     return (
         [_extract_tracking(node, settings) for node in track_infos],

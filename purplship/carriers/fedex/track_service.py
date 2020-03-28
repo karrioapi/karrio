@@ -10,14 +10,14 @@ from pyfedex.track_service_v18 import (
 )
 from purplship.core.utils import export, Serializable, Element, format_date, format_time
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.models import TrackingRequest, TrackingDetails, TrackingEvent, Error
+from purplship.core.models import TrackingRequest, TrackingDetails, TrackingEvent, Message
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
 
 def parse_track_response(
     response: Element, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Error]]:
+) -> Tuple[List[TrackingDetails], List[Message]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="TrackDetails")
     tracking_details = [
         _extract_tracking(track_detail_node, settings)

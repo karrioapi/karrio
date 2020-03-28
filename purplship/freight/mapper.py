@@ -5,7 +5,7 @@ from abc import ABC
 from typing import List, Tuple
 from purplship.core.settings import Settings
 from purplship.core.models import (
-    Error,
+    Message,
     RateRequest,
     TrackingRequest,
     ShipmentDetails,
@@ -36,7 +36,7 @@ class Mapper(ABC):
 
     def parse_rate_response(
         self, response: Deserializable
-    ) -> Tuple[List[RateDetails], List[Error]]:
+    ) -> Tuple[List[RateDetails], List[Message]]:
         """ Create a united API quote result list from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_rate_response.__name__, self.__class__.__name__
@@ -50,7 +50,7 @@ class Mapper(ABC):
 
     def parse_tracking_response(
         self, response: Deserializable
-    ) -> Tuple[List[TrackingDetails], List[Error]]:
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
         """ Create a united API tracking result list from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_tracking_response.__name__, self.__class__.__name__
@@ -64,7 +64,7 @@ class Mapper(ABC):
 
     def parse_shipment_response(
         self, response: Deserializable
-    ) -> Tuple[ShipmentDetails, List[Error]]:
+    ) -> Tuple[ShipmentDetails, List[Message]]:
         """ Create a united API shipment creation result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_shipment_response.__name__, self.__class__.__name__
@@ -78,7 +78,7 @@ class Mapper(ABC):
 
     def parse_pickup_response(
         self, response: Deserializable
-    ) -> Tuple[PickupDetails, List[Error]]:
+    ) -> Tuple[PickupDetails, List[Message]]:
         """ Create a united API pickup result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_pickup_response.__name__, self.__class__.__name__
@@ -95,7 +95,7 @@ class Mapper(ABC):
 
     def parse_modify_pickup_response(
         self, response: Deserializable
-    ) -> Tuple[PickupDetails, List[Error]]:
+    ) -> Tuple[PickupDetails, List[Message]]:
         """ Create a united API pickup result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_modify_pickup_response.__name__,
@@ -113,7 +113,7 @@ class Mapper(ABC):
 
     def parse_cancel_pickup_response(
         self, response: Deserializable
-    ) -> Tuple[dict, List[Error]]:
+    ) -> Tuple[dict, List[Message]]:
         """ Create a united API pickup cancellation result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_cancel_pickup_response.__name__,

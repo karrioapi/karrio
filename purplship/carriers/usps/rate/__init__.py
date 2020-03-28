@@ -4,7 +4,7 @@ from pyusps.intlratev2request import IntlRateV2Request
 from purplship.core.units import Country
 from purplship.core.errors import OriginNotServicedError
 from purplship.core.utils.serializable import Serializable
-from purplship.core.models import RateRequest, RateDetails, Error
+from purplship.core.models import RateRequest, RateDetails, Message
 from purplship.core.utils.xml import Element
 from purplship.carriers.usps import Settings
 from purplship.carriers.usps.rate.rate_v4 import rate_v4_request, parse_rate_v4_response
@@ -16,7 +16,7 @@ from purplship.carriers.usps.rate.intl_rate import (
 
 def parse_rate_request(
     response: Element, settins: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     is_intl = response.tag == "IntlRateV2Response"
     return (parse_intl_rate_response if is_intl else parse_rate_v4_response)(
         response, settins

@@ -35,7 +35,7 @@ from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.errors import RequiredFieldError
 from purplship.core.units import Weight, Dimension, Options, Package
-from purplship.core.models import ShipmentDetails, Error, ShipmentRequest
+from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 from purplship.carriers.fedex.units import PackagingType, ServiceType, SpecialServiceType, PackagePresets
@@ -46,7 +46,7 @@ NOTIFICATION_EVENTS = ['ON_DELIVERY', 'ON_ESTIMATED_DELIVERY', 'ON_EXCEPTION', '
 
 def parse_shipment_response(
     response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Error]]:
+) -> Tuple[ShipmentDetails, List[Message]]:
     detail = next(iter(response.xpath(".//*[local-name() = $name]", name="CompletedShipmentDetail")), None)
     shipment: ShipmentDetails = _extract_shipment(detail, settings) if detail is not None else None
     return shipment, parse_error_response(response, settings)

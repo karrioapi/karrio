@@ -21,7 +21,7 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit
 from purplship.core.utils.xml import Element
-from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
+from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.carriers.ups.units import (
     RatingServiceCode,
     WeightUnit as UPSWeightUnit,
@@ -33,7 +33,7 @@ from purplship.carriers.ups.utils import Settings
 
 def parse_freight_rate_response(
     response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     rate_reply = response.xpath(
         ".//*[local-name() = $name]", name="FreightRateResponse"
     )

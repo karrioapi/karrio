@@ -5,13 +5,13 @@ from typing import List, Tuple, Callable
 from purplship.carriers.aups.error import parse_error_response
 from purplship.core.utils import Serializable, format_date, format_time
 from purplship.core.settings import Settings
-from purplship.core.models import TrackingRequest, Error, TrackingEvent, TrackingDetails
+from purplship.core.models import TrackingRequest, Message, TrackingEvent, TrackingDetails
 from pyaups.track_item import TrackingResponse, TrackingResult
 
 
 def parse_track_items_response(
     response: dict, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Error]]:
+) -> Tuple[List[TrackingDetails], List[Message]]:
     tracking_response: TrackingResponse = TrackingResponse(**response)
     return (
         reduce(_extract_tracking(settings), tracking_response.tracking_results, []),

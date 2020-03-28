@@ -22,14 +22,14 @@ from purplship.core.units import (
     Package
 )
 from purplship.core.errors import OriginNotServicedError, RequiredFieldError
-from purplship.core.models import RateDetails, ChargeDetails, Error, RateRequest
+from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets
 
 
 def parse_price_quotes(
     response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     price_quotes = response.xpath(".//*[local-name() = $name]", name="price-quote")
     quotes: List[RateDetails] = [
         _extract_quote(price_quote_node, settings) for price_quote_node in price_quotes

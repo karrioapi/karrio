@@ -12,13 +12,13 @@ from purplship.core.units import Currency, Package
 from purplship.core.utils import Serializable, Element, concat_str, format_date
 from purplship.core.utils.soap import create_envelope
 from purplship.core.errors import RequiredFieldError
-from purplship.core.models import RateRequest, RateDetails, Error, ChargeDetails
+from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.carriers.purolator.utils import Settings, standard_request_serializer
 from purplship.carriers.purolator.error import parse_error_response
 from purplship.carriers.purolator.units import Product, PackagePresets
 
 
-def parse_full_estimate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_full_estimate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
     estimates = response.xpath(".//*[local-name() = $name]", name="ShipmentEstimate")
     return (
         [_extract_rate(node, settings) for node in estimates],

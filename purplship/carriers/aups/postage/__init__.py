@@ -9,7 +9,7 @@ from pyaups.domestic_parcel_postage import ServiceResponse, Service
 from purplship.core.utils.helpers import to_dict
 from purplship.core.utils.serializable import Serializable
 from purplship.core.units import Country, PackagingUnit, Currency
-from purplship.core.models import Error, RateRequest, RateDetails
+from purplship.core.models import Message, RateRequest, RateDetails
 from purplship.carriers.aups.utils import Settings
 from purplship.core.errors import OriginNotServicedError
 from purplship.carriers.aups.postage.calculate_domestic_letter import (
@@ -35,7 +35,7 @@ PostageRateRequest = Union[
 
 def parse_service_response(
     self, response: dict
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     services: List[Service] = (
         ServiceResponse(**response).services.service if "services" in response else []
     )

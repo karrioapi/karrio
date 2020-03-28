@@ -2,14 +2,14 @@ from typing import List, Tuple
 from pyusps.trackfieldrequest import TrackFieldRequest, TrackIDType
 from pyusps.trackresponse import TrackInfoType, TrackDetailType
 from purplship.core.utils import export, Serializable, Element, format_date, format_time
-from purplship.core.models import TrackingRequest, Error, TrackingDetails, TrackingEvent
+from purplship.core.models import TrackingRequest, Message, TrackingDetails, TrackingEvent
 from purplship.carriers.usps.error import parse_error_response
 from purplship.carriers.usps import Settings
 
 
 def parse_track_field_response(
     response: Element, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Error]]:
+) -> Tuple[List[TrackingDetails], List[Message]]:
     tracks_info = response.xpath(".//*[local-name() = $name]", name="TrackInfo")
     return (
         [_extract_tracking(tracking_node, settings) for tracking_node in tracks_info],

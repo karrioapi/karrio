@@ -26,7 +26,7 @@ from purplship.core.errors import RequiredFieldError
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
     ShipmentRequest,
-    Error,
+    Message,
     ShipmentDetails,
 )
 from purplship.core.units import Options, Package
@@ -47,7 +47,7 @@ from purplship.carriers.dhl.error import parse_error_response
 
 def parse_shipment_response(
     response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Error]]:
+) -> Tuple[ShipmentDetails, List[Message]]:
     air_way_bill = next(iter(response.xpath(".//*[local-name() = $name]", name="AirwayBillNumber")), None)
     return (
         _extract_shipment(response, settings) if air_way_bill is not None else None,

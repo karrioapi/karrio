@@ -2,14 +2,14 @@ from typing import List, Optional, Tuple
 from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.tracking_response import AWBInfo
 from purplship.core.utils import export, Serializable, Element, format_datetime, format_time
-from purplship.core.models import TrackingEvent, TrackingDetails, TrackingRequest, Error
+from purplship.core.models import TrackingEvent, TrackingDetails, TrackingRequest, Message
 from .utils import Settings
 from .error import parse_error_response
 
 
 def parse_known_tracking_response(
     response: Element, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Error]]:
+) -> Tuple[List[TrackingDetails], List[Message]]:
     awb_nodes = response.xpath(".//*[local-name() = $name]", name="AWBInfo")
     tracking_details = [
         _extract_tracking(info_node, settings) for info_node in awb_nodes

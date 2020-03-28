@@ -20,7 +20,7 @@ from purplship.core.utils import export, concat_str, Serializable, format_date
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Package
-from purplship.core.models import RateDetails, ChargeDetails, Error, RateRequest
+from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.core.errors import RequiredFieldError
 from purplship.carriers.ups.units import (
     RatingServiceCode,
@@ -35,7 +35,7 @@ from purplship.carriers.ups.utils import Settings
 
 def parse_rate_response(
     response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     rate_reply = response.xpath(".//*[local-name() = $name]", name="RatedShipment")
     rates: List[RateDetails] = reduce(_extract_package_rate(settings), rate_reply, [])
     return rates, parse_error_response(response, settings)

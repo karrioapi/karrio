@@ -115,23 +115,11 @@ def exec_parrallel(
         return [response.result() for response in as_completed(requests)]
 
 
-def exec_async(
-    function: Callable, sequence: List[tuple], max_workers: int = None
-) -> List[T]:
-    def async_function(args):
-        return function(*args)
+def exec_async(action: Callable[[Any], T], sequence: List[Any]) -> List[T]:
+    async def async_action(args):
+        return action(args)
 
-    async def execute():
-        with ThreadPoolExecutor(max_workers=max_workers or len(sequence)) as executor:
-            event_loop = asyncio.get_event_loop()
-            requests = [
-                event_loop.run_in_executor(executor, async_function, params)
-                for params in sequence
-            ]
-            return [r for r in await asyncio.gather(*requests)]
+    async def run_tasks():
+        return await asyncio.gather(*[async_action(args) for args in sequence])
 
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    result = loop.run_until_complete(execute())
-    loop.close()
-    return result
+    return asyncio.run(run_tasks())

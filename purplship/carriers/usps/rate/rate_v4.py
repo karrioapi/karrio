@@ -7,7 +7,7 @@ from pyusps.ratev4request import (
     RateV4Request, PackageType, SpecialServicesType, ShipDateType
 )
 from purplship.core.utils import export, Serializable, Element, format_date
-from purplship.core.models import RateDetails, RateRequest, Error, ChargeDetails
+from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Currency
 from purplship.carriers.usps.utils import Settings
 from purplship.carriers.usps.error import parse_error_response
@@ -18,7 +18,7 @@ REQUIRED_MAIL_TYPE_SERVICES = [Service.first_class, Service.first_class_commerci
 
 def parse_rate_v4_response(
     response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     rates: List[RateDetails] = [
         _extract_quote(package, settings)
         for package in response.xpath(".//*[local-name() = $name]", name="Postage")

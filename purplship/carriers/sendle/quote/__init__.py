@@ -1,6 +1,6 @@
 from typing import List, Tuple, Union
 from purplship.core.utils import to_dict, Serializable, format_date
-from purplship.core.models import RateRequest, RateDetails, Error
+from purplship.core.models import RateRequest, RateDetails, Message
 from purplship.core.units import Country
 from purplship.core.errors import OriginNotServicedError
 from pysendle.quotes import (
@@ -20,7 +20,7 @@ ParcelQuoteRequest = Union[DomesticParcelQuote, InternationalParcelQuote]
 
 def parse_parcel_quote_response(
     response: dict, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     parcel_quotes: List[ParcelQuoteResponse] = [
         ParcelQuoteResponse(**p) for p in response
     ] if isinstance(response, list) else []

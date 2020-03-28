@@ -17,7 +17,7 @@ from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils import export, Serializable, Element, format_date
 from purplship.core.errors import RequiredFieldError
 from purplship.core.units import Package
-from purplship.core.models import RateDetails, Error, ChargeDetails, RateRequest
+from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.carriers.dhl.units import (
     Product,
     ProductCode,
@@ -32,7 +32,7 @@ from purplship.carriers.dhl.error import parse_error_response
 
 def parse_dct_response(
     response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     qtdshp_list = response.xpath(".//*[local-name() = $name]", name="QtdShp")
     quotes: List[RateDetails] = [
         _extract_quote(qtdshp_node, settings) for qtdshp_node in qtdshp_list

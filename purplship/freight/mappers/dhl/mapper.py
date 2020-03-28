@@ -18,7 +18,7 @@ from purplship.core.models import (
     PickupDetails,
     PickupUpdateRequest,
     PickupCancellationRequest,
-    Error,
+    Message,
 )
 from purplship.carriers.dhl import (
     dct_request,
@@ -70,30 +70,30 @@ class Mapper(BaseMapper):
 
     def parse_rate_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[RateDetails], List[Error]]:
+    ) -> Tuple[List[RateDetails], List[Message]]:
         return parse_dct_response(response.deserialize(), self.settings)
 
     def parse_tracking_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[TrackingDetails], List[Error]]:
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
         return parse_known_tracking_response(response.deserialize(), self.settings)
 
     def parse_shipment_response(
         self, response: Deserializable[str]
-    ) -> Tuple[ShipmentDetails, List[Error]]:
+    ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_response(response.deserialize(), self.settings)
 
     def parse_pickup_response(
         self, response: Deserializable[str]
-    ) -> Tuple[PickupDetails, List[Error]]:
+    ) -> Tuple[PickupDetails, List[Message]]:
         return parse_book_pickup_response(response.deserialize(), self.settings)
 
     def parse_modify_pickup_response(
         self, response: Deserializable[str]
-    ) -> Tuple[PickupDetails, List[Error]]:
+    ) -> Tuple[PickupDetails, List[Message]]:
         return parse_modify_pickup_response(response.deserialize(), self.settings)
 
     def parse_cancel_pickup_response(
         self, response: Deserializable[str]
-    ) -> Tuple[dict, List[Error]]:
+    ) -> Tuple[dict, List[Message]]:
         return parse_cancel_pickup_response(response.deserialize(), self.settings)

@@ -19,13 +19,13 @@ from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.units import Currency, Package, Options
 from purplship.core.utils.xml import Element
 from purplship.core.errors import RequiredFieldError
-from purplship.core.models import RateDetails, RateRequest, Error, ChargeDetails
+from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.carriers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
 
-def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
     rate_reply = response.xpath(".//*[local-name() = $name]", name="RateReplyDetails")
     rate_details: List[RateDetails] = [
         _extract_quote(detail_node, settings) for detail_node in rate_reply

@@ -3,13 +3,13 @@ from typing import Tuple, List
 from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
-from purplship.core.models import PickupCancellationRequest, Error
+from purplship.core.models import PickupCancellationRequest, Message
 from purplship.carriers.dhl.utils import Settings, reformat_time
 from purplship.carriers.dhl.error import parse_error_response
 from purplship.carriers.dhl.units import CountryRegion
 
 
-def parse_cancel_pickup_response(response, settings) -> Tuple[dict, List[Error]]:
+def parse_cancel_pickup_response(response, settings) -> Tuple[dict, List[Message]]:
     successful = (
         len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
     )

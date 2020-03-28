@@ -3,7 +3,7 @@ from purplship.carriers.caps.error import parse_error_response
 from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets, PaymentType
 from purplship.carriers.caps.utils import Settings
 from purplship.core.models import (
-    Error,
+    Message,
     ShipmentDetails,
     ShipmentRequest,
 )
@@ -36,7 +36,7 @@ from pycaps.ncshipment import (
 
 def parse_non_contract_shipment_response(
     response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Error]]:
+) -> Tuple[ShipmentDetails, List[Message]]:
     shipment = (
         _extract_shipment(response, settings)
         if len(response.xpath(".//*[local-name() = $name]", name="shipment-id")) > 0

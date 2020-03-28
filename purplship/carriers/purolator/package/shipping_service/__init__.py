@@ -5,7 +5,7 @@ from pypurolator.shipping_service import (
     Error as PurolatorError, ArrayOfError
 )
 from pypurolator.shipping_documents_service import DocumentDetail
-from purplship.core.models import ShipmentRequest, ShipmentDetails, Error
+from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.utils.helpers import export, to_xml, to_dict
@@ -17,7 +17,7 @@ from purplship.carriers.purolator.package.shipping_service.create_shipping impor
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
 
 
-def parse_shipment_creation_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Error]]:
+def parse_shipment_creation_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
     details = next(iter(response.xpath(".//*[local-name() = $name]", name="CreateShipmentResponse")), None)
     shipment = _extract_shipment(response, settings) if details is not None else None
     return shipment, parse_error_response(response, settings)

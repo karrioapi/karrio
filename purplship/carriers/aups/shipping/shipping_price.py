@@ -6,7 +6,7 @@ from purplship.carriers.aups.error import parse_error_response
 from purplship.carriers.aups.units import PackagingType
 from purplship.core.utils.helpers import jsonify, to_dict
 from purplship.core.utils.serializable import Serializable
-from purplship.core.models import Error, ChargeDetails, RateRequest, RateDetails
+from purplship.core.models import Message, ChargeDetails, RateRequest, RateDetails
 from purplship.core.units import Currency, Country
 from purplship.core.settings import Settings
 from purplship.core.errors import OriginNotServicedError
@@ -19,7 +19,7 @@ from pyaups.shipping_price_response import (
 
 def parse_shipping_price_response(
     response: dict, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     price_response: ShippingPriceResponse = ShippingPriceResponse(**response)
     return (
         [_extract_quote(rate, settings) for rate in price_response.shipments],

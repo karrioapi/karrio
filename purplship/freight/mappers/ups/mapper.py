@@ -9,7 +9,7 @@ from purplship.core.models import (
     ShipmentDetails,
     RateDetails,
     TrackingDetails,
-    Error,
+    Message,
 )
 from purplship.carriers.ups.package import parse_track_response, track_request
 
@@ -48,15 +48,15 @@ class Mapper(BaseMapper):
 
     def parse_rate_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[RateDetails], List[Error]]:
+    ) -> Tuple[List[RateDetails], List[Message]]:
         return parse_freight_rate_response(response.deserialize(), self.settings)
 
     def parse_tracking_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[TrackingDetails], List[Error]]:
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
         return parse_track_response(response.deserialize(), self.settings)
 
     def parse_shipment_response(
         self, response: Deserializable[str]
-    ) -> Tuple[ShipmentDetails, List[Error]]:
+    ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_freight_ship_response(response.deserialize(), self.settings)

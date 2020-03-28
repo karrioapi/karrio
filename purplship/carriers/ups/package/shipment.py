@@ -39,7 +39,7 @@ from purplship.core.errors import RequiredFieldError
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
-    Error,
+    Message,
     Payment
 )
 from purplship.carriers.ups.units import (
@@ -54,7 +54,7 @@ from purplship.carriers.ups.utils import Settings
 
 def parse_shipment_response(
     response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Error]]:
+) -> Tuple[ShipmentDetails, List[Message]]:
     details = next(iter(response.xpath(".//*[local-name() = $name]", name="ShipmentResults")), None)
     shipment = _extract_shipment(details, settings) if details is not None else None
     return shipment, parse_error_response(response, settings)

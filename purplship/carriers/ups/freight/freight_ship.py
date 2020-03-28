@@ -30,7 +30,7 @@ from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit, O
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
-    Error,
+    Message,
 )
 from purplship.carriers.ups.units import (
     ShippingServiceCode,
@@ -45,7 +45,7 @@ NOTIFICATION_EVENT_TYPES = ['001', '002', '003', '004']
 
 def parse_freight_ship_response(
     response: Element, settings: Settings
-) -> Tuple[ShipmentDetails, List[Error]]:
+) -> Tuple[ShipmentDetails, List[Message]]:
     details = response.xpath(".//*[local-name() = $name]", name="FreightShipResponse")
     shipment = _extract_shipment(details[0], settings) if len(details) > 0 else None
     return shipment, parse_error_response(response, settings)

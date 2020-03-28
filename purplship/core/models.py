@@ -224,8 +224,8 @@ class Insurance:
 
 
 @attr.s(auto_attribs=True)
-class Error:
-    """PurplShip Error type."""
+class Message:
+    """PurplShip Message type."""
 
     message: str = None
     code: str = None

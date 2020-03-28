@@ -11,7 +11,7 @@ from pydhl.pickupdatatypes_global_3_0 import (
 from purplship.core.utils import export, Serializable, Element, format_time, format_date
 from purplship.core.models import (
     PickupRequest,
-    Error,
+    Message,
     PickupDetails,
     ChargeDetails,
 )
@@ -23,7 +23,7 @@ from purplship.carriers.dhl.error import parse_error_response
 
 def parse_book_pickup_response(
     response, settings: Settings
-) -> Tuple[PickupDetails, List[Error]]:
+) -> Tuple[PickupDetails, List[Message]]:
     successful = (
         len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
     )

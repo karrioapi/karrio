@@ -3,14 +3,14 @@ from pyups.common import RequestType, TransactionReferenceType
 from pyups.track_web_service_schema import TrackRequest, ShipmentType, ActivityType
 from purplship.core.utils import export, Serializable, Element, format_date, format_time
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.models import TrackingEvent, TrackingRequest, TrackingDetails, Error
+from purplship.core.models import TrackingEvent, TrackingRequest, TrackingDetails, Message
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
 
 def parse_track_response(
     response: Element, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Error]]:
+) -> Tuple[List[TrackingDetails], List[Message]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="Shipment")
     tracking: List[TrackingDetails] = [
         _extract_tracking(node, settings) for node in track_details

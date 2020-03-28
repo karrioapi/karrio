@@ -3,7 +3,7 @@ from datetime import datetime
 from pyusps.intlratev2request import IntlRateV2Request, PackageType
 from pyusps.intlratev2response import ServiceType, ExtraServiceType
 from purplship.core.utils import export, Serializable, Element, format_date
-from purplship.core.models import RateDetails, Error, RateRequest, ChargeDetails
+from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country
 from purplship.carriers.usps.units import IntlContainer, ExtraService, IntlMailType
 from purplship.carriers.usps.error import parse_error_response
@@ -12,7 +12,7 @@ from purplship.carriers.usps import Settings
 
 def parse_intl_rate_response(
     response: Element, settings: Settings
-) -> Tuple[List[RateDetails], List[Error]]:
+) -> Tuple[List[RateDetails], List[Message]]:
     quotes: List[RateDetails] = [
         _extract_intl_rates(package, settings)
         for package in response.xpath(".//*[local-name() = $name]", name="Service")

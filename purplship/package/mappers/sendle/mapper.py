@@ -5,7 +5,7 @@ from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.models import (
     RateRequest,
     TrackingRequest,
-    Error,
+    Message,
     RateDetails,
     TrackingDetails,
 )
@@ -39,10 +39,10 @@ class Mapper(BaseMapper):
 
     def parse_rate_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[RateDetails], List[Error]]:
+    ) -> Tuple[List[RateDetails], List[Message]]:
         return parse_parcel_quote_response(response.deserialize(), self.settings)
 
     def parse_tracking_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[TrackingDetails], List[Error]]:
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
         return parse_parcel_tracking_response(response.deserialize(), self.settings)
