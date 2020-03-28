@@ -40,6 +40,7 @@ alias env:reset=init
 
 # shellcheck disable=SC2120
 test() {
+    pip install -e .
     pushd tests || exit
     python -m unittest -v "$@"
     popd || exit
@@ -53,33 +54,43 @@ check() {
     typecheck && test 
 }
 
+backup_wheels() {
+    [ -d "$WHEEL_STORE" ] &&
+    find . -name \*.whl -exec mv {} "$WHEEL_STORE" \; &&
+    clean_builds
+}
+
 build_package() {
     clean_builds
     python setup.package.py bdist_wheel
+    backup_wheels
 }
 
 build_freight() {
     clean_builds
     python setup.freight.py bdist_wheel
+    backup_wheels
 }
 
 build_core() {
     clean_builds
     python setup.core.py bdist_wheel
+    backup_wheels
 }
 
 build() {
     clean_builds
     python setup.py bdist_wheel
+    backup_wheels
 }
 
 updaterelease() {
-    git tag -f -a $1
+    git tag -f -a "$1"
     git push -f --tags
 }
 
 clean_builds() {
-    find . -type d -name dist -exec rm -r {} \;
-    find . -type d -name build -exec rm -r {} \;
-    find . -type d -name *.egg-info -exec rm -r {} \;
+    find . -type d -name dist -exec rm -r {} \; || true
+    find . -type d -name build -exec rm -r {} \; || true
+    find . -type d -name "*.egg-info" -exec rm -r {} \; || true
 }
