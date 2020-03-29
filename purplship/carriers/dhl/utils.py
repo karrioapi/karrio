@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     password: str
     account_number: str = None
 
+    @property
+    def carrier(self):
+        return 'dhl'
+
     def Request(self, **kwargs) -> Request:
         return Request(
             ServiceHeader=ServiceHeader(

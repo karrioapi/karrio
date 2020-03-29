@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     account_number: str
     language: str = 'en'
 
+    @property
+    def carrier(self):
+        return 'purolator'
+
 
 def standard_request_serializer(envelope: Envelope) -> str:
     namespacedef_ = 'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1"'

@@ -73,7 +73,8 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
         shipmentDetail.Taxes,
     )
     return RateDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         service=ServiceType(detail.ServiceType).name,
         currency=currency_,
         estimated_delivery=(

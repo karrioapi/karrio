@@ -1,7 +1,7 @@
 from typing import List, Callable
 from functools import reduce
 from purplship.core.utils.xml import Element
-from purplship.core import Settings
+from purplship.carriers.dhl import Settings
 from purplship.core.models import Message
 from pydhl.dct_response_global_2_0 import ConditionType
 
@@ -19,7 +19,8 @@ def _extract_error(settings: Settings) -> Callable[[List[Message], Element], Lis
             Message(
                 code=condition.ConditionCode,
                 message=condition.ConditionData,
-                carrier=settings.carrier_name,
+                carrier=settings.carrier,
+                carrier_name=settings.carrier_name,
             )
         ]
 

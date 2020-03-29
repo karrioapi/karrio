@@ -4,7 +4,7 @@ from functools import reduce
 from typing import List, Tuple, Callable
 from purplship.carriers.aups.error import parse_error_response
 from purplship.core.utils import Serializable, format_date, format_time
-from purplship.core.settings import Settings
+from purplship.carriers.aups.utils import Settings
 from purplship.core.models import TrackingRequest, Message, TrackingEvent, TrackingDetails
 from pyaups.track_item import TrackingResponse, TrackingResult
 
@@ -39,7 +39,8 @@ def _extract_tracking(
             return tracking
         return tracking + [
             TrackingDetails(
-                carrier=settings.carrier_name,
+                carrier=settings.carrier,
+                carrier_name=settings.carrier_name,
                 tracking_number=tracking_result.tracking_id,
                 events=[
                     TrackingEvent(

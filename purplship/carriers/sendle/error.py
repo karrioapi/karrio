@@ -11,7 +11,8 @@ def parse_error_response(response: List[dict], settings: Settings) -> List[Messa
     return [
         Message(
             code=error.error,
-            carrier=settings.carrier_name,
+            carrier=settings.carrier,
+            carrier_name=settings.carrier_name,
             message=error.error_description,
             details=error.messages,
         )

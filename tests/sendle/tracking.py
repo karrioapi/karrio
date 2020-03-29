@@ -53,7 +53,8 @@ TRACKING_REQUEST = ["S3ND73"]
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier": "Sendle",
+            "carrier": "sendle",
+            "carrier_name": "Sendle",
             "events": [
                 {
                     "code": "Pickup Attempted",
@@ -116,7 +117,8 @@ PARSED_TRACKING_RESPONSE_WITH_ERROR = [
     [],
     [
         {
-            "carrier": "Sendle",
+            "carrier": "sendle",
+            "carrier_name": "Sendle",
             "code": "unprocessable_entity",
             "message": "The data you supplied is invalid. Error messages are in the messages section. Please fix those fields and try again.",
         }

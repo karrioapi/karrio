@@ -16,7 +16,8 @@ def _extract_error(error_node: Element, settings: Settings) -> Message:
     return Message(
         code=error.Code,
         message=error.Description,
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         details=dict(
             AdditionalInformation=error.AdditionalInformation
         ) if error.AdditionalInformation is not None else None

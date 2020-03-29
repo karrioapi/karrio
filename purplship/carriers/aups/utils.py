@@ -20,3 +20,7 @@ class Settings(BaseSettings):
             if self.password
             else None
         )
+
+    @property
+    def carrier(self):
+        return 'aups'

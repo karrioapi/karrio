@@ -78,7 +78,8 @@ PARSED_SHIPPING_PRICE_RESPONSE = [
     [
         {
             "base_charge": 58.74,
-            "carrier": "Australia Post Shipping",
+            "carrier": "aups",
+            "carrier_name": "Australia Post Shipping",
             "currency": "AUD",
             "duties_and_taxes": 5.87,
             "extra_charges": [{"amount": 4.51, "currency": "AUD", "name": "Fuel"}],
@@ -92,7 +93,8 @@ PARSED_ERRORS = [
     [],
     [
         {
-            "carrier": "Australia Post Shipping",
+            "carrier": "aups",
+            "carrier_name": "Australia Post Shipping",
             "code": "44003",
             "message": "The product T28S specified in an item has indicated that dangerous goods will be included in the parcel, however, the product does not allow dangerous goods to be sent using the service.  Please choose a product that allows dangerous goods to be included within the parcel to be sent.",
         }

@@ -63,7 +63,8 @@ TRACKING_REQUEST = "7XX1000,7XX1000634011427"
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier": "Australia Post Shipping",
+            "carrier": "aups",
+            "carrier_name": "Australia Post Shipping",
             "events": [
                 {
                     "date": "2017-09-18",
@@ -81,19 +82,32 @@ PARSED_TRACKING_RESPONSE = [
             "tracking_number": "7XX1000634011427",
         }
     ],
-    [{"carrier": "Australia Post Shipping", "code": "ESB-10001"}],
+    [
+        {
+            "carrier": "aups",
+            "carrier_name": "Australia Post Shipping",
+            "code": "ESB-10001",
+        }
+    ],
 ]
 
 PARSED_TRACKING_ERROR = [
     [],
-    [{"carrier": "Australia Post Shipping", "code": "ESB-10001"}],
+    [
+        {
+            "carrier": "aups",
+            "carrier_name": "Australia Post Shipping",
+            "code": "ESB-10001",
+        }
+    ],
 ]
 
 PARSED_ERRORS = [
     [],
     [
         {
-            "carrier": "Australia Post Shipping",
+            "carrier": "aups",
+            "carrier_name": "Australia Post Shipping",
             "code": "51101",
             "message": "The request must contain 10 or less AP article ids, consignment ids, or barcode ids.",
         }

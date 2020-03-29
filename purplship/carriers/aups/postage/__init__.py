@@ -24,6 +24,7 @@ from purplship.carriers.aups.postage.calculate_international_letter import (
 from purplship.carriers.aups.postage.calculate_international_parcel import (
     calculate_international_parcel_request,
 )
+from purplship.carriers.aups.error import parse_error_response
 
 PostageRateRequest = Union[
     pyaups.international_parcel_postage.ServiceRequest,
@@ -33,21 +34,20 @@ PostageRateRequest = Union[
 ]
 
 
-def parse_service_response(
-    self, response: dict
-) -> Tuple[List[RateDetails], List[Message]]:
+def parse_service_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
     services: List[Service] = (
         ServiceResponse(**response).services.service if "services" in response else []
     )
     return (
-        [self._extract_quote(svc) for svc in services],
-        self.parse_error_response(response),
+        [_extract_quote(svc, settings) for svc in services],
+        parse_error_response(response, settings),
     )
 
 
-def _extract_quote(self, service: Service) -> RateDetails:
+def _extract_quote(service: Service, settings: Settings) -> RateDetails:
     return RateDetails(
-        carrier=self.client.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         service=service.name,
         base_charge=float(service.price),
         total_charge=float(service.price),
@@ -55,9 +55,7 @@ def _extract_quote(self, service: Service) -> RateDetails:
     )
 
 
-def calculate_postage_request(
-    payload: RateRequest, settings: Settings
-) -> Serializable[PostageRateRequest]:
+def calculate_postage_request(payload: RateRequest, settings: Settings) -> Serializable[PostageRateRequest]:
     if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
         raise OriginNotServicedError(
             payload.shipper.country_code, settings.carrier_name

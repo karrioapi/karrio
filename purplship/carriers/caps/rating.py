@@ -50,7 +50,8 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         for d in price_quote.price_details.adjustments.adjustment
     ]
     return RateDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         currency=currency,
         estimated_delivery=format_date(price_quote.service_standard.expected_delivery_date),
         service=ServiceType(price_quote.service_code).name,

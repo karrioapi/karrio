@@ -28,7 +28,8 @@ def _extract_tracking(tracking_node: Element, settings) -> TrackingDetails:
         for detail in track_detail_nodes
     ]
     return TrackingDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=tracking.TrackInfoID,
         events=[
             TrackingEvent(

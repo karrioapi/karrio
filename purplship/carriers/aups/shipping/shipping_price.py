@@ -8,7 +8,7 @@ from purplship.core.utils.helpers import jsonify, to_dict
 from purplship.core.utils.serializable import Serializable
 from purplship.core.models import Message, ChargeDetails, RateRequest, RateDetails
 from purplship.core.units import Currency, Country
-from purplship.core.settings import Settings
+from purplship.carriers.aups.utils import Settings
 from purplship.core.errors import OriginNotServicedError
 from pyaups.shipping_price_response import (
     ShippingPriceResponse,
@@ -30,7 +30,8 @@ def parse_shipping_price_response(
 def _extract_quote(rate: ResponseShipment, settings: Settings) -> RateDetails:
     summary = rate.shipment_summary or ShipmentSummary()
     return RateDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         base_charge=summary.total_cost_ex_gst,
         duties_and_taxes=summary.total_gst,
         total_charge=summary.total_cost,

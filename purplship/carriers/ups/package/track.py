@@ -30,7 +30,8 @@ def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDet
 
     activities: List[ActivityType] = list(map(build_activity, activity_nodes))
     return TrackingDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=track_detail.InquiryNumber.Value,
         events=list(
             map(

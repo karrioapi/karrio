@@ -34,7 +34,8 @@ def _extract_quote(
     parcel_quote: ParcelQuoteResponse, settings: Settings
 ) -> RateDetails:
     return RateDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         service=Plan(parcel_quote.plan_name).name,
         base_charge=parcel_quote.quote.gross.amount,
         duties_and_taxes=parcel_quote.quote.tax.amount,

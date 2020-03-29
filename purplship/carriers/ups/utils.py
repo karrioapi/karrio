@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     account_number: str = None
 
     @property
+    def carrier(self):
+        return 'ups'
+
+    @property
     def Security(self):
         return UPSSecurity(
             UsernameToken=UsernameTokenType(

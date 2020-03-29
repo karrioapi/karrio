@@ -37,7 +37,8 @@ def _extract_tracking(
     if track_detail.Notification.Severity == "ERROR":
         return None
     return TrackingDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=track_detail.TrackingNumber,
         events=list(
             map(

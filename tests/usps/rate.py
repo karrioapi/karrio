@@ -93,7 +93,8 @@ PARSED_RATE_RESPONSE = [
     [
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "extra_charges": [
                 {
@@ -141,7 +142,8 @@ PARSED_RATE_RESPONSE = [
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "extra_charges": [
                 {"amount": 5.7, "currency": "USD", "name": "adult_signature_required"},
@@ -159,84 +161,96 @@ PARSED_RATE_RESPONSE = [
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup>",
             "total_charge": 14.9,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Medium Flat Rate Box",
             "total_charge": 13.45,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Small Flat Rate Box",
             "total_charge": 6.8,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Large Flat Rate Box APO/FPO/DPO",
             "total_charge": 16.75,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Flat Rate Envelope",
             "total_charge": 6.45,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Legal Flat Rate Envelope",
             "total_charge": 6.45,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Padded Flat Rate Envelope",
             "total_charge": 6.8,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Gift Card Flat Rate Envelope",
             "total_charge": 6.45,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Small Flat Rate Envelope",
             "total_charge": 6.45,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Priority Mail Military<sup>™</sup> Window Flat Rate Envelope",
             "total_charge": 6.45,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Media Mail Parcel",
             "total_charge": 6.93,
         },
         {
             "base_charge": 0.0,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "service": "Library Mail Parcel",
             "total_charge": 6.62,
@@ -249,7 +263,8 @@ PARSED_INTL_RATE_RESPONSE = [
     [
         {
             "base_charge": 211.5,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "extra_charges": [
                 {
@@ -263,7 +278,8 @@ PARSED_INTL_RATE_RESPONSE = [
         },
         {
             "base_charge": 158.7,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "estimated_delivery": "2016-03-30",
             "extra_charges": [
@@ -278,7 +294,8 @@ PARSED_INTL_RATE_RESPONSE = [
         },
         {
             "base_charge": 118.55,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "extra_charges": [
                 {
@@ -294,7 +311,8 @@ PARSED_INTL_RATE_RESPONSE = [
         },
         {
             "base_charge": 3.64,
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "currency": "USD",
             "extra_charges": [
                 {"amount": 1.3, "currency": "USD", "name": "certificate_of_mailing"}
@@ -311,7 +329,8 @@ PARSED_ERRORS = [
     [],
     [
         {
-            "carrier": "USPS",
+            "carrier": "usps",
+            "carrier_name": "USPS",
             "code": "-2147218040",
             "message": "Invalid International Mail Type",
         }

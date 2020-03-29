@@ -78,7 +78,8 @@ def _extract_package_rate(
         service = ShippingServiceCode(rate.Service.Code).name
         return rates + [
             RateDetails(
-                carrier=settings.carrier_name,
+                carrier=settings.carrier,
+                carrier_name=settings.carrier_name,
                 currency=currency_,
                 service=service,
                 base_charge=float(rate.TransportationCharges.MonetaryValue),

@@ -36,7 +36,8 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     label = document.Data if document.Data is not None else None
 
     return ShipmentDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=cast(PIN, shipment.ShipmentPIN).Value,
         label=label,
     )

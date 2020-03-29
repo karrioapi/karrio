@@ -28,7 +28,8 @@ def _extract_tracking(
 ) -> TrackingDetails:
     tracking_number, detail = response
     return TrackingDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
         events=[
             TrackingEvent(

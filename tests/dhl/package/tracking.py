@@ -64,7 +64,8 @@ ParsedAuthError = [
     [],
     [
         {
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "code": "111",
             "message": " Error Parsing incoming request XML\n                    Error: Datatype error: In element\n                    'Password' : Value 'testPwd'\n                    with length '7' is less than minimum\n                    length facet of '8'.. at line 11, column 33",
         }
@@ -75,7 +76,8 @@ ParsedTrackingSingNotFound = [
     [],
     [
         {
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "code": "103",
             "message": "No Shipments Found for AWBNumber 123456789",
         }
@@ -85,7 +87,8 @@ ParsedTrackingSingNotFound = [
 ParsedTrackingResponse = [
     [
         {
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "events": [
                 {
                     "code": "PU",
@@ -205,7 +208,8 @@ ParsedTrackingResponse = [
             "tracking_number": "3180831640",
         },
         {
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "events": [
                 {
                     "code": "PU",
@@ -218,7 +222,8 @@ ParsedTrackingResponse = [
             "tracking_number": "7740842550",
         },
         {
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "events": [
                 {
                     "code": "PU",

@@ -59,13 +59,21 @@ TrackingRequestPayload = ["1Z12345E6205277936"]
 
 ParsedAuthError = [
     [],
-    [{"carrier": "UPS", "code": "250003", "message": "Invalid Access License number"}],
+    [
+        {
+            "carrier": "ups",
+            "carrier_name": "UPS",
+            "code": "250003",
+            "message": "Invalid Access License number",
+        }
+    ],
 ]
 
 ParsedTrackingResponse = [
     [
         {
-            "carrier": "UPS",
+            "carrier": "ups",
+            "carrier_name": "UPS",
             "events": [
                 {
                     "code": "KB",
@@ -118,7 +126,14 @@ ParsedTrackingResponse = [
 
 ParsedInvalidTrackingNumberResponse = [
     [],
-    [{"carrier": "UPS", "code": "151018", "message": "Invalid tracking number"}],
+    [
+        {
+            "carrier": "ups",
+            "carrier_name": "UPS",
+            "code": "151018",
+            "message": "Invalid tracking number",
+        }
+    ],
 ]
 
 

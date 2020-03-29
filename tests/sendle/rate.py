@@ -129,7 +129,8 @@ PARSED_PARCEL_RATE_RESPONSE = [
     [
         {
             "base_charge": 14.95,
-            "carrier": "Sendle",
+            "carrier": "sendle",
+            "carrier_name": "Sendle",
             "currency": "AUD",
             "duties_and_taxes": 1.36,
             "estimated_delivery": "2018-02-19",
@@ -138,7 +139,8 @@ PARSED_PARCEL_RATE_RESPONSE = [
         },
         {
             "base_charge": 13.95,
-            "carrier": "Sendle",
+            "carrier": "sendle",
+            "carrier_name": "Sendle",
             "currency": "AUD",
             "duties_and_taxes": 1.27,
             "estimated_delivery": "2018-02-19",
@@ -147,7 +149,8 @@ PARSED_PARCEL_RATE_RESPONSE = [
         },
         {
             "base_charge": 13.95,
-            "carrier": "Sendle",
+            "carrier": "sendle",
+            "carrier_name": "Sendle",
             "currency": "AUD",
             "duties_and_taxes": 1.27,
             "estimated_delivery": "2018-02-14",
@@ -163,7 +166,8 @@ PARSED_ERRORS = [
     [],
     [
         {
-            "carrier": "Sendle",
+            "carrier": "sendle",
+            "carrier_name": "Sendle",
             "code": "unprocessable_entity",
             "details": {
                 "pickup_date": [

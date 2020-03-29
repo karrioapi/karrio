@@ -16,3 +16,7 @@ class Settings(BaseSettings):
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
         return b64encode(pair.encode("utf-8")).decode("ascii")
+
+    @property
+    def carrier(self):
+        return 'caps'

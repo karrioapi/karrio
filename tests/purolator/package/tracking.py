@@ -48,6 +48,7 @@ PARSED_TRACKING_RESPONSE = [
     [
         {
             "carrier": "purolator",
+            "carrier_name": "purolator",
             "events": [
                 {
                     "code": "Other",

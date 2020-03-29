@@ -44,7 +44,8 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
         else None
     )
     return PickupDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         confirmation_number=str(pickup.ConfirmationNumber[0]),
         pickup_date=format_date(pickup.NextPickupDate),
         pickup_charge=pickup_charge,

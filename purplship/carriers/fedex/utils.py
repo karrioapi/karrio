@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     account_number: str
 
     @property
+    def carrier(self):
+        return 'fedex'
+
+    @property
     def webAuthenticationDetail(self) -> WebAuthenticationDetail:
         return WebAuthenticationDetail(
             UserCredential=WebAuthenticationCredential(

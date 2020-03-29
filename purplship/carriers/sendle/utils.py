@@ -12,3 +12,7 @@ class Settings(BaseSettings):
     def authorization(self):
         pair = "%s:%s" % (self.sendle_id, self.api_key)
         return b64encode(pair.encode("utf-8")).decode("ascii")
+
+    @property
+    def carrier(self):
+        return 'sendle'

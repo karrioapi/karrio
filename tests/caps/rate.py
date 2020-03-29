@@ -99,7 +99,8 @@ ParsedQuoteParsingError = [
     [],
     [
         {
-            "carrier": "CanadaPost",
+            "carrier": "caps",
+            "carrier_name": "CanadaPost",
             "code": "AA004",
             "message": "You cannot mail on behalf of the requested customer.",
         }
@@ -110,7 +111,8 @@ ParsedQuoteMissingArgsError = [
     [],
     [
         {
-            "carrier": "CanadaPost",
+            "carrier": "caps",
+            "carrier_name": "CanadaPost",
             "code": "Server",
             "message": "/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v4}parcel-characteristics with anonymous type, found </parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v4), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v4}weight, {http://www.canadapost.ca/ws/ship/rate-v4}dimensions, {http://www.canadapost.ca/ws/ship/rate-v4}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v4}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v4}oversized]",
         }
@@ -121,10 +123,11 @@ ParsedQuoteResponse = [
     [
         {
             "base_charge": 9.59,
-            "carrier": "CanadaPost",
+            "carrier": "caps",
+            "carrier_name": "CanadaPost",
             "currency": "CAD",
-            'discount': 0.6200000000000001,
-            'duties_and_taxes': 0.0,
+            "discount": 0.620_000_000_000_000_1,
+            "duties_and_taxes": 0.0,
             "estimated_delivery": "2011-10-24",
             "extra_charges": [
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
@@ -135,10 +138,11 @@ ParsedQuoteResponse = [
         },
         {
             "base_charge": 22.64,
-            "carrier": "CanadaPost",
+            "carrier": "caps",
+            "carrier_name": "CanadaPost",
             "currency": "CAD",
             "discount": 2.56,
-            'duties_and_taxes': 0.0,
+            "duties_and_taxes": 0.0,
             "estimated_delivery": "2011-10-21",
             "extra_charges": [
                 {"amount": -0.68, "currency": "CAD", "name": "Automation discount"},
@@ -149,10 +153,11 @@ ParsedQuoteResponse = [
         },
         {
             "base_charge": 9.59,
-            "carrier": "CanadaPost",
+            "carrier": "caps",
+            "carrier_name": "CanadaPost",
             "currency": "CAD",
-            'discount': 0.6200000000000001,
-            'duties_and_taxes': 0.0,
+            "discount": 0.620_000_000_000_000_1,
+            "duties_and_taxes": 0.0,
             "estimated_delivery": "2011-10-26",
             "extra_charges": [
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
@@ -163,10 +168,11 @@ ParsedQuoteResponse = [
         },
         {
             "base_charge": 12.26,
-            "carrier": "CanadaPost",
+            "carrier": "caps",
+            "carrier_name": "CanadaPost",
             "currency": "CAD",
             "discount": 1.38,
-            'duties_and_taxes': 0.0,
+            "duties_and_taxes": 0.0,
             "estimated_delivery": "2011-10-24",
             "extra_charges": [
                 {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},

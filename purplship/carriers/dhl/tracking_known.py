@@ -29,7 +29,8 @@ def _extract_tracking(
         return None
 
     return TrackingDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=info.AWBNumber,
         events=list(
             map(

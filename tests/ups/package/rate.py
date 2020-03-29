@@ -116,12 +116,14 @@ ParsedRateteParsingError = [
     [],
     [
         {
-            "carrier": "UPS",
+            "carrier": "ups",
+            "carrier_name": "UPS",
             "code": "9380216",
             "message": "Missing or Invalid Handling Unit One Quantity",
         },
         {
-            "carrier": "UPS",
+            "carrier": "ups",
+            "carrier_name": "UPS",
             "code": "9360541",
             "message": "Missing or Invalid Pickup Date.",
         },
@@ -132,7 +134,8 @@ ParsedRateMissingArgsError = [
     [],
     [
         {
-            "carrier": "UPS",
+            "carrier": "ups",
+            "carrier_name": "UPS",
             "code": "250002",
             "message": "Invalid Authentication Information.",
         }
@@ -143,9 +146,10 @@ ParsedRateResponse = [
     [
         {
             "base_charge": 9.86,
-            "carrier": "UPS",
+            "carrier": "ups",
+            "carrier_name": "UPS",
             "currency": "USD",
-            'duties_and_taxes': 0.0,
+            "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 0.0, "currency": "USD", "name": None}],
             "service": "ups_ground",
             "total_charge": 9.86,

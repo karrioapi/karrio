@@ -22,7 +22,8 @@ def _extract_error(settings: Settings) -> Callable[[List[Message], Element], Lis
                 Message(
                     code=notification.Code,
                     message=notification.Message,
-                    carrier=settings.carrier_name,
+                    carrier=settings.carrier,
+                    carrier_name=settings.carrier_name,
                 )
             )
         return messages

@@ -64,7 +64,8 @@ def _extract_shipment(
     label = encodebytes(cast(ShippingDocumentPart, part).Image).decode('utf-8') if part is not None else None
 
     return ShipmentDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
         label=label,
     )

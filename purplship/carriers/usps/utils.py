@@ -8,3 +8,7 @@ class Settings(BaseSettings):
 
     username: str
     password: str
+
+    @property
+    def carrier(self):
+        return 'usps'

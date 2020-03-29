@@ -1,7 +1,7 @@
 from typing import List, Callable
 from functools import reduce
 from purplship.core.utils.xml import Element
-from purplship.core.settings import Settings
+from purplship.carriers.caps import Settings
 from purplship.core.models import Message
 from pycaps.messages import messageType
 
@@ -19,7 +19,8 @@ def _extract_error(settings: Settings) -> Callable[[List[Message], Element], Lis
             Message(
                 code=message.code,
                 message=message.description,
-                carrier=settings.carrier_name,
+                carrier=settings.carrier,
+                carrier_name=settings.carrier_name,
             )
         ]
 

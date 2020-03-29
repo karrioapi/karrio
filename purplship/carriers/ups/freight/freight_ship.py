@@ -59,7 +59,8 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
     label = cast(ImageFormsType, document.Image).GraphicImage if document is not None else None
 
     return ShipmentDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=shipment.ShipmentNumber,
         label=label,
     )

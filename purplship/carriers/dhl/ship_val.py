@@ -62,7 +62,8 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
     label = encodebytes(cast(LabelImage, label_image).OutputImage).decode('utf-8')
 
     return ShipmentDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         tracking_number=shipment.AirwayBillNumber,
         label=label,
     )

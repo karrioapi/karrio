@@ -59,23 +59,14 @@ if __name__ == "__main__":
 RateRequestPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcel": {
-        "id": "1",
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-    },
+    "parcel": {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0},
     "options": {"currency": "USD"},
 }
 
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcel": {
-        "id": "1",
-        "package_preset": "fedex_pak",
-    },
+    "parcel": {"id": "1", "package_preset": "fedex_pak"},
     "options": {"currency": "USD"},
 }
 
@@ -83,20 +74,22 @@ ParsedRateResponse = [
     [
         {
             "base_charge": 230.49,
-            "carrier": "carrier_name",
+            "carrier": "fedex",
+            "carrier_name": "carrier_name",
             "currency": "USD",
-            'discount': 0.0,
-            'duties_and_taxes': 0.0,
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 9.22, "currency": "USD", "name": "FUEL"}],
             "service": "international_priority",
             "total_charge": 239.71,
         },
         {
             "base_charge": 207.47,
-            "carrier": "carrier_name",
+            "carrier": "fedex",
+            "carrier_name": "carrier_name",
             "currency": "USD",
-            'discount': 0.0,
-            'duties_and_taxes': 0.0,
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 8.3, "currency": "USD", "name": "FUEL"}],
             "service": "international_economy",
             "total_charge": 215.77,
@@ -109,7 +102,8 @@ ParsedRateErrorResponse = [
     [],
     [
         {
-            "carrier": "carrier_name",
+            "carrier": "fedex",
+            "carrier_name": "carrier_name",
             "code": "873",
             "message": "All specified account numbers must match.  ",
         }

@@ -116,7 +116,8 @@ ParsedRateParsingError = [
     [],
     [
         {
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "code": "111",
             "message": 'Error in parsing request XML:Error: The\n                    content of element type "ServiceHeader"\n                    must match\n                    "(MessageTime,MessageReference,SiteID,Password)".\n                    at line 9, column 30',
         }
@@ -127,11 +128,17 @@ ParsedRateMissingArgsError = [
     [],
     [
         {
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "code": "340004",
             "message": "The location information is missing. At least one attribute post code, city name or suburb name should be provided",
         },
-        {"carrier": "carrier_name", "code": "220001", "message": "Failure - request"},
+        {
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
+            "code": "220001",
+            "message": "Failure - request",
+        },
     ],
 ]
 
@@ -139,10 +146,11 @@ ParsedRateResponse = [
     [
         {
             "base_charge": 195.32,
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "currency": "CAD",
-            'discount': 0.0,
-            'duties_and_taxes': 0.0,
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
             "estimated_delivery": "2018-06-26",
             "extra_charges": [
                 {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
@@ -152,10 +160,11 @@ ParsedRateResponse = [
         },
         {
             "base_charge": 213.47,
-            "carrier": "carrier_name",
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
             "currency": "CAD",
-            'discount': 0.0,
-            'duties_and_taxes': 0.0,
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
             "estimated_delivery": "2018-06-26",
             "extra_charges": [],
             "service": "dhl_express_easy_doc",
@@ -169,9 +178,10 @@ ParsedRateVolWeightHigher = [
     [
         {
             "base_charge": 0.0,
-            "carrier": "carrier_name",
-            'discount': 0.0,
-            'duties_and_taxes': 0.0,
+            "carrier": "dhl",
+            "carrier_name": "carrier_name",
+            "discount": 0.0,
+            "duties_and_taxes": 0.0,
             "estimated_delivery": "2017-11-13",
             "extra_charges": [],
             "service": "dhl_express_worldwide_nondoc",
