@@ -173,7 +173,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'
 
-
 # drf-yasg
 
 SWAGGER_SETTINGS = {
