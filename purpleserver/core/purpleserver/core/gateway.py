@@ -66,7 +66,7 @@ def create_shipment(payload: dict) -> ShipmentResponse:
             "selected_rate": to_dict(shipment_rate)
         }) if shipment is not None else None,
         messages=messages
-    )
+    ))
 
 
 def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> RateResponse:
