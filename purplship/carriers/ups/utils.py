@@ -16,6 +16,14 @@ class Settings(BaseSettings):
         return 'ups'
 
     @property
+    def server_url(self):
+        return (
+            "https://wwwcie.ups.com/webservices"
+            if self.test else
+            "https://onlinetools.ups.com/webservices"
+        )
+
+    @property
     def Security(self):
         return UPSSecurity(
             UsernameToken=UsernameTokenType(

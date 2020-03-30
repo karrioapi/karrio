@@ -20,6 +20,14 @@ class Settings(BaseSettings):
         return 'fedex'
 
     @property
+    def server_url(self):
+        return (
+            "https://wsbeta.fedex.com:443/web-services"
+            if self.test else
+            "https://ws.fedex.com:443/web-services"
+        )
+
+    @property
     def webAuthenticationDetail(self) -> WebAuthenticationDetail:
         return WebAuthenticationDetail(
             UserCredential=WebAuthenticationCredential(

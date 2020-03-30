@@ -13,5 +13,5 @@ class Settings(BaseSettings):
     meter_number: str
     account_number: str
     id: str = None
+    test: bool = False
     carrier_name: str = "FedEx"
-    server_url: str = "https://ws.fedex.com:443/web-services"

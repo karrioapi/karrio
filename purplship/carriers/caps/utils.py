@@ -14,10 +14,18 @@ class Settings(BaseSettings):
     id: str = None
 
     @property
+    def carrier(self):
+        return 'caps'
+
+    @property
+    def server_url(self):
+        return (
+            "https://soa-gw.canadapost.ca"
+            if self.test else
+            "https://ct.soa-gw.canadapost.ca"
+        )
+
+    @property
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
         return b64encode(pair.encode("utf-8")).decode("ascii")
-
-    @property
-    def carrier(self):
-        return 'caps'

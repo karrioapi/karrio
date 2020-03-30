@@ -10,6 +10,10 @@ class Settings(ABC):
     Unified API carrier Connection settings (Interface)
     """
 
-    server_url: str
     carrier_name: str
     id: str = None
+    test: bool = False
+
+    @property
+    def server_url(self):
+        return None

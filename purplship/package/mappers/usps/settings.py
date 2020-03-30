@@ -11,5 +11,5 @@ class Settings(BaseSettings):
     username: str
     password: str
     id: str = None
+    test: bool = False
     carrier_name: str = "USPS"
-    server_url: str = "https://secure.shippingapis.com/ShippingAPI.dll"

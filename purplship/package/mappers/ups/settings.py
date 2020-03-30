@@ -13,5 +13,5 @@ class Settings(BaseSettings):
     access_license_number: str
     account_number: str = None
     id: str = None
+    test: bool = False
     carrier_name: str = "UPS"
-    server_url: str = "https://onlinetools.ups.com/webservices"

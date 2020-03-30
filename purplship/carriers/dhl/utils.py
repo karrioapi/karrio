@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     def carrier(self):
         return 'dhl'
 
+    @property
+    def server_url(self):
+        return "https://xmlpi-ea.dhl.com/XMLShippingServlet"
+
     def Request(self, **kwargs) -> Request:
         return Request(
             ServiceHeader=ServiceHeader(

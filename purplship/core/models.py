@@ -8,9 +8,9 @@ from jstruct import JList, JStruct, REQUIRED
 class Address:
     """shipping party (contact and address) type."""
 
+    id: str = None
     postal_code: str = None
     city: str = None
-    type: str = None
     federal_tax_id: str = None
     state_tax_id: str = None
     person_name: str = None

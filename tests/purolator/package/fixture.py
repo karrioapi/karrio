@@ -5,7 +5,6 @@ gateway = api.gateway["purolator"].create(
         user_token="token",
         account_number="12398576956",
         language="en",
-        server_url="https://devwebservices.purolator.com",
         carrier_name="purolator",
     )
 )

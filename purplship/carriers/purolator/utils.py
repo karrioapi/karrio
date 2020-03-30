@@ -15,6 +15,14 @@ class Settings(BaseSettings):
     def carrier(self):
         return 'purolator'
 
+    @property
+    def server_url(self):
+        return (
+            "https://devwebservices.purolator.com"
+            if self.test else
+            "https://webservices.purolator.com"
+        )
+
 
 def standard_request_serializer(envelope: Envelope) -> str:
     namespacedef_ = 'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1"'

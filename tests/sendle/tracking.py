@@ -126,7 +126,7 @@ PARSED_TRACKING_RESPONSE_WITH_ERROR = [
 ]
 
 
-TRACKING_REQUEST_QUERY_STR = "https://sandbox.sendle.com/tracking/S3ND73"
+TRACKING_REQUEST_QUERY_STR = f"{gateway.settings.server_url}/tracking/S3ND73"
 
 TRACKING_RESPONSE = [
     {
