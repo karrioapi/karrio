@@ -8,12 +8,12 @@ from purplship.carriers.caps.shipment.non_contract_shipment import parse_non_con
 
 
 def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
-    if settings.contract_id is None:
+    if settings.contract_id is None or settings.contract_id == "":
         return parse_non_contract_shipment_response(response, settings)
     return parse_contract_shipment_response(response, settings)
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Element]:
-    if settings.contract_id is None:
+    if settings.contract_id is None or settings.contract_id == "":
         return non_contract_shipment_request(payload, settings)
     return contract_shipment_request(payload, settings)
