@@ -11,5 +11,6 @@ class Settings(BaseSettings):
     api_key: str
     password: str
     account_number: str
+    id: str = None
     carrier_name: str = "Australia Post Shipping"
     server_url: str = "https://digitalapi.auspost.com.au"

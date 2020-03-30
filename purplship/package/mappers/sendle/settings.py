@@ -10,5 +10,6 @@ class Settings(BaseSettings):
 
     sendle_id: str
     api_key: str
+    id: str = None
     carrier_name: str = "Sendle"
     server_url: str = "https://api.sendle.com"

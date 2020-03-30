@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     site_id: str
     password: str
     account_number: str = None
+    id: str = None
 
     @property
     def carrier(self):

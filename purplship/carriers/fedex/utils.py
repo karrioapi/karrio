@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     password: str
     meter_number: str
     account_number: str
+    id: str = None
 
     @property
     def carrier(self):

@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     password: str
     access_license_number: str
     account_number: str = None
+    id: str = None
 
     @property
     def carrier(self):

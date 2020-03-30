@@ -11,5 +11,6 @@ class Settings(BaseSettings):
     user_token: str
     account_number: str
     language: str = 'en'
+    id: str = None
     carrier_name: str = "Purolator"
     server_url: str = "https://webservices.purolator.com"

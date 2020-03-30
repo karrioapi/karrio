@@ -269,6 +269,7 @@ class RateDetails:
     duties_and_taxes: float = None
     estimated_delivery: str = None
     extra_charges: List[ChargeDetails] = []
+    id: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -290,6 +291,7 @@ class ShipmentDetails:
     label: str
     tracking_number: str
     selected_rate: RateDetails = None
+    id: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -303,3 +305,4 @@ class PickupDetails:
     pickup_charge: ChargeDetails = None
     pickup_time: str = None
     pickup_max_time: str = None
+    id: str = None

@@ -1,10 +1,10 @@
 """PurplShip Settings base class definition"""
 
+import attr
 from abc import ABC
-from dataclasses import dataclass
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Settings(ABC):
     """ 
     Unified API carrier Connection settings (Interface)
@@ -12,3 +12,4 @@ class Settings(ABC):
 
     server_url: str
     carrier_name: str
+    id: str = None

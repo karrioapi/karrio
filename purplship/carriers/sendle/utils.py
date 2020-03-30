@@ -7,6 +7,7 @@ class Settings(BaseSettings):
 
     sendle_id: str
     api_key: str
+    id: str = None
 
     @property
     def authorization(self):

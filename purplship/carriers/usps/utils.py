@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     username: str
     password: str
+    id: str = None
 
     @property
     def carrier(self):

@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     api_key: str
     password: str
     account_number: str
+    id: str = None
 
     @property
     def authorization(self):

@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     password: str
     customer_number: str
     contract_id: str = None
+    id: str = None
 
     @property
     def authorization(self):

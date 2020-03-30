@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     user_token: str
     account_number: str
     language: str = 'en'
+    id: str = None
 
     @property
     def carrier(self):

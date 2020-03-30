@@ -11,5 +11,6 @@ class Settings(BaseSettings):
     site_id: str
     password: str
     account_number: str = None
+    id: str = None
     carrier_name: str = "DHL"
     server_url: str = "https://xmlpi-ea.dhl.com/XMLShippingServlet"
