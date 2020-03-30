@@ -11,7 +11,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from purplship.core.utils import to_dict
-from purpleserver.core.serializers import TrackingRequest, CompleteTrackingResponse
+from purpleserver.core.serializers import TrackingRequest, TrackingResponse
 from purpleserver.core.gateway import track_shipment, get_carriers
 from purpleserver.proxy.router import router
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 @swagger_auto_schema(
     methods=['get'],
-    responses={200: CompleteTrackingResponse()},
+    responses={200: TrackingResponse()},
     operation_description="""
     GET /v1/tracking/[carrier]/[tracking_number]
     """,
@@ -55,9 +55,8 @@ def track(_, carrier: str, tracking_number: str):
             if carrier_setting is None:
                 raise Exception(f'No configured carrier of type: {carrier}')
 
-            request.is_valid(raise_exception=True)
             response = track_shipment(request.data, carrier_setting)
-            print(response)
+
             return Response(
                 to_dict(response),
                 status=status.HTTP_200_OK if response.tracking_details is not None else status.HTTP_404_NOT_FOUND

@@ -13,7 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 from purplship.core.utils.helpers import to_dict
 
 from purpleserver.core.serializers import ShipmentResponse, ShipmentRequest
-from purpleserver.core.gateway import create_shipment
+from purpleserver.core.gateway import create_shipment, get_carriers
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
@@ -35,10 +35,10 @@ logger = logging.getLogger(__name__)
 def ship(request: Request):
     try:
         try:
-            shipping_request = ShipmentRequest(data=request.data)
-            shipping_request.is_valid(raise_exception=True)
+            request = ShipmentRequest(data=request.data)
 
-            response = create_shipment(shipping_request.data)
+            request.is_valid(raise_exception=True)
+            response = create_shipment(request.data)
 
             return Response(to_dict(response), status=status.HTTP_201_CREATED)
         except Exception as pe:

@@ -121,19 +121,6 @@ class Doc(Serializer):
     image = CharField(required=False)
 
 
-class ShipmentRequest(Serializer):
-
-    shipper = Address(required=True)
-    recipient = Address(required=True)
-    parcel = Parcel(required=True)
-
-    payment = Payment(required=True)
-    customs = Customs(required=False)
-    doc_images = ListField(child=Doc(), required=False)
-
-    options = DictField(required=False)
-
-
 class RateRequest(Serializer):
     shipper = Address(required=True)
     recipient = Address(required=True)
@@ -227,6 +214,7 @@ class TrackingEvent(Serializer):
 
 class RateDetails(Serializer):
 
+    id = CharField(required=False)
     carrier = CharField(required=True)
     carrier_name = CharField(required=True)
     currency = CharField(required=True)
@@ -249,6 +237,7 @@ class TrackingDetails(Serializer):
 
 class ShipmentDetails(Serializer):
 
+    id = CharField(required=False)
     carrier = CharField(required=True)
     carrier_name = CharField(required=True)
     label = CharField(required=True)
@@ -265,6 +254,7 @@ class PickupDetails(Serializer):
     pickup_charge = ChargeDetails(required=False)
     pickup_time = CharField(required=False)
     pickup_max_time = CharField(required=False)
+    id = CharField(required=False)
 
 
 class ShipmentRate(RateRequest):
@@ -275,16 +265,24 @@ class Shipment(ShipmentRate, ShipmentDetails):
     pass
 
 
-class CompleteRateResponse(Serializer):
+class ShipmentRequest(ShipmentRate):
+    selected_rate_id = CharField(required=True)
+
+    payment = Payment(required=True)
+    customs = Customs(required=False)
+    doc_images = ListField(child=Doc(), required=False)
+
+
+class RateResponse(Serializer):
     messages = ListField(child=Message())
     shipment = ShipmentRate()
 
 
-class CompleteShipmentResponse(Serializer):
+class ShipmentResponse(Serializer):
     messages = ListField(child=Message())
     shipment = Shipment()
 
 
-class CompleteTrackingResponse(Serializer):
+class TrackingResponse(Serializer):
     messages = ListField(child=Message())
     tracking_details = TrackingDetails()
