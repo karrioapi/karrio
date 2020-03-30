@@ -115,7 +115,7 @@ def exec_parrallel(
         return [response.result() for response in as_completed(requests)]
 
 
-def exec_async(action: Callable[[Any], T], sequence: List[Any]) -> List[T]:
+def exec_async(action: Callable[[S], T], sequence: List[S]) -> List[T]:
     async def async_action(args):
         return action(args)
 

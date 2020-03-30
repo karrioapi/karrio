@@ -13,4 +13,4 @@ class Settings(BaseSettings):
     customer_number: str
     contract_id: str = None
     carrier_name: str = "CanadaPost"
-    server_url: str = "https://soagw.canadapost.ca"
+    server_url: str = "https://soa-gw.canadapost.ca"
