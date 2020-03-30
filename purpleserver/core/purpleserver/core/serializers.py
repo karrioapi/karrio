@@ -1,10 +1,9 @@
-from purpleserver.core.models import MODELS
+from purplship.package.mappers import Providers
 from rest_framework.serializers import (
-    Serializer, CharField, FloatField, BooleanField, IntegerField, ListField, DictField, ChoiceField, ListSerializer,
-    UUIDField
+    Serializer, CharField, FloatField, BooleanField, IntegerField, ListField, DictField, ChoiceField, ListSerializer
 )
 
-CARRIERS = [(k, k) for k in MODELS.keys()]
+CARRIERS = [(k, k) for k in Providers.keys()]
 
 
 class StringListField(ListField):
@@ -12,9 +11,8 @@ class StringListField(ListField):
 
 
 class CarrierSettings(Serializer):
-    carrier = ChoiceField(choices=CARRIERS, required=True)
-    carrier_name = CharField(required=True)
-    test = BooleanField(required=True)
+    carrier = ChoiceField(choices=CARRIERS)
+    settings = DictField(required=True)
 
 
 class CarrierSettingsList(ListSerializer):
@@ -23,9 +21,9 @@ class CarrierSettingsList(ListSerializer):
 
 class Address(Serializer):
 
-    id = CharField(required=False)
     postal_code = CharField(required=False)
     city = CharField(required=False)
+    type = CharField(required=False)
     federal_tax_id = CharField(required=False)
     state_tax_id = CharField(required=False)
     person_name = CharField(required=False)
@@ -38,29 +36,8 @@ class Address(Serializer):
     suburb = CharField(required=False)
     residential = BooleanField(required=False)
 
-    address_line1 = CharField(required=False)
-    address_line2 = CharField(required=False)
-
-
-class ShippingAddress(Serializer):
-
-    id = CharField(required=False)
-    postal_code = CharField(required=False)
-    city = CharField(required=True)
-    federal_tax_id = CharField(required=False)
-    state_tax_id = CharField(required=False)
-    person_name = CharField(required=True)
-    company_name = CharField(required=False)
-    country_code = CharField(required=True)
-    email = CharField(required=False)
-    phone_number = CharField(required=False)
-
-    state_code = CharField(required=False)
-    suburb = CharField(required=False)
-    residential = BooleanField(required=False)
-
-    address_line1 = CharField(required=True)
-    address_line2 = CharField(required=False)
+    address_line_1 = CharField(required=False)
+    address_line_2 = CharField(required=False)
 
 
 class Commodity(Serializer):
@@ -93,6 +70,7 @@ class Parcel(Serializer):
     is_document = BooleanField(required=False)
     weight_unit = CharField(required=False)
     dimension_unit = CharField(required=False)
+    services = StringListField(required=False)
 
 
 class Invoice(Serializer):
@@ -120,8 +98,8 @@ class Payment(Serializer):
     amount = FloatField(required=False)
     currency = CharField(required=False)
     account_number = CharField(required=False)
-    credit_card = Card(required=False)
-    contact = Address(required=False)
+    credit_card = Card()
+    contact = Address()
 
 
 class Customs(Serializer):
@@ -130,9 +108,9 @@ class Customs(Serializer):
     aes = CharField(required=False)
     description = CharField(required=False)
     terms_of_trade = CharField(required=False)
-    commodities = ListField(child=Commodity(), required=False)
-    duty = Payment(required=False)
-    invoice = Invoice(required=False)
+    commodities = ListField(child=Commodity())
+    duty = Payment()
+    invoice = Invoice()
     commercial_invoice = BooleanField(required=False)
 
 
@@ -143,12 +121,24 @@ class Doc(Serializer):
     image = CharField(required=False)
 
 
+class ShipmentRequest(Serializer):
+
+    shipper = Address(required=True)
+    recipient = Address(required=True)
+    parcel = Parcel(required=True)
+
+    payment = Payment(required=True)
+    customs = Customs(required=False)
+    doc_images = ListField(child=Doc(), required=False)
+
+    options = DictField(required=False)
+
+
 class RateRequest(Serializer):
     shipper = Address(required=True)
     recipient = Address(required=True)
     parcel = Parcel(required=True)
 
-    services = StringListField(required=False)
     options = DictField(required=False)
 
 
@@ -164,7 +154,7 @@ class PickupRequest(Serializer):
     date = CharField(required=True)
 
     address = Address(required=True)
-    parcels = ListField(child=Parcel(), required=False)
+    parcels = ListField(child=Parcel())
 
     ready_time = CharField(required=False)
     closing_time = CharField(required=False)
@@ -176,7 +166,7 @@ class PickupUpdateRequest(Serializer):
 
     date = CharField(required=True)
     address = Address(required=True)
-    parcels = ListField(child=Parcel(), required=False)
+    parcels = ListField(child=Parcel())
 
     confirmation_number = CharField(required=False)
     ready_time = CharField(required=False)
@@ -237,7 +227,6 @@ class TrackingEvent(Serializer):
 
 class RateDetails(Serializer):
 
-    id = UUIDField(required=False)
     carrier = CharField(required=True)
     carrier_name = CharField(required=True)
     currency = CharField(required=True)
@@ -260,7 +249,6 @@ class TrackingDetails(Serializer):
 
 class ShipmentDetails(Serializer):
 
-    id = CharField(required=False)
     carrier = CharField(required=True)
     carrier_name = CharField(required=True)
     label = CharField(required=True)
@@ -277,43 +265,26 @@ class PickupDetails(Serializer):
     pickup_charge = ChargeDetails(required=False)
     pickup_time = CharField(required=False)
     pickup_max_time = CharField(required=False)
-    id = CharField(required=False)
 
 
 class ShipmentRate(RateRequest):
     rates = ListField(child=RateDetails())
 
 
-class ShipmentRequest(Serializer):
-    selected_rate_id = CharField(required=True)
-
-    rates = ListField(child=RateDetails())
-
-    shipper = ShippingAddress(required=True)
-    recipient = ShippingAddress(required=True)
-    parcel = Parcel(required=True)
-
-    options = DictField(required=False)
-
-    payment = Payment(required=True)
-    customs = Customs(required=False)
-    doc_images = ListField(child=Doc(), required=False)
+class Shipment(ShipmentRate, ShipmentDetails):
+    pass
 
 
-class Shipment(ShipmentRequest, ShipmentDetails):
-    selected_rate_id = CharField(required=True)
-
-
-class RateResponse(Serializer):
+class CompleteRateResponse(Serializer):
     messages = ListField(child=Message())
-    shipment = ShipmentRate(required=False)
+    shipment = ShipmentRate()
 
 
-class ShipmentResponse(Serializer):
+class CompleteShipmentResponse(Serializer):
     messages = ListField(child=Message())
-    shipment = Shipment(required=False)
+    shipment = Shipment()
 
 
-class TrackingResponse(Serializer):
+class CompleteTrackingResponse(Serializer):
     messages = ListField(child=Message())
-    tracking_details = TrackingDetails(required=False)
+    tracking_details = TrackingDetails()

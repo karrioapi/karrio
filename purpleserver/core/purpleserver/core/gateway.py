@@ -1,21 +1,18 @@
-import logging
-import uuid
 from typing import List, Union
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from purplship import package as api
 from purplship.core.utils import exec_async, to_dict
 from purpleserver.core.datatypes import (
-    CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
-    RateResponse, TrackingResponse, TrackingRequest, Message, RateDetails
+    RateRequest, TrackingRequest, ShipmentRequest, CarrierSettings, Shipment, Message,
+    ShipmentDetails, ShipmentRate, TrackingDetails, RateDetails,
+    CompleteTrackingResponse, CompleteShipmentResponse, CompleteRateResponse
 )
 from purpleserver.core import models
 
-logger = logging.getLogger(__name__)
-
 
 def get_carriers(carrier_type: str = None, carrier_name: str = None, test: bool = None) -> Union[CarrierSettings, List[CarrierSettings]]:
-    filters = dict(carrier_name=carrier_name, test=(bool(test) if test is not None else None))
+    filters = dict(carrier_name=carrier_name, test=test)
     carrier_models = {carrier_type: models.MODELS.get(carrier_type)} if carrier_type is not None else models.MODELS
 
     if any(carrier_models.values()) and any(filters.values()):
@@ -33,80 +30,42 @@ def get_carriers(carrier_type: str = None, carrier_name: str = None, test: bool 
         raise Exception(f'Unknown carrier {carrier_type}')
 
 
-def create_shipment(payload: dict) -> ShipmentResponse:
-    selected_rate = next(
-        (RateDetails(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
-        None
-    )
+def create_shipment(payload: dict, carrier_settings: CarrierSettings) -> CompleteShipmentResponse:
+    request = ShipmentRequest(**{
+        key: value for key, value in payload.items() if key in ShipmentRequest.__annotations__
+    })
 
-    if selected_rate is None:
-        raise Exception(
-            f'Invalid "selected_rate_id": {payload.get("selected_rate_id")}'
-            f'Please select from {", ".join([r.id for r in payload.get("rates")])}'
-        )
-
-    carrier_settings = next(
-        iter(get_carriers(carrier_type=selected_rate.carrier, carrier_name=selected_rate.carrier_name)),
-        None
-    )
-
-    request = ShipmentRequest(**{**payload, 'service': selected_rate.service})
     gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
-    shipment, messages = api.Shipment.create(request).with_(gateway).parse()
-    shipment_rate = (
-        shipment.selected_rate or selected_rate
-        if shipment is not None else None
+    shipment, messages = api.shipment.create(request).from_(gateway).parse()
+
+    return CompleteShipmentResponse(
+        shipment=Shipment(**{**payload, **to_dict(shipment)}),
+        messages=messages
     )
 
-    return ShipmentResponse(
-        shipment=Shipment(**{
-            **payload,
-            **to_dict(shipment),
-            "service": shipment_rate.service,
-            "selected_rate": to_dict(shipment_rate)
-        }) if shipment is not None else None,
-        messages=messages
-    ))
 
-
-def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> RateResponse:
-    request = api.Rating.fetch(payload)
+def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> CompleteShipmentResponse:
+    request = RateRequest(**payload)
 
     def process(carrier_settings: CarrierSettings):
-        try:
-            gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
-            return request.from_(gateway).parse()
-        except Exception as e:
-            logger.exception(e)
-            return [[], [Message(
-                code="500",
-                carrier=carrier_settings.carrier,
-                carrier_name=carrier_settings.settings.get('carrier_name'),
-                message=str(e)
-            )]]
+        gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
+        return api.rating.fetch(request).from_(gateway).parse()
 
-    results = exec_async(process, carrier_settings_list)
-    rates = sum((r for r, _ in results if r is not None), [])
-    messages = sum((m for _, m in results), [])
+    rates, messages = exec_async(process, carrier_settings_list)
 
-    return RateResponse(
-        shipment=ShipmentRate(**{
-            **payload,
-            'rates': [
-                {**{**to_dict(r), 'id': str(uuid.uuid4())}} for r in rates
-            ]
-        }) if len(rates) > 0 else None,
+    return CompleteShipmentResponse(
+        shipment=ShipmentRate(**{**payload, 'rates': to_dict(rates)}),
         messages=messages
     )
 
 
-def track_shipment(payload: dict, carrier_settings: CarrierSettings) -> TrackingResponse:
+def track_shipment(payload: dict, carrier_settings: CarrierSettings) -> CompleteTrackingResponse:
     request = TrackingRequest(**payload)
 
-    gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
-    results, messages = api.Tracking.fetch(request).from_(gateway).parse()
+    gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.clean_settings)
+    results, messages = api.tracking.fetch(request).from_(gateway).parse()
 
-    return TrackingResponse(
+    return CompleteTrackingResponse(
         tracking_details=next(iter(results), None),
         messages=messages
     )

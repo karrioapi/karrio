@@ -2,7 +2,10 @@ from django.db import models
 
 
 class Carrier(models.Model):
-    carrier_name = models.CharField(max_length=200, unique=True)
+    class Meta:
+        abstract = True
+
+    carrier_name = models.CharField(max_length=200)
     test = models.BooleanField(default=True)
 
 
@@ -43,7 +46,6 @@ class PurolatorSettings(Carrier):
 
     user_token = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
-    language = models.CharField(max_length=200, default='en')
 
 
 PurolatorSettings._meta.get_field('carrier_name').default = 'PurolatorCourrier'
@@ -77,3 +79,12 @@ class FedexSettings(Carrier):
 
 
 FedexSettings._meta.get_field('carrier_name').default = 'FedEx'
+
+
+MODELS = {
+    'caps': CanadaPostSettings,
+    'dhl': DHLSettings,
+    'fedex': FedexSettings,
+    'purolator': PurolatorSettings,
+    'ups': UPSSettings,
+}

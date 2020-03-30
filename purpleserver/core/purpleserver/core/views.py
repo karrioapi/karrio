@@ -1,5 +1,4 @@
 import logging
-from typing import List
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -12,9 +11,9 @@ from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from purplship.core.utils import to_dict
 from purpleserver.core.serializers import CarrierSettingsList
 from purpleserver.core.gateway import get_carriers
-from purpleserver.core.datatypes import CarrierSettings
 
 logger = logging.getLogger(__name__)
 router = DefaultRouter(trailing_slash=False)
@@ -23,13 +22,9 @@ router = DefaultRouter(trailing_slash=False)
 @swagger_auto_schema(
     methods=['get'],
     responses={200: CarrierSettingsList()},
-    operation_description=("""
-    GET /v1/carriers?carrier=[carrier]&test=[true/false]
-    
-    GET /v1/carriers?carrier_name=[carrierName]
-    
-    GET /v1/carriers?carrier=[carrier]&carrierName=[carrierName]
-    """),
+    operation_description="""
+    GET /v1/carriers?carrier=[carrier]&carrier_name=[carrier_name]&test=[true/false]
+    """,
     operation_id="GetConfiguredCarriers",
     manual_parameter=[
         openapi.Parameter(
@@ -39,7 +34,7 @@ router = DefaultRouter(trailing_slash=False)
             type=openapi.TYPE_STRING
         ),
         openapi.Parameter(
-            'carrierName',
+            'carrier_name',
             openapi.IN_QUERY,
             description="shipment name",
             type=openapi.TYPE_STRING
@@ -48,7 +43,7 @@ router = DefaultRouter(trailing_slash=False)
             'test',
             openapi.IN_QUERY,
             description="test mode",
-            type=openapi.TYPE_BOOLEAN
+            type=openapi.TYPE_STRING
         )
     ]
 )
@@ -59,20 +54,12 @@ def carriers_settings(request):
     try:
         try:
             query = request.query_params
-            response: List[CarrierSettings] = get_carriers(
+            response = get_carriers(
                 carrier_type=query.get('carrier'),
-                carrier_name=query.get('carrierName'),
+                carrier_name=query.get('carrier_name'),
                 test=query.get('test'),
             )
-            carriers = [
-                dict(
-                    carrier=carrier.carrier,
-                    carrier_name=carrier.settings['carrier_name'],
-                    test=carrier.settings['test']
-                )
-                for carrier in response
-            ]
-            return Response(carriers, status=status.HTTP_200_OK)
+            return Response(to_dict(response), status=status.HTTP_200_OK)
         except Exception as pe:
             logger.exception(pe)
             return Response(pe.args, status=status.HTTP_404_NOT_FOUND)
