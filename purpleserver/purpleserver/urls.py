@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import logging
 from django.contrib import admin
 from django.urls import include, path
 
@@ -23,6 +24,8 @@ from drf_yasg import openapi
 import purpleserver.proxy.views
 from purpleserver.proxy.router import router as proxy_router
 from purpleserver.core.views import router as core_router
+
+logging.getLogger('purplship').setLevel(logging.NOTSET)
 
 admin.site.site_header = "PurplShip Board"
 
@@ -40,6 +43,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    path('swagger.yaml', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('dashboard/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),

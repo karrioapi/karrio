@@ -35,10 +35,10 @@ logger = logging.getLogger(__name__)
 def ship(request: Request):
     try:
         try:
-            request = ShipmentRequest(data=request.data)
+            shipping_request = ShipmentRequest(data=request.data)
+            shipping_request.is_valid(raise_exception=True)
 
-            request.is_valid(raise_exception=True)
-            response = create_shipment(request.data)
+            response = create_shipment(shipping_request.data)
 
             return Response(to_dict(response), status=status.HTTP_201_CREATED)
         except Exception as pe:

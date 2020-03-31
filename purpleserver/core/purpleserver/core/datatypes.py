@@ -35,6 +35,7 @@ class ShipmentRate:
 
 @attr.s(auto_attribs=True)
 class ShipmentRequest(BaseShipmentRequest):
+    service: str = JStruct[str, REQUIRED]
     selected_rate_id: str = JStruct[str, REQUIRED]
 
     shipper: Address = JStruct[Address, REQUIRED]
@@ -55,12 +56,20 @@ class Shipment:
     carrier_name: str
     tracking_number: str
     label: str
+    service: str
     selected_rate_id: str
+
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
-    selected_rate: RateDetails = JList[RateDetails]
-    rates: List[RateDetails] = JList[RateDetails]
+
+    selected_rate: RateDetails = JList[RateDetails, REQUIRED]
+    rates: List[RateDetails] = JList[RateDetails, REQUIRED]
+
+    payment: Payment = JStruct[Payment]
+    customs: Customs = JStruct[Customs]
+    doc_images: List[Doc] = JList[Doc]
+
     options: Dict = {}
 
 

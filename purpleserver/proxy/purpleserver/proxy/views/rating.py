@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
     methods=['post'],
     responses={200: RateResponse()},
     request_body=RateRequest(),
-    operation_description="""
-    POST /v1/rating?carrier=[carrier]
-    """,
+    operation_description=(
+        'POST /v1/rating?carrier=[carrier]&carrier_name=[carrier_name]'
+    ),
     operation_id="ShippingRates",
     manual_parameter=[
         openapi.Parameter(
@@ -55,13 +55,13 @@ def rate(request: Request):
                 carrier_type=query.get('carrier'),
                 carrier_name=query.get('carrier_name'),
             )
-            request = RateRequest(data=request.data)
+            rate_request = RateRequest(data=request.data)
 
             if len(carrier_settings_list) == 0:
                 raise Exception(f'No configured carriers specified')
 
-            request.is_valid(raise_exception=True)
-            response = fetch_rates(request.data, carrier_settings_list)
+            rate_request.is_valid(raise_exception=True)
+            response = fetch_rates(rate_request.data, carrier_settings_list)
 
             return Response(
                 to_dict(response),

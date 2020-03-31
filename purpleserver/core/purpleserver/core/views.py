@@ -22,9 +22,11 @@ router = DefaultRouter(trailing_slash=False)
 @swagger_auto_schema(
     methods=['get'],
     responses={200: CarrierSettingsList()},
-    operation_description="""
-    GET /v1/carriers?carrier=[carrier]&carrier_name=[carrier_name]&test=[true/false]
-    """,
+    operation_description=(
+        'GET /v1/carriers?carrier=[carrier]&test=[true/false]'
+        'GET /v1/carriers?carrier_name=[carrier_name]'
+        'GET /v1/carriers?carrier=[carrier]&carrier_name=[carrier_name]'
+    ),
     operation_id="GetConfiguredCarriers",
     manual_parameter=[
         openapi.Parameter(

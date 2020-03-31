@@ -23,7 +23,7 @@ class CarrierSettingsList(ListSerializer):
 class Address(Serializer):
 
     id = CharField(required=False)
-    postal_code = CharField(required=False)
+    postal_code = CharField(required=True)
     city = CharField(required=False)
     federal_tax_id = CharField(required=False)
     state_tax_id = CharField(required=False)
@@ -37,8 +37,29 @@ class Address(Serializer):
     suburb = CharField(required=False)
     residential = BooleanField(required=False)
 
-    address_line_1 = CharField(required=False)
-    address_line_2 = CharField(required=False)
+    address_line1 = CharField(required=False)
+    address_line2 = CharField(required=False)
+
+
+class ShippingAddress(Serializer):
+
+    id = CharField(required=False)
+    postal_code = CharField(required=True)
+    city = CharField(required=True)
+    federal_tax_id = CharField(required=False)
+    state_tax_id = CharField(required=False)
+    person_name = CharField(required=True)
+    company_name = CharField(required=True)
+    country_code = CharField(required=True)
+    email = CharField(required=False)
+    phone_number = CharField(required=False)
+
+    state_code = CharField(required=True)
+    suburb = CharField(required=False)
+    residential = BooleanField(required=False)
+
+    address_line1 = CharField(required=True)
+    address_line2 = CharField(required=False)
 
 
 class Commodity(Serializer):
@@ -262,16 +283,24 @@ class ShipmentRate(RateRequest):
     rates = ListField(child=RateDetails())
 
 
-class Shipment(ShipmentRate, ShipmentDetails):
+class ShipmentRequest(Serializer):
     selected_rate_id = CharField(required=True)
 
+    rates = ListField(child=RateDetails())
 
-class ShipmentRequest(ShipmentRate):
-    selected_rate_id = CharField(required=True)
+    shipper = ShippingAddress(required=True)
+    recipient = ShippingAddress(required=True)
+    parcel = Parcel(required=True)
 
-    payment = Payment(required=False)
+    options = DictField(required=False)
+
+    payment = Payment(required=True)
     customs = Customs(required=False)
     doc_images = ListField(child=Doc(), required=False)
+
+
+class Shipment(ShipmentRequest, ShipmentDetails):
+    selected_rate_id = CharField(required=True)
 
 
 class RateResponse(Serializer):

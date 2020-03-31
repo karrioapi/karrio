@@ -1,6 +1,6 @@
 import logging
 import uuid
-from typing import List, Union, cast
+from typing import List, Union
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from purplship import package as api
@@ -8,7 +8,7 @@ from purplship.core.utils import exec_async, to_dict
 from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
     RateResponse, RateRequest, TrackingResponse, TrackingRequest, ShipmentDetails,
-    Message
+    Message, RateDetails
 )
 from purpleserver.core import models
 
@@ -35,17 +35,15 @@ def get_carriers(carrier_type: str = None, carrier_name: str = None, test: bool 
 
 
 def create_shipment(payload: dict) -> ShipmentResponse:
-    request = ShipmentRequest(**payload)
-
     selected_rate = next(
-        (rate for rate in request.rates if rate.id == request.selected_rate_id),
+        (RateDetails(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
         None
     )
 
     if selected_rate is None:
         raise Exception(
-            f'Invalid "selected_rate_id": {request.selected_rate_id}'
-            f'Please select from {", ".join([r.id for r in request.rates])}'
+            f'Invalid "selected_rate_id": {payload.get("selected_rate_id")}'
+            f'Please select from {", ".join([r.id for r in payload.get("rates")])}'
         )
 
     carrier_settings = next(
@@ -53,18 +51,17 @@ def create_shipment(payload: dict) -> ShipmentResponse:
         None
     )
 
+    request = ShipmentRequest(**{**payload, 'service': selected_rate.service})
     gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
     shipment, messages = api.shipment.create(request).with_(gateway).parse()
-
-    returned_selected_rate = (
-        cast(ShipmentDetails, shipment).selected_rate if shipment is not None else None
-    )
+    shipment_rate = shipment.selected_rate or selected_rate
 
     return ShipmentResponse(
         shipment=Shipment(**{
             **payload,
             **to_dict(shipment),
-            "selected_rate": to_dict(returned_selected_rate or selected_rate)
+            "service": shipment_rate.service,
+            "selected_rate": to_dict(shipment_rate)
         }) if shipment is not None else None,
         messages=messages
     )
@@ -80,7 +77,7 @@ def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> 
         except Exception as e:
             logger.exception(e)
             return [[], [Message(
-                code="00000",
+                code="500",
                 carrier=carrier_settings.carrier,
                 carrier_name=carrier_settings.settings.get('carrier_name'),
                 message=str(e)
