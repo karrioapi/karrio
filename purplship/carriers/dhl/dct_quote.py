@@ -14,7 +14,7 @@ from pydhl.dct_req_global_2_0 import (
     QtdShpType,
 )
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
-from purplship.core.utils import export, Serializable, Element, format_date
+from purplship.core.utils import export, Serializable, Element, format_date, decimal
 from purplship.core.errors import RequiredFieldError
 from purplship.core.units import Package
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
@@ -46,7 +46,7 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     ExtraCharges = list(
         map(
             lambda s: ChargeDetails(
-                name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)
+                name=s.LocalServiceTypeName, amount=decimal(s.ChargeValue or 0)
             ),
             qtdshp.QtdShpExChrg,
         )
@@ -72,14 +72,14 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
         currency=qtdshp.CurrencyCode,
         estimated_delivery=format_date(delivery_date),
         service=service_name,
-        base_charge=float(qtdshp.WeightCharge or 0),
-        total_charge=float(qtdshp.ShippingCharge or 0),
-        duties_and_taxes=DutiesAndTaxes_,
-        discount=Discount_,
+        base_charge=decimal(qtdshp.WeightCharge or 0),
+        total_charge=decimal(qtdshp.ShippingCharge or 0),
+        duties_and_taxes=decimal(DutiesAndTaxes_),
+        discount=decimal(Discount_),
         extra_charges=list(
             map(
                 lambda s: ChargeDetails(
-                    name=s.LocalServiceTypeName, amount=float(s.ChargeValue or 0)
+                    name=s.LocalServiceTypeName, amount=decimal(s.ChargeValue or 0)
                 ),
                 qtdshp.QtdShpExChrg,
             )

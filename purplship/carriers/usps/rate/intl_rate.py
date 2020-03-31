@@ -2,7 +2,7 @@ from typing import Tuple, List
 from datetime import datetime
 from pyusps.intlratev2request import IntlRateV2Request, PackageType
 from pyusps.intlratev2response import ServiceType, ExtraServiceType
-from purplship.core.utils import export, Serializable, Element, format_date
+from purplship.core.utils import export, Serializable, Element, format_date, decimal
 from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country
 from purplship.carriers.usps.units import IntlContainer, ExtraService, IntlMailType
@@ -37,14 +37,14 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
         carrier=settings.carrier,
         carrier_name=settings.carrier_name,
         service=service.SvcDescription,
-        base_charge=float(service.Postage),
-        total_charge=service.Postage,
+        base_charge=decimal(service.Postage),
+        total_charge=decimal(service.Postage),
         currency=currency,
         estimated_delivery=delivery_date,
         extra_charges=[
             ChargeDetails(
                 name=ExtraService(special.ServiceID).name,
-                amount=special.Price,
+                amount=decimal(special.Price),
                 currency=currency,
             )
             for special in special_services

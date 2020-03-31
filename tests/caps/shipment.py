@@ -142,7 +142,6 @@ ShipmentPriceLinkXML = """
 """
 
 ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
-    <customer-request-id>2004381</customer-request-id>
     <transmit-shipment/>
     <requested-shipping-point>H2B1A0</requested-shipping-point>
     <provide-pricing-info>true</provide-pricing-info>
@@ -204,6 +203,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <customer-ref-1></customer-ref-1>
         </references>
         <settlement-info>
+            <paid-by-customer>2004381</paid-by-customer>
             <contract-id>42708517</contract-id>
         </settlement-info>
     </delivery-spec>
@@ -212,7 +212,6 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
 
 
 ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
-    <customer-request-id>2004381</customer-request-id>
     <transmit-shipment/>
     <requested-shipping-point>H2B1A0</requested-shipping-point>
     <provide-pricing-info>true</provide-pricing-info>
@@ -267,6 +266,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             <customer-ref-1></customer-ref-1>
         </references>
         <settlement-info>
+            <paid-by-customer>2004381</paid-by-customer>
             <contract-id>42708517</contract-id>
         </settlement-info>
     </delivery-spec>

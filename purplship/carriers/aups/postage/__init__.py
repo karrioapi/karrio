@@ -6,8 +6,7 @@ import pyaups.domestic_letter_postage
 import pyaups.international_letter_postage
 import pyaups.domestic_parcel_postage
 from pyaups.domestic_parcel_postage import ServiceResponse, Service
-from purplship.core.utils.helpers import to_dict
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import to_dict, Serializable, decimal
 from purplship.core.units import Country, PackagingUnit, Currency
 from purplship.core.models import Message, RateRequest, RateDetails
 from purplship.carriers.aups.utils import Settings
@@ -49,8 +48,8 @@ def _extract_quote(service: Service, settings: Settings) -> RateDetails:
         carrier=settings.carrier,
         carrier_name=settings.carrier_name,
         service=service.name,
-        base_charge=float(service.price),
-        total_charge=float(service.price),
+        base_charge=decimal(service.price),
+        total_charge=decimal(service.price),
         currency=Currency.AUD.name,
     )
 

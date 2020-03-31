@@ -26,11 +26,13 @@ class TestCanadaPostRating(unittest.TestCase):
 
     @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
     def test_create_rate_request_with_package_preset_missing_weight(self, _):
-        processing_error = rating.fetch(RateRequest(**RateWithPresetMissingWeightPayload)).from_(gateway).parse()
-
-        self.assertEqual(
-            to_dict(processing_error), to_dict(ProcessingError)
+        processing_error = (
+            rating.fetch(RateRequest(**RateWithPresetMissingWeightPayload))
+            .from_(gateway)
+            .parse()
         )
+
+        self.assertEqual(to_dict(processing_error), to_dict(ProcessingError))
 
     @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
@@ -96,7 +98,17 @@ RateWithPresetMissingWeightPayload = {
     },
 }
 
-ProcessingError = [[], [{'carrier': 'caps', 'carrier_name': 'CanadaPost', 'code': '500', 'message': '<parcel.weight> must be specified (required)'}]]
+ProcessingError = [
+    [],
+    [
+        {
+            "carrier": "caps",
+            "carrier_name": "CanadaPost",
+            "code": "500",
+            "message": "<parcel.weight> must be specified (required)",
+        }
+    ],
+]
 
 ParsedQuoteParsingError = [
     [],
@@ -129,7 +141,7 @@ ParsedQuoteResponse = [
             "carrier": "caps",
             "carrier_name": "CanadaPost",
             "currency": "CAD",
-            "discount": 0.620_000_000_000_000_1,
+            "discount": 0.62,
             "duties_and_taxes": 0.0,
             "estimated_delivery": "2011-10-24",
             "extra_charges": [
@@ -159,7 +171,7 @@ ParsedQuoteResponse = [
             "carrier": "caps",
             "carrier_name": "CanadaPost",
             "currency": "CAD",
-            "discount": 0.620_000_000_000_000_1,
+            "discount": 0.62,
             "duties_and_taxes": 0.0,
             "estimated_delivery": "2011-10-26",
             "extra_charges": [

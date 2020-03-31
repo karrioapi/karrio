@@ -8,7 +8,7 @@ from pydhl.pickupdatatypes_global_3_0 import (
     WeightSeg,
     RequestorContact,
 )
-from purplship.core.utils import export, Serializable, Element, format_time, format_date
+from purplship.core.utils import export, Serializable, Element, format_time, format_date, decimal
 from purplship.core.models import (
     PickupRequest,
     Message,
@@ -37,7 +37,7 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
     pickup_charge = (
         ChargeDetails(
             name="Pickup Charge",
-            amount=float(pickup.PickupCharge),
+            amount=decimal(pickup.PickupCharge),
             currency=pickup.CurrencyCode,
         )
         if pickup.PickupCharge is not None

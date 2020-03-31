@@ -1,3 +1,3 @@
 import logging
 
-logging.getLogger('purplship').setLevel(logging.CRITICAL)
+logging.getLogger("purplship").setLevel(logging.CRITICAL)

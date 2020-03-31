@@ -89,7 +89,7 @@ def contract_shipment_request(
     )
 
     request = ShipmentType(
-        customer_request_id=payload.parcel.reference,
+        customer_request_id=None,
         groupIdOrTransmitShipment=groupIdOrTransmitShipment(),
         quickship_label_requested=None,
         cpc_pickup_indicator=None,

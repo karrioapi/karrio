@@ -4,8 +4,7 @@ from typing import List, Tuple
 from pyaups.shipping_price_request import ShippingPriceRequest, Shipment, From, To, Item
 from purplship.carriers.aups.error import parse_error_response
 from purplship.carriers.aups.units import PackagingType
-from purplship.core.utils.helpers import jsonify, to_dict
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import jsonify, to_dict, Serializable, decimal
 from purplship.core.models import Message, ChargeDetails, RateRequest, RateDetails
 from purplship.core.units import Currency, Country
 from purplship.carriers.aups.utils import Settings
@@ -29,28 +28,27 @@ def parse_shipping_price_response(
 
 def _extract_quote(rate: ResponseShipment, settings: Settings) -> RateDetails:
     summary = rate.shipment_summary or ShipmentSummary()
+
+    surcharges = {
+        "Fuel": summary.fuel_surcharge,
+        "Security": summary.security_surcharge,
+        "Transit Cover": summary.transit_cover,
+        "Freight Charge": summary.freight_charge
+    }
+    extra_charges = [
+        ChargeDetails(name=name, amount=decimal(amount), currency=Currency.AUD.name)
+        for name, amount in surcharges.items() if amount is not None
+    ]
+
     return RateDetails(
         carrier=settings.carrier,
         carrier_name=settings.carrier_name,
-        base_charge=summary.total_cost_ex_gst,
-        duties_and_taxes=summary.total_gst,
-        total_charge=summary.total_cost,
+        base_charge=decimal(summary.total_cost_ex_gst),
+        duties_and_taxes=decimal(summary.total_gst),
+        total_charge=decimal(summary.total_cost),
         currency=Currency.AUD.name,
-        discount=summary.discount,
-        extra_charges=[
-            ChargeDetails(**details)
-            for details in (
-                []
-                if not summary.fuel_surcharge
-                else [{"name": "Fuel", "amount": summary.fuel_surcharge, "currency": "AUD"}] + []
-                if not summary.security_surcharge
-                else [{"name": "Fuel", "amount": summary.security_surcharge, "currency": "AUD"}] + []
-                if not summary.transit_cover
-                else [{"name": "Fuel", "amount": summary.transit_cover, "currency": "AUD"}] + []
-                if not summary.freight_charge
-                else [{"name": "Fuel", "amount": summary.freight_charge, "currency": "AUD"}]
-            )
-        ],
+        discount=decimal(summary.discount),
+        extra_charges=extra_charges,
     )
 
 

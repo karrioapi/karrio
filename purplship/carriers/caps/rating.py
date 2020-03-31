@@ -14,7 +14,7 @@ from pycaps.rating import (
 from functools import reduce
 from datetime import datetime
 from typing import List, Tuple
-from purplship.core.utils import Serializable, export, Element, format_date
+from purplship.core.utils import Serializable, export, Element, format_date, decimal
 from purplship.carriers.caps.utils import Settings
 from purplship.core.units import (
     Country,
@@ -45,7 +45,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         ChargeDetails(
             name=d.adjustment_name,
             currency=currency,
-            amount=float(d.adjustment_cost or 0),
+            amount=decimal(d.adjustment_cost or 0),
         )
         for d in price_quote.price_details.adjustments.adjustment
     ]
@@ -55,10 +55,10 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         currency=currency,
         estimated_delivery=format_date(price_quote.service_standard.expected_delivery_date),
         service=ServiceType(price_quote.service_code).name,
-        base_charge=float(price_quote.price_details.base or 0),
-        total_charge=float(price_quote.price_details.due or 0),
-        discount=reduce(lambda total, d: total + d.amount, discounts, 0.0),
-        duties_and_taxes=(
+        base_charge=decimal(price_quote.price_details.base or 0),
+        total_charge=decimal(price_quote.price_details.due or 0),
+        discount=decimal(reduce(lambda total, d: total + d.amount, discounts, 0.0)),
+        duties_and_taxes=decimal(
             float(price_quote.price_details.taxes.gst.valueOf_ or 0)
             + float(price_quote.price_details.taxes.pst.valueOf_ or 0)
             + float(price_quote.price_details.taxes.hst.valueOf_ or 0)
@@ -68,7 +68,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
                 lambda a: ChargeDetails(
                     name=a.adjustment_name,
                     currency=currency,
-                    amount=float(a.adjustment_cost or 0),
+                    amount=decimal(a.adjustment_cost or 0),
                 ),
                 price_quote.price_details.adjustments.adjustment,
             )

@@ -14,7 +14,7 @@ from pyfedex.rate_service_v26 import (
     RatedShipmentDetail,
     Weight as FedexWeight,
 )
-from purplship.core.utils import export, concat_str, Serializable, format_date
+from purplship.core.utils import export, concat_str, Serializable, format_date, decimal
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.units import Currency, Package, Options
 from purplship.core.utils.xml import Element
@@ -56,19 +56,19 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
     )
     Discounts_ = map(
         lambda d: ChargeDetails(
-            name=d.RateDiscountType, amount=float(d.Amount.Amount), currency=currency_
+            name=d.RateDiscountType, amount=decimal(d.Amount.Amount), currency=currency_
         ),
         shipmentDetail.FreightDiscounts,
     )
     Surcharges_ = map(
         lambda s: ChargeDetails(
-            name=s.SurchargeType, amount=float(s.Amount.Amount), currency=currency_
+            name=s.SurchargeType, amount=decimal(s.Amount.Amount), currency=currency_
         ),
         shipmentDetail.Surcharges,
     )
     Taxes_ = map(
         lambda t: ChargeDetails(
-            name=t.TaxType, amount=float(t.Amount.Amount), currency=currency_
+            name=t.TaxType, amount=decimal(t.Amount.Amount), currency=currency_
         ),
         shipmentDetail.Taxes,
     )
@@ -80,10 +80,10 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
         estimated_delivery=(
             format_date(delivery_, "%Y-%m-%dT%H:%M:%S") if delivery_ is not None else None
         ),
-        base_charge=float(shipmentDetail.TotalBaseCharge.Amount),
-        total_charge=float(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
-        duties_and_taxes=float(shipmentDetail.TotalTaxes.Amount),
-        discount=float(shipmentDetail.TotalFreightDiscounts.Amount),
+        base_charge=decimal(shipmentDetail.TotalBaseCharge.Amount),
+        total_charge=decimal(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
+        duties_and_taxes=decimal(shipmentDetail.TotalTaxes.Amount),
+        discount=decimal(shipmentDetail.TotalFreightDiscounts.Amount),
         extra_charges=list(Discounts_) + list(Surcharges_) + list(Taxes_),
     )
 

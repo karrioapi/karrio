@@ -28,6 +28,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
         with patch("purplship.package.mappers.aups.proxy.http") as mock:
             mock.return_value = jsonify(SHIPPING_PRICE_RESPONSE)
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_SHIPPING_PRICE_RESPONSE)
             )
@@ -36,6 +37,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
         with patch("purplship.package.mappers.aups.proxy.http") as mock:
             mock.return_value = jsonify(ERRORS)
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
@@ -82,7 +84,11 @@ PARSED_SHIPPING_PRICE_RESPONSE = [
             "carrier_name": "Australia Post Shipping",
             "currency": "AUD",
             "duties_and_taxes": 5.87,
-            "extra_charges": [{"amount": 4.51, "currency": "AUD", "name": "Fuel"}],
+            "extra_charges": [
+                {"amount": 4.51, "currency": "AUD", "name": "Fuel"},
+                {"amount": 8.25, "currency": "AUD", "name": "Transit Cover"},
+                {"amount": 45.98, "currency": "AUD", "name": "Freight Charge"},
+            ],
             "total_charge": 64.61,
         }
     ],

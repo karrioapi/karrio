@@ -9,7 +9,7 @@ from pypurolator.estimate_service import (
     ShipmentEstimate, Tax, Surcharge, OptionPrice, PickupType, PhoneNumber
 )
 from purplship.core.units import Currency, Package
-from purplship.core.utils import Serializable, Element, concat_str, format_date
+from purplship.core.utils import Serializable, Element, concat_str, format_date, decimal
 from purplship.core.utils.soap import create_envelope
 from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
@@ -33,21 +33,21 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     duties_and_taxes = [
         ChargeDetails(
             name=cast(Tax, tax).Description,
-            amount=float(cast(Tax, tax).Amount),
+            amount=decimal(cast(Tax, tax).Amount),
             currency=currency
         ) for tax in estimate.Taxes.Tax
     ]
     surcharges = [
         ChargeDetails(
             name=cast(Surcharge, charge).Description,
-            amount=float(cast(Surcharge, charge).Amount),
+            amount=decimal(cast(Surcharge, charge).Amount),
             currency=currency
         ) for charge in estimate.Surcharges.Surcharge
     ]
     option_charges = [
         ChargeDetails(
             name=cast(OptionPrice, charge).Description,
-            amount=float(cast(OptionPrice, charge).Amount),
+            amount=decimal(cast(OptionPrice, charge).Amount),
             currency=currency
         ) for charge in estimate.OptionPrices.OptionPrice
     ]
@@ -57,10 +57,10 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
         carrier_name=settings.carrier_name,
         service=service,
         currency=currency,
-        base_charge=float(estimate.BasePrice),
+        base_charge=decimal(estimate.BasePrice),
         estimated_delivery=format_date(estimate.ExpectedDeliveryDate),
-        total_charge=float(estimate.TotalPrice),
-        duties_and_taxes=sum(c.amount for c in duties_and_taxes),
+        total_charge=decimal(estimate.TotalPrice),
+        duties_and_taxes=decimal(sum(c.amount for c in duties_and_taxes)),
         extra_charges=(duties_and_taxes + surcharges + option_charges)
     )
 

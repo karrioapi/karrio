@@ -55,8 +55,9 @@ check() {
 }
 
 backup_wheels() {
-    [ -d "$WHEEL_STORE" ] &&
-    find . -name \*.whl -exec mv {} "$WHEEL_STORE" \; &&
+    # shellcheck disable=SC2154
+    [ -d "$wheels" ] &&
+    find . -name \*.whl -exec mv {} "$wheels" \; &&
     clean_builds
 }
 

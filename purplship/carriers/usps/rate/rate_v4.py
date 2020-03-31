@@ -6,7 +6,7 @@ from pyusps.ratev4response import PostageType, SpecialServiceType
 from pyusps.ratev4request import (
     RateV4Request, PackageType, SpecialServicesType, ShipDateType
 )
-from purplship.core.utils import export, Serializable, Element, format_date
+from purplship.core.utils import export, Serializable, Element, format_date, decimal
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Currency
 from purplship.carriers.usps.utils import Settings
@@ -45,13 +45,13 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
         carrier=settings.carrier,
         carrier_name=settings.carrier_name,
         service=get("MailService"),
-        total_charge=float(postage_node.find("Rate").text),
+        total_charge=decimal(postage_node.find("Rate").text),
         currency=currency,
         estimated_delivery=estimated_date,
         extra_charges=[
             ChargeDetails(
                 name=SpecialService(str(svc.ServiceID)).name,
-                amount=svc.Price,
+                amount=decimal(svc.Price),
                 currency=currency,
             )
             for svc in services

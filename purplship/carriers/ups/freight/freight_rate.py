@@ -16,8 +16,7 @@ from pyups.freight_rate_web_service_schema import (
     CommodityType,
     DimensionsType,
 )
-from purplship.core.utils.helpers import export, concat_str
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import export, concat_str, decimal, Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit
 from purplship.core.utils.xml import Element
@@ -52,7 +51,7 @@ def _extract_freight_rate(detail_node: Element, settings: Settings) -> RateDetai
         ChargeDetails(
             name=r.Type.Code,
             currency=r.Factor.UnitOfMeasurement.Code,
-            amount=float(r.Factor.Value),
+            amount=decimal(r.Factor.Value),
         )
         for r in detail.Rate
         if r.Type.Code == "DSCNT"
@@ -61,7 +60,7 @@ def _extract_freight_rate(detail_node: Element, settings: Settings) -> RateDetai
         ChargeDetails(
             name=r.Type.Code,
             currency=r.Factor.UnitOfMeasurement.Code,
-            amount=float(r.Factor.Value),
+            amount=decimal(r.Factor.Value),
         )
         for r in detail.Rate
         if r.Type.Code not in ["DSCNT", "AFTR_DSCNT", "DSCNT_RATE", "LND_GROSS"]
@@ -76,10 +75,10 @@ def _extract_freight_rate(detail_node: Element, settings: Settings) -> RateDetai
         carrier_name=settings.carrier_name,
         currency=currency_,
         service=detail.Service.Description,
-        base_charge=float(detail.TotalShipmentCharge.MonetaryValue),
-        total_charge=float(total_charge.Factor.Value or 0.0),
-        duties_and_taxes=reduce(lambda r, c: r + c.amount, Surcharges_, 0.0),
-        discount=reduce(lambda r, c: r + c.amount, Discounts_, 0.0),
+        base_charge=decimal(detail.TotalShipmentCharge.MonetaryValue),
+        total_charge=decimal(total_charge.Factor.Value or 0.0),
+        duties_and_taxes=decimal(reduce(lambda r, c: r + c.amount, Surcharges_, 0.0)),
+        discount=decimal(reduce(lambda r, c: r + c.amount, Discounts_, 0.0)),
         extra_charges=extra_charges,
     )
 
