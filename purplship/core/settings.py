@@ -17,3 +17,7 @@ class Settings(ABC):
     @property
     def server_url(self):
         return None
+
+    @property
+    def carrier(self):
+        return None

@@ -1,5 +1,6 @@
 """Interface."""
 
+import logging
 import attr
 from typing import Callable, TypeVar, Union
 from purplship.package.gateway import Gateway
@@ -11,7 +12,10 @@ from purplship.core.models import (
     PickupRequest,
     PickupCancellationRequest,
     PickupUpdateRequest,
+    Message
 )
+
+logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 S = TypeVar("S")
@@ -25,12 +29,28 @@ class IDeserialize:
         return self.deserialize()
 
 
+def abort(gateway: Gateway, error: Exception) -> IDeserialize:
+    logger.exception(error)
+
+    def deserialize():
+        return ([], [Message(
+            code="500",
+            carrier=gateway.settings.carrier,
+            carrier_name=gateway.settings.carrier_name,
+            message=f'Service Error: \n {error}'
+        )])
+    return IDeserialize(deserialize)
+
+
 @attr.s(auto_attribs=True)
 class IRequestFrom:
     action: Callable[[Gateway], IDeserialize]
 
     def from_(self, gateway: Gateway) -> IDeserialize:
-        return self.action(gateway)
+        try:
+            return self.action(gateway)
+        except Exception as e:
+            return abort(gateway, e)
 
 
 @attr.s(auto_attribs=True)
@@ -38,7 +58,10 @@ class IRequestWith:
     action: Callable[[Gateway], IDeserialize]
 
     def with_(self, gateway: Gateway) -> IDeserialize:
-        return self.action(gateway)
+        try:
+            return self.action(gateway)
+        except Exception as e:
+            return abort(gateway, e)
 
 
 class pickup:

@@ -1,11 +1,13 @@
 import unittest
+import logging
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.package import rating
 from purplship.core.models import RateRequest
-from purplship.core.errors import RequiredFieldError
 from tests.caps.fixture import gateway
 from datetime import datetime
+
+logging.disable(logging.CRITICAL)
 
 
 class TestCanadaPostRating(unittest.TestCase):
@@ -25,11 +27,13 @@ class TestCanadaPostRating(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RateRequestUsingPackagePresetXML)
 
-    def test_create_rate_request_with_package_preset_missing_weight(self):
-        with self.assertRaises(RequiredFieldError):
-            gateway.mapper.create_rate_request(
-                RateRequest(**RateWithPresetMissingWeightPayload)
-            )
+    @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
+    def test_create_rate_request_with_package_preset_missing_weight(self, _):
+        processing_error = rating.fetch(RateRequest(**RateWithPresetMissingWeightPayload)).from_(gateway).parse()
+
+        self.assertEqual(
+            to_dict(processing_error), to_dict(ProcessingError)
+        )
 
     @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
@@ -94,6 +98,8 @@ RateWithPresetMissingWeightPayload = {
         "services": ["caps_regular_parcel"],
     },
 }
+
+ProcessingError = [[], [{'carrier': 'caps', 'carrier_name': 'CanadaPost', 'code': '500', 'message': 'Service Error: \n <parcel.weight> must be specified (required)'}]]
 
 ParsedQuoteParsingError = [
     [],
