@@ -1,13 +1,10 @@
 import unittest
-import logging
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.package import rating
 from purplship.core.models import RateRequest
 from tests.caps.fixture import gateway
 from datetime import datetime
-
-logging.disable(logging.CRITICAL)
 
 
 class TestCanadaPostRating(unittest.TestCase):
@@ -99,7 +96,7 @@ RateWithPresetMissingWeightPayload = {
     },
 }
 
-ProcessingError = [[], [{'carrier': 'caps', 'carrier_name': 'CanadaPost', 'code': '500', 'message': 'Service Error: \n <parcel.weight> must be specified (required)'}]]
+ProcessingError = [[], [{'carrier': 'caps', 'carrier_name': 'CanadaPost', 'code': '500', 'message': '<parcel.weight> must be specified (required)'}]]
 
 ParsedQuoteParsingError = [
     [],

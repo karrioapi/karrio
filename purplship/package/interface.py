@@ -1,7 +1,7 @@
 """Interface."""
 
-import logging
 import attr
+import logging
 from typing import Callable, TypeVar, Union
 from purplship.package.gateway import Gateway
 from purplship.core.utils.serializable import Serializable, Deserializable
@@ -15,7 +15,7 @@ from purplship.core.models import (
     Message
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('purplship')
 
 T = TypeVar("T")
 S = TypeVar("S")
@@ -37,7 +37,7 @@ def abort(gateway: Gateway, error: Exception) -> IDeserialize:
             code="500",
             carrier=gateway.settings.carrier,
             carrier_name=gateway.settings.carrier_name,
-            message=f'Service Error: \n {error}'
+            message=f'{error}'
         )])
     return IDeserialize(deserialize)
 

@@ -1,5 +1,8 @@
 import attr
+import logging
 from typing import Any, Callable, Generic, TypeVar
+
+logger = logging.getLogger('purplship')
 
 XML_str = str
 T = TypeVar("T")
@@ -24,4 +27,6 @@ class Deserializable(Generic[T]):
     _deserializer: Callable[[T], Any] = _identity
 
     def deserialize(self) -> Any:
-        return self._deserializer(self.value)
+        deserialized_value = self._deserializer(self.value)
+        logger.debug(deserialized_value)
+        return deserialized_value
