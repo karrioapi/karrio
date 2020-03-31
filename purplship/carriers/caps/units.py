@@ -40,9 +40,9 @@ class PaymentType(Flag):
     card = "CreditCard"
     supplier_account = "SupplierAccount"
 
-    sender = supplier_account
+    sender = account
     recipient = account
-    third_party = account
+    third_party = supplier_account
     credit_card = card
 
 

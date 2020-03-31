@@ -71,7 +71,7 @@ def contract_shipment_request(
 
     service = next(
         (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
-        None
+        (ServiceType.caps_xpresspost if payload.parcel.is_document else ServiceType.caps_regular_parcel).value
     )
     options = Options(payload.options)
 
