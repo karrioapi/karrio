@@ -20,9 +20,9 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            "https://soa-gw.canadapost.ca"
-            if self.test else
             "https://ct.soa-gw.canadapost.ca"
+            if self.test else
+            "https://soa-gw.canadapost.ca"
         )
 
     @property

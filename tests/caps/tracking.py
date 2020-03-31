@@ -111,7 +111,7 @@ AuthError = """<wrapper>
 """
 
 TrackingRequestURL = (
-    """https://ct.soa-gw.canadapost.ca/vis/track/pin/1Z12345E6205277936/summary"""
+    f"""{gateway.settings.server_url}/vis/track/pin/1Z12345E6205277936/summary"""
 )
 
 TrackingResponseXml = """<wrapper>

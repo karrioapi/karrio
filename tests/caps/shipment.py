@@ -153,7 +153,6 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <contact-phone>1 (450) 823-8432</contact-phone>
             <address-details>
                 <address-line-1>502 MAIN ST N</address-line-1>
-                <address-line-2></address-line-2>
                 <city>MONTREAL</city>
                 <prov-state>QC</prov-state>
                 <country-code>CA</country-code>
@@ -165,7 +164,6 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <company>CGI</company>
             <address-details>
                 <address-line-1>23 jardin private</address-line-1>
-                <address-line-2></address-line-2>
                 <city>Ottawa</city>
                 <prov-state>ON</prov-state>
                 <country-code>CA</country-code>
@@ -225,7 +223,6 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             <contact-phone>1 (450) 823-8432</contact-phone>
             <address-details>
                 <address-line-1>502 MAIN ST N</address-line-1>
-                <address-line-2></address-line-2>
                 <city>MONTREAL</city>
                 <prov-state>QC</prov-state>
                 <country-code>CA</country-code>
@@ -237,7 +234,6 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             <company>CGI</company>
             <address-details>
                 <address-line-1>23 jardin private</address-line-1>
-                <address-line-2></address-line-2>
                 <city>Ottawa</city>
                 <prov-state>ON</prov-state>
                 <country-code>CA</country-code>

@@ -8,9 +8,7 @@ from purplship.core.models import (
     ShipmentRequest,
 )
 from purplship.core.units import Currency, WeightUnit, DimensionUnit, Options, Package
-from purplship.core.utils.helpers import export
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.xml import Element
+from purplship.core.utils import export, concat_str, Serializable, Element
 from purplship.core.errors import RequiredFieldError
 from pycaps.shipment import (
     ShipmentType,
@@ -114,8 +112,8 @@ def contract_shipment_request(
                     prov_state=payload.shipper.state_code,
                     country_code=payload.shipper.country_code,
                     postal_zip_code=payload.shipper.postal_code,
-                    address_line_1=payload.shipper.address_line_1,
-                    address_line_2=payload.shipper.address_line_2,
+                    address_line_1=concat_str(payload.shipper.address_line_1, join=True),
+                    address_line_2=concat_str(payload.shipper.address_line_2, join=True),
                 ),
             ),
             destination=DestinationType(
@@ -128,8 +126,8 @@ def contract_shipment_request(
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
                     postal_zip_code=payload.recipient.postal_code,
-                    address_line_1=payload.recipient.address_line_1,
-                    address_line_2=payload.recipient.address_line_2,
+                    address_line_1=concat_str(payload.recipient.address_line_1, join=True),
+                    address_line_2=concat_str(payload.recipient.address_line_2, join=True),
                 ),
             ),
             parcel_characteristics=ParcelCharacteristicsType(
