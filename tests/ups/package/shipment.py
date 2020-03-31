@@ -85,6 +85,7 @@ package_shipment_data = {
         "height": 2,
         "weight": 10,
     },
+    "service": "ups_express",
     "options": {"notification": {"email": "test@mail.com"}},
     "payment": {"paid_by": "sender"},
 }
@@ -119,6 +120,7 @@ package_shipment_with_package_preset_data = {
         "description": "Description",
         "package_preset": "ups_medium_express_box",
     },
+    "service": "ups_express",
     "payment": {"paid_by": "sender"},
     "options": {"notification": {"email": "test@mail.com"}},
 }

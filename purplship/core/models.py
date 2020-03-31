@@ -126,6 +126,8 @@ class Doc:
 class ShipmentRequest:
     """shipment request type."""
 
+    service: str
+
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]

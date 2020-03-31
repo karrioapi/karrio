@@ -95,8 +95,8 @@ shipment_data = {
         "weight": 4.0,
         "packaging_type": "dhl_express_envelope",
         "is_document": False,
-        "services": ["dhl_express_worldwide"],
     },
+    "service": "dhl_express_worldwide_nondoc",
     "options": {"paperless_trade": True, "insurance": {"amount": 148.0}},
     "payment": {"paid_by": "sender", "account_number": "123456789"},
     "customs": {

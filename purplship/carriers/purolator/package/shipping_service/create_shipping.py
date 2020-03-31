@@ -30,10 +30,7 @@ def create_shipping_request(payload: ShipmentRequest, settings: Settings, valida
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
-    service = next(
-        (s.value for s in Product if s in payload.parcel.services),
-        Product.purolator_express.value
-    )
+    service = Product[payload.service].value
     is_international = payload.shipper.country_code != payload.recipient.country_code
     options = Options(payload.options)
     printing = PrinterType[options.printing or "regular"].value

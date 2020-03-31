@@ -72,10 +72,10 @@ shipment_data = {
         "length": 6,
         "width": 12,
         "weight": 20.0,
-        "services": ["caps_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
     },
+    "service": "caps_expedited_parcel",
     "options": {
         "caps_signature": True,
         "cash_on_delivery": {"amount": 10.5},
@@ -110,6 +110,7 @@ shipment_with_package_preset_data = {
         "package_preset": "caps_corrugated_large_box",
         "services": ["caps_expedited_parcel"],
     },
+    "service": "caps_expedited_parcel",
     "options": {"cash_on_delivery": {"amount": 25.5}},
 }
 

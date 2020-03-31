@@ -57,6 +57,7 @@ freight_shipment_data = {
         "country_code": "CountryCode",
         "person_name": "Attention Name",
     },
+    "service": "ups_ground",
     "parcel": {
         "description": "Commodity Description",
         "weight_unit": "LB",
@@ -228,6 +229,9 @@ FreightShipmentRequestXML = f"""<tns:Envelope  xmlns:tns="http://schemas.xmlsoap
                     </Address>
                     <AttentionName>Attention Name</AttentionName>
                 </ShipTo>
+                <Service>
+                    <Code>03</Code>
+                </Service>
                 <Commodity>
                     <Description>Commodity Description</Description>
                     <Weight>

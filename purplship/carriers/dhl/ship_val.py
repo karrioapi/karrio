@@ -79,15 +79,7 @@ def shipment_request(
         raise RequiredFieldError("parcel.weight")
 
     options = Options(payload.options)
-    default_product_code = (
-        ProductCode.dhl_express_worldwide_doc
-        if payload.parcel.is_document
-        else ProductCode.dhl_express_worldwide_nondoc
-    )
-    product = next(
-        (s for s in ProductCode if s.name in payload.parcel.services),
-        default_product_code
-    )
+    product = ProductCode[payload.service].value
     delivery_type = next(
         (d for d in DeliveryType if d.name in payload.options.keys()),
         None
@@ -202,8 +194,8 @@ def shipment_request(
             InsuredAmount=options.insurance.amount if options.insurance else None,
             ShipmentCharges=options.cash_on_delivery.amount if options.cash_on_delivery else None,
             DoorTo=delivery_type,
-            GlobalProductCode=product.value,
-            LocalProductCode=product.value,
+            GlobalProductCode=product,
+            LocalProductCode=product,
             Contents="...",
         ),
         EProcShip=None,

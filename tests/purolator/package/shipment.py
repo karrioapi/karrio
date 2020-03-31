@@ -102,8 +102,8 @@ SHIPMENT_REQUEST_PAYLOAD = {
         "reference": "Reference For Shipment",
         "weight": 10,
         "weight_unit": "LB",
-        "services": ["purolator_express"],
     },
+    "service": "purolator_express",
     "options": {"printing": "thermal"},
 }
 

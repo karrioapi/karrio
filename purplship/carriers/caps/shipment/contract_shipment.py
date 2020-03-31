@@ -69,10 +69,7 @@ def contract_shipment_request(
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
-    service = next(
-        (ServiceType[s].value for s in payload.parcel.services if s in ServiceType.__members__),
-        (ServiceType.caps_xpresspost if payload.parcel.is_document else ServiceType.caps_regular_parcel).value
-    )
+    service = ServiceType[payload.service].value
     options = Options(payload.options)
 
     def compute_amount(code: str, _: Any):

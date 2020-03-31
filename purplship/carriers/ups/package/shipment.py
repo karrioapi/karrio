@@ -77,10 +77,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
     options = Options(payload.options)
-    service = next(
-        (ShippingServiceCode[s].value for s in payload.parcel.services if s in ShippingServiceCode.__members__),
-        None
-    )
+    service = ShippingServiceCode[payload.service].value
 
     if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
         raise RequiredFieldError("parcel.weight")
