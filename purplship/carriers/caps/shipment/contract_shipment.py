@@ -89,7 +89,7 @@ def contract_shipment_request(
     )
 
     request = ShipmentType(
-        customer_request_id=settings.customer_number,
+        customer_request_id=payload.parcel.reference,
         groupIdOrTransmitShipment=groupIdOrTransmitShipment(),
         quickship_label_requested=None,
         cpc_pickup_indicator=None,
@@ -198,7 +198,9 @@ def contract_shipment_request(
                 customer_ref_2=None,
             ),
             settlement_info=SettlementInfoType(
-                paid_by_customer=payload.payment.account_number if payload.payment is not None else None,
+                paid_by_customer=(
+                    payload.payment.account_number if payload.payment is not None else settings.customer_number
+                ),
                 contract_id=settings.contract_id,
                 cif_shipment=None,
                 intended_method_of_payment=payment_type,

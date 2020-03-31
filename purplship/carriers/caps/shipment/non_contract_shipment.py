@@ -184,7 +184,9 @@ def non_contract_shipment_request(
             if payload.customs is not None
             else None,
             settlement_info=SettlementInfoType(
-                paid_by_customer=payload.payment.account_number if payload.payment is not None else None,
+                paid_by_customer=(
+                    payload.payment.account_number if payload.payment is not None else settings.customer_number
+                ),
                 contract_id=settings.contract_id,
                 cif_shipment=None,
                 intended_method_of_payment=payment_type,
