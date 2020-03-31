@@ -1,4 +1,5 @@
 import logging
+import uuid
 from typing import List, Union, cast
 from django.db.models import Q
 from django.forms.models import model_to_dict
@@ -33,7 +34,7 @@ def get_carriers(carrier_type: str = None, carrier_name: str = None, test: bool 
         raise Exception(f'Unknown carrier {carrier_type}')
 
 
-def create_shipment(payload: dict, carrier_settings: CarrierSettings) -> ShipmentResponse:
+def create_shipment(payload: dict) -> ShipmentResponse:
     request = ShipmentRequest(**payload)
 
     selected_rate = next(
@@ -47,15 +48,24 @@ def create_shipment(payload: dict, carrier_settings: CarrierSettings) -> Shipmen
             f'Please select from {", ".join([r.id for r in request.rates])}'
         )
 
+    carrier_settings = next(
+        iter(get_carriers(carrier_type=selected_rate.carrier, carrier_name=selected_rate.carrier_name)),
+        None
+    )
+
     gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
-    shipment, messages = api.shipment.create(request).from_(gateway).parse()
+    shipment, messages = api.shipment.create(request).with_(gateway).parse()
+
+    returned_selected_rate = (
+        cast(ShipmentDetails, shipment).selected_rate if shipment is not None else None
+    )
 
     return ShipmentResponse(
         shipment=Shipment(**{
             **payload,
             **to_dict(shipment),
-            "selected_rate": cast(ShipmentDetails, shipment).selected_rate or selected_rate
-        }),
+            "selected_rate": to_dict(returned_selected_rate or selected_rate)
+        }) if shipment is not None else None,
         messages=messages
     )
 
@@ -69,17 +79,24 @@ def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> 
             return api.rating.fetch(request).from_(gateway).parse()
         except Exception as e:
             logger.exception(e)
-            return Message(
+            return [[], [Message(
                 code="00000",
                 carrier=carrier_settings.carrier,
                 carrier_name=carrier_settings.settings.get('carrier_name'),
                 message=str(e)
-            )
+            )]]
 
-    rates, messages = exec_async(process, carrier_settings_list)
+    results = exec_async(process, carrier_settings_list)
+    rates = sum((r for r, _ in results), [])
+    messages = sum((m for _, m in results), [])
 
     return RateResponse(
-        shipment=ShipmentRate(**{**payload, 'rates': to_dict(rates)}),
+        shipment=ShipmentRate(**{
+            **payload,
+            'rates': [
+                {**{**to_dict(r), 'id': str(uuid.uuid4())}} for r in rates
+            ]
+        }),
         messages=messages
     )
 

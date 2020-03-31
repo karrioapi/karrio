@@ -1,6 +1,7 @@
 from purplship.package.mappers import Providers
 from rest_framework.serializers import (
-    Serializer, CharField, FloatField, BooleanField, IntegerField, ListField, DictField, ChoiceField, ListSerializer
+    Serializer, CharField, FloatField, BooleanField, IntegerField, ListField, DictField, ChoiceField, ListSerializer,
+    UUIDField
 )
 
 CARRIERS = [(k, k) for k in Providers.keys()]
@@ -21,9 +22,9 @@ class CarrierSettingsList(ListSerializer):
 
 class Address(Serializer):
 
+    id = CharField(required=False)
     postal_code = CharField(required=False)
     city = CharField(required=False)
-    type = CharField(required=False)
     federal_tax_id = CharField(required=False)
     state_tax_id = CharField(required=False)
     person_name = CharField(required=False)
@@ -98,8 +99,8 @@ class Payment(Serializer):
     amount = FloatField(required=False)
     currency = CharField(required=False)
     account_number = CharField(required=False)
-    credit_card = Card()
-    contact = Address()
+    credit_card = Card(required=False)
+    contact = Address(required=False)
 
 
 class Customs(Serializer):
@@ -108,9 +109,9 @@ class Customs(Serializer):
     aes = CharField(required=False)
     description = CharField(required=False)
     terms_of_trade = CharField(required=False)
-    commodities = ListField(child=Commodity())
-    duty = Payment()
-    invoice = Invoice()
+    commodities = ListField(child=Commodity(), required=False)
+    duty = Payment(required=False)
+    invoice = Invoice(required=False)
     commercial_invoice = BooleanField(required=False)
 
 
@@ -141,7 +142,7 @@ class PickupRequest(Serializer):
     date = CharField(required=True)
 
     address = Address(required=True)
-    parcels = ListField(child=Parcel())
+    parcels = ListField(child=Parcel(), required=False)
 
     ready_time = CharField(required=False)
     closing_time = CharField(required=False)
@@ -153,7 +154,7 @@ class PickupUpdateRequest(Serializer):
 
     date = CharField(required=True)
     address = Address(required=True)
-    parcels = ListField(child=Parcel())
+    parcels = ListField(child=Parcel(), required=False)
 
     confirmation_number = CharField(required=False)
     ready_time = CharField(required=False)
@@ -214,7 +215,7 @@ class TrackingEvent(Serializer):
 
 class RateDetails(Serializer):
 
-    id = CharField(required=False)
+    id = UUIDField(required=False)
     carrier = CharField(required=True)
     carrier_name = CharField(required=True)
     currency = CharField(required=True)
@@ -262,13 +263,13 @@ class ShipmentRate(RateRequest):
 
 
 class Shipment(ShipmentRate, ShipmentDetails):
-    pass
+    selected_rate_id = CharField(required=True)
 
 
 class ShipmentRequest(ShipmentRate):
     selected_rate_id = CharField(required=True)
 
-    payment = Payment(required=True)
+    payment = Payment(required=False)
     customs = Customs(required=False)
     doc_images = ListField(child=Doc(), required=False)
 

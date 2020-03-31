@@ -55,6 +55,7 @@ def track(_, carrier: str, tracking_number: str):
             if carrier_setting is None:
                 raise Exception(f'No configured carrier of type: {carrier}')
 
+            request.is_valid(raise_exception=True)
             response = track_shipment(request.data, carrier_setting)
 
             return Response(
