@@ -50,7 +50,7 @@ if __name__ == "__main__":
 shipment_data = {
     "shipper": {
         "company_name": "CGI",
-        "address_line_1": "502 MAIN ST N",
+        "address_line1": "502 MAIN ST N",
         "city": "MONTREAL",
         "postal_code": "H2B1A0",
         "country_code": "CA",
@@ -60,7 +60,7 @@ shipment_data = {
     },
     "recipient": {
         "company_name": "CGI",
-        "address_line_1": "23 jardin private",
+        "address_line1": "23 jardin private",
         "city": "Ottawa",
         "postal_code": "K1K4T3",
         "country_code": "CA",
@@ -87,7 +87,7 @@ shipment_data = {
 shipment_with_package_preset_data = {
     "shipper": {
         "company_name": "CGI",
-        "address_line_1": "502 MAIN ST N",
+        "address_line1": "502 MAIN ST N",
         "city": "MONTREAL",
         "postal_code": "H2B1A0",
         "country_code": "CA",
@@ -97,7 +97,7 @@ shipment_with_package_preset_data = {
     },
     "recipient": {
         "company_name": "CGI",
-        "address_line_1": "23 jardin private",
+        "address_line1": "23 jardin private",
         "city": "Ottawa",
         "postal_code": "K1K4T3",
         "country_code": "CA",

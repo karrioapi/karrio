@@ -117,7 +117,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 EMailAddress=payload.shipper.email,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
-                        payload.shipper.address_line_1, payload.shipper.address_line_2
+                        payload.shipper.address_line1, payload.shipper.address_line2
                     ),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
@@ -140,7 +140,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 EMailAddress=payload.recipient.email,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
-                        payload.recipient.address_line_1, payload.recipient.address_line_2,
+                        payload.recipient.address_line1, payload.recipient.address_line2,
                     ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
@@ -163,7 +163,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                                 SecurityCode=payment.credit_card.security_code,
                                 Address=CreditCardAddressType(
                                     AddressLine=concat_str(
-                                        payload.shipper.address_line_1, payload.shipper.address_line_2
+                                        payload.shipper.address_line1, payload.shipper.address_line2
                                     ),
                                     City=payload.shipper.city,
                                     StateProvinceCode=payload.shipper.state_code,

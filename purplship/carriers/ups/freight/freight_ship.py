@@ -92,7 +92,7 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 TariffPoint=None,
                 Address=FreightShipAddressType(
                     AddressLine=concat_str(
-                        payload.shipper.address_line_1, payload.shipper.address_line_2
+                        payload.shipper.address_line1, payload.shipper.address_line2
                     ),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
@@ -115,8 +115,8 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 TaxIdentificationNumber=payload.recipient.federal_tax_id,
                 Address=FreightShipAddressType(
                     AddressLine=concat_str(
-                        payload.recipient.address_line_1,
-                        payload.recipient.address_line_2,
+                        payload.recipient.address_line1,
+                        payload.recipient.address_line2,
                     ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,

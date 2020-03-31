@@ -94,7 +94,7 @@ book_pickup_payload = {
         "state_code": "QC",
         "country_code": "CA",
         "email": "test@mail.com",
-        "address_line_1": "234 rue Hubert",
+        "address_line1": "234 rue Hubert",
     },
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
 }

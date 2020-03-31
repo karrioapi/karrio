@@ -140,8 +140,8 @@ def rate_request(
                 ShipperNumber=settings.account_number,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
-                        payload.recipient.address_line_1,
-                        payload.recipient.address_line_2,
+                        payload.recipient.address_line1,
+                        payload.recipient.address_line2,
                     ),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
@@ -153,8 +153,8 @@ def rate_request(
                 Name=payload.recipient.company_name,
                 Address=ShipToAddressType(
                     AddressLine=concat_str(
-                        payload.recipient.address_line_1,
-                        payload.recipient.address_line_2,
+                        payload.recipient.address_line1,
+                        payload.recipient.address_line2,
                     ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,

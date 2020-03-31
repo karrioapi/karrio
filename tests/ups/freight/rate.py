@@ -40,7 +40,7 @@ rate_req_data = {
         "postal_code": "H3N1S4",
         "country_code": "CA",
         "city": "Montreal",
-        "address_line_1": "Rue Fake",
+        "address_line1": "Rue Fake",
     },
     "recipient": {"postal_code": "89109", "city": "Las Vegas", "country_code": "US"},
     "parcel": {

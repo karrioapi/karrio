@@ -40,7 +40,7 @@ if __name__ == "__main__":
 freight_shipment_data = {
     "shipper": {
         "company_name": "Ship From Name",
-        "address_line_1": "Address Line",
+        "address_line1": "Address Line",
         "city": "City",
         "state_code": "StateProvinceCode",
         "postal_code": "PostalCode",
@@ -50,7 +50,7 @@ freight_shipment_data = {
     },
     "recipient": {
         "company_name": "Ship To Name",
-        "address_line_1": "Address Line",
+        "address_line1": "Address Line",
         "city": "City",
         "state_code": "StateProvinceCode",
         "postal_code": "PostalCode",

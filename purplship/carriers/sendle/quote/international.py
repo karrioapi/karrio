@@ -21,7 +21,7 @@ def international_quote_request(payload: RateRequest) -> InternationalParcelQuot
     )
     return InternationalParcelQuote(
         pickup_suburb=concat_str(
-            payload.shipper.address_line_1, payload.shipper.address_line_2, join=True
+            payload.shipper.address_line1, payload.shipper.address_line2, join=True
         ),
         pickup_postcode=payload.shipper.postal_code,
         delivery_country=payload.recipient.country_code,

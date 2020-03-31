@@ -143,7 +143,7 @@ def process_shipment_request(
                 else None,
                 Address=Address(
                     StreetLines=concat_str(
-                        payload.shipper.address_line_1, payload.shipper.address_line_2
+                        payload.shipper.address_line1, payload.shipper.address_line2
                     ),
                     City=payload.shipper.city,
                     StateOrProvinceCode=payload.shipper.state_code,
@@ -191,8 +191,8 @@ def process_shipment_request(
                 else None,
                 Address=Address(
                     StreetLines=concat_str(
-                        payload.recipient.address_line_1,
-                        payload.recipient.address_line_2,
+                        payload.recipient.address_line1,
+                        payload.recipient.address_line2,
                     ),
                     City=payload.recipient.city,
                     StateOrProvinceCode=payload.recipient.state_code,

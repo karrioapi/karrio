@@ -89,37 +89,37 @@ if __name__ == "__main__":
 
 
 DOMESTIC_RATE_PAYLOAD = {
-    "shipper": {"address_line_1": "Camberwell North", "postal_code": "3124"},
-    "recipient": {"address_line_1": "Barangaroo", "postal_code": "2000"},
+    "shipper": {"address_line1": "Camberwell North", "postal_code": "3124"},
+    "recipient": {"address_line1": "Barangaroo", "postal_code": "2000"},
     "parcel": {"weight": 2.0, "weight_unit": "KG"},
 }
 
 INTERNATIONAL_RATE_PAYLOAD = {
-    "shipper": {"address_line_1": "Sydney", "postal_code": "2000"},
+    "shipper": {"address_line1": "Sydney", "postal_code": "2000"},
     "recipient": {"country_code": "NZ"},
     "parcel": {"weight": 5, "weight_unit": "KG"},
 }
 
 DOMESTIC_RATE_WITH_PACKAGE_PRESET_PAYLOAD = {
-    "shipper": {"address_line_1": "Camberwell North", "postal_code": "3124"},
-    "recipient": {"address_line_1": "Barangaroo", "postal_code": "2000"},
+    "shipper": {"address_line1": "Camberwell North", "postal_code": "3124"},
+    "recipient": {"address_line1": "Barangaroo", "postal_code": "2000"},
     "parcel": {"package_preset": "sendle_shoebox"},
 }
 
 INTERNATIONAL_RATE_WITH_PACKAGE_PRESET_PAYLOAD = {
-    "shipper": {"address_line_1": "Sydney", "postal_code": "2000"},
+    "shipper": {"address_line1": "Sydney", "postal_code": "2000"},
     "recipient": {"country_code": "NZ"},
     "parcel": {"package_preset": "sendle_carry_on"},
 }
 
 DOMESTIC_RATE_MISSING_WEIGHT_PAYLOAD = {
-    "shipper": {"address_line_1": "Camberwell North", "postal_code": "3124"},
-    "recipient": {"address_line_1": "Barangaroo", "postal_code": "2000"},
+    "shipper": {"address_line1": "Camberwell North", "postal_code": "3124"},
+    "recipient": {"address_line1": "Barangaroo", "postal_code": "2000"},
     "parcel": {"reference": "testing request"},
 }
 
 INTERNATIONAL_RATE_MISSING_WEIGHT_PAYLOAD = {
-    "shipper": {"address_line_1": "Sydney", "postal_code": "2000"},
+    "shipper": {"address_line1": "Sydney", "postal_code": "2000"},
     "recipient": {"country_code": "NZ"},
     "parcel": {"reference": "testing request"},
 }

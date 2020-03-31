@@ -118,7 +118,7 @@ def shipment_request(
         Consignee=Consignee(
             CompanyName=payload.recipient.company_name,
             SuiteDepartmentName=None,
-            AddressLine=concat_str(payload.recipient.address_line_1, payload.recipient.address_line_2),
+            AddressLine=concat_str(payload.recipient.address_line1, payload.recipient.address_line2),
             City=payload.recipient.city,
             Division=None,
             DivisionCode=payload.recipient.state_code,
@@ -152,7 +152,7 @@ def shipment_request(
         Shipper=Shipper(
             ShipperID=None,
             RegisteredAccount=settings.account_number,
-            AddressLine=concat_str(payload.shipper.address_line_1, payload.shipper.address_line_2),
+            AddressLine=concat_str(payload.shipper.address_line1, payload.shipper.address_line2),
             CompanyName=payload.shipper.company_name,
             PostalCode=payload.shipper.postal_code,
             CountryCode=payload.shipper.country_code,

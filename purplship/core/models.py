@@ -23,8 +23,8 @@ class Address:
     suburb: str = None
     residential: bool = False
 
-    address_line_1: str = ""
-    address_line_2: str = ""
+    address_line1: str = ""
+    address_line2: str = ""
 
 
 @attr.s(auto_attribs=True)

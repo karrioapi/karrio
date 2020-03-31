@@ -21,12 +21,12 @@ def domestic_quote_request(payload: RateRequest) -> DomesticParcelQuote:
     )
     return DomesticParcelQuote(
         pickup_suburb=concat_str(
-            payload.shipper.address_line_1, payload.shipper.address_line_2, join=True
+            payload.shipper.address_line1, payload.shipper.address_line2, join=True
         ),
         pickup_postcode=payload.shipper.postal_code,
         delivery_suburb=concat_str(
-            payload.recipient.address_line_1,
-            payload.recipient.address_line_2,
+            payload.recipient.address_line1,
+            payload.recipient.address_line2,
             join=True,
         ),
         delivery_postcode=payload.recipient.postal_code,

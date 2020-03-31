@@ -68,7 +68,7 @@ if __name__ == "__main__":
 shipment_data = {
     "shipper": {
         "company_name": "shipper company privated limited 12",
-        "address_line_1": "238 850925434 Drive",
+        "address_line1": "238 850925434 Drive",
         "city": "Scottsdale",
         "postal_code": "85260",
         "country_code": "US",
@@ -79,7 +79,7 @@ shipment_data = {
     },
     "recipient": {
         "company_name": "IBM Bruse Pte Ltd",
-        "address_line_1": "9 Business Park Central 13th Floor The IBM Place",
+        "address_line1": "9 Business Park Central 13th Floor The IBM Place",
         "city": "Brussels",
         "postal_code": "1060",
         "country_code": "BE",

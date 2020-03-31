@@ -90,8 +90,8 @@ def book_pickup_request(
             CountryCode=payload.address.country_code,
             PackageLocation=payload.package_location,
             LocationType="R" if payload.address.residential else "B",
-            Address1=payload.address.address_line_1,
-            Address2=payload.address.address_line_2,
+            Address1=payload.address.address_line1,
+            Address2=payload.address.address_line2,
         ),
         PickupContact=RequestorContact(
             PersonName=payload.address.person_name, Phone=payload.address.phone_number

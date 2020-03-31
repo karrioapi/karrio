@@ -46,7 +46,7 @@ RATE_REQUEST_PAYLOAD = {
         "city": "Mississauga",
         "country_code": "CA",
         "postal_code": "L4W5M8",
-        "address_line_1": "Main Street",
+        "address_line1": "Main Street",
         "phone_number": "5555555",
     },
     "recipient": {
@@ -55,7 +55,7 @@ RATE_REQUEST_PAYLOAD = {
         "city": "Burnaby",
         "country_code": "CA",
         "postal_code": "V5C5A9",
-        "address_line_1": "Douglas Road",
+        "address_line1": "Douglas Road",
         "phone_number": "2982181",
     },
     "parcel": {
@@ -73,7 +73,7 @@ RATE_REQUEST_WITH_PRESET_PAYLOAD = {
         "city": "Mississauga",
         "country_code": "CA",
         "postal_code": "L4W5M8",
-        "address_line_1": "Main Street",
+        "address_line1": "Main Street",
         "phone_number": "5555555",
     },
     "recipient": {
@@ -82,7 +82,7 @@ RATE_REQUEST_WITH_PRESET_PAYLOAD = {
         "city": "Burnaby",
         "country_code": "CA",
         "postal_code": "V5C5A9",
-        "address_line_1": "Douglas Road",
+        "address_line1": "Douglas Road",
         "phone_number": "2982181",
     },
     "parcel": {

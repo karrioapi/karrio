@@ -46,7 +46,7 @@ if __name__ == "__main__":
 RATE_PAYLOAD = {
     "shipper": {
         "person_name": "John Citizen",
-        "address_line_1": "1 Main Street",
+        "address_line1": "1 Main Street",
         "state_code": "VIC",
         "postal_code": "3000",
         "phone_number": "0401234567",
@@ -56,7 +56,7 @@ RATE_PAYLOAD = {
     "recipient": {
         "person_name": "Jane Smith",
         "company_name": "Smith Pty Ltd",
-        "address_line_1": "123 Centre Road",
+        "address_line1": "123 Centre Road",
         "state_code": "NSW",
         "postal_code": "2000",
         "phone_number": "0412345678",

@@ -82,8 +82,8 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                     name=payload.shipper.person_name,
                     type=None,
                     lines=[
-                        payload.shipper.address_line_1,
-                        payload.shipper.address_line_2,
+                        payload.shipper.address_line1,
+                        payload.shipper.address_line2,
                     ],
                     suburb=payload.shipper.suburb,
                     state=payload.shipper.state_code,
@@ -97,8 +97,8 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                     business_name=payload.recipient.company_name,
                     type=None,
                     lines=[
-                        payload.recipient.address_line_1,
-                        payload.recipient.address_line_2,
+                        payload.recipient.address_line1,
+                        payload.recipient.address_line2,
                     ],
                     suburb=payload.recipient.suburb,
                     state=payload.recipient.state_code,
