@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='py-sendle',
-      version='1.0-alpha',
+      version='2020.4.0',
       description='Sendle Python Data domain library',
       url='https://github.com/PurplShip/purplship-carriers/tree/master/py-sendle',
       author='PurplShip',
@@ -9,8 +9,7 @@ setup(name='py-sendle',
       license='MIT',
       packages=['pysendle'],
       install_requires=[
-            'attrs==18.2.0',
-            'jstruct==1.0.0'
+            'jstruct'
       ],
       dependency_links=[
             'https://git.io/purplship',
