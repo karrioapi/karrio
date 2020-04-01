@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='py-purolator',
-      version='2020.3.0',
+      version='2020.4.0',
       description='Purolator Python Data domain',
       url='https://github.com/PurplShip/purplship-carriers/tree/master/py-purolator',
       author='PurplShip',

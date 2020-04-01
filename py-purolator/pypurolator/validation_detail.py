@@ -2,21 +2,21 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Mar  6 15:32:48 2020 by generateDS.py version 2.35.15.
-# Python 3.8.1 (v3.8.1:1b293b6006, Dec 18 2019, 14:08:53)  [Clang 6.0 (clang-600.0.57)]
+# Generated Wed Apr  1 15:07:25 2020 by generateDS.py version 2.35.15.
+# Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './python/validation_detail.py')
+#   ('-o', './pypurolator/validation_detail.py')
 #
 # Command line arguments:
 #   ./schemas/ValidationDetail.xsd
 #
 # Command line:
-#   /Users/danielkobina/Documents/Open/.sandbox/bin/generateDS --no-namespace-defs -o "./python/validation_detail.py" ./schemas/ValidationDetail.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/validation_detail.py" ./schemas/ValidationDetail.xsd
 #
 # Current working directory (os.getcwd()):
-#   2020-03
+#   py-purolator
 #
 
 from six.moves import zip_longest
