@@ -2,21 +2,21 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Mar  6 15:32:45 2020 by generateDS.py version 2.35.15.
-# Python 3.8.1 (v3.8.1:1b293b6006, Dec 18 2019, 14:08:53)  [Clang 6.0 (clang-600.0.57)]
+# Generated Wed Apr  1 15:07:24 2020 by generateDS.py version 2.35.15.
+# Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './python/service_availability_service.py')
+#   ('-o', './pypurolator/service_availability_service_2_0_2.py')
 #
 # Command line arguments:
-#   ./schemas/ServiceAvailabilityService.xsd
+#   ./schemas/ServiceAvailabilityService_2_0_2.xsd
 #
 # Command line:
-#   /Users/danielkobina/Documents/Open/.sandbox/bin/generateDS --no-namespace-defs -o "./python/service_availability_service.py" ./schemas/ServiceAvailabilityService.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/service_availability_service_2_0_2.py" ./schemas/ServiceAvailabilityService_2_0_2.xsd
 #
 # Current working directory (os.getcwd()):
-#   2020-03
+#   py-purolator
 #
 
 from six.moves import zip_longest
@@ -5605,8 +5605,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from service_availability_service import *\n\n')
-        sys.stdout.write('import service_availability_service as model_\n\n')
+        sys.stdout.write('#from service_availability_service_2_0_2 import *\n\n')
+        sys.stdout.write('import service_availability_service_2_0_2 as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')
