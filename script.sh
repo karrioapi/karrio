@@ -14,18 +14,18 @@ activate_env() {
 }
 
 create_env() {
-    echo "create $BASE_DIR Python3 env"
-    deactivate || true
-    rm -rf "${ROOT:?}/$ENV_DIR" || true
-    mkdir -p "${ROOT:?}/$ENV_DIR"
-    python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
-    activate_env &&
-    pip install --upgrade pip
+  echo "create $BASE_DIR Python3 env"
+  deactivate || true
+  rm -rf "${ROOT:?}/$ENV_DIR" || true
+  mkdir -p "${ROOT:?}/$ENV_DIR"
+  python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
+  activate_env &&
+  pip install --upgrade pip
 }
 
 init() {
-    create_env &&
-    pip install -r requirements.txt
+  create_env &&
+  pip install -r requirements.txt
 }
 
 
@@ -36,24 +36,33 @@ alias env:reset=init
 
 # Project helpers
 
-build_all() {
-    mkdir -p ./dist
-    for d in py-*/ ; do
-        pushd "${d}" &&
-        python setup.py bdist_wheel &&
-        popd
-    done
-    find . -name \*.whl -exec mv {} ./dist \;
+generate () {
+  pushd "$1"
+  . ./generate.sh "$2"
+  popd
 }
 
 clean_builds() {
-    find . -type d -name dist -exec rm -r {} \;
-    find . -type d -name build -exec rm -r {} \;
-    find . -type d -name "*.egg-info" -exec rm -r {} \;
+  find . -type d -name dist -exec rm -r {} \;
+  find . -type d -name build -exec rm -r {} \;
+  find . -type d -name "*.egg-info" -exec rm -r {} \;
 }
 
-generate () {
-    pushd "$1"
-    . ./generate.sh "$2"
-    popd
+backup_wheels() {
+  # shellcheck disable=SC2154
+  [ -d "$wheels" ] &&
+  find . -name \*.whl -exec mv {} "$wheels" \; &&
+  clean_builds
+}
+
+build_all() {
+  clean_builds
+  mkdir -p ./dist
+  for d in py-*/ ; do
+    cd ${d} &&
+    python setup.py bdist_wheel &&
+    cd ..
+  done
+  find . -name \*.whl -exec mv {} ./dist \;
+  backup_wheels
 }
