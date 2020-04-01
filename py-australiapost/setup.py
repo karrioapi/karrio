@@ -1,16 +1,15 @@
 from setuptools import setup
 
-setup(name='py-aups',
-      version='1.0-alpha',
+setup(name='py-australia',
+      version='2020.4.0',
       description='Australia Post Python Data domain library',
       url='https://github.com/PurplShip/purplship-carriers/tree/master/py-aups',
       author='PurplShip',
       author_email='danielk.developer@gmail.com',
       license='MIT',
-      packages=['pyaups'],
+      packages=['pyaustraliapost'],
       install_requires=[
-            'attrs==18.2.0',
-            'jstruct==1.0.0'
+            'jstruct'
       ],
       dependency_links=[
             'https://git.io/purplship',
