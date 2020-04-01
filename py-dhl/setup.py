@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='py-dhl',
-      version='2020.3.0',
+      version='2020.4.0',
       description='DHL Python Schema Data domain',
       url='https://github.com/OpenShip/py-dhl',
       author='PurplShip',

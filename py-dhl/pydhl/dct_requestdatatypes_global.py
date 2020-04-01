@@ -2,21 +2,21 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Mar  6 18:34:08 2020 by generateDS.py version 2.35.15.
-# Python 3.8.1 (v3.8.1:1b293b6006, Dec 18 2019, 14:08:53)  [Clang 6.0 (clang-600.0.57)]
+# Generated Wed Apr  1 15:24:32 2020 by generateDS.py version 2.35.15.
+# Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './python/dct_requestdatatypes_global.py')
+#   ('-o', './pydhl/dct_requestdatatypes_global.py')
 #
 # Command line arguments:
-#   ./schemas/DCTRequestdatatypes_global.xsd
+#   /Users/daniel/Documents/Documentations/DHL/2020-03/schemas/DCTRequestdatatypes_global.xsd
 #
 # Command line:
-#   /Users/danielkobina/Documents/Open/.env/bin/generateDS --no-namespace-defs -o "./python/dct_requestdatatypes_global.py" ./schemas/DCTRequestdatatypes_global.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pydhl/dct_requestdatatypes_global.py" /Users/daniel/Documents/Documentations/DHL/2020-03/schemas/DCTRequestdatatypes_global.xsd
 #
 # Current working directory (os.getcwd()):
-#   2020-03
+#   py-dhl
 #
 
 from six.moves import zip_longest
