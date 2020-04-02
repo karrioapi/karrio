@@ -1,10 +1,6 @@
-import purplship
-from purplship.mappers.sendle import SendleClient
+import purplship.package as api
+from purplship.package.mappers.sendle import Settings
 
-proxy = purplship.gateway["sendle"].create(
-    SendleClient(
-        server_url="https://sandbox.sendle.com",
-        sendle_id="username",
-        api_key="password",
-    )
+gateway = api.gateway["sendle"].create(
+    Settings(sendle_id="username", api_key="password")
 )

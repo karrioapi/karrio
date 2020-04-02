@@ -1,35 +1,47 @@
 import unittest
 from unittest.mock import patch
-from tests.sendle.fixture import proxy
-from gds_helpers import to_dict
-from purplship.domain.Types import TrackingRequest
+from tests.sendle.fixture import gateway
+from purplship.core.utils.helpers import to_dict
+from purplship.core.models import TrackingRequest
+from purplship.package import tracking
 
 
 class TestSendleTracking(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+        self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_REQUEST)
+
     def test_create_tracking_request(self):
-        payload = TrackingRequest(tracking_numbers=TRACKING_REQUEST)
+        request = gateway.mapper.create_tracking_request(self.TrackingRequest)
+        self.assertEqual(request.serialize(), TRACKING_REQUEST)
 
-        tracking_request = proxy.mapper.create_tracking_request(payload)
-        self.assertEqual(to_dict(tracking_request), to_dict(TRACKING_REQUEST))
-
-    @patch("purplship.mappers.sendle.sendle_proxy.http", return_value="{}")
+    @patch("purplship.package.mappers.sendle.proxy.http", return_value="{}")
     def test_get_tracking(self, http_mock):
-        proxy.get_tracking(TRACKING_REQUEST)
+        tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, TRACKING_REQUEST_QUERY_STR)
 
     def test_parse_tracking_response(self):
-        parsed_response = proxy.mapper.parse_tracking_response(TRACKING_RESPONSE)
-        self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE))
+        with patch("purplship.package.mappers.sendle.proxy.exec_parrallel") as mock:
+            mock.return_value = TRACKING_RESPONSE
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
+            )
 
     def test_parse_tracking_response_with_errors(self):
-        parsed_response = proxy.mapper.parse_tracking_response(
-            TRACKING_RESPONSE_WITH_ERROR
-        )
-        self.assertEqual(
-            to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE_WITH_ERROR)
-        )
+        with patch("purplship.package.mappers.sendle.proxy.exec_parrallel") as mock:
+            mock.return_value = TRACKING_RESPONSE_WITH_ERROR
+            parsed_response = (
+                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE_WITH_ERROR)
+            )
 
 
 if __name__ == "__main__":
@@ -41,48 +53,57 @@ TRACKING_REQUEST = ["S3ND73"]
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier": "Sendle",
+            "carrier": "sendle",
+            "carrier_name": "Sendle",
             "events": [
                 {
                     "code": "Pickup Attempted",
-                    "date": "2015-11-23T01:04:00Z",
+                    "date": "2015-11-23",
                     "description": "We attempted to pick up the parcel but were unsuccessful",
+                    "time": "01:04",
                 },
                 {
                     "code": "Pickup",
-                    "date": "2015-11-24T20:31:00Z",
+                    "date": "2015-11-24",
                     "description": "Parcel picked up",
+                    "time": "20:31",
                 },
                 {
                     "code": "Info",
-                    "date": "2015-11-25T01:04:00Z",
+                    "date": "2015-11-25",
                     "description": "In transit between locations",
+                    "time": "01:04",
                 },
                 {
                     "code": "In Transit",
-                    "date": "2015-11-25T01:14:00Z",
+                    "date": "2015-11-25",
                     "description": "In transit",
                     "location": "Brisbane",
+                    "time": "01:14",
                 },
                 {
                     "code": "Info",
-                    "date": "2015-11-26T19:46:00Z",
+                    "date": "2015-11-26",
                     "description": "Arrived at the depot for processing",
+                    "time": "19:46",
                 },
                 {
                     "code": "Info",
-                    "date": "2015-11-26T23:00:00Z",
+                    "date": "2015-11-26",
                     "description": "Parcel is loaded for delivery",
+                    "time": "23:00",
                 },
                 {
                     "code": "Delivered",
-                    "date": "2015-11-27T23:46:00Z",
+                    "date": "2015-11-27",
                     "description": "Parcel delivered",
+                    "time": "23:46",
                 },
                 {
                     "code": "Info",
-                    "date": "2015-11-27T23:47:00Z",
+                    "date": "2015-11-27",
                     "description": "Your parcel was signed for by JIMMY",
+                    "time": "23:47",
                 },
             ],
             "tracking_number": "S3ND73",
@@ -91,11 +112,13 @@ PARSED_TRACKING_RESPONSE = [
     [],
 ]
 
+
 PARSED_TRACKING_RESPONSE_WITH_ERROR = [
     [],
     [
         {
-            "carrier": "Sendle",
+            "carrier": "sendle",
+            "carrier_name": "Sendle",
             "code": "unprocessable_entity",
             "message": "The data you supplied is invalid. Error messages are in the messages section. Please fix those fields and try again.",
         }
@@ -103,7 +126,7 @@ PARSED_TRACKING_RESPONSE_WITH_ERROR = [
 ]
 
 
-TRACKING_REQUEST_QUERY_STR = "https://sandbox.sendle.com/tracking/S3ND73"
+TRACKING_REQUEST_QUERY_STR = f"{gateway.settings.server_url}/tracking/S3ND73"
 
 TRACKING_RESPONSE = [
     {

@@ -1,11 +1,11 @@
-from purplship.mappers.ups import UPSClient, UPSProxy, UPSApi
+import purplship.freight as api
+from purplship.freight.mappers.ups import Settings
 
-proxy = UPSProxy(
-    UPSClient(
-        server_url="https://wwwcie.ups.com/webservices",
+gateway = api.gateway["ups"].create(
+    Settings(
         username="username",
         password="password",
         access_license_number="FG09H9G8H09GH8G0",
-        api=UPSApi.Freight.name
+        account_number="Your Account Number",
     )
 )

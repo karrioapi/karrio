@@ -1,2 +1,2 @@
 from tests.usps.tracking import *
-from tests.usps.quote import *
+from tests.usps.rate import *

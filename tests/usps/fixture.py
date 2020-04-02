@@ -1,10 +1,3 @@
-import purplship
-from purplship.mappers.usps import USPSProxy
+import purplship.package as api
 
-proxy: USPSProxy = purplship.gateway["usps"].create(
-    {
-        "server_url": "http://production.shippingapis.com/ShippingAPI.dll",
-        "username": "username",
-        "password": "password",
-    }
-)
+gateway = api.gateway["usps"].create({"username": "username", "password": "password"})
