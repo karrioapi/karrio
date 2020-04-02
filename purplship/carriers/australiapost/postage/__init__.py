@@ -1,35 +1,35 @@
 """PurplShip Australia post postage calculation service mapper module."""
 
 from typing import List, Union, Tuple
-import pyaups.international_parcel_postage
-import pyaups.domestic_letter_postage
-import pyaups.international_letter_postage
-import pyaups.domestic_parcel_postage
-from pyaups.domestic_parcel_postage import ServiceResponse, Service
+import pyaustraliapost.international_parcel_postage
+import pyaustraliapost.domestic_letter_postage
+import pyaustraliapost.international_letter_postage
+import pyaustraliapost.domestic_parcel_postage
+from pyaustraliapost.domestic_parcel_postage import ServiceResponse, Service
 from purplship.core.utils import to_dict, Serializable, decimal
 from purplship.core.units import Country, PackagingUnit, Currency
 from purplship.core.models import Message, RateRequest, RateDetails
-from purplship.carriers.aups.utils import Settings
+from purplship.carriers.australiapost.utils import Settings
 from purplship.core.errors import OriginNotServicedError
-from purplship.carriers.aups.postage.calculate_domestic_letter import (
+from purplship.carriers.australiapost.postage.calculate_domestic_letter import (
     calculate_domestic_letter_request,
 )
-from purplship.carriers.aups.postage.calculate_domestic_parcel import (
+from purplship.carriers.australiapost.postage.calculate_domestic_parcel import (
     calculate_domestic_parcel_request,
 )
-from purplship.carriers.aups.postage.calculate_international_letter import (
+from purplship.carriers.australiapost.postage.calculate_international_letter import (
     calculate_international_letter_request,
 )
-from purplship.carriers.aups.postage.calculate_international_parcel import (
+from purplship.carriers.australiapost.postage.calculate_international_parcel import (
     calculate_international_parcel_request,
 )
-from purplship.carriers.aups.error import parse_error_response
+from purplship.carriers.australiapost.error import parse_error_response
 
 PostageRateRequest = Union[
-    pyaups.international_parcel_postage.ServiceRequest,
-    pyaups.domestic_letter_postage.ServiceRequest,
-    pyaups.international_letter_postage.ServiceRequest,
-    pyaups.domestic_parcel_postage.ServiceRequest,
+    pyaustraliapost.international_parcel_postage.ServiceRequest,
+    pyaustraliapost.domestic_letter_postage.ServiceRequest,
+    pyaustraliapost.international_letter_postage.ServiceRequest,
+    pyaustraliapost.domestic_parcel_postage.ServiceRequest,
 ]
 
 

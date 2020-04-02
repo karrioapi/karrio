@@ -5,8 +5,8 @@ import purplship.extension.mappers as extensions
 Providers: Dict[str, Any] = {}
 
 try:
-    import purplship.package.mappers.aups as aups
-    Providers.update({'aups': aups})
+    import purplship.package.mappers.australiapost as australiapost
+    Providers.update({'australiapost': australiapost})
 except ImportError:
     pass
 try:

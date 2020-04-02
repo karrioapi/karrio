@@ -1,7 +1,7 @@
 """PurplShip Australia post client settings."""
 
 import attr
-from purplship.carriers.aups.utils import Settings as BaseSettings
+from purplship.carriers.australiapost.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

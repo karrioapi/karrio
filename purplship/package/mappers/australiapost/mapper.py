@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from pyaups.shipping_price_request import ShippingPriceRequest
-from purplship.carriers.aups.shipping import (
+from pyaustraliapost.shipping_price_request import ShippingPriceRequest
+from purplship.carriers.australiapost.shipping import (
     shipping_price_request,
     parse_shipping_price_response,
     track_items_request,
@@ -15,7 +15,7 @@ from purplship.core.models import (
     RateDetails,
     TrackingDetails,
 )
-from purplship.package.mappers.aups.settings import Settings
+from purplship.package.mappers.australiapost.settings import Settings
 
 
 class Mapper(BaseMapper):

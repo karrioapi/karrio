@@ -2,11 +2,11 @@
 
 from functools import reduce
 from typing import List, Tuple, Callable
-from purplship.carriers.aups.error import parse_error_response
+from purplship.carriers.australiapost.error import parse_error_response
 from purplship.core.utils import Serializable, format_date, format_time
-from purplship.carriers.aups.utils import Settings
+from purplship.carriers.australiapost.utils import Settings
 from purplship.core.models import TrackingRequest, Message, TrackingEvent, TrackingDetails
-from pyaups.track_item import TrackingResponse, TrackingResult
+from pyaustraliapost.track_item import TrackingResponse, TrackingResult
 
 
 def parse_track_items_response(

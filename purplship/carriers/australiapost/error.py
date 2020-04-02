@@ -1,6 +1,6 @@
 from typing import List
 from purplship.core.models import Message
-from purplship.carriers.aups.utils import Settings
+from purplship.carriers.australiapost.utils import Settings
 
 
 def parse_error_response(response: dict, settings: Settings) -> List[Message]:

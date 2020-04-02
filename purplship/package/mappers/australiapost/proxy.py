@@ -1,19 +1,19 @@
 from typing import List, Union
 from purplship.core.utils.helpers import request as http, to_dict
 from purplship.core.utils.serializable import Deserializable, Serializable
-from purplship.package.mappers.aups.settings import Settings
+from purplship.package.mappers.australiapost.settings import Settings
 from purplship.package.proxy import Proxy as BaseProxy
-from pyaups.shipping_price_request import ShippingPriceRequest
-from pyaups.domestic_letter_postage import (
+from pyaustraliapost.shipping_price_request import ShippingPriceRequest
+from pyaustraliapost.domestic_letter_postage import (
     ServiceRequest as DomesticLetterServiceRequest,
 )
-from pyaups.international_letter_postage import (
+from pyaustraliapost.international_letter_postage import (
     ServiceRequest as IntlLetterServiceRequest,
 )
-from pyaups.domestic_parcel_postage import (
+from pyaustraliapost.domestic_parcel_postage import (
     ServiceRequest as DomesticParcelServiceRequest,
 )
-from pyaups.international_parcel_postage import (
+from pyaustraliapost.international_parcel_postage import (
     ServiceRequest as IntlParcelServiceRequest,
 )
 

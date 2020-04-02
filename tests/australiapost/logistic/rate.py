@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tests.aups.logistic.fixture import gateway
+from tests.australiapost.logistic.fixture import gateway
 from purplship.core.utils.helpers import jsonify, to_dict
 from purplship.core.models import RateRequest
 from purplship.package import rating
@@ -15,7 +15,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         self.assertEqual(to_dict(request.serialize()), to_dict(SHIPPING_PRICE_REQUEST))
 
-    @patch("purplship.package.mappers.aups.proxy.http", return_value="{}")
+    @patch("purplship.package.mappers.australiapost.proxy.http", return_value="{}")
     def test_get_rates(self, http_mock):
         rating.fetch(self.RateRequest).from_(gateway)
 
@@ -25,7 +25,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
         )
 
     def test_parse_rate_response(self):
-        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+        with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(SHIPPING_PRICE_RESPONSE)
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
 
@@ -34,7 +34,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
             )
 
     def test_parse_rate_response_errors(self):
-        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+        with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(ERRORS)
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
 
@@ -80,7 +80,7 @@ PARSED_SHIPPING_PRICE_RESPONSE = [
     [
         {
             "base_charge": 58.74,
-            "carrier": "aups",
+            "carrier": "australiapost",
             "carrier_name": "Australia Post Shipping",
             "currency": "AUD",
             "duties_and_taxes": 5.87,
@@ -99,7 +99,7 @@ PARSED_ERRORS = [
     [],
     [
         {
-            "carrier": "aups",
+            "carrier": "australiapost",
             "carrier_name": "Australia Post Shipping",
             "code": "44003",
             "message": "The product T28S specified in an item has indicated that dangerous goods will be included in the parcel, however, the product does not allow dangerous goods to be sent using the service.  Please choose a product that allows dangerous goods to be included within the parcel to be sent.",

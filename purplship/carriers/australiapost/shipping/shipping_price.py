@@ -1,15 +1,15 @@
 """PurplShip Australia post rate mapper module."""
 
 from typing import List, Tuple
-from pyaups.shipping_price_request import ShippingPriceRequest, Shipment, From, To, Item
-from purplship.carriers.aups.error import parse_error_response
-from purplship.carriers.aups.units import PackagingType
+from pyaustraliapost.shipping_price_request import ShippingPriceRequest, Shipment, From, To, Item
+from purplship.carriers.australiapost.error import parse_error_response
+from purplship.carriers.australiapost.units import PackagingType
 from purplship.core.utils import jsonify, to_dict, Serializable, decimal
 from purplship.core.models import Message, ChargeDetails, RateRequest, RateDetails
 from purplship.core.units import Currency, Country
-from purplship.carriers.aups.utils import Settings
+from purplship.carriers.australiapost.utils import Settings
 from purplship.core.errors import OriginNotServicedError
-from pyaups.shipping_price_response import (
+from pyaustraliapost.shipping_price_response import (
     ShippingPriceResponse,
     Shipment as ResponseShipment,
     ShipmentSummary,

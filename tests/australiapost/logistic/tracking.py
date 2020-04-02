@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tests.aups.logistic.fixture import gateway
+from tests.australiapost.logistic.fixture import gateway
 from purplship.core.utils.helpers import to_dict, jsonify
 from purplship.package import tracking
 from purplship.core.models import TrackingRequest
@@ -15,7 +15,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
         self.assertEqual(request.serialize(), TRACKING_REQUEST)
 
-    @patch("purplship.package.mappers.aups.proxy.http", return_value="{}")
+    @patch("purplship.package.mappers.australiapost.proxy.http", return_value="{}")
     def test_get_tracking(self, http_mock):
         tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -26,7 +26,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
         )
 
     def test_parse_tracking_response(self):
-        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+        with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(TRACKING_RESPONSE)
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -37,7 +37,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response_with_errors(self):
-        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+        with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(TRACKING_ERROR)
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -45,7 +45,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_ERROR))
 
     def test_parse_tracking_response_errors(self):
-        with patch("purplship.package.mappers.aups.proxy.http") as mock:
+        with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(ERRORS)
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -63,7 +63,7 @@ TRACKING_REQUEST = "7XX1000,7XX1000634011427"
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier": "aups",
+            "carrier": "australiapost",
             "carrier_name": "Australia Post Shipping",
             "events": [
                 {
@@ -84,7 +84,7 @@ PARSED_TRACKING_RESPONSE = [
     ],
     [
         {
-            "carrier": "aups",
+            "carrier": "australiapost",
             "carrier_name": "Australia Post Shipping",
             "code": "ESB-10001",
         }
@@ -95,7 +95,7 @@ PARSED_TRACKING_ERROR = [
     [],
     [
         {
-            "carrier": "aups",
+            "carrier": "australiapost",
             "carrier_name": "Australia Post Shipping",
             "code": "ESB-10001",
         }
@@ -106,7 +106,7 @@ PARSED_ERRORS = [
     [],
     [
         {
-            "carrier": "aups",
+            "carrier": "australiapost",
             "carrier_name": "Australia Post Shipping",
             "code": "51101",
             "message": "The request must contain 10 or less AP article ids, consignment ids, or barcode ids.",

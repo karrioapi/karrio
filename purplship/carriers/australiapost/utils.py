@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
     @property
     def carrier(self):
-        return 'aups'
+        return 'australiapost'
 
     @property
     def authorization(self):
