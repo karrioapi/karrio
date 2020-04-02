@@ -1,9 +1,9 @@
 from setuptools import setup
 
-setup(name='py-australia',
+setup(name='py-australiapost',
       version='2020.4.0',
       description='Australia Post Python Data domain library',
-      url='https://github.com/PurplShip/purplship-carriers/tree/master/py-aups',
+      url='https://github.com/PurplShip/purplship-carriers/tree/master/py-australiapost',
       author='PurplShip',
       author_email='danielk.developer@gmail.com',
       license='MIT',

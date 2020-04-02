@@ -43,15 +43,15 @@ generate () {
 }
 
 clean_builds() {
-  find . -type d -name dist -exec rm -r {} \;
-  find . -type d -name build -exec rm -r {} \;
-  find . -type d -name "*.egg-info" -exec rm -r {} \;
+  find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \;
+  find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \;
+  find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \;
 }
 
 backup_wheels() {
   # shellcheck disable=SC2154
   [ -d "$wheels" ] &&
-  find . -name \*.whl -exec mv {} "$wheels" \; &&
+  find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
   clean_builds
 }
 
@@ -59,10 +59,10 @@ build_all() {
   clean_builds
   mkdir -p ./dist
   for d in py-*/ ; do
-    cd ${d} &&
-    python setup.py bdist_wheel &&
-    cd ..
+    pushd ${d} &&
+    python setup.py bdist_wheel
+    popd
   done
-  find . -name \*.whl -exec mv {} ./dist \;
+  find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} ./dist \;
   backup_wheels
 }

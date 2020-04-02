@@ -3,8 +3,8 @@
 Carrier services Python data types libraries
 
 - [Aramex - py-aramex](https://github.com/PurplShip/purplship-carriers/tree/master/py-aramex)
-- [Australia Post - py-aups](https://github.com/PurplShip/purplship-carriers/tree/master/py-aups)
-- [Canada Post - py-caps](https://github.com/PurplShip/purplship-carriers/tree/master/py-caps)
+- [Australia Post - py-australiapost](https://github.com/PurplShip/purplship-carriers/tree/master/py-australiapost)
+- [Canada Post - py-canadapost](https://github.com/PurplShip/purplship-carriers/tree/master/py-canadapost)
 - [DHL - py-dhl](https://github.com/PurplShip/purplship-carriers/tree/master/py-dhl)
 - [FedEx - py-fedex](https://github.com/PurplShip/purplship-carriers/tree/master/py-fedex)
 - [Purolator - py-purolator](https://github.com/PurplShip/purplship-carriers/tree/master/py-purolator)

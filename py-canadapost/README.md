@@ -1,24 +1,23 @@
-# py-caps
+# py-canadapost
 
-Canada Post Python Data Structure generated from .xsd files with [generateDS](http://www.davekuhlman.org/generateDS.html) library
+Canada Post Python Data Types generated from the official schema files with [generateDS](http://www.davekuhlman.org/generateDS.html) library
 
 ## Installation
 
 ```bash
-pip install -f https://git.io/purplship py-caps
+pip install -f https://git.io/purplship py-canadapost
 ```
 
 ## Usage
 
 ### Rating
 
-- [Types Documentation](https://doc.purplship.com/api/pycaps.html)
 - [Official API Documentation](https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/rating/getrates/default.jsf)
 
 #### Create a rating request (mailing-scenario)
 
 ```python
-from pycaps import rating as Rating
+from pycanadapost import rating as Rating
 
 mailing = Rating.mailing_scenario(
   customer_number="1234567",
@@ -47,12 +46,8 @@ mailing = Rating.mailing_scenario(
 ```python
 # Install generateDs-helpers to benefit from utilities functions used below
 # pip install -f https://git.io/purplship gds-helpers
-from gds_helpers import export
 
-requestXML = export(
-  mailing,
-  namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v3"'
-)
+requestXML = mailing.export(namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v3"')
 
 print(requestXML)
 """
@@ -84,7 +79,6 @@ print(requestXML)
 #### Send a http request to get the rate pricing from Canada Post
 
 ```python
-from gds_helpers import request
 from base64 import b64encode
 auth = b64encode(f"{username}:{password}".encode("utf-8")).decode("ascii")
 
