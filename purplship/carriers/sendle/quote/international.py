@@ -16,7 +16,7 @@ def international_quote_request(payload: RateRequest) -> InternationalParcelQuot
         raise RequiredFieldError("parcel.weight")
 
     plan = next(
-        (Plan[s].value for s in payload.parcel.services if s in Plan.__members__),
+        (Plan[s].value for s in payload.services if s in Plan.__members__),
         None
     )
     return InternationalParcelQuote(

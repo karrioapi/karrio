@@ -96,7 +96,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
 
     products = [
         ProductCode[svc].value
-        for svc in payload.parcel.services
+        for svc in payload.services
         if svc in ProductCode.__members__
     ]
 

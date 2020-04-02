@@ -91,7 +91,7 @@ def freight_rate_request(
     service = (
         [
             RatingServiceCode[svc]
-            for svc in payload.parcel.services
+            for svc in payload.services
             if svc in RatingServiceCode.__members__
         ]
         + [RatingServiceCode.ups_freight_ltl_guaranteed]

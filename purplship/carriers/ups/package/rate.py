@@ -116,7 +116,7 @@ def rate_request(
     parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
     package = Package(payload.parcel, parcel_preset)
     service: str = next(
-        (RatingServiceCode[s].value for s in payload.parcel.services if s in RatingServiceCode.__members__),
+        (RatingServiceCode[s].value for s in payload.services if s in RatingServiceCode.__members__),
         RatingServiceCode.ups_express.value
     )
 

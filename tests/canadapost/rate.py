@@ -74,10 +74,10 @@ RatePayload = {
         "length": 10,
         "width": 3,
         "weight": 4.0,
-        "services": ["canadapost_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
     },
+    "services": ["canadapost_expedited_parcel"],
 }
 
 RateWithPresetPayload = {
@@ -85,8 +85,8 @@ RateWithPresetPayload = {
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
     "parcel": {
         "package_preset": "canadapost_xexpresspost_certified_envelope",
-        "services": ["canadapost_xpresspost"],
     },
+    "services": ["canadapost_xpresspost"],
 }
 
 RateWithPresetMissingWeightPayload = {
@@ -94,8 +94,8 @@ RateWithPresetMissingWeightPayload = {
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
     "parcel": {
         "package_preset": "canadapost_corrugated_small_box",
-        "services": ["canadapost_regular_parcel"],
     },
+    "services": ["canadapost_regular_parcel"],
 }
 
 ProcessingError = [

@@ -90,7 +90,6 @@ RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
-        "services": ["dhl_express_worldwide_doc"],
         "id": "1",
         "height": 3,
         "length": 10,
@@ -98,6 +97,7 @@ RatePayload = {
         "weight": 4.0,
         "is_document": True,
     },
+    "services": ["dhl_express_worldwide_doc"],
     "options": {"currency": "CAD", "insurance": {"amount": 75}},
 }
 
@@ -107,8 +107,8 @@ RateWithPresetPayload = {
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
         "package_preset": "dhl_express_tube",
-        "services": ["dhl_express_worldwide_nondoc"],
     },
+    "services": ["dhl_express_worldwide_nondoc"],
     "options": {"currency": "CAD"},
 }
 

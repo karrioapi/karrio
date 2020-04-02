@@ -62,8 +62,8 @@ RATE_REQUEST_PAYLOAD = {
         "reference": "Reference For Shipment",
         "weight": 10,
         "weight_unit": "LB",
-        "services": ["purolator_express"],
     },
+    "services": ["purolator_express"],
 }
 
 RATE_REQUEST_WITH_PRESET_PAYLOAD = {

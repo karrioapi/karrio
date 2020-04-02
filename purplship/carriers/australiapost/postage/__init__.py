@@ -61,7 +61,7 @@ def calculate_postage_request(payload: RateRequest, settings: Settings) -> Seria
         )
 
     is_letter: bool = (
-        any(svc for svc in payload.parcel.services if "letter" in svc)
+        any(svc for svc in payload.services if "letter" in svc)
         or payload.parcel.packaging_type == PackagingUnit.envelope.name
         or payload.parcel.packaging_type == PackagingUnit.pak.name
     )

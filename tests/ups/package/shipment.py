@@ -75,7 +75,6 @@ package_shipment_data = {
     },
     "parcel": {
         "reference": "Your Customer Context",
-        "services": ["ups_express"],
         "dimension_unit": "IN",
         "weight_unit": "LB",
         "packaging_type": "ups_customer_supplied_package",
@@ -115,7 +114,6 @@ package_shipment_with_package_preset_data = {
     },
     "parcel": {
         "reference": "Your Customer Context",
-        "services": ["ups_express"],
         "packaging_type": "ups_customer_supplied_package",
         "description": "Description",
         "package_preset": "ups_medium_express_box",

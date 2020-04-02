@@ -73,7 +73,7 @@ def get_full_estimate_request(payload: RateRequest, settings: Settings) -> Seria
         raise RequiredFieldError("parcel.weight")
 
     service = next(
-        (Product[s].value for s in payload.parcel.services if s in Product.__members__),
+        (Product[s].value for s in payload.services if s in Product.__members__),
         Product.purolator_express.value
     )
     request = create_envelope(

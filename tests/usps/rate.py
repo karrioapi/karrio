@@ -68,8 +68,8 @@ RATE_PAYLOAD = {
         "height": 15,
         "length": 30,
         "weight": 1,
-        "services": ["priority"],
     },
+    "services": ["priority"],
     "options": {"signature_confirmation": True},
 }
 

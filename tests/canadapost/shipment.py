@@ -108,7 +108,6 @@ shipment_with_package_preset_data = {
         "weight": 20.0,
         "weight_unit": "LB",
         "package_preset": "canadapost_corrugated_large_box",
-        "services": ["canadapost_expedited_parcel"],
     },
     "service": "canadapost_expedited_parcel",
     "options": {"cash_on_delivery": {"amount": 25.5}},

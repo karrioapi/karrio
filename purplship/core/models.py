@@ -61,7 +61,6 @@ class Parcel:
     is_document: bool = False
     weight_unit: str = None
     dimension_unit: str = None
-    services: List[str] = []
 
 
 @attr.s(auto_attribs=True)
@@ -145,6 +144,7 @@ class RateRequest:
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
 
+    services: List[str] = []
     options: Dict = {}
 
 

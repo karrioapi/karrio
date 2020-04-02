@@ -155,7 +155,7 @@ class RateRequestExtensionV4:
     @property
     def service(self):
         return next(
-            (Service[s].value for s in self.parcel.services if s in Service.__members__),
+            (Service[s].value for s in self.request.services if s in Service.__members__),
             Service.first_class.value
         )
 

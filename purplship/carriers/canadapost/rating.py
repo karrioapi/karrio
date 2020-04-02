@@ -98,7 +98,7 @@ def mailing_scenario_request(
         raise RequiredFieldError("parcel.weight")
 
     requested_services = [
-        svc for svc in payload.parcel.services if svc in ServiceType.__members__
+        svc for svc in payload.services if svc in ServiceType.__members__
     ]
     requested_options = {
         code: value
