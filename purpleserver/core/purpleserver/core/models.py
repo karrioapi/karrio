@@ -82,7 +82,7 @@ FedexSettings._meta.get_field('carrier_name').default = 'FedEx'
 
 
 MODELS = {
-    'caps': CanadaPostSettings,
+    'canadapost': CanadaPostSettings,
     'dhl': DHLSettings,
     'fedex': FedexSettings,
     'purolator': PurolatorSettings,

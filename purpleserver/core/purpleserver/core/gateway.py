@@ -7,7 +7,7 @@ from purplship import package as api
 from purplship.core.utils import exec_async, to_dict
 from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
-    RateResponse, RateRequest, TrackingResponse, TrackingRequest, ShipmentDetails,
+    RateResponse, TrackingResponse, TrackingRequest, ShipmentDetails,
     Message, RateDetails
 )
 from purpleserver.core import models
@@ -53,7 +53,7 @@ def create_shipment(payload: dict) -> ShipmentResponse:
 
     request = ShipmentRequest(**{**payload, 'service': selected_rate.service})
     gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
-    shipment, messages = api.shipment.create(request).with_(gateway).parse()
+    shipment, messages = api.Shipment.create(request).with_(gateway).parse()
     shipment_rate = shipment.selected_rate or selected_rate
 
     return ShipmentResponse(
@@ -68,12 +68,12 @@ def create_shipment(payload: dict) -> ShipmentResponse:
 
 
 def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> RateResponse:
-    request = RateRequest(**payload)
+    request = api.Rating.fetch(payload)
 
     def process(carrier_settings: CarrierSettings):
         try:
             gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
-            return api.rating.fetch(request).from_(gateway).parse()
+            return request.from_(gateway).parse()
         except Exception as e:
             logger.exception(e)
             return [[], [Message(
@@ -102,7 +102,7 @@ def track_shipment(payload: dict, carrier_settings: CarrierSettings) -> Tracking
     request = TrackingRequest(**payload)
 
     gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
-    results, messages = api.tracking.fetch(request).from_(gateway).parse()
+    results, messages = api.Tracking.fetch(request).from_(gateway).parse()
 
     return TrackingResponse(
         tracking_details=next(iter(results), None),

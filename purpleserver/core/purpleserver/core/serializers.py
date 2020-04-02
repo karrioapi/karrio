@@ -92,7 +92,6 @@ class Parcel(Serializer):
     is_document = BooleanField(required=False)
     weight_unit = CharField(required=False)
     dimension_unit = CharField(required=False)
-    services = StringListField(required=False)
 
 
 class Invoice(Serializer):
@@ -148,6 +147,7 @@ class RateRequest(Serializer):
     recipient = Address(required=True)
     parcel = Parcel(required=True)
 
+    services = StringListField(required=False)
     options = DictField(required=False)
 
 

@@ -11,7 +11,6 @@ from purplship.core.models import (
     Parcel,
     Message,
     TrackingDetails,
-    RateRequest,
     TrackingRequest,
     ShipmentDetails,
     ShipmentRequest as BaseShipmentRequest
@@ -30,6 +29,8 @@ class ShipmentRate:
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
     rates: List[RateDetails] = JList[RateDetails]
+
+    services: List[str] = []
     options: Dict = {}
 
 
