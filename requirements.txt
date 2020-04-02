@@ -1,6 +1,6 @@
 -f https://git.io/purplship
 attrs==18.2.0
-jstruct==1.0.0
+jstruct==2020.4.0
 xmltodict==0.12.0
 py-fedex==2020.3.0
 py-purolator==2020.3.0
@@ -9,5 +9,5 @@ py-soap==2020.3.0
 py-ups==2020.3.0
 py-canadapost==2020.4.0
 py-australiapost==2020.4.0
-py-sendle==1.0a0
+py-sendle==2020.4.0
 py-usps==1.0a0
