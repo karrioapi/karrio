@@ -3,7 +3,7 @@ from unittest.mock import patch
 from tests.sendle.fixture import gateway
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
-from purplship.package import tracking
+from purplship.package import Tracking
 
 
 class TestSendleTracking(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestSendleTracking(unittest.TestCase):
 
     @patch("purplship.package.mappers.sendle.proxy.http", return_value="{}")
     def test_get_tracking(self, http_mock):
-        tracking.fetch(self.TrackingRequest).from_(gateway)
+        Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, TRACKING_REQUEST_QUERY_STR)
@@ -26,7 +26,7 @@ class TestSendleTracking(unittest.TestCase):
         with patch("purplship.package.mappers.sendle.proxy.exec_parrallel") as mock:
             mock.return_value = TRACKING_RESPONSE
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
             self.assertEqual(
@@ -37,7 +37,7 @@ class TestSendleTracking(unittest.TestCase):
         with patch("purplship.package.mappers.sendle.proxy.exec_parrallel") as mock:
             mock.return_value = TRACKING_RESPONSE_WITH_ERROR
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE_WITH_ERROR)

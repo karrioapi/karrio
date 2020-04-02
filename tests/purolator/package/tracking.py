@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
-from purplship.package import tracking
+from purplship.package import Tracking
 from tests.purolator.package.fixture import gateway
 
 
@@ -20,7 +20,7 @@ class TestPurolatorTracking(unittest.TestCase):
 
     @patch("purplship.package.mappers.purolator.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        tracking.fetch(self.TrackingRequest).from_(gateway)
+        Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -31,7 +31,7 @@ class TestPurolatorTracking(unittest.TestCase):
         with patch("purplship.package.mappers.purolator.proxy.http") as mock:
             mock.return_value = TRACKING_RESPONSE_XML
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
             self.assertEqual(

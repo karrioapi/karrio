@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from tests.australiapost.logistic.fixture import gateway
 from purplship.core.utils.helpers import to_dict, jsonify
-from purplship.package import tracking
+from purplship.package import Tracking
 from purplship.core.models import TrackingRequest
 
 
@@ -17,7 +17,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
 
     @patch("purplship.package.mappers.australiapost.proxy.http", return_value="{}")
     def test_get_tracking(self, http_mock):
-        tracking.fetch(self.TrackingRequest).from_(gateway)
+        Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -29,7 +29,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
         with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(TRACKING_RESPONSE)
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
             self.assertEqual(
@@ -40,7 +40,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
         with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(TRACKING_ERROR)
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_TRACKING_ERROR))
 
@@ -48,7 +48,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
         with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(ERRORS)
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 

@@ -70,11 +70,12 @@ class IRequestWith:
             return abort(gateway, e)
 
 
-class pickup:
+class Pickup:
     @staticmethod
     def book(args: Union[PickupRequest, dict]):
+        payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
+
         def action(gateway: Gateway):
-            payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
             request: Serializable = gateway.mapper.create_pickup_request(payload)
             response: Deserializable = gateway.proxy.request_pickup(request)
 
@@ -87,12 +88,13 @@ class pickup:
 
     @staticmethod
     def cancel(args: Union[PickupCancellationRequest, dict]):
+        payload = (
+            args
+            if isinstance(args, PickupCancellationRequest)
+            else PickupCancellationRequest(**args)
+        )
+
         def action(gateway: Gateway):
-            payload = (
-                args
-                if isinstance(args, PickupCancellationRequest)
-                else PickupCancellationRequest(**args)
-            )
             request: Serializable = gateway.mapper.create_cancel_pickup_request(payload)
             response: Deserializable = gateway.proxy.cancel_pickup(request)
 
@@ -105,12 +107,13 @@ class pickup:
 
     @staticmethod
     def update(args: Union[PickupUpdateRequest, dict]):
+        payload = (
+            args
+            if isinstance(args, PickupUpdateRequest)
+            else PickupUpdateRequest(**args)
+        )
+
         def action(gateway: Gateway):
-            payload = (
-                args
-                if isinstance(args, PickupUpdateRequest)
-                else PickupUpdateRequest(**args)
-            )
             request: Serializable = gateway.mapper.create_modify_pickup_request(payload)
             response: Deserializable = gateway.proxy.modify_pickup(request)
 
@@ -122,11 +125,12 @@ class pickup:
         return IRequestFrom(action)
 
 
-class rating:
+class Rating:
     @staticmethod
     def fetch(args: Union[RateRequest, dict]):
+        payload = args if isinstance(args, RateRequest) else RateRequest(**args)
+
         def action(gateway: Gateway):
-            payload = args if isinstance(args, RateRequest) else RateRequest(**args)
             request: Serializable = gateway.mapper.create_rate_request(payload)
             response: Deserializable = gateway.proxy.get_rates(request)
 
@@ -138,13 +142,14 @@ class rating:
         return IRequestFrom(action)
 
 
-class shipment:
+class Shipment:
     @staticmethod
     def create(args: Union[ShipmentRequest, dict]):
+        payload = (
+            args if isinstance(args, ShipmentRequest) else ShipmentRequest(**args)
+        )
+
         def action(gateway: Gateway):
-            payload = (
-                args if isinstance(args, ShipmentRequest) else ShipmentRequest(**args)
-            )
             request: Serializable = gateway.mapper.create_shipment_request(payload)
             response: Deserializable = gateway.proxy.create_shipment(request)
 
@@ -156,13 +161,14 @@ class shipment:
         return IRequestWith(action)
 
 
-class tracking:
+class Tracking:
     @staticmethod
     def fetch(args: Union[TrackingRequest, dict]) -> IRequestFrom:
+        payload = (
+            args if isinstance(args, TrackingRequest) else TrackingRequest(**args)
+        )
+
         def action(gateway: Gateway) -> IDeserialize:
-            payload = (
-                args if isinstance(args, TrackingRequest) else TrackingRequest(**args)
-            )
             request: Serializable = gateway.mapper.create_tracking_request(payload)
             response: Deserializable = gateway.proxy.get_tracking(request)
 

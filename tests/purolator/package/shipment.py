@@ -4,7 +4,7 @@ from datetime import datetime
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
-from purplship.package import shipment
+from purplship.package import Shipment
 from tests.purolator.package.fixture import gateway
 
 
@@ -32,7 +32,7 @@ class TestPurolatorShipment(unittest.TestCase):
                 SHIPMENT_RESPONSE_XML,
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
             ]
-            shipment.create(self.ShipmentRequest).with_(gateway)
+            Shipment.create(self.ShipmentRequest).with_(gateway)
 
             validate_call, create_call, document_call = mocks.call_args_list
 
@@ -57,7 +57,7 @@ class TestPurolatorShipment(unittest.TestCase):
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
             ]
             parsed_response = (
-                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
             self.assertEqual(
@@ -68,7 +68,7 @@ class TestPurolatorShipment(unittest.TestCase):
         with patch("purplship.package.mappers.purolator.proxy.http") as mocks:
             mocks.side_effect = ["false"]
             parsed_response = (
-                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
             self.assertEqual(

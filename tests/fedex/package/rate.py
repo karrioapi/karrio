@@ -4,7 +4,7 @@ from unittest.mock import patch
 from pyfedex.rate_service_v26 import RateRequest
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.package import rating
+from purplship.package import Rating
 from tests.fedex.package.fixture import gateway
 
 
@@ -35,7 +35,7 @@ class TestFeDexQuote(unittest.TestCase):
 
     @patch("purplship.package.mappers.fedex.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
-        rating.fetch(self.RateRequest).from_(gateway)
+        Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, gateway.settings.server_url)
@@ -43,13 +43,13 @@ class TestFeDexQuote(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
             mock.return_value = RateResponseXml
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_rate_error_response(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
             mock.return_value = RateErrorResponseXml
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateErrorResponse))
 
 

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
-from purplship.package import tracking
+from purplship.package import Tracking
 from purplship.core.models import TrackingRequest
 from tests.canadapost.fixture import gateway
 
@@ -18,7 +18,7 @@ class TestCanadaPostTracking(unittest.TestCase):
 
     @patch("purplship.package.mappers.canadapost.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        tracking.fetch(self.TrackingRequest).from_(gateway)
+        Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(reqUrl, TrackingRequestURL)
@@ -27,7 +27,7 @@ class TestCanadaPostTracking(unittest.TestCase):
         with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = AuthError
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
@@ -35,7 +35,7 @@ class TestCanadaPostTracking(unittest.TestCase):
         with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = TrackingResponseXml
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
@@ -44,7 +44,7 @@ class TestCanadaPostTracking(unittest.TestCase):
         with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = UnknownTrackingNumberResponse
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedUnknownTrackingNumberResponse)

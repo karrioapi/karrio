@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
-from purplship.package import rating
+from purplship.package import Rating
 from purplship.core.models import RateRequest
 from tests.canadapost.fixture import gateway
 from datetime import datetime
@@ -27,7 +27,7 @@ class TestCanadaPostRating(unittest.TestCase):
     @patch("purplship.package.mappers.canadapost.proxy.http", return_value="<a></a>")
     def test_create_rate_request_with_package_preset_missing_weight(self, _):
         processing_error = (
-            rating.fetch(RateRequest(**RateWithPresetMissingWeightPayload))
+            Rating.fetch(RateRequest(**RateWithPresetMissingWeightPayload))
             .from_(gateway)
             .parse()
         )
@@ -36,7 +36,7 @@ class TestCanadaPostRating(unittest.TestCase):
 
     @patch("purplship.package.mappers.canadapost.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
-        rating.fetch(self.RateRequest).from_(gateway)
+        Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, f"{gateway.proxy.settings.server_url}/rs/ship/price")
@@ -44,20 +44,20 @@ class TestCanadaPostRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = RateResponseXml
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
     def test_parse_rate_parsing_error(self):
         with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteParsingError
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
 
     def test_parse_rate_missing_args_error(self):
         with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteMissingArgsError
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedQuoteMissingArgsError)
             )

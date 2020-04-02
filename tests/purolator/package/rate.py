@@ -3,7 +3,7 @@ from datetime import datetime
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.package import rating
+from purplship.package import Rating
 from tests.purolator.package.fixture import gateway
 
 
@@ -19,7 +19,7 @@ class TestPurolatorQuote(unittest.TestCase):
 
     @patch("purplship.package.mappers.purolator.proxy.http", return_value="<a></a>")
     def test_create_rate(self, http_mock):
-        rating.fetch(self.RateRequest).from_(gateway)
+        Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -30,7 +30,7 @@ class TestPurolatorQuote(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.purolator.proxy.http") as mock:
             mock.return_value = RATE_RESPONSE_XML
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
 

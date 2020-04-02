@@ -3,7 +3,7 @@ from unittest.mock import patch
 from tests.australiapost.logistic.fixture import gateway
 from purplship.core.utils.helpers import jsonify, to_dict
 from purplship.core.models import RateRequest
-from purplship.package import rating
+from purplship.package import Rating
 
 
 class TestAustraliaPostLogisticRate(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
 
     @patch("purplship.package.mappers.australiapost.proxy.http", return_value="{}")
     def test_get_rates(self, http_mock):
-        rating.fetch(self.RateRequest).from_(gateway)
+        Rating.fetch(self.RateRequest).from_(gateway)
 
         reqUrl = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -27,7 +27,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(SHIPPING_PRICE_RESPONSE)
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_SHIPPING_PRICE_RESPONSE)
@@ -36,7 +36,7 @@ class TestAustraliaPostLogisticRate(unittest.TestCase):
     def test_parse_rate_response_errors(self):
         with patch("purplship.package.mappers.australiapost.proxy.http") as mock:
             mock.return_value = jsonify(ERRORS)
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 

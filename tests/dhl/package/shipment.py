@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
-from purplship.package import shipment
+from purplship.package import Shipment
 from tests.dhl.package.fixture import gateway
 
 
@@ -26,7 +26,7 @@ class TestDHLShipment(unittest.TestCase):
 
     @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        shipment.create(self.ShipmentRequest).with_(gateway)
+        Shipment.create(self.ShipmentRequest).with_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, gateway.settings.server_url)
@@ -35,7 +35,7 @@ class TestDHLShipment(unittest.TestCase):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentParsingError
             parsed_response = (
-                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedShipmentParsingError)
@@ -45,7 +45,7 @@ class TestDHLShipment(unittest.TestCase):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentMissingArgsError
             parsed_response = (
-                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedShipmentMissingArgsError)
@@ -55,7 +55,7 @@ class TestDHLShipment(unittest.TestCase):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentResponseXml
             parsed_response = (
-                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
