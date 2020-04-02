@@ -27,7 +27,7 @@ from purplship.carriers.ups.units import (
     RatingPackagingType,
     WeightUnit as UPSWeightUnit,
     ShippingServiceCode,
-    PackagePresets
+    PackagePresets,
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -42,7 +42,7 @@ def parse_rate_response(
 
 
 def _extract_package_rate(
-    settings: Settings
+    settings: Settings,
 ) -> Callable[[List[RateDetails], Element], List[RateDetails]]:
     def extract(rates: List[RateDetails], detail_node: Element) -> List[RateDetails]:
         rate = RatedShipmentType()
@@ -113,14 +113,24 @@ def _extract_package_rate(
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[UPSRateRequest]:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
     service: str = next(
-        (RatingServiceCode[s].value for s in payload.services if s in RatingServiceCode.__members__),
-        RatingServiceCode.ups_express.value
+        (
+            RatingServiceCode[s].value
+            for s in payload.services
+            if s in RatingServiceCode.__members__
+        ),
+        RatingServiceCode.ups_express.value,
     )
 
-    if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
+    if (("freight" in service) or ("ground" in service)) and (
+        package.weight.value is None
+    ):
         raise RequiredFieldError("parcel.weight")
 
     request = UPSRateRequest(
@@ -189,14 +199,25 @@ def rate_request(
                         Length=package.length.value,
                         Width=package.width.value,
                         Height=package.height.value,
-                    ) if any([package.length.value, package.height.value, package.width.value]) else None,
+                    )
+                    if any(
+                        [
+                            package.length.value,
+                            package.height.value,
+                            package.width.value,
+                        ]
+                    )
+                    else None,
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=UPSWeightUnit[package.weight_unit.name].value, Description=None
+                            Code=UPSWeightUnit[package.weight_unit.name].value,
+                            Description=None,
                         ),
                         Weight=package.weight.value,
-                    ) if package.weight.value else None,
+                    )
+                    if package.weight.value
+                    else None,
                     Commodity=None,
                     PackageServiceOptions=None,
                     AdditionalHandlingIndicator=None,

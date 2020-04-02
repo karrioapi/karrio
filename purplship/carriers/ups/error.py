@@ -19,5 +19,5 @@ def _extract_error(error_node: Element, settings: Settings) -> Message:
         code=error.Code,
         message=error.Description,
         carrier=settings.carrier,
-        carrier_name=settings.carrier_name
+        carrier_name=settings.carrier_name,
     )

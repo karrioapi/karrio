@@ -160,7 +160,9 @@ def freight_rate_request(
                 ),
                 NumberOfPieces=None,
                 PackagingType=RateCodeDescriptionType(
-                    Code=FreightPackagingType[payload.parcel.packaging_type or "small_box"].value,
+                    Code=FreightPackagingType[
+                        payload.parcel.packaging_type or "small_box"
+                    ].value,
                     Description=None,
                 ),
                 FreightClass=50,

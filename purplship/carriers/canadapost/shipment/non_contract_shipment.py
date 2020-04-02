@@ -1,6 +1,11 @@
 from typing import Tuple, List, Any
 from purplship.carriers.canadapost.error import parse_error_response
-from purplship.carriers.canadapost.units import OptionCode, ServiceType, PackagePresets, PaymentType
+from purplship.carriers.canadapost.units import (
+    OptionCode,
+    ServiceType,
+    PackagePresets,
+    PaymentType,
+)
 from purplship.carriers.canadapost.utils import Settings
 from purplship.core.models import (
     Message,
@@ -44,7 +49,9 @@ def parse_non_contract_shipment_response(
 
 
 def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
-    info_node = next(iter(response.xpath(".//*[local-name() = $name]", name="shipment-info")))
+    info_node = next(
+        iter(response.xpath(".//*[local-name() = $name]", name="shipment-info"))
+    )
     label = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
     errors = parse_error_response(label, settings)
     info: NonContractShipmentInfoType = NonContractShipmentInfoType()
@@ -61,7 +68,11 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 def non_contract_shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[NonContractShipmentType]:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
@@ -83,7 +94,9 @@ def non_contract_shipment_request(
         if name in OptionCode.__members__
     }
     payment_type = (
-        PaymentType[payload.payment.paid_by].value if payload.payment is not None else None
+        PaymentType[payload.payment.paid_by].value
+        if payload.payment is not None
+        else None
     )
 
     request = NonContractShipmentType(
@@ -100,8 +113,8 @@ def non_contract_shipment_request(
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
                     country_code=payload.shipper.country_code,
-                    postal_zip_code=payload.shipper.postal_code
-                )
+                    postal_zip_code=payload.shipper.postal_code,
+                ),
             ),
             destination=DestinationType(
                 name=payload.recipient.person_name,
@@ -109,13 +122,17 @@ def non_contract_shipment_request(
                 additional_address_info=None,
                 client_voice_number=None,
                 address_details=DestinationAddressDetailsType(
-                    address_line_1=concat_str(payload.recipient.address_line1, join=True),
-                    address_line_2=concat_str(payload.recipient.address_line2, join=True),
+                    address_line_1=concat_str(
+                        payload.recipient.address_line1, join=True
+                    ),
+                    address_line_2=concat_str(
+                        payload.recipient.address_line2, join=True
+                    ),
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=payload.recipient.postal_code
-                )
+                    postal_zip_code=payload.recipient.postal_code,
+                ),
             ),
             options=optionsType(
                 option=[
@@ -127,7 +144,9 @@ def non_contract_shipment_request(
                     )
                     for code, amount in special_services.items()
                 ]
-            ) if len(special_services) > 0 else None,
+            )
+            if len(special_services) > 0
+            else None,
             parcel_characteristics=ParcelCharacteristicsType(
                 weight=package.weight.KG,
                 dimensions=dimensionsType(
@@ -143,7 +162,9 @@ def non_contract_shipment_request(
                 on_shipment=True,
                 on_exception=True,
                 on_delivery=True,
-            ) if options.notification else None,
+            )
+            if options.notification
+            else None,
             preferences=PreferencesType(
                 service_code=None,
                 show_packing_instructions=True,
@@ -185,14 +206,16 @@ def non_contract_shipment_request(
             else None,
             settlement_info=SettlementInfoType(
                 paid_by_customer=(
-                    payload.payment.account_number if payload.payment is not None else settings.customer_number
+                    payload.payment.account_number
+                    if payload.payment is not None
+                    else settings.customer_number
                 ),
                 contract_id=settings.contract_id,
                 cif_shipment=None,
                 intended_method_of_payment=payment_type,
-                promo_code=None
-            )
-        )
+                promo_code=None,
+            ),
+        ),
     )
     return Serializable(request, _request_serializer)
 
@@ -201,5 +224,5 @@ def _request_serializer(request: NonContractShipmentType) -> str:
     return export(
         request,
         name_="shipment",
-        namespacedef_='xmlns=”http://www.canadapost.ca/ws/shipment-v8”',
+        namespacedef_="xmlns=”http://www.canadapost.ca/ws/shipment-v8”",
     )

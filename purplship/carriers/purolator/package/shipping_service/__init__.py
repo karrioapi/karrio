@@ -1,8 +1,13 @@
 from typing import List, Tuple, cast, Union, Type, Dict
 from functools import partial
 from pypurolator.shipping_service_2_1_3 import (
-    CreateShipmentRequest, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
-    Error as PurolatorError, ArrayOfError
+    CreateShipmentRequest,
+    CreateShipmentResponse,
+    PIN,
+    ValidateShipmentRequest,
+    ResponseInformation,
+    Error as PurolatorError,
+    ArrayOfError,
 )
 from pypurolator.shipping_documents_service_1_3_0 import DocumentDetail
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
@@ -11,14 +16,25 @@ from purplship.core.utils.xml import Element
 from purplship.core.utils.helpers import export, to_xml, to_dict
 from purplship.carriers.purolator.utils import Settings
 from purplship.carriers.purolator.error import parse_error_response
-from purplship.carriers.purolator.package.shipping_service.get_documents import get_shipping_documents_request
-from purplship.carriers.purolator.package.shipping_service.create_shipping import create_shipping_request
+from purplship.carriers.purolator.package.shipping_service.get_documents import (
+    get_shipping_documents_request,
+)
+from purplship.carriers.purolator.package.shipping_service.create_shipping import (
+    create_shipping_request,
+)
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
 
 
-def parse_shipment_creation_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
-    details = next(iter(response.xpath(".//*[local-name() = $name]", name="CreateShipmentResponse")), None)
+def parse_shipment_creation_response(
+    response: Element, settings: Settings
+) -> Tuple[ShipmentDetails, List[Message]]:
+    details = next(
+        iter(
+            response.xpath(".//*[local-name() = $name]", name="CreateShipmentResponse")
+        ),
+        None,
+    )
     shipment = _extract_shipment(response, settings) if details is not None else None
     return shipment, parse_error_response(response, settings)
 
@@ -27,10 +43,20 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     shipment = CreateShipmentResponse()
     document = DocumentDetail()
     shipment.build(
-        next(iter(response.xpath(".//*[local-name() = $name]", name="CreateShipmentResponse")), None)
+        next(
+            iter(
+                response.xpath(
+                    ".//*[local-name() = $name]", name="CreateShipmentResponse"
+                )
+            ),
+            None,
+        )
     )
     document.build(
-        next(iter(response.xpath(".//*[local-name() = $name]", name="DocumentDetail")), None)
+        next(
+            iter(response.xpath(".//*[local-name() = $name]", name="DocumentDetail")),
+            None,
+        )
     )
 
     label = document.Data if document.Data is not None else None
@@ -43,7 +69,9 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Dict]:
+def create_shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[Dict]:
     requests = dict(
         validate=partial(_validate_shipment, payload=payload, settings=settings),
         create=partial(_create_shipment, payload=payload, settings=settings),
@@ -54,11 +82,15 @@ def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Ser
 
 def _validate_shipment(payload: ShipmentRequest, settings: Settings) -> Dict:
     return dict(
-        data=create_shipping_request(payload=payload, settings=settings, validate=True).serialize()
+        data=create_shipping_request(
+            payload=payload, settings=settings, validate=True
+        ).serialize()
     )
 
 
-def _create_shipment(validate_response: str, payload: ShipmentRequest, settings: Settings) -> Dict:
+def _create_shipment(
+    validate_response: str, payload: ShipmentRequest, settings: Settings
+) -> Dict:
     valid = str(to_dict(validate_response)) == str(True)
     return dict(
         data=create_shipping_request(payload, settings).serialize() if valid else None,
@@ -67,26 +99,35 @@ def _create_shipment(validate_response: str, payload: ShipmentRequest, settings:
                 Errors=ArrayOfError(
                     Error=[
                         PurolatorError(
-                            Description="Invalid Shipment Request",
-                            Code='000000'
+                            Description="Invalid Shipment Request", Code="000000"
                         )
                     ]
                 )
             )
-        ) if not valid else None
+        )
+        if not valid
+        else None,
     )
 
 
-def _get_shipment_label(create_response: str, payload: ShipmentRequest, settings: Settings) -> Dict:
+def _get_shipment_label(
+    create_response: str, payload: ShipmentRequest, settings: Settings
+) -> Dict:
     node = next(
-        iter(to_xml(create_response).xpath(".//*[local-name() = $name]", name="ShipmentPIN")),
-        None
+        iter(
+            to_xml(create_response).xpath(
+                ".//*[local-name() = $name]", name="ShipmentPIN"
+            )
+        ),
+        None,
     )
     pin = PIN()
     if node is not None:
         pin.build(node)
     return dict(
-        data=get_shipping_documents_request(pin.Value, payload, settings).serialize() if node is not None else None,
+        data=get_shipping_documents_request(pin.Value, payload, settings).serialize()
+        if node is not None
+        else None,
         fallback="",
-        service='document'
+        service="document",
     )

@@ -92,7 +92,9 @@ class Dimension:
 
 
 class Volume:
-    def __init__(self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None):
+    def __init__(
+        self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
+    ):
         self._side1 = side1
         self._side2 = side2
         self._side3 = side3
@@ -112,7 +114,9 @@ class Volume:
 
 
 class Girth:
-    def __init__(self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None):
+    def __init__(
+        self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
+    ):
         self._side1 = side1
         self._side2 = side2
         self._side3 = side3
@@ -176,8 +180,8 @@ class Package:
         dimensions = [self._parcel.height, self._parcel.width, self._parcel.length]
         unit = (
             (self._parcel.dimension_unit or self._preset.dimension_unit)
-            if any(dimensions) else
-            self._preset.dimension_unit
+            if any(dimensions)
+            else self._preset.dimension_unit
         )
 
         return DimensionUnit[unit]
@@ -186,8 +190,8 @@ class Package:
     def weight_unit(self):
         unit = (
             self._preset.weight_unit
-            if self._parcel.weight is None else
-            (self._parcel.weight_unit or self._preset.weight_unit)
+            if self._parcel.weight is None
+            else (self._parcel.weight_unit or self._preset.weight_unit)
         )
 
         return WeightUnit[unit]
@@ -198,49 +202,35 @@ class Package:
 
     @property
     def weight(self):
-        return Weight(
-            self._parcel.weight or self._preset.weight,
-            self.weight_unit
-        )
+        return Weight(self._parcel.weight or self._preset.weight, self.weight_unit)
 
     @property
     def width(self):
-        return Dimension(
-            self._preset.width or self._parcel.width,
-            self.dimension_unit
-        )
+        return Dimension(self._preset.width or self._parcel.width, self.dimension_unit)
 
     @property
     def height(self):
         return Dimension(
-            self._preset.height or self._parcel.height,
-            self.dimension_unit
+            self._preset.height or self._parcel.height, self.dimension_unit
         )
 
     @property
     def length(self):
         return Dimension(
-            self._preset.length or self._parcel.length,
-            self.dimension_unit
+            self._preset.length or self._parcel.length, self.dimension_unit
         )
 
     @property
     def girth(self):
-        return Girth(
-            self.width, self.length, self.height
-        )
+        return Girth(self.width, self.length, self.height)
 
     @property
     def volume(self):
-        return Volume(
-            self.width, self.length, self.height
-        )
+        return Volume(self.width, self.length, self.height)
 
     @property
     def thickness(self):
-        return Dimension(
-            self._preset.thickness, self.dimension_unit
-        )
+        return Dimension(self._preset.thickness, self.dimension_unit)
 
 
 class Options:
@@ -286,8 +276,8 @@ class Options:
 
 
 class PrinterType(Enum):
-    regular = 'Regular'  # Regular
-    thermal = 'Thermal'  # Thermal
+    regular = "Regular"  # Regular
+    thermal = "Thermal"  # Thermal
 
 
 class Currency(Enum):

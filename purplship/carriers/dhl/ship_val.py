@@ -48,7 +48,10 @@ from purplship.carriers.dhl.error import parse_error_response
 def parse_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    air_way_bill = next(iter(response.xpath(".//*[local-name() = $name]", name="AirwayBillNumber")), None)
+    air_way_bill = next(
+        iter(response.xpath(".//*[local-name() = $name]", name="AirwayBillNumber")),
+        None,
+    )
     return (
         _extract_shipment(response, settings) if air_way_bill is not None else None,
         parse_error_response(response, settings),
@@ -59,7 +62,7 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
     shipment = ShipmentResponse()
     shipment.build(shipment_node)
     label_image = next(iter(shipment.LabelImage), None)
-    label = encodebytes(cast(LabelImage, label_image).OutputImage).decode('utf-8')
+    label = encodebytes(cast(LabelImage, label_image).OutputImage).decode("utf-8")
 
     return ShipmentDetails(
         carrier=settings.carrier,
@@ -72,7 +75,11 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[DHLShipmentRequest]:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
@@ -81,11 +88,12 @@ def shipment_request(
     options = Options(payload.options)
     product = ProductCode[payload.service].value
     delivery_type = next(
-        (d for d in DeliveryType if d.name in payload.options.keys()),
-        None
+        (d for d in DeliveryType if d.name in payload.options.keys()), None
     )
     special_services = [
-        ServiceCode[s].value for s in payload.options.keys() if s in ServiceCode.__members__
+        ServiceCode[s].value
+        for s in payload.options.keys()
+        if s in ServiceCode.__members__
     ]
     has_payment_config = payload.payment is not None
     has_customs_config = payload.customs is not None
@@ -102,15 +110,25 @@ def shipment_request(
         LatinResponseInd=None,
         Billing=Billing(
             ShipperAccountNumber=settings.account_number,
-            BillingAccountNumber=payload.payment.account_number if has_payment_config else None,
-            ShippingPaymentType=PaymentType[payload.payment.paid_by].value if has_payment_config else None,
-            DutyAccountNumber=payload.customs.duty.account_number if has_customs_config else None,
-            DutyPaymentType=PaymentType[payload.customs.duty.paid_by].value if has_customs_config else None,
+            BillingAccountNumber=payload.payment.account_number
+            if has_payment_config
+            else None,
+            ShippingPaymentType=PaymentType[payload.payment.paid_by].value
+            if has_payment_config
+            else None,
+            DutyAccountNumber=payload.customs.duty.account_number
+            if has_customs_config
+            else None,
+            DutyPaymentType=PaymentType[payload.customs.duty.paid_by].value
+            if has_customs_config
+            else None,
         ),
         Consignee=Consignee(
             CompanyName=payload.recipient.company_name,
             SuiteDepartmentName=None,
-            AddressLine=concat_str(payload.recipient.address_line1, payload.recipient.address_line2),
+            AddressLine=concat_str(
+                payload.recipient.address_line1, payload.recipient.address_line2
+            ),
             City=payload.recipient.city,
             Division=None,
             DivisionCode=payload.recipient.state_code,
@@ -144,7 +162,9 @@ def shipment_request(
         Shipper=Shipper(
             ShipperID=None,
             RegisteredAccount=settings.account_number,
-            AddressLine=concat_str(payload.shipper.address_line1, payload.shipper.address_line2),
+            AddressLine=concat_str(
+                payload.shipper.address_line1, payload.shipper.address_line2
+            ),
             CompanyName=payload.shipper.company_name,
             PostalCode=payload.shipper.postal_code,
             CountryCode=payload.shipper.country_code,
@@ -174,7 +194,9 @@ def shipment_request(
                 Piece=[
                     Piece(
                         PieceID=payload.parcel.id,
-                        PackageType=PackageType[package.packaging_type or "your_packaging"].value,
+                        PackageType=PackageType[
+                            package.packaging_type or "your_packaging"
+                        ].value,
                         Depth=package.length.value,
                         Width=package.width.value,
                         Height=package.height.value,
@@ -192,7 +214,9 @@ def shipment_request(
             PackageType=PackageType[package.packaging_type].value,
             IsDutiable="Y" if payload.customs is not None else "N",
             InsuredAmount=options.insurance.amount if options.insurance else None,
-            ShipmentCharges=options.cash_on_delivery.amount if options.cash_on_delivery else None,
+            ShipmentCharges=options.cash_on_delivery.amount
+            if options.cash_on_delivery
+            else None,
             DoorTo=delivery_type,
             GlobalProductCode=product,
             LocalProductCode=product,
@@ -213,7 +237,9 @@ def shipment_request(
         ],
         Notification=Notification(
             EmailAddress=options.notification.email or payload.shipper.email,
-        ) if options.notification else None,
+        )
+        if options.notification
+        else None,
         LabelImageFormat="PDF",
         DocImages=DocImages(
             DocImage=[

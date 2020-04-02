@@ -17,14 +17,14 @@ class Settings(BaseSettings):
 
     @property
     def carrier(self):
-        return 'fedex'
+        return "fedex"
 
     @property
     def server_url(self):
         return (
             "https://wsbeta.fedex.com:443/web-services"
-            if self.test else
-            "https://ws.fedex.com:443/web-services"
+            if self.test
+            else "https://ws.fedex.com:443/web-services"
         )
 
     @property

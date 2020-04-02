@@ -2,7 +2,7 @@ import attr
 import logging
 from typing import Any, Callable, Generic, TypeVar
 
-logger = logging.getLogger('purplship')
+logger = logging.getLogger("purplship")
 
 XML_str = str
 T = TypeVar("T")

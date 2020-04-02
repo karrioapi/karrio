@@ -11,18 +11,36 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    fedex_envelope_legal_size = PackagePreset(weight=1, width=9.5, height=15.5, packaging_type="envelope")
-    fedex_envelope_without_pouch = PackagePreset(weight=1, width=9.5, height=15.5, packaging_type="envelope")
-    fedex_padded_pak = PackagePreset(weight=2.2, width=11.75, height=14.75, packaging_type="pak")
-    fedex_polyethylene_pak = PackagePreset(weight=2.2, width=12, height=15.5, packaging_type="pak")
-    fedex_clinical_pak = PackagePreset(weight=2.2, width=13.5, height=18, packaging_type="pak")
-    fedex_un_3373_pak = PackagePreset(weight=2.2, width=13.5, height=18, packaging_type="pak")
-    fedex_small_box = PackagePreset(weight=20, width=12.25, height=10.9, length=1.5, packaging_type="small_box")
+    fedex_envelope_legal_size = PackagePreset(
+        weight=1, width=9.5, height=15.5, packaging_type="envelope"
+    )
+    fedex_envelope_without_pouch = PackagePreset(
+        weight=1, width=9.5, height=15.5, packaging_type="envelope"
+    )
+    fedex_padded_pak = PackagePreset(
+        weight=2.2, width=11.75, height=14.75, packaging_type="pak"
+    )
+    fedex_polyethylene_pak = PackagePreset(
+        weight=2.2, width=12, height=15.5, packaging_type="pak"
+    )
+    fedex_clinical_pak = PackagePreset(
+        weight=2.2, width=13.5, height=18, packaging_type="pak"
+    )
+    fedex_un_3373_pak = PackagePreset(
+        weight=2.2, width=13.5, height=18, packaging_type="pak"
+    )
+    fedex_small_box = PackagePreset(
+        weight=20, width=12.25, height=10.9, length=1.5, packaging_type="small_box"
+    )
     fedex_medium_box = PackagePreset(weight=20, width=13.25, height=11.5, length=2.38)
-    fedex_large_box = PackagePreset(weight=20, width=17.88, height=12.38, length=3, packaging_type="large_box")
+    fedex_large_box = PackagePreset(
+        weight=20, width=17.88, height=12.38, length=3, packaging_type="large_box"
+    )
     fedex_10_kg_box = PackagePreset(weight=10, width=15.81, height=12.94, length=10.19)
     fedex_25_kg_box = PackagePreset(weight=25, width=21.56, height=16.56, length=13.19)
-    fedex_tube = PackagePreset(weight=20, width=38, height=6, length=6, packaging_type="tube")
+    fedex_tube = PackagePreset(
+        weight=20, width=38, height=6, length=6, packaging_type="tube"
+    )
     fedex_envelope = fedex_envelope_legal_size
     fedex_pak = fedex_padded_pak
 
@@ -110,21 +128,33 @@ class ServiceType(Enum):
     fedex_3_day_freight = "FEDEX_3_DAY_FREIGHT"
     fedex_cargo_airport_to_airport = "FEDEX_CARGO_AIRPORT_TO_AIRPORT"
     fedex_cargo_freight_forwarding = "FEDEX_CARGO_FREIGHT_FORWARDING"
-    fedex_cargo_international_express_freight = "FEDEX_CARGO_INTERNATIONAL_EXPRESS_FREIGHT"
+    fedex_cargo_international_express_freight = (
+        "FEDEX_CARGO_INTERNATIONAL_EXPRESS_FREIGHT"
+    )
     fedex_cargo_international_premium = "FEDEX_CARGO_INTERNATIONAL_PREMIUM"
     fedex_cargo_mail = "FEDEX_CARGO_MAIL"
     fedex_cargo_registered_mail = "FEDEX_CARGO_REGISTERED_MAIL"
     fedex_cargo_surface_mail = "FEDEX_CARGO_SURFACE_MAIL"
     fedex_custom_critical_air_expedite = "FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE"
-    fedex_custom_critical_air_expedite_exclusive_use = "FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_EXCLUSIVE_USE"
-    fedex_custom_critical_air_expedite_network = "FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_NETWORK"
+    fedex_custom_critical_air_expedite_exclusive_use = (
+        "FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_EXCLUSIVE_USE"
+    )
+    fedex_custom_critical_air_expedite_network = (
+        "FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_NETWORK"
+    )
     fedex_custom_critical_charter_air = "FEDEX_CUSTOM_CRITICAL_CHARTER_AIR"
     fedex_custom_critical_point_to_point = "FEDEX_CUSTOM_CRITICAL_POINT_TO_POINT"
     fedex_custom_critical_surface_expedite = "FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE"
-    fedex_custom_critical_surface_expedite_exclusive_use = "FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE_EXCLUSIVE_USE"
+    fedex_custom_critical_surface_expedite_exclusive_use = (
+        "FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE_EXCLUSIVE_USE"
+    )
     fedex_custom_critical_temp_assure_air = "FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_AIR"
-    fedex_custom_critical_temp_assure_validated_air = "FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_VALIDATED_AIR"
-    fedex_custom_critical_white_glove_services = "FEDEX_CUSTOM_CRITICAL_WHITE_GLOVE_SERVICES"
+    fedex_custom_critical_temp_assure_validated_air = (
+        "FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_VALIDATED_AIR"
+    )
+    fedex_custom_critical_white_glove_services = (
+        "FEDEX_CUSTOM_CRITICAL_WHITE_GLOVE_SERVICES"
+    )
     fedex_distance_deferred = "FEDEX_DISTANCE_DEFERRED"
     fedex_express_saver = "FEDEX_EXPRESS_SAVER"
     fedex_first_freight = "FEDEX_FIRST_FREIGHT"
@@ -183,7 +213,9 @@ class SpecialServiceType(Flag):
     exhibition_pickup = "EXHIBITION_PICKUP"
     expedited_alternate_delivery_route = "EXPEDITED_ALTERNATE_DELIVERY_ROUTE"
     expedited_one_day_earlier = "EXPEDITED_ONE_DAY_EARLIER"
-    expedited_service_monitoring_and_delivery = "EXPEDITED_SERVICE_MONITORING_AND_DELIVERY"
+    expedited_service_monitoring_and_delivery = (
+        "EXPEDITED_SERVICE_MONITORING_AND_DELIVERY"
+    )
     expedited_standard_day_early_delivery = "EXPEDITED_STANDARD_DAY_EARLY_DELIVERY"
     extra_labor = "EXTRA_LABOR"
     extreme_length = "EXTREME_LENGTH"
@@ -201,7 +233,9 @@ class SpecialServiceType(Flag):
     inside_pickup = "INSIDE_PICKUP"
     international_controlled_export_service = "INTERNATIONAL_CONTROLLED_EXPORT_SERVICE"
     international_mail_service = "INTERNATIONAL_MAIL_SERVICE"
-    international_traffic_in_arms_regulations = "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"
+    international_traffic_in_arms_regulations = (
+        "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS"
+    )
     liftgate_delivery = "LIFTGATE_DELIVERY"
     liftgate_pickup = "LIFTGATE_PICKUP"
     limited_access_delivery = "LIMITED_ACCESS_DELIVERY"
@@ -226,7 +260,9 @@ class SpecialServiceType(Flag):
     regional_mall_pickup = "REGIONAL_MALL_PICKUP"
     return_shipment = "RETURN_SHIPMENT"
     returns_clearance = "RETURNS_CLEARANCE"
-    returns_clearance_special_routing_required = "RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED"
+    returns_clearance_special_routing_required = (
+        "RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED"
+    )
     saturday_delivery = "SATURDAY_DELIVERY"
     saturday_pickup = "SATURDAY_PICKUP"
     shipment_assembly = "SHIPMENT_ASSEMBLY"
@@ -247,11 +283,11 @@ class SpecialServiceType(Flag):
 
 
 class RateType(Enum):
-    payor_account_package = "PAYOR_ACCOUNT_PACKAGE"   
-    payor_account_shipment = "PAYOR_ACCOUNT_SHIPMENT"  
-    payor_list_package = "PAYOR_LIST_PACKAGE"      
-    payor_list_shipment = "PAYOR_LIST_SHIPMENT"     
+    payor_account_package = "PAYOR_ACCOUNT_PACKAGE"
+    payor_account_shipment = "PAYOR_ACCOUNT_SHIPMENT"
+    payor_list_package = "PAYOR_LIST_PACKAGE"
+    payor_list_shipment = "PAYOR_LIST_SHIPMENT"
     preferred_account_package = "PREFERRED_ACCOUNT_PACKAGE"
     preferred_account_shipment = "PREFERRED_ACCOUNT_SHIPMENT"
-    preferred_list_package = "PREFERRED_LIST_PACKAGE"  
-    preferred_list_shipment = "PREFERRED_LIST_SHIPMENT" 
+    preferred_list_package = "PREFERRED_LIST_PACKAGE"
+    preferred_list_shipment = "PREFERRED_LIST_SHIPMENT"

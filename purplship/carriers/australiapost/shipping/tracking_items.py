@@ -5,7 +5,12 @@ from typing import List, Tuple, Callable
 from purplship.carriers.australiapost.error import parse_error_response
 from purplship.core.utils import Serializable, format_date, format_time
 from purplship.carriers.australiapost.utils import Settings
-from purplship.core.models import TrackingRequest, Message, TrackingEvent, TrackingDetails
+from purplship.core.models import (
+    TrackingRequest,
+    Message,
+    TrackingEvent,
+    TrackingDetails,
+)
 from pyaustraliapost.track_item import TrackingResponse, TrackingResult
 
 
@@ -30,7 +35,7 @@ def parse_track_items_response(
 
 
 def _extract_tracking(
-    settings: Settings
+    settings: Settings,
 ) -> Callable[[List[TrackingDetails], TrackingResult], List[TrackingDetails]]:
     def extract(
         tracking: List[TrackingDetails], tracking_result: TrackingResult
@@ -44,8 +49,8 @@ def _extract_tracking(
                 tracking_number=tracking_result.tracking_id,
                 events=[
                     TrackingEvent(
-                        date=format_date(event.date, '%Y-%m-%dT%H:%M:%S%z'),
-                        time=format_time(event.date, '%Y-%m-%dT%H:%M:%S%z'),
+                        date=format_date(event.date, "%Y-%m-%dT%H:%M:%S%z"),
+                        time=format_time(event.date, "%Y-%m-%dT%H:%M:%S%z"),
                         location=event.location,
                         description=event.description,
                     )

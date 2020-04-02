@@ -69,19 +69,27 @@ class Proxy(BaseProxy):
             url = next(
                 (
                     link.get("href")
-                    for link in to_xml(response).xpath(".//*[local-name() = $name]", name="link")
+                    for link in to_xml(response).xpath(
+                        ".//*[local-name() = $name]", name="link"
+                    )
                     if link.get("rel") == "label"
                 ),
-                None
+                None,
             )
-            return http(
-                decoder=lambda b: base64.encodebytes(b).decode('utf-8'),
-                url=url,
-                headers={
-                    "Accept": "application/pdf",
-                    "Authorization": f"Basic {self.settings.authorization}",
-                },
-                method="GET",
-            ) if url else ""
+            return (
+                http(
+                    decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
+                    url=url,
+                    headers={
+                        "Accept": "application/pdf",
+                        "Authorization": f"Basic {self.settings.authorization}",
+                    },
+                    method="GET",
+                )
+                if url
+                else ""
+            )
 
-        return Deserializable(bundle_xml([response, f"<label>{fetch_label()}</label>"]), to_xml)
+        return Deserializable(
+            bundle_xml([response, f"<label>{fetch_label()}</label>"]), to_xml
+        )

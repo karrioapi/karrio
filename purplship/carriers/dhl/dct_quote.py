@@ -24,7 +24,7 @@ from purplship.carriers.dhl.units import (
     DCTPackageType,
     Dimension,
     WeightUnit,
-    PackagePresets
+    PackagePresets,
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -59,12 +59,13 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     )
     DlvyDateTime = qtdshp.DeliveryDate[0].DlvyDateTime
     delivery_date = (
-        datetime.strptime(str(DlvyDateTime), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
-        if DlvyDateTime is not None else None
+        datetime.strptime(str(DlvyDateTime), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+        if DlvyDateTime is not None
+        else None
     )
     service_name = next(
         (p.name for p in Product if p.value in qtdshp.LocalProductName),
-        qtdshp.LocalProductName
+        qtdshp.LocalProductName,
     )
     return RateDetails(
         carrier=settings.carrier,
@@ -88,7 +89,11 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 
 
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
@@ -125,14 +130,14 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 DimensionUnit=Dimension[package.dimension_unit.name].value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
-                IsDutiable=(
-                    "N" if payload.parcel.is_document else "Y"
-                ),
+                IsDutiable=("N" if payload.parcel.is_document else "Y"),
                 Pieces=PiecesType(
                     Piece=[
                         PieceType(
                             PieceID=payload.parcel.id,
-                            PackageTypeCode=DCTPackageType[package.packaging_type or "your_packaging"].value,
+                            PackageTypeCode=DCTPackageType[
+                                package.packaging_type or "your_packaging"
+                            ].value,
                             Depth=package.length.value,
                             Width=package.width.value,
                             Height=package.height.value,

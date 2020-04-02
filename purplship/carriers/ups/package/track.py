@@ -3,7 +3,12 @@ from pyups.common import RequestType, TransactionReferenceType
 from pyups.track_web_service_schema import TrackRequest, ShipmentType, ActivityType
 from purplship.core.utils import export, Serializable, Element, format_date, format_time
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.models import TrackingEvent, TrackingRequest, TrackingDetails, Message
+from purplship.core.models import (
+    TrackingEvent,
+    TrackingRequest,
+    TrackingDetails,
+    Message,
+)
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
@@ -36,8 +41,8 @@ def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDet
         events=list(
             map(
                 lambda a: TrackingEvent(
-                    date=format_date(a.Date, '%Y%m%d'),
-                    time=format_time(a.Time, '%H%M%S'),
+                    date=format_date(a.Date, "%Y%m%d"),
+                    time=format_time(a.Time, "%H%M%S"),
                     code=a.Status.Code if a.Status else None,
                     location=(
                         a.ActivityLocation.Address.City

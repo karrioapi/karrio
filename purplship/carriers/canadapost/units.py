@@ -11,28 +11,46 @@ class PackagePreset(BasePackagePreset):
 
 class PackagePresets(Flag):
     canadapost_mailing_box = PackagePreset(width=10.2, height=15.2)
-    canadapost_extra_small_mailing_box = PackagePreset(width=14.0, height=14.0, length=14.0)
+    canadapost_extra_small_mailing_box = PackagePreset(
+        width=14.0, height=14.0, length=14.0
+    )
     canadapost_small_mailing_box = PackagePreset(width=28.6, height=22.9, length=6.4)
     canadapost_medium_mailing_box = PackagePreset(width=31.0, height=23.5, length=13.3)
     canadapost_large_mailing_box = PackagePreset(width=38.1, height=30.5, length=9.5)
-    canadapost_extra_large_mailing_box = PackagePreset(width=40.0, height=30.5, length=21.6)
-    canadapost_corrugated_small_box = PackagePreset(width=42.0, height=32.0, length=32.0)
-    canadapost_corrugated_medium_box = PackagePreset(width=46.0, height=38.0, length=32.0)
-    canadapost_corrugated_large_box = PackagePreset(width=46.0, height=46.0, length=40.6)
-    canadapost_xexpresspost_certified_envelope = PackagePreset(width=26.0, height=15.9, weight=0.5, thickness=1.5)
-    canadapost_xexpresspost_national_large_envelope = PackagePreset(width=40.0, height=29.2, weight=1.36, thickness=1.5)
-    canadapost_xexpresspost_regional_small_envelope = PackagePreset(width=26.0, height=15.9, weight=0.5, thickness=1.5)
-    canadapost_xexpresspost_regional_large_envelope = PackagePreset(width=40.0, height=29.2, weight=1.36, thickness=1.5)
+    canadapost_extra_large_mailing_box = PackagePreset(
+        width=40.0, height=30.5, length=21.6
+    )
+    canadapost_corrugated_small_box = PackagePreset(
+        width=42.0, height=32.0, length=32.0
+    )
+    canadapost_corrugated_medium_box = PackagePreset(
+        width=46.0, height=38.0, length=32.0
+    )
+    canadapost_corrugated_large_box = PackagePreset(
+        width=46.0, height=46.0, length=40.6
+    )
+    canadapost_xexpresspost_certified_envelope = PackagePreset(
+        width=26.0, height=15.9, weight=0.5, thickness=1.5
+    )
+    canadapost_xexpresspost_national_large_envelope = PackagePreset(
+        width=40.0, height=29.2, weight=1.36, thickness=1.5
+    )
+    canadapost_xexpresspost_regional_small_envelope = PackagePreset(
+        width=26.0, height=15.9, weight=0.5, thickness=1.5
+    )
+    canadapost_xexpresspost_regional_large_envelope = PackagePreset(
+        width=40.0, height=29.2, weight=1.36, thickness=1.5
+    )
 
 
 class PrinterType(Enum):
-    regular = '8.5x11'
-    thermal = '4x6'
+    regular = "8.5x11"
+    thermal = "4x6"
 
 
 class LablelEncoding(Enum):
-    pdf = 'PDF'
-    zpl = 'ZPL'
+    pdf = "PDF"
+    zpl = "ZPL"
 
 
 class PaymentType(Flag):

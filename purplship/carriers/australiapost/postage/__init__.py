@@ -33,7 +33,9 @@ PostageRateRequest = Union[
 ]
 
 
-def parse_service_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
+def parse_service_response(
+    response: dict, settings: Settings
+) -> Tuple[List[RateDetails], List[Message]]:
     services: List[Service] = (
         ServiceResponse(**response).services.service if "services" in response else []
     )
@@ -54,7 +56,9 @@ def _extract_quote(service: Service, settings: Settings) -> RateDetails:
     )
 
 
-def calculate_postage_request(payload: RateRequest, settings: Settings) -> Serializable[PostageRateRequest]:
+def calculate_postage_request(
+    payload: RateRequest, settings: Settings
+) -> Serializable[PostageRateRequest]:
     if payload.shipper.country_code and payload.shipper.country_code != Country.AU.name:
         raise OriginNotServicedError(
             payload.shipper.country_code, settings.carrier_name

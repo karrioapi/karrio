@@ -212,7 +212,7 @@ class Notification:
     """notification option type."""
 
     email: str = None  # Only defined if other email than shipper
-    locale: str = 'en'
+    locale: str = "en"
 
 
 @attr.s(auto_attribs=True)

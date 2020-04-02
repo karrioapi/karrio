@@ -105,9 +105,7 @@ RatePayload = {
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcel": {
-        "package_preset": "dhl_express_tube",
-    },
+    "parcel": {"package_preset": "dhl_express_tube",},
     "services": ["dhl_express_worldwide_nondoc"],
     "options": {"currency": "CAD"},
 }

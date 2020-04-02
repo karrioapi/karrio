@@ -9,15 +9,18 @@ from purplship.carriers.sendle.units import Plan, PackagePresets
 
 
 def international_quote_request(payload: RateRequest) -> InternationalParcelQuote:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
     plan = next(
-        (Plan[s].value for s in payload.services if s in Plan.__members__),
-        None
+        (Plan[s].value for s in payload.services if s in Plan.__members__), None
     )
     return InternationalParcelQuote(
         pickup_suburb=concat_str(

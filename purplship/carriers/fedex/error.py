@@ -13,7 +13,9 @@ def parse_error_response(response: Element, settings: Settings) -> List[Message]
     return reduce(_extract_error(settings), notifications, [])
 
 
-def _extract_error(settings: Settings) -> Callable[[List[Message], Element], List[Message]]:
+def _extract_error(
+    settings: Settings,
+) -> Callable[[List[Message], Element], List[Message]]:
     def extract(messages: List[Message], notification_node: Element) -> List[Message]:
         notification = Notification()
         notification.build(notification_node)

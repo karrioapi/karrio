@@ -12,10 +12,10 @@ from purplship.core.models import (
     PickupRequest,
     PickupCancellationRequest,
     PickupUpdateRequest,
-    Message
+    Message,
 )
 
-logger = logging.getLogger('purplship')
+logger = logging.getLogger("purplship")
 
 T = TypeVar("T")
 S = TypeVar("S")
@@ -33,12 +33,18 @@ def abort(gateway: Gateway, error: Exception) -> IDeserialize:
     logger.exception(error)
 
     def deserialize():
-        return ([], [Message(
-            code="500",
-            carrier=gateway.settings.carrier,
-            carrier_name=gateway.settings.carrier_name,
-            message=f'{error}'
-        )])
+        return (
+            [],
+            [
+                Message(
+                    code="500",
+                    carrier=gateway.settings.carrier,
+                    carrier_name=gateway.settings.carrier_name,
+                    message=f"{error}",
+                )
+            ],
+        )
+
     return IDeserialize(deserialize)
 
 

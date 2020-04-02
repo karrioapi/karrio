@@ -8,19 +8,19 @@ class Settings(BaseSettings):
 
     user_token: str
     account_number: str
-    language: str = 'en'
+    language: str = "en"
     id: str = None
 
     @property
     def carrier(self):
-        return 'purolator'
+        return "purolator"
 
     @property
     def server_url(self):
         return (
             "https://devwebservices.purolator.com"
-            if self.test else
-            "https://webservices.purolator.com"
+            if self.test
+            else "https://webservices.purolator.com"
         )
 
 

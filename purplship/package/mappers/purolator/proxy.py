@@ -7,7 +7,7 @@ from pysoap.envelope import Envelope
 
 SHIPPING_SERVICES = dict(
     shipping="/EWS/V2/Shipping/ShippingService.asmx",
-    document="/PWS/V1/ShippingDocuments/ShippingDocumentsService.asmx"
+    document="/PWS/V1/ShippingDocuments/ShippingDocumentsService.asmx",
 )
 
 
@@ -32,8 +32,12 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def create_shipment(self, request: Serializable[Dict[str, Callable]]) -> Deserializable[str]:
-        def apply(data: str = None, fallback: str = None, service: str = "shipping") -> str:
+    def create_shipment(
+        self, request: Serializable[Dict[str, Callable]]
+    ) -> Deserializable[str]:
+        def apply(
+            data: str = None, fallback: str = None, service: str = "shipping"
+        ) -> str:
             return (
                 http(
                     url=f"{self.settings.server_url}{SHIPPING_SERVICES[service]}",
@@ -41,15 +45,13 @@ class Proxy(BaseProxy):
                     headers={"Content-Type": "application/xml"},
                     method="POST",
                 )
-                if data else fallback
+                if data
+                else fallback
             )
 
         requests: Dict[str, Callable] = request.serialize()
-        validate_response = apply(**requests.get('validate')())
-        create_response = apply(**requests.get('create')(validate_response))
-        document_response = apply(**requests.get('document')(create_response))
+        validate_response = apply(**requests.get("validate")())
+        create_response = apply(**requests.get("create")(validate_response))
+        document_response = apply(**requests.get("document")(create_response))
 
-        return Deserializable(
-            bundle_xml([create_response, document_response]),
-            to_xml
-        )
+        return Deserializable(bundle_xml([create_response, document_response]), to_xml)

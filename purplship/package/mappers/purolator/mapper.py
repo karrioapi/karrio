@@ -13,9 +13,12 @@ from purplship.core.models import (
     Message,
 )
 from purplship.carriers.purolator.package import (
-    parse_track_package_response, track_package_by_pin_request,
-    parse_full_estimate_response, get_full_estimate_request,
-    parse_shipment_creation_response, create_shipment_request
+    parse_track_package_response,
+    track_package_by_pin_request,
+    parse_full_estimate_response,
+    get_full_estimate_request,
+    parse_shipment_creation_response,
+    create_shipment_request,
 )
 
 
@@ -27,10 +30,14 @@ class Mapper(BaseMapper):
     def create_rate_request(self, payload: RateRequest) -> Serializable[Element]:
         return get_full_estimate_request(payload, self.settings)
 
-    def create_tracking_request(self, payload: TrackingRequest) -> Serializable[Element]:
+    def create_tracking_request(
+        self, payload: TrackingRequest
+    ) -> Serializable[Element]:
         return track_package_by_pin_request(payload, self.settings)
 
-    def create_shipment_request(self, payload: ShipmentRequest) -> Serializable[Element]:
+    def create_shipment_request(
+        self, payload: ShipmentRequest
+    ) -> Serializable[Element]:
         return create_shipment_request(payload, self.settings)
 
     """Response Parsers"""

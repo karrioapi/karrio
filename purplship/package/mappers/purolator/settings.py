@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     user_token: str
     account_number: str
-    language: str = 'en'
+    language: str = "en"
     id: str = None
     test: bool = False
     carrier_name: str = "Purolator"

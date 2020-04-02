@@ -20,7 +20,7 @@ from pyups.freight_ship_web_service_schema import (
     CODType,
     CODValueType,
     DocumentType,
-    ImageFormsType
+    ImageFormsType,
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -40,7 +40,7 @@ from purplship.carriers.ups.units import (
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
 
-NOTIFICATION_EVENT_TYPES = ['001', '002', '003', '004']
+NOTIFICATION_EVENT_TYPES = ["001", "002", "003", "004"]
 
 
 def parse_freight_ship_response(
@@ -56,7 +56,11 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
     shipmentResponse.build(shipment_node)
     shipment: ShipmentResultsType = shipmentResponse.ShipmentResults
     document = cast(DocumentType, shipment.Documents)
-    label = cast(ImageFormsType, document.Image).GraphicImage if document is not None else None
+    label = (
+        cast(ImageFormsType, document.Image).GraphicImage
+        if document is not None
+        else None
+    )
 
     return ShipmentDetails(
         carrier=settings.carrier,
@@ -66,12 +70,16 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
     )
 
 
-def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serializable[FreightShipRequest]:
+def freight_ship_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[FreightShipRequest]:
     dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
     weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
     options = Options(payload.options)
     service = ShippingServiceCode[payload.service].value
-    freight_class = FreightClass[payload.options.get("ups_freight_class", "ups_freight_class_50")].value
+    freight_class = FreightClass[
+        payload.options.get("ups_freight_class", "ups_freight_class_50")
+    ].value
 
     request = FreightShipRequest(
         Request=common.RequestType(
@@ -131,7 +139,9 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
             ),
             PaymentInformation=None,
             ManufactureInformation=None,
-            Service=ShipCodeDescriptionType(Code=service) if service is not None else None,
+            Service=ShipCodeDescriptionType(Code=service)
+            if service is not None
+            else None,
             HandlingUnitOne=None,
             HandlingUnitTwo=None,
             ExistingShipmentID=None,
@@ -179,22 +189,27 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
             ShipmentServiceOptions=ShipmentServiceOptionsType(
                 EMailInformation=[
                     EMailNotificationType(
-                        EMailAddress=options.notification.email or payload.shipper.email,
-                        EventType=NOTIFICATION_EVENT_TYPES
+                        EMailAddress=options.notification.email
+                        or payload.shipper.email,
+                        EventType=NOTIFICATION_EVENT_TYPES,
                     )
-                ] if options.notification else None,
+                ]
+                if options.notification
+                else None,
                 PickupOptions=None,
                 DeliveryOptions=None,
                 OverSeasLeg=None,
                 COD=CODType(
                     CODValue=CODValueType(
                         CurrencyCode=options.currency or "USD",
-                        MonetaryValue=options.cash_on_delivery.amount
+                        MonetaryValue=options.cash_on_delivery.amount,
                     ),
                     CODPaymentMethod=None,
                     CODBillingOption=None,
-                    RemitTo=None
-                ) if options.cash_on_delivery else None,
+                    RemitTo=None,
+                )
+                if options.cash_on_delivery
+                else None,
                 DangerousGoods=None,
                 SortingAndSegregating=None,
                 DeclaredValue=None,
@@ -207,7 +222,9 @@ def freight_ship_request(payload: ShipmentRequest, settings: Settings) -> Serial
                 FreezableProtectionIndicator=None,
                 ExtremeLengthIndicator=None,
                 LinearFeet=None,
-            ) if options.has_content else None,
+            )
+            if options.has_content
+            else None,
             PickupRequest=None,
             Documents=None,
             ITNNumber=None,

@@ -1,8 +1,19 @@
 from typing import List, Optional, Tuple
 from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.tracking_response import AWBInfo
-from purplship.core.utils import export, Serializable, Element, format_datetime, format_time
-from purplship.core.models import TrackingEvent, TrackingDetails, TrackingRequest, Message
+from purplship.core.utils import (
+    export,
+    Serializable,
+    Element,
+    format_datetime,
+    format_time,
+)
+from purplship.core.models import (
+    TrackingEvent,
+    TrackingDetails,
+    TrackingRequest,
+    Message,
+)
 from .utils import Settings
 from .error import parse_error_response
 

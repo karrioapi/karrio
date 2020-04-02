@@ -15,13 +15,13 @@ class Settings(BaseSettings):
     def server_url(self):
         return (
             "https://digitalapi.auspost.com.au"
-            if self.test else
-            "https://digitalapi.auspost.com.au"
+            if self.test
+            else "https://digitalapi.auspost.com.au"
         )
 
     @property
     def carrier(self):
-        return 'australiapost'
+        return "australiapost"
 
     @property
     def authorization(self):

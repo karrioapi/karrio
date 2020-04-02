@@ -10,7 +10,12 @@ from pyfedex.track_service_v18 import (
 )
 from purplship.core.utils import export, Serializable, Element, format_date, format_time
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.models import TrackingRequest, TrackingDetails, TrackingEvent, Message
+from purplship.core.models import (
+    TrackingRequest,
+    TrackingDetails,
+    TrackingEvent,
+    Message,
+)
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
@@ -43,8 +48,8 @@ def _extract_tracking(
         events=list(
             map(
                 lambda e: TrackingEvent(
-                    date=format_date(e.Timestamp, '%Y-%m-%d %H:%M:%S%z'),
-                    time=format_time(e.Timestamp, '%Y-%m-%d %H:%M:%S%z'),
+                    date=format_date(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                    time=format_time(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
                     code=e.EventType,
                     location=e.ArrivalLocation,
                     description=e.EventDescription,

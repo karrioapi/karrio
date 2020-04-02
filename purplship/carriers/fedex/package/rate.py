@@ -25,7 +25,9 @@ from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
 
 
-def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
+def parse_rate_response(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Message]]:
     rate_reply = response.xpath(".//*[local-name() = $name]", name="RateReplyDetails")
     rate_details: List[RateDetails] = [
         _extract_quote(detail_node, settings) for detail_node in rate_reply
@@ -78,7 +80,9 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
         service=ServiceType(detail.ServiceType).name,
         currency=currency_,
         estimated_delivery=(
-            format_date(delivery_, "%Y-%m-%dT%H:%M:%S") if delivery_ is not None else None
+            format_date(delivery_, "%Y-%m-%dT%H:%M:%S")
+            if delivery_ is not None
+            else None
         ),
         base_charge=decimal(shipmentDetail.TotalBaseCharge.Amount),
         total_charge=decimal(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
@@ -91,15 +95,23 @@ def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDet
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[FedexRateRequest]:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
     service = next(
-        (ServiceType[s].value for s in payload.services if s in ServiceType.__members__),
-        None
+        (
+            ServiceType[s].value
+            for s in payload.services
+            if s in ServiceType.__members__
+        ),
+        None,
     )
     options = Options(payload.options)
 
@@ -116,11 +128,12 @@ def rate_request(
             ShipTimestamp=datetime.now(),
             DropoffType="REGULAR_PICKUP",
             ServiceType=service,
-            PackagingType=PackagingType[package.packaging_type or "your_packaging"].value,
+            PackagingType=PackagingType[
+                package.packaging_type or "your_packaging"
+            ].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
-                Units=package.weight_unit.value,
-                Value=package.weight.value,
+                Units=package.weight_unit.value, Value=package.weight.value,
             ),
             TotalInsuredValue=None,
             PreferredCurrency=options.currency,

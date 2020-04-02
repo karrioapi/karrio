@@ -33,16 +33,16 @@ class PackagingType(Flag):
 
 
 class PaymentType(Flag):
-    sender = 'Sender'
-    recipient = 'Receiver'
-    third_party = 'ThirdParty'
-    credit_card = 'CreditCard'
+    sender = "Sender"
+    recipient = "Receiver"
+    third_party = "ThirdParty"
+    credit_card = "CreditCard"
 
 
 class DutyPaymentType(Enum):
-    sender = 'Sender'
-    recipient = 'Receiver'
-    third_party = 'Buyer'
+    sender = "Sender"
+    recipient = "Receiver"
+    third_party = "Buyer"
 
 
 class CreditCardType(Flag):
@@ -109,19 +109,31 @@ class Product(Enum):
     purolator_ground9_am = "PurolatorGround9AM"
     purolator_express_envelope_international = "PurolatorExpressEnvelopeInternational"
     purolator_ground10_30_am = "PurolatorGround10:30AM"
-    purolator_express_international_envelope_9_am = "PurolatorExpressInternationalEnvelope9AM"
+    purolator_express_international_envelope_9_am = (
+        "PurolatorExpressInternationalEnvelope9AM"
+    )
     purolator_ground_evening = "PurolatorGroundEvening"
-    purolator_express_international_envelope_10_30_am = "PurolatorExpressInternationalEnvelope10:30AM"
+    purolator_express_international_envelope_10_30_am = (
+        "PurolatorExpressInternationalEnvelope10:30AM"
+    )
     purolator_quick_ship = "PurolatorQuickShip"
-    purolator_express_international_envelope_12_00 = "PurolatorExpressInternationalEnvelope12:00"
+    purolator_express_international_envelope_12_00 = (
+        "PurolatorExpressInternationalEnvelope12:00"
+    )
     purolator_quick_ship_envelope = "PurolatorQuickShipEnvelope"
     purolator_express_pack_international = "PurolatorExpressPackInternational"
     purolator_quick_ship_pack = "PurolatorQuickShipPack"
     purolator_express_international_pack_9_am = "PurolatorExpressInternationalPack9AM"
     purolator_quick_ship_box = "PurolatorQuickShipBox"
-    purolator_express_international_pack_10_30_am = "PurolatorExpressInternationalPack10:30AM"
-    purolator_express_international_pack_12_00 = "PurolatorExpressInternationalPack12:00"
+    purolator_express_international_pack_10_30_am = (
+        "PurolatorExpressInternationalPack10:30AM"
+    )
+    purolator_express_international_pack_12_00 = (
+        "PurolatorExpressInternationalPack12:00"
+    )
     purolator_express_box_international = "PurolatorExpressBoxInternational"
     purolator_express_international_box_9_am = "PurolatorExpressInternationalBox9AM"
-    purolator_express_international_box_10_30_am = "PurolatorExpressInternationalBox10:30AM"
+    purolator_express_international_box_10_30_am = (
+        "PurolatorExpressInternationalBox10:30AM"
+    )
     purolator_express_international_box_12_00 = "PurolatorExpressInternationalBox12:00"

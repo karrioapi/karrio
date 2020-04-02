@@ -29,8 +29,9 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
         for svc in service_node.xpath(".//*[local-name() = $name]", name="ExtraService")
     ]
     delivery_date = (
-        format_date(service.GuaranteeAvailability, '%m/%d/%Y')
-        if service.GuaranteeAvailability is not None else None
+        format_date(service.GuaranteeAvailability, "%m/%d/%Y")
+        if service.GuaranteeAvailability is not None
+        else None
     )
 
     return RateDetails(

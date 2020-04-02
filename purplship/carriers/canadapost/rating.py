@@ -16,11 +16,7 @@ from datetime import datetime
 from typing import List, Tuple
 from purplship.core.utils import Serializable, export, Element, format_date, decimal
 from purplship.carriers.canadapost.utils import Settings
-from purplship.core.units import (
-    Country,
-    Currency,
-    Package
-)
+from purplship.core.units import Country, Currency, Package
 from purplship.core.errors import OriginNotServicedError, RequiredFieldError
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.carriers.canadapost.error import parse_error_response
@@ -53,7 +49,9 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         carrier=settings.carrier,
         carrier_name=settings.carrier_name,
         currency=currency,
-        estimated_delivery=format_date(price_quote.service_standard.expected_delivery_date),
+        estimated_delivery=format_date(
+            price_quote.service_standard.expected_delivery_date
+        ),
         service=ServiceType(price_quote.service_code).name,
         base_charge=decimal(price_quote.price_details.base or 0),
         total_charge=decimal(price_quote.price_details.due or 0),
@@ -91,7 +89,11 @@ def mailing_scenario_request(
             payload.shipper.country_code, settings.carrier_name
         )
 
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:

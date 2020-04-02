@@ -2,7 +2,12 @@ from typing import Tuple, List
 from pycanadapost.track import pin_summary
 from purplship.carriers.canadapost.utils import Settings
 from purplship.core.utils import Element, Serializable, format_date, format_time
-from purplship.core.models import TrackingRequest, TrackingDetails, TrackingEvent, Message
+from purplship.core.models import (
+    TrackingRequest,
+    TrackingDetails,
+    TrackingEvent,
+    Message,
+)
 from purplship.carriers.canadapost.error import parse_error_response
 
 
@@ -25,8 +30,8 @@ def _extract_tracking(pin_summary_node: Element, settings: Settings) -> Tracking
         tracking_number=pin_summary_.pin,
         events=[
             TrackingEvent(
-                date=format_date(pin_summary_.event_date_time, '%Y%m%d:%H%M%S'),
-                time=format_time(pin_summary_.event_date_time, '%Y%m%d:%H%M%S'),
+                date=format_date(pin_summary_.event_date_time, "%Y%m%d:%H%M%S"),
+                time=format_time(pin_summary_.event_date_time, "%Y%m%d:%H%M%S"),
                 signatory=pin_summary_.signatory_name,
                 code=pin_summary_.event_type,
                 location=pin_summary_.event_location,

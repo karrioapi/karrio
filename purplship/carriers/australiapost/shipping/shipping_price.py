@@ -1,7 +1,13 @@
 """PurplShip Australia post rate mapper module."""
 
 from typing import List, Tuple
-from pyaustraliapost.shipping_price_request import ShippingPriceRequest, Shipment, From, To, Item
+from pyaustraliapost.shipping_price_request import (
+    ShippingPriceRequest,
+    Shipment,
+    From,
+    To,
+    Item,
+)
 from purplship.carriers.australiapost.error import parse_error_response
 from purplship.carriers.australiapost.units import PackagingType
 from purplship.core.utils import jsonify, to_dict, Serializable, decimal
@@ -33,11 +39,12 @@ def _extract_quote(rate: ResponseShipment, settings: Settings) -> RateDetails:
         "Fuel": summary.fuel_surcharge,
         "Security": summary.security_surcharge,
         "Transit Cover": summary.transit_cover,
-        "Freight Charge": summary.freight_charge
+        "Freight Charge": summary.freight_charge,
     }
     extra_charges = [
         ChargeDetails(name=name, amount=decimal(amount), currency=Currency.AUD.name)
-        for name, amount in surcharges.items() if amount is not None
+        for name, amount in surcharges.items()
+        if amount is not None
     ]
 
     return RateDetails(
@@ -64,7 +71,7 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
 
     packaging_type = next(
         (t.value for t in PackagingType if t.name == payload.parcel.packaging_type),
-        None
+        None,
     )
 
     request = ShippingPriceRequest(

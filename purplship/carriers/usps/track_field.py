@@ -2,7 +2,12 @@ from typing import List, Tuple
 from pyusps.trackfieldrequest import TrackFieldRequest, TrackIDType
 from pyusps.trackresponse import TrackInfoType, TrackDetailType
 from purplship.core.utils import export, Serializable, Element, format_date, format_time
-from purplship.core.models import TrackingRequest, Message, TrackingDetails, TrackingEvent
+from purplship.core.models import (
+    TrackingRequest,
+    Message,
+    TrackingDetails,
+    TrackingEvent,
+)
 from purplship.carriers.usps.error import parse_error_response
 from purplship.carriers.usps import Settings
 
@@ -34,8 +39,8 @@ def _extract_tracking(tracking_node: Element, settings) -> TrackingDetails:
         events=[
             TrackingEvent(
                 code=str(event.EventCode),
-                date=format_date(event.EventDate, '%B %d, %Y'),
-                time=format_time(event.EventTime, '%H:%M %p'),
+                date=format_date(event.EventDate, "%B %d, %Y"),
+                time=format_time(event.EventTime, "%H:%M %p"),
                 description=event.ActionCode,
                 location=", ".join(
                     [
