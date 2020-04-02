@@ -1,7 +1,7 @@
 from typing import List, Tuple, cast
 from datetime import datetime
 from pysoap.envelope import Envelope
-from pypurolator.estimate_service import (
+from pypurolator.estimate_service_2_1_2 import (
     GetFullEstimateRequest, Shipment, SenderInformation, Address, ReceiverInformation,
     PackageInformation, TrackingReferenceInformation, PickupInformation,
     ArrayOfPiece, Piece, Weight as PurolatorWeight, WeightUnit as PurolatorWeightUnit, RequestContext,

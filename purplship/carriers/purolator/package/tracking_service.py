@@ -1,5 +1,5 @@
 from typing import List, Tuple, cast
-from pypurolator.tracking_service import (
+from pypurolator.tracking_service_1_2_2 import (
     TrackPackagesByPinRequest, PIN, ArrayOfPIN, RequestContext, TrackingInformation, Scan, Depot
 )
 from purplship.core.models import TrackingRequest, TrackingDetails, Message, TrackingEvent

@@ -1,5 +1,5 @@
 from typing import List
-from pypurolator.estimate_service import Error
+from pypurolator.estimate_service_2_1_2 import Error
 from purplship.core.models import Message
 from purplship.core.utils.xml import Element
 from .utils import Settings

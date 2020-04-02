@@ -3,7 +3,7 @@ attrs==19.3.0
 jstruct==2020.4.0
 xmltodict==0.12.0
 py-fedex==2020.3.0
-py-purolator==2020.3.0
+py-purolator==2020.4.0
 py-dhl==2020.4.0
 py-soap==2020.3.0
 py-ups==2020.3.0

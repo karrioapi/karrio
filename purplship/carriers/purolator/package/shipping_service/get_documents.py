@@ -1,4 +1,4 @@
-from pypurolator.shipping_documents_service import (
+from pypurolator.shipping_documents_service_1_3_0 import (
     GetDocumentsRequest, RequestContext, DocumentCriteria, ArrayOfDocumentCriteria, PIN
 )
 from purplship.core.utils.soap import Envelope, create_envelope

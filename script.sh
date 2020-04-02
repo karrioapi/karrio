@@ -95,3 +95,5 @@ clean_builds() {
     find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; || true
     find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; || true
 }
+
+env:on || true

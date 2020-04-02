@@ -1,7 +1,7 @@
 from typing import Union, Type
 from datetime import datetime
 from pysoap.envelope import Envelope
-from pypurolator.shipping_service import (
+from pypurolator.shipping_service_2_1_3 import (
     CreateShipmentRequest, Shipment, SenderInformation, ReceiverInformation, PackageInformation,
     TrackingReferenceInformation, Address, InternationalInformation, PickupInformation, PickupType,
     ArrayOfPiece, Piece, Weight as PurolatorWeight, WeightUnit as PurolatorWeightUnit, RequestContext,

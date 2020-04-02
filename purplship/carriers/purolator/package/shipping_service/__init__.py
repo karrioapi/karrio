@@ -1,10 +1,10 @@
 from typing import List, Tuple, cast, Union, Type, Dict
 from functools import partial
-from pypurolator.shipping_service import (
+from pypurolator.shipping_service_2_1_3 import (
     CreateShipmentRequest, CreateShipmentResponse, PIN, ValidateShipmentRequest, ResponseInformation,
     Error as PurolatorError, ArrayOfError
 )
-from pypurolator.shipping_documents_service import DocumentDetail
+from pypurolator.shipping_documents_service_1_3_0 import DocumentDetail
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.xml import Element
