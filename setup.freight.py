@@ -5,7 +5,7 @@ with open("builds/package/README.md", "r") as fh:
 
 
 setup(name='purplship.freight',
-      version='2020.3.0',
+      version='2020.3.0-dev',
       description='Multi-carrier freight Library',
       long_description=long_description,
       long_description_content_type="text/markdown",
