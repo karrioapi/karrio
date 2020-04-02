@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  1 15:07:22 2020 by generateDS.py version 2.35.15.
+# Generated Thu Apr  2 06:51:05 2020 by generateDS.py version 2.35.15.
 # Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
@@ -10,10 +10,10 @@
 #   ('-o', './pypurolator/locator_service_1_0_2.py')
 #
 # Command line arguments:
-#   ./schemas/LocatorService_1_0_2.xsd
+#   ./schemas/LocatorService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/locator_service_1_0_2.py" ./schemas/LocatorService_1_0_2.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/locator_service_1_0_2.py" ./schemas/LocatorService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator
@@ -966,7 +966,7 @@ class Language(Enum):
     FR='fr' # fr
 
 
-class RequestContainer(GeneratedsSuper):
+class Request(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -979,13 +979,13 @@ class RequestContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RequestContainer)
+                CurrentSubclassModule_, Request)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if RequestContainer.subclass:
-            return RequestContainer.subclass(*args_, **kwargs_)
+        if Request.subclass:
+            return Request.subclass(*args_, **kwargs_)
         else:
-            return RequestContainer(*args_, **kwargs_)
+            return Request(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -998,31 +998,31 @@ class RequestContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Request')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RequestContainer':
+        if self.original_tagname_ is not None and name_ == 'Request':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Request')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Request', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Request'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1039,7 +1039,7 @@ class RequestContainer(GeneratedsSuper):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class RequestContainer
+# end class Request
 
 
 class Address(GeneratedsSuper):
@@ -1916,7 +1916,7 @@ class RequestContext(GeneratedsSuper):
 # end class RequestContext
 
 
-class ResponseContainer(GeneratedsSuper):
+class Response(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -1931,13 +1931,13 @@ class ResponseContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ResponseContainer)
+                CurrentSubclassModule_, Response)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ResponseContainer.subclass:
-            return ResponseContainer.subclass(*args_, **kwargs_)
+        if Response.subclass:
+            return Response.subclass(*args_, **kwargs_)
         else:
-            return ResponseContainer(*args_, **kwargs_)
+            return Response(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -1954,32 +1954,32 @@ class ResponseContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Response')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'Response':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Response')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Response', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ResponseContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Response'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2006,7 +2006,7 @@ class ResponseContainer(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ResponseInformation = obj_
             obj_.original_tagname_ = 'ResponseInformation'
-# end class ResponseContainer
+# end class Response
 
 
 class ResponseInformation(GeneratedsSuper):
@@ -4230,18 +4230,18 @@ class ResponseContext(GeneratedsSuper):
 # end class ResponseContext
 
 
-class GetLocationsByCoordinatesRequestContainer(RequestContainer):
+class GetLocationsByCoordinatesRequest(Request):
     """GetLocationsByCoordinatesRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, Coordinates=None, SearchOptions=None, LocationTypes=None, HoursOfOperation=None, DaysOfOperation=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetLocationsByCoordinatesRequestContainer, self).__init__( **kwargs_)
+        super(GetLocationsByCoordinatesRequest, self).__init__( **kwargs_)
         self.Coordinates = Coordinates
         self.Coordinates_nsprefix_ = None
         self.SearchOptions = SearchOptions
@@ -4255,13 +4255,13 @@ class GetLocationsByCoordinatesRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetLocationsByCoordinatesRequestContainer)
+                CurrentSubclassModule_, GetLocationsByCoordinatesRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetLocationsByCoordinatesRequestContainer.subclass:
-            return GetLocationsByCoordinatesRequestContainer.subclass(*args_, **kwargs_)
+        if GetLocationsByCoordinatesRequest.subclass:
+            return GetLocationsByCoordinatesRequest.subclass(*args_, **kwargs_)
         else:
-            return GetLocationsByCoordinatesRequestContainer(*args_, **kwargs_)
+            return GetLocationsByCoordinatesRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -4294,38 +4294,38 @@ class GetLocationsByCoordinatesRequestContainer(RequestContainer):
             self.LocationTypes is not None or
             self.HoursOfOperation is not None or
             self.DaysOfOperation is not None or
-            super(GetLocationsByCoordinatesRequestContainer, self).hasContent_()
+            super(GetLocationsByCoordinatesRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByCoordinatesRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByCoordinatesRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByCoordinatesRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByCoordinatesRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetLocationsByCoordinatesRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetLocationsByCoordinatesRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByCoordinatesRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByCoordinatesRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByCoordinatesRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByCoordinatesRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByCoordinatesRequestContainer'):
-        super(GetLocationsByCoordinatesRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByCoordinatesRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByCoordinatesRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetLocationsByCoordinatesRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByCoordinatesRequest'):
+        super(GetLocationsByCoordinatesRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByCoordinatesRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByCoordinatesRequest', fromsubclass_=False, pretty_print=True):
+        super(GetLocationsByCoordinatesRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4357,7 +4357,7 @@ class GetLocationsByCoordinatesRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetLocationsByCoordinatesRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetLocationsByCoordinatesRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Coordinates':
             obj_ = Coordinates.factory(parent_object_=self)
@@ -4384,8 +4384,8 @@ class GetLocationsByCoordinatesRequestContainer(RequestContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.DaysOfOperation = obj_
             obj_.original_tagname_ = 'DaysOfOperation'
-        super(GetLocationsByCoordinatesRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetLocationsByCoordinatesRequestContainer
+        super(GetLocationsByCoordinatesRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetLocationsByCoordinatesRequest
 
 
 class Coordinates(GeneratedsSuper):
@@ -4501,18 +4501,18 @@ class Coordinates(GeneratedsSuper):
 # end class Coordinates
 
 
-class GetLocationsByCityRequestContainer(RequestContainer):
+class GetLocationsByCityRequest(Request):
     """GetLocationsByCityRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, CountryCode=None, CityName=None, ProvinceStateCode=None, SearchOptions=None, LocationTypes=None, HoursOfOperation=None, DaysOfOperation=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetLocationsByCityRequestContainer, self).__init__( **kwargs_)
+        super(GetLocationsByCityRequest, self).__init__( **kwargs_)
         self.CountryCode = CountryCode
         self.CountryCode_nsprefix_ = None
         self.CityName = CityName
@@ -4530,13 +4530,13 @@ class GetLocationsByCityRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetLocationsByCityRequestContainer)
+                CurrentSubclassModule_, GetLocationsByCityRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetLocationsByCityRequestContainer.subclass:
-            return GetLocationsByCityRequestContainer.subclass(*args_, **kwargs_)
+        if GetLocationsByCityRequest.subclass:
+            return GetLocationsByCityRequest.subclass(*args_, **kwargs_)
         else:
-            return GetLocationsByCityRequestContainer(*args_, **kwargs_)
+            return GetLocationsByCityRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -4579,38 +4579,38 @@ class GetLocationsByCityRequestContainer(RequestContainer):
             self.LocationTypes is not None or
             self.HoursOfOperation is not None or
             self.DaysOfOperation is not None or
-            super(GetLocationsByCityRequestContainer, self).hasContent_()
+            super(GetLocationsByCityRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByCityRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByCityRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByCityRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByCityRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetLocationsByCityRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetLocationsByCityRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByCityRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByCityRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByCityRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByCityRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByCityRequestContainer'):
-        super(GetLocationsByCityRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByCityRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByCityRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetLocationsByCityRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByCityRequest'):
+        super(GetLocationsByCityRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByCityRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByCityRequest', fromsubclass_=False, pretty_print=True):
+        super(GetLocationsByCityRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4651,7 +4651,7 @@ class GetLocationsByCityRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetLocationsByCityRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetLocationsByCityRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'CountryCode':
             value_ = child_.text
@@ -4691,22 +4691,22 @@ class GetLocationsByCityRequestContainer(RequestContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.DaysOfOperation = obj_
             obj_.original_tagname_ = 'DaysOfOperation'
-        super(GetLocationsByCityRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetLocationsByCityRequestContainer
+        super(GetLocationsByCityRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetLocationsByCityRequest
 
 
-class GetLocationsByPointOfInterestRequestContainer(RequestContainer):
+class GetLocationsByPointOfInterestRequest(Request):
     """GetLocationsByPointOfInterestRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, PointOfInterest=None, SearchOptions=None, LocationTypes=None, HoursOfOperation=None, DaysOfOperation=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetLocationsByPointOfInterestRequestContainer, self).__init__( **kwargs_)
+        super(GetLocationsByPointOfInterestRequest, self).__init__( **kwargs_)
         self.PointOfInterest = PointOfInterest
         self.PointOfInterest_nsprefix_ = None
         self.SearchOptions = SearchOptions
@@ -4720,13 +4720,13 @@ class GetLocationsByPointOfInterestRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetLocationsByPointOfInterestRequestContainer)
+                CurrentSubclassModule_, GetLocationsByPointOfInterestRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetLocationsByPointOfInterestRequestContainer.subclass:
-            return GetLocationsByPointOfInterestRequestContainer.subclass(*args_, **kwargs_)
+        if GetLocationsByPointOfInterestRequest.subclass:
+            return GetLocationsByPointOfInterestRequest.subclass(*args_, **kwargs_)
         else:
-            return GetLocationsByPointOfInterestRequestContainer(*args_, **kwargs_)
+            return GetLocationsByPointOfInterestRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -4759,38 +4759,38 @@ class GetLocationsByPointOfInterestRequestContainer(RequestContainer):
             self.LocationTypes is not None or
             self.HoursOfOperation is not None or
             self.DaysOfOperation is not None or
-            super(GetLocationsByPointOfInterestRequestContainer, self).hasContent_()
+            super(GetLocationsByPointOfInterestRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByPointOfInterestRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByPointOfInterestRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByPointOfInterestRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByPointOfInterestRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetLocationsByPointOfInterestRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetLocationsByPointOfInterestRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByPointOfInterestRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByPointOfInterestRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByPointOfInterestRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByPointOfInterestRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByPointOfInterestRequestContainer'):
-        super(GetLocationsByPointOfInterestRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByPointOfInterestRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByPointOfInterestRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetLocationsByPointOfInterestRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByPointOfInterestRequest'):
+        super(GetLocationsByPointOfInterestRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByPointOfInterestRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByPointOfInterestRequest', fromsubclass_=False, pretty_print=True):
+        super(GetLocationsByPointOfInterestRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4823,7 +4823,7 @@ class GetLocationsByPointOfInterestRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetLocationsByPointOfInterestRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetLocationsByPointOfInterestRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'PointOfInterest':
             value_ = child_.text
@@ -4851,22 +4851,22 @@ class GetLocationsByPointOfInterestRequestContainer(RequestContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.DaysOfOperation = obj_
             obj_.original_tagname_ = 'DaysOfOperation'
-        super(GetLocationsByPointOfInterestRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetLocationsByPointOfInterestRequestContainer
+        super(GetLocationsByPointOfInterestRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetLocationsByPointOfInterestRequest
 
 
-class GetLocationsByPostalCodeRequestContainer(RequestContainer):
+class GetLocationsByPostalCodeRequest(Request):
     """GetLocationsByPostalCodeRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, PostalCode=None, SearchOptions=None, LocationTypes=None, HoursOfOperation=None, DaysOfOperation=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetLocationsByPostalCodeRequestContainer, self).__init__( **kwargs_)
+        super(GetLocationsByPostalCodeRequest, self).__init__( **kwargs_)
         self.PostalCode = PostalCode
         self.PostalCode_nsprefix_ = None
         self.SearchOptions = SearchOptions
@@ -4880,13 +4880,13 @@ class GetLocationsByPostalCodeRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetLocationsByPostalCodeRequestContainer)
+                CurrentSubclassModule_, GetLocationsByPostalCodeRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetLocationsByPostalCodeRequestContainer.subclass:
-            return GetLocationsByPostalCodeRequestContainer.subclass(*args_, **kwargs_)
+        if GetLocationsByPostalCodeRequest.subclass:
+            return GetLocationsByPostalCodeRequest.subclass(*args_, **kwargs_)
         else:
-            return GetLocationsByPostalCodeRequestContainer(*args_, **kwargs_)
+            return GetLocationsByPostalCodeRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -4919,38 +4919,38 @@ class GetLocationsByPostalCodeRequestContainer(RequestContainer):
             self.LocationTypes is not None or
             self.HoursOfOperation is not None or
             self.DaysOfOperation is not None or
-            super(GetLocationsByPostalCodeRequestContainer, self).hasContent_()
+            super(GetLocationsByPostalCodeRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByPostalCodeRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByPostalCodeRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByPostalCodeRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByPostalCodeRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetLocationsByPostalCodeRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetLocationsByPostalCodeRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByPostalCodeRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByPostalCodeRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByPostalCodeRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByPostalCodeRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByPostalCodeRequestContainer'):
-        super(GetLocationsByPostalCodeRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByPostalCodeRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByPostalCodeRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetLocationsByPostalCodeRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByPostalCodeRequest'):
+        super(GetLocationsByPostalCodeRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByPostalCodeRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByPostalCodeRequest', fromsubclass_=False, pretty_print=True):
+        super(GetLocationsByPostalCodeRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4983,7 +4983,7 @@ class GetLocationsByPostalCodeRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetLocationsByPostalCodeRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetLocationsByPostalCodeRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'PostalCode':
             value_ = child_.text
@@ -5011,34 +5011,34 @@ class GetLocationsByPostalCodeRequestContainer(RequestContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.DaysOfOperation = obj_
             obj_.original_tagname_ = 'DaysOfOperation'
-        super(GetLocationsByPostalCodeRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetLocationsByPostalCodeRequestContainer
+        super(GetLocationsByPostalCodeRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetLocationsByPostalCodeRequest
 
 
-class GetLocationsResponseContainer(ResponseContainer):
+class GetLocationsResponse(Response):
     """GetLocationsResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, Locations=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetLocationsResponseContainer, self).__init__( **kwargs_)
+        super(GetLocationsResponse, self).__init__( **kwargs_)
         self.Locations = Locations
         self.Locations_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetLocationsResponseContainer)
+                CurrentSubclassModule_, GetLocationsResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetLocationsResponseContainer.subclass:
-            return GetLocationsResponseContainer.subclass(*args_, **kwargs_)
+        if GetLocationsResponse.subclass:
+            return GetLocationsResponse.subclass(*args_, **kwargs_)
         else:
-            return GetLocationsResponseContainer(*args_, **kwargs_)
+            return GetLocationsResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -5051,38 +5051,38 @@ class GetLocationsResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.Locations is not None or
-            super(GetLocationsResponseContainer, self).hasContent_()
+            super(GetLocationsResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetLocationsResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'GetLocationsResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsResponseContainer'):
-        super(GetLocationsResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(GetLocationsResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsResponse'):
+        super(GetLocationsResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsResponse', fromsubclass_=False, pretty_print=True):
+        super(GetLocationsResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5102,29 +5102,29 @@ class GetLocationsResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetLocationsResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetLocationsResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Locations':
             obj_ = ArrayOfDepotLocation.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Locations = obj_
             obj_.original_tagname_ = 'Locations'
-        super(GetLocationsResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetLocationsResponseContainer
+        super(GetLocationsResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class GetLocationsResponse
 
 
-class GetLocationsByAddressRequestContainer(RequestContainer):
+class GetLocationsByAddressRequest(Request):
     """GetLocationsByAddressRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, Address=None, SearchOptions=None, LocationTypes=None, HoursOfOperation=None, DaysOfOperation=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetLocationsByAddressRequestContainer, self).__init__( **kwargs_)
+        super(GetLocationsByAddressRequest, self).__init__( **kwargs_)
         self.Address = Address
         self.Address_nsprefix_ = None
         self.SearchOptions = SearchOptions
@@ -5138,13 +5138,13 @@ class GetLocationsByAddressRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetLocationsByAddressRequestContainer)
+                CurrentSubclassModule_, GetLocationsByAddressRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetLocationsByAddressRequestContainer.subclass:
-            return GetLocationsByAddressRequestContainer.subclass(*args_, **kwargs_)
+        if GetLocationsByAddressRequest.subclass:
+            return GetLocationsByAddressRequest.subclass(*args_, **kwargs_)
         else:
-            return GetLocationsByAddressRequestContainer(*args_, **kwargs_)
+            return GetLocationsByAddressRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -5177,38 +5177,38 @@ class GetLocationsByAddressRequestContainer(RequestContainer):
             self.LocationTypes is not None or
             self.HoursOfOperation is not None or
             self.DaysOfOperation is not None or
-            super(GetLocationsByAddressRequestContainer, self).hasContent_()
+            super(GetLocationsByAddressRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByAddressRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByAddressRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByAddressRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetLocationsByAddressRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetLocationsByAddressRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetLocationsByAddressRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByAddressRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByAddressRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByAddressRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetLocationsByAddressRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByAddressRequestContainer'):
-        super(GetLocationsByAddressRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByAddressRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByAddressRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetLocationsByAddressRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetLocationsByAddressRequest'):
+        super(GetLocationsByAddressRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetLocationsByAddressRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetLocationsByAddressRequest', fromsubclass_=False, pretty_print=True):
+        super(GetLocationsByAddressRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5240,7 +5240,7 @@ class GetLocationsByAddressRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetLocationsByAddressRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetLocationsByAddressRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Address':
             obj_ = Address.factory(parent_object_=self)
@@ -5267,8 +5267,8 @@ class GetLocationsByAddressRequestContainer(RequestContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.DaysOfOperation = obj_
             obj_.original_tagname_ = 'DaysOfOperation'
-        super(GetLocationsByAddressRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetLocationsByAddressRequestContainer
+        super(GetLocationsByAddressRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetLocationsByAddressRequest
 
 
 GDSClassesMapping = {
@@ -5280,25 +5280,25 @@ GDSClassesMapping = {
     'DaysOfOperation': DaysOfOperation,
     'DepotLocation': DepotLocation,
     'Error': Error,
-    'GetLocationsByAddressRequest': GetLocationsByAddressRequestContainer,
-    'GetLocationsByAddressRequestContainer': GetLocationsByAddressRequestContainer,
-    'GetLocationsByCityRequest': GetLocationsByCityRequestContainer,
-    'GetLocationsByCityRequestContainer': GetLocationsByCityRequestContainer,
-    'GetLocationsByCoordinatesRequest': GetLocationsByCoordinatesRequestContainer,
-    'GetLocationsByCoordinatesRequestContainer': GetLocationsByCoordinatesRequestContainer,
-    'GetLocationsByPointOfInterestRequest': GetLocationsByPointOfInterestRequestContainer,
-    'GetLocationsByPointOfInterestRequestContainer': GetLocationsByPointOfInterestRequestContainer,
-    'GetLocationsByPostalCodeRequest': GetLocationsByPostalCodeRequestContainer,
-    'GetLocationsByPostalCodeRequestContainer': GetLocationsByPostalCodeRequestContainer,
-    'GetLocationsResponse': GetLocationsResponseContainer,
-    'GetLocationsResponseContainer': GetLocationsResponseContainer,
+    'GetLocationsByAddressRequest': GetLocationsByAddressRequest,
+    'GetLocationsByAddressRequest': GetLocationsByAddressRequest,
+    'GetLocationsByCityRequest': GetLocationsByCityRequest,
+    'GetLocationsByCityRequest': GetLocationsByCityRequest,
+    'GetLocationsByCoordinatesRequest': GetLocationsByCoordinatesRequest,
+    'GetLocationsByCoordinatesRequest': GetLocationsByCoordinatesRequest,
+    'GetLocationsByPointOfInterestRequest': GetLocationsByPointOfInterestRequest,
+    'GetLocationsByPointOfInterestRequest': GetLocationsByPointOfInterestRequest,
+    'GetLocationsByPostalCodeRequest': GetLocationsByPostalCodeRequest,
+    'GetLocationsByPostalCodeRequest': GetLocationsByPostalCodeRequest,
+    'GetLocationsResponse': GetLocationsResponse,
+    'GetLocationsResponse': GetLocationsResponse,
     'HoursOfOperation': HoursOfOperation,
     'InformationalMessage': InformationalMessage,
     'LocationAddress': LocationAddress,
     'LocationTypes': LocationTypes,
-    'RequestContainer': RequestContainer,
+    'Request': Request,
     'RequestContext': RequestContext,
-    'ResponseContainer': ResponseContainer,
+    'Response': Response,
     'ResponseContext': ResponseContext,
     'ResponseInformation': ResponseInformation,
     'SearchOptions': SearchOptions,
@@ -5348,8 +5348,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetLocationsByAddressRequestContainer'
-        rootClass = GetLocationsByAddressRequestContainer
+        rootTag = 'GetLocationsByAddressRequest'
+        rootClass = GetLocationsByAddressRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -5379,8 +5379,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetLocationsByAddressRequestContainer'
-        rootClass = GetLocationsByAddressRequestContainer
+        rootTag = 'GetLocationsByAddressRequest'
+        rootClass = GetLocationsByAddressRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -5420,8 +5420,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetLocationsByAddressRequestContainer'
-        rootClass = GetLocationsByAddressRequestContainer
+        rootTag = 'GetLocationsByAddressRequest'
+        rootClass = GetLocationsByAddressRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -5448,8 +5448,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetLocationsByAddressRequestContainer'
-        rootClass = GetLocationsByAddressRequestContainer
+        rootTag = 'GetLocationsByAddressRequest'
+        rootClass = GetLocationsByAddressRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -5496,19 +5496,19 @@ __all__ = [
     "DaysOfOperation",
     "DepotLocation",
     "Error",
-    "GetLocationsByAddressRequestContainer",
-    "GetLocationsByCityRequestContainer",
-    "GetLocationsByCoordinatesRequestContainer",
-    "GetLocationsByPointOfInterestRequestContainer",
-    "GetLocationsByPostalCodeRequestContainer",
-    "GetLocationsResponseContainer",
+    "GetLocationsByAddressRequest",
+    "GetLocationsByCityRequest",
+    "GetLocationsByCoordinatesRequest",
+    "GetLocationsByPointOfInterestRequest",
+    "GetLocationsByPostalCodeRequest",
+    "GetLocationsResponse",
     "HoursOfOperation",
     "InformationalMessage",
     "LocationAddress",
     "LocationTypes",
-    "RequestContainer",
+    "Request",
     "RequestContext",
-    "ResponseContainer",
+    "Response",
     "ResponseContext",
     "ResponseInformation",
     "SearchOptions"

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  1 15:07:24 2020 by generateDS.py version 2.35.15.
+# Generated Thu Apr  2 06:51:06 2020 by generateDS.py version 2.35.15.
 # Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
@@ -10,10 +10,10 @@
 #   ('-o', './pypurolator/service_availability_service_2_0_2.py')
 #
 # Command line arguments:
-#   ./schemas/ServiceAvailabilityService_2_0_2.xsd
+#   ./schemas/ServiceAvailabilityService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/service_availability_service_2_0_2.py" ./schemas/ServiceAvailabilityService_2_0_2.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/service_availability_service_2_0_2.py" ./schemas/ServiceAvailabilityService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator
@@ -971,7 +971,7 @@ class WeightUnit(Enum):
     KG='kg' # kg
 
 
-class RequestContainer(GeneratedsSuper):
+class Request(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -984,13 +984,13 @@ class RequestContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RequestContainer)
+                CurrentSubclassModule_, Request)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if RequestContainer.subclass:
-            return RequestContainer.subclass(*args_, **kwargs_)
+        if Request.subclass:
+            return Request.subclass(*args_, **kwargs_)
         else:
-            return RequestContainer(*args_, **kwargs_)
+            return Request(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -1003,31 +1003,31 @@ class RequestContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Request')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RequestContainer':
+        if self.original_tagname_ is not None and name_ == 'Request':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Request')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Request', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Request'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1044,7 +1044,7 @@ class RequestContainer(GeneratedsSuper):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class RequestContainer
+# end class Request
 
 
 class ShortAddress(GeneratedsSuper):
@@ -1376,7 +1376,7 @@ class RequestContext(GeneratedsSuper):
 # end class RequestContext
 
 
-class ResponseContainer(GeneratedsSuper):
+class Response(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -1391,13 +1391,13 @@ class ResponseContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ResponseContainer)
+                CurrentSubclassModule_, Response)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ResponseContainer.subclass:
-            return ResponseContainer.subclass(*args_, **kwargs_)
+        if Response.subclass:
+            return Response.subclass(*args_, **kwargs_)
         else:
-            return ResponseContainer(*args_, **kwargs_)
+            return Response(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -1414,32 +1414,32 @@ class ResponseContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Response')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'Response':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Response')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Response', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ResponseContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Response'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1466,7 +1466,7 @@ class ResponseContainer(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ResponseInformation = obj_
             obj_.original_tagname_ = 'ResponseInformation'
-# end class ResponseContainer
+# end class Response
 
 
 class ResponseInformation(GeneratedsSuper):
@@ -2897,18 +2897,18 @@ class ResponseContext(GeneratedsSuper):
 # end class ResponseContext
 
 
-class GetServiceRulesRequestContainer(RequestContainer):
+class GetServiceRulesRequest(Request):
     """GetServiceRulesRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, BillingAccountNumber=None, SenderAddress=None, ReceiverAddress=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetServiceRulesRequestContainer, self).__init__( **kwargs_)
+        super(GetServiceRulesRequest, self).__init__( **kwargs_)
         self.BillingAccountNumber = BillingAccountNumber
         self.BillingAccountNumber_nsprefix_ = None
         self.SenderAddress = SenderAddress
@@ -2918,13 +2918,13 @@ class GetServiceRulesRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetServiceRulesRequestContainer)
+                CurrentSubclassModule_, GetServiceRulesRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetServiceRulesRequestContainer.subclass:
-            return GetServiceRulesRequestContainer.subclass(*args_, **kwargs_)
+        if GetServiceRulesRequest.subclass:
+            return GetServiceRulesRequest.subclass(*args_, **kwargs_)
         else:
-            return GetServiceRulesRequestContainer(*args_, **kwargs_)
+            return GetServiceRulesRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -2947,38 +2947,38 @@ class GetServiceRulesRequestContainer(RequestContainer):
             self.BillingAccountNumber is not None or
             self.SenderAddress is not None or
             self.ReceiverAddress is not None or
-            super(GetServiceRulesRequestContainer, self).hasContent_()
+            super(GetServiceRulesRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServiceRulesRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetServiceRulesRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServiceRulesRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetServiceRulesRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetServiceRulesRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetServiceRulesRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServiceRulesRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServiceRulesRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetServiceRulesRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetServiceRulesRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetServiceRulesRequestContainer'):
-        super(GetServiceRulesRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServiceRulesRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServiceRulesRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetServiceRulesRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetServiceRulesRequest'):
+        super(GetServiceRulesRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServiceRulesRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServiceRulesRequest', fromsubclass_=False, pretty_print=True):
+        super(GetServiceRulesRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3005,7 +3005,7 @@ class GetServiceRulesRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetServiceRulesRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetServiceRulesRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'BillingAccountNumber':
             value_ = child_.text
@@ -3023,22 +3023,22 @@ class GetServiceRulesRequestContainer(RequestContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ReceiverAddress = obj_
             obj_.original_tagname_ = 'ReceiverAddress'
-        super(GetServiceRulesRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetServiceRulesRequestContainer
+        super(GetServiceRulesRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetServiceRulesRequest
 
 
-class GetServiceRulesResponseContainer(ResponseContainer):
+class GetServiceRulesResponse(Response):
     """GetServiceRulesResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, ServiceRules=None, ServiceOptionRules=None, OptionRules=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetServiceRulesResponseContainer, self).__init__( **kwargs_)
+        super(GetServiceRulesResponse, self).__init__( **kwargs_)
         self.ServiceRules = ServiceRules
         self.ServiceRules_nsprefix_ = None
         self.ServiceOptionRules = ServiceOptionRules
@@ -3048,13 +3048,13 @@ class GetServiceRulesResponseContainer(ResponseContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetServiceRulesResponseContainer)
+                CurrentSubclassModule_, GetServiceRulesResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetServiceRulesResponseContainer.subclass:
-            return GetServiceRulesResponseContainer.subclass(*args_, **kwargs_)
+        if GetServiceRulesResponse.subclass:
+            return GetServiceRulesResponse.subclass(*args_, **kwargs_)
         else:
-            return GetServiceRulesResponseContainer(*args_, **kwargs_)
+            return GetServiceRulesResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -3077,38 +3077,38 @@ class GetServiceRulesResponseContainer(ResponseContainer):
             self.ServiceRules is not None or
             self.ServiceOptionRules is not None or
             self.OptionRules is not None or
-            super(GetServiceRulesResponseContainer, self).hasContent_()
+            super(GetServiceRulesResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServiceRulesResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetServiceRulesResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServiceRulesResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetServiceRulesResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetServiceRulesResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'GetServiceRulesResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServiceRulesResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServiceRulesResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetServiceRulesResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetServiceRulesResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetServiceRulesResponseContainer'):
-        super(GetServiceRulesResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServiceRulesResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServiceRulesResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(GetServiceRulesResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetServiceRulesResponse'):
+        super(GetServiceRulesResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServiceRulesResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServiceRulesResponse', fromsubclass_=False, pretty_print=True):
+        super(GetServiceRulesResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3134,7 +3134,7 @@ class GetServiceRulesResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetServiceRulesResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetServiceRulesResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'ServiceRules':
             obj_ = ArrayOfServiceRule.factory(parent_object_=self)
@@ -3151,8 +3151,8 @@ class GetServiceRulesResponseContainer(ResponseContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.OptionRules = obj_
             obj_.original_tagname_ = 'OptionRules'
-        super(GetServiceRulesResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetServiceRulesResponseContainer
+        super(GetServiceRulesResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class GetServiceRulesResponse
 
 
 class ArrayOfServiceRule(GeneratedsSuper):
@@ -4654,30 +4654,30 @@ class OptionRule(GeneratedsSuper):
 # end class OptionRule
 
 
-class ValidateCityPostalCodeZipRequestContainer(RequestContainer):
+class ValidateCityPostalCodeZipRequest(Request):
     """ValidateCityPostalCodeZipRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, Addresses=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(ValidateCityPostalCodeZipRequestContainer, self).__init__( **kwargs_)
+        super(ValidateCityPostalCodeZipRequest, self).__init__( **kwargs_)
         self.Addresses = Addresses
         self.Addresses_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ValidateCityPostalCodeZipRequestContainer)
+                CurrentSubclassModule_, ValidateCityPostalCodeZipRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ValidateCityPostalCodeZipRequestContainer.subclass:
-            return ValidateCityPostalCodeZipRequestContainer.subclass(*args_, **kwargs_)
+        if ValidateCityPostalCodeZipRequest.subclass:
+            return ValidateCityPostalCodeZipRequest.subclass(*args_, **kwargs_)
         else:
-            return ValidateCityPostalCodeZipRequestContainer(*args_, **kwargs_)
+            return ValidateCityPostalCodeZipRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -4690,38 +4690,38 @@ class ValidateCityPostalCodeZipRequestContainer(RequestContainer):
     def hasContent_(self):
         if (
             self.Addresses is not None or
-            super(ValidateCityPostalCodeZipRequestContainer, self).hasContent_()
+            super(ValidateCityPostalCodeZipRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateCityPostalCodeZipRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ValidateCityPostalCodeZipRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateCityPostalCodeZipRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ValidateCityPostalCodeZipRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ValidateCityPostalCodeZipRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'ValidateCityPostalCodeZipRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateCityPostalCodeZipRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateCityPostalCodeZipRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ValidateCityPostalCodeZipRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ValidateCityPostalCodeZipRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ValidateCityPostalCodeZipRequestContainer'):
-        super(ValidateCityPostalCodeZipRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateCityPostalCodeZipRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateCityPostalCodeZipRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(ValidateCityPostalCodeZipRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ValidateCityPostalCodeZipRequest'):
+        super(ValidateCityPostalCodeZipRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateCityPostalCodeZipRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateCityPostalCodeZipRequest', fromsubclass_=False, pretty_print=True):
+        super(ValidateCityPostalCodeZipRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4741,15 +4741,15 @@ class ValidateCityPostalCodeZipRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(ValidateCityPostalCodeZipRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(ValidateCityPostalCodeZipRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Addresses':
             obj_ = ArrayOfShortAddress.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Addresses = obj_
             obj_.original_tagname_ = 'Addresses'
-        super(ValidateCityPostalCodeZipRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class ValidateCityPostalCodeZipRequestContainer
+        super(ValidateCityPostalCodeZipRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class ValidateCityPostalCodeZipRequest
 
 
 class ArrayOfShortAddress(GeneratedsSuper):
@@ -4854,30 +4854,30 @@ class ArrayOfShortAddress(GeneratedsSuper):
 # end class ArrayOfShortAddress
 
 
-class ValidateCityPostalCodeZipResponseContainer(ResponseContainer):
+class ValidateCityPostalCodeZipResponse(Response):
     """ValidateCityPostalCodeZipResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, SuggestedAddresses=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(ValidateCityPostalCodeZipResponseContainer, self).__init__( **kwargs_)
+        super(ValidateCityPostalCodeZipResponse, self).__init__( **kwargs_)
         self.SuggestedAddresses = SuggestedAddresses
         self.SuggestedAddresses_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ValidateCityPostalCodeZipResponseContainer)
+                CurrentSubclassModule_, ValidateCityPostalCodeZipResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ValidateCityPostalCodeZipResponseContainer.subclass:
-            return ValidateCityPostalCodeZipResponseContainer.subclass(*args_, **kwargs_)
+        if ValidateCityPostalCodeZipResponse.subclass:
+            return ValidateCityPostalCodeZipResponse.subclass(*args_, **kwargs_)
         else:
-            return ValidateCityPostalCodeZipResponseContainer(*args_, **kwargs_)
+            return ValidateCityPostalCodeZipResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -4890,38 +4890,38 @@ class ValidateCityPostalCodeZipResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.SuggestedAddresses is not None or
-            super(ValidateCityPostalCodeZipResponseContainer, self).hasContent_()
+            super(ValidateCityPostalCodeZipResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateCityPostalCodeZipResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ValidateCityPostalCodeZipResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateCityPostalCodeZipResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ValidateCityPostalCodeZipResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ValidateCityPostalCodeZipResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'ValidateCityPostalCodeZipResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateCityPostalCodeZipResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateCityPostalCodeZipResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ValidateCityPostalCodeZipResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ValidateCityPostalCodeZipResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ValidateCityPostalCodeZipResponseContainer'):
-        super(ValidateCityPostalCodeZipResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateCityPostalCodeZipResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateCityPostalCodeZipResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(ValidateCityPostalCodeZipResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ValidateCityPostalCodeZipResponse'):
+        super(ValidateCityPostalCodeZipResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateCityPostalCodeZipResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateCityPostalCodeZipResponse', fromsubclass_=False, pretty_print=True):
+        super(ValidateCityPostalCodeZipResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4941,15 +4941,15 @@ class ValidateCityPostalCodeZipResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(ValidateCityPostalCodeZipResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(ValidateCityPostalCodeZipResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'SuggestedAddresses':
             obj_ = ArrayOfSuggestedAddress.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.SuggestedAddresses = obj_
             obj_.original_tagname_ = 'SuggestedAddresses'
-        super(ValidateCityPostalCodeZipResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class ValidateCityPostalCodeZipResponseContainer
+        super(ValidateCityPostalCodeZipResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class ValidateCityPostalCodeZipResponse
 
 
 class ArrayOfSuggestedAddress(GeneratedsSuper):
@@ -5163,30 +5163,30 @@ class SuggestedAddress(GeneratedsSuper):
 # end class SuggestedAddress
 
 
-class GetServicesOptionsResponseContainer(ResponseContainer):
+class GetServicesOptionsResponse(Response):
     """GetServicesOptionsResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, Services=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetServicesOptionsResponseContainer, self).__init__( **kwargs_)
+        super(GetServicesOptionsResponse, self).__init__( **kwargs_)
         self.Services = Services
         self.Services_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetServicesOptionsResponseContainer)
+                CurrentSubclassModule_, GetServicesOptionsResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetServicesOptionsResponseContainer.subclass:
-            return GetServicesOptionsResponseContainer.subclass(*args_, **kwargs_)
+        if GetServicesOptionsResponse.subclass:
+            return GetServicesOptionsResponse.subclass(*args_, **kwargs_)
         else:
-            return GetServicesOptionsResponseContainer(*args_, **kwargs_)
+            return GetServicesOptionsResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -5199,38 +5199,38 @@ class GetServicesOptionsResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.Services is not None or
-            super(GetServicesOptionsResponseContainer, self).hasContent_()
+            super(GetServicesOptionsResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServicesOptionsResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetServicesOptionsResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServicesOptionsResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetServicesOptionsResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetServicesOptionsResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'GetServicesOptionsResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServicesOptionsResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServicesOptionsResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetServicesOptionsResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetServicesOptionsResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetServicesOptionsResponseContainer'):
-        super(GetServicesOptionsResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServicesOptionsResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServicesOptionsResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(GetServicesOptionsResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetServicesOptionsResponse'):
+        super(GetServicesOptionsResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServicesOptionsResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServicesOptionsResponse', fromsubclass_=False, pretty_print=True):
+        super(GetServicesOptionsResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5250,29 +5250,29 @@ class GetServicesOptionsResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetServicesOptionsResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetServicesOptionsResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Services':
             obj_ = ArrayOfService.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Services = obj_
             obj_.original_tagname_ = 'Services'
-        super(GetServicesOptionsResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetServicesOptionsResponseContainer
+        super(GetServicesOptionsResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class GetServicesOptionsResponse
 
 
-class GetServicesOptionsRequestContainer(RequestContainer):
+class GetServicesOptionsRequest(Request):
     """GetServicesOptionsRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, BillingAccountNumber=None, SenderAddress=None, ReceiverAddress=None, ShipmentDate=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetServicesOptionsRequestContainer, self).__init__( **kwargs_)
+        super(GetServicesOptionsRequest, self).__init__( **kwargs_)
         self.BillingAccountNumber = BillingAccountNumber
         self.BillingAccountNumber_nsprefix_ = None
         self.SenderAddress = SenderAddress
@@ -5284,13 +5284,13 @@ class GetServicesOptionsRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetServicesOptionsRequestContainer)
+                CurrentSubclassModule_, GetServicesOptionsRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetServicesOptionsRequestContainer.subclass:
-            return GetServicesOptionsRequestContainer.subclass(*args_, **kwargs_)
+        if GetServicesOptionsRequest.subclass:
+            return GetServicesOptionsRequest.subclass(*args_, **kwargs_)
         else:
-            return GetServicesOptionsRequestContainer(*args_, **kwargs_)
+            return GetServicesOptionsRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -5318,38 +5318,38 @@ class GetServicesOptionsRequestContainer(RequestContainer):
             self.SenderAddress is not None or
             self.ReceiverAddress is not None or
             self.ShipmentDate is not None or
-            super(GetServicesOptionsRequestContainer, self).hasContent_()
+            super(GetServicesOptionsRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServicesOptionsRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetServicesOptionsRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServicesOptionsRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetServicesOptionsRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetServicesOptionsRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetServicesOptionsRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServicesOptionsRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServicesOptionsRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetServicesOptionsRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetServicesOptionsRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetServicesOptionsRequestContainer'):
-        super(GetServicesOptionsRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServicesOptionsRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServicesOptionsRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetServicesOptionsRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetServicesOptionsRequest'):
+        super(GetServicesOptionsRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetServicesOptionsRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetServicesOptionsRequest', fromsubclass_=False, pretty_print=True):
+        super(GetServicesOptionsRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5380,7 +5380,7 @@ class GetServicesOptionsRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetServicesOptionsRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetServicesOptionsRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'BillingAccountNumber':
             value_ = child_.text
@@ -5404,8 +5404,8 @@ class GetServicesOptionsRequestContainer(RequestContainer):
             value_ = self.gds_validate_string(value_, node, 'ShipmentDate')
             self.ShipmentDate = value_
             self.ShipmentDate_nsprefix_ = child_.prefix
-        super(GetServicesOptionsRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetServicesOptionsRequestContainer
+        super(GetServicesOptionsRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetServicesOptionsRequest
 
 
 GDSClassesMapping = {
@@ -5422,22 +5422,22 @@ GDSClassesMapping = {
     'ArrayOfSuggestedAddress': ArrayOfSuggestedAddress,
     'Dimension': Dimension,
     'Error': Error,
-    'GetServiceRulesRequest': GetServiceRulesRequestContainer,
-    'GetServiceRulesRequestContainer': GetServiceRulesRequestContainer,
-    'GetServiceRulesResponse': GetServiceRulesResponseContainer,
-    'GetServiceRulesResponseContainer': GetServiceRulesResponseContainer,
-    'GetServicesOptionsRequest': GetServicesOptionsRequestContainer,
-    'GetServicesOptionsRequestContainer': GetServicesOptionsRequestContainer,
-    'GetServicesOptionsResponse': GetServicesOptionsResponseContainer,
-    'GetServicesOptionsResponseContainer': GetServicesOptionsResponseContainer,
+    'GetServiceRulesRequest': GetServiceRulesRequest,
+    'GetServiceRulesRequest': GetServiceRulesRequest,
+    'GetServiceRulesResponse': GetServiceRulesResponse,
+    'GetServiceRulesResponse': GetServiceRulesResponse,
+    'GetServicesOptionsRequest': GetServicesOptionsRequest,
+    'GetServicesOptionsRequest': GetServicesOptionsRequest,
+    'GetServicesOptionsResponse': GetServicesOptionsResponse,
+    'GetServicesOptionsResponse': GetServicesOptionsResponse,
     'InformationalMessage': InformationalMessage,
     'Option': Option,
     'OptionIDValuePair': OptionIDValuePair,
     'OptionRule': OptionRule,
     'OptionValue': OptionValue,
-    'RequestContainer': RequestContainer,
+    'Request': Request,
     'RequestContext': RequestContext,
-    'ResponseContainer': ResponseContainer,
+    'Response': Response,
     'ResponseContext': ResponseContext,
     'ResponseInformation': ResponseInformation,
     'Service': Service,
@@ -5445,10 +5445,10 @@ GDSClassesMapping = {
     'ServiceRule': ServiceRule,
     'ShortAddress': ShortAddress,
     'SuggestedAddress': SuggestedAddress,
-    'ValidateCityPostalCodeZipRequest': ValidateCityPostalCodeZipRequestContainer,
-    'ValidateCityPostalCodeZipRequestContainer': ValidateCityPostalCodeZipRequestContainer,
-    'ValidateCityPostalCodeZipResponse': ValidateCityPostalCodeZipResponseContainer,
-    'ValidateCityPostalCodeZipResponseContainer': ValidateCityPostalCodeZipResponseContainer,
+    'ValidateCityPostalCodeZipRequest': ValidateCityPostalCodeZipRequest,
+    'ValidateCityPostalCodeZipRequest': ValidateCityPostalCodeZipRequest,
+    'ValidateCityPostalCodeZipResponse': ValidateCityPostalCodeZipResponse,
+    'ValidateCityPostalCodeZipResponse': ValidateCityPostalCodeZipResponse,
     'Weight': Weight,
 }
 
@@ -5496,8 +5496,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetServicesOptionsRequestContainer'
-        rootClass = GetServicesOptionsRequestContainer
+        rootTag = 'GetServicesOptionsRequest'
+        rootClass = GetServicesOptionsRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -5527,8 +5527,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetServicesOptionsRequestContainer'
-        rootClass = GetServicesOptionsRequestContainer
+        rootTag = 'GetServicesOptionsRequest'
+        rootClass = GetServicesOptionsRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -5568,8 +5568,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetServicesOptionsRequestContainer'
-        rootClass = GetServicesOptionsRequestContainer
+        rootTag = 'GetServicesOptionsRequest'
+        rootClass = GetServicesOptionsRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -5596,8 +5596,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetServicesOptionsRequestContainer'
-        rootClass = GetServicesOptionsRequestContainer
+        rootTag = 'GetServicesOptionsRequest'
+        rootClass = GetServicesOptionsRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -5649,18 +5649,18 @@ __all__ = [
     "ArrayOfSuggestedAddress",
     "Dimension",
     "Error",
-    "GetServiceRulesRequestContainer",
-    "GetServiceRulesResponseContainer",
-    "GetServicesOptionsRequestContainer",
-    "GetServicesOptionsResponseContainer",
+    "GetServiceRulesRequest",
+    "GetServiceRulesResponse",
+    "GetServicesOptionsRequest",
+    "GetServicesOptionsResponse",
     "InformationalMessage",
     "Option",
     "OptionIDValuePair",
     "OptionRule",
     "OptionValue",
-    "RequestContainer",
+    "Request",
     "RequestContext",
-    "ResponseContainer",
+    "Response",
     "ResponseContext",
     "ResponseInformation",
     "Service",
@@ -5668,7 +5668,7 @@ __all__ = [
     "ServiceRule",
     "ShortAddress",
     "SuggestedAddress",
-    "ValidateCityPostalCodeZipRequestContainer",
-    "ValidateCityPostalCodeZipResponseContainer",
+    "ValidateCityPostalCodeZipRequest",
+    "ValidateCityPostalCodeZipResponse",
     "Weight"
 ]

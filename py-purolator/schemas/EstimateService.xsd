@@ -1,13 +1,13 @@
 <xs:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v2" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://purolator.com/pws/datatypes/v2">
-    <xs:complexType name="GetQuickEstimateRequestContainer">
+    <xs:complexType name="GetQuickEstimateRequest">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>GetQuickEstimateRequest</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:RequestContainer">
+            <xs:extension base="tns:Request">
                 <xs:sequence>
                     <xs:element name="BillingAccountNumber" nillable="true" type="xs:string">
                         <xs:annotation>
@@ -43,11 +43,11 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="GetQuickEstimateRequestContainer" nillable="true" type="tns:GetQuickEstimateRequestContainer"/>
-    <xs:complexType name="RequestContainer">
+    <xs:element name="GetQuickEstimateRequest" nillable="true" type="tns:GetQuickEstimateRequest"/>
+    <xs:complexType name="Request">
         <xs:sequence/>
     </xs:complexType>
-    <xs:element name="RequestContainer" nillable="true" type="tns:RequestContainer"/>
+    <xs:element name="Request" nillable="true" type="tns:Request"/>
     <xs:complexType name="ShortAddress">
         <xs:annotation>
             <xs:appinfo/>
@@ -121,7 +121,7 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:element name="WeightUnit" nillable="true" type="tns:WeightUnit"/>
-    <xs:element name="GetQuickEstimateRequest" nillable="true" type="tns:GetQuickEstimateRequestContainer"/>
+    <xs:element name="GetQuickEstimateRequest" nillable="true" type="tns:GetQuickEstimateRequest"/>
     <xs:complexType name="RequestContext">
         <xs:annotation>
             <xs:appinfo/>
@@ -180,13 +180,13 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:element name="Language" nillable="true" type="tns:Language"/>
-    <xs:complexType name="GetQuickEstimateResponseContainer">
+    <xs:complexType name="GetQuickEstimateResponse">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>GetQuickEstimateRespone</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:ResponseContainer">
+            <xs:extension base="tns:Response">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="ShipmentEstimates" nillable="true" type="tns:ArrayOfShipmentEstimate">
                         <xs:annotation>
@@ -198,8 +198,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="GetQuickEstimateResponseContainer" nillable="true" type="tns:GetQuickEstimateResponseContainer"/>
-    <xs:complexType name="ResponseContainer">
+    <xs:element name="GetQuickEstimateResponse" nillable="true" type="tns:GetQuickEstimateResponse"/>
+    <xs:complexType name="Response">
         <xs:sequence>
             <xs:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation">
                 <xs:annotation>
@@ -209,7 +209,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:element name="ResponseContainer" nillable="true" type="tns:ResponseContainer"/>
+    <xs:element name="Response" nillable="true" type="tns:Response"/>
     <xs:complexType name="ResponseInformation">
         <xs:annotation>
             <xs:appinfo/>
@@ -459,7 +459,7 @@
         </xs:sequence>
     </xs:complexType>
     <xs:element name="OptionPrice" nillable="true" type="tns:OptionPrice"/>
-    <xs:element name="GetQuickEstimateResponse" nillable="true" type="tns:GetQuickEstimateResponseContainer"/>
+    <xs:element name="GetQuickEstimateResponse" nillable="true" type="tns:GetQuickEstimateResponse"/>
     <xs:complexType name="ResponseContext">
         <xs:annotation>
             <xs:appinfo/>
@@ -475,13 +475,13 @@
         </xs:sequence>
     </xs:complexType>
     <xs:element name="ResponseContext" nillable="true" type="tns:ResponseContext"/>
-    <xs:complexType name="GetFullEstimateRequestContainer">
+    <xs:complexType name="GetFullEstimateRequest">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>GetFullEstimateRequest</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:RequestContainer">
+            <xs:extension base="tns:Request">
                 <xs:sequence>
                     <xs:element name="Shipment" nillable="true" type="tns:Shipment">
                         <xs:annotation>
@@ -499,7 +499,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="GetFullEstimateRequestContainer" nillable="true" type="tns:GetFullEstimateRequestContainer"/>
+    <xs:element name="GetFullEstimateRequest" nillable="true" type="tns:GetFullEstimateRequest"/>
     <xs:complexType name="Shipment">
         <xs:annotation>
             <xs:appinfo/>
@@ -1664,14 +1664,14 @@
         </xs:sequence>
     </xs:complexType>
     <xs:element name="Subscription" nillable="true" type="tns:Subscription"/>
-    <xs:element name="GetFullEstimateRequest" nillable="true" type="tns:GetFullEstimateRequestContainer"/>
-    <xs:complexType name="GetFullEstimateResponseContainer">
+    <xs:element name="GetFullEstimateRequest" nillable="true" type="tns:GetFullEstimateRequest"/>
+    <xs:complexType name="GetFullEstimateResponse">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>GetFullEstimateResponse</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:ResponseContainer">
+            <xs:extension base="tns:Response">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="ShipmentEstimates" nillable="true" type="tns:ArrayOfShipmentEstimate">
                         <xs:annotation>
@@ -1689,6 +1689,6 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="GetFullEstimateResponseContainer" nillable="true" type="tns:GetFullEstimateResponseContainer"/>
-    <xs:element name="GetFullEstimateResponse" nillable="true" type="tns:GetFullEstimateResponseContainer"/>
+    <xs:element name="GetFullEstimateResponse" nillable="true" type="tns:GetFullEstimateResponse"/>
+    <xs:element name="GetFullEstimateResponse" nillable="true" type="tns:GetFullEstimateResponse"/>
 </xs:schema>

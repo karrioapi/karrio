@@ -1,13 +1,13 @@
 <xs:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v2" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://purolator.com/pws/datatypes/v2">
-    <xs:complexType name="CreateShipmentRequestContainer">
+    <xs:complexType name="CreateShipmentRequest">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>CreateShipmentRequest</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:RequestContainer">
+            <xs:extension base="tns:Request">
                 <xs:sequence>
                     <xs:element name="Shipment" nillable="true" type="tns:Shipment">
                         <xs:annotation>
@@ -25,11 +25,11 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="CreateShipmentRequestContainer" nillable="true" type="tns:CreateShipmentRequestContainer"/>
-    <xs:complexType name="RequestContainer">
+    <xs:element name="CreateShipmentRequest" nillable="true" type="tns:CreateShipmentRequest"/>
+    <xs:complexType name="Request">
         <xs:sequence/>
     </xs:complexType>
-    <xs:element name="RequestContainer" nillable="true" type="tns:RequestContainer"/>
+    <xs:element name="Request" nillable="true" type="tns:Request"/>
     <xs:complexType name="Shipment">
         <xs:annotation>
             <xs:appinfo/>
@@ -1253,7 +1253,7 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:element name="PrinterType" nillable="true" type="tns:PrinterType"/>
-    <xs:element name="CreateShipmentRequest" nillable="true" type="tns:CreateShipmentRequestContainer"/>
+    <xs:element name="CreateShipmentRequest" nillable="true" type="tns:CreateShipmentRequest"/>
     <xs:complexType name="RequestContext">
         <xs:annotation>
             <xs:appinfo/>
@@ -1312,13 +1312,13 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:element name="Language" nillable="true" type="tns:Language"/>
-    <xs:complexType name="CreateShipmentResponseContainer">
+    <xs:complexType name="CreateShipmentResponse">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>CreateShipmentResponse</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:ResponseContainer">
+            <xs:extension base="tns:Response">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="ShipmentPIN" nillable="true" type="tns:PIN">
                         <xs:annotation>
@@ -1348,8 +1348,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="CreateShipmentResponseContainer" nillable="true" type="tns:CreateShipmentResponseContainer"/>
-    <xs:complexType name="ResponseContainer">
+    <xs:element name="CreateShipmentResponse" nillable="true" type="tns:CreateShipmentResponse"/>
+    <xs:complexType name="Response">
         <xs:sequence>
             <xs:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation">
                 <xs:annotation>
@@ -1359,7 +1359,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:element name="ResponseContainer" nillable="true" type="tns:ResponseContainer"/>
+    <xs:element name="Response" nillable="true" type="tns:Response"/>
     <xs:complexType name="ResponseInformation">
         <xs:annotation>
             <xs:appinfo/>
@@ -1462,7 +1462,7 @@
         </xs:sequence>
     </xs:complexType>
     <xs:element name="ArrayOfPIN" nillable="true" type="tns:ArrayOfPIN"/>
-    <xs:element name="CreateShipmentResponse" nillable="true" type="tns:CreateShipmentResponseContainer"/>
+    <xs:element name="CreateShipmentResponse" nillable="true" type="tns:CreateShipmentResponse"/>
     <xs:complexType name="ResponseContext">
         <xs:annotation>
             <xs:appinfo/>
@@ -1478,13 +1478,13 @@
         </xs:sequence>
     </xs:complexType>
     <xs:element name="ResponseContext" nillable="true" type="tns:ResponseContext"/>
-    <xs:complexType name="VoidShipmentRequestContainer">
+    <xs:complexType name="VoidShipmentRequest">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>VoidShipmentRequest</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:RequestContainer">
+            <xs:extension base="tns:Request">
                 <xs:sequence>
                     <xs:element name="PIN" nillable="true" type="tns:PIN">
                         <xs:annotation>
@@ -1496,15 +1496,15 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="VoidShipmentRequestContainer" nillable="true" type="tns:VoidShipmentRequestContainer"/>
-    <xs:element name="VoidShipmentRequest" nillable="true" type="tns:VoidShipmentRequestContainer"/>
-    <xs:complexType name="VoidShipmentResponseContainer">
+    <xs:element name="VoidShipmentRequest" nillable="true" type="tns:VoidShipmentRequest"/>
+    <xs:element name="VoidShipmentRequest" nillable="true" type="tns:VoidShipmentRequest"/>
+    <xs:complexType name="VoidShipmentResponse">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>VoidShipmentResponse</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:ResponseContainer">
+            <xs:extension base="tns:Response">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="ShipmentVoided" type="xs:boolean">
                         <xs:annotation>
@@ -1516,15 +1516,15 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="VoidShipmentResponseContainer" nillable="true" type="tns:VoidShipmentResponseContainer"/>
-    <xs:element name="VoidShipmentResponse" nillable="true" type="tns:VoidShipmentResponseContainer"/>
-    <xs:complexType name="ValidateShipmentRequestContainer">
+    <xs:element name="VoidShipmentResponse" nillable="true" type="tns:VoidShipmentResponse"/>
+    <xs:element name="VoidShipmentResponse" nillable="true" type="tns:VoidShipmentResponse"/>
+    <xs:complexType name="ValidateShipmentRequest">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>ValidateShipmentRequest</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:RequestContainer">
+            <xs:extension base="tns:Request">
                 <xs:sequence>
                     <xs:element name="Shipment" nillable="true" type="tns:Shipment">
                         <xs:annotation>
@@ -1536,15 +1536,15 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="ValidateShipmentRequestContainer" nillable="true" type="tns:ValidateShipmentRequestContainer"/>
-    <xs:element name="ValidateShipmentRequest" nillable="true" type="tns:ValidateShipmentRequestContainer"/>
-    <xs:complexType name="ValidateShipmentResponseContainer">
+    <xs:element name="ValidateShipmentRequest" nillable="true" type="tns:ValidateShipmentRequest"/>
+    <xs:element name="ValidateShipmentRequest" nillable="true" type="tns:ValidateShipmentRequest"/>
+    <xs:complexType name="ValidateShipmentResponse">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>ValidateShipmentResponse</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:ResponseContainer">
+            <xs:extension base="tns:Response">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="ValidShipment" type="xs:boolean">
                         <xs:annotation>
@@ -1556,28 +1556,28 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="ValidateShipmentResponseContainer" nillable="true" type="tns:ValidateShipmentResponseContainer"/>
-    <xs:element name="ValidateShipmentResponse" nillable="true" type="tns:ValidateShipmentResponseContainer"/>
-    <xs:complexType name="ConsolidateRequestContainer">
+    <xs:element name="ValidateShipmentResponse" nillable="true" type="tns:ValidateShipmentResponse"/>
+    <xs:element name="ValidateShipmentResponse" nillable="true" type="tns:ValidateShipmentResponse"/>
+    <xs:complexType name="ConsolidateRequest">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>ValidateShipmentRequest</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:RequestContainer">
+            <xs:extension base="tns:Request">
                 <xs:sequence/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="ConsolidateRequestContainer" nillable="true" type="tns:ConsolidateRequestContainer"/>
-    <xs:element name="ConsolidateRequest" nillable="true" type="tns:ConsolidateRequestContainer"/>
-    <xs:complexType name="ConsolidateResponseContainer">
+    <xs:element name="ConsolidateRequest" nillable="true" type="tns:ConsolidateRequest"/>
+    <xs:element name="ConsolidateRequest" nillable="true" type="tns:ConsolidateRequest"/>
+    <xs:complexType name="ConsolidateResponse">
         <xs:annotation>
             <xs:appinfo/>
             <xs:documentation>ValidateShipmentResponse</xs:documentation>
         </xs:annotation>
         <xs:complexContent mixed="false">
-            <xs:extension base="tns:ResponseContainer">
+            <xs:extension base="tns:Response">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="Consolidate" type="xs:boolean">
                         <xs:annotation>
@@ -1589,6 +1589,6 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="ConsolidateResponseContainer" nillable="true" type="tns:ConsolidateResponseContainer"/>
-    <xs:element name="ConsolidateResponse" nillable="true" type="tns:ConsolidateResponseContainer"/>
+    <xs:element name="ConsolidateResponse" nillable="true" type="tns:ConsolidateResponse"/>
+    <xs:element name="ConsolidateResponse" nillable="true" type="tns:ConsolidateResponse"/>
 </xs:schema>

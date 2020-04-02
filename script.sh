@@ -66,3 +66,5 @@ build_all() {
   find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} ./dist \;
   backup_wheels
 }
+
+env:on || true

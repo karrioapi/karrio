@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  1 15:07:24 2020 by generateDS.py version 2.35.15.
+# Generated Thu Apr  2 06:51:06 2020 by generateDS.py version 2.35.15.
 # Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
@@ -10,10 +10,10 @@
 #   ('-o', './pypurolator/shipping_documents_service_1_3_0.py')
 #
 # Command line arguments:
-#   ./schemas/ShippingDocumentsService_1_3_0.xsd
+#   ./schemas/ShippingDocumentsService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/shipping_documents_service_1_3_0.py" ./schemas/ShippingDocumentsService_1_3_0.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/shipping_documents_service_1_3_0.py" ./schemas/ShippingDocumentsService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator
@@ -960,7 +960,7 @@ class Language(Enum):
     FR='fr' # fr
 
 
-class RequestContainer(GeneratedsSuper):
+class Request(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -973,13 +973,13 @@ class RequestContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RequestContainer)
+                CurrentSubclassModule_, Request)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if RequestContainer.subclass:
-            return RequestContainer.subclass(*args_, **kwargs_)
+        if Request.subclass:
+            return Request.subclass(*args_, **kwargs_)
         else:
-            return RequestContainer(*args_, **kwargs_)
+            return Request(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -992,31 +992,31 @@ class RequestContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Request')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RequestContainer':
+        if self.original_tagname_ is not None and name_ == 'Request':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Request')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Request', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Request'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1033,7 +1033,7 @@ class RequestContainer(GeneratedsSuper):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class RequestContainer
+# end class Request
 
 
 class ArrayOfDocumentCriteria(GeneratedsSuper):
@@ -1629,7 +1629,7 @@ class RequestContext(GeneratedsSuper):
 # end class RequestContext
 
 
-class ResponseContainer(GeneratedsSuper):
+class Response(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -1644,13 +1644,13 @@ class ResponseContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ResponseContainer)
+                CurrentSubclassModule_, Response)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ResponseContainer.subclass:
-            return ResponseContainer.subclass(*args_, **kwargs_)
+        if Response.subclass:
+            return Response.subclass(*args_, **kwargs_)
         else:
-            return ResponseContainer(*args_, **kwargs_)
+            return Response(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -1667,32 +1667,32 @@ class ResponseContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Response')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'Response':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Response')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Response', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ResponseContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Response'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1719,7 +1719,7 @@ class ResponseContainer(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ResponseInformation = obj_
             obj_.original_tagname_ = 'ResponseInformation'
-# end class ResponseContainer
+# end class Response
 
 
 class ResponseInformation(GeneratedsSuper):
@@ -2869,30 +2869,30 @@ class ResponseContext(GeneratedsSuper):
 # end class ResponseContext
 
 
-class GetShipmentManifestDocumentRequestContainer(RequestContainer):
+class GetShipmentManifestDocumentRequest(Request):
     """GetShipmentManifestDocumentRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, ShipmentManifestDocumentCriterium=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetShipmentManifestDocumentRequestContainer, self).__init__( **kwargs_)
+        super(GetShipmentManifestDocumentRequest, self).__init__( **kwargs_)
         self.ShipmentManifestDocumentCriterium = ShipmentManifestDocumentCriterium
         self.ShipmentManifestDocumentCriterium_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetShipmentManifestDocumentRequestContainer)
+                CurrentSubclassModule_, GetShipmentManifestDocumentRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetShipmentManifestDocumentRequestContainer.subclass:
-            return GetShipmentManifestDocumentRequestContainer.subclass(*args_, **kwargs_)
+        if GetShipmentManifestDocumentRequest.subclass:
+            return GetShipmentManifestDocumentRequest.subclass(*args_, **kwargs_)
         else:
-            return GetShipmentManifestDocumentRequestContainer(*args_, **kwargs_)
+            return GetShipmentManifestDocumentRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -2905,38 +2905,38 @@ class GetShipmentManifestDocumentRequestContainer(RequestContainer):
     def hasContent_(self):
         if (
             self.ShipmentManifestDocumentCriterium is not None or
-            super(GetShipmentManifestDocumentRequestContainer, self).hasContent_()
+            super(GetShipmentManifestDocumentRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetShipmentManifestDocumentRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetShipmentManifestDocumentRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetShipmentManifestDocumentRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetShipmentManifestDocumentRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetShipmentManifestDocumentRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetShipmentManifestDocumentRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetShipmentManifestDocumentRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetShipmentManifestDocumentRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetShipmentManifestDocumentRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetShipmentManifestDocumentRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetShipmentManifestDocumentRequestContainer'):
-        super(GetShipmentManifestDocumentRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetShipmentManifestDocumentRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetShipmentManifestDocumentRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetShipmentManifestDocumentRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetShipmentManifestDocumentRequest'):
+        super(GetShipmentManifestDocumentRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetShipmentManifestDocumentRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetShipmentManifestDocumentRequest', fromsubclass_=False, pretty_print=True):
+        super(GetShipmentManifestDocumentRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2956,15 +2956,15 @@ class GetShipmentManifestDocumentRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetShipmentManifestDocumentRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetShipmentManifestDocumentRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'ShipmentManifestDocumentCriterium':
             obj_ = ArrayOfShipmentManifestDocumentCriteria.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ShipmentManifestDocumentCriterium = obj_
             obj_.original_tagname_ = 'ShipmentManifestDocumentCriterium'
-        super(GetShipmentManifestDocumentRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetShipmentManifestDocumentRequestContainer
+        super(GetShipmentManifestDocumentRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetShipmentManifestDocumentRequest
 
 
 class ArrayOfShipmentManifestDocumentCriteria(GeneratedsSuper):
@@ -3165,30 +3165,30 @@ class ShipmentManifestDocumentCriteria(GeneratedsSuper):
 # end class ShipmentManifestDocumentCriteria
 
 
-class GetShipmentManifestDocumentResponseContainer(ResponseContainer):
+class GetShipmentManifestDocumentResponse(Response):
     """GetShipmentManifestDocumentResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, ManifestBatches=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetShipmentManifestDocumentResponseContainer, self).__init__( **kwargs_)
+        super(GetShipmentManifestDocumentResponse, self).__init__( **kwargs_)
         self.ManifestBatches = ManifestBatches
         self.ManifestBatches_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetShipmentManifestDocumentResponseContainer)
+                CurrentSubclassModule_, GetShipmentManifestDocumentResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetShipmentManifestDocumentResponseContainer.subclass:
-            return GetShipmentManifestDocumentResponseContainer.subclass(*args_, **kwargs_)
+        if GetShipmentManifestDocumentResponse.subclass:
+            return GetShipmentManifestDocumentResponse.subclass(*args_, **kwargs_)
         else:
-            return GetShipmentManifestDocumentResponseContainer(*args_, **kwargs_)
+            return GetShipmentManifestDocumentResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -3201,38 +3201,38 @@ class GetShipmentManifestDocumentResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.ManifestBatches is not None or
-            super(GetShipmentManifestDocumentResponseContainer, self).hasContent_()
+            super(GetShipmentManifestDocumentResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetShipmentManifestDocumentResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetShipmentManifestDocumentResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetShipmentManifestDocumentResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetShipmentManifestDocumentResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetShipmentManifestDocumentResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'GetShipmentManifestDocumentResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetShipmentManifestDocumentResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetShipmentManifestDocumentResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetShipmentManifestDocumentResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetShipmentManifestDocumentResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetShipmentManifestDocumentResponseContainer'):
-        super(GetShipmentManifestDocumentResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetShipmentManifestDocumentResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetShipmentManifestDocumentResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(GetShipmentManifestDocumentResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetShipmentManifestDocumentResponse'):
+        super(GetShipmentManifestDocumentResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetShipmentManifestDocumentResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetShipmentManifestDocumentResponse', fromsubclass_=False, pretty_print=True):
+        super(GetShipmentManifestDocumentResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3252,15 +3252,15 @@ class GetShipmentManifestDocumentResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetShipmentManifestDocumentResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetShipmentManifestDocumentResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'ManifestBatches':
             obj_ = ArrayOfManifestBatch.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ManifestBatches = obj_
             obj_.original_tagname_ = 'ManifestBatches'
-        super(GetShipmentManifestDocumentResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetShipmentManifestDocumentResponseContainer
+        super(GetShipmentManifestDocumentResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class GetShipmentManifestDocumentResponse
 
 
 class ArrayOfManifestBatch(GeneratedsSuper):
@@ -3760,30 +3760,30 @@ class ManifestBatchDetail(GeneratedsSuper):
 # end class ManifestBatchDetail
 
 
-class GetDocumentsResponseContainer(ResponseContainer):
+class GetDocumentsResponse(Response):
     """GetDocumentsResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, Documents=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetDocumentsResponseContainer, self).__init__( **kwargs_)
+        super(GetDocumentsResponse, self).__init__( **kwargs_)
         self.Documents = Documents
         self.Documents_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetDocumentsResponseContainer)
+                CurrentSubclassModule_, GetDocumentsResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetDocumentsResponseContainer.subclass:
-            return GetDocumentsResponseContainer.subclass(*args_, **kwargs_)
+        if GetDocumentsResponse.subclass:
+            return GetDocumentsResponse.subclass(*args_, **kwargs_)
         else:
-            return GetDocumentsResponseContainer(*args_, **kwargs_)
+            return GetDocumentsResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -3796,38 +3796,38 @@ class GetDocumentsResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.Documents is not None or
-            super(GetDocumentsResponseContainer, self).hasContent_()
+            super(GetDocumentsResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetDocumentsResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetDocumentsResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetDocumentsResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetDocumentsResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetDocumentsResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'GetDocumentsResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetDocumentsResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetDocumentsResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetDocumentsResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetDocumentsResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetDocumentsResponseContainer'):
-        super(GetDocumentsResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetDocumentsResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetDocumentsResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(GetDocumentsResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetDocumentsResponse'):
+        super(GetDocumentsResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetDocumentsResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetDocumentsResponse', fromsubclass_=False, pretty_print=True):
+        super(GetDocumentsResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3847,29 +3847,29 @@ class GetDocumentsResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetDocumentsResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetDocumentsResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Documents':
             obj_ = ArrayOfDocument.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Documents = obj_
             obj_.original_tagname_ = 'Documents'
-        super(GetDocumentsResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetDocumentsResponseContainer
+        super(GetDocumentsResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class GetDocumentsResponse
 
 
-class GetDocumentsRequestContainer(RequestContainer):
+class GetDocumentsRequest(Request):
     """GetDocumentsRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, OutputType=None, Synchronous=None, DocumentCriterium=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetDocumentsRequestContainer, self).__init__( **kwargs_)
+        super(GetDocumentsRequest, self).__init__( **kwargs_)
         self.OutputType = OutputType
         self.OutputType_nsprefix_ = None
         self.Synchronous = Synchronous
@@ -3879,13 +3879,13 @@ class GetDocumentsRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetDocumentsRequestContainer)
+                CurrentSubclassModule_, GetDocumentsRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetDocumentsRequestContainer.subclass:
-            return GetDocumentsRequestContainer.subclass(*args_, **kwargs_)
+        if GetDocumentsRequest.subclass:
+            return GetDocumentsRequest.subclass(*args_, **kwargs_)
         else:
-            return GetDocumentsRequestContainer(*args_, **kwargs_)
+            return GetDocumentsRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -3908,38 +3908,38 @@ class GetDocumentsRequestContainer(RequestContainer):
             self.OutputType is not None or
             self.Synchronous is not None or
             self.DocumentCriterium is not None or
-            super(GetDocumentsRequestContainer, self).hasContent_()
+            super(GetDocumentsRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetDocumentsRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetDocumentsRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetDocumentsRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetDocumentsRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetDocumentsRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetDocumentsRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetDocumentsRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetDocumentsRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetDocumentsRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetDocumentsRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetDocumentsRequestContainer'):
-        super(GetDocumentsRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetDocumentsRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetDocumentsRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetDocumentsRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetDocumentsRequest'):
+        super(GetDocumentsRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetDocumentsRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetDocumentsRequest', fromsubclass_=False, pretty_print=True):
+        super(GetDocumentsRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3967,7 +3967,7 @@ class GetDocumentsRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetDocumentsRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetDocumentsRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'OutputType':
             value_ = child_.text
@@ -3986,8 +3986,8 @@ class GetDocumentsRequestContainer(RequestContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.DocumentCriterium = obj_
             obj_.original_tagname_ = 'DocumentCriterium'
-        super(GetDocumentsRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetDocumentsRequestContainer
+        super(GetDocumentsRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetDocumentsRequest
 
 
 GDSClassesMapping = {
@@ -4004,21 +4004,21 @@ GDSClassesMapping = {
     'DocumentDetail': DocumentDetail,
     'DocumentTypes': DocumentTypes,
     'Error': Error,
-    'GetDocumentsRequest': GetDocumentsRequestContainer,
-    'GetDocumentsRequestContainer': GetDocumentsRequestContainer,
-    'GetDocumentsResponse': GetDocumentsResponseContainer,
-    'GetDocumentsResponseContainer': GetDocumentsResponseContainer,
-    'GetShipmentManifestDocumentRequest': GetShipmentManifestDocumentRequestContainer,
-    'GetShipmentManifestDocumentRequestContainer': GetShipmentManifestDocumentRequestContainer,
-    'GetShipmentManifestDocumentResponse': GetShipmentManifestDocumentResponseContainer,
-    'GetShipmentManifestDocumentResponseContainer': GetShipmentManifestDocumentResponseContainer,
+    'GetDocumentsRequest': GetDocumentsRequest,
+    'GetDocumentsRequest': GetDocumentsRequest,
+    'GetDocumentsResponse': GetDocumentsResponse,
+    'GetDocumentsResponse': GetDocumentsResponse,
+    'GetShipmentManifestDocumentRequest': GetShipmentManifestDocumentRequest,
+    'GetShipmentManifestDocumentRequest': GetShipmentManifestDocumentRequest,
+    'GetShipmentManifestDocumentResponse': GetShipmentManifestDocumentResponse,
+    'GetShipmentManifestDocumentResponse': GetShipmentManifestDocumentResponse,
     'InformationalMessage': InformationalMessage,
     'ManifestBatch': ManifestBatch,
     'ManifestBatchDetail': ManifestBatchDetail,
     'PIN': PIN,
-    'RequestContainer': RequestContainer,
+    'Request': Request,
     'RequestContext': RequestContext,
-    'ResponseContainer': ResponseContainer,
+    'Response': Response,
     'ResponseContext': ResponseContext,
     'ResponseInformation': ResponseInformation,
     'ShipmentManifestDocumentCriteria': ShipmentManifestDocumentCriteria,
@@ -4068,8 +4068,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetDocumentsRequestContainer'
-        rootClass = GetDocumentsRequestContainer
+        rootTag = 'GetDocumentsRequest'
+        rootClass = GetDocumentsRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -4099,8 +4099,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetDocumentsRequestContainer'
-        rootClass = GetDocumentsRequestContainer
+        rootTag = 'GetDocumentsRequest'
+        rootClass = GetDocumentsRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -4140,8 +4140,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetDocumentsRequestContainer'
-        rootClass = GetDocumentsRequestContainer
+        rootTag = 'GetDocumentsRequest'
+        rootClass = GetDocumentsRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -4168,8 +4168,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetDocumentsRequestContainer'
-        rootClass = GetDocumentsRequestContainer
+        rootTag = 'GetDocumentsRequest'
+        rootClass = GetDocumentsRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -4221,17 +4221,17 @@ __all__ = [
     "DocumentDetail",
     "DocumentTypes",
     "Error",
-    "GetDocumentsRequestContainer",
-    "GetDocumentsResponseContainer",
-    "GetShipmentManifestDocumentRequestContainer",
-    "GetShipmentManifestDocumentResponseContainer",
+    "GetDocumentsRequest",
+    "GetDocumentsResponse",
+    "GetShipmentManifestDocumentRequest",
+    "GetShipmentManifestDocumentResponse",
     "InformationalMessage",
     "ManifestBatch",
     "ManifestBatchDetail",
     "PIN",
-    "RequestContainer",
+    "Request",
     "RequestContext",
-    "ResponseContainer",
+    "Response",
     "ResponseContext",
     "ResponseInformation",
     "ShipmentManifestDocumentCriteria"

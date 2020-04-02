@@ -1,13 +1,13 @@
 <xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v2" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://purolator.com/pws/datatypes/v2">
-    <xsd:complexType name="GetServicesOptionsRequestContainer">
+    <xsd:complexType name="GetServicesOptionsRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetServicesOptionsRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="BillingAccountNumber" nillable="true" type="xsd:string">
                         <xsd:annotation>
@@ -37,11 +37,11 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetServicesOptionsRequestContainer" nillable="true" type="tns:GetServicesOptionsRequestContainer"/>
-    <xsd:complexType name="RequestContainer">
+    <xsd:element name="GetServicesOptionsRequest" nillable="true" type="tns:GetServicesOptionsRequest"/>
+    <xsd:complexType name="Request">
         <xsd:sequence/>
     </xsd:complexType>
-    <xsd:element name="RequestContainer" nillable="true" type="tns:RequestContainer"/>
+    <xsd:element name="Request" nillable="true" type="tns:Request"/>
     <xsd:complexType name="ShortAddress">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -75,7 +75,7 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ShortAddress" nillable="true" type="tns:ShortAddress"/>
-    <xsd:element name="GetServicesOptionsRequest" nillable="true" type="tns:GetServicesOptionsRequestContainer"/>
+    <xsd:element name="GetServicesOptionsRequest" nillable="true" type="tns:GetServicesOptionsRequest"/>
     <xsd:complexType name="RequestContext">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -134,13 +134,13 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="Language" nillable="true" type="tns:Language"/>
-    <xsd:complexType name="GetServicesOptionsResponseContainer">
+    <xsd:complexType name="GetServicesOptionsResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetServicesOptionsResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" name="Services" nillable="true" type="tns:ArrayOfService">
                         <xsd:annotation>
@@ -152,8 +152,8 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetServicesOptionsResponseContainer" nillable="true" type="tns:GetServicesOptionsResponseContainer"/>
-    <xsd:complexType name="ResponseContainer">
+    <xsd:element name="GetServicesOptionsResponse" nillable="true" type="tns:GetServicesOptionsResponse"/>
+    <xsd:complexType name="Response">
         <xsd:sequence>
             <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation">
                 <xsd:annotation>
@@ -163,7 +163,7 @@
             </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:element name="ResponseContainer" nillable="true" type="tns:ResponseContainer"/>
+    <xsd:element name="Response" nillable="true" type="tns:Response"/>
     <xsd:complexType name="ResponseInformation">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -397,7 +397,7 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="OptionValue" nillable="true" type="tns:OptionValue"/>
-    <xsd:element name="GetServicesOptionsResponse" nillable="true" type="tns:GetServicesOptionsResponseContainer"/>
+    <xsd:element name="GetServicesOptionsResponse" nillable="true" type="tns:GetServicesOptionsResponse"/>
     <xsd:complexType name="ResponseContext">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -413,13 +413,13 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ResponseContext" nillable="true" type="tns:ResponseContext"/>
-    <xsd:complexType name="GetServiceRulesRequestContainer">
+    <xsd:complexType name="GetServiceRulesRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetServiceRulesRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="BillingAccountNumber" nillable="true" type="xsd:string">
                         <xsd:annotation>
@@ -443,15 +443,15 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetServiceRulesRequestContainer" nillable="true" type="tns:GetServiceRulesRequestContainer"/>
-    <xsd:element name="GetServiceRulesRequest" nillable="true" type="tns:GetServiceRulesRequestContainer"/>
-    <xsd:complexType name="GetServiceRulesResponseContainer">
+    <xsd:element name="GetServiceRulesRequest" nillable="true" type="tns:GetServiceRulesRequest"/>
+    <xsd:element name="GetServiceRulesRequest" nillable="true" type="tns:GetServiceRulesRequest"/>
+    <xsd:complexType name="GetServiceRulesResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetServiceRulesResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" name="ServiceRules" nillable="true" type="tns:ArrayOfServiceRule">
                         <xsd:annotation>
@@ -475,7 +475,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetServiceRulesResponseContainer" nillable="true" type="tns:GetServiceRulesResponseContainer"/>
+    <xsd:element name="GetServiceRulesResponse" nillable="true" type="tns:GetServiceRulesResponse"/>
     <xsd:complexType name="ArrayOfServiceRule">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="ServiceRule" nillable="true" type="tns:ServiceRule"/>
@@ -814,14 +814,14 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="OptionRule" nillable="true" type="tns:OptionRule"/>
-    <xsd:element name="GetServiceRulesResponse" nillable="true" type="tns:GetServiceRulesResponseContainer"/>
-    <xsd:complexType name="ValidateCityPostalCodeZipRequestContainer">
+    <xsd:element name="GetServiceRulesResponse" nillable="true" type="tns:GetServiceRulesResponse"/>
+    <xsd:complexType name="ValidateCityPostalCodeZipRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>ValidateCityPostalCodeZipRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="Addresses" nillable="true" type="tns:ArrayOfShortAddress">
                         <xsd:annotation>
@@ -833,21 +833,21 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="ValidateCityPostalCodeZipRequestContainer" nillable="true" type="tns:ValidateCityPostalCodeZipRequestContainer"/>
+    <xsd:element name="ValidateCityPostalCodeZipRequest" nillable="true" type="tns:ValidateCityPostalCodeZipRequest"/>
     <xsd:complexType name="ArrayOfShortAddress">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="ShortAddress" nillable="true" type="tns:ShortAddress"/>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ArrayOfShortAddress" nillable="true" type="tns:ArrayOfShortAddress"/>
-    <xsd:element name="ValidateCityPostalCodeZipRequest" nillable="true" type="tns:ValidateCityPostalCodeZipRequestContainer"/>
-    <xsd:complexType name="ValidateCityPostalCodeZipResponseContainer">
+    <xsd:element name="ValidateCityPostalCodeZipRequest" nillable="true" type="tns:ValidateCityPostalCodeZipRequest"/>
+    <xsd:complexType name="ValidateCityPostalCodeZipResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>ValidateCityPostalCodeZipResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" name="SuggestedAddresses" nillable="true" type="tns:ArrayOfSuggestedAddress">
                         <xsd:annotation>
@@ -859,7 +859,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="ValidateCityPostalCodeZipResponseContainer" nillable="true" type="tns:ValidateCityPostalCodeZipResponseContainer"/>
+    <xsd:element name="ValidateCityPostalCodeZipResponse" nillable="true" type="tns:ValidateCityPostalCodeZipResponse"/>
     <xsd:complexType name="ArrayOfSuggestedAddress">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="SuggestedAddress" nillable="true" type="tns:SuggestedAddress"/>
@@ -887,5 +887,5 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="SuggestedAddress" nillable="true" type="tns:SuggestedAddress"/>
-    <xsd:element name="ValidateCityPostalCodeZipResponse" nillable="true" type="tns:ValidateCityPostalCodeZipResponseContainer"/>
+    <xsd:element name="ValidateCityPostalCodeZipResponse" nillable="true" type="tns:ValidateCityPostalCodeZipResponse"/>
 </xsd:schema>

@@ -1,13 +1,13 @@
 <xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://purolator.com/pws/datatypes/v1">
-    <xsd:complexType name="TrackPackagesByPinRequestContainer">
+    <xsd:complexType name="TrackPackagesByPinRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>TrackPackagesByPinRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="PINs" nillable="true" type="tns:ArrayOfPIN">
                         <xsd:annotation>
@@ -19,11 +19,11 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="TrackPackagesByPinRequestContainer" nillable="true" type="tns:TrackPackagesByPinRequestContainer"/>
-    <xsd:complexType name="RequestContainer">
+    <xsd:element name="TrackPackagesByPinRequest" nillable="true" type="tns:TrackPackagesByPinRequest"/>
+    <xsd:complexType name="Request">
         <xsd:sequence/>
     </xsd:complexType>
-    <xsd:element name="RequestContainer" nillable="true" type="tns:RequestContainer"/>
+    <xsd:element name="Request" nillable="true" type="tns:Request"/>
     <xsd:complexType name="ArrayOfPIN">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="PIN" nillable="true" type="tns:PIN"/>
@@ -45,7 +45,7 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="PIN" nillable="true" type="tns:PIN"/>
-    <xsd:element name="TrackPackagesByPinRequest" nillable="true" type="tns:TrackPackagesByPinRequestContainer"/>
+    <xsd:element name="TrackPackagesByPinRequest" nillable="true" type="tns:TrackPackagesByPinRequest"/>
     <xsd:complexType name="RequestContext">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -104,13 +104,13 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="Language" nillable="true" type="tns:Language"/>
-    <xsd:complexType name="TrackPackagesByPinResponseContainer">
+    <xsd:complexType name="TrackPackagesByPinResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>TrackPackagesByPinResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" name="TrackingInformationList" nillable="true" type="tns:ArrayOfTrackingInformation">
                         <xsd:annotation>
@@ -122,8 +122,8 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="TrackPackagesByPinResponseContainer" nillable="true" type="tns:TrackPackagesByPinResponseContainer"/>
-    <xsd:complexType name="ResponseContainer">
+    <xsd:element name="TrackPackagesByPinResponse" nillable="true" type="tns:TrackPackagesByPinResponse"/>
+    <xsd:complexType name="Response">
         <xsd:sequence>
             <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation">
                 <xsd:annotation>
@@ -133,7 +133,7 @@
             </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:element name="ResponseContainer" nillable="true" type="tns:ResponseContainer"/>
+    <xsd:element name="Response" nillable="true" type="tns:Response"/>
     <xsd:complexType name="ResponseInformation">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -770,7 +770,7 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="SignatureImageFormat" nillable="true" type="tns:SignatureImageFormat"/>
-    <xsd:element name="TrackPackagesByPinResponse" nillable="true" type="tns:TrackPackagesByPinResponseContainer"/>
+    <xsd:element name="TrackPackagesByPinResponse" nillable="true" type="tns:TrackPackagesByPinResponse"/>
     <xsd:complexType name="ResponseContext">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -786,13 +786,13 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ResponseContext" nillable="true" type="tns:ResponseContext"/>
-    <xsd:complexType name="TrackPackagesByReferenceRequestContainer">
+    <xsd:complexType name="TrackPackagesByReferenceRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>TrackPackagesByReferenceRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="TrackPackageByReferenceSearchCriteria" nillable="true" type="tns:TrackPackageByReferenceSearchCriteria">
                         <xsd:annotation>
@@ -804,7 +804,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="TrackPackagesByReferenceRequestContainer" nillable="true" type="tns:TrackPackagesByReferenceRequestContainer"/>
+    <xsd:element name="TrackPackagesByReferenceRequest" nillable="true" type="tns:TrackPackagesByReferenceRequest"/>
     <xsd:complexType name="TrackPackageByReferenceSearchCriteria">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -850,14 +850,14 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="TrackPackageByReferenceSearchCriteria" nillable="true" type="tns:TrackPackageByReferenceSearchCriteria"/>
-    <xsd:element name="TrackPackagesByReferenceRequest" nillable="true" type="tns:TrackPackagesByReferenceRequestContainer"/>
-    <xsd:complexType name="TrackPackagesByReferenceResponseContainer">
+    <xsd:element name="TrackPackagesByReferenceRequest" nillable="true" type="tns:TrackPackagesByReferenceRequest"/>
+    <xsd:complexType name="TrackPackagesByReferenceResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>Service Contract Class - TrackPackagesByReferenceResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" name="TrackingInformationList" nillable="true" type="tns:ArrayOfTrackingInformation">
                         <xsd:annotation>
@@ -869,15 +869,15 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="TrackPackagesByReferenceResponseContainer" nillable="true" type="tns:TrackPackagesByReferenceResponseContainer"/>
-    <xsd:element name="TrackPackagesByReferenceResponse" nillable="true" type="tns:TrackPackagesByReferenceResponseContainer"/>
-    <xsd:complexType name="GetDeliveryDetailsRequestContainer">
+    <xsd:element name="TrackPackagesByReferenceResponse" nillable="true" type="tns:TrackPackagesByReferenceResponse"/>
+    <xsd:element name="TrackPackagesByReferenceResponse" nillable="true" type="tns:TrackPackagesByReferenceResponse"/>
+    <xsd:complexType name="GetDeliveryDetailsRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetDeliveryDetailsRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="PIN" nillable="true" type="tns:PIN">
                         <xsd:annotation>
@@ -889,15 +889,15 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetDeliveryDetailsRequestContainer" nillable="true" type="tns:GetDeliveryDetailsRequestContainer"/>
-    <xsd:element name="GetDeliveryDetailsRequest" nillable="true" type="tns:GetDeliveryDetailsRequestContainer"/>
-    <xsd:complexType name="GetDeliveryDetailsResponseContainer">
+    <xsd:element name="GetDeliveryDetailsRequest" nillable="true" type="tns:GetDeliveryDetailsRequest"/>
+    <xsd:element name="GetDeliveryDetailsRequest" nillable="true" type="tns:GetDeliveryDetailsRequest"/>
+    <xsd:complexType name="GetDeliveryDetailsResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetDeliveryDetailsResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" name="DeliveryDetails" nillable="true" type="tns:DeliveryScan">
                         <xsd:annotation>
@@ -909,6 +909,6 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetDeliveryDetailsResponseContainer" nillable="true" type="tns:GetDeliveryDetailsResponseContainer"/>
-    <xsd:element name="GetDeliveryDetailsResponse" nillable="true" type="tns:GetDeliveryDetailsResponseContainer"/>
+    <xsd:element name="GetDeliveryDetailsResponse" nillable="true" type="tns:GetDeliveryDetailsResponse"/>
+    <xsd:element name="GetDeliveryDetailsResponse" nillable="true" type="tns:GetDeliveryDetailsResponse"/>
 </xsd:schema>

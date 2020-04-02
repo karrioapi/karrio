@@ -1,26 +1,34 @@
 <xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://purolator.com/pws/datatypes/v1">
-    <xsd:complexType name="GetEstimateRequestContainer">
+    <xsd:complexType name="CreateShipmentRequest">
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
-                    <xsd:element name="Estimate" nillable="true" type="tns:Shipment" />
+                    <xsd:element name="Shipment" nillable="true" type="tns:Shipment" />
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetEstimateRequestContainer" nillable="true" type="tns:GetEstimateRequestContainer" />
-    <xsd:complexType name="RequestContainer">
+    <xsd:element name="CreateShipmentRequest" nillable="true" type="tns:CreateShipmentRequest" />
+    <xsd:complexType name="Request">
         <xsd:sequence />
     </xsd:complexType>
-    <xsd:element name="RequestContainer" nillable="true" type="tns:RequestContainer" />
+    <xsd:element name="Request" nillable="true" type="tns:Request" />
     <xsd:complexType name="Shipment">
         <xsd:sequence>
             <xsd:element name="SenderInformation" nillable="true" type="tns:SenderInformation" />
             <xsd:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation" />
+            <xsd:element minOccurs="0" name="ThirdPartyInformation" nillable="true" type="tns:ThirdPartyInformation" />
             <xsd:element name="PaymentInformation" nillable="true" type="tns:PaymentInformation" />
-            <xsd:element name="ShipmentDetails" nillable="true" type="tns:EstimateInformation" />
+            <xsd:element name="ShipmentDetails" nillable="true" type="tns:ShipmentInformation" />
+            <xsd:element name="AppointmentFlag" type="xsd:boolean" />
+            <xsd:element minOccurs="0" name="AppointmentDate" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="AppointmentStartTime" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="AppointmentEndTime" nillable="true" type="xsd:string" />
+            <xsd:element name="PickupFlag" type="xsd:boolean" />
+            <xsd:element minOccurs="0" name="PickupInformation" nillable="true" type="tns:PickUpInformation" />
+            <xsd:element minOccurs="0" name="AlertInformation" nillable="true" type="tns:AlertInformation" />
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="Shipment" nillable="true" type="tns:Shipment" />
@@ -70,6 +78,12 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation" />
+    <xsd:complexType name="ThirdPartyInformation">
+        <xsd:sequence>
+            <xsd:element name="Address" nillable="true" type="tns:Address" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ThirdPartyInformation" nillable="true" type="tns:ThirdPartyInformation" />
     <xsd:complexType name="PaymentInformation">
         <xsd:sequence>
             <xsd:element name="PaymentType" type="tns:PaymentType" />
@@ -107,6 +121,16 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="CreditCardType" nillable="true" type="tns:CreditCardType" />
+    <xsd:complexType name="ShipmentInformation">
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:EstimateInformation">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="CustomerReferences" nillable="true" type="tns:ArrayOfCustomerReference" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="ShipmentInformation" nillable="true" type="tns:ShipmentInformation" />
     <xsd:complexType name="EstimateInformation">
         <xsd:sequence>
             <xsd:element minOccurs="0" name="ServiceTypeCode" nillable="true" type="xsd:string" />
@@ -183,7 +207,52 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="BoolValuePair" nillable="true" type="tns:BoolValuePair" />
-    <xsd:element name="FreightGetEstimateRequest" nillable="true" type="tns:GetEstimateRequestContainer" />
+    <xsd:complexType name="ArrayOfCustomerReference">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="CustomerReference" nillable="true" type="tns:CustomerReference" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfCustomerReference" nillable="true" type="tns:ArrayOfCustomerReference" />
+    <xsd:complexType name="CustomerReference">
+        <xsd:sequence>
+            <xsd:element name="Sequence" type="xsd:int" />
+            <xsd:element name="Code" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="CustomerReference" nillable="true" type="tns:CustomerReference" />
+    <xsd:complexType name="PickUpInformation">
+        <xsd:sequence>
+            <xsd:element name="PickupDate" nillable="true" type="xsd:string" />
+            <xsd:element name="ReadyTime" nillable="true" type="xsd:string" />
+            <xsd:element name="CloseTime" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="PickUpOptions" nillable="true" type="tns:ArrayOfBoolValuePair" />
+            <xsd:element minOccurs="0" name="OtherOption" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StopNotes" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="DriverNotes" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="PickUpConfirmationEmailFlag" type="xsd:boolean" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PickUpInformation" nillable="true" type="tns:PickUpInformation" />
+    <xsd:complexType name="AlertInformation">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="AlertDetails" nillable="true" type="tns:ArrayOfAlertDetail" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="AlertInformation" nillable="true" type="tns:AlertInformation" />
+    <xsd:complexType name="ArrayOfAlertDetail">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="AlertDetail" nillable="true" type="tns:AlertDetail" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfAlertDetail" nillable="true" type="tns:ArrayOfAlertDetail" />
+    <xsd:complexType name="AlertDetail">
+        <xsd:sequence>
+            <xsd:element name="Type" nillable="true" type="xsd:string" />
+            <xsd:element name="EmailAddress" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="AlertDetail" nillable="true" type="tns:AlertDetail" />
+    <xsd:element name="CreateShipmentRequest" nillable="true" type="tns:CreateShipmentRequest" />
     <xsd:complexType name="RequestContext">
         <xsd:sequence>
             <xsd:element name="Version" nillable="true" type="xsd:string" />
@@ -206,15 +275,21 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="Language" nillable="true" type="tns:Language" />
-    <xsd:complexType name="GetEstimateResponseContainer">
+    <xsd:complexType name="CreateShipmentResponse">
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
+                    <xsd:element minOccurs="0" name="ProNumber" nillable="true" type="xsd:string" />
+                    <xsd:element minOccurs="0" name="PickupNumber" nillable="true" type="xsd:string" />
                     <xsd:element minOccurs="0" name="TariffCode" nillable="true" type="xsd:string" />
                     <xsd:element minOccurs="0" name="DiscountPoint" type="xsd:decimal" />
                     <xsd:element minOccurs="0" name="TransitDays" type="xsd:int" />
                     <xsd:element minOccurs="0" name="EstimatedDeliveryDate" nillable="true" type="xsd:string" />
+                    <xsd:element minOccurs="0" name="OriginalTerminalCode" nillable="true" type="xsd:string" />
+                    <xsd:element minOccurs="0" name="DestinationTerminalCode" nillable="true" type="xsd:string" />
+                    <xsd:element minOccurs="0" name="DestinationUniCode" nillable="true" type="xsd:string" />
                     <xsd:element minOccurs="0" name="TotalPrice" type="xsd:decimal" />
+                    <xsd:element minOccurs="0" name="ShipmentPINs" nillable="true" type="tns:ArrayOfPIN" />
                     <xsd:element minOccurs="0" name="LineItemDetails" nillable="true" type="tns:ArrayOfLineItem" />
                     <xsd:element minOccurs="0" name="AccessorialDetails" nillable="true" type="tns:ArrayOfAccessorialItem" />
                     <xsd:element minOccurs="0" name="ShipmentTaxes" nillable="true" type="tns:ArrayOfTax" />
@@ -222,13 +297,13 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetEstimateResponseContainer" nillable="true" type="tns:GetEstimateResponseContainer" />
-    <xsd:complexType name="ResponseContainer">
+    <xsd:element name="CreateShipmentResponse" nillable="true" type="tns:CreateShipmentResponse" />
+    <xsd:complexType name="Response">
         <xsd:sequence>
             <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation" />
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:element name="ResponseContainer" nillable="true" type="tns:ResponseContainer" />
+    <xsd:element name="Response" nillable="true" type="tns:Response" />
     <xsd:complexType name="ResponseInformation">
         <xsd:sequence>
             <xsd:element name="Errors" nillable="true" type="tns:ArrayOfError" />
@@ -263,6 +338,18 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="InformationalMessage" nillable="true" type="tns:InformationalMessage" />
+    <xsd:complexType name="ArrayOfPIN">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="PIN" nillable="true" type="tns:PIN" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfPIN" nillable="true" type="tns:ArrayOfPIN" />
+    <xsd:complexType name="PIN">
+        <xsd:sequence>
+            <xsd:element name="Value" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PIN" nillable="true" type="tns:PIN" />
     <xsd:complexType name="ArrayOfAccessorialItem">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="AccessorialItem" nillable="true" type="tns:AccessorialItem" />
@@ -291,7 +378,7 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="Tax" nillable="true" type="tns:Tax" />
-    <xsd:element name="GetEstimateResponse" nillable="true" type="tns:GetEstimateResponseContainer" />
+    <xsd:element name="CreateShipmentResponse" nillable="true" type="tns:CreateShipmentResponse" />
     <xsd:complexType name="ResponseContext">
         <xsd:sequence>
             <xsd:element name="ResponseReference" nillable="true" type="xsd:string" />

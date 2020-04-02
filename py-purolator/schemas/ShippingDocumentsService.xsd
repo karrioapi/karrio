@@ -1,13 +1,13 @@
 <xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://purolator.com/pws/datatypes/v1">
-    <xsd:complexType name="GetDocumentsRequestContainer">
+    <xsd:complexType name="GetDocumentsRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetDocumentsRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" maxOccurs="1" nillable="true" name="OutputType" type="xsd:string">
                         <xsd:annotation>
@@ -31,11 +31,11 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetDocumentsRequestContainer" nillable="true" type="tns:GetDocumentsRequestContainer"/>
-    <xsd:complexType name="RequestContainer">
+    <xsd:element name="GetDocumentsRequest" nillable="true" type="tns:GetDocumentsRequest"/>
+    <xsd:complexType name="Request">
         <xsd:sequence/>
     </xsd:complexType>
-    <xsd:element name="RequestContainer" nillable="true" type="tns:RequestContainer"/>
+    <xsd:element name="Request" nillable="true" type="tns:Request"/>
     <xsd:complexType name="ArrayOfDocumentCriteria">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="DocumentCriteria" nillable="true" type="tns:DocumentCriteria"/>
@@ -92,7 +92,7 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="DocumentTypes" nillable="true" type="tns:DocumentTypes"/>
-    <xsd:element name="GetDocumentsRequest" nillable="true" type="tns:GetDocumentsRequestContainer"/>
+    <xsd:element name="GetDocumentsRequest" nillable="true" type="tns:GetDocumentsRequest"/>
     <xsd:complexType name="RequestContext">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -151,13 +151,13 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="Language" nillable="true" type="tns:Language"/>
-    <xsd:complexType name="GetDocumentsResponseContainer">
+    <xsd:complexType name="GetDocumentsResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetDocumentsResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" name="Documents" nillable="true" type="tns:ArrayOfDocument">
                         <xsd:annotation>
@@ -169,8 +169,8 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetDocumentsResponseContainer" nillable="true" type="tns:GetDocumentsResponseContainer"/>
-    <xsd:complexType name="ResponseContainer">
+    <xsd:element name="GetDocumentsResponse" nillable="true" type="tns:GetDocumentsResponse"/>
+    <xsd:complexType name="Response">
         <xsd:sequence>
             <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation">
                 <xsd:annotation>
@@ -180,7 +180,7 @@
             </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:element name="ResponseContainer" nillable="true" type="tns:ResponseContainer"/>
+    <xsd:element name="Response" nillable="true" type="tns:Response"/>
     <xsd:complexType name="ResponseInformation">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -368,7 +368,7 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="DocumentStatus" nillable="true" type="tns:DocumentStatus"/>
-    <xsd:element name="GetDocumentsResponse" nillable="true" type="tns:GetDocumentsResponseContainer"/>
+    <xsd:element name="GetDocumentsResponse" nillable="true" type="tns:GetDocumentsResponse"/>
     <xsd:complexType name="ResponseContext">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -384,13 +384,13 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ResponseContext" nillable="true" type="tns:ResponseContext"/>
-    <xsd:complexType name="GetShipmentManifestDocumentRequestContainer">
+    <xsd:complexType name="GetShipmentManifestDocumentRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetShipmentManifestDocumentRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="ShipmentManifestDocumentCriterium" nillable="true" type="tns:ArrayOfShipmentManifestDocumentCriteria">
                         <xsd:annotation>
@@ -402,7 +402,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetShipmentManifestDocumentRequestContainer" nillable="true" type="tns:GetShipmentManifestDocumentRequestContainer"/>
+    <xsd:element name="GetShipmentManifestDocumentRequest" nillable="true" type="tns:GetShipmentManifestDocumentRequest"/>
     <xsd:complexType name="ArrayOfShipmentManifestDocumentCriteria">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="ShipmentManifestDocumentCriteria" nillable="true" type="tns:ShipmentManifestDocumentCriteria"/>
@@ -424,14 +424,14 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ShipmentManifestDocumentCriteria" nillable="true" type="tns:ShipmentManifestDocumentCriteria"/>
-    <xsd:element name="GetShipmentManifestDocumentRequest" nillable="true" type="tns:GetShipmentManifestDocumentRequestContainer"/>
-    <xsd:complexType name="GetShipmentManifestDocumentResponseContainer">
+    <xsd:element name="GetShipmentManifestDocumentRequest" nillable="true" type="tns:GetShipmentManifestDocumentRequest"/>
+    <xsd:complexType name="GetShipmentManifestDocumentResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetShipmentManifestDocumentResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element minOccurs="0" name="ManifestBatches" nillable="true" type="tns:ArrayOfManifestBatch">
                         <xsd:annotation>
@@ -443,7 +443,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetShipmentManifestDocumentResponseContainer" nillable="true" type="tns:GetShipmentManifestDocumentResponseContainer"/>
+    <xsd:element name="GetShipmentManifestDocumentResponse" nillable="true" type="tns:GetShipmentManifestDocumentResponse"/>
     <xsd:complexType name="ArrayOfManifestBatch">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="ManifestBatch" nillable="true" type="tns:ManifestBatch"/>
@@ -516,5 +516,5 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ManifestBatchDetail" nillable="true" type="tns:ManifestBatchDetail"/>
-    <xsd:element name="GetShipmentManifestDocumentResponse" nillable="true" type="tns:GetShipmentManifestDocumentResponseContainer"/>
+    <xsd:element name="GetShipmentManifestDocumentResponse" nillable="true" type="tns:GetShipmentManifestDocumentResponse"/>
 </xsd:schema>

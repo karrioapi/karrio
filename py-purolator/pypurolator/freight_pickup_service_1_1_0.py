@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  1 15:07:20 2020 by generateDS.py version 2.35.15.
+# Generated Thu Apr  2 06:51:02 2020 by generateDS.py version 2.35.15.
 # Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
@@ -10,10 +10,10 @@
 #   ('-o', './pypurolator/freight_pickup_service_1_1_0.py')
 #
 # Command line arguments:
-#   ./schemas/FreightPickupService_1_1_0.xsd
+#   ./schemas/FreightPickupService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/freight_pickup_service_1_1_0.py" ./schemas/FreightPickupService_1_1_0.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/freight_pickup_service_1_1_0.py" ./schemas/FreightPickupService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator
@@ -973,7 +973,7 @@ class WeightUnit(Enum):
     KG='kg'
 
 
-class RequestContainer(GeneratedsSuper):
+class Request(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -986,13 +986,13 @@ class RequestContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RequestContainer)
+                CurrentSubclassModule_, Request)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if RequestContainer.subclass:
-            return RequestContainer.subclass(*args_, **kwargs_)
+        if Request.subclass:
+            return Request.subclass(*args_, **kwargs_)
         else:
-            return RequestContainer(*args_, **kwargs_)
+            return Request(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -1005,31 +1005,31 @@ class RequestContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Request')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RequestContainer':
+        if self.original_tagname_ is not None and name_ == 'Request':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Request')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Request', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Request'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1046,7 +1046,7 @@ class RequestContainer(GeneratedsSuper):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class RequestContainer
+# end class Request
 
 
 class PickUp(GeneratedsSuper):
@@ -3958,7 +3958,7 @@ class RequestContext(GeneratedsSuper):
 # end class RequestContext
 
 
-class ResponseContainer(GeneratedsSuper):
+class Response(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -3973,13 +3973,13 @@ class ResponseContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ResponseContainer)
+                CurrentSubclassModule_, Response)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ResponseContainer.subclass:
-            return ResponseContainer.subclass(*args_, **kwargs_)
+        if Response.subclass:
+            return Response.subclass(*args_, **kwargs_)
         else:
-            return ResponseContainer(*args_, **kwargs_)
+            return Response(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -3996,32 +3996,32 @@ class ResponseContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Response')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'Response':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Response')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Response', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ResponseContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Response'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4048,7 +4048,7 @@ class ResponseContainer(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ResponseInformation = obj_
             obj_.original_tagname_ = 'ResponseInformation'
-# end class ResponseContainer
+# end class Response
 
 
 class ResponseInformation(GeneratedsSuper):
@@ -4699,29 +4699,29 @@ class ResponseContext(GeneratedsSuper):
 # end class ResponseContext
 
 
-class GetPickUpResponseContainer(ResponseContainer):
+class GetPickUpResponse(Response):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, PickupNumber=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetPickUpResponseContainer, self).__init__( **kwargs_)
+        super(GetPickUpResponse, self).__init__( **kwargs_)
         self.PickupNumber = PickupNumber
         self.PickupNumber_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetPickUpResponseContainer)
+                CurrentSubclassModule_, GetPickUpResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetPickUpResponseContainer.subclass:
-            return GetPickUpResponseContainer.subclass(*args_, **kwargs_)
+        if GetPickUpResponse.subclass:
+            return GetPickUpResponse.subclass(*args_, **kwargs_)
         else:
-            return GetPickUpResponseContainer(*args_, **kwargs_)
+            return GetPickUpResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -4734,38 +4734,38 @@ class GetPickUpResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.PickupNumber is not None or
-            super(GetPickUpResponseContainer, self).hasContent_()
+            super(GetPickUpResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetPickUpResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetPickUpResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetPickUpResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetPickUpResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetPickUpResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'GetPickUpResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetPickUpResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetPickUpResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetPickUpResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetPickUpResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetPickUpResponseContainer'):
-        super(GetPickUpResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetPickUpResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetPickUpResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(GetPickUpResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetPickUpResponse'):
+        super(GetPickUpResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetPickUpResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetPickUpResponse', fromsubclass_=False, pretty_print=True):
+        super(GetPickUpResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4786,7 +4786,7 @@ class GetPickUpResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetPickUpResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetPickUpResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'PickupNumber':
             value_ = child_.text
@@ -4794,8 +4794,8 @@ class GetPickUpResponseContainer(ResponseContainer):
             value_ = self.gds_validate_string(value_, node, 'PickupNumber')
             self.PickupNumber = value_
             self.PickupNumber_nsprefix_ = child_.prefix
-        super(GetPickUpResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetPickUpResponseContainer
+        super(GetPickUpResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class GetPickUpResponse
 
 
 class ShipmentInformation(EstimateInformation):
@@ -4895,29 +4895,29 @@ class ShipmentInformation(EstimateInformation):
 # end class ShipmentInformation
 
 
-class GetPickUpRequestContainer(RequestContainer):
+class GetPickUpRequest(Request):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, PickUp=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetPickUpRequestContainer, self).__init__( **kwargs_)
+        super(GetPickUpRequest, self).__init__( **kwargs_)
         self.PickUp = PickUp
         self.PickUp_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetPickUpRequestContainer)
+                CurrentSubclassModule_, GetPickUpRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetPickUpRequestContainer.subclass:
-            return GetPickUpRequestContainer.subclass(*args_, **kwargs_)
+        if GetPickUpRequest.subclass:
+            return GetPickUpRequest.subclass(*args_, **kwargs_)
         else:
-            return GetPickUpRequestContainer(*args_, **kwargs_)
+            return GetPickUpRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -4930,38 +4930,38 @@ class GetPickUpRequestContainer(RequestContainer):
     def hasContent_(self):
         if (
             self.PickUp is not None or
-            super(GetPickUpRequestContainer, self).hasContent_()
+            super(GetPickUpRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetPickUpRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetPickUpRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetPickUpRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetPickUpRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetPickUpRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetPickUpRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetPickUpRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetPickUpRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetPickUpRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetPickUpRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetPickUpRequestContainer'):
-        super(GetPickUpRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetPickUpRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetPickUpRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetPickUpRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetPickUpRequest'):
+        super(GetPickUpRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetPickUpRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetPickUpRequest', fromsubclass_=False, pretty_print=True):
+        super(GetPickUpRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4981,15 +4981,15 @@ class GetPickUpRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetPickUpRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetPickUpRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'PickUp':
             obj_ = PickUp.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.PickUp = obj_
             obj_.original_tagname_ = 'PickUp'
-        super(GetPickUpRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetPickUpRequestContainer
+        super(GetPickUpRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetPickUpRequest
 
 
 GDSClassesMapping = {
@@ -5005,10 +5005,10 @@ GDSClassesMapping = {
     'Dimension': Dimension,
     'Error': Error,
     'EstimateInformation': EstimateInformation,
-    'FreightGetPickUpRequest': GetPickUpRequestContainer,
-    'GetPickUpRequestContainer': GetPickUpRequestContainer,
-    'GetPickUpResponse': GetPickUpResponseContainer,
-    'GetPickUpResponseContainer': GetPickUpResponseContainer,
+    'FreightGetPickUpRequest': GetPickUpRequest,
+    'GetPickUpRequest': GetPickUpRequest,
+    'GetPickUpResponse': GetPickUpResponse,
+    'GetPickUpResponse': GetPickUpResponse,
     'InformationalMessage': InformationalMessage,
     'LineItem': LineItem,
     'PaymentInformation': PaymentInformation,
@@ -5016,9 +5016,9 @@ GDSClassesMapping = {
     'PickUp': PickUp,
     'PickUpInformation': PickUpInformation,
     'ReceiverInformation': ReceiverInformation,
-    'RequestContainer': RequestContainer,
+    'Request': Request,
     'RequestContext': RequestContext,
-    'ResponseContainer': ResponseContainer,
+    'Response': Response,
     'ResponseContext': ResponseContext,
     'ResponseInformation': ResponseInformation,
     'SenderInformation': SenderInformation,
@@ -5070,8 +5070,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetPickUpRequestContainer'
-        rootClass = GetPickUpRequestContainer
+        rootTag = 'GetPickUpRequest'
+        rootClass = GetPickUpRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -5101,8 +5101,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetPickUpRequestContainer'
-        rootClass = GetPickUpRequestContainer
+        rootTag = 'GetPickUpRequest'
+        rootClass = GetPickUpRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -5142,8 +5142,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetPickUpRequestContainer'
-        rootClass = GetPickUpRequestContainer
+        rootTag = 'GetPickUpRequest'
+        rootClass = GetPickUpRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -5170,8 +5170,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetPickUpRequestContainer'
-        rootClass = GetPickUpRequestContainer
+        rootTag = 'GetPickUpRequest'
+        rootClass = GetPickUpRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -5222,8 +5222,8 @@ __all__ = [
     "Dimension",
     "Error",
     "EstimateInformation",
-    "GetPickUpRequestContainer",
-    "GetPickUpResponseContainer",
+    "GetPickUpRequest",
+    "GetPickUpResponse",
     "InformationalMessage",
     "LineItem",
     "PaymentInformation",
@@ -5231,9 +5231,9 @@ __all__ = [
     "PickUp",
     "PickUpInformation",
     "ReceiverInformation",
-    "RequestContainer",
+    "Request",
     "RequestContext",
-    "ResponseContainer",
+    "Response",
     "ResponseContext",
     "ResponseInformation",
     "SenderInformation",

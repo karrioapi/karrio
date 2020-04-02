@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  1 15:07:25 2020 by generateDS.py version 2.35.15.
+# Generated Thu Apr  2 06:51:07 2020 by generateDS.py version 2.35.15.
 # Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
@@ -10,10 +10,10 @@
 #   ('-o', './pypurolator/shipping_service_2_1_3.py')
 #
 # Command line arguments:
-#   ./schemas/ShippingService_2_1_3.xsd
+#   ./schemas/ShippingService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/shipping_service_2_1_3.py" ./schemas/ShippingService_2_1_3.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/shipping_service_2_1_3.py" ./schemas/ShippingService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator
@@ -1017,7 +1017,7 @@ class WeightUnit(Enum):
     KG='kg' # kg
 
 
-class RequestContainer(GeneratedsSuper):
+class Request(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -1030,13 +1030,13 @@ class RequestContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RequestContainer)
+                CurrentSubclassModule_, Request)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if RequestContainer.subclass:
-            return RequestContainer.subclass(*args_, **kwargs_)
+        if Request.subclass:
+            return Request.subclass(*args_, **kwargs_)
         else:
-            return RequestContainer(*args_, **kwargs_)
+            return Request(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -1049,31 +1049,31 @@ class RequestContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Request')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RequestContainer':
+        if self.original_tagname_ is not None and name_ == 'Request':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Request')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Request', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Request'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1090,7 +1090,7 @@ class RequestContainer(GeneratedsSuper):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class RequestContainer
+# end class Request
 
 
 class Shipment(GeneratedsSuper):
@@ -6054,7 +6054,7 @@ class RequestContext(GeneratedsSuper):
 # end class RequestContext
 
 
-class ResponseContainer(GeneratedsSuper):
+class Response(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -6069,13 +6069,13 @@ class ResponseContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ResponseContainer)
+                CurrentSubclassModule_, Response)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ResponseContainer.subclass:
-            return ResponseContainer.subclass(*args_, **kwargs_)
+        if Response.subclass:
+            return Response.subclass(*args_, **kwargs_)
         else:
-            return ResponseContainer(*args_, **kwargs_)
+            return Response(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -6092,32 +6092,32 @@ class ResponseContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Response')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'Response':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Response')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Response', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ResponseContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Response'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -6144,7 +6144,7 @@ class ResponseContainer(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ResponseInformation = obj_
             obj_.original_tagname_ = 'ResponseInformation'
-# end class ResponseContainer
+# end class Response
 
 
 class ResponseInformation(GeneratedsSuper):
@@ -6997,30 +6997,30 @@ class ResponseContext(GeneratedsSuper):
 # end class ResponseContext
 
 
-class VoidShipmentRequestContainer(RequestContainer):
+class VoidShipmentRequest(Request):
     """VoidShipmentRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, PIN=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(VoidShipmentRequestContainer, self).__init__( **kwargs_)
+        super(VoidShipmentRequest, self).__init__( **kwargs_)
         self.PIN = PIN
         self.PIN_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, VoidShipmentRequestContainer)
+                CurrentSubclassModule_, VoidShipmentRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if VoidShipmentRequestContainer.subclass:
-            return VoidShipmentRequestContainer.subclass(*args_, **kwargs_)
+        if VoidShipmentRequest.subclass:
+            return VoidShipmentRequest.subclass(*args_, **kwargs_)
         else:
-            return VoidShipmentRequestContainer(*args_, **kwargs_)
+            return VoidShipmentRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -7033,38 +7033,38 @@ class VoidShipmentRequestContainer(RequestContainer):
     def hasContent_(self):
         if (
             self.PIN is not None or
-            super(VoidShipmentRequestContainer, self).hasContent_()
+            super(VoidShipmentRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='VoidShipmentRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('VoidShipmentRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='VoidShipmentRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('VoidShipmentRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'VoidShipmentRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'VoidShipmentRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VoidShipmentRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VoidShipmentRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='VoidShipmentRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='VoidShipmentRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='VoidShipmentRequestContainer'):
-        super(VoidShipmentRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VoidShipmentRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='VoidShipmentRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(VoidShipmentRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='VoidShipmentRequest'):
+        super(VoidShipmentRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VoidShipmentRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='VoidShipmentRequest', fromsubclass_=False, pretty_print=True):
+        super(VoidShipmentRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -7084,41 +7084,41 @@ class VoidShipmentRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(VoidShipmentRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(VoidShipmentRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'PIN':
             obj_ = PIN.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.PIN = obj_
             obj_.original_tagname_ = 'PIN'
-        super(VoidShipmentRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class VoidShipmentRequestContainer
+        super(VoidShipmentRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class VoidShipmentRequest
 
 
-class VoidShipmentResponseContainer(ResponseContainer):
+class VoidShipmentResponse(Response):
     """VoidShipmentResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, ShipmentVoided=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(VoidShipmentResponseContainer, self).__init__( **kwargs_)
+        super(VoidShipmentResponse, self).__init__( **kwargs_)
         self.ShipmentVoided = ShipmentVoided
         self.ShipmentVoided_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, VoidShipmentResponseContainer)
+                CurrentSubclassModule_, VoidShipmentResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if VoidShipmentResponseContainer.subclass:
-            return VoidShipmentResponseContainer.subclass(*args_, **kwargs_)
+        if VoidShipmentResponse.subclass:
+            return VoidShipmentResponse.subclass(*args_, **kwargs_)
         else:
-            return VoidShipmentResponseContainer(*args_, **kwargs_)
+            return VoidShipmentResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -7131,38 +7131,38 @@ class VoidShipmentResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.ShipmentVoided is not None or
-            super(VoidShipmentResponseContainer, self).hasContent_()
+            super(VoidShipmentResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='VoidShipmentResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('VoidShipmentResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='VoidShipmentResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('VoidShipmentResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'VoidShipmentResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'VoidShipmentResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VoidShipmentResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VoidShipmentResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='VoidShipmentResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='VoidShipmentResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='VoidShipmentResponseContainer'):
-        super(VoidShipmentResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VoidShipmentResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='VoidShipmentResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(VoidShipmentResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='VoidShipmentResponse'):
+        super(VoidShipmentResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='VoidShipmentResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='VoidShipmentResponse', fromsubclass_=False, pretty_print=True):
+        super(VoidShipmentResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -7183,7 +7183,7 @@ class VoidShipmentResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(VoidShipmentResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(VoidShipmentResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'ShipmentVoided':
             sval_ = child_.text
@@ -7191,34 +7191,34 @@ class VoidShipmentResponseContainer(ResponseContainer):
             ival_ = self.gds_validate_boolean(ival_, node, 'ShipmentVoided')
             self.ShipmentVoided = ival_
             self.ShipmentVoided_nsprefix_ = child_.prefix
-        super(VoidShipmentResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class VoidShipmentResponseContainer
+        super(VoidShipmentResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class VoidShipmentResponse
 
 
-class ValidateShipmentRequestContainer(RequestContainer):
+class ValidateShipmentRequest(Request):
     """ValidateShipmentRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, Shipment=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(ValidateShipmentRequestContainer, self).__init__( **kwargs_)
+        super(ValidateShipmentRequest, self).__init__( **kwargs_)
         self.Shipment = Shipment
         self.Shipment_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ValidateShipmentRequestContainer)
+                CurrentSubclassModule_, ValidateShipmentRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ValidateShipmentRequestContainer.subclass:
-            return ValidateShipmentRequestContainer.subclass(*args_, **kwargs_)
+        if ValidateShipmentRequest.subclass:
+            return ValidateShipmentRequest.subclass(*args_, **kwargs_)
         else:
-            return ValidateShipmentRequestContainer(*args_, **kwargs_)
+            return ValidateShipmentRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -7231,38 +7231,38 @@ class ValidateShipmentRequestContainer(RequestContainer):
     def hasContent_(self):
         if (
             self.Shipment is not None or
-            super(ValidateShipmentRequestContainer, self).hasContent_()
+            super(ValidateShipmentRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateShipmentRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ValidateShipmentRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateShipmentRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ValidateShipmentRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ValidateShipmentRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'ValidateShipmentRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateShipmentRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateShipmentRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ValidateShipmentRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ValidateShipmentRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ValidateShipmentRequestContainer'):
-        super(ValidateShipmentRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateShipmentRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateShipmentRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(ValidateShipmentRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ValidateShipmentRequest'):
+        super(ValidateShipmentRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateShipmentRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateShipmentRequest', fromsubclass_=False, pretty_print=True):
+        super(ValidateShipmentRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -7282,41 +7282,41 @@ class ValidateShipmentRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(ValidateShipmentRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(ValidateShipmentRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Shipment':
             obj_ = Shipment.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Shipment = obj_
             obj_.original_tagname_ = 'Shipment'
-        super(ValidateShipmentRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class ValidateShipmentRequestContainer
+        super(ValidateShipmentRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class ValidateShipmentRequest
 
 
-class ValidateShipmentResponseContainer(ResponseContainer):
+class ValidateShipmentResponse(Response):
     """ValidateShipmentResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, ValidShipment=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(ValidateShipmentResponseContainer, self).__init__( **kwargs_)
+        super(ValidateShipmentResponse, self).__init__( **kwargs_)
         self.ValidShipment = ValidShipment
         self.ValidShipment_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ValidateShipmentResponseContainer)
+                CurrentSubclassModule_, ValidateShipmentResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ValidateShipmentResponseContainer.subclass:
-            return ValidateShipmentResponseContainer.subclass(*args_, **kwargs_)
+        if ValidateShipmentResponse.subclass:
+            return ValidateShipmentResponse.subclass(*args_, **kwargs_)
         else:
-            return ValidateShipmentResponseContainer(*args_, **kwargs_)
+            return ValidateShipmentResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -7329,38 +7329,38 @@ class ValidateShipmentResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.ValidShipment is not None or
-            super(ValidateShipmentResponseContainer, self).hasContent_()
+            super(ValidateShipmentResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateShipmentResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ValidateShipmentResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateShipmentResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ValidateShipmentResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ValidateShipmentResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'ValidateShipmentResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateShipmentResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateShipmentResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ValidateShipmentResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ValidateShipmentResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ValidateShipmentResponseContainer'):
-        super(ValidateShipmentResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateShipmentResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateShipmentResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(ValidateShipmentResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ValidateShipmentResponse'):
+        super(ValidateShipmentResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ValidateShipmentResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ValidateShipmentResponse', fromsubclass_=False, pretty_print=True):
+        super(ValidateShipmentResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -7381,7 +7381,7 @@ class ValidateShipmentResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(ValidateShipmentResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(ValidateShipmentResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'ValidShipment':
             sval_ = child_.text
@@ -7389,32 +7389,32 @@ class ValidateShipmentResponseContainer(ResponseContainer):
             ival_ = self.gds_validate_boolean(ival_, node, 'ValidShipment')
             self.ValidShipment = ival_
             self.ValidShipment_nsprefix_ = child_.prefix
-        super(ValidateShipmentResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class ValidateShipmentResponseContainer
+        super(ValidateShipmentResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class ValidateShipmentResponse
 
 
-class ConsolidateRequestContainer(RequestContainer):
+class ConsolidateRequest(Request):
     """ValidateShipmentRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(ConsolidateRequestContainer, self).__init__( **kwargs_)
+        super(ConsolidateRequest, self).__init__( **kwargs_)
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ConsolidateRequestContainer)
+                CurrentSubclassModule_, ConsolidateRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ConsolidateRequestContainer.subclass:
-            return ConsolidateRequestContainer.subclass(*args_, **kwargs_)
+        if ConsolidateRequest.subclass:
+            return ConsolidateRequest.subclass(*args_, **kwargs_)
         else:
-            return ConsolidateRequestContainer(*args_, **kwargs_)
+            return ConsolidateRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -7422,37 +7422,37 @@ class ConsolidateRequestContainer(RequestContainer):
         self.ns_prefix_ = ns_prefix
     def hasContent_(self):
         if (
-            super(ConsolidateRequestContainer, self).hasContent_()
+            super(ConsolidateRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ConsolidateRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ConsolidateRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ConsolidateRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ConsolidateRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ConsolidateRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'ConsolidateRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsolidateRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsolidateRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ConsolidateRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ConsolidateRequest', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ConsolidateRequestContainer'):
-        super(ConsolidateRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsolidateRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ConsolidateRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(ConsolidateRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ConsolidateRequest'):
+        super(ConsolidateRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsolidateRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ConsolidateRequest', fromsubclass_=False, pretty_print=True):
+        super(ConsolidateRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -7466,37 +7466,37 @@ class ConsolidateRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(ConsolidateRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(ConsolidateRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        super(ConsolidateRequestContainer, self).buildChildren(child_, node, nodeName_, True)
+        super(ConsolidateRequest, self).buildChildren(child_, node, nodeName_, True)
         pass
-# end class ConsolidateRequestContainer
+# end class ConsolidateRequest
 
 
-class ConsolidateResponseContainer(ResponseContainer):
+class ConsolidateResponse(Response):
     """ValidateShipmentResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, Consolidate=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(ConsolidateResponseContainer, self).__init__( **kwargs_)
+        super(ConsolidateResponse, self).__init__( **kwargs_)
         self.Consolidate = Consolidate
         self.Consolidate_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ConsolidateResponseContainer)
+                CurrentSubclassModule_, ConsolidateResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ConsolidateResponseContainer.subclass:
-            return ConsolidateResponseContainer.subclass(*args_, **kwargs_)
+        if ConsolidateResponse.subclass:
+            return ConsolidateResponse.subclass(*args_, **kwargs_)
         else:
-            return ConsolidateResponseContainer(*args_, **kwargs_)
+            return ConsolidateResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -7509,38 +7509,38 @@ class ConsolidateResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.Consolidate is not None or
-            super(ConsolidateResponseContainer, self).hasContent_()
+            super(ConsolidateResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ConsolidateResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ConsolidateResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ConsolidateResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ConsolidateResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ConsolidateResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'ConsolidateResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsolidateResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsolidateResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ConsolidateResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ConsolidateResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ConsolidateResponseContainer'):
-        super(ConsolidateResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsolidateResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ConsolidateResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(ConsolidateResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ConsolidateResponse'):
+        super(ConsolidateResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsolidateResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ConsolidateResponse', fromsubclass_=False, pretty_print=True):
+        super(ConsolidateResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -7561,7 +7561,7 @@ class ConsolidateResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(ConsolidateResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(ConsolidateResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Consolidate':
             sval_ = child_.text
@@ -7569,22 +7569,22 @@ class ConsolidateResponseContainer(ResponseContainer):
             ival_ = self.gds_validate_boolean(ival_, node, 'Consolidate')
             self.Consolidate = ival_
             self.Consolidate_nsprefix_ = child_.prefix
-        super(ConsolidateResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class ConsolidateResponseContainer
+        super(ConsolidateResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class ConsolidateResponse
 
 
-class CreateShipmentResponseContainer(ResponseContainer):
+class CreateShipmentResponse(Response):
     """CreateShipmentResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, ShipmentPIN=None, PiecePINs=None, ReturnShipmentPINs=None, ExpressChequePIN=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(CreateShipmentResponseContainer, self).__init__( **kwargs_)
+        super(CreateShipmentResponse, self).__init__( **kwargs_)
         self.ShipmentPIN = ShipmentPIN
         self.ShipmentPIN_nsprefix_ = None
         self.PiecePINs = PiecePINs
@@ -7596,13 +7596,13 @@ class CreateShipmentResponseContainer(ResponseContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, CreateShipmentResponseContainer)
+                CurrentSubclassModule_, CreateShipmentResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if CreateShipmentResponseContainer.subclass:
-            return CreateShipmentResponseContainer.subclass(*args_, **kwargs_)
+        if CreateShipmentResponse.subclass:
+            return CreateShipmentResponse.subclass(*args_, **kwargs_)
         else:
-            return CreateShipmentResponseContainer(*args_, **kwargs_)
+            return CreateShipmentResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -7630,38 +7630,38 @@ class CreateShipmentResponseContainer(ResponseContainer):
             self.PiecePINs is not None or
             self.ReturnShipmentPINs is not None or
             self.ExpressChequePIN is not None or
-            super(CreateShipmentResponseContainer, self).hasContent_()
+            super(CreateShipmentResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CreateShipmentResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CreateShipmentResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CreateShipmentResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CreateShipmentResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'CreateShipmentResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'CreateShipmentResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CreateShipmentResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CreateShipmentResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CreateShipmentResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CreateShipmentResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CreateShipmentResponseContainer'):
-        super(CreateShipmentResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CreateShipmentResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CreateShipmentResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(CreateShipmentResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CreateShipmentResponse'):
+        super(CreateShipmentResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CreateShipmentResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CreateShipmentResponse', fromsubclass_=False, pretty_print=True):
+        super(CreateShipmentResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -7690,7 +7690,7 @@ class CreateShipmentResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(CreateShipmentResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(CreateShipmentResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'ShipmentPIN':
             obj_ = PIN.factory(parent_object_=self)
@@ -7712,22 +7712,22 @@ class CreateShipmentResponseContainer(ResponseContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ExpressChequePIN = obj_
             obj_.original_tagname_ = 'ExpressChequePIN'
-        super(CreateShipmentResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class CreateShipmentResponseContainer
+        super(CreateShipmentResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class CreateShipmentResponse
 
 
-class CreateShipmentRequestContainer(RequestContainer):
+class CreateShipmentRequest(Request):
     """CreateShipmentRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, Shipment=None, PrinterType=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(CreateShipmentRequestContainer, self).__init__( **kwargs_)
+        super(CreateShipmentRequest, self).__init__( **kwargs_)
         self.Shipment = Shipment
         self.Shipment_nsprefix_ = None
         self.PrinterType = PrinterType
@@ -7736,13 +7736,13 @@ class CreateShipmentRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, CreateShipmentRequestContainer)
+                CurrentSubclassModule_, CreateShipmentRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if CreateShipmentRequestContainer.subclass:
-            return CreateShipmentRequestContainer.subclass(*args_, **kwargs_)
+        if CreateShipmentRequest.subclass:
+            return CreateShipmentRequest.subclass(*args_, **kwargs_)
         else:
-            return CreateShipmentRequestContainer(*args_, **kwargs_)
+            return CreateShipmentRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -7775,38 +7775,38 @@ class CreateShipmentRequestContainer(RequestContainer):
         if (
             self.Shipment is not None or
             self.PrinterType is not None or
-            super(CreateShipmentRequestContainer, self).hasContent_()
+            super(CreateShipmentRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CreateShipmentRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CreateShipmentRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CreateShipmentRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CreateShipmentRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'CreateShipmentRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'CreateShipmentRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CreateShipmentRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CreateShipmentRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CreateShipmentRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CreateShipmentRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CreateShipmentRequestContainer'):
-        super(CreateShipmentRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CreateShipmentRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CreateShipmentRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(CreateShipmentRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CreateShipmentRequest'):
+        super(CreateShipmentRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CreateShipmentRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CreateShipmentRequest', fromsubclass_=False, pretty_print=True):
+        super(CreateShipmentRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -7830,7 +7830,7 @@ class CreateShipmentRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(CreateShipmentRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(CreateShipmentRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Shipment':
             obj_ = Shipment.factory(parent_object_=self)
@@ -7845,8 +7845,8 @@ class CreateShipmentRequestContainer(RequestContainer):
             self.PrinterType_nsprefix_ = child_.prefix
             # validate type PrinterType
             self.validate_PrinterType(self.PrinterType)
-        super(CreateShipmentRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class CreateShipmentRequestContainer
+        super(CreateShipmentRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class CreateShipmentRequest
 
 
 GDSClassesMapping = {
@@ -7859,15 +7859,15 @@ GDSClassesMapping = {
     'ArrayOfPiece': ArrayOfPiece,
     'ArrayOfSubscription': ArrayOfSubscription,
     'BuyerInformation': BuyerInformation,
-    'ConsolidateRequest': ConsolidateRequestContainer,
-    'ConsolidateRequestContainer': ConsolidateRequestContainer,
-    'ConsolidateResponse': ConsolidateResponseContainer,
-    'ConsolidateResponseContainer': ConsolidateResponseContainer,
+    'ConsolidateRequest': ConsolidateRequest,
+    'ConsolidateRequest': ConsolidateRequest,
+    'ConsolidateResponse': ConsolidateResponse,
+    'ConsolidateResponse': ConsolidateResponse,
     'ContentDetail': ContentDetail,
-    'CreateShipmentRequest': CreateShipmentRequestContainer,
-    'CreateShipmentRequestContainer': CreateShipmentRequestContainer,
-    'CreateShipmentResponse': CreateShipmentResponseContainer,
-    'CreateShipmentResponseContainer': CreateShipmentResponseContainer,
+    'CreateShipmentRequest': CreateShipmentRequest,
+    'CreateShipmentRequest': CreateShipmentRequest,
+    'CreateShipmentResponse': CreateShipmentResponse,
+    'CreateShipmentResponse': CreateShipmentResponse,
     'CreditCardInformation': CreditCardInformation,
     'Dimension': Dimension,
     'DutyInformation': DutyInformation,
@@ -7887,9 +7887,9 @@ GDSClassesMapping = {
     'Piece': Piece,
     'ProactiveNotification': ProactiveNotification,
     'ReceiverInformation': ReceiverInformation,
-    'RequestContainer': RequestContainer,
+    'Request': Request,
     'RequestContext': RequestContext,
-    'ResponseContainer': ResponseContainer,
+    'Response': Response,
     'ResponseContext': ResponseContext,
     'ResponseInformation': ResponseInformation,
     'ReturnShipment': ReturnShipment,
@@ -7899,14 +7899,14 @@ GDSClassesMapping = {
     'Subscription': Subscription,
     'TotalWeight': TotalWeight,
     'TrackingReferenceInformation': TrackingReferenceInformation,
-    'ValidateShipmentRequest': ValidateShipmentRequestContainer,
-    'ValidateShipmentRequestContainer': ValidateShipmentRequestContainer,
-    'ValidateShipmentResponse': ValidateShipmentResponseContainer,
-    'ValidateShipmentResponseContainer': ValidateShipmentResponseContainer,
-    'VoidShipmentRequest': VoidShipmentRequestContainer,
-    'VoidShipmentRequestContainer': VoidShipmentRequestContainer,
-    'VoidShipmentResponse': VoidShipmentResponseContainer,
-    'VoidShipmentResponseContainer': VoidShipmentResponseContainer,
+    'ValidateShipmentRequest': ValidateShipmentRequest,
+    'ValidateShipmentRequest': ValidateShipmentRequest,
+    'ValidateShipmentResponse': ValidateShipmentResponse,
+    'ValidateShipmentResponse': ValidateShipmentResponse,
+    'VoidShipmentRequest': VoidShipmentRequest,
+    'VoidShipmentRequest': VoidShipmentRequest,
+    'VoidShipmentResponse': VoidShipmentResponse,
+    'VoidShipmentResponse': VoidShipmentResponse,
     'Weight': Weight,
 }
 
@@ -7954,8 +7954,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'CreateShipmentRequestContainer'
-        rootClass = CreateShipmentRequestContainer
+        rootTag = 'CreateShipmentRequest'
+        rootClass = CreateShipmentRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -7985,8 +7985,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'CreateShipmentRequestContainer'
-        rootClass = CreateShipmentRequestContainer
+        rootTag = 'CreateShipmentRequest'
+        rootClass = CreateShipmentRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -8026,8 +8026,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'CreateShipmentRequestContainer'
-        rootClass = CreateShipmentRequestContainer
+        rootTag = 'CreateShipmentRequest'
+        rootClass = CreateShipmentRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -8054,8 +8054,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'CreateShipmentRequestContainer'
-        rootClass = CreateShipmentRequestContainer
+        rootTag = 'CreateShipmentRequest'
+        rootClass = CreateShipmentRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -8103,11 +8103,11 @@ __all__ = [
     "ArrayOfPiece",
     "ArrayOfSubscription",
     "BuyerInformation",
-    "ConsolidateRequestContainer",
-    "ConsolidateResponseContainer",
+    "ConsolidateRequest",
+    "ConsolidateResponse",
     "ContentDetail",
-    "CreateShipmentRequestContainer",
-    "CreateShipmentResponseContainer",
+    "CreateShipmentRequest",
+    "CreateShipmentResponse",
     "CreditCardInformation",
     "Dimension",
     "DutyInformation",
@@ -8127,9 +8127,9 @@ __all__ = [
     "Piece",
     "ProactiveNotification",
     "ReceiverInformation",
-    "RequestContainer",
+    "Request",
     "RequestContext",
-    "ResponseContainer",
+    "Response",
     "ResponseContext",
     "ResponseInformation",
     "ReturnShipment",
@@ -8139,9 +8139,9 @@ __all__ = [
     "Subscription",
     "TotalWeight",
     "TrackingReferenceInformation",
-    "ValidateShipmentRequestContainer",
-    "ValidateShipmentResponseContainer",
-    "VoidShipmentRequestContainer",
-    "VoidShipmentResponseContainer",
+    "ValidateShipmentRequest",
+    "ValidateShipmentResponse",
+    "VoidShipmentRequest",
+    "VoidShipmentResponse",
     "Weight"
 ]

@@ -1,9 +1,9 @@
 <xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://purolator.com/pws/datatypes/v1">
-    <xsd:complexType name="TrackPackagesByPinRequestContainer">
+    <xsd:complexType name="TrackPackagesByPinRequest">
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="PINs" nillable="true" type="tns:ArrayOfPIN" />
                     <xsd:element minOccurs="0" name="SearchType" nillable="true" type="xsd:string" />
@@ -11,11 +11,11 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="TrackPackagesByPinRequestContainer" nillable="true" type="tns:TrackPackagesByPinRequestContainer" />
-    <xsd:complexType name="RequestContainer">
+    <xsd:element name="TrackPackagesByPinRequest" nillable="true" type="tns:TrackPackagesByPinRequest" />
+    <xsd:complexType name="Request">
         <xsd:sequence />
     </xsd:complexType>
-    <xsd:element name="RequestContainer" nillable="true" type="tns:RequestContainer" />
+    <xsd:element name="Request" nillable="true" type="tns:Request" />
     <xsd:complexType name="ArrayOfPIN">
         <xsd:sequence>
             <xsd:element minOccurs="0" maxOccurs="unbounded" name="PIN" nillable="true" type="tns:PIN" />
@@ -28,7 +28,7 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="PIN" nillable="true" type="tns:PIN" />
-    <xsd:element name="TrackPackageByPINSearchCriteria" nillable="true" type="tns:TrackPackagesByPinRequestContainer" />
+    <xsd:element name="TrackPackageByPINSearchCriteria" nillable="true" type="tns:TrackPackagesByPinRequest" />
     <xsd:complexType name="RequestContext">
         <xsd:sequence>
             <xsd:element name="Version" nillable="true" type="xsd:string" />
@@ -53,7 +53,7 @@
     <xsd:element name="Language" nillable="true" type="tns:Language" />
     <xsd:complexType name="TrackingResponse">
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element name="TrackingInformationList" nillable="true" type="tns:ArrayOfTrackingInformation" />
                 </xsd:sequence>
@@ -61,12 +61,12 @@
         </xsd:complexContent>
     </xsd:complexType>
     <xsd:element name="TrackingResponse" nillable="true" type="tns:TrackingResponse" />
-    <xsd:complexType name="ResponseContainer">
+    <xsd:complexType name="Response">
         <xsd:sequence>
             <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation" />
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:element name="ResponseContainer" nillable="true" type="tns:ResponseContainer" />
+    <xsd:element name="Response" nillable="true" type="tns:Response" />
     <xsd:complexType name="ResponseInformation">
         <xsd:sequence>
             <xsd:element name="Errors" nillable="true" type="tns:ArrayOfError" />

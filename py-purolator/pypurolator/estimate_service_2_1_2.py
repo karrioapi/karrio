@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  1 15:07:19 2020 by generateDS.py version 2.35.15.
+# Generated Thu Apr  2 06:51:01 2020 by generateDS.py version 2.35.15.
 # Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
@@ -10,10 +10,10 @@
 #   ('-o', './pypurolator/estimate_service_2_1_2.py')
 #
 # Command line arguments:
-#   ./schemas/EstimateService_2_1_2.xsd
+#   ./schemas/EstimateService.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/estimate_service_2_1_2.py" ./schemas/EstimateService_2_1_2.xsd
+#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pypurolator/estimate_service_2_1_2.py" ./schemas/EstimateService.xsd
 #
 # Current working directory (os.getcwd()):
 #   py-purolator
@@ -1011,7 +1011,7 @@ class WeightUnit(Enum):
     KG='kg' # kg
 
 
-class RequestContainer(GeneratedsSuper):
+class Request(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -1024,13 +1024,13 @@ class RequestContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RequestContainer)
+                CurrentSubclassModule_, Request)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if RequestContainer.subclass:
-            return RequestContainer.subclass(*args_, **kwargs_)
+        if Request.subclass:
+            return Request.subclass(*args_, **kwargs_)
         else:
-            return RequestContainer(*args_, **kwargs_)
+            return Request(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -1043,31 +1043,31 @@ class RequestContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Request')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RequestContainer':
+        if self.original_tagname_ is not None and name_ == 'Request':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Request')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Request', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RequestContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Request'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RequestContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Request', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1084,7 +1084,7 @@ class RequestContainer(GeneratedsSuper):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class RequestContainer
+# end class Request
 
 
 class ShortAddress(GeneratedsSuper):
@@ -1547,7 +1547,7 @@ class RequestContext(GeneratedsSuper):
 # end class RequestContext
 
 
-class ResponseContainer(GeneratedsSuper):
+class Response(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
@@ -1562,13 +1562,13 @@ class ResponseContainer(GeneratedsSuper):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ResponseContainer)
+                CurrentSubclassModule_, Response)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ResponseContainer.subclass:
-            return ResponseContainer.subclass(*args_, **kwargs_)
+        if Response.subclass:
+            return Response.subclass(*args_, **kwargs_)
         else:
-            return ResponseContainer(*args_, **kwargs_)
+            return Response(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -1585,32 +1585,32 @@ class ResponseContainer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Response')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'Response':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Response')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Response', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ResponseContainer'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Response'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ResponseContainer', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1637,7 +1637,7 @@ class ResponseContainer(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ResponseInformation = obj_
             obj_.original_tagname_ = 'ResponseInformation'
-# end class ResponseContainer
+# end class Response
 
 
 class ResponseInformation(GeneratedsSuper):
@@ -3316,18 +3316,18 @@ class ResponseContext(GeneratedsSuper):
 # end class ResponseContext
 
 
-class GetFullEstimateRequestContainer(RequestContainer):
+class GetFullEstimateRequest(Request):
     """GetFullEstimateRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, Shipment=None, ShowAlternativeServicesIndicator=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetFullEstimateRequestContainer, self).__init__( **kwargs_)
+        super(GetFullEstimateRequest, self).__init__( **kwargs_)
         self.Shipment = Shipment
         self.Shipment_nsprefix_ = None
         self.ShowAlternativeServicesIndicator = ShowAlternativeServicesIndicator
@@ -3335,13 +3335,13 @@ class GetFullEstimateRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetFullEstimateRequestContainer)
+                CurrentSubclassModule_, GetFullEstimateRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetFullEstimateRequestContainer.subclass:
-            return GetFullEstimateRequestContainer.subclass(*args_, **kwargs_)
+        if GetFullEstimateRequest.subclass:
+            return GetFullEstimateRequest.subclass(*args_, **kwargs_)
         else:
-            return GetFullEstimateRequestContainer(*args_, **kwargs_)
+            return GetFullEstimateRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -3359,38 +3359,38 @@ class GetFullEstimateRequestContainer(RequestContainer):
         if (
             self.Shipment is not None or
             self.ShowAlternativeServicesIndicator is not None or
-            super(GetFullEstimateRequestContainer, self).hasContent_()
+            super(GetFullEstimateRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetFullEstimateRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetFullEstimateRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetFullEstimateRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetFullEstimateRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetFullEstimateRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetFullEstimateRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetFullEstimateRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetFullEstimateRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetFullEstimateRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetFullEstimateRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetFullEstimateRequestContainer'):
-        super(GetFullEstimateRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetFullEstimateRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetFullEstimateRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetFullEstimateRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetFullEstimateRequest'):
+        super(GetFullEstimateRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetFullEstimateRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetFullEstimateRequest', fromsubclass_=False, pretty_print=True):
+        super(GetFullEstimateRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3414,7 +3414,7 @@ class GetFullEstimateRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetFullEstimateRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetFullEstimateRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Shipment':
             obj_ = Shipment.factory(parent_object_=self)
@@ -3427,8 +3427,8 @@ class GetFullEstimateRequestContainer(RequestContainer):
             ival_ = self.gds_validate_boolean(ival_, node, 'ShowAlternativeServicesIndicator')
             self.ShowAlternativeServicesIndicator = ival_
             self.ShowAlternativeServicesIndicator_nsprefix_ = child_.prefix
-        super(GetFullEstimateRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetFullEstimateRequestContainer
+        super(GetFullEstimateRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetFullEstimateRequest
 
 
 class Shipment(GeneratedsSuper):
@@ -8079,18 +8079,18 @@ class Subscription(GeneratedsSuper):
 # end class Subscription
 
 
-class GetFullEstimateResponseContainer(ResponseContainer):
+class GetFullEstimateResponse(Response):
     """GetFullEstimateResponse"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, ShipmentEstimates=None, ReturnShipmentEstimates=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetFullEstimateResponseContainer, self).__init__( **kwargs_)
+        super(GetFullEstimateResponse, self).__init__( **kwargs_)
         self.ShipmentEstimates = ShipmentEstimates
         self.ShipmentEstimates_nsprefix_ = None
         self.ReturnShipmentEstimates = ReturnShipmentEstimates
@@ -8098,13 +8098,13 @@ class GetFullEstimateResponseContainer(ResponseContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetFullEstimateResponseContainer)
+                CurrentSubclassModule_, GetFullEstimateResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetFullEstimateResponseContainer.subclass:
-            return GetFullEstimateResponseContainer.subclass(*args_, **kwargs_)
+        if GetFullEstimateResponse.subclass:
+            return GetFullEstimateResponse.subclass(*args_, **kwargs_)
         else:
-            return GetFullEstimateResponseContainer(*args_, **kwargs_)
+            return GetFullEstimateResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -8122,38 +8122,38 @@ class GetFullEstimateResponseContainer(ResponseContainer):
         if (
             self.ShipmentEstimates is not None or
             self.ReturnShipmentEstimates is not None or
-            super(GetFullEstimateResponseContainer, self).hasContent_()
+            super(GetFullEstimateResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetFullEstimateResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetFullEstimateResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetFullEstimateResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetFullEstimateResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetFullEstimateResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'GetFullEstimateResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetFullEstimateResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetFullEstimateResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetFullEstimateResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetFullEstimateResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetFullEstimateResponseContainer'):
-        super(GetFullEstimateResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetFullEstimateResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetFullEstimateResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(GetFullEstimateResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetFullEstimateResponse'):
+        super(GetFullEstimateResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetFullEstimateResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetFullEstimateResponse', fromsubclass_=False, pretty_print=True):
+        super(GetFullEstimateResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -8176,7 +8176,7 @@ class GetFullEstimateResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetFullEstimateResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetFullEstimateResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'ShipmentEstimates':
             obj_ = ArrayOfShipmentEstimate.factory(parent_object_=self)
@@ -8188,34 +8188,34 @@ class GetFullEstimateResponseContainer(ResponseContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ReturnShipmentEstimates = obj_
             obj_.original_tagname_ = 'ReturnShipmentEstimates'
-        super(GetFullEstimateResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetFullEstimateResponseContainer
+        super(GetFullEstimateResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class GetFullEstimateResponse
 
 
-class GetQuickEstimateResponseContainer(ResponseContainer):
+class GetQuickEstimateResponse(Response):
     """GetQuickEstimateRespone"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = ResponseContainer
+    superclass = Response
     def __init__(self, ShipmentEstimates=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetQuickEstimateResponseContainer, self).__init__( **kwargs_)
+        super(GetQuickEstimateResponse, self).__init__( **kwargs_)
         self.ShipmentEstimates = ShipmentEstimates
         self.ShipmentEstimates_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetQuickEstimateResponseContainer)
+                CurrentSubclassModule_, GetQuickEstimateResponse)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetQuickEstimateResponseContainer.subclass:
-            return GetQuickEstimateResponseContainer.subclass(*args_, **kwargs_)
+        if GetQuickEstimateResponse.subclass:
+            return GetQuickEstimateResponse.subclass(*args_, **kwargs_)
         else:
-            return GetQuickEstimateResponseContainer(*args_, **kwargs_)
+            return GetQuickEstimateResponse(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -8228,38 +8228,38 @@ class GetQuickEstimateResponseContainer(ResponseContainer):
     def hasContent_(self):
         if (
             self.ShipmentEstimates is not None or
-            super(GetQuickEstimateResponseContainer, self).hasContent_()
+            super(GetQuickEstimateResponse, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetQuickEstimateResponseContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetQuickEstimateResponseContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetQuickEstimateResponse', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetQuickEstimateResponse')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetQuickEstimateResponseContainer':
+        if self.original_tagname_ is not None and name_ == 'GetQuickEstimateResponse':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetQuickEstimateResponseContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetQuickEstimateResponse')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetQuickEstimateResponseContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetQuickEstimateResponse', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetQuickEstimateResponseContainer'):
-        super(GetQuickEstimateResponseContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetQuickEstimateResponseContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetQuickEstimateResponseContainer', fromsubclass_=False, pretty_print=True):
-        super(GetQuickEstimateResponseContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetQuickEstimateResponse'):
+        super(GetQuickEstimateResponse, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetQuickEstimateResponse')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetQuickEstimateResponse', fromsubclass_=False, pretty_print=True):
+        super(GetQuickEstimateResponse, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -8279,29 +8279,29 @@ class GetQuickEstimateResponseContainer(ResponseContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetQuickEstimateResponseContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetQuickEstimateResponse, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'ShipmentEstimates':
             obj_ = ArrayOfShipmentEstimate.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ShipmentEstimates = obj_
             obj_.original_tagname_ = 'ShipmentEstimates'
-        super(GetQuickEstimateResponseContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetQuickEstimateResponseContainer
+        super(GetQuickEstimateResponse, self).buildChildren(child_, node, nodeName_, True)
+# end class GetQuickEstimateResponse
 
 
-class GetQuickEstimateRequestContainer(RequestContainer):
+class GetQuickEstimateRequest(Request):
     """GetQuickEstimateRequest"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
-    superclass = RequestContainer
+    superclass = Request
     def __init__(self, BillingAccountNumber=None, SenderPostalCode=None, ReceiverAddress=None, PackageType=None, TotalWeight=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        super(GetQuickEstimateRequestContainer, self).__init__( **kwargs_)
+        super(GetQuickEstimateRequest, self).__init__( **kwargs_)
         self.BillingAccountNumber = BillingAccountNumber
         self.BillingAccountNumber_nsprefix_ = None
         self.SenderPostalCode = SenderPostalCode
@@ -8315,13 +8315,13 @@ class GetQuickEstimateRequestContainer(RequestContainer):
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, GetQuickEstimateRequestContainer)
+                CurrentSubclassModule_, GetQuickEstimateRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if GetQuickEstimateRequestContainer.subclass:
-            return GetQuickEstimateRequestContainer.subclass(*args_, **kwargs_)
+        if GetQuickEstimateRequest.subclass:
+            return GetQuickEstimateRequest.subclass(*args_, **kwargs_)
         else:
-            return GetQuickEstimateRequestContainer(*args_, **kwargs_)
+            return GetQuickEstimateRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -8354,38 +8354,38 @@ class GetQuickEstimateRequestContainer(RequestContainer):
             self.ReceiverAddress is not None or
             self.PackageType is not None or
             self.TotalWeight is not None or
-            super(GetQuickEstimateRequestContainer, self).hasContent_()
+            super(GetQuickEstimateRequest, self).hasContent_()
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetQuickEstimateRequestContainer', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetQuickEstimateRequestContainer')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetQuickEstimateRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('GetQuickEstimateRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'GetQuickEstimateRequestContainer':
+        if self.original_tagname_ is not None and name_ == 'GetQuickEstimateRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetQuickEstimateRequestContainer')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetQuickEstimateRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetQuickEstimateRequestContainer', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='GetQuickEstimateRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetQuickEstimateRequestContainer'):
-        super(GetQuickEstimateRequestContainer, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetQuickEstimateRequestContainer')
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetQuickEstimateRequestContainer', fromsubclass_=False, pretty_print=True):
-        super(GetQuickEstimateRequestContainer, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='GetQuickEstimateRequest'):
+        super(GetQuickEstimateRequest, self).exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='GetQuickEstimateRequest')
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='GetQuickEstimateRequest', fromsubclass_=False, pretty_print=True):
+        super(GetQuickEstimateRequest, self).exportChildren(outfile, level, namespaceprefix_, namespacedef_, name_, True, pretty_print=pretty_print)
         if pretty_print:
             eol_ = '\n'
         else:
@@ -8420,7 +8420,7 @@ class GetQuickEstimateRequestContainer(RequestContainer):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        super(GetQuickEstimateRequestContainer, self).buildAttributes(node, attrs, already_processed)
+        super(GetQuickEstimateRequest, self).buildAttributes(node, attrs, already_processed)
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'BillingAccountNumber':
             value_ = child_.text
@@ -8450,8 +8450,8 @@ class GetQuickEstimateRequestContainer(RequestContainer):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.TotalWeight = obj_
             obj_.original_tagname_ = 'TotalWeight'
-        super(GetQuickEstimateRequestContainer, self).buildChildren(child_, node, nodeName_, True)
-# end class GetQuickEstimateRequestContainer
+        super(GetQuickEstimateRequest, self).buildChildren(child_, node, nodeName_, True)
+# end class GetQuickEstimateRequest
 
 
 GDSClassesMapping = {
@@ -8473,14 +8473,14 @@ GDSClassesMapping = {
     'DutyInformation': DutyInformation,
     'Error': Error,
     'FromOnLabelInformation': FromOnLabelInformation,
-    'GetFullEstimateRequest': GetFullEstimateRequestContainer,
-    'GetFullEstimateRequestContainer': GetFullEstimateRequestContainer,
-    'GetFullEstimateResponse': GetFullEstimateResponseContainer,
-    'GetFullEstimateResponseContainer': GetFullEstimateResponseContainer,
-    'GetQuickEstimateRequest': GetQuickEstimateRequestContainer,
-    'GetQuickEstimateRequestContainer': GetQuickEstimateRequestContainer,
-    'GetQuickEstimateResponse': GetQuickEstimateResponseContainer,
-    'GetQuickEstimateResponseContainer': GetQuickEstimateResponseContainer,
+    'GetFullEstimateRequest': GetFullEstimateRequest,
+    'GetFullEstimateRequest': GetFullEstimateRequest,
+    'GetFullEstimateResponse': GetFullEstimateResponse,
+    'GetFullEstimateResponse': GetFullEstimateResponse,
+    'GetQuickEstimateRequest': GetQuickEstimateRequest,
+    'GetQuickEstimateRequest': GetQuickEstimateRequest,
+    'GetQuickEstimateResponse': GetQuickEstimateResponse,
+    'GetQuickEstimateResponse': GetQuickEstimateResponse,
     'InformationalMessage': InformationalMessage,
     'InternationalInformation': InternationalInformation,
     'NotificationInformation': NotificationInformation,
@@ -8495,9 +8495,9 @@ GDSClassesMapping = {
     'Piece': Piece,
     'ProactiveNotification': ProactiveNotification,
     'ReceiverInformation': ReceiverInformation,
-    'RequestContainer': RequestContainer,
+    'Request': Request,
     'RequestContext': RequestContext,
-    'ResponseContainer': ResponseContainer,
+    'Response': Response,
     'ResponseContext': ResponseContext,
     'ResponseInformation': ResponseInformation,
     'ReturnShipment': ReturnShipment,
@@ -8558,8 +8558,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetQuickEstimateRequestContainer'
-        rootClass = GetQuickEstimateRequestContainer
+        rootTag = 'GetQuickEstimateRequest'
+        rootClass = GetQuickEstimateRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -8589,8 +8589,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetQuickEstimateRequestContainer'
-        rootClass = GetQuickEstimateRequestContainer
+        rootTag = 'GetQuickEstimateRequest'
+        rootClass = GetQuickEstimateRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -8630,8 +8630,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetQuickEstimateRequestContainer'
-        rootClass = GetQuickEstimateRequestContainer
+        rootTag = 'GetQuickEstimateRequest'
+        rootClass = GetQuickEstimateRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -8658,8 +8658,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'GetQuickEstimateRequestContainer'
-        rootClass = GetQuickEstimateRequestContainer
+        rootTag = 'GetQuickEstimateRequest'
+        rootClass = GetQuickEstimateRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -8716,10 +8716,10 @@ __all__ = [
     "DutyInformation",
     "Error",
     "FromOnLabelInformation",
-    "GetFullEstimateRequestContainer",
-    "GetFullEstimateResponseContainer",
-    "GetQuickEstimateRequestContainer",
-    "GetQuickEstimateResponseContainer",
+    "GetFullEstimateRequest",
+    "GetFullEstimateResponse",
+    "GetQuickEstimateRequest",
+    "GetQuickEstimateResponse",
     "InformationalMessage",
     "InternationalInformation",
     "NotificationInformation",
@@ -8734,9 +8734,9 @@ __all__ = [
     "Piece",
     "ProactiveNotification",
     "ReceiverInformation",
-    "RequestContainer",
+    "Request",
     "RequestContext",
-    "ResponseContainer",
+    "Response",
     "ResponseContext",
     "ResponseInformation",
     "ReturnShipment",

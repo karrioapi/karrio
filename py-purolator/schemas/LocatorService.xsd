@@ -1,11 +1,11 @@
 <xsd:schema xmlns:tns="http://purolator.com/pws/datatypes/v1" targetNamespace="http://purolator.com/pws/datatypes/v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-    <xsd:complexType name="GetLocationsByAddressRequestContainer">
+    <xsd:complexType name="GetLocationsByAddressRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetLocationsByAddressRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="Address" type="tns:Address" nillable="true">
                         <xsd:annotation>
@@ -41,11 +41,11 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetLocationsByAddressRequestContainer" type="tns:GetLocationsByAddressRequestContainer" nillable="true"/>
-    <xsd:complexType name="RequestContainer">
+    <xsd:element name="GetLocationsByAddressRequest" type="tns:GetLocationsByAddressRequest" nillable="true"/>
+    <xsd:complexType name="Request">
         <xsd:sequence/>
     </xsd:complexType>
-    <xsd:element name="RequestContainer" type="tns:RequestContainer" nillable="true"/>
+    <xsd:element name="Request" type="tns:Request" nillable="true"/>
     <xsd:complexType name="Address">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -183,7 +183,7 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="DaysOfOperation" type="tns:DaysOfOperation" nillable="true"/>
-    <xsd:element name="GetLocationsByAddressRequest" type="tns:GetLocationsByAddressRequestContainer" nillable="true"/>
+    <xsd:element name="GetLocationsByAddressRequest" type="tns:GetLocationsByAddressRequest" nillable="true"/>
     <xsd:complexType name="RequestContext">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -242,13 +242,13 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="Language" type="tns:Language" nillable="true"/>
-    <xsd:complexType name="GetLocationsResponseContainer">
+    <xsd:complexType name="GetLocationsResponse">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetLocationsResponse</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:ResponseContainer">
+            <xsd:extension base="tns:Response">
                 <xsd:sequence>
                     <xsd:element name="Locations" type="tns:ArrayOfDepotLocation" nillable="true" minOccurs="0">
                         <xsd:annotation>
@@ -260,8 +260,8 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetLocationsResponseContainer" type="tns:GetLocationsResponseContainer" nillable="true"/>
-    <xsd:complexType name="ResponseContainer">
+    <xsd:element name="GetLocationsResponse" type="tns:GetLocationsResponse" nillable="true"/>
+    <xsd:complexType name="Response">
         <xsd:sequence>
             <xsd:element name="ResponseInformation" type="tns:ResponseInformation" nillable="true">
                 <xsd:annotation>
@@ -271,7 +271,7 @@
             </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:element name="ResponseContainer" type="tns:ResponseContainer" nillable="true"/>
+    <xsd:element name="Response" type="tns:Response" nillable="true"/>
     <xsd:complexType name="ResponseInformation">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -897,7 +897,7 @@
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="Direction" type="tns:Direction" nillable="true"/>
-    <xsd:element name="GetLocationsResponse" type="tns:GetLocationsResponseContainer" nillable="true"/>
+    <xsd:element name="GetLocationsResponse" type="tns:GetLocationsResponse" nillable="true"/>
     <xsd:complexType name="ResponseContext">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -913,13 +913,13 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="ResponseContext" type="tns:ResponseContext" nillable="true"/>
-    <xsd:complexType name="GetLocationsByCoordinatesRequestContainer">
+    <xsd:complexType name="GetLocationsByCoordinatesRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetLocationsByCoordinatesRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="Coordinates" type="tns:Coordinates" nillable="true">
                         <xsd:annotation>
@@ -955,7 +955,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetLocationsByCoordinatesRequestContainer" type="tns:GetLocationsByCoordinatesRequestContainer" nillable="true"/>
+    <xsd:element name="GetLocationsByCoordinatesRequest" type="tns:GetLocationsByCoordinatesRequest" nillable="true"/>
     <xsd:complexType name="Coordinates">
         <xsd:annotation>
             <xsd:appinfo/>
@@ -977,14 +977,14 @@
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="Coordinates" type="tns:Coordinates" nillable="true"/>
-    <xsd:element name="GetLocationsByCoordinatesRequest" type="tns:GetLocationsByCoordinatesRequestContainer" nillable="true"/>
-    <xsd:complexType name="GetLocationsByCityRequestContainer">
+    <xsd:element name="GetLocationsByCoordinatesRequest" type="tns:GetLocationsByCoordinatesRequest" nillable="true"/>
+    <xsd:complexType name="GetLocationsByCityRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetLocationsByCityRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="CountryCode" type="xsd:string" nillable="true" minOccurs="0">
                         <xsd:annotation>
@@ -1032,15 +1032,15 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetLocationsByCityRequestContainer" type="tns:GetLocationsByCityRequestContainer" nillable="true"/>
-    <xsd:element name="GetLocationsByCityRequest" type="tns:GetLocationsByCityRequestContainer" nillable="true"/>
-    <xsd:complexType name="GetLocationsByPointOfInterestRequestContainer">
+    <xsd:element name="GetLocationsByCityRequest" type="tns:GetLocationsByCityRequest" nillable="true"/>
+    <xsd:element name="GetLocationsByCityRequest" type="tns:GetLocationsByCityRequest" nillable="true"/>
+    <xsd:complexType name="GetLocationsByPointOfInterestRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetLocationsByPointOfInterestRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="PointOfInterest" type="xsd:string" nillable="true">
                         <xsd:annotation>
@@ -1076,15 +1076,15 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetLocationsByPointOfInterestRequestContainer" type="tns:GetLocationsByPointOfInterestRequestContainer" nillable="true"/>
-    <xsd:element name="GetLocationsByPointOfInterestRequest" type="tns:GetLocationsByPointOfInterestRequestContainer" nillable="true"/>
-    <xsd:complexType name="GetLocationsByPostalCodeRequestContainer">
+    <xsd:element name="GetLocationsByPointOfInterestRequest" type="tns:GetLocationsByPointOfInterestRequest" nillable="true"/>
+    <xsd:element name="GetLocationsByPointOfInterestRequest" type="tns:GetLocationsByPointOfInterestRequest" nillable="true"/>
+    <xsd:complexType name="GetLocationsByPostalCodeRequest">
         <xsd:annotation>
             <xsd:appinfo/>
             <xsd:documentation>GetLocationsByPostalCodeRequest</xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent mixed="false">
-            <xsd:extension base="tns:RequestContainer">
+            <xsd:extension base="tns:Request">
                 <xsd:sequence>
                     <xsd:element name="PostalCode" type="xsd:string" nillable="true">
                         <xsd:annotation>
@@ -1120,6 +1120,6 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    <xsd:element name="GetLocationsByPostalCodeRequestContainer" type="tns:GetLocationsByPostalCodeRequestContainer" nillable="true"/>
-    <xsd:element name="GetLocationsByPostalCodeRequest" type="tns:GetLocationsByPostalCodeRequestContainer" nillable="true"/>
+    <xsd:element name="GetLocationsByPostalCodeRequest" type="tns:GetLocationsByPostalCodeRequest" nillable="true"/>
+    <xsd:element name="GetLocationsByPostalCodeRequest" type="tns:GetLocationsByPostalCodeRequest" nillable="true"/>
 </xsd:schema>
