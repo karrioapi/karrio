@@ -44,6 +44,7 @@ class TestFeDexQuote(unittest.TestCase):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
+
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_rate_error_response(self):
@@ -79,7 +80,7 @@ ParsedRateResponse = [
             "currency": "USD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
-            "extra_charges": [{"amount": 9.22, "currency": "USD", "name": "FUEL"}],
+            "extra_charges": [{"amount": 9.22, "currency": "USD", "name": "Fuel"}],
             "service": "international_priority",
             "total_charge": 239.71,
         },
@@ -90,7 +91,7 @@ ParsedRateResponse = [
             "currency": "USD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
-            "extra_charges": [{"amount": 8.3, "currency": "USD", "name": "FUEL"}],
+            "extra_charges": [{"amount": 8.3, "currency": "USD", "name": "Fuel"}],
             "service": "international_economy",
             "total_charge": 215.77,
         },

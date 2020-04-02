@@ -1,9 +1,8 @@
-from functools import reduce
 from datetime import datetime
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, cast
 from pyfedex.rate_service_v26 import (
-    RateReplyDetail,
     RateRequest as FedexRateRequest,
+    RateReplyDetail,
     TransactionDetail,
     VersionId,
     RequestedShipment,
@@ -11,12 +10,14 @@ from pyfedex.rate_service_v26 import (
     Party,
     Contact,
     Address,
-    RatedShipmentDetail,
+    Money,
     Weight as FedexWeight,
+    ShipmentRateDetail,
+    Surcharge
 )
 from purplship.core.utils import export, concat_str, Serializable, format_date, decimal
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.units import Currency, Package, Options
+from purplship.core.units import Package, Options
 from purplship.core.utils.xml import Element
 from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
@@ -30,7 +31,7 @@ def parse_rate_response(
 ) -> Tuple[List[RateDetails], List[Message]]:
     rate_reply = response.xpath(".//*[local-name() = $name]", name="RateReplyDetails")
     rate_details: List[RateDetails] = [
-        _extract_quote(detail_node, settings) for detail_node in rate_reply
+        _extract_rate(detail_node, settings) for detail_node in rate_reply
     ]
     return (
         [details for details in rate_details if details is not None],
@@ -38,57 +39,41 @@ def parse_rate_response(
     )
 
 
-def _extract_quote(detail_node: Element, settings: Settings) -> Optional[RateDetails]:
-    detail = RateReplyDetail()
-    detail.build(detail_node)
-    if not detail.RatedShipmentDetails:
-        return None
-    shipmentDetail: RatedShipmentDetail = detail.RatedShipmentDetails[
-        0
-    ].ShipmentRateDetail
-    delivery_ = reduce(
-        lambda v, c: c.text,
-        detail_node.xpath(".//*[local-name() = $name]", name="DeliveryTimestamp"),
-        None,
-    )
-    currency_ = reduce(
-        lambda v, c: c.text,
-        detail_node.xpath(".//*[local-name() = $name]", name="Currency"),
-        Currency.USD.name,
-    )
-    Discounts_ = map(
-        lambda d: ChargeDetails(
-            name=d.RateDiscountType, amount=decimal(d.Amount.Amount), currency=currency_
+def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDetails]:
+    rate: RateReplyDetail = RateReplyDetail()
+    rate.build(detail_node)
+
+    service = ServiceType(rate.ServiceType).name
+    rate_type = rate.ActualRateType
+    shipment_rate, shipment_discount = cast(Tuple[ShipmentRateDetail, Money], next(
+        (
+            (r.ShipmentRateDetail, r.EffectiveNetDiscount) for r in rate.RatedShipmentDetails
+            if cast(ShipmentRateDetail, r.ShipmentRateDetail).RateType == rate_type
         ),
-        shipmentDetail.FreightDiscounts,
-    )
-    Surcharges_ = map(
-        lambda s: ChargeDetails(
-            name=s.SurchargeType, amount=decimal(s.Amount.Amount), currency=currency_
-        ),
-        shipmentDetail.Surcharges,
-    )
-    Taxes_ = map(
-        lambda t: ChargeDetails(
-            name=t.TaxType, amount=decimal(t.Amount.Amount), currency=currency_
-        ),
-        shipmentDetail.Taxes,
-    )
+        (None, None)
+    ))
+    currency = cast(Money, shipment_rate.TotalBaseCharge).Currency
+    duties_and_taxes = shipment_rate.TotalTaxes.Amount + shipment_rate.TotalDutiesAndTaxes.Amount
+    surcharges = [
+        ChargeDetails(
+            name=cast(Surcharge, s).Description,
+            amount=decimal(cast(Surcharge, s).Amount.Amount),
+            currency=currency
+        )
+        for s in shipment_rate.Surcharges + shipment_rate.Taxes
+    ]
+
     return RateDetails(
         carrier=settings.carrier,
         carrier_name=settings.carrier_name,
-        service=ServiceType(detail.ServiceType).name,
-        currency=currency_,
-        estimated_delivery=(
-            format_date(delivery_, "%Y-%m-%dT%H:%M:%S")
-            if delivery_ is not None
-            else None
-        ),
-        base_charge=decimal(shipmentDetail.TotalBaseCharge.Amount),
-        total_charge=decimal(shipmentDetail.TotalNetChargeWithDutiesAndTaxes.Amount),
-        duties_and_taxes=decimal(shipmentDetail.TotalTaxes.Amount),
-        discount=decimal(shipmentDetail.TotalFreightDiscounts.Amount),
-        extra_charges=list(Discounts_) + list(Surcharges_) + list(Taxes_),
+        service=service,
+        currency=currency,
+        base_charge=decimal(shipment_rate.TotalBaseCharge.Amount),
+        total_charge=decimal(shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount),
+        duties_and_taxes=decimal(duties_and_taxes),
+        discount=decimal(shipment_discount.Amount),
+        estimated_delivery=format_date(rate.DeliveryTimestamp, "%Y-%m-%dT%H:%M:%S"),
+        extra_charges=surcharges,
     )
 
 
