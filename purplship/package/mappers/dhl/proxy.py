@@ -3,7 +3,7 @@ from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.package.mappers.dhl.settings import Settings
 from purplship.package.proxy import Proxy as BaseProxy
 from pydhl.dct_req_global_2_0 import DCTRequest
-from pydhl.tracking_request_known import KnownTrackingRequest
+from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.ship_val_global_req_6_2 import ShipmentRequest
 from pydhl.book_pickup_global_req_3_0 import BookPURequest
 from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest

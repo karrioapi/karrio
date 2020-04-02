@@ -1,13 +1,12 @@
 appdirs==1.4.3
 attrs==19.3.0
 bandit==1.5.1
-black==18.9b0
+black==19.10b0
 certifi==2019.11.28
 chardet==3.0.4
 Click==7.0
 entrypoints==0.3
 flake8==3.7.7
-generateDS==2.35.15
 gitdb2==2.0.6
 GitPython==3.0.5
 idna==2.9
