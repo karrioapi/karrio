@@ -1,7 +1,7 @@
 from typing import Tuple, List, Any
-from purplship.carriers.caps.error import parse_error_response
-from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets, PaymentType
-from purplship.carriers.caps.utils import Settings
+from purplship.carriers.canadapost.error import parse_error_response
+from purplship.carriers.canadapost.units import OptionCode, ServiceType, PackagePresets, PaymentType
+from purplship.carriers.canadapost.utils import Settings
 from purplship.core.models import (
     Message,
     ShipmentDetails,
@@ -10,7 +10,7 @@ from purplship.core.models import (
 from purplship.core.units import Currency, WeightUnit, DimensionUnit, Options, Package
 from purplship.core.utils import export, concat_str, Serializable, Element
 from purplship.core.errors import RequiredFieldError
-from pycaps.ncshipment import (
+from pycanadapost.ncshipment import (
     NonContractShipmentType,
     NonContractShipmentInfoType,
     DeliverySpecType,

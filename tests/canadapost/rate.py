@@ -3,7 +3,7 @@ from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.package import rating
 from purplship.core.models import RateRequest
-from tests.caps.fixture import gateway
+from tests.canadapost.fixture import gateway
 from datetime import datetime
 
 
@@ -24,7 +24,7 @@ class TestCanadaPostRating(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RateRequestUsingPackagePresetXML)
 
-    @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.canadapost.proxy.http", return_value="<a></a>")
     def test_create_rate_request_with_package_preset_missing_weight(self, _):
         processing_error = (
             rating.fetch(RateRequest(**RateWithPresetMissingWeightPayload))
@@ -34,7 +34,7 @@ class TestCanadaPostRating(unittest.TestCase):
 
         self.assertEqual(to_dict(processing_error), to_dict(ProcessingError))
 
-    @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.canadapost.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         rating.fetch(self.RateRequest).from_(gateway)
 
@@ -42,20 +42,20 @@ class TestCanadaPostRating(unittest.TestCase):
         self.assertEqual(url, f"{gateway.proxy.settings.server_url}/rs/ship/price")
 
     def test_parse_rate_response(self):
-        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
     def test_parse_rate_parsing_error(self):
-        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteParsingError
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
 
     def test_parse_rate_missing_args_error(self):
-        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteMissingArgsError
             parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -74,7 +74,7 @@ RatePayload = {
         "length": 10,
         "width": 3,
         "weight": 4.0,
-        "services": ["caps_expedited_parcel"],
+        "services": ["canadapost_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
     },
@@ -84,8 +84,8 @@ RateWithPresetPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
     "parcel": {
-        "package_preset": "caps_xexpresspost_certified_envelope",
-        "services": ["caps_xpresspost"],
+        "package_preset": "canadapost_xexpresspost_certified_envelope",
+        "services": ["canadapost_xpresspost"],
     },
 }
 
@@ -93,8 +93,8 @@ RateWithPresetMissingWeightPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
     "parcel": {
-        "package_preset": "caps_corrugated_small_box",
-        "services": ["caps_regular_parcel"],
+        "package_preset": "canadapost_corrugated_small_box",
+        "services": ["canadapost_regular_parcel"],
     },
 }
 
@@ -102,7 +102,7 @@ ProcessingError = [
     [],
     [
         {
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "code": "500",
             "message": "<parcel.weight> must be specified (required)",
@@ -114,7 +114,7 @@ ParsedQuoteParsingError = [
     [],
     [
         {
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "code": "AA004",
             "message": "You cannot mail on behalf of the requested customer.",
@@ -126,7 +126,7 @@ ParsedQuoteMissingArgsError = [
     [],
     [
         {
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "code": "Server",
             "message": "/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v4}parcel-characteristics with anonymous type, found </parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v4), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v4}weight, {http://www.canadapost.ca/ws/ship/rate-v4}dimensions, {http://www.canadapost.ca/ws/ship/rate-v4}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v4}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v4}oversized]",
@@ -138,7 +138,7 @@ ParsedQuoteResponse = [
     [
         {
             "base_charge": 9.59,
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "currency": "CAD",
             "discount": 0.62,
@@ -148,12 +148,12 @@ ParsedQuoteResponse = [
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
             ],
-            "service": "caps_expedited_parcel",
+            "service": "canadapost_expedited_parcel",
             "total_charge": 10.21,
         },
         {
             "base_charge": 22.64,
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "currency": "CAD",
             "discount": 2.56,
@@ -163,12 +163,12 @@ ParsedQuoteResponse = [
                 {"amount": -0.68, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 3.24, "currency": "CAD", "name": "Fuel surcharge"},
             ],
-            "service": "caps_priority",
+            "service": "canadapost_priority",
             "total_charge": 25.2,
         },
         {
             "base_charge": 9.59,
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "currency": "CAD",
             "discount": 0.62,
@@ -178,12 +178,12 @@ ParsedQuoteResponse = [
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
             ],
-            "service": "caps_regular_parcel",
+            "service": "canadapost_regular_parcel",
             "total_charge": 10.21,
         },
         {
             "base_charge": 12.26,
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "currency": "CAD",
             "discount": 1.38,
@@ -193,7 +193,7 @@ ParsedQuoteResponse = [
                 {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"},
             ],
-            "service": "caps_xpresspost",
+            "service": "canadapost_xpresspost",
             "total_charge": 13.64,
         },
     ],

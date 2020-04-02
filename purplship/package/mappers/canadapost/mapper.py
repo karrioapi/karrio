@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from pycaps.rating import mailing_scenario
-from pycaps.shipment import ShipmentType
+from pycanadapost.rating import mailing_scenario
+from pycanadapost.shipment import ShipmentType
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.package.mapper import Mapper as BaseMapper
 from purplship.core.models import (
@@ -12,7 +12,7 @@ from purplship.core.models import (
     RateRequest,
     ShipmentDetails,
 )
-from purplship.carriers.caps import (
+from purplship.carriers.canadapost import (
     mailing_scenario_request,
     parse_price_quotes,
     tracking_pins_request,
@@ -20,7 +20,7 @@ from purplship.carriers.caps import (
     shipment_request,
     parse_shipment_response,
 )
-from purplship.package.mappers.caps.settings import Settings
+from purplship.package.mappers.canadapost.settings import Settings
 
 
 class Mapper(BaseMapper):

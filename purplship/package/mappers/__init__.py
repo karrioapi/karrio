@@ -10,8 +10,8 @@ try:
 except ImportError:
     pass
 try:
-    import purplship.package.mappers.caps as caps
-    Providers.update({'caps': caps})
+    import purplship.package.mappers.canadapost as canadapost
+    Providers.update({'canadapost': canadapost})
 except ImportError:
     pass
 try:
@@ -45,6 +45,8 @@ try:
 except ImportError:
     pass
 
+
+# Register PurplShip extensions
 
 for _, name, _ in pkgutil.iter_modules(extensions.__path__):
     Providers.update({name: __import__(f'{extensions.__name__}.{name}', fromlist=[name])})

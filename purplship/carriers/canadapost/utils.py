@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     @property
     def carrier(self):
-        return 'caps'
+        return 'canadapost'
 
     @property
     def server_url(self):

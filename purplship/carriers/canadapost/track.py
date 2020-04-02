@@ -1,9 +1,9 @@
 from typing import Tuple, List
-from pycaps.track import pin_summary
-from purplship.carriers.caps.utils import Settings
+from pycanadapost.track import pin_summary
+from purplship.carriers.canadapost.utils import Settings
 from purplship.core.utils import Element, Serializable, format_date, format_time
 from purplship.core.models import TrackingRequest, TrackingDetails, TrackingEvent, Message
-from purplship.carriers.caps.error import parse_error_response
+from purplship.carriers.canadapost.error import parse_error_response
 
 
 def parse_tracking_summary(

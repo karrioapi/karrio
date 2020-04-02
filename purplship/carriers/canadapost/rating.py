@@ -1,4 +1,4 @@
-from pycaps.rating import (
+from pycanadapost.rating import (
     mailing_scenario,
     optionsType,
     optionType,
@@ -15,7 +15,7 @@ from functools import reduce
 from datetime import datetime
 from typing import List, Tuple
 from purplship.core.utils import Serializable, export, Element, format_date, decimal
-from purplship.carriers.caps.utils import Settings
+from purplship.carriers.canadapost.utils import Settings
 from purplship.core.units import (
     Country,
     Currency,
@@ -23,8 +23,8 @@ from purplship.core.units import (
 )
 from purplship.core.errors import OriginNotServicedError, RequiredFieldError
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
-from purplship.carriers.caps.error import parse_error_response
-from purplship.carriers.caps.units import OptionCode, ServiceType, PackagePresets
+from purplship.carriers.canadapost.error import parse_error_response
+from purplship.carriers.canadapost.units import OptionCode, ServiceType, PackagePresets
 
 
 def parse_price_quotes(

@@ -7,10 +7,10 @@ from purplship.core.utils.helpers import (
     exec_parrallel,
     bundle_xml,
 )
-from purplship.package.mappers.caps.settings import Settings
+from purplship.package.mappers.canadapost.settings import Settings
 from purplship.package.proxy import Proxy as BaseProxy
-from pycaps.shipment import ShipmentType
-from pycaps.rating import mailing_scenario
+from pycanadapost.shipment import ShipmentType
+from pycanadapost.rating import mailing_scenario
 
 
 class Proxy(BaseProxy):

@@ -7,7 +7,7 @@ py-purolator==2020.3.0
 py-dhl==2020.3.0
 py-soap==2020.3.0
 py-ups==2020.3.0
-py-caps==2020.3.0
+py-canadapost==2020.4.0
 py-aups==1.0a0
 py-sendle==1.0a0
 py-usps==1.0a0

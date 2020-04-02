@@ -3,7 +3,7 @@ from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.package import tracking
 from purplship.core.models import TrackingRequest
-from tests.caps.fixture import gateway
+from tests.canadapost.fixture import gateway
 
 
 class TestCanadaPostTracking(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestCanadaPostTracking(unittest.TestCase):
 
         self.assertEqual(request.serialize(), TRACKING_PAYLOAD)
 
-    @patch("purplship.package.mappers.caps.proxy.http", return_value="<a></a>")
+    @patch("purplship.package.mappers.canadapost.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -24,7 +24,7 @@ class TestCanadaPostTracking(unittest.TestCase):
         self.assertEqual(reqUrl, TrackingRequestURL)
 
     def test_tracking_auth_error_parsing(self):
-        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = AuthError
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -32,7 +32,7 @@ class TestCanadaPostTracking(unittest.TestCase):
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
-        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = TrackingResponseXml
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -41,7 +41,7 @@ class TestCanadaPostTracking(unittest.TestCase):
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
-        with patch("purplship.package.mappers.caps.proxy.http") as mock:
+        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
             mock.return_value = UnknownTrackingNumberResponse
             parsed_response = (
                 tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -60,7 +60,7 @@ ParsedAuthError = [
     [],
     [
         {
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "code": "E002",
             "message": "AAA Authentication Failure",
@@ -71,7 +71,7 @@ ParsedAuthError = [
 ParsedTrackingResponse = [
     [
         {
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "events": [
                 {
@@ -91,7 +91,7 @@ ParsedUnknownTrackingNumberResponse = [
     [],
     [
         {
-            "carrier": "caps",
+            "carrier": "canadapost",
             "carrier_name": "CanadaPost",
             "code": "004",
             "message": "No Pin History",

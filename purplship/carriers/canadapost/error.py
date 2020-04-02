@@ -1,9 +1,9 @@
 from typing import List, Callable
 from functools import reduce
 from purplship.core.utils.xml import Element
-from purplship.carriers.caps import Settings
+from purplship.carriers.canadapost import Settings
 from purplship.core.models import Message
-from pycaps.messages import messageType
+from pycanadapost.messages import messageType
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:
