@@ -7,8 +7,7 @@ from purplship import package as api
 from purplship.core.utils import exec_async, to_dict
 from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
-    RateResponse, TrackingResponse, TrackingRequest, ShipmentDetails,
-    Message, RateDetails
+    RateResponse, TrackingResponse, TrackingRequest, Message, RateDetails
 )
 from purpleserver.core import models
 
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_carriers(carrier_type: str = None, carrier_name: str = None, test: bool = None) -> Union[CarrierSettings, List[CarrierSettings]]:
-    filters = dict(carrier_name=carrier_name, test=test)
+    filters = dict(carrier_name=carrier_name, test=(bool(test) if test is not None else None))
     carrier_models = {carrier_type: models.MODELS.get(carrier_type)} if carrier_type is not None else models.MODELS
 
     if any(carrier_models.values()) and any(filters.values()):

@@ -1,10 +1,10 @@
-from purplship.package.mappers import Providers
+from purpleserver.core.models import MODELS
 from rest_framework.serializers import (
     Serializer, CharField, FloatField, BooleanField, IntegerField, ListField, DictField, ChoiceField, ListSerializer,
     UUIDField
 )
 
-CARRIERS = [(k, k) for k in Providers.keys()]
+CARRIERS = [(k, k) for k in MODELS.keys()]
 
 
 class StringListField(ListField):
@@ -12,8 +12,9 @@ class StringListField(ListField):
 
 
 class CarrierSettings(Serializer):
-    carrier = ChoiceField(choices=CARRIERS)
-    settings = DictField(required=True)
+    carrier = ChoiceField(choices=CARRIERS, required=True)
+    carrier_name = CharField(required=True)
+    test = BooleanField(required=True)
 
 
 class CarrierSettingsList(ListSerializer):

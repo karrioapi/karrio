@@ -13,7 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 from purplship.core.utils.helpers import to_dict
 
 from purpleserver.core.serializers import ShipmentResponse, ShipmentRequest
-from purpleserver.core.gateway import create_shipment, get_carriers
+from purpleserver.core.gateway import create_shipment
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
