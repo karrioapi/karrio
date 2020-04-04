@@ -49,7 +49,6 @@ RatePayload = {
         "length": 10,
         "width": 3,
         "weight": 4.0,
-        "services": [],
         "dimension_unit": "CM",
         "weight_unit": "KG",
     },
@@ -58,14 +57,15 @@ RatePayload = {
 RateWithPresetMissingDimensionPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcel": {"services": []},
+    "parcel": {},
 }
 
 ParsedQuoteResponse = [
     [
         {
             "base_charge": 177.0,
-            "carrier": "Freightcom",
+            "carrier": "freightcom",
+            "carrier_name": "Freightcom",
             "currency": "CAD",
             "estimated_delivery": "1",
             "extra_charges": [
@@ -75,8 +75,9 @@ ParsedQuoteResponse = [
             "total_charge": 177.0,
         },
         {
-            "base_charge": 28.650_000_000_000_002,
-            "carrier": "Freightcom",
+            "base_charge": 28.65,
+            "carrier": "freightcom",
+            "carrier_name": "Freightcom",
             "currency": "CAD",
             "estimated_delivery": "1",
             "extra_charges": [
@@ -86,8 +87,9 @@ ParsedQuoteResponse = [
             "total_charge": 28.65,
         },
         {
-            "base_charge": 46.270_000_457_763_67,
-            "carrier": "Freightcom",
+            "base_charge": 46.27,
+            "carrier": "freightcom",
+            "carrier_name": "Freightcom",
             "currency": "CAD",
             "estimated_delivery": "0",
             "extra_charges": [
@@ -99,7 +101,8 @@ ParsedQuoteResponse = [
     ],
     [
         {
-            "carrier": "Freightcom",
+            "carrier": "freightcom",
+            "carrier_name": "Freightcom",
             "message": "Polaris:Military Base Delivery,Saturday Pickup,Construction Site,BORDER FEE,Homeland Security,Limited Access,Saturday Delivery,Sort and Segregate Charge,Pier Charge",
         }
     ],

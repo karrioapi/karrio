@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='freightcom.extension',
-    version='2020.3.0',
+    version='2020.4.0',
     description='Freightcom purplship extension',
     long_description=long_description,
     long_description_content_type="text/markdown",

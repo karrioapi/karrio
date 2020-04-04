@@ -4,15 +4,15 @@ from pyfreightcom.quote_request import (
 )
 from pyfreightcom.quote_reply import QuoteType
 from purplship.core.errors import RequiredFieldError
-from purplship.core.utils import Element, Serializable, concat_str
-from purplship.core.models import RateRequest, RateDetails, Error, ChargeDetails
+from purplship.core.utils import Element, Serializable, concat_str, decimal
+from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.core.units import Package, Options
 from purplship.extension.carriers.freightcom.utils import Settings, standard_request_serializer
 from purplship.extension.carriers.freightcom.units import Service, FreightPackagingType, FreightClass, Option
 from purplship.extension.carriers.freightcom.error import parse_error_response
 
 
-def parse_quote_reply(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Error]]:
+def parse_quote_reply(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
     estimates = response.xpath(".//*[local-name() = $name]", name="Quote")
     return (
         [_extract_rate(node, settings) for node in estimates],
@@ -27,16 +27,17 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
 
     extra_charges = [ChargeDetails(
         name="Fuel surcharge",
-        amount=float(quote.fuelSurcharge),
+        amount=decimal(quote.fuelSurcharge),
         currency=quote.currency
     )] if quote.fuelSurcharge is not None else []
 
     return RateDetails(
-        carrier=settings.carrier_name,
+        carrier=settings.carrier,
+        carrier_name=settings.carrier_name,
         currency=quote.currency,
         service=service,
-        base_charge=float(quote.baseCharge),
-        total_charge=float(quote.totalCharge),
+        base_charge=decimal(quote.baseCharge),
+        total_charge=decimal(quote.totalCharge),
         estimated_delivery=str(quote.transitDays),
         extra_charges=extra_charges
     )
@@ -51,17 +52,17 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
             raise RequiredFieldError(key)
 
     packaging_type = FreightPackagingType[package.packaging_type or "small_box"].value
-    options = Options(payload.parcel.options)
+    options = Options(payload.options)
     service = next(
-        (Service[s].value for s in payload.parcel.services if s in Service.__members__),
+        (Service[s].value for s in payload.services if s in Service.__members__),
         Service.freightcom_central_transport.value
     )
     freight_class = next(
-        (FreightClass[c].value for c in payload.parcel.options.keys() if c in FreightClass.__members__),
+        (FreightClass[c].value for c in payload.options.keys() if c in FreightClass.__members__),
         None
     )
     special_services = {
-        Option[s]: True for s in payload.parcel.options.keys() if s in Option.__members__
+        Option[s]: True for s in payload.options.keys() if s in Option.__members__
     }
 
     request = Freightcom(
@@ -92,7 +93,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
             serviceId=service,
             stackable=special_services.get(Option.freightcom_stackable),
             From=FromType(
-                id=payload.shipper.type,
+                id=payload.shipper.id,
                 company=payload.shipper.company_name,
                 instructions=None,
                 email=payload.shipper.email,
@@ -100,15 +101,15 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                 phone=payload.shipper.phone_number,
                 tailgateRequired=None,
                 residential=payload.shipper.residential,
-                address1=concat_str(payload.shipper.address_line_1, join=True),
-                address2=concat_str(payload.shipper.address_line_2, join=True),
+                address1=concat_str(payload.shipper.address_line1, join=True),
+                address2=concat_str(payload.shipper.address_line2, join=True),
                 city=payload.shipper.city,
                 state=payload.shipper.state_code,
                 zip=payload.shipper.postal_code,
                 country=payload.shipper.country_code
             ),
             To=ToType(
-                id=payload.recipient.type,
+                id=payload.recipient.id,
                 company=payload.recipient.company_name,
                 notifyRecipient=None,
                 instructions=None,
@@ -117,8 +118,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                 phone=payload.recipient.phone_number,
                 tailgateRequired=None,
                 residential=payload.recipient.residential,
-                address1=concat_str(payload.recipient.address_line_1, join=True),
-                address2=concat_str(payload.recipient.address_line_2, join=True),
+                address1=concat_str(payload.recipient.address_line1, join=True),
+                address2=concat_str(payload.recipient.address_line2, join=True),
                 city=payload.recipient.city,
                 state=payload.recipient.state_code,
                 zip=payload.recipient.postal_code,

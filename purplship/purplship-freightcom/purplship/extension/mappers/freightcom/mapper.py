@@ -8,7 +8,7 @@ from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
     RateDetails,
-    Error,
+    Message,
 )
 from purplship.extension.carriers.freightcom import (
     parse_quote_reply, quote_request,
@@ -31,10 +31,10 @@ class Mapper(BaseMapper):
 
     def parse_rate_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[RateDetails], List[Error]]:
+    ) -> Tuple[List[RateDetails], List[Message]]:
         return parse_quote_reply(response.deserialize(), self.settings)
 
     def parse_shipment_response(
         self, response: Deserializable[str]
-    ) -> Tuple[ShipmentDetails, List[Error]]:
+    ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipping_reply(response.deserialize(), self.settings)

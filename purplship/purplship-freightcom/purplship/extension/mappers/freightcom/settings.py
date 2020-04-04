@@ -10,5 +10,6 @@ class Settings(BaseSettings):
 
     username: str
     password: str
+    id: str = None
+    test: bool = False
     carrier_name: str = "Freightcom"
-    server_url: str = "https://app.freightcom.com/rpc2"

@@ -40,7 +40,7 @@ if __name__ == "__main__":
 shipment_data = {
     "shipper": {
         "company_name": "CGI",
-        "address_line_1": "502 MAIN ST N",
+        "address_line1": "502 MAIN ST N",
         "city": "MONTREAL",
         "postal_code": "H2B1A0",
         "country_code": "CA",
@@ -50,7 +50,7 @@ shipment_data = {
     },
     "recipient": {
         "company_name": "CGI",
-        "address_line_1": "23 jardin private",
+        "address_line1": "23 jardin private",
         "city": "Ottawa",
         "postal_code": "K1K4T3",
         "country_code": "CA",
@@ -62,23 +62,25 @@ shipment_data = {
         "length": 6,
         "width": 12,
         "weight": 20.0,
-        "services": ["caps_expedited_parcel"],
         "dimension_unit": "CM",
         "weight_unit": "KG",
-        "options": {
-            "cash_on_delivery": {"amount": 10.5},
-            "insurance": {"amount": 70.0},
-        },
+    },
+    "service": "freightcom_central_transport",
+    "options": {
+        "cash_on_delivery": {"amount": 10.5},
+        "insurance": {"amount": 70.0},
     },
 }
 
 ParsedShipmentResponse = [
     {
-        "carrier": "Freightcom",
+        "carrier": "freightcom",
+        "carrier_name": "Freightcom",
         "label": "[base-64 encoded String]",
         "selected_rate": {
-            "base_charge": 30.739999771118164,
-            "carrier": "Freightcom",
+            "base_charge": 30.74,
+            "carrier": "freightcom",
+            "carrier_name": "Freightcom",
             "currency": "CAD",
             "estimated_delivery": 0,
             "extra_charges": [
