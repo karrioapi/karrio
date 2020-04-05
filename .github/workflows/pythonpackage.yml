@@ -1,0 +1,45 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: PuprlShip Extension Tests
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Test Freightcom dependencies
+      run: |
+        cd purplship/purplship-freightcom
+        python -m venv .env
+        source .env/bin/activate
+        pip install -r requirements.txt
+        pip install -r requirements.dev.txt
+        pip install .
+        pip install coverage
+        coverage run --include='purplship/*' -m unittest -v -f
+        mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
+        coverage report -m
+    - name: Test eShipper dependencies
+      run: |
+        cd purplship/purplship-eshipper
+        python -m venv .env
+        source .env/bin/activate
+        pip install -r requirements.txt
+        pip install -r requirements.dev.txt
+        pip install .
+        pip install coverage
+        coverage run --include='purplship/*' -m unittest -v -f
+        mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
+        coverage report -m
