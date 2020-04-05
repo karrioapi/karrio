@@ -13,10 +13,12 @@ from pyfedex.rate_service_v26 import (
     Money,
     Weight as FedexWeight,
     ShipmentRateDetail,
-    Surcharge
+    Surcharge,
+    RequestedPackageLineItem,
+    Dimensions
 )
 from purplship.core.utils import export, concat_str, Serializable, format_date, decimal
-from purplship.core.utils.soap import clean_namespaces, create_envelope
+from purplship.core.utils.soap import create_envelope
 from purplship.core.units import Package, Options
 from purplship.core.utils.xml import Element
 from purplship.core.errors import RequiredFieldError
@@ -52,6 +54,7 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         ),
         (None, None)
     ))
+    discount = decimal(shipment_discount.Amount) if shipment_discount is not None else None
     currency = cast(Money, shipment_rate.TotalBaseCharge).Currency
     duties_and_taxes = shipment_rate.TotalTaxes.Amount + shipment_rate.TotalDutiesAndTaxes.Amount
     surcharges = [
@@ -71,8 +74,8 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         base_charge=decimal(shipment_rate.TotalBaseCharge.Amount),
         total_charge=decimal(shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount),
         duties_and_taxes=decimal(duties_and_taxes),
-        discount=decimal(shipment_discount.Amount),
-        estimated_delivery=format_date(rate.DeliveryTimestamp, "%Y-%m-%dT%H:%M:%S"),
+        discount=discount,
+        estimated_delivery=format_date(rate.DeliveryTimestamp, "%Y-%m-%d %H:%M:%S"),
         extra_charges=surcharges,
     )
 
@@ -90,13 +93,14 @@ def rate_request(
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
+    is_international = payload.shipper.country_code != payload.recipient.country_code
     service = next(
         (
             ServiceType[s].value
             for s in payload.services
             if s in ServiceType.__members__
         ),
-        None,
+        ServiceType.international_first.value if is_international else ServiceType.standard_overnight.value,
     )
     options = Options(payload.options)
 
@@ -239,19 +243,42 @@ def rate_request(
             PackageCount=None,
             ShipmentOnlyFields=None,
             ConfigurationData=None,
-            RequestedPackageLineItems=None,
+            RequestedPackageLineItems=[
+                RequestedPackageLineItem(
+                    SequenceNumber=1,
+                    GroupNumber=None,
+                    GroupPackageCount=1,
+                    VariableHandlingChargeDetail=None,
+                    InsuredValue=None,
+                    Weight=FedexWeight(
+                        Units=package.weight_unit.value,
+                        Value=package.weight.value,
+                    )
+                    if package.weight.value is not None
+                    else None,
+                    Dimensions=Dimensions(
+                        Length=package.length.value,
+                        Width=package.width.value,
+                        Height=package.height.value,
+                        Units=package.dimension_unit.value,
+                    )
+                    if any([package.length.value, package.width.value, package.height.value])
+                    else None,
+                    PhysicalPackaging=None,
+                    ItemDescription=payload.parcel.description,
+                    ItemDescriptionForClearance=None,
+                    CustomerReferences=None,
+                    SpecialServicesRequested=None,
+                    ContentRecords=None,
+                )
+            ],
         ),
     )
     return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: FedexRateRequest) -> str:
-    return clean_namespaces(
-        export(
-            create_envelope(body_content=request),
-            namespacedef_='tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26"',
-        ),
-        envelope_prefix="tns:",
-        body_child_prefix="ns:",
-        body_child_name="RateRequest",
-    )
+    return export(
+        create_envelope(body_content=request),
+        namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26"',
+    ).replace('tns:RateRequest', 'RateRequest')

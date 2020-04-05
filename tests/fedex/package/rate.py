@@ -137,9 +137,9 @@ RateErrorResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmls
 </SOAP-ENV:Envelope>
 """
 
-RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
+RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
     <tns:Body>
-        <ns:RateRequest>
+        <RateRequest>
             <WebAuthenticationDetail>
                 <UserCredential>
                     <Key>user_key</Key>
@@ -163,6 +163,7 @@ RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoa
             <RequestedShipment>
                 
                 <DropoffType>REGULAR_PICKUP</DropoffType>
+                <ServiceType>INTERNATIONAL_FIRST</ServiceType>
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <TotalWeight>
                     <Units>LB</Units>
@@ -184,15 +185,29 @@ RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoa
                 </Recipient>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
+                <RequestedPackageLineItems>
+                    <SequenceNumber>1</SequenceNumber>
+                    <GroupPackageCount>1</GroupPackageCount>
+                    <Weight>
+                        <Units>LB</Units>
+                        <Value>4.</Value>
+                    </Weight>
+                    <Dimensions>
+                        <Length>10</Length>
+                        <Width>3</Width>
+                        <Height>3</Height>
+                        <Units>IN</Units>
+                    </Dimensions>
+                </RequestedPackageLineItems>
             </RequestedShipment>
-        </ns:RateRequest>
+        </RateRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-RateRequestUsingPackagePresetXML = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
+RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
     <tns:Body>
-        <ns:RateRequest>
+        <RateRequest>
             <WebAuthenticationDetail>
                 <UserCredential>
                     <Key>user_key</Key>
@@ -216,6 +231,7 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope tns:Envelope xmlns:tns="htt
             <RequestedShipment>
                 
                 <DropoffType>REGULAR_PICKUP</DropoffType>
+                <ServiceType>INTERNATIONAL_FIRST</ServiceType>
                 <PackagingType>FEDEX_PAK</PackagingType>
                 <TotalWeight>
                     <Units>LB</Units>
@@ -237,8 +253,21 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope tns:Envelope xmlns:tns="htt
                 </Recipient>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
+                <RequestedPackageLineItems>
+                    <SequenceNumber>1</SequenceNumber>
+                    <GroupPackageCount>1</GroupPackageCount>
+                    <Weight>
+                        <Units>LB</Units>
+                        <Value>2.2</Value>
+                    </Weight>
+                    <Dimensions>
+                        <Width>11</Width>
+                        <Height>14</Height>
+                        <Units>IN</Units>
+                    </Dimensions>
+                </RequestedPackageLineItems>
             </RequestedShipment>
-        </ns:RateRequest>
+        </RateRequest>
     </tns:Body>
 </tns:Envelope>
 """

@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            "https://wsbeta.fedex.com:443/web-services"
+            "https://wsbeta.fedex.com:443/web-services/rate"
             if self.test
             else "https://ws.fedex.com:443/web-services"
         )
