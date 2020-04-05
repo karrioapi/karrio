@@ -22,8 +22,11 @@ jobs:
     - name: Test Freightcom dependencies
       run: |
         cd purplship/purplship-freightcom
-        . ./script.sh
-        env:reset
+        python -m venv .env
+        source .env/bin/activate
+        pip install -r requirements.txt
+        pip install -r requirements.dev.txt
+        pip install .
         pip install coverage
         coverage run --include='purplship/*' -m unittest -v -f
         mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
@@ -31,8 +34,11 @@ jobs:
     - name: Test eShipper dependencies
       run: |
         cd purplship/purplship-eshipper
-        . ./script.sh
-        env:reset
+        python -m venv .env
+        source .env/bin/activate
+        pip install -r requirements.txt
+        pip install -r requirements.dev.txt
+        pip install .
         pip install coverage
         coverage run --include='purplship/*' -m unittest -v -f
         mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
