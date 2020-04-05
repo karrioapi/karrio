@@ -18,14 +18,14 @@ class PackagingType(Flag):
 
 
 class PaymentType(Flag):
+    check = "Check"
     receiver = "Receiver"
     shipper = "Shipper"
-    consignee_account = "Consignee Account"
+    third_party = "3rd Party"
 
     """ Unified payment type mapping """
     sender = shipper
     recipient = receiver
-    third_party = consignee_account
 
 
 class Service(Enum):

@@ -39,87 +39,89 @@ if __name__ == "__main__":
 
 shipment_data = {
     "shipper": {
-        "company_name": "CGI",
-        "address_line_1": "502 MAIN ST N",
-        "city": "MONTREAL",
-        "postal_code": "H2B1A0",
+        "id": "123",
+        "company_name": "Test Company",
+        "address_line1": "650 CIT Drive",
+        "city": "Livingston",
+        "postal_code": "L8E5X9",
         "country_code": "CA",
-        "person_name": "Bob",
-        "phone_number": "1 (450) 823-8432",
-        "state_code": "QC",
+        "person_name": "Riz",
+        "state_code": "ON",
+        "phone_number": "9052223333",
+        "residential": "true",
+        "email": "riz@shaw.ca"
     },
     "recipient": {
-        "company_name": "CGI",
-        "address_line_1": "23 jardin private",
-        "city": "Ottawa",
-        "postal_code": "K1K4T3",
+        "company_name": "Test Company",
+        "address_line1": "650 CIT Drive",
+        "city": "Livingston",
+        "postal_code": "V3N4R3",
+        "person_name": "RizTo",
         "country_code": "CA",
-        "person_name": "Jain",
-        "state_code": "ON",
+        "state_code": "BC",
+        "phone_number": "4162223333",
+        "email": "riz@shaw.ca",
     },
     "parcel": {
         "height": 9,
         "length": 6,
         "width": 12,
         "weight": 20.0,
-        "services": ["caps_expedited_parcel"],
-        "dimension_unit": "CM",
-        "weight_unit": "KG",
-        "options": {
-            "cash_on_delivery": {"amount": 10.5},
-            "insurance": {"amount": 70.0},
-        },
+        "description": "desc.",
+        "packaging_type": "eshipper_pallet"
     },
+    "service": "eshipper_fedex_ground",
+    "options": {
+        "freight_class": "eshipper_freight_class_70",
+        "cash_on_delivery": {"amount": 10.5},
+        "insurance": {"amount": 70.0},
+    },
+    "customs": {
+        "duty": {"paid_by": "receiver"},
+        "commodities": [
+            {"sku": "1234", "description": "Laptop computer", "origin_country": "US", "quantity": 100, "value_amount": 1000.00}
+        ]
+    },
+    "payment": {
+        "paid_by": "third_party",
+        "contact": {
+            "company_name": "ABC Towing",
+            "address_line1": "444 Highway 401",
+            "city": "Toronto",
+            "postal_code": "A1B 2C3",
+            "person_name": "Alfred",
+            "country_code": "CA",
+            "state_code": "ON",
+            "phone_number": "555-555-4444",
+            "email": "riz@shaw.ca",
+        }
+    }
 }
 
-ParsedShipmentResponse = [
-    {
-        "carrier": "EShipper",
-        "label": "[base-64 encoded String]",
-        "selected_rate": {
-            "base_charge": 30.739999771118164,
-            "carrier": "EShipper",
-            "currency": "CAD",
-            "estimated_delivery": 0,
-            "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel Surcharge"}
-            ],
-            "service": "eshipper_central_transport",
-            "total_charge": 31.82,
-        },
-        "tracking_number": 52800410000484,
-    },
-    [],
-]
+ParsedShipmentResponse = [{'carrier': 'eshipper', 'carrier_name': 'eShipper', 'label': '[base-64 encoded String]', 'selected_rate': {'base_charge': 30.74, 'carrier': 'eshipper', 'carrier_name': 'eShipper', 'currency': 'CAD', 'estimated_delivery': 0, 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'Fuel Surcharge'}], 'service': 'eshipper_fedex_ground', 'total_charge': 31.82}, 'tracking_number': 52800410000484}, []]
 
-ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="merchantinc." password="abcd" version="3.0.0">
-    <ShippingRequest serviceId="3" stackable="true">
-        <From id="123" company="Test Company" address1="650 CIT Drive" city="Livingston" state="ON" zip="L8E5X9" country="CA" phone="9052223333" attention="Riz" email="riz@shaw.ca" residential="true" />
-        <To company="Test Company" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA" phone="4162223333" attention="RizTo" email="riz@shaw.ca"/>
-        <COD paymentType="Check">
-            <CODReturnAddress codCompany="ABC Towing" codName="Alfred" codAddress1="444 Highway 401" codCity="Toronto" codStateCode="On" codZip="A1B2C3" codCountry="CA"/>
+ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
+    <ShippingRequest insuranceType="True" serviceId="3">
+        <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
+        <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA"/>
+        <COD paymentType="Receiver">
+            <CODReturnAddress codCompany="Test Company" codName="RizTo" codAddress1="650 CIT Drive" codCity="Livingston" codStateCode="BC" codZip="V3N4R3" codCountry="CA"/>
         </COD>
-        <Packages type="Package">
-            <Package length="15" width="10" height="12" weight="12" type="Pallet" freightClass="70" insuranceAmount="0.0" codAmount="0.0" description="desc."/>
-            <Package length="15" width="10" height="10" weight="14" type="Pallet" freightClass="70" nmfcCode="123456" insuranceAmount="0.0" codAmount="0.0" description="desc."/>
+        <Packages>
+            <Package length="6" width="12" height="9" weight="20" type="Pallet" freightClass="70" description="desc."/>
         </Packages>
-        <Pickup contactName="Test Name" phoneNumber="888-888-8888" pickupDate="2009-08-03" pickupTime="16:30" closingTime="17:45" location="Front Door"/>
-        <Payment type="3rd Party" />
-        <Reference name="" code="123456" />
-        <Reference name="" code="" />
-        <Reference name="" code="" />
-        <CustomsInvoice brokerName="John Doe" contactCompany="MERITCON INC" contactName="Jim">
-            <BillTo company="ABC Towing" name="Alfred" address1="444 Highway 401" city="Toronto" state="ON" zip="A1B 2C3" country="CA" />
-            <Contact name="Rizwan" phone="555-555-4444" />
-            <Item code="1234" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000.00"/>
-            <DutiesTaxes dutiable="true" billTo="receiver" />
-            <InBondManifest locationOfGoods="CANADA WORLDWIDE SLC4358" nameOfCarrier="AIR CANADA" vehicleIdentification="12345" customsClearedBy="CANADA WORLDWIDE" handlingInfo="CANADA WORLDWIDE SERVICES INC. TO ARRANGE DELIVERY" previousCargoControlNum="1234" weight="12.34" weightUOM="LBS"/>
+        <Payment type="PaymentType.third_party"/>
+        <CustomsInvoice>
+            <BillTo company="ABC Towing" name="Alfred" address1="444 Highway 401" city="Toronto" state="ON" zip="A1B 2C3" country="CA"/>
+            <Contact name="Alfred" phone="555-555-4444"/>
+            <Item code="1234" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000."/>
         </CustomsInvoice>
     </ShippingRequest>
 </EShipper>
 """
 
-ShipmentResponseXML = """<EShipper xmlns="http://www.eshipper.net/xml/XMLSchema" version="3.0.0">
+ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<EShipper xmlns="http://www.eshipper.net/xml/XMLSchema" version="3.0.0">
     <ShippingReply>
         <Order id="181004" />
         <Carrier carrierName="Federal Express" serviceName="FedEx Ground" />

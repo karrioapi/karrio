@@ -10,5 +10,6 @@ class Settings(BaseSettings):
 
     username: str
     password: str
-    carrier_name: str = "eshipper"
-    server_url: str = "http://web.eshipper.com/rpc2"
+    id: str = None
+    test: bool = False
+    carrier_name: str = "eShipper"

@@ -28,3 +28,12 @@ jobs:
         coverage run --include='purplship/*' -m unittest -v -f
         mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
         coverage report -m
+    - name: Test eShipper dependencies
+      run: |
+        cd purplship/purplship-eshipper
+        . ./script.sh
+        env:reset
+        pip install coverage
+        coverage run --include='purplship/*' -m unittest -v -f
+        mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
+        coverage report -m

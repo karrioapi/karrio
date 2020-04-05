@@ -42,95 +42,75 @@ if __name__ == "__main__":
     unittest.main()
 
 RatePayload = {
-    "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
-    "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
+    "shipper": {
+        "id": "123",
+        "company_name": "Test Company",
+        "address_line1": "650 CIT Drive",
+        "city": "Livingston",
+        "postal_code": "L8E5X9",
+        "country_code": "CA",
+        "person_name": "Riz",
+        "state_code": "ON",
+        "phone_number": "9052223333",
+        "residential": "true",
+        "email": "riz@shaw.ca"
+    },
+    "recipient": {
+        "company_name": "Test Company",
+        "address_line1": "650 CIT Drive",
+        "city": "Livingston",
+        "postal_code": "V3N4R3",
+        "person_name": "RizTo",
+        "country_code": "CA",
+        "state_code": "BC",
+        "phone_number": "4162223333",
+        "email": "riz@shaw.ca",
+    },
     "parcel": {
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-        "services": [],
-        "dimension_unit": "CM",
-        "weight_unit": "KG",
+        "height": 9,
+        "length": 6,
+        "width": 12,
+        "weight": 20.0,
+        "description": "desc.",
+        "packaging_type": "eshipper_pallet"
+    },
+    "options": {
+        "freight_class": "eshipper_freight_class_70",
+        "cash_on_delivery": {"amount": 10.5},
+        "insurance": {"amount": 70.0},
     },
 }
 
 RateWithPresetMissingDimensionPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcel": {"services": []},
+    "parcel": {},
 }
 
-ParsedQuoteResponse = [
-    [
-        {
-            "base_charge": 177.0,
-            "carrier": "EShipper",
-            "currency": "CAD",
-            "estimated_delivery": "1",
-            "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
-            ],
-            "service": "eshipper_central_transport",
-            "total_charge": 177.0,
-        },
-        {
-            "base_charge": 28.650_000_000_000_002,
-            "carrier": "EShipper",
-            "currency": "CAD",
-            "estimated_delivery": "1",
-            "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
-            ],
-            "service": "eshipper_2107",
-            "total_charge": 28.65,
-        },
-        {
-            "base_charge": 46.270_000_457_763_67,
-            "carrier": "EShipper",
-            "currency": "CAD",
-            "estimated_delivery": "0",
-            "extra_charges": [
-                {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
-            ],
-            "service": "eshipper_1911",
-            "total_charge": 52.52,
-        },
-    ],
-    [
-        {
-            "carrier": "EShipper",
-            "message": "Polaris:Military Base Delivery,Saturday Pickup,Construction Site,BORDER FEE,Homeland Security,Limited Access,Saturday Delivery,Sort and Segregate Charge,Pier Charge",
-        }
-    ],
-]
+ParsedQuoteResponse = [[{'base_charge': 177.0, 'carrier': 'eshipper', 'carrier_name': 'eShipper', 'currency': 'CAD', 'estimated_delivery': '1', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service': 'eshipper_purolator_air', 'total_charge': 177.0}, {'base_charge': 28.65, 'carrier': 'eshipper', 'carrier_name': 'eShipper', 'currency': 'CAD', 'estimated_delivery': '1', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service': 'eshipper_purolator_ground', 'total_charge': 28.65}, {'base_charge': 46.27, 'carrier': 'eshipper', 'carrier_name': 'eShipper', 'currency': 'CAD', 'estimated_delivery': '0', 'extra_charges': [{'amount': 6.25, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service': 'eshipper_fedex_priority', 'total_charge': 52.52}, {'base_charge': 30.74, 'carrier': 'eshipper', 'carrier_name': 'eShipper', 'currency': 'CAD', 'estimated_delivery': '0', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service': 'eshipper_fedex_ground', 'total_charge': 31.82}, {'base_charge': 300.0, 'carrier': 'eshipper', 'carrier_name': 'eShipper', 'currency': 'CAD', 'estimated_delivery': '0', 'extra_charges': [{'amount': 36.0, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service': 'eshipper_canada_worldwide_air_freight', 'total_charge': 336.0}, {'base_charge': 165.0, 'carrier': 'eshipper', 'carrier_name': 'eShipper', 'currency': 'CAD', 'estimated_delivery': '0', 'extra_charges': [{'amount': 19.8, 'currency': 'CAD', 'name': 'Fuel surcharge'}], 'service': 'eshipper_canada_worldwide_next_flight_out', 'total_charge': 184.8}], []]
 
-RateRequestXML = f"""<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="merchantinc." password="9999" version="3.0.0">
-    <QuoteRequest serviceId="0" stackable="true">
-        <From id="123" company="Test Company" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L4J7Y9" />
-        <To company="Test Company" address1="650 CIT Drive" city="Livingston" state="MA" zip="01603" country="CA" />
-        <COD paymentType="Check">
-            <CODReturnAddress codCompany="ABC Towing" codName="Alfred" codAddress1="444 Highway 401" codCity="Toronto" codStateCode="ON" codZip="A1B2C3" codCountry="CA"/>
-        </COD>
-        <Packages type="Package">
-            <Package length="15" width="10" height="12" weight="10" type="Pallet" freightClass="70" nmfcCode="123456" insuranceAmount="0.0" codAmount="0.0" description="desc."/>
-            <Package length="15" width="10" height="10" weight="5" type="Pallet" freightClass="70" insuranceAmount="0.0" codAmount="0.0" description="desc."/>
+RateRequestXML = f"""<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
+    <QuoteRequest insuranceType="True" serviceId="0">
+        <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
+        <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA"/>
+        <Packages>
+            <Package length="6" width="12" height="9" weight="20" type="Pallet" description="desc."/>
         </Packages>
-        <Pickup contactName="Test Name" phoneNumber="888-888-8888" pickupDate="2009-08-03" pickupTime="16:30" closingTime="17:45" location="Front Door"/>
     </QuoteRequest>
 </EShipper>
 """
 
-RateResponseXml = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" version="3.1.0">
-    <QuoteReply>
-        <Quote carrierId="20" carrierName="EShipper" serviceId="2029" serviceName="Central Transport" modeTransport="A" transitDays="1" baseCharge="177.0" fuelSurcharge="0.0" totalCharge="177.0" currency="CAD">
-        </Quote>
-        <Quote carrierId="21" carrierName="EShipper" serviceId="2107" serviceName="Estes" modeTransport="G" transitDays="1" baseCharge="28.650000000000002" fuelSurcharge="0.0" totalCharge="28.65" currency="CAD">
-        </Quote>
-        <Quote carrierId="19" carrierName="EShipper" serviceId="1911" serviceName="USF Holland" modeTransport="null" transitDays="0" baseCharge="46.27000045776367" fuelSurcharge="6.25" totalCharge="52.52" currency="CAD">
-        </Quote>
-        <CarrierErrorMessage size="1" errorMessage0="Polaris:Military Base Delivery,Saturday Pickup,Construction Site,BORDER FEE,Homeland Security,Limited Access,Saturday Delivery,Sort and Segregate Charge,Pier Charge">
-        </CarrierErrorMessage>
-    </QuoteReply>
+RateResponseXml = """<?xml version="1.0" encoding="UTF-8"?>
+<EShipper xmlns="http://www.eshipper.net/XMLSchema" version="3.0.0">
+   <QuoteReply>
+      <Quote carrierId="2" carrierName="Purolator" serviceId="4" serviceName="Air" modeTransport="A" transitDays="1" baseCharge="177.0" fuelSurcharge="0.0" totalCharge="177.0" currency="CAD" />
+      <Quote carrierId="2" carrierName="Purolator" serviceId="13" serviceName="Ground" modeTransport="G" transitDays="1" baseCharge="28.650000000000002" fuelSurcharge="0.0" totalCharge="28.65" currency="CAD" />
+      <Quote carrierId="1" carrierName="Federal Express" serviceId="1" serviceName="Priority" modeTransport="null" transitDays="0" baseCharge="46.27000045776367" fuelSurcharge="6.25" totalCharge="52.52" currency="CAD" />
+      <Quote carrierId="1" carrierName="Federal Express" serviceId="3" serviceName="Ground" modeTransport="null" transitDays="0" baseCharge="30.739999771118164" fuelSurcharge="0.0" totalCharge="31.82" currency="CAD">
+         <Surcharge id="null" name="Other" amount="1.0800000429153442" />
+      </Quote>
+      <Quote carrierId="3" carrierName="Canada WorldWide" serviceId="16" serviceName="Air Freight" modeTransport="null" transitDays="0" baseCharge="300.0" fuelSurcharge="36.0" totalCharge="336.0" currency="CAD" />
+      <Quote carrierId="3" carrierName="Canada WorldWide" serviceId="15" serviceName="Next Flight Out" modeTransport="null" transitDays="0" baseCharge="165.0" fuelSurcharge="19.8" totalCharge="184.8" currency="CAD" />
+   </QuoteReply>
 </EShipper>
 """

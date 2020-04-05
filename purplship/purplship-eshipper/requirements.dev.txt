@@ -7,9 +7,9 @@ chardet==3.0.4
 click==7.1.1
 generateDS==2.35.15
 idna==2.9
-jstruct==2019.5.1
+jstruct==2020.4.0
 lxml==4.5.0
-purplship.core==2020.3.0
+purplship.core==2020.4.0
 py-soap==2020.3.0
 requests==2.23.0
 six==1.14.0
