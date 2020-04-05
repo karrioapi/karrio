@@ -13,8 +13,8 @@ setup(
     license='LGPLv3',
     packages=find_packages("."),
     install_requires=[
+        'django',
         'purplship-server.core',
-        'django'
     ],
     dependency_links=[],
     classifiers=[

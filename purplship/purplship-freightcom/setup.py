@@ -13,7 +13,8 @@ setup(
     license='LGPLv3',
     packages=find_packages(".", exclude=["tests*"]),
     install_requires=[
-        'six'
+        'six',
+        'purplship.package'
     ],
     dependency_links=[],
     classifiers=[

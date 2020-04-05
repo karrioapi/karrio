@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='eshipper.extension',
-    version='2020.3.0',
+    version='2020.4.0',
     description='eShipper purplship extension',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,7 +13,8 @@ setup(
     license='LGPLv3',
     packages=find_packages(".", exclude=["tests*"]),
     install_requires=[
-        'six'
+        'six',
+        'purplship.package'
     ],
     dependency_links=[],
     classifiers=[

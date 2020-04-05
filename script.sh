@@ -23,25 +23,45 @@ create_env() {
   pip install --upgrade pip
 }
 
+init() {
+    create_env &&
+    pip install -r requirements.dev.txt
+}
+
 
 alias env:new=create_env
 alias env:on=activate_env
+alias env:reset=init
 
 
 # Project helpers
 
-build() {
-  pushd "$1"
+backup_wheels() {
+    # shellcheck disable=SC2154
+    [ -d "$wheels" ] &&
+    find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
     clean_builds
-    python setup.py bdist_wheel
-    backup_wheels
-  popd
 }
 
 clean_builds() {
   find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; || true
   find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; || true
   find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; || true
+}
+
+
+build() {
+  clean_builds
+  pushd "$1"
+    python setup.py bdist_wheel
+  popd
+  backup_wheels
+}
+
+build_all() {
+  build "${ROOT:?}/purplship/purplship-eshipper"
+  build "${ROOT:?}/purplship/purplship-freightcom"
+  build "${ROOT:?}/purplship-server"
 }
 
 env:on || true
