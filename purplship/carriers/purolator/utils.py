@@ -1,3 +1,5 @@
+
+from base64 import b64encode
 from purplship.core import Settings as BaseSettings
 from purplship.core.utils.soap import Envelope
 from purplship.core.utils.helpers import export
@@ -6,8 +8,10 @@ from purplship.core.utils.helpers import export
 class Settings(BaseSettings):
     """UPS connection settings."""
 
-    user_token: str
+    username: str
+    password: str
     account_number: str
+    user_token: str = None
     language: str = "en"
     id: str = None
 
@@ -23,12 +27,17 @@ class Settings(BaseSettings):
             else "https://webservices.purolator.com"
         )
 
+    @property
+    def authorization(self):
+        pair = "%s:%s" % (self.username, self.password)
+        return b64encode(pair.encode("utf-8")).decode("ascii")
+
 
 def standard_request_serializer(envelope: Envelope) -> str:
-    namespacedef_ = 'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1"'
-    envelope.ns_prefix_ = "SOAP-ENV"
+    namespacedef_ = 'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2" xmlns="http://purolator.com/pws/datatypes/v2"'
+    envelope.ns_prefix_ = "soap"
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     envelope.Header.ns_prefix_ = envelope.ns_prefix_
-    envelope.Body.anytypeobjs_[0].ns_prefix_ = "ns1"
-    envelope.Header.anytypeobjs_[0].ns_prefix_ = "ns1"
+    envelope.Body.anytypeobjs_[0].ns_prefix_ = "v2"
+    envelope.Header.anytypeobjs_[0].ns_prefix_ = "v2"
     return export(envelope, namespacedef_=namespacedef_)

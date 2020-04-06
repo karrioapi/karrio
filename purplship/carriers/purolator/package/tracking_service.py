@@ -61,8 +61,8 @@ def track_package_by_pin_request(
         header_content=RequestContext(
             Version="1.1",
             Language=settings.language,
-            GroupID=None,
-            RequestReference=None,
+            GroupID="",
+            RequestReference="",
             UserToken=settings.user_token,
         ),
         body_content=TrackPackagesByPinRequest(

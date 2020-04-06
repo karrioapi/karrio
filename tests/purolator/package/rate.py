@@ -97,7 +97,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 62.35,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 5.15,
             "estimated_delivery": "2009-04-17",
@@ -119,7 +119,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 55.0,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 4.77,
             "estimated_delivery": "2009-04-17",
@@ -141,7 +141,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 46.15,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 4.3,
             "estimated_delivery": "2009-04-17",
@@ -163,7 +163,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 29.6,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 3.44,
             "estimated_delivery": "2009-04-22",
@@ -185,7 +185,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 87.69,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 6.47,
             "estimated_delivery": "2009-04-22",
@@ -209,26 +209,31 @@ PARSED_RATE_RESPONSE = [
 ]
 
 
-RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
-    <SOAP-ENV:Header>
-        <ns1:RequestContext>
+RATE_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2" xmlns="http://purolator.com/pws/datatypes/v2">
+    <soap:Header>
+        <v2:RequestContext>
             <Version>2.1</Version>
             <Language>en</Language>
+            <GroupID></GroupID>
+            <RequestReference></RequestReference>
             <UserToken>token</UserToken>
-        </ns1:RequestContext>
-    </SOAP-ENV:Header>
-    <SOAP-ENV:Body>
-        <ns1:GetFullEstimateRequest>
+        </v2:RequestContext>
+    </soap:Header>
+    <soap:Body>
+        <v2:GetFullEstimateRequest>
             <Shipment>
                 <SenderInformation>
                     <Address>
                         <Name>Aaron Summer</Name>
+                        <StreetNumber></StreetNumber>
                         <StreetName>Main Street</StreetName>
                         <City>Mississauga</City>
                         <Province>ON</Province>
                         <Country>CA</Country>
                         <PostalCode>L4W5M8</PostalCode>
                         <PhoneNumber>
+                            <CountryCode></CountryCode>
+                            <AreaCode></AreaCode>
                             <Phone>5555555</Phone>
                         </PhoneNumber>
                     </Address>
@@ -236,12 +241,15 @@ RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap
                 <ReceiverInformation>
                     <Address>
                         <Name>Aaron Summer</Name>
+                        <StreetNumber></StreetNumber>
                         <StreetName>Douglas Road</StreetName>
                         <City>Burnaby</City>
                         <Province>BC</Province>
                         <Country>CA</Country>
                         <PostalCode>V5C5A9</PostalCode>
                         <PhoneNumber>
+                            <CountryCode></CountryCode>
+                            <AreaCode></AreaCode>
                             <Phone>2982181</Phone>
                         </PhoneNumber>
                     </Address>
@@ -263,6 +271,10 @@ RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap
                         </Piece>
                     </PiecesInformation>
                 </PackageInformation>
+                <PaymentInformation>
+                    <PaymentType>Sender</PaymentType>
+                    <RegisteredAccountNumber>12398576956</RegisteredAccountNumber>
+                </PaymentInformation>
                 <PickupInformation>
                     <PickupType>DropOff</PickupType>
                 </PickupInformation>
@@ -271,9 +283,9 @@ RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap
                 </TrackingReferenceInformation>
             </Shipment>
             <ShowAlternativeServicesIndicator>true</ShowAlternativeServicesIndicator>
-        </ns1:GetFullEstimateRequest>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+        </v2:GetFullEstimateRequest>
+    </soap:Body>
+</soap:Envelope>
 """
 
 RATE_REQUEST_WITH_PRESET_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">

@@ -24,6 +24,8 @@ from pypurolator.estimate_service_2_1_2 import (
     OptionPrice,
     PickupType,
     PhoneNumber,
+    PaymentInformation,
+    PaymentType
 )
 from purplship.core.units import Currency, Package
 from purplship.core.utils import Serializable, Element, concat_str, format_date, decimal
@@ -102,9 +104,10 @@ def get_full_estimate_request(
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
+    is_international = payload.shipper.country_code != payload.recipient.company_name
     service = next(
         (Product[s].value for s in payload.services if s in Product.__members__),
-        Product.purolator_express.value,
+        (Product.purolator_express_international if is_international else Product.purolator_express).value,
     )
     request = create_envelope(
         envelope_prefix="SOAP-ENV",
@@ -112,8 +115,8 @@ def get_full_estimate_request(
         header_content=RequestContext(
             Version="2.1",
             Language=settings.language,
-            GroupID=None,
-            RequestReference=None,
+            GroupID="",
+            RequestReference="",
             UserToken=settings.user_token,
         ),
         body_prefix="ns1",
@@ -121,10 +124,10 @@ def get_full_estimate_request(
             Shipment=Shipment(
                 SenderInformation=SenderInformation(
                     Address=Address(
-                        Name=payload.shipper.person_name,
+                        Name=payload.shipper.person_name or "",
                         Company=payload.shipper.company_name,
                         Department=None,
-                        StreetNumber=None,
+                        StreetNumber="",
                         StreetSuffix=None,
                         StreetName=concat_str(payload.shipper.address_line1, join=True),
                         StreetType=None,
@@ -139,7 +142,12 @@ def get_full_estimate_request(
                         Province=payload.shipper.state_code,
                         Country=payload.shipper.country_code,
                         PostalCode=payload.shipper.postal_code,
-                        PhoneNumber=PhoneNumber(Phone=payload.shipper.phone_number),
+                        PhoneNumber=PhoneNumber(
+                            CountryCode="",
+                            AreaCode="",
+                            Phone=payload.shipper.phone_number or "",
+                            Extension=None
+                        ),
                         FaxNumber=None,
                     ),
                     TaxNumber=payload.shipper.federal_tax_id
@@ -147,10 +155,10 @@ def get_full_estimate_request(
                 ),
                 ReceiverInformation=ReceiverInformation(
                     Address=Address(
-                        Name=payload.recipient.person_name,
+                        Name=payload.recipient.person_name or "",
                         Company=payload.recipient.company_name,
                         Department=None,
-                        StreetNumber=None,
+                        StreetNumber="",
                         StreetSuffix=None,
                         StreetName=concat_str(
                             payload.recipient.address_line1, join=True
@@ -167,7 +175,12 @@ def get_full_estimate_request(
                         Province=payload.recipient.state_code,
                         Country=payload.recipient.country_code,
                         PostalCode=payload.recipient.postal_code,
-                        PhoneNumber=PhoneNumber(Phone=payload.recipient.phone_number),
+                        PhoneNumber=PhoneNumber(
+                            CountryCode="",
+                            AreaCode="",
+                            Phone=payload.recipient.phone_number or "",
+                            Extension=None
+                        ),
                         FaxNumber=None,
                     ),
                     TaxNumber=payload.recipient.federal_tax_id
@@ -230,14 +243,17 @@ def get_full_estimate_request(
                 ),
                 InternationalInformation=None,
                 ReturnShipmentInformation=None,
-                PaymentInformation=None,
+                PaymentInformation=PaymentInformation(
+                    PaymentType=PaymentType.SENDER.value,
+                    RegisteredAccountNumber=settings.account_number,
+                ),
                 PickupInformation=PickupInformation(
                     PickupType=PickupType.DROP_OFF.value
                 ),
                 NotificationInformation=None,
                 TrackingReferenceInformation=TrackingReferenceInformation(
                     Reference1=payload.parcel.reference,
-                ),
+                ) if payload.parcel.reference != "" else None,
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),

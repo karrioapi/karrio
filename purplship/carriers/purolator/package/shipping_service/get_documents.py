@@ -18,8 +18,8 @@ def get_shipping_documents_request(
         header_content=RequestContext(
             Version="1.3",
             Language=settings.language,
-            GroupID=None,
-            RequestReference=None,
+            GroupID="",
+            RequestReference="",
             UserToken=settings.user_token,
         ),
         body_content=GetDocumentsRequest(

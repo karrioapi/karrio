@@ -77,8 +77,8 @@ def create_shipping_request(
         header_content=RequestContext(
             Version="2.1",
             Language=settings.language,
-            GroupID=None,
-            RequestReference=None,
+            GroupID="",
+            RequestReference="",
             UserToken=settings.user_token,
         ),
         body_content=RequestType(
@@ -88,7 +88,7 @@ def create_shipping_request(
                         Name=payload.shipper.person_name,
                         Company=payload.shipper.company_name,
                         Department=None,
-                        StreetNumber=None,
+                        StreetNumber="",
                         StreetSuffix=None,
                         StreetName=concat_str(payload.shipper.address_line1, join=True),
                         StreetType=None,
@@ -114,7 +114,7 @@ def create_shipping_request(
                         Name=payload.recipient.person_name,
                         Company=payload.recipient.company_name,
                         Department=None,
-                        StreetNumber=None,
+                        StreetNumber="",
                         StreetSuffix=None,
                         StreetName=concat_str(
                             payload.recipient.address_line1, join=True

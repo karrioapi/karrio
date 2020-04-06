@@ -48,7 +48,7 @@ PARSED_TRACKING_RESPONSE = [
     [
         {
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "events": [
                 {
                     "code": "Other",
@@ -71,24 +71,26 @@ PARSED_TRACKING_RESPONSE = [
     [],
 ]
 
-TRACKING_REQUEST_XML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
-    <SOAP-ENV:Header>
-        <ns1:RequestContext>
+TRACKING_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2" xmlns="http://purolator.com/pws/datatypes/v2">
+    <soap:Header>
+        <v2:RequestContext>
             <Version>1.1</Version>
             <Language>en</Language>
+            <GroupID></GroupID>
+            <RequestReference></RequestReference>
             <UserToken>token</UserToken>
-        </ns1:RequestContext>
-    </SOAP-ENV:Header>
-    <SOAP-ENV:Body>
-        <ns1:TrackPackagesByPinRequest>
+        </v2:RequestContext>
+    </soap:Header>
+    <soap:Body>
+        <v2:TrackPackagesByPinRequest>
             <PINs>
                 <PIN>
                     <Value>m123</Value>
                 </PIN>
             </PINs>
-        </ns1:TrackPackagesByPinRequest>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+        </v2:TrackPackagesByPinRequest>
+    </soap:Body>
+</soap:Envelope>
 """
 
 TRACKING_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">

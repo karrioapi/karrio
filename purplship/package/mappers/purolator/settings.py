@@ -8,8 +8,10 @@ from purplship.carriers.purolator.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """UPS connection settings."""
 
-    user_token: str
+    username: str
+    password: str
     account_number: str
+    user_token: str = None
     language: str = "en"
     id: str = None
     test: bool = False
