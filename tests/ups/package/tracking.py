@@ -169,24 +169,24 @@ AuthError = """<wrapper>
 TrackingRequestXml = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" >
     <tns:Header>
         <upss:UPSSecurity>
-            <UsernameToken>
-                <Username>username</Username>
-                <Password>password</Password>
-            </UsernameToken>
-            <ServiceAccessToken>
-                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
-            </ServiceAccessToken>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <trk:TrackRequest>
             <common:Request>
-                <RequestOption>1</RequestOption>
-                <TransactionReference>
-                    <TransactionIdentifier>TransactionIdentifier</TransactionIdentifier>
-                </TransactionReference>
+                <common:RequestOption>1</common:RequestOption>
+                <common:TransactionReference>
+                    <common:TransactionIdentifier>TransactionIdentifier</common:TransactionIdentifier>
+                </common:TransactionReference>
             </common:Request>
-            <InquiryNumber>1Z12345E6205277936</InquiryNumber>
+            <trk:InquiryNumber>1Z12345E6205277936</trk:InquiryNumber>
         </trk:TrackRequest>
     </tns:Body>
 </tns:Envelope>

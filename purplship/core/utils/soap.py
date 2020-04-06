@@ -59,3 +59,14 @@ def clean_namespaces(
             "</%s%s" % (body_child_prefix, body_child_name),
         )
     )
+
+
+def apply_namespaceprefix(item, prefix: str):
+    if isinstance(item, list):
+        [apply_namespaceprefix(child, prefix) for child in item]
+    elif hasattr(item, 'export'):
+        item.ns_prefix_ = prefix
+        children = [(k, v) for k, v in item.__dict__.items() if '_' not in k and v is not None]
+        for name, child in children:
+            setattr(item, f'{name}_nsprefix_', prefix)
+            apply_namespaceprefix(child, prefix)

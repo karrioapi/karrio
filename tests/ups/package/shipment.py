@@ -270,95 +270,95 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth" xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
     <tns:Header>
         <upss:UPSSecurity>
-            <UsernameToken>
-                <Username>username</Username>
-                <Password>password</Password>
-            </UsernameToken>
-            <ServiceAccessToken>
-                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
-            </ServiceAccessToken>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <ship:ShipmentRequest>
             <common:Request>
-                <RequestOption>validate</RequestOption>
-                <TransactionReference>
-                    <CustomerContext>Your Customer Context</CustomerContext>
-                </TransactionReference>
+                <common:RequestOption>validate</common:RequestOption>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
             </common:Request>
-            <Shipment>
-                <Description>Description</Description>
-                <Shipper>
-                    <Name>Shipper Name</Name>
-                    <AttentionName>Shipper Attn Name</AttentionName>
-                    <TaxIdentificationNumber>123456</TaxIdentificationNumber>
-                    <Phone>
-                        <Number>1234567890</Number>
-                    </Phone>
-                    <ShipperNumber>Your Account Number</ShipperNumber>
-                    <Address>
-                        <AddressLine>Address Line</AddressLine>
-                        <City>City</City>
-                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
-                        <PostalCode>PostalCode</PostalCode>
-                        <CountryCode>CountryCode</CountryCode>
-                    </Address>
-                </Shipper>
-                <ShipTo>
-                    <Name>Ship To Name</Name>
-                    <AttentionName>Ship To Attn Name</AttentionName>
-                    <Phone>
-                        <Number>1234567890</Number>
-                    </Phone>
-                    <Address>
-                        <AddressLine>Address Line</AddressLine>
-                        <City>City</City>
-                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
-                        <PostalCode>PostalCode</PostalCode>
-                        <CountryCode>CountryCode</CountryCode>
-                    </Address>
-                </ShipTo>
-                <PaymentInformation>
-                    <ShipmentCharge>
-                        <Type>01</Type>
-                        <BillShipper>
-                            <AccountNumber>Your Account Number</AccountNumber>
-                        </BillShipper>
-                    </ShipmentCharge>
-                </PaymentInformation>
-                <Service>
-                    <Code>01</Code>
-                </Service>
-                <ShipmentServiceOptions>
-                    <Notification>
-                        <NotificationCode>8</NotificationCode>
-                        <EMail>
-                            <EMailAddress>test@mail.com</EMailAddress>
-                        </EMail>
-                    </Notification>
-                </ShipmentServiceOptions>
-                <Package>
-                    <Description>Description</Description>
-                    <Packaging>
-                        <Code>02</Code>
-                    </Packaging>
-                    <Dimensions>
-                        <UnitOfMeasurement>
-                            <Code>IN</Code>
-                        </UnitOfMeasurement>
-                        <Length>7.0</Length>
-                        <Width>5.0</Width>
-                        <Height>2.0</Height>
-                    </Dimensions>
-                    <PackageWeight>
-                        <UnitOfMeasurement>
-                            <Code>LBS</Code>
-                        </UnitOfMeasurement>
-                        <Weight>10.0</Weight>
-                    </PackageWeight>
-                </Package>
-            </Shipment>
+            <ship:Shipment>
+                <ship:Description>Description</ship:Description>
+                <ship:Shipper>
+                    <ship:Name>Shipper Name</ship:Name>
+                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:Shipper>
+                <ship:ShipTo>
+                    <ship:Name>Ship To Name</ship:Name>
+                    <ship:AttentionName>Ship To Attn Name</ship:AttentionName>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:ShipTo>
+                <ship:PaymentInformation>
+                    <ship:ShipmentCharge>
+                        <ship:Type>01</ship:Type>
+                        <ship:BillShipper>
+                            <ship:AccountNumber>Your Account Number</ship:AccountNumber>
+                        </ship:BillShipper>
+                    </ship:ShipmentCharge>
+                </ship:PaymentInformation>
+                <ship:Service>
+                    <ship:Code>01</ship:Code>
+                </ship:Service>
+                <ship:ShipmentServiceOptions>
+                    <ship:Notification>
+                        <ship:NotificationCode>8</ship:NotificationCode>
+                        <ship:EMail>
+                            <ship:EMailAddress>test@mail.com</ship:EMailAddress>
+                        </ship:EMail>
+                    </ship:Notification>
+                </ship:ShipmentServiceOptions>
+                <ship:Package>
+                    <ship:Description>Description</ship:Description>
+                    <ship:Packaging>
+                        <ship:Code>02</ship:Code>
+                    </ship:Packaging>
+                    <ship:Dimensions>
+                        <ship:UnitOfMeasurement>
+                            <ship:Code>IN</ship:Code>
+                        </ship:UnitOfMeasurement>
+                        <ship:Length>7.0</ship:Length>
+                        <ship:Width>5.0</ship:Width>
+                        <ship:Height>2.0</ship:Height>
+                    </ship:Dimensions>
+                    <ship:PackageWeight>
+                        <ship:UnitOfMeasurement>
+                            <ship:Code>LBS</ship:Code>
+                        </ship:UnitOfMeasurement>
+                        <ship:Weight>10.0</ship:Weight>
+                    </ship:PackageWeight>
+                </ship:Package>
+            </ship:Shipment>
         </ship:ShipmentRequest>
     </tns:Body>
 </tns:Envelope>
@@ -367,95 +367,95 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
 ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth" xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0" >
     <tns:Header>
         <upss:UPSSecurity>
-            <UsernameToken>
-                <Username>username</Username>
-                <Password>password</Password>
-            </UsernameToken>
-            <ServiceAccessToken>
-                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
-            </ServiceAccessToken>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <ship:ShipmentRequest>
             <common:Request>
-                <RequestOption>validate</RequestOption>
-                <TransactionReference>
-                    <CustomerContext>Your Customer Context</CustomerContext>
-                </TransactionReference>
+                <common:RequestOption>validate</common:RequestOption>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
             </common:Request>
-            <Shipment>
-                <Description>Description</Description>
-                <Shipper>
-                    <Name>Shipper Name</Name>
-                    <AttentionName>Shipper Attn Name</AttentionName>
-                    <TaxIdentificationNumber>123456</TaxIdentificationNumber>
-                    <Phone>
-                        <Number>1234567890</Number>
-                    </Phone>
-                    <ShipperNumber>Your Account Number</ShipperNumber>
-                    <Address>
-                        <AddressLine>Address Line</AddressLine>
-                        <City>City</City>
-                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
-                        <PostalCode>PostalCode</PostalCode>
-                        <CountryCode>CountryCode</CountryCode>
-                    </Address>
-                </Shipper>
-                <ShipTo>
-                    <Name>Ship To Name</Name>
-                    <AttentionName>Ship To Attn Name</AttentionName>
-                    <Phone>
-                        <Number>1234567890</Number>
-                    </Phone>
-                    <Address>
-                        <AddressLine>Address Line</AddressLine>
-                        <City>City</City>
-                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
-                        <PostalCode>PostalCode</PostalCode>
-                        <CountryCode>CountryCode</CountryCode>
-                    </Address>
-                </ShipTo>
-                <PaymentInformation>
-                    <ShipmentCharge>
-                        <Type>01</Type>
-                        <BillShipper>
-                            <AccountNumber>Your Account Number</AccountNumber>
-                        </BillShipper>
-                    </ShipmentCharge>
-                </PaymentInformation>
-                <Service>
-                    <Code>01</Code>
-                </Service>
-                <ShipmentServiceOptions>
-                    <Notification>
-                        <NotificationCode>8</NotificationCode>
-                        <EMail>
-                            <EMailAddress>test@mail.com</EMailAddress>
-                        </EMail>
-                    </Notification>
-                </ShipmentServiceOptions>
-                <Package>
-                    <Description>Description</Description>
-                    <Packaging>
-                        <Code>02</Code>
-                    </Packaging>
-                    <Dimensions>
-                        <UnitOfMeasurement>
-                            <Code>IN</Code>
-                        </UnitOfMeasurement>
-                        <Length>3.0</Length>
-                        <Width>16.0</Width>
-                        <Height>11.0</Height>
-                    </Dimensions>
-                    <PackageWeight>
-                        <UnitOfMeasurement>
-                            <Code>LBS</Code>
-                        </UnitOfMeasurement>
-                        <Weight>30.0</Weight>
-                    </PackageWeight>
-                </Package>
-            </Shipment>
+            <ship:Shipment>
+                <ship:Description>Description</ship:Description>
+                <ship:Shipper>
+                    <ship:Name>Shipper Name</ship:Name>
+                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:Shipper>
+                <ship:ShipTo>
+                    <ship:Name>Ship To Name</ship:Name>
+                    <ship:AttentionName>Ship To Attn Name</ship:AttentionName>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:ShipTo>
+                <ship:PaymentInformation>
+                    <ship:ShipmentCharge>
+                        <ship:Type>01</ship:Type>
+                        <ship:BillShipper>
+                            <ship:AccountNumber>Your Account Number</ship:AccountNumber>
+                        </ship:BillShipper>
+                    </ship:ShipmentCharge>
+                </ship:PaymentInformation>
+                <ship:Service>
+                    <ship:Code>01</ship:Code>
+                </ship:Service>
+                <ship:ShipmentServiceOptions>
+                    <ship:Notification>
+                        <ship:NotificationCode>8</ship:NotificationCode>
+                        <ship:EMail>
+                            <ship:EMailAddress>test@mail.com</ship:EMailAddress>
+                        </ship:EMail>
+                    </ship:Notification>
+                </ship:ShipmentServiceOptions>
+                <ship:Package>
+                    <ship:Description>Description</ship:Description>
+                    <ship:Packaging>
+                        <ship:Code>02</ship:Code>
+                    </ship:Packaging>
+                    <ship:Dimensions>
+                        <ship:UnitOfMeasurement>
+                            <ship:Code>IN</ship:Code>
+                        </ship:UnitOfMeasurement>
+                        <ship:Length>3.0</ship:Length>
+                        <ship:Width>16.0</ship:Width>
+                        <ship:Height>11.0</ship:Height>
+                    </ship:Dimensions>
+                    <ship:PackageWeight>
+                        <ship:UnitOfMeasurement>
+                            <ship:Code>LBS</ship:Code>
+                        </ship:UnitOfMeasurement>
+                        <ship:Weight>30.0</ship:Weight>
+                    </ship:PackageWeight>
+                </ship:Package>
+            </ship:Shipment>
         </ship:ShipmentRequest>
     </tns:Body>
 </tns:Envelope>

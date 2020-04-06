@@ -32,7 +32,7 @@ from pyups.ship_web_service_schema import (
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.soap import clean_namespaces, create_envelope
+from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Options, Package, PaymentType
 from purplship.core.errors import RequiredFieldError
@@ -272,7 +272,7 @@ def shipment_request(
     )
 
 
-def _request_serializer(request: Element) -> str:
+def _request_serializer(envelope: Element) -> str:
     namespace_ = """
         xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"
         xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
@@ -288,11 +288,11 @@ def _request_serializer(request: Element) -> str:
     ).replace(
         "\n", " "
     )
-    return clean_namespaces(
-        export(request, namespacedef_=namespace_),
-        envelope_prefix="tns:",
-        header_child_prefix="upss:",
-        body_child_prefix="ship:",
-        header_child_name="UPSSecurity",
-        body_child_name="Shipment",
-    )
+
+    envelope.Body.ns_prefix_ = envelope.ns_prefix_
+    envelope.Header.ns_prefix_ = envelope.ns_prefix_
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "ship")
+    apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
+
+    return export(envelope, namespacedef_=namespace_)

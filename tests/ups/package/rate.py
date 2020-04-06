@@ -219,138 +219,138 @@ RateMissingArgsErrorXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xml
 </soapenv:Envelope>
 """
 
-RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" >
     <tns:Header>
         <upss:UPSSecurity>
-            <UsernameToken>
-                <Username>username</Username>
-                <Password>password</Password>
-            </UsernameToken>
-            <ServiceAccessToken>
-                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
-            </ServiceAccessToken>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
-                <RequestOption>Rate</RequestOption>
-                <TransactionReference>
-                    <CustomerContext>Your Customer Context</CustomerContext>
-                </TransactionReference>
+                <common:RequestOption>Rate</common:RequestOption>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
             </common:Request>
-            <Shipment>
-                <Shipper>
-                    <Name>Shipper Name</Name>
-                    <ShipperNumber>Your Account Number</ShipperNumber>
-                    <Address>
-                        <AddressLine>Address Line</AddressLine>
-                        <City>Montreal</City>
-                        <PostalCode>H3N1S4</PostalCode>
-                        <CountryCode>CountryCode</CountryCode>
-                    </Address>
-                </Shipper>
-                <ShipTo>
-                    <Name>Ship To Name</Name>
-                    <Address>
-                        <AddressLine>Address Line</AddressLine>
-                        <City>Las Vegas</City>
-                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
-                        <PostalCode>89109</PostalCode>
-                        <CountryCode>US</CountryCode>
-                    </Address>
-                </ShipTo>
-                <Service>
-                    <Code>11</Code>
-                </Service>
-                <Package>
-                    <PackagingType>
-                        <Code>02</Code>
-                    </PackagingType>
-                    <Dimensions>
-                        <UnitOfMeasurement>
-                            <Code>IN</Code>
-                        </UnitOfMeasurement>
-                        <Length>10.0</Length>
-                        <Width>3.0</Width>
-                        <Height>3.0</Height>
-                    </Dimensions>
-                    <PackageWeight>
-                        <UnitOfMeasurement>
-                            <Code>LBS</Code>
-                        </UnitOfMeasurement>
-                        <Weight>4.0</Weight>
-                    </PackageWeight>
-                </Package>
-                <ShipmentRatingOptions>
-                    <NegotiatedRatesIndicator></NegotiatedRatesIndicator>
-                </ShipmentRatingOptions>
-            </Shipment>
+            <rate:Shipment>
+                <rate:Shipper>
+                    <rate:Name>Shipper Name</rate:Name>
+                    <rate:ShipperNumber>Your Account Number</rate:ShipperNumber>
+                    <rate:Address>
+                        <rate:AddressLine>Address Line</rate:AddressLine>
+                        <rate:City>Montreal</rate:City>
+                        <rate:PostalCode>H3N1S4</rate:PostalCode>
+                        <rate:CountryCode>CountryCode</rate:CountryCode>
+                    </rate:Address>
+                </rate:Shipper>
+                <rate:ShipTo>
+                    <rate:Name>Ship To Name</rate:Name>
+                    <rate:Address>
+                        <rate:AddressLine>Address Line</rate:AddressLine>
+                        <rate:City>Las Vegas</rate:City>
+                        <rate:StateProvinceCode>StateProvinceCode</rate:StateProvinceCode>
+                        <rate:PostalCode>89109</rate:PostalCode>
+                        <rate:CountryCode>US</rate:CountryCode>
+                    </rate:Address>
+                </rate:ShipTo>
+                <rate:Service>
+                    <rate:Code>11</rate:Code>
+                </rate:Service>
+                <rate:Package>
+                    <rate:PackagingType>
+                        <rate:Code>02</rate:Code>
+                    </rate:PackagingType>
+                    <rate:Dimensions>
+                        <rate:UnitOfMeasurement>
+                            <rate:Code>IN</rate:Code>
+                        </rate:UnitOfMeasurement>
+                        <rate:Length>10.0</rate:Length>
+                        <rate:Width>3.0</rate:Width>
+                        <rate:Height>3.0</rate:Height>
+                    </rate:Dimensions>
+                    <rate:PackageWeight>
+                        <rate:UnitOfMeasurement>
+                            <rate:Code>LBS</rate:Code>
+                        </rate:UnitOfMeasurement>
+                        <rate:Weight>4.0</rate:Weight>
+                    </rate:PackageWeight>
+                </rate:Package>
+                <rate:ShipmentRatingOptions>
+                    <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
+                </rate:ShipmentRatingOptions>
+            </rate:Shipment>
         </rate:RateRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" >
     <tns:Header>
         <upss:UPSSecurity>
-            <UsernameToken>
-                <Username>username</Username>
-                <Password>password</Password>
-            </UsernameToken>
-            <ServiceAccessToken>
-                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
-            </ServiceAccessToken>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
-                <RequestOption>Rate</RequestOption>
-                <TransactionReference>
-                    <CustomerContext>Your Customer Context</CustomerContext>
-                </TransactionReference>
+                <common:RequestOption>Rate</common:RequestOption>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
             </common:Request>
-            <Shipment>
-                <Shipper>
-                    <Name>Shipper Name</Name>
-                    <ShipperNumber>Your Account Number</ShipperNumber>
-                    <Address>
-                        <AddressLine>Address Line</AddressLine>
-                        <City>Montreal</City>
-                        <PostalCode>H3N1S4</PostalCode>
-                        <CountryCode>CountryCode</CountryCode>
-                    </Address>
-                </Shipper>
-                <ShipTo>
-                    <Name>Ship To Name</Name>
-                    <Address>
-                        <AddressLine>Address Line</AddressLine>
-                        <City>Las Vegas</City>
-                        <StateProvinceCode>StateProvinceCode</StateProvinceCode>
-                        <PostalCode>89109</PostalCode>
-                        <CountryCode>US</CountryCode>
-                    </Address>
-                </ShipTo>
-                <Service>
-                    <Code>11</Code>
-                </Service>
-                <Package>
-                    <PackagingType>
-                        <Code>02</Code>
-                    </PackagingType>
-                    <Dimensions>
-                        <UnitOfMeasurement>
-                            <Code>IN</Code>
-                        </UnitOfMeasurement>
-                        <Width>16.0</Width>
-                        <Height>11.75</Height>
-                    </Dimensions>
-                </Package>
-                <ShipmentRatingOptions>
-                    <NegotiatedRatesIndicator></NegotiatedRatesIndicator>
-                </ShipmentRatingOptions>
-            </Shipment>
+            <rate:Shipment>
+                <rate:Shipper>
+                    <rate:Name>Shipper Name</rate:Name>
+                    <rate:ShipperNumber>Your Account Number</rate:ShipperNumber>
+                    <rate:Address>
+                        <rate:AddressLine>Address Line</rate:AddressLine>
+                        <rate:City>Montreal</rate:City>
+                        <rate:PostalCode>H3N1S4</rate:PostalCode>
+                        <rate:CountryCode>CountryCode</rate:CountryCode>
+                    </rate:Address>
+                </rate:Shipper>
+                <rate:ShipTo>
+                    <rate:Name>Ship To Name</rate:Name>
+                    <rate:Address>
+                        <rate:AddressLine>Address Line</rate:AddressLine>
+                        <rate:City>Las Vegas</rate:City>
+                        <rate:StateProvinceCode>StateProvinceCode</rate:StateProvinceCode>
+                        <rate:PostalCode>89109</rate:PostalCode>
+                        <rate:CountryCode>US</rate:CountryCode>
+                    </rate:Address>
+                </rate:ShipTo>
+                <rate:Service>
+                    <rate:Code>11</rate:Code>
+                </rate:Service>
+                <rate:Package>
+                    <rate:PackagingType>
+                        <rate:Code>02</rate:Code>
+                    </rate:PackagingType>
+                    <rate:Dimensions>
+                        <rate:UnitOfMeasurement>
+                            <rate:Code>IN</rate:Code>
+                        </rate:UnitOfMeasurement>
+                        <rate:Width>16.0</rate:Width>
+                        <rate:Height>11.75</rate:Height>
+                    </rate:Dimensions>
+                </rate:Package>
+                <rate:ShipmentRatingOptions>
+                    <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
+                </rate:ShipmentRatingOptions>
+            </rate:Shipment>
         </rate:RateRequest>
     </tns:Body>
 </tns:Envelope>

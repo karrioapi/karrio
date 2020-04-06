@@ -2,7 +2,7 @@ from typing import List, Tuple
 from pyups.common import RequestType, TransactionReferenceType
 from pyups.track_web_service_schema import TrackRequest, ShipmentType, ActivityType
 from purplship.core.utils import export, Serializable, Element, format_date, format_time
-from purplship.core.utils.soap import clean_namespaces, create_envelope
+from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, Envelope
 from purplship.core.models import (
     TrackingEvent,
     TrackingRequest,
@@ -59,7 +59,7 @@ def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDet
 
 def track_request(
     payload: TrackingRequest, settings: Settings
-) -> Serializable[List[TrackRequest]]:
+) -> Serializable[List[Envelope]]:
     requests = [
         create_envelope(
             header_content=settings.Security,
@@ -78,7 +78,7 @@ def track_request(
     return Serializable(requests, _request_serializer)
 
 
-def _request_serializer(requests: List[Element]) -> List[str]:
+def _request_serializer(requests: List[Envelope]) -> List[str]:
     namespacedef_ = """
         xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
         xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"
@@ -89,14 +89,14 @@ def _request_serializer(requests: List[Element]) -> List[str]:
     ).replace(
         "\n", " "
     )
-    return [
-        clean_namespaces(
-            export(request, namespacedef_=namespacedef_),
-            envelope_prefix="tns:",
-            header_child_prefix="upss:",
-            body_child_prefix="trk:",
-            header_child_name="UPSSecurity",
-            body_child_name="TrackRequest",
-        )
-        for request in requests
-    ]
+
+    def serialize(envelope: Envelope):
+        envelope.Body.ns_prefix_ = envelope.ns_prefix_
+        envelope.Header.ns_prefix_ = envelope.ns_prefix_
+        apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "trk")
+        apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
+        apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
+
+        return export(envelope, namespacedef_=namespacedef_)
+
+    return [serialize(request) for request in requests]
