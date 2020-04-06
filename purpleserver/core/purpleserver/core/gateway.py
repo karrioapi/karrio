@@ -53,7 +53,10 @@ def create_shipment(payload: dict) -> ShipmentResponse:
     request = ShipmentRequest(**{**payload, 'service': selected_rate.service})
     gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
     shipment, messages = api.Shipment.create(request).with_(gateway).parse()
-    shipment_rate = shipment.selected_rate or selected_rate
+    shipment_rate = (
+        shipment.selected_rate or selected_rate
+        if shipment is not None else None
+    )
 
     return ShipmentResponse(
         shipment=Shipment(**{

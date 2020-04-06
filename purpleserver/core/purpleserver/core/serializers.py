@@ -50,7 +50,7 @@ class ShippingAddress(Serializer):
     federal_tax_id = CharField(required=False)
     state_tax_id = CharField(required=False)
     person_name = CharField(required=True)
-    company_name = CharField(required=True)
+    company_name = CharField(required=False)
     country_code = CharField(required=True)
     email = CharField(required=False)
     phone_number = CharField(required=False)
