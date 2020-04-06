@@ -31,7 +31,7 @@ class DHLSettings(Carrier):
 
     site_id = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
-    account_number = models.CharField(max_length=200)
+    account_number = models.CharField(max_length=200, blank=True, default='')
 
 
 DHLSettings._meta.get_field('carrier_name').default = 'DHLExpress'
@@ -43,8 +43,10 @@ class PurolatorSettings(Carrier):
         verbose_name = 'Purolator Settings'
         verbose_name_plural = 'Purolator Settings'
 
-    user_token = models.CharField(max_length=200)
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
+    user_token = models.CharField(max_length=200, blank=True, default='')
 
 
 PurolatorSettings._meta.get_field('carrier_name').default = 'PurolatorCourrier'
