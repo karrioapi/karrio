@@ -1,6 +1,5 @@
 -f https://git.io/purplship
 psycopg2
-purplship.package
 purplship-server
 # eshipper.extension
 # freightcom.extension

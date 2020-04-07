@@ -26,7 +26,8 @@ create_env() {
 init() {
     create_env &&
     pip install -r requirements.txt &&
-    pip install -r requirements.dev.txt
+    pip install -r requirements.dev.txt &&
+    install_all
 }
 
 
@@ -37,27 +38,50 @@ alias env:reset=init
 
 # Project helpers
 
+install_all() {
+    pip install -e "${ROOT:?}/purpleserver/core" &&
+    pip install -e "${ROOT:?}/purpleserver/proxy" &&
+    pip install -e "${ROOT:?}/purpleserver"
+}
+
 run_server() {
-    (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'password')" | python manage.py shell);
-    python manage.py makemigrations && python manage.py migrate && python manage.py runserver
+  if [[ "$1" == "-i" ]]; then
+    install_all
+  fi
+  purplship makemigrations &&
+  purplship migrate &&
+  (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+  purplship runserver
 }
 
-run_prod() {
-    export APP_STAGE="production"
-    run_server
+clean_builds() {
+    find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; || true
 }
-alias run:prod=run_prod
 
-run_dev() {
-    export APP_STAGE="developement"
-    run_server
+backup_wheels() {
+    # shellcheck disable=SC2154
+    [ -d "$wheels" ] &&
+    find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
+    clean_builds
 }
-alias run:dev=run_dev
 
-run_container() {
-    export APP_STAGE="containerized"
-    docker-compose up "$@"
+build() {
+  pushd "$1" || false &&
+  python setup.py bdist_wheel
+  popd || true
 }
-alias run:container=run_container
+
+build_all() {
+  clean_builds
+  build "${ROOT:?}/purpleserver/core"
+  build "${ROOT:?}/purpleserver/proxy"
+  build "${ROOT:?}/purpleserver"
+  backup_wheels
+}
+
+
+alias run=run_server
 
 env:on || true

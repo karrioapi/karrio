@@ -1,13 +1,19 @@
-# PurplShip-server
+# PurplShip (Multi-carrier REST API)
 
-PurplShip-server 
+## Introduction
 
-## Deployments
+purplship-server is a private cloud Multi-carrier API.
 
-### Dev
+## Try out PurplShip
 
-### Docker
+- Install
 
-### Heroku
+```shell script
+pip install -f https://git.io/purplship purplship-server
+```
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/PurplShip/purplship-server/tree/master)
+- Start the server
+
+```shell script
+purplship runserver
+```
