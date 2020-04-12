@@ -15,7 +15,7 @@ from purplship.core.models import (
     Message,
 )
 
-logger = logging.getLogger("purplship")
+logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 S = TypeVar("S")
