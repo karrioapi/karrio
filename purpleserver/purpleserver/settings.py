@@ -196,10 +196,12 @@ REDOC_SETTINGS = {
    'LAZY_RENDERING': False,
 }
 
+LOG_LEVEL = ('DEBUG' if DEBUG else os.getenv('DJANGO_LOG_LEVEL', 'INFO'))
+
 # Logging configuration
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
@@ -216,12 +218,21 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': os.path.join(os.getenv('LOG_PATH', ''), 'debug.log'),
         },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+            'handlers': ['file', 'console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'purplship': {
+            'handlers': ['file', 'console'],
+            'level': LOG_LEVEL,
+            'propagate': False,
         },
     },
 }

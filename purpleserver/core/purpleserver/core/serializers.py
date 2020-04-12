@@ -24,7 +24,7 @@ class CarrierSettingsList(ListSerializer):
 class Address(Serializer):
 
     id = CharField(required=False)
-    postal_code = CharField(required=True)
+    postal_code = CharField(required=False)
     city = CharField(required=False)
     federal_tax_id = CharField(required=False)
     state_tax_id = CharField(required=False)
@@ -45,7 +45,7 @@ class Address(Serializer):
 class ShippingAddress(Serializer):
 
     id = CharField(required=False)
-    postal_code = CharField(required=True)
+    postal_code = CharField(required=False)
     city = CharField(required=True)
     federal_tax_id = CharField(required=False)
     state_tax_id = CharField(required=False)
@@ -55,7 +55,7 @@ class ShippingAddress(Serializer):
     email = CharField(required=False)
     phone_number = CharField(required=False)
 
-    state_code = CharField(required=True)
+    state_code = CharField(required=False)
     suburb = CharField(required=False)
     residential = BooleanField(required=False)
 
