@@ -291,7 +291,7 @@ TrackingSingleNotFound = """<?xml version="1.0" encoding="UTF-8"?>
 </res:TrackingResponse>
 """
 
-TrackingRequestXML = """<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd" schemaVersion="1.">
+TrackingRequestXML = """<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd" schemaVersion="1.0">
     <Request>
         <ServiceHeader>
             

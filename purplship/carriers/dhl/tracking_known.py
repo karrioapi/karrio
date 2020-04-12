@@ -76,4 +76,4 @@ def _request_serializer(request: KnownTrackingRequest) -> str:
         request,
         name_="req:KnownTrackingRequest",
         namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd"',
-    )
+    ).replace('schemaVersion="1."', 'schemaVersion="1.0"')

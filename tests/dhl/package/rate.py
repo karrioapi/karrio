@@ -151,7 +151,7 @@ ParsedRateResponse = [
             "duties_and_taxes": 0.0,
             "estimated_delivery": "2018-06-26",
             "extra_charges": [
-                {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
+                {"amount": 12.7, 'currency': 'CAD', "name": "FUEL SURCHARGE"}
             ],
             "service": "dhl_express_worldwide_doc",
             "total_charge": 208.02,
@@ -172,22 +172,7 @@ ParsedRateResponse = [
     [],
 ]
 
-ParsedRateVolWeightHigher = [
-    [
-        {
-            "base_charge": 0.0,
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
-            "estimated_delivery": "2017-11-13",
-            "extra_charges": [],
-            "service": "dhl_express_worldwide_nondoc",
-            "total_charge": 0.0,
-        }
-    ],
-    [],
-]
+ParsedRateVolWeightHigher = [[], []]
 
 
 RateParsingError = """<?xml version="1.0" encoding="UTF-8"?>
@@ -239,7 +224,7 @@ RateMissingArgsError = """<?xml version="1.0" ?>
 </DCTResponse>
 """
 
-RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.">
+RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.0">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -261,8 +246,8 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
             <PaymentCountryCode>CA</PaymentCountryCode>
             
             
-            <DimensionUnit>I</DimensionUnit>
-            <WeightUnit>L</WeightUnit>
+            <DimensionUnit>IN</DimensionUnit>
+            <WeightUnit>LB</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>
             <ShipmentWeight>4.</ShipmentWeight>
             <Pieces>
@@ -274,11 +259,18 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
                     <Weight>4.</Weight>
                 </Piece>
             </Pieces>
+            <PaymentAccountNumber>123456789</PaymentAccountNumber>
             <IsDutiable>N</IsDutiable>
+            <NetworkTypeCode>AL</NetworkTypeCode>
             <QtdShp>
                 <GlobalProductCode>D</GlobalProductCode>
                 <LocalProductCode>D</LocalProductCode>
+                <QtdShpExChrg>
+                    <SpecialServiceType>II</SpecialServiceType>
+                </QtdShpExChrg>
             </QtdShp>
+            <InsuredValue>75</InsuredValue>
+            <InsuredCurrency>CAD</InsuredCurrency>
         </BkgDetails>
         <To>
             <CountryCode>TG</CountryCode>
@@ -288,7 +280,7 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
 </p:DCTRequest>
 """
 
-RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.">
+RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.0">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -310,12 +302,13 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
             <PaymentCountryCode>CA</PaymentCountryCode>
             
             
-            <DimensionUnit>I</DimensionUnit>
-            <WeightUnit>L</WeightUnit>
+            <DimensionUnit>IN</DimensionUnit>
+            <WeightUnit>LB</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>
             <ShipmentWeight>5.</ShipmentWeight>
             <Pieces>
                 <Piece>
+                    <PieceID>1</PieceID>
                     <PackageTypeCode>COY</PackageTypeCode>
                     <Height>15.</Height>
                     <Depth>15.</Depth>
@@ -323,16 +316,25 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
                     <Weight>5.</Weight>
                 </Piece>
             </Pieces>
+            <PaymentAccountNumber>123456789</PaymentAccountNumber>
             <IsDutiable>Y</IsDutiable>
+            <NetworkTypeCode>AL</NetworkTypeCode>
             <QtdShp>
                 <GlobalProductCode>P</GlobalProductCode>
                 <LocalProductCode>P</LocalProductCode>
+                <QtdShpExChrg>
+                    <SpecialServiceType>WY</SpecialServiceType>
+                </QtdShpExChrg>
             </QtdShp>
         </BkgDetails>
         <To>
             <CountryCode>TG</CountryCode>
             <City>Lome</City>
         </To>
+        <Dutiable>
+            <DeclaredCurrency>CAD</DeclaredCurrency>
+            <DeclaredValue>1.</DeclaredValue>
+        </Dutiable>
     </GetQuote>
 </p:DCTRequest>
 """

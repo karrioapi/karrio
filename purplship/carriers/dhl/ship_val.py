@@ -29,7 +29,7 @@ from purplship.core.models import (
     Message,
     ShipmentDetails,
 )
-from purplship.core.units import Options, Package
+from purplship.core.units import Options, Package, Country
 from purplship.carriers.dhl.units import (
     PackageType,
     ProductCode,
@@ -37,9 +37,9 @@ from purplship.carriers.dhl.units import (
     Dimension as DHLDimensionUnit,
     WeightUnit as DHLWeightUnit,
     CountryRegion,
-    ServiceCode,
+    SpecialServiceCode,
     DeliveryType,
-    PackagePresets,
+    PackagePresets
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -85,16 +85,19 @@ def shipment_request(
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
+    is_international = payload.shipper.country_code == payload.recipient.country_code
     options = Options(payload.options)
     product = ProductCode[payload.service].value
     delivery_type = next(
         (d for d in DeliveryType if d.name in payload.options.keys()), None
     )
     special_services = [
-        ServiceCode[s].value
+        SpecialServiceCode[s].value
         for s in payload.options.keys()
-        if s in ServiceCode.__members__
+        if s in SpecialServiceCode.__members__
     ]
+    if is_international and payload.doc_images is not None:
+        special_services.append(SpecialServiceCode.dhl_paperless_trade.value)
     has_payment_config = payload.payment is not None
     has_customs_config = payload.customs is not None
 
@@ -124,7 +127,7 @@ def shipment_request(
             else None,
         ),
         Consignee=Consignee(
-            CompanyName=payload.recipient.company_name,
+            CompanyName=payload.recipient.company_name or "  ",
             SuiteDepartmentName=None,
             AddressLine=concat_str(
                 payload.recipient.address_line1, payload.recipient.address_line2
@@ -134,7 +137,7 @@ def shipment_request(
             DivisionCode=payload.recipient.state_code,
             PostalCode=payload.recipient.postal_code,
             CountryCode=payload.recipient.country_code,
-            CountryName=None,
+            CountryName=Country[payload.recipient.country_code].value,
             FederalTaxId=payload.shipper.federal_tax_id,
             StateTaxId=payload.shipper.state_tax_id,
             Contact=(
@@ -143,33 +146,25 @@ def shipment_request(
                     PhoneNumber=payload.recipient.phone_number,
                     Email=payload.recipient.email,
                 )
-                if any(
-                    [
-                        payload.recipient.person_name,
-                        payload.recipient.phone_number,
-                        payload.recipient.email,
-                    ]
-                )
-                else None
             ),
             Suburb=None,
         ),
         Commodity=[
             Commodity(CommodityCode=c.sku, CommodityName=c.description)
             for c in payload.customs.commodities
-        ],
+        ] if payload.customs is not None else None,
         NewShipper=None,
         Shipper=Shipper(
-            ShipperID=None,
+            ShipperID=settings.account_number or "  ",
             RegisteredAccount=settings.account_number,
             AddressLine=concat_str(
                 payload.shipper.address_line1, payload.shipper.address_line2
             ),
-            CompanyName=payload.shipper.company_name,
+            CompanyName=payload.shipper.company_name or "  ",
             PostalCode=payload.shipper.postal_code,
             CountryCode=payload.shipper.country_code,
             City=payload.shipper.city,
-            CountryName=None,
+            CountryName=Country[payload.shipper.country_code].value,
             Division=None,
             DivisionCode=payload.shipper.state_code,
             Contact=(
@@ -178,18 +173,10 @@ def shipment_request(
                     PhoneNumber=payload.shipper.phone_number,
                     Email=payload.shipper.email,
                 )
-                if any(
-                    [
-                        payload.shipper.person_name,
-                        payload.shipper.phone_number,
-                        payload.shipper.email,
-                    ]
-                )
-                else None
             ),
         ),
         ShipmentDetails=DHLShipmentDetails(
-            NumberOfPieces=None,
+            NumberOfPieces=1,
             Pieces=Pieces(
                 Piece=[
                     Piece(
@@ -220,7 +207,7 @@ def shipment_request(
             DoorTo=delivery_type,
             GlobalProductCode=product,
             LocalProductCode=product,
-            Contents="...",
+            Contents="  ",
         ),
         EProcShip=None,
         Dutiable=Dutiable(

@@ -226,6 +226,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
+        <CountryName>BELGIUM</CountryName>
         <Contact>
             <PersonName>Mrs Orlander</PersonName>
             <PhoneNumber>506-851-2271</PhoneNumber>
@@ -245,6 +246,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <ReferenceID></ReferenceID>
     </Reference>
     <ShipmentDetails>
+        <NumberOfPieces>1</NumberOfPieces>
         <Pieces>
             <Piece>
                 <PieceID>1</PieceID>
@@ -260,7 +262,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <GlobalProductCode>P</GlobalProductCode>
         <LocalProductCode>P</LocalProductCode>
         
-        <Contents>...</Contents>
+        <Contents>  </Contents>
         <DimensionUnit>I</DimensionUnit>
         <InsuredAmount>148.</InsuredAmount>
         <PackageType>EE</PackageType>
@@ -268,6 +270,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <CurrencyCode>USD</CurrencyCode>
     </ShipmentDetails>
     <Shipper>
+        <ShipperID>123456789</ShipperID>
         <CompanyName>shipper company privated limited 12</CompanyName>
         <RegisteredAccount>123456789</RegisteredAccount>
         <AddressLine>238 850925434 Drive</AddressLine>
@@ -275,15 +278,13 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
         <CountryCode>US</CountryCode>
+        <CountryName>UNITED STATES OF AMERICA</CountryName>
         <Contact>
             <PersonName>Ms Lucian</PersonName>
             <PhoneNumber>1 23 8613402</PhoneNumber>
             <Email>test@email.com</Email>
         </Contact>
     </Shipper>
-    <SpecialService>
-        <SpecialServiceType>WY</SpecialServiceType>
-    </SpecialService>
     <SpecialService>
         <SpecialServiceType>II</SpecialServiceType>
     </SpecialService>
