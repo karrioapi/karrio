@@ -1,6 +1,5 @@
 from functools import reduce
 from typing import Callable, List, Tuple
-from pyups import common
 from pyups.rate_web_service_schema import (
     RateRequest as UPSRateRequest,
     PickupType,
@@ -15,9 +14,11 @@ from pyups.rate_web_service_schema import (
     PackageWeightType,
     UOMCodeDescriptionType,
     DimensionsType,
+    RequestType,
+    TransactionReferenceType,
 )
 from purplship.core.utils import export, concat_str, Serializable, format_date, decimal
-from purplship.core.utils.soap import clean_namespaces, create_envelope
+from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Package
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
@@ -27,7 +28,7 @@ from purplship.carriers.ups.units import (
     RatingPackagingType,
     WeightUnit as UPSWeightUnit,
     ShippingServiceCode,
-    PackagePresets
+    PackagePresets,
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -42,7 +43,7 @@ def parse_rate_response(
 
 
 def _extract_package_rate(
-    settings: Settings
+    settings: Settings,
 ) -> Callable[[List[RateDetails], Element], List[RateDetails]]:
     def extract(rates: List[RateDetails], detail_node: Element) -> List[RateDetails]:
         rate = RatedShipmentType()
@@ -113,21 +114,36 @@ def _extract_package_rate(
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[UPSRateRequest]:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
-    package = Package(payload.parcel, parcel_preset)
-    service: str = next(
-        (RatingServiceCode[s].value for s in payload.parcel.services if s in RatingServiceCode.__members__),
-        RatingServiceCode.ups_express.value
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
     )
+    package = Package(payload.parcel, parcel_preset)
+    is_international = payload.shipper.country_code != payload.recipient.country_code
+    service: str = next(
+        (
+            RatingServiceCode[s]
+            for s in payload.services
+            if s in RatingServiceCode.__members__
+        ),
+        (
+            RatingServiceCode.ups_worldwide_express
+            if is_international else
+            RatingServiceCode.ups_express
+        ),
+    ).value
 
-    if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
+    if (("freight" in service) or ("ground" in service)) and (
+        package.weight.value is None
+    ):
         raise RequiredFieldError("parcel.weight")
 
     request = UPSRateRequest(
-        Request=common.RequestType(
+        Request=RequestType(
             RequestOption=["Rate"],
             SubVersion=None,
-            TransactionReference=common.TransactionReferenceType(
+            TransactionReference=TransactionReferenceType(
                 CustomerContext=payload.parcel.reference, TransactionIdentifier=None
             ),
         ),
@@ -189,14 +205,25 @@ def rate_request(
                         Length=package.length.value,
                         Width=package.width.value,
                         Height=package.height.value,
-                    ) if any([package.length.value, package.height.value, package.width.value]) else None,
+                    )
+                    if any(
+                        [
+                            package.length.value,
+                            package.height.value,
+                            package.width.value,
+                        ]
+                    )
+                    else None,
                     DimWeight=None,
                     PackageWeight=PackageWeightType(
                         UnitOfMeasurement=UOMCodeDescriptionType(
-                            Code=UPSWeightUnit[package.weight_unit.name].value, Description=None
+                            Code=UPSWeightUnit[package.weight_unit.name].value,
+                            Description=None,
                         ),
                         Weight=package.weight.value,
-                    ) if package.weight.value else None,
+                    )
+                    if package.weight.value
+                    else None,
                     Commodity=None,
                     PackageServiceOptions=None,
                     AdditionalHandlingIndicator=None,
@@ -219,7 +246,7 @@ def rate_request(
     )
 
 
-def _request_serializer(request: Element) -> str:
+def _request_serializer(envelope: Element) -> str:
     namespace_ = """
         xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -227,18 +254,15 @@ def _request_serializer(request: Element) -> str:
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
         xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1"
-        xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     """.replace(
         " ", ""
     ).replace(
         "\n", " "
     )
-    return clean_namespaces(
-        export(request, namespacedef_=namespace_),
-        envelope_prefix="tns:",
-        header_child_prefix="upss:",
-        body_child_prefix="rate:",
-        header_child_name="UPSSecurity",
-        body_child_name="RateRequest",
-    )
+    envelope.Body.ns_prefix_ = envelope.ns_prefix_
+    envelope.Header.ns_prefix_ = envelope.ns_prefix_
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "rate")
+    apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
+
+    return export(envelope, namespacedef_=namespace_)

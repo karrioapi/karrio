@@ -11,7 +11,9 @@ def parse_error_response(response, settings: Settings) -> List[Message]:
     return reduce(_extract_error(settings), conditions, [])
 
 
-def _extract_error(settings: Settings) -> Callable[[List[Message], Element], List[Message]]:
+def _extract_error(
+    settings: Settings,
+) -> Callable[[List[Message], Element], List[Message]]:
     def extract(errors: List[Message], condition_node: Element) -> List[Message]:
         condition = ConditionType()
         condition.build(condition_node)

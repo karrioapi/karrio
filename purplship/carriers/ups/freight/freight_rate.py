@@ -91,7 +91,7 @@ def freight_rate_request(
     service = (
         [
             RatingServiceCode[svc]
-            for svc in payload.parcel.services
+            for svc in payload.services
             if svc in RatingServiceCode.__members__
         ]
         + [RatingServiceCode.ups_freight_ltl_guaranteed]
@@ -160,7 +160,9 @@ def freight_rate_request(
                 ),
                 NumberOfPieces=None,
                 PackagingType=RateCodeDescriptionType(
-                    Code=FreightPackagingType[payload.parcel.packaging_type or "small_box"].value,
+                    Code=FreightPackagingType[
+                        payload.parcel.packaging_type or "small_box"
+                    ].value,
                     Description=None,
                 ),
                 FreightClass=50,

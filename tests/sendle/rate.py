@@ -5,7 +5,7 @@ from tests.sendle.fixture import gateway
 from purplship.core.utils.helpers import to_dict, jsonify
 from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateRequest
-from purplship.package import rating
+from purplship.package import Rating
 
 
 class TestSendleQuote(unittest.TestCase):
@@ -52,14 +52,14 @@ class TestSendleQuote(unittest.TestCase):
 
     @patch("purplship.package.mappers.sendle.proxy.http", return_value="{}")
     def test_get_domestic_rates(self, http_mock):
-        rating.fetch(self.DomesticRateRequest).from_(gateway)
+        Rating.fetch(self.DomesticRateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, DOMESTIC_PARCEL_RATE_QUERY_STR)
 
     @patch("purplship.package.mappers.sendle.proxy.http", return_value="{}")
     def test_get_international_rates(self, http_mock):
-        rating.fetch(self.InternationalRateRequest).from_(gateway)
+        Rating.fetch(self.InternationalRateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, INTERNATIONAL_PARCEL_RATE_QUERY_STR)
@@ -68,7 +68,7 @@ class TestSendleQuote(unittest.TestCase):
         with patch("purplship.package.mappers.sendle.proxy.http") as mock:
             mock.return_value = jsonify(PARCEL_QUOTE_RESPONSE)
             parsed_response = (
-                rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
+                Rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
             )
 
             self.assertEqual(
@@ -79,7 +79,7 @@ class TestSendleQuote(unittest.TestCase):
         with patch("purplship.package.mappers.sendle.proxy.http") as mock:
             mock.return_value = jsonify(ERROR)
             parsed_response = (
-                rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
+                Rating.fetch(self.DomesticRateRequest).from_(gateway).parse()
             )
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 

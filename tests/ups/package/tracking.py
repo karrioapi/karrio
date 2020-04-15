@@ -3,7 +3,7 @@ from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
 from tests.ups.package.fixture import gateway
-from purplship.package import tracking
+from purplship.package import Tracking
 
 
 class TestUPSTracking(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestUPSTracking(unittest.TestCase):
 
     @patch("purplship.package.mappers.ups.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        tracking.fetch(self.TrackingRequest).from_(gateway)
+        Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, f"{gateway.settings.server_url}/Track")
@@ -27,7 +27,7 @@ class TestUPSTracking(unittest.TestCase):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = AuthError
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
@@ -35,7 +35,7 @@ class TestUPSTracking(unittest.TestCase):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = TrackingResponseXml
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
@@ -44,7 +44,7 @@ class TestUPSTracking(unittest.TestCase):
         with patch("purplship.package.mappers.ups.proxy.http") as mock:
             mock.return_value = InvalidTrackingNumberResponseXML
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedInvalidTrackingNumberResponse)
@@ -169,24 +169,24 @@ AuthError = """<wrapper>
 TrackingRequestXml = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:trk="http://www.ups.com/XMLSchema/XOLTWS/Track/v2.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" >
     <tns:Header>
         <upss:UPSSecurity>
-            <UsernameToken>
-                <Username>username</Username>
-                <Password>password</Password>
-            </UsernameToken>
-            <ServiceAccessToken>
-                <AccessLicenseNumber>FG09H9G8H09GH8G0</AccessLicenseNumber>
-            </ServiceAccessToken>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
         </upss:UPSSecurity>
     </tns:Header>
     <tns:Body>
         <trk:TrackRequest>
             <common:Request>
-                <RequestOption>1</RequestOption>
-                <TransactionReference>
-                    <TransactionIdentifier>TransactionIdentifier</TransactionIdentifier>
-                </TransactionReference>
+                <common:RequestOption>1</common:RequestOption>
+                <common:TransactionReference>
+                    <common:TransactionIdentifier>TransactionIdentifier</common:TransactionIdentifier>
+                </common:TransactionReference>
             </common:Request>
-            <InquiryNumber>1Z12345E6205277936</InquiryNumber>
+            <trk:InquiryNumber>1Z12345E6205277936</trk:InquiryNumber>
         </trk:TrackRequest>
     </tns:Body>
 </tns:Envelope>

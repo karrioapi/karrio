@@ -3,7 +3,7 @@ from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
 from tests.ups.freight.fixture import gateway
-from purplship.freight import rating
+from purplship.freight import Rating
 
 
 class TestUPSRating(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestUPSRating(unittest.TestCase):
 
     @patch("purplship.freight.mappers.ups.proxy.http", return_value="<a></a>")
     def test_freight_get_rates(self, http_mock):
-        rating.fetch(self.RateRequest).from_(gateway)
+        Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, f"{gateway.settings.server_url}/FreightRate")
@@ -25,7 +25,7 @@ class TestUPSRating(unittest.TestCase):
     def test_parse_freight_get_rates_response(self):
         with patch("purplship.freight.mappers.ups.proxy.http") as mock:
             mock.return_value = FreightRateResponseXML
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedFreightRateResponse)
             )

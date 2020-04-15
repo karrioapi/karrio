@@ -9,15 +9,18 @@ from purplship.carriers.sendle.units import Plan, PackagePresets
 
 
 def domestic_quote_request(payload: RateRequest) -> DomesticParcelQuote:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
     plan = next(
-        (Plan[s].value for s in payload.parcel.services if s in Plan.__members__),
-        None
+        (Plan[s].value for s in payload.services if s in Plan.__members__), None
     )
     return DomesticParcelQuote(
         pickup_suburb=concat_str(
@@ -25,9 +28,7 @@ def domestic_quote_request(payload: RateRequest) -> DomesticParcelQuote:
         ),
         pickup_postcode=payload.shipper.postal_code,
         delivery_suburb=concat_str(
-            payload.recipient.address_line1,
-            payload.recipient.address_line2,
-            join=True,
+            payload.recipient.address_line1, payload.recipient.address_line2, join=True,
         ),
         delivery_postcode=payload.recipient.postal_code,
         kilogram_weight=str(package.weight.KG),

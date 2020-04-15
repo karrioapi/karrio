@@ -16,30 +16,21 @@ capabilities while simplifying the addition of new carrier APIs.
 
 With PurplShip you can:
 
-- Integrate multiple carriers: DHL, FedEx, UPS, USPS, Canada Post and more with ease
+- Integrate multiple carriers web services: DHL, FedEx, UPS, USPS, Canada Post and more with ease
 - Use a modern and intuitive, unified API across carriers
 - Use your developer credentials and your own negotiated rates
 
 
+## Install
+
+```shell script
+pip install -f https://git.io/purplship purplship
+```
+
+
 ## Documentation
 
-PurplShip has usage and reference documentation at [doc.purplship.com](https://doc.purplship.com).
-
-
-## Built With
-
-- [generateDs-helpers](https://github.com/PurplShip/generateDs-helpers) - [generateDs](http://www.davekuhlman.org/generateDS.html) object manipulation helpers
-- [py-dhl](https://github.com/PurplShip/purplship-carriers/tree/master/py-dhl) - The DHL xml generated datatypes library
-- [py-fedex](https://github.com/PurplShip/purplship-carriers/tree/master/py-fedex) - The FedEx xml generated datatypes library
-- [py-australiapost](https://github.com/PurplShip/purplship-carriers/tree/master/py-australiapost) - The Australia post JSON generated datatypes library
-- [py-sendle](https://github.com/PurplShip/purplship-carriers/tree/master/py-sendle) - The Sendle JSON generated datatypes library
-- [py-usps](https://github.com/PurplShip/purplship-carriers/tree/master/py-usps) - The USPS xml generated datatypes library
-- [py-canadapost](https://github.com/PurplShip/purplship-carriers/tree/master/py-canadapost) - The Canada Post xml generated datatypes library
-- [py-ups](https://github.com/PurplShip/purplship-carriers/tree/master/py-ups) - The UPS xml generated datatypes library
-- [py-purolator](https://github.com/PurplShip/purplship-carriers/tree/master/py-purolator) - The UPS xml generated datatypes library
-- [py-soap](https://github.com/PurplShip/py-soap) - The SOAP xml generated datatypes and utilities library
-- [lxml](https://lxml.de/) - Processing XML and HTML with Python
-- [jstruct](https://github.com/DanH91/jstruct) - JSON to python datatypes
+PurplShip has usage and reference documentation at [docs.purplship.com](https://docs.purplship.com).
 
 
 ## License

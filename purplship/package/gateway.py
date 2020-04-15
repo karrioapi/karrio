@@ -1,4 +1,4 @@
-"""PurplShip Shipping Gateway modules."""
+"""PurplShip Package Gateway modules."""
 
 import attr
 from typing import Callable, Union

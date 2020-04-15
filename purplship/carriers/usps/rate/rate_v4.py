@@ -4,16 +4,28 @@ from typing import List, Any, Tuple, Optional
 from datetime import datetime
 from pyusps.ratev4response import PostageType, SpecialServiceType
 from pyusps.ratev4request import (
-    RateV4Request, PackageType, SpecialServicesType, ShipDateType
+    RateV4Request,
+    PackageType,
+    SpecialServicesType,
+    ShipDateType,
 )
 from purplship.core.utils import export, Serializable, Element, format_date, decimal
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Currency
 from purplship.carriers.usps.utils import Settings
 from purplship.carriers.usps.error import parse_error_response
-from purplship.carriers.usps.units import Service, FirstClassMailType, Size, SpecialService
+from purplship.carriers.usps.units import (
+    Service,
+    FirstClassMailType,
+    Size,
+    SpecialService,
+)
 
-REQUIRED_MAIL_TYPE_SERVICES = [Service.first_class, Service.first_class_commercial, Service.first_class_hfp_commercial]
+REQUIRED_MAIL_TYPE_SERVICES = [
+    Service.first_class,
+    Service.first_class_commercial,
+    Service.first_class_hfp_commercial,
+]
 
 
 def parse_rate_v4_response(
@@ -36,7 +48,11 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
             ".//*[local-name() = $name]", name="SpecialService"
         )
     ]
-    estimated_date = format_date(postage.CommitmentDate) if postage.CommitmentDate is not None else None
+    estimated_date = (
+        format_date(postage.CommitmentDate)
+        if postage.CommitmentDate is not None
+        else None
+    )
 
     def get(key: str) -> Any:
         return reduce(lambda r, v: v.text, postage_node.findall(key), None)
@@ -59,11 +75,13 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
     )
 
 
-def rate_v4_request(request_payload: RateRequest, settings: Settings) -> Serializable[RateV4Request]:
+def rate_v4_request(
+    request_payload: RateRequest, settings: Settings
+) -> Serializable[RateV4Request]:
     payload = RateRequestExtensionV4(request_payload)
     request = RateV4Request(
         USERID=settings.username,
-        Revision='2',
+        Revision="2",
         Package=[
             PackageType(
                 ID=payload.parcel.id,
@@ -86,7 +104,9 @@ def rate_v4_request(request_payload: RateRequest, settings: Settings) -> Seriali
                 AmountToCollect=None,  # TODO:: compute this with COD option
                 SpecialServices=SpecialServicesType(
                     SpecialService=payload.special_services.keys()
-                ) if payload.special_services is not None else None,
+                )
+                if payload.special_services is not None
+                else None,
                 Content=None,
                 GroundOnly=None,
                 SortBy=None,
@@ -95,11 +115,10 @@ def rate_v4_request(request_payload: RateRequest, settings: Settings) -> Seriali
                 ReturnServiceInfo=None,
                 DropOffTime=None,
                 ShipDate=ShipDateType(
-                    Option=None,
-                    valueOf_=str(datetime.today().strftime("%Y-%m-%d"))
+                    Option=None, valueOf_=str(datetime.today().strftime("%Y-%m-%d"))
                 ),
             )
-        ]
+        ],
     )
     return Serializable(request, _request_serializer)
 
@@ -155,15 +174,20 @@ class RateRequestExtensionV4:
     @property
     def service(self):
         return next(
-            (Service[s].value for s in self.parcel.services if s in Service.__members__),
-            Service.first_class.value
+            (
+                Service[s].value
+                for s in self.request.services
+                if s in Service.__members__
+            ),
+            Service.first_class.value,
         )
 
     @property
     def mail_type(self):
         return (
             FirstClassMailType[self.parcel.packaging_type or "small_box"].value
-            if Service(self.service) in REQUIRED_MAIL_TYPE_SERVICES else None
+            if Service(self.service) in REQUIRED_MAIL_TYPE_SERVICES
+            else None
         )
 
     @property

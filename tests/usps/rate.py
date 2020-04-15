@@ -4,7 +4,7 @@ from datetime import datetime
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.package import rating
+from purplship.package import Rating
 from tests.usps.fixture import gateway
 
 
@@ -35,14 +35,14 @@ class TestUSPSRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.usps.proxy.http") as mock:
             mock.return_value = RATE_RESPONSE
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
 
     def test_parse_intl_quote_response(self):
         with patch("purplship.package.mappers.usps.proxy.http") as mock:
             mock.return_value = INTL_RATE_RESPONSE
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_INTL_RATE_RESPONSE)
             )
@@ -50,7 +50,7 @@ class TestUSPSRating(unittest.TestCase):
     def test_parse_rate_response_errors(self):
         with patch("purplship.package.mappers.usps.proxy.http") as mock:
             mock.return_value = ERRORS
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
 
 
@@ -68,8 +68,8 @@ RATE_PAYLOAD = {
         "height": 15,
         "length": 30,
         "weight": 1,
-        "services": ["priority"],
     },
+    "services": ["priority"],
     "options": {"signature_confirmation": True},
 }
 

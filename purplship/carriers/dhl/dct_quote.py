@@ -12,19 +12,21 @@ from pydhl.dct_req_global_2_0 import (
     MetaData,
     PieceType,
     QtdShpType,
+    QtdShpExChrgType
 )
+from pydhl.dct_requestdatatypes_global import DCTDutiable
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils import export, Serializable, Element, format_date, decimal
 from purplship.core.errors import RequiredFieldError
-from purplship.core.units import Package
+from purplship.core.units import Package, Options
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.carriers.dhl.units import (
     Product,
     ProductCode,
     DCTPackageType,
-    Dimension,
-    WeightUnit,
-    PackagePresets
+    PackagePresets,
+    SpecialServiceCode,
+    NetworkType
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -37,12 +39,18 @@ def parse_dct_response(
     quotes: List[RateDetails] = [
         _extract_quote(qtdshp_node, settings) for qtdshp_node in qtdshp_list
     ]
-    return quotes, parse_error_response(response, settings)
+    return (
+        [quote for quote in quotes if quote is not None],
+        parse_error_response(response, settings)
+    )
 
 
 def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     qtdshp = ResponseQtdShpType()
     qtdshp.build(qtdshp_node)
+    if qtdshp.ShippingCharge is None or qtdshp.ShippingCharge == 0:
+        return None
+
     ExtraCharges = list(
         map(
             lambda s: ChargeDetails(
@@ -59,12 +67,13 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     )
     DlvyDateTime = qtdshp.DeliveryDate[0].DlvyDateTime
     delivery_date = (
-        datetime.strptime(str(DlvyDateTime), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
-        if DlvyDateTime is not None else None
+        datetime.strptime(str(DlvyDateTime), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+        if DlvyDateTime is not None
+        else None
     )
     service_name = next(
         (p.name for p in Product if p.value in qtdshp.LocalProductName),
-        qtdshp.LocalProductName
+        qtdshp.LocalProductName,
     )
     return RateDetails(
         carrier=settings.carrier,
@@ -72,14 +81,16 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
         currency=qtdshp.CurrencyCode,
         estimated_delivery=format_date(delivery_date),
         service=service_name,
-        base_charge=decimal(qtdshp.WeightCharge or 0),
-        total_charge=decimal(qtdshp.ShippingCharge or 0),
+        base_charge=decimal(qtdshp.WeightCharge),
+        total_charge=decimal(qtdshp.ShippingCharge),
         duties_and_taxes=decimal(DutiesAndTaxes_),
         discount=decimal(Discount_),
         extra_charges=list(
             map(
                 lambda s: ChargeDetails(
-                    name=s.LocalServiceTypeName, amount=decimal(s.ChargeValue or 0)
+                    name=s.LocalServiceTypeName,
+                    amount=decimal(s.ChargeValue),
+                    currency=qtdshp.CurrencyCode
                 ),
                 qtdshp.QtdShpExChrg,
             )
@@ -88,20 +99,42 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 
 
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
+    options = Options(payload.options)
+    is_international = payload.shipper.country_code != payload.recipient.country_code
+    is_dutiable = not payload.parcel.is_document
     products = [
         ProductCode[svc].value
-        for svc in payload.parcel.services
+        for svc in payload.services
         if svc in ProductCode.__members__
     ]
+    special_services = [
+        SpecialServiceCode[s].value
+        for s in payload.options.keys()
+        if s in SpecialServiceCode.__members__
+    ]
+    if is_international and is_dutiable:
+        special_services.append(SpecialServiceCode.dhl_paperless_trade.value)
+    if len(products) == 0:
+        if is_international:
+            products = [
+                (ProductCode.dhl_express_worldwide_doc if payload.parcel.is_document else ProductCode.dhl_express_worldwide_nondoc).value
+            ]
+        else:
+            products = [
+                (ProductCode.dhl_express_easy_doc if payload.parcel.is_document else ProductCode.dhl_express_easy_nondoc).value
+            ]
 
     request = DCTRequest(
-        schemaVersion=2.0,
         GetQuote=GetQuoteType(
             Request=settings.Request(
                 MetaData=MetaData(SoftwareName="3PV", SoftwareVersion=1.0)
@@ -120,19 +153,19 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
             ),
             BkgDetails=BkgDetailsType(
                 PaymentCountryCode=payload.shipper.country_code,
-                NetworkTypeCode=None,
-                WeightUnit=WeightUnit[package.weight_unit.name].value,
-                DimensionUnit=Dimension[package.dimension_unit.name].value,
+                NetworkTypeCode=NetworkType.both_time_and_day_definite.value,
+                WeightUnit=package.weight_unit.value,
+                DimensionUnit=package.dimension_unit.value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
-                IsDutiable=(
-                    "N" if payload.parcel.is_document else "Y"
-                ),
+                IsDutiable=("Y" if is_dutiable else "N"),
                 Pieces=PiecesType(
                     Piece=[
                         PieceType(
-                            PieceID=payload.parcel.id,
-                            PackageTypeCode=DCTPackageType[package.packaging_type or "your_packaging"].value,
+                            PieceID=payload.parcel.id or "1",
+                            PackageTypeCode=DCTPackageType[
+                                package.packaging_type or "your_packaging"
+                            ].value,
                             Depth=package.length.value,
                             Width=package.width.value,
                             Height=package.height.value,
@@ -143,29 +176,38 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 NumberOfPieces=1,
                 ShipmentWeight=package.weight.value,
                 Volume=None,
-                PaymentAccountNumber=None,
-                InsuredCurrency=None,
-                InsuredValue=None,
+                PaymentAccountNumber=settings.account_number,
+                InsuredCurrency=options.currency if options.insurance is not None else None,
+                InsuredValue=options.insurance.amount if options.insurance is not None else None,
                 PaymentType=None,
                 AcctPickupCloseTime=None,
                 QtdShp=[
                     QtdShpType(
                         GlobalProductCode=product,
                         LocalProductCode=product,
-                        QtdShpExChrg=None,
+                        QtdShpExChrg=[
+                            QtdShpExChrgType(SpecialServiceType=service)
+                            for service in special_services
+                        ],
                     )
                     for product in products
                 ],
             ),
-            Dutiable=None,
+            Dutiable=DCTDutiable(
+                DeclaredValue=payload.options.get('value', 1.0),
+                DeclaredCurrency=options.currency,
+            ) if is_international and is_dutiable else None,
         ),
     )
     return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: DCTRequest) -> str:
+    namespacedef_ = (
+        'xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "'
+    )
     return export(
         request,
         name_="p:DCTRequest",
-        namespacedef_='xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "',
-    )
+        namespacedef_=namespacedef_,
+    ).replace('schemaVersion="2."', 'schemaVersion="2.0"')

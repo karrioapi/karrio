@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.package import rating
+from purplship.package import Rating
 from tests.dhl.package.fixture import gateway
 
 
@@ -48,7 +48,7 @@ class TestDHLRating(unittest.TestCase):
 
     @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
-        rating.fetch(self.RateRequest).from_(gateway)
+        Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, gateway.settings.server_url)
@@ -56,19 +56,19 @@ class TestDHLRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = RateResponseXML
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_rate_parsing_error(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = RateParsingError
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateParsingError))
 
     def test_parse_rate_missing_args_error(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = RateMissingArgsError
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedRateMissingArgsError)
             )
@@ -76,7 +76,7 @@ class TestDHLRating(unittest.TestCase):
     def test_parse_rate_vol_weight_higher_response(self):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = RateVolWeightHigher
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedRateVolWeightHigher)
             )
@@ -90,7 +90,6 @@ RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcel": {
-        "services": ["dhl_express_worldwide_doc"],
         "id": "1",
         "height": 3,
         "length": 10,
@@ -98,6 +97,7 @@ RatePayload = {
         "weight": 4.0,
         "is_document": True,
     },
+    "services": ["dhl_express_worldwide_doc"],
     "options": {"currency": "CAD", "insurance": {"amount": 75}},
 }
 
@@ -105,10 +105,8 @@ RatePayload = {
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcel": {
-        "package_preset": "dhl_express_tube",
-        "services": ["dhl_express_worldwide_nondoc"],
-    },
+    "parcel": {"package_preset": "dhl_express_tube",},
+    "services": ["dhl_express_worldwide_nondoc"],
     "options": {"currency": "CAD"},
 }
 
@@ -153,7 +151,7 @@ ParsedRateResponse = [
             "duties_and_taxes": 0.0,
             "estimated_delivery": "2018-06-26",
             "extra_charges": [
-                {"amount": 12.7, "currency": None, "name": "FUEL SURCHARGE"}
+                {"amount": 12.7, 'currency': 'CAD', "name": "FUEL SURCHARGE"}
             ],
             "service": "dhl_express_worldwide_doc",
             "total_charge": 208.02,
@@ -174,22 +172,7 @@ ParsedRateResponse = [
     [],
 ]
 
-ParsedRateVolWeightHigher = [
-    [
-        {
-            "base_charge": 0.0,
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
-            "discount": 0.0,
-            "duties_and_taxes": 0.0,
-            "estimated_delivery": "2017-11-13",
-            "extra_charges": [],
-            "service": "dhl_express_worldwide_nondoc",
-            "total_charge": 0.0,
-        }
-    ],
-    [],
-]
+ParsedRateVolWeightHigher = [[], []]
 
 
 RateParsingError = """<?xml version="1.0" encoding="UTF-8"?>
@@ -241,7 +224,7 @@ RateMissingArgsError = """<?xml version="1.0" ?>
 </DCTResponse>
 """
 
-RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.">
+RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.0">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -263,8 +246,8 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
             <PaymentCountryCode>CA</PaymentCountryCode>
             
             
-            <DimensionUnit>I</DimensionUnit>
-            <WeightUnit>L</WeightUnit>
+            <DimensionUnit>IN</DimensionUnit>
+            <WeightUnit>LB</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>
             <ShipmentWeight>4.</ShipmentWeight>
             <Pieces>
@@ -276,11 +259,18 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
                     <Weight>4.</Weight>
                 </Piece>
             </Pieces>
+            <PaymentAccountNumber>123456789</PaymentAccountNumber>
             <IsDutiable>N</IsDutiable>
+            <NetworkTypeCode>AL</NetworkTypeCode>
             <QtdShp>
                 <GlobalProductCode>D</GlobalProductCode>
                 <LocalProductCode>D</LocalProductCode>
+                <QtdShpExChrg>
+                    <SpecialServiceType>II</SpecialServiceType>
+                </QtdShpExChrg>
             </QtdShp>
+            <InsuredValue>75</InsuredValue>
+            <InsuredCurrency>CAD</InsuredCurrency>
         </BkgDetails>
         <To>
             <CountryCode>TG</CountryCode>
@@ -290,7 +280,7 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
 </p:DCTRequest>
 """
 
-RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.">
+RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.0">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -312,12 +302,13 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
             <PaymentCountryCode>CA</PaymentCountryCode>
             
             
-            <DimensionUnit>I</DimensionUnit>
-            <WeightUnit>L</WeightUnit>
+            <DimensionUnit>IN</DimensionUnit>
+            <WeightUnit>LB</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>
             <ShipmentWeight>5.</ShipmentWeight>
             <Pieces>
                 <Piece>
+                    <PieceID>1</PieceID>
                     <PackageTypeCode>COY</PackageTypeCode>
                     <Height>15.</Height>
                     <Depth>15.</Depth>
@@ -325,16 +316,25 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
                     <Weight>5.</Weight>
                 </Piece>
             </Pieces>
+            <PaymentAccountNumber>123456789</PaymentAccountNumber>
             <IsDutiable>Y</IsDutiable>
+            <NetworkTypeCode>AL</NetworkTypeCode>
             <QtdShp>
                 <GlobalProductCode>P</GlobalProductCode>
                 <LocalProductCode>P</LocalProductCode>
+                <QtdShpExChrg>
+                    <SpecialServiceType>WY</SpecialServiceType>
+                </QtdShpExChrg>
             </QtdShp>
         </BkgDetails>
         <To>
             <CountryCode>TG</CountryCode>
             <City>Lome</City>
         </To>
+        <Dutiable>
+            <DeclaredCurrency>CAD</DeclaredCurrency>
+            <DeclaredValue>1.</DeclaredValue>
+        </Dutiable>
     </GetQuote>
 </p:DCTRequest>
 """

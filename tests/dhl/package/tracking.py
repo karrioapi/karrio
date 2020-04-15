@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
-from purplship.package import tracking
+from purplship.package import Tracking
 from tests.dhl.package.fixture import gateway
 
 
@@ -22,7 +22,7 @@ class TestDHLTracking(unittest.TestCase):
 
     @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        tracking.fetch(self.TrackingRequest).from_(gateway)
+        Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, gateway.settings.server_url)
@@ -31,7 +31,7 @@ class TestDHLTracking(unittest.TestCase):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = AuthError
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
@@ -39,7 +39,7 @@ class TestDHLTracking(unittest.TestCase):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = TrackingResponseXML
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
@@ -48,7 +48,7 @@ class TestDHLTracking(unittest.TestCase):
         with patch("purplship.package.mappers.dhl.proxy.http") as mock:
             mock.return_value = TrackingSingleNotFound
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedTrackingSingNotFound)
@@ -291,7 +291,7 @@ TrackingSingleNotFound = """<?xml version="1.0" encoding="UTF-8"?>
 </res:TrackingResponse>
 """
 
-TrackingRequestXML = """<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd" schemaVersion="1.">
+TrackingRequestXML = """<req:KnownTrackingRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd" schemaVersion="1.0">
     <Request>
         <ServiceHeader>
             

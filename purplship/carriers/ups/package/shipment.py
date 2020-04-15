@@ -32,16 +32,11 @@ from pyups.ship_web_service_schema import (
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.soap import clean_namespaces, create_envelope
+from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Options, Package, PaymentType
 from purplship.core.errors import RequiredFieldError
-from purplship.core.models import (
-    ShipmentRequest,
-    ShipmentDetails,
-    Message,
-    Payment
-)
+from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
 from purplship.carriers.ups.units import (
     ShippingPackagingType,
     ShippingServiceCode,
@@ -55,7 +50,9 @@ from purplship.carriers.ups.utils import Settings
 def parse_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    details = next(iter(response.xpath(".//*[local-name() = $name]", name="ShipmentResults")), None)
+    details = next(
+        iter(response.xpath(".//*[local-name() = $name]", name="ShipmentResults")), None
+    )
     shipment = _extract_shipment(details, settings) if details is not None else None
     return shipment, parse_error_response(response, settings)
 
@@ -73,18 +70,26 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[UPSShipmentRequest]:
-    parcel_preset = PackagePresets[payload.parcel.package_preset].value if payload.parcel.package_preset else None
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[UPSShipmentRequest]:
+    parcel_preset = (
+        PackagePresets[payload.parcel.package_preset].value
+        if payload.parcel.package_preset
+        else None
+    )
     package = Package(payload.parcel, parcel_preset)
     options = Options(payload.options)
     service = ShippingServiceCode[payload.service].value
 
-    if (("freight" in service) or ("ground" in service)) and (package.weight.value is None):
+    if (("freight" in service) or ("ground" in service)) and (
+        package.weight.value is None
+    ):
         raise RequiredFieldError("parcel.weight")
 
     charges: Dict[str, Payment] = {
-        '01': payload.payment,
-        '02': payload.customs.duty if payload.customs is not None else None
+        "01": payload.payment,
+        "02": payload.customs.duty if payload.customs is not None else None,
     }
 
     request = UPSShipmentRequest(
@@ -137,7 +142,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 EMailAddress=payload.recipient.email,
                 Address=ShipAddressType(
                     AddressLine=concat_str(
-                        payload.recipient.address_line1, payload.recipient.address_line2,
+                        payload.recipient.address_line1,
+                        payload.recipient.address_line2,
                     ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
@@ -160,62 +166,85 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                                 SecurityCode=payment.credit_card.security_code,
                                 Address=CreditCardAddressType(
                                     AddressLine=concat_str(
-                                        payload.shipper.address_line1, payload.shipper.address_line2
+                                        payload.shipper.address_line1,
+                                        payload.shipper.address_line2,
                                     ),
                                     City=payload.shipper.city,
                                     StateProvinceCode=payload.shipper.state_code,
-                                    PostalCode=payload.payment.credit_card.postal_code or payload.shipper.postal_code,
+                                    PostalCode=payload.payment.credit_card.postal_code
+                                    or payload.shipper.postal_code,
                                     CountryCode=payload.shipper.country_code,
-                                )
-                            ) if payment.credit_card is not None else None,
-                            AlternatePaymentMethod=None
-                        ) if payment.paid_by == PaymentType.sender.name else None,
+                                ),
+                            )
+                            if payment.credit_card is not None
+                            else None,
+                            AlternatePaymentMethod=None,
+                        )
+                        if payment.paid_by == PaymentType.sender.name
+                        else None,
                         BillReceiver=BillReceiverType(
                             AccountNumber=payment.account_number,
                             Address=BillReceiverAddressType(
                                 PostalCode=payload.recipient.postal_code
-                            )
-                        ) if payment.paid_by == PaymentType.recipient.name else None,
+                            ),
+                        )
+                        if payment.paid_by == PaymentType.recipient.name
+                        else None,
                         BillThirdParty=BillThirdPartyChargeType(
                             AccountNumber=payment.account_number,
-                        ) if payment.paid_by == PaymentType.third_party.name else None,
-                        ConsigneeBilledIndicator=None
+                        )
+                        if payment.paid_by == PaymentType.third_party.name
+                        else None,
+                        ConsigneeBilledIndicator=None,
                     )
-                    for charge_type, payment in charges.items() if payment is not None
+                    for charge_type, payment in charges.items()
+                    if payment is not None
                 ],
-                SplitDutyVATIndicator=None
-            ) if any(charges.values()) else None,
-            Service=(
-                ServiceType(Code=service) if service is not None else None
-            ),
+                SplitDutyVATIndicator=None,
+            )
+            if any(charges.values())
+            else None,
+            Service=(ServiceType(Code=service) if service is not None else None),
             ShipmentServiceOptions=ShipmentServiceOptionsType(
                 COD=CODType(
                     CODFundsCode=None,
                     CODAmount=CurrencyMonetaryType(
                         CurrencyCode=options.currency or "USD",
-                        MonetaryValue=options.cash_on_delivery.amount
-                    )
-                ) if options.cash_on_delivery else None,
+                        MonetaryValue=options.cash_on_delivery.amount,
+                    ),
+                )
+                if options.cash_on_delivery
+                else None,
                 Notification=[
                     NotificationType(
                         NotificationCode=event,
                         EMail=EmailDetailsType(
-                            EMailAddress=[options.notification.email or payload.shipper.email],
+                            EMailAddress=[
+                                options.notification.email or payload.shipper.email
+                            ],
                         ),
                         VoiceMessage=None,
                         TextMessage=None,
-                        Locale=None
-                    ) for event in [8]
-                ] if options.notification else None,
-            ) if any([options.cash_on_delivery, options.notification]) else None,
+                        Locale=None,
+                    )
+                    for event in [8]
+                ]
+                if options.notification
+                else None,
+            )
+            if any([options.cash_on_delivery, options.notification])
+            else None,
             Package=[
                 PackageType(
                     Description=payload.parcel.description,
                     Packaging=(
                         PackagingType(
-                            Code=ShippingPackagingType[payload.parcel.packaging_type].value,
+                            Code=ShippingPackagingType[
+                                payload.parcel.packaging_type
+                            ].value,
                         )
-                        if payload.parcel.packaging_type is not None else None
+                        if payload.parcel.packaging_type is not None
+                        else None
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
@@ -243,7 +272,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     )
 
 
-def _request_serializer(request: Element) -> str:
+def _request_serializer(envelope: Element) -> str:
     namespace_ = """
         xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"
         xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
@@ -259,11 +288,11 @@ def _request_serializer(request: Element) -> str:
     ).replace(
         "\n", " "
     )
-    return clean_namespaces(
-        export(request, namespacedef_=namespace_),
-        envelope_prefix="tns:",
-        header_child_prefix="upss:",
-        body_child_prefix="ship:",
-        header_child_name="UPSSecurity",
-        body_child_name="Shipment",
-    )
+
+    envelope.Body.ns_prefix_ = envelope.ns_prefix_
+    envelope.Header.ns_prefix_ = envelope.ns_prefix_
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "ship")
+    apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
+
+    return export(envelope, namespacedef_=namespace_)

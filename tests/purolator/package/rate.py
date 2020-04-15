@@ -3,7 +3,7 @@ from datetime import datetime
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.package import rating
+from purplship.package import Rating
 from tests.purolator.package.fixture import gateway
 
 
@@ -19,7 +19,7 @@ class TestPurolatorQuote(unittest.TestCase):
 
     @patch("purplship.package.mappers.purolator.proxy.http", return_value="<a></a>")
     def test_create_rate(self, http_mock):
-        rating.fetch(self.RateRequest).from_(gateway)
+        Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -30,7 +30,7 @@ class TestPurolatorQuote(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.purolator.proxy.http") as mock:
             mock.return_value = RATE_RESPONSE_XML
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
 
@@ -47,7 +47,7 @@ RATE_REQUEST_PAYLOAD = {
         "country_code": "CA",
         "postal_code": "L4W5M8",
         "address_line1": "Main Street",
-        "phone_number": "5555555",
+        "phone_number": "1 514 5555555",
     },
     "recipient": {
         "person_name": "Aaron Summer",
@@ -56,14 +56,14 @@ RATE_REQUEST_PAYLOAD = {
         "country_code": "CA",
         "postal_code": "V5C5A9",
         "address_line1": "Douglas Road",
-        "phone_number": "2982181",
+        "phone_number": "1 514 2982181",
     },
     "parcel": {
         "reference": "Reference For Shipment",
         "weight": 10,
         "weight_unit": "LB",
-        "services": ["purolator_express"],
     },
+    "services": ["purolator_express"],
 }
 
 RATE_REQUEST_WITH_PRESET_PAYLOAD = {
@@ -97,7 +97,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 62.35,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 5.15,
             "estimated_delivery": "2009-04-17",
@@ -119,7 +119,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 55.0,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 4.77,
             "estimated_delivery": "2009-04-17",
@@ -141,7 +141,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 46.15,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 4.3,
             "estimated_delivery": "2009-04-17",
@@ -163,7 +163,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 29.6,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 3.44,
             "estimated_delivery": "2009-04-22",
@@ -185,7 +185,7 @@ PARSED_RATE_RESPONSE = [
         {
             "base_charge": 87.69,
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "currency": "CAD",
             "duties_and_taxes": 6.47,
             "estimated_delivery": "2009-04-22",
@@ -209,136 +209,152 @@ PARSED_RATE_RESPONSE = [
 ]
 
 
-RATE_REQUEST_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
-    <SOAP-ENV:Header>
-        <ns1:RequestContext>
-            <Version>2.1</Version>
-            <Language>en</Language>
-            <UserToken>token</UserToken>
-        </ns1:RequestContext>
-    </SOAP-ENV:Header>
-    <SOAP-ENV:Body>
-        <ns1:GetFullEstimateRequest>
-            <Shipment>
-                <SenderInformation>
-                    <Address>
-                        <Name>Aaron Summer</Name>
-                        <StreetName>Main Street</StreetName>
-                        <City>Mississauga</City>
-                        <Province>ON</Province>
-                        <Country>CA</Country>
-                        <PostalCode>L4W5M8</PostalCode>
-                        <PhoneNumber>
-                            <Phone>5555555</Phone>
-                        </PhoneNumber>
-                    </Address>
-                </SenderInformation>
-                <ReceiverInformation>
-                    <Address>
-                        <Name>Aaron Summer</Name>
-                        <StreetName>Douglas Road</StreetName>
-                        <City>Burnaby</City>
-                        <Province>BC</Province>
-                        <Country>CA</Country>
-                        <PostalCode>V5C5A9</PostalCode>
-                        <PhoneNumber>
-                            <Phone>2982181</Phone>
-                        </PhoneNumber>
-                    </Address>
-                </ReceiverInformation>
-                <ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</ShipmentDate>
-                <PackageInformation>
-                    <ServiceID>PurolatorExpress</ServiceID>
-                    <TotalWeight>
-                        <Value>10</Value>
-                        <WeightUnit>lb</WeightUnit>
-                    </TotalWeight>
-                    <TotalPieces>1</TotalPieces>
-                    <PiecesInformation>
-                        <Piece>
-                            <Weight>
-                                <Value>10.</Value>
-                                <WeightUnit>lb</WeightUnit>
-                            </Weight>
-                        </Piece>
-                    </PiecesInformation>
-                </PackageInformation>
-                <PickupInformation>
-                    <PickupType>DropOff</PickupType>
-                </PickupInformation>
-                <TrackingReferenceInformation>
-                    <Reference1>Reference For Shipment</Reference1>
-                </TrackingReferenceInformation>
-            </Shipment>
-            <ShowAlternativeServicesIndicator>true</ShowAlternativeServicesIndicator>
-        </ns1:GetFullEstimateRequest>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+RATE_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
+    <soap:Header>
+        <v2:RequestContext>
+            <v2:Version>2.1</v2:Version>
+            <v2:Language>en</v2:Language>
+            <v2:GroupID></v2:GroupID>
+            <v2:RequestReference></v2:RequestReference>
+            <v2:UserToken>token</v2:UserToken>
+        </v2:RequestContext>
+    </soap:Header>
+    <soap:Body>
+        <v2:GetFullEstimateRequest>
+            <v2:Shipment>
+                <v2:SenderInformation>
+                    <v2:Address>
+                        <v2:Name>Aaron Summer</v2:Name>
+                        <v2:StreetNumber></v2:StreetNumber>
+                        <v2:StreetName>Main Street</v2:StreetName>
+                        <v2:City>Mississauga</v2:City>
+                        <v2:Province>ON</v2:Province>
+                        <v2:Country>CA</v2:Country>
+                        <v2:PostalCode>L4W5M8</v2:PostalCode>
+                        <v2:PhoneNumber>
+                            <v2:CountryCode>1</v2:CountryCode>
+                            <v2:AreaCode>514</v2:AreaCode>
+                            <v2:Phone>5555555</v2:Phone>
+                        </v2:PhoneNumber>
+                    </v2:Address>
+                </v2:SenderInformation>
+                <v2:ReceiverInformation>
+                    <v2:Address>
+                        <v2:Name>Aaron Summer</v2:Name>
+                        <v2:StreetNumber></v2:StreetNumber>
+                        <v2:StreetName>Douglas Road</v2:StreetName>
+                        <v2:City>Burnaby</v2:City>
+                        <v2:Province>BC</v2:Province>
+                        <v2:Country>CA</v2:Country>
+                        <v2:PostalCode>V5C5A9</v2:PostalCode>
+                        <v2:PhoneNumber>
+                            <v2:CountryCode>1</v2:CountryCode>
+                            <v2:AreaCode>514</v2:AreaCode>
+                            <v2:Phone>2982181</v2:Phone>
+                        </v2:PhoneNumber>
+                    </v2:Address>
+                </v2:ReceiverInformation>
+                <v2:ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</v2:ShipmentDate>
+                <v2:PackageInformation>
+                    <v2:ServiceID>PurolatorExpress</v2:ServiceID>
+                    <v2:TotalWeight>
+                        <v2:Value>10</v2:Value>
+                        <v2:WeightUnit>lb</v2:WeightUnit>
+                    </v2:TotalWeight>
+                    <v2:TotalPieces>1</v2:TotalPieces>
+                    <v2:PiecesInformation>
+                        <v2:Piece>
+                            <v2:Weight>
+                                <v2:Value>10.</v2:Value>
+                                <v2:WeightUnit>lb</v2:WeightUnit>
+                            </v2:Weight>
+                        </v2:Piece>
+                    </v2:PiecesInformation>
+                </v2:PackageInformation>
+                <v2:PaymentInformation>
+                    <v2:PaymentType>Sender</v2:PaymentType>
+                    <v2:RegisteredAccountNumber>12398576956</v2:RegisteredAccountNumber>
+                </v2:PaymentInformation>
+                <v2:PickupInformation>
+                    <v2:PickupType>DropOff</v2:PickupType>
+                </v2:PickupInformation>
+                <v2:TrackingReferenceInformation>
+                    <v2:Reference1>Reference For Shipment</v2:Reference1>
+                </v2:TrackingReferenceInformation>
+            </v2:Shipment>
+            <v2:ShowAlternativeServicesIndicator>false</v2:ShowAlternativeServicesIndicator>
+        </v2:GetFullEstimateRequest>
+    </soap:Body>
+</soap:Envelope>
 """
 
-RATE_REQUEST_WITH_PRESET_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
+RATE_REQUEST_WITH_PRESET_XML = f"""<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <SOAP-ENV:Header>
-        <ns1:RequestContext>
-            <Version>2.1</Version>
-            <Language>en</Language>
-            <UserToken>token</UserToken>
-        </ns1:RequestContext>
+        <v2:RequestContext>
+            <v2:Version>2.1</v2:Version>
+            <v2:Language>en</v2:Language>
+            <v2:UserToken>token</v2:UserToken>
+        </v2:RequestContext>
     </SOAP-ENV:Header>
     <SOAP-ENV:Body>
-        <ns1:GetFullEstimateRequest>
-            <Shipment>
-                <SenderInformation>
-                    <Address>
-                        <Name>Aaron Summer</Name>
-                        <StreetName>Main Street</StreetName>
-                        <City>Mississauga</City>
-                        <Province>ON</Province>
-                        <Country>CA</Country>
-                        <PostalCode>L4W5M8</PostalCode>
-                        <PhoneNumber>
-                            <Phone>5555555</Phone>
-                        </PhoneNumber>
-                    </Address>
-                </SenderInformation>
-                <ReceiverInformation>
-                    <Address>
-                        <Name>Aaron Summer</Name>
-                        <StreetName>Douglas Road</StreetName>
-                        <City>Burnaby</City>
-                        <Province>BC</Province>
-                        <Country>CA</Country>
-                        <PostalCode>V5C5A9</PostalCode>
-                        <PhoneNumber>
-                            <Phone>2982181</Phone>
-                        </PhoneNumber>
-                    </Address>
-                </ReceiverInformation>
-                <ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</ShipmentDate>
-                <PackageInformation>
-                    <ServiceID>PurolatorExpress</ServiceID>
-                    <TotalWeight>
-                        <Value>10</Value>
-                        <WeightUnit>lb</WeightUnit>
-                    </TotalWeight>
-                    <TotalPieces>1</TotalPieces>
-                    <PiecesInformation>
-                        <Piece>
-                            <Weight>
-                                <Value>7.</Value>
-                                <WeightUnit>lb</WeightUnit>
-                            </Weight>
-                        </Piece>
-                    </PiecesInformation>
-                </PackageInformation>
-                <PickupInformation>
-                    <PickupType>DropOff</PickupType>
-                </PickupInformation>
-                <TrackingReferenceInformation>
-                    <Reference1>Reference For Shipment</Reference1>
-                </TrackingReferenceInformation>
-            </Shipment>
-            <ShowAlternativeServicesIndicator>true</ShowAlternativeServicesIndicator>
-        </ns1:GetFullEstimateRequest>
+        <v2:GetFullEstimateRequest>
+            <v2:Shipment>
+                <v2:SenderInformation>
+                    <v2:Address>
+                        <v2:Name>Aaron Summer</v2:Name>
+                        <v2:StreetName>Main Street</v2:StreetName>
+                        <v2:City>Mississauga</v2:City>
+                        <v2:Province>ON</v2:Province>
+                        <v2:Country>CA</v2:Country>
+                        <v2:PostalCode>L4W5M8</v2:PostalCode>
+                        <v2:PhoneNumber>
+                            <v2:CountryCode>1</v2:CountryCode>
+                            <v2:AreaCode>514</v2:AreaCode>
+                            <v2:Phone>5555555</v2:Phone>
+                        </v2:PhoneNumber>
+                    </v2:Address>
+                </v2:SenderInformation>
+                <v2:ReceiverInformation>
+                    <v2:Address>
+                        <v2:Name>Aaron Summer</v2:Name>
+                        <v2:StreetName>Douglas Road</v2:StreetName>
+                        <v2:City>Burnaby</v2:City>
+                        <v2:Province>BC</v2:Province>
+                        <v2:Country>CA</v2:Country>
+                        <v2:PostalCode>V5C5A9</v2:PostalCode>
+                        <v2:PhoneNumber>
+                            <v2:CountryCode>1</v2:CountryCode>
+                            <v2:AreaCode>514</v2:AreaCode>
+                            <v2:Phone>2982181</v2:Phone>
+                        </v2:PhoneNumber>
+                    </v2:Address>
+                </v2:ReceiverInformation>
+                <v2:ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</v2:ShipmentDate>
+                <v2:PackageInformation>
+                    <v2:ServiceID>PurolatorExpress</v2:ServiceID>
+                    <v2:TotalWeight>
+                        <v2:Value>10</v2:Value>
+                        <v2:WeightUnit>lb</v2:WeightUnit>
+                    </v2:TotalWeight>
+                    <v2:TotalPieces>1</v2:TotalPieces>
+                    <v2:PiecesInformation>
+                        <v2:Piece>
+                            <v2:Weight>
+                                <v2:Value>7.</v2:Value>
+                                <v2:WeightUnit>lb</v2:WeightUnit>
+                            </v2:Weight>
+                        </v2:Piece>
+                    </v2:PiecesInformation>
+                </v2:PackageInformation>
+                <v2:PickupInformation>
+                    <v2:PickupType>DropOff</v2:PickupType>
+                </v2:PickupInformation>
+                <v2:TrackingReferenceInformation>
+                    <v2:Reference1>Reference For Shipment</v2:Reference1>
+                </v2:TrackingReferenceInformation>
+            </v2:Shipment>
+            <v2:ShowAlternativeServicesIndicator>false</v2:ShowAlternativeServicesIndicator>
+        </v2:GetFullEstimateRequest>
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 """

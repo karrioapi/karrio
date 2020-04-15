@@ -4,7 +4,7 @@ from unittest.mock import patch
 from pyfedex.rate_service_v26 import RateRequest
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.package import rating
+from purplship.package import Rating
 from tests.fedex.package.fixture import gateway
 
 
@@ -35,7 +35,7 @@ class TestFeDexQuote(unittest.TestCase):
 
     @patch("purplship.package.mappers.fedex.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
-        rating.fetch(self.RateRequest).from_(gateway)
+        Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, gateway.settings.server_url)
@@ -43,13 +43,14 @@ class TestFeDexQuote(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
             mock.return_value = RateResponseXml
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
+
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_rate_error_response(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
             mock.return_value = RateErrorResponseXml
-            parsed_response = rating.fetch(self.RateRequest).from_(gateway).parse()
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateErrorResponse))
 
 
@@ -79,7 +80,7 @@ ParsedRateResponse = [
             "currency": "USD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
-            "extra_charges": [{"amount": 9.22, "currency": "USD", "name": "FUEL"}],
+            "extra_charges": [{"amount": 9.22, "currency": "USD", "name": "Fuel"}],
             "service": "international_priority",
             "total_charge": 239.71,
         },
@@ -90,7 +91,7 @@ ParsedRateResponse = [
             "currency": "USD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
-            "extra_charges": [{"amount": 8.3, "currency": "USD", "name": "FUEL"}],
+            "extra_charges": [{"amount": 8.3, "currency": "USD", "name": "Fuel"}],
             "service": "international_economy",
             "total_charge": 215.77,
         },
@@ -136,9 +137,9 @@ RateErrorResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmls
 </SOAP-ENV:Envelope>
 """
 
-RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
+RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
     <tns:Body>
-        <ns:RateRequest>
+        <RateRequest>
             <WebAuthenticationDetail>
                 <UserCredential>
                     <Key>user_key</Key>
@@ -162,6 +163,7 @@ RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoa
             <RequestedShipment>
                 
                 <DropoffType>REGULAR_PICKUP</DropoffType>
+                <ServiceType>INTERNATIONAL_FIRST</ServiceType>
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <TotalWeight>
                     <Units>LB</Units>
@@ -183,15 +185,29 @@ RateRequestXml = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoa
                 </Recipient>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
+                <RequestedPackageLineItems>
+                    <SequenceNumber>1</SequenceNumber>
+                    <GroupPackageCount>1</GroupPackageCount>
+                    <Weight>
+                        <Units>LB</Units>
+                        <Value>4.</Value>
+                    </Weight>
+                    <Dimensions>
+                        <Length>10</Length>
+                        <Width>3</Width>
+                        <Height>3</Height>
+                        <Units>IN</Units>
+                    </Dimensions>
+                </RequestedPackageLineItems>
             </RequestedShipment>
-        </ns:RateRequest>
+        </RateRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-RateRequestUsingPackagePresetXML = f"""<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
+RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26">
     <tns:Body>
-        <ns:RateRequest>
+        <RateRequest>
             <WebAuthenticationDetail>
                 <UserCredential>
                     <Key>user_key</Key>
@@ -215,6 +231,7 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope tns:Envelope xmlns:tns="htt
             <RequestedShipment>
                 
                 <DropoffType>REGULAR_PICKUP</DropoffType>
+                <ServiceType>INTERNATIONAL_FIRST</ServiceType>
                 <PackagingType>FEDEX_PAK</PackagingType>
                 <TotalWeight>
                     <Units>LB</Units>
@@ -236,8 +253,21 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope tns:Envelope xmlns:tns="htt
                 </Recipient>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
+                <RequestedPackageLineItems>
+                    <SequenceNumber>1</SequenceNumber>
+                    <GroupPackageCount>1</GroupPackageCount>
+                    <Weight>
+                        <Units>LB</Units>
+                        <Value>2.2</Value>
+                    </Weight>
+                    <Dimensions>
+                        <Width>11</Width>
+                        <Height>14</Height>
+                        <Units>IN</Units>
+                    </Dimensions>
+                </RequestedPackageLineItems>
             </RequestedShipment>
-        </ns:RateRequest>
+        </RateRequest>
     </tns:Body>
 </tns:Envelope>
 """

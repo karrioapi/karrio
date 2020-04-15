@@ -12,12 +12,12 @@ class Settings(BaseSettings):
 
     @property
     def carrier(self):
-        return 'usps'
+        return "usps"
 
     @property
     def server_url(self):
         return (
             "https://secure.shippingapis.com/ShippingAPI.dll"
-            if self.test else
-            "https://secure.shippingapis.com/ShippingAPI.dll"
+            if self.test
+            else "https://secure.shippingapis.com/ShippingAPI.dll"
         )

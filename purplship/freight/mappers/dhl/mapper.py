@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from pydhl.dct_req_global_2_0 import DCTRequest
 from pydhl.ship_val_global_req_6_2 import ShipmentRequest as DHLShipmentRequest
-from pydhl.tracking_request_known import KnownTrackingRequest
+from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.book_pickup_global_req_3_0 import BookPURequest
 from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest

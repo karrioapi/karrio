@@ -9,12 +9,14 @@ def create_envelope(
     body_prefix: str = None,
     header_tag_name: str = None,
     body_tag_name: str = None,
-    envelope_prefix: str = "tns"
+    envelope_prefix: str = "tns",
 ) -> Envelope:
     header = None
     if header_content is not None:
         header_content.ns_prefix_ = header_prefix or header_content.ns_prefix_
-        header_content.original_tagname_ = header_tag_name or header_content.original_tagname_
+        header_content.original_tagname_ = (
+            header_tag_name or header_content.original_tagname_
+        )
         header = Header()
         header.add_anytypeobjs_(header_content)
 
@@ -57,3 +59,14 @@ def clean_namespaces(
             "</%s%s" % (body_child_prefix, body_child_name),
         )
     )
+
+
+def apply_namespaceprefix(item, prefix: str):
+    if isinstance(item, list):
+        [apply_namespaceprefix(child, prefix) for child in item]
+    elif hasattr(item, 'export'):
+        item.ns_prefix_ = prefix
+        children = [(k, v) for k, v in item.__dict__.items() if '_' not in k and v is not None]
+        for name, child in children:
+            setattr(item, f'{name}_nsprefix_', prefix)
+            apply_namespaceprefix(child, prefix)

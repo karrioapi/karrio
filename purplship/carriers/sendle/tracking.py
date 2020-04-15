@@ -2,7 +2,12 @@
 
 from typing import Tuple, List
 from purplship.core.utils import Serializable, format_date, format_time
-from purplship.core.models import TrackingRequest, Message, TrackingEvent, TrackingDetails
+from purplship.core.models import (
+    TrackingRequest,
+    Message,
+    TrackingEvent,
+    TrackingDetails,
+)
 from pysendle.tracking import TrackingResponse
 from purplship.carriers.sendle.error import parse_error_response
 from purplship.carriers.sendle.utils import Settings
@@ -33,8 +38,8 @@ def _extract_tracking(
         tracking_number=tracking_number,
         events=[
             TrackingEvent(
-                date=format_date(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
-                time=format_time(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
+                date=format_date(event.scan_time, "%Y-%m-%dT%H:%M:%SZ"),
+                time=format_time(event.scan_time, "%Y-%m-%dT%H:%M:%SZ"),
                 code=event.event_type,
                 location=event.destination_location,
                 description=event.description,

@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     @property
     def carrier(self):
-        return 'dhl'
+        return "dhl"
 
     @property
     def server_url(self):

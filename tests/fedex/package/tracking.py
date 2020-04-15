@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
-from purplship.package import tracking
+from purplship.package import Tracking
 from tests.fedex.package.fixture import gateway
 
 
@@ -18,7 +18,7 @@ class TestFeDexTracking(unittest.TestCase):
 
     @patch("purplship.package.mappers.fedex.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        tracking.fetch(self.TrackRequest).from_(gateway)
+        Tracking.fetch(self.TrackRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, gateway.settings.server_url)
@@ -26,21 +26,21 @@ class TestFeDexTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
             mock.return_value = TrackingResponseXML
-            parsed_response = tracking.fetch(self.TrackRequest).from_(gateway).parse()
+            parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_auth_error_parsing(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
             mock.return_value = TrackingAuthErrorXML
-            parsed_response = tracking.fetch(self.TrackRequest).from_(gateway).parse()
+            parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_error_tracking_response(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
             mock.return_value = TrackingErrorResponseXML
-            parsed_response = tracking.fetch(self.TrackRequest).from_(gateway).parse()
+            parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedTrackingResponseError)

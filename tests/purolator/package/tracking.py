@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
-from purplship.package import tracking
+from purplship.package import Tracking
 from tests.purolator.package.fixture import gateway
 
 
@@ -20,7 +20,7 @@ class TestPurolatorTracking(unittest.TestCase):
 
     @patch("purplship.package.mappers.purolator.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        tracking.fetch(self.TrackingRequest).from_(gateway)
+        Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
@@ -31,9 +31,8 @@ class TestPurolatorTracking(unittest.TestCase):
         with patch("purplship.package.mappers.purolator.proxy.http") as mock:
             mock.return_value = TRACKING_RESPONSE_XML
             parsed_response = (
-                tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
             )
@@ -48,7 +47,7 @@ PARSED_TRACKING_RESPONSE = [
     [
         {
             "carrier": "purolator",
-            "carrier_name": "purolator",
+            "carrier_name": "PurolatorCourier",
             "events": [
                 {
                     "code": "Other",
@@ -71,24 +70,26 @@ PARSED_TRACKING_RESPONSE = [
     [],
 ]
 
-TRACKING_REQUEST_XML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://purolator.com/pws/datatypes/v1">
-    <SOAP-ENV:Header>
-        <ns1:RequestContext>
-            <Version>1.1</Version>
-            <Language>en</Language>
-            <UserToken>token</UserToken>
-        </ns1:RequestContext>
-    </SOAP-ENV:Header>
-    <SOAP-ENV:Body>
-        <ns1:TrackPackagesByPinRequest>
-            <PINs>
-                <PIN>
-                    <Value>m123</Value>
-                </PIN>
-            </PINs>
-        </ns1:TrackPackagesByPinRequest>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+TRACKING_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1">
+    <soap:Header>
+        <v1:RequestContext>
+            <v1:Version>1.2</v1:Version>
+            <v1:Language>en</v1:Language>
+            <v1:GroupID></v1:GroupID>
+            <v1:RequestReference></v1:RequestReference>
+            <v1:UserToken>token</v1:UserToken>
+        </v1:RequestContext>
+    </soap:Header>
+    <soap:Body>
+        <v1:TrackPackagesByPinRequest>
+            <v1:PINs>
+                <v1:PIN>
+                    <v1:Value>m123</v1:Value>
+                </v1:PIN>
+            </v1:PINs>
+        </v1:TrackPackagesByPinRequest>
+    </soap:Body>
+</soap:Envelope>
 """
 
 TRACKING_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">

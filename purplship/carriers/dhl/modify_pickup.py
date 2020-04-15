@@ -8,7 +8,14 @@ from pydhl.pickupdatatypes_global_3_0 import (
     Pickup,
     WeightSeg,
 )
-from purplship.core.utils import export, Serializable, Element, format_time, format_date, decimal
+from purplship.core.utils import (
+    export,
+    Serializable,
+    Element,
+    format_time,
+    format_date,
+    decimal,
+)
 from purplship.core.models import (
     Message,
     PickupDetails,

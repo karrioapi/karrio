@@ -3,7 +3,7 @@ from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
 from tests.ups.freight.fixture import gateway
-from purplship.freight import shipment
+from purplship.freight import Shipment
 
 
 class TestUPSShipment(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestUPSShipment(unittest.TestCase):
 
     @patch("purplship.freight.mappers.ups.proxy.http", return_value="<a></a>")
     def test_create_freight_shipment(self, http_mock):
-        shipment.create(self.ShipmentRequest).with_(gateway)
+        Shipment.create(self.ShipmentRequest).with_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, f"{gateway.settings.server_url}/FreightShip")
@@ -26,7 +26,7 @@ class TestUPSShipment(unittest.TestCase):
         with patch("purplship.freight.mappers.ups.proxy.http") as mock:
             mock.return_value = FreightShipmentResponseXML
             parsed_response = (
-                shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedFreightShipmentResponse)

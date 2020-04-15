@@ -1,8 +1,19 @@
 from typing import List, Optional, Tuple
 from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.tracking_response import AWBInfo
-from purplship.core.utils import export, Serializable, Element, format_datetime, format_time
-from purplship.core.models import TrackingEvent, TrackingDetails, TrackingRequest, Message
+from purplship.core.utils import (
+    export,
+    Serializable,
+    Element,
+    format_datetime,
+    format_time,
+)
+from purplship.core.models import (
+    TrackingEvent,
+    TrackingDetails,
+    TrackingRequest,
+    Message,
+)
 from .utils import Settings
 from .error import parse_error_response
 
@@ -65,4 +76,4 @@ def _request_serializer(request: KnownTrackingRequest) -> str:
         request,
         name_="req:KnownTrackingRequest",
         namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd"',
-    )
+    ).replace('schemaVersion="1."', 'schemaVersion="1.0"')
