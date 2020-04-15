@@ -306,14 +306,14 @@ class Shipment(ShipmentRequest, ShipmentDetails):
 
 class RateResponse(Serializer):
     messages = ListField(child=Message())
-    shipment = ShipmentRate()
+    shipment = ShipmentRate(required=False)
 
 
 class ShipmentResponse(Serializer):
     messages = ListField(child=Message())
-    shipment = Shipment()
+    shipment = Shipment(required=False)
 
 
 class TrackingResponse(Serializer):
     messages = ListField(child=Message())
-    tracking_details = TrackingDetails()
+    tracking_details = TrackingDetails(required=False)

@@ -86,7 +86,7 @@ def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> 
             )]]
 
     results = exec_async(process, carrier_settings_list)
-    rates = sum((r for r, _ in results), [])
+    rates = sum((r for r, _ in results if r is not None), [])
     messages = sum((m for _, m in results), [])
 
     return RateResponse(
@@ -95,7 +95,7 @@ def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> 
             'rates': [
                 {**{**to_dict(r), 'id': str(uuid.uuid4())}} for r in rates
             ]
-        }),
+        }) if len(rates) > 0 else None,
         messages=messages
     )
 
