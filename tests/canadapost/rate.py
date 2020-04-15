@@ -95,7 +95,7 @@ RateWithPresetMissingWeightPayload = {
 }
 
 ProcessingError = [
-    [],
+    None,
     [
         {
             "carrier": "canadapost",

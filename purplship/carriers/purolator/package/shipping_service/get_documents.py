@@ -5,10 +5,10 @@ from pypurolator.shipping_documents_service_1_3_0 import (
     ArrayOfDocumentCriteria,
     PIN,
 )
-from purplship.core.utils.soap import Envelope, create_envelope
+from purplship.core.utils.soap import Envelope, create_envelope, apply_namespaceprefix
 from purplship.core.models import ShipmentRequest
-from purplship.core.utils.serializable import Serializable
-from purplship.carriers.purolator.utils import Settings, standard_request_serializer
+from purplship.core.utils import Serializable, export
+from purplship.carriers.purolator.utils import Settings
 
 
 def get_shipping_documents_request(
@@ -32,4 +32,14 @@ def get_shipping_documents_request(
             ),
         ),
     )
-    return Serializable(request, standard_request_serializer)
+    return Serializable(request, _request_serializer)
+
+
+def _request_serializer(envelope: Envelope) -> str:
+    namespacedef_ = 'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1"'
+    envelope.ns_prefix_ = "soap"
+    envelope.Body.ns_prefix_ = envelope.ns_prefix_
+    envelope.Header.ns_prefix_ = envelope.ns_prefix_
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v1")
+    apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "v1")
+    return export(envelope, namespacedef_=namespacedef_)

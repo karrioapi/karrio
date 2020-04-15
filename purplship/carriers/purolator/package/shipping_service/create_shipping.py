@@ -30,9 +30,11 @@ from pypurolator.shipping_service_2_1_3 import (
     OptionIDValuePair,
     CreditCardInformation,
     BusinessRelationship,
+    ContentDetail,
+    ArrayOfContentDetail
 )
 from purplship.core.models import ShipmentRequest
-from purplship.core.units import PrinterType, Options, Package
+from purplship.core.units import PrinterType, Options, Package, Phone
 from purplship.core.utils.serializable import Serializable
 from purplship.core.errors import RequiredFieldError
 from purplship.core.utils.helpers import concat_str
@@ -50,7 +52,7 @@ ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]
 
 
 def create_shipping_request(
-    payload: ShipmentRequest, settings: Settings, validate: bool = False
+    payload: ShipmentRequest, settings: Settings, validate: bool = None
 ) -> Serializable[Envelope]:
     RequestType: ShipmentRequestType = ValidateShipmentRequest if validate else CreateShipmentRequest
     parcel_preset = (
@@ -66,6 +68,8 @@ def create_shipping_request(
     service = Product[payload.service].value
     is_international = payload.shipper.country_code != payload.recipient.country_code
     options = Options(payload.options)
+    shipper_phone_number = Phone(payload.shipper.phone_number)
+    recipient_phone_number = Phone(payload.recipient.phone_number)
     printing = PrinterType[options.printing or "regular"].value
     special_services = {
         Service[name].value: value
@@ -103,7 +107,12 @@ def create_shipping_request(
                         Province=payload.shipper.state_code,
                         Country=payload.shipper.country_code,
                         PostalCode=payload.shipper.postal_code,
-                        PhoneNumber=PhoneNumber(Phone=payload.shipper.phone_number),
+                        PhoneNumber=PhoneNumber(
+                            CountryCode=shipper_phone_number.country_code,
+                            AreaCode=shipper_phone_number.area_code,
+                            Phone=shipper_phone_number.phone,
+                            Extension=None
+                        ),
                         FaxNumber=None,
                     ),
                     TaxNumber=payload.shipper.federal_tax_id
@@ -131,7 +140,12 @@ def create_shipping_request(
                         Province=payload.recipient.state_code,
                         Country=payload.recipient.country_code,
                         PostalCode=payload.recipient.postal_code,
-                        PhoneNumber=PhoneNumber(Phone=payload.recipient.phone_number),
+                        PhoneNumber=PhoneNumber(
+                            CountryCode=recipient_phone_number.country_code,
+                            AreaCode=recipient_phone_number.area_code,
+                            Phone=recipient_phone_number.phone,
+                            Extension=None
+                        ),
                         FaxNumber=None,
                     ),
                     TaxNumber=payload.recipient.federal_tax_id
@@ -201,7 +215,25 @@ def create_shipping_request(
                 ),
                 InternationalInformation=InternationalInformation(
                     DocumentsOnlyIndicator=payload.parcel.is_document,
-                    ContentDetails=payload.parcel.description,
+                    ContentDetails=ArrayOfContentDetail(
+                        ContentDetail=[
+                            ContentDetail(
+                                Description=c.description,
+                                HarmonizedCode=None,
+                                CountryOfManufacture=c.origin_country,
+                                ProductCode=c.sku,
+                                UnitValue=c.value_amount,
+                                Quantity=c.quantity,
+                                NAFTADocumentIndicator=None,
+                                FDADocumentIndicator=None,
+                                FCCDocumentIndicator=None,
+                                SenderIsProducerIndicator=None,
+                                TextileIndicator=None,
+                                TextileManufacturer=None
+                            )
+                            for c in payload.customs.commodities
+                        ]
+                    ) if not payload.parcel.is_document else None,
                     BuyerInformation=None,
                     PreferredCustomsBroker=None,
                     DutyInformation=DutyInformation(
@@ -221,8 +253,8 @@ def create_shipping_request(
                 ReturnShipmentInformation=None,
                 PaymentInformation=PaymentInformation(
                     PaymentType=PaymentType[payload.payment.paid_by].value,
-                    RegisteredAccountNumber=payload.payment.account_number,
-                    BillingAccountNumber=payload.payment.account_number,
+                    RegisteredAccountNumber=payload.payment.account_number or settings.account_number,
+                    BillingAccountNumber=payload.payment.account_number or settings.account_number,
                     CreditCardInformation=CreditCardInformation(
                         Type=payload.payment.credit_card.type,
                         Number=payload.payment.credit_card.number,

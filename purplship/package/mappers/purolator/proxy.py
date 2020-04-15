@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, Callable
 from purplship.core.utils.helpers import to_xml, request as http, bundle_xml
 from purplship.package.proxy import Proxy as BaseProxy
@@ -5,13 +6,19 @@ from purplship.package.mappers.purolator.settings import Settings
 from purplship.core.utils.serializable import Serializable, Deserializable
 from pysoap.envelope import Envelope
 
+logger = logging.getLogger(__name__)
+
 SHIPPING_SERVICES = dict(
-    shipping=dict(
+    create=dict(
         path="/EWS/V2/Shipping/ShippingService.asmx",
         action="http://purolator.com/pws/service/v2/CreateShipment"
     ),
+    validate=dict(
+        path="/EWS/V2/Shipping/ShippingService.asmx",
+        action="http://purolator.com/pws/service/v2/ValidateShipment"
+    ),
     document=dict(
-        path="/PWS/V1/ShippingDocuments/ShippingDocumentsService.asmx",
+        path="/EWS/V1/ShippingDocuments/ShippingDocumentsService.asmx",
         action="http://purolator.com/pws/service/v1/GetDocuments"
     )
 )
@@ -50,7 +57,7 @@ class Proxy(BaseProxy):
         self, request: Serializable[Dict[str, Callable]]
     ) -> Deserializable[str]:
         def apply(
-            data: str = None, fallback: str = None, service: str = "shipping"
+            data: str = None, fallback: str = None, service: str = "validate"
         ) -> str:
             return (
                 http(

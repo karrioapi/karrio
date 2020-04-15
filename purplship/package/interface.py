@@ -2,6 +2,7 @@
 
 import attr
 import logging
+import functools
 from typing import Callable, TypeVar, Union
 from purplship.package.gateway import Gateway
 from purplship.core.utils.serializable import Serializable, Deserializable
@@ -21,31 +22,43 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
+def abort(error: Exception, gateway: Gateway):
+    return (
+        None,
+        [
+            Message(
+                code="500",
+                carrier=gateway.settings.carrier,
+                carrier_name=gateway.settings.carrier_name,
+                message=f"{error}",
+            )
+        ],
+    )
+
+
+def fail_safe(gateway: Gateway):
+    def catcher(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as error:
+                logger.exception(error)
+
+                return IDeserialize(functools.partial(abort, gateway=gateway, error=error))
+        return wrapper
+    return catcher
+
+
 @attr.s(auto_attribs=True)
 class IDeserialize:
     deserialize: Callable[[], S]
 
     def parse(self):
-        return self.deserialize()
-
-
-def abort(gateway: Gateway, error: Exception) -> IDeserialize:
-    logger.exception(error)
-
-    def deserialize():
-        return (
-            [],
-            [
-                Message(
-                    code="500",
-                    carrier=gateway.settings.carrier,
-                    carrier_name=gateway.settings.carrier_name,
-                    message=f"{error}",
-                )
-            ],
-        )
-
-    return IDeserialize(deserialize)
+        result = self.deserialize()
+        if isinstance(result, IDeserialize):
+            return result.parse()
+        return result
 
 
 @attr.s(auto_attribs=True)
@@ -53,10 +66,7 @@ class IRequestFrom:
     action: Callable[[Gateway], IDeserialize]
 
     def from_(self, gateway: Gateway) -> IDeserialize:
-        try:
-            return self.action(gateway)
-        except Exception as e:
-            return abort(gateway, e)
+        return fail_safe(gateway)(self.action)(gateway)
 
 
 @attr.s(auto_attribs=True)
@@ -64,10 +74,7 @@ class IRequestWith:
     action: Callable[[Gateway], IDeserialize]
 
     def with_(self, gateway: Gateway) -> IDeserialize:
-        try:
-            return self.action(gateway)
-        except Exception as e:
-            return abort(gateway, e)
+        return fail_safe(gateway)(self.action)(gateway)
 
 
 class Pickup:
@@ -79,6 +86,7 @@ class Pickup:
             request: Serializable = gateway.mapper.create_pickup_request(payload)
             response: Deserializable = gateway.proxy.request_pickup(request)
 
+            @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_pickup_response(response)
 
@@ -98,6 +106,7 @@ class Pickup:
             request: Serializable = gateway.mapper.create_cancel_pickup_request(payload)
             response: Deserializable = gateway.proxy.cancel_pickup(request)
 
+            @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_cancel_pickup_response(response)
 
@@ -117,6 +126,7 @@ class Pickup:
             request: Serializable = gateway.mapper.create_modify_pickup_request(payload)
             response: Deserializable = gateway.proxy.modify_pickup(request)
 
+            @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_modify_pickup_response(response)
 
@@ -134,6 +144,7 @@ class Rating:
             request: Serializable = gateway.mapper.create_rate_request(payload)
             response: Deserializable = gateway.proxy.get_rates(request)
 
+            @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_rate_response(response)
 
@@ -153,6 +164,7 @@ class Shipment:
             request: Serializable = gateway.mapper.create_shipment_request(payload)
             response: Deserializable = gateway.proxy.create_shipment(request)
 
+            @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_shipment_response(response)
 
@@ -172,6 +184,7 @@ class Tracking:
             request: Serializable = gateway.mapper.create_tracking_request(payload)
             response: Deserializable = gateway.proxy.get_tracking(request)
 
+            @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_tracking_response(response)
 

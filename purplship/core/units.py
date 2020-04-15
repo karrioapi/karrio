@@ -275,6 +275,30 @@ class Options:
         printing = "printing"
 
 
+class Phone:
+    def __init__(self, phone_number: str = None):
+        self.number = phone_number
+        self.parts = phone_number.split(" ") if phone_number is not None else []
+
+    @property
+    def country_code(self):
+        return next((part for part in self.parts), None)
+
+    @property
+    def area_code(self):
+        return next(
+            (part[1] for part in [self.parts] if len(part) > 1),
+            None
+        )
+
+    @property
+    def phone(self):
+        return next(
+            (part[2] for part in [self.parts] if len(part) > 2),
+            None
+        )
+
+
 class PrinterType(Enum):
     regular = "Regular"  # Regular
     thermal = "Thermal"  # Thermal

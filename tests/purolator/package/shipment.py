@@ -46,7 +46,7 @@ class TestPurolatorShipment(unittest.TestCase):
             )
             self.assertEqual(
                 document_call[1]["url"],
-                f"{gateway.settings.server_url}/PWS/V1/ShippingDocuments/ShippingDocumentsService.asmx",
+                f"{gateway.settings.server_url}/EWS/V1/ShippingDocuments/ShippingDocumentsService.asmx",
             )
 
     def test_parse_shipment_response(self):
@@ -66,7 +66,7 @@ class TestPurolatorShipment(unittest.TestCase):
 
     def test_parse_invalid_shipment_response(self):
         with patch("purplship.package.mappers.purolator.proxy.http") as mocks:
-            mocks.side_effect = ["false"]
+            mocks.side_effect = [VALIDATE_SHIPMENT_ERROR_RESPONSE_XML]
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
@@ -87,7 +87,7 @@ SHIPMENT_REQUEST_PAYLOAD = {
         "country_code": "CA",
         "postal_code": "L4W5M8",
         "address_line1": "Main Street",
-        "phone_number": "5555555",
+        "phone_number": "1 514 5555555",
     },
     "recipient": {
         "person_name": "Aaron Summer",
@@ -96,7 +96,7 @@ SHIPMENT_REQUEST_PAYLOAD = {
         "country_code": "CA",
         "postal_code": "V5C5A9",
         "address_line1": "Douglas Road",
-        "phone_number": "2982181",
+        "phone_number": "1 514 2982181",
     },
     "parcel": {
         "reference": "Reference For Shipment",
@@ -117,122 +117,161 @@ PARSED_SHIPMENT_RESPONSE = [
     [],
 ]
 
-PARSED_INVALID_SHIPMENT_RESPONSE = [
-    None,
-    [
-        {
-            "carrier": "purolator",
-            "carrier_name": "PurolatorCourier",
-            "code": "000000",
-            "message": "Invalid Shipment Request",
-        }
-    ],
-]
+PARSED_INVALID_SHIPMENT_RESPONSE = [{'carrier': 'purolator', 'carrier_name': 'PurolatorCourier', 'label': 'No label returned'}, [{'carrier': 'purolator', 'carrier_name': 'PurolatorCourier', 'code': '3001116', 'details': {}, 'message': 'Service Failed'}]]
 
-SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2" xmlns="http://purolator.com/pws/datatypes/v2">
+SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <soap:Header>
         <v2:RequestContext>
-            <Version>2.1</Version>
-            <Language>en</Language>
-            <GroupID></GroupID>
-            <RequestReference></RequestReference>
-            <UserToken>token</UserToken>
+            <v2:Version>2.1</v2:Version>
+            <v2:Language>en</v2:Language>
+            <v2:GroupID></v2:GroupID>
+            <v2:RequestReference></v2:RequestReference>
+            <v2:UserToken>token</v2:UserToken>
         </v2:RequestContext>
     </soap:Header>
     <soap:Body>
         <v2:CreateShipmentRequest>
-            <Shipment>
-                <SenderInformation>
-                    <Address>
-                        <Name>Aaron Summer</Name>
-                        <StreetNumber></StreetNumber>
-                        <StreetName>Main Street</StreetName>
-                        <City>Mississauga</City>
-                        <Province>ON</Province>
-                        <Country>CA</Country>
-                        <PostalCode>L4W5M8</PostalCode>
-                        <PhoneNumber>
-                            <Phone>5555555</Phone>
-                        </PhoneNumber>
-                    </Address>
-                </SenderInformation>
-                <ReceiverInformation>
-                    <Address>
-                        <Name>Aaron Summer</Name>
-                        <StreetNumber></StreetNumber>
-                        <StreetName>Douglas Road</StreetName>
-                        <City>Burnaby</City>
-                        <Province>BC</Province>
-                        <Country>CA</Country>
-                        <PostalCode>V5C5A9</PostalCode>
-                        <PhoneNumber>
-                            <Phone>2982181</Phone>
-                        </PhoneNumber>
-                    </Address>
-                </ReceiverInformation>
-                <ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</ShipmentDate>
-                <PackageInformation>
-                    <ServiceID>PurolatorExpress</ServiceID>
-                    <TotalWeight>
-                        <Value>10</Value>
-                        <WeightUnit>lb</WeightUnit>
-                    </TotalWeight>
-                    <TotalPieces>1</TotalPieces>
-                    <PiecesInformation>
-                        <Piece>
-                            <Weight>
-                                <Value>10.</Value>
-                                <WeightUnit>lb</WeightUnit>
-                            </Weight>
-                        </Piece>
-                    </PiecesInformation>
-                </PackageInformation>
-                <PickupInformation>
-                    <PickupType>DropOff</PickupType>
-                </PickupInformation>
-                <TrackingReferenceInformation>
-                    <Reference1>Reference For Shipment</Reference1>
-                </TrackingReferenceInformation>
-            </Shipment>
-            <PrinterType>Thermal</PrinterType>
+            <v2:Shipment>
+                <v2:SenderInformation>
+                    <v2:Address>
+                        <v2:Name>Aaron Summer</v2:Name>
+                        <v2:StreetNumber></v2:StreetNumber>
+                        <v2:StreetName>Main Street</v2:StreetName>
+                        <v2:City>Mississauga</v2:City>
+                        <v2:Province>ON</v2:Province>
+                        <v2:Country>CA</v2:Country>
+                        <v2:PostalCode>L4W5M8</v2:PostalCode>
+                        <v2:PhoneNumber>
+                            <v2:CountryCode>1</v2:CountryCode>
+                            <v2:AreaCode>514</v2:AreaCode>
+                            <v2:Phone>5555555</v2:Phone>
+                        </v2:PhoneNumber>
+                    </v2:Address>
+                </v2:SenderInformation>
+                <v2:ReceiverInformation>
+                    <v2:Address>
+                        <v2:Name>Aaron Summer</v2:Name>
+                        <v2:StreetNumber></v2:StreetNumber>
+                        <v2:StreetName>Douglas Road</v2:StreetName>
+                        <v2:City>Burnaby</v2:City>
+                        <v2:Province>BC</v2:Province>
+                        <v2:Country>CA</v2:Country>
+                        <v2:PostalCode>V5C5A9</v2:PostalCode>
+                        <v2:PhoneNumber>
+                            <v2:CountryCode>1</v2:CountryCode>
+                            <v2:AreaCode>514</v2:AreaCode>
+                            <v2:Phone>2982181</v2:Phone>
+                        </v2:PhoneNumber>
+                    </v2:Address>
+                </v2:ReceiverInformation>
+                <v2:ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</v2:ShipmentDate>
+                <v2:PackageInformation>
+                    <v2:ServiceID>PurolatorExpress</v2:ServiceID>
+                    <v2:TotalWeight>
+                        <v2:Value>10</v2:Value>
+                        <v2:WeightUnit>lb</v2:WeightUnit>
+                    </v2:TotalWeight>
+                    <v2:TotalPieces>1</v2:TotalPieces>
+                    <v2:PiecesInformation>
+                        <v2:Piece>
+                            <v2:Weight>
+                                <v2:Value>10.</v2:Value>
+                                <v2:WeightUnit>lb</v2:WeightUnit>
+                            </v2:Weight>
+                        </v2:Piece>
+                    </v2:PiecesInformation>
+                </v2:PackageInformation>
+                <v2:PickupInformation>
+                    <v2:PickupType>DropOff</v2:PickupType>
+                </v2:PickupInformation>
+                <v2:TrackingReferenceInformation>
+                    <v2:Reference1>Reference For Shipment</v2:Reference1>
+                </v2:TrackingReferenceInformation>
+            </v2:Shipment>
+            <v2:PrinterType>Thermal</v2:PrinterType>
         </v2:CreateShipmentRequest>
     </soap:Body>
 </soap:Envelope>
 """
 
 VALIDATE_SHIPMENT_REQUEST_XML = re.sub(
-    "<PrinterType>[^>]+</PrinterType>",
+    "<v2:PrinterType>[^>]+</v2:PrinterType>",
     "<removal-anchor>",
     SHIPMENT_REQUEST_XML.replace("CreateShipmentRequest", "ValidateShipmentRequest"),
 ).replace("            <removal-anchor>\n", "")
 
-SHIPMENT_DOCUMENT_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2" xmlns="http://purolator.com/pws/datatypes/v2">
+SHIPMENT_DOCUMENT_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1">
     <soap:Header>
-        <v2:RequestContext>
-            <Version>1.3</Version>
-            <Language>en</Language>
-            <GroupID></GroupID>
-            <RequestReference></RequestReference>
-            <UserToken>token</UserToken>
-        </v2:RequestContext>
+        <v1:RequestContext>
+            <v1:Version>1.3</v1:Version>
+            <v1:Language>en</v1:Language>
+            <v1:GroupID></v1:GroupID>
+            <v1:RequestReference></v1:RequestReference>
+            <v1:UserToken>token</v1:UserToken>
+        </v1:RequestContext>
     </soap:Header>
     <soap:Body>
-        <v2:GetDocumentsRequest>
-            <OutputType>PDF</OutputType>
-            <Synchronous>true</Synchronous>
-            <DocumentCriterium>
-                <DocumentCriteria>
-                    <PIN>
-                        <Value>329014521622</Value>
-                    </PIN>
-                </DocumentCriteria>
-            </DocumentCriterium>
-        </v2:GetDocumentsRequest>
+        <v1:GetDocumentsRequest>
+            <v1:OutputType>PDF</v1:OutputType>
+            <v1:Synchronous>true</v1:Synchronous>
+            <v1:DocumentCriterium>
+                <v1:DocumentCriteria>
+                    <v1:PIN>
+                        <v1:Value>329014521622</v1:Value>
+                    </v1:PIN>
+                </v1:DocumentCriteria>
+            </v1:DocumentCriterium>
+        </v1:GetDocumentsRequest>
     </soap:Body>
 </soap:Envelope>
 """
 
-VALIDATE_SHIPMENT_RESPONSE_XML = "true"
+VALIDATE_SHIPMENT_RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Header>
+      <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+         <h:ResponseReference>232d3da7-921d-4247-baec-1c7683be86b0</h:ResponseReference>
+      </h:ResponseContext>
+   </s:Header>
+   <s:Body>
+      <ValidateShipmentResponse xmlns="http://purolator.com/pws/datatypes/v2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+         <ResponseInformation>
+            <Errors />
+            <InformationalMessages i:nil="true" />
+         </ResponseInformation>
+         <ValidShipment>true</ValidShipment>
+      </ValidateShipmentResponse>
+   </s:Body>
+</s:Envelope>
+"""
+
+VALIDATE_SHIPMENT_ERROR_RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Header>
+      <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+         <h:ResponseReference>fe4d8845-160b-4b77-9b00-a49ab295fea9</h:ResponseReference>
+      </h:ResponseContext>
+   </s:Header>
+   <s:Body>
+      <CreateShipmentResponse xmlns="http://purolator.com/pws/datatypes/v2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+         <ResponseInformation>
+            <Errors>
+               <Error>
+                  <Code>3001116</Code>
+                  <Description>Service Failed</Description>
+                  <AdditionalInformation i:nil="true" />
+               </Error>
+            </Errors>
+            <InformationalMessages i:nil="true" />
+         </ResponseInformation>
+         <ShipmentPIN i:nil="true" />
+         <PiecePINs i:nil="true" />
+         <ReturnShipmentPINs i:nil="true" />
+         <ExpressChequePIN i:nil="true" />
+      </CreateShipmentResponse>
+   </s:Body>
+</s:Envelope>
+"""
 
 SHIPMENT_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
     <s:Header>

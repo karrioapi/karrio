@@ -25,16 +25,19 @@ from pypurolator.estimate_service_2_1_2 import (
     PickupType,
     PhoneNumber,
     PaymentInformation,
-    PaymentType
+    PaymentType,
+    InternationalInformation,
+    DutyInformation,
+    BusinessRelationship
 )
-from purplship.core.units import Currency, Package
+from purplship.core.units import Currency, Package, Options, Phone
 from purplship.core.utils import Serializable, Element, concat_str, format_date, decimal
 from purplship.core.utils.soap import create_envelope
 from purplship.core.errors import RequiredFieldError
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.carriers.purolator.utils import Settings, standard_request_serializer
 from purplship.carriers.purolator.error import parse_error_response
-from purplship.carriers.purolator.units import Product, PackagePresets
+from purplship.carriers.purolator.units import Product, PackagePresets, DutyPaymentType
 
 
 def parse_full_estimate_response(
@@ -104,14 +107,16 @@ def get_full_estimate_request(
     if package.weight.value is None:
         raise RequiredFieldError("parcel.weight")
 
-    is_international = payload.shipper.country_code != payload.recipient.company_name
-    service = next(
-        (Product[s].value for s in payload.services if s in Product.__members__),
-        (Product.purolator_express_international if is_international else Product.purolator_express).value,
-    )
+    options = Options(payload.options)
+    shipper_phone_number = Phone(payload.shipper.phone_number)
+    recipient_phone_number = Phone(payload.recipient.phone_number)
+    is_international = payload.shipper.country_code != payload.recipient.country_code
+    service = next((Product[s].value for s in payload.services if s in Product.__members__), None)
+    default_service = (
+        Product.purolator_express_international if is_international else Product.purolator_express
+    ).value
+
     request = create_envelope(
-        envelope_prefix="SOAP-ENV",
-        header_prefix="ns1",
         header_content=RequestContext(
             Version="2.1",
             Language=settings.language,
@@ -119,7 +124,6 @@ def get_full_estimate_request(
             RequestReference="",
             UserToken=settings.user_token,
         ),
-        body_prefix="ns1",
         body_content=GetFullEstimateRequest(
             Shipment=Shipment(
                 SenderInformation=SenderInformation(
@@ -143,9 +147,9 @@ def get_full_estimate_request(
                         Country=payload.shipper.country_code,
                         PostalCode=payload.shipper.postal_code,
                         PhoneNumber=PhoneNumber(
-                            CountryCode="",
-                            AreaCode="",
-                            Phone=payload.shipper.phone_number or "",
+                            CountryCode=shipper_phone_number.country_code,
+                            AreaCode=shipper_phone_number.area_code,
+                            Phone=shipper_phone_number.phone or "",
                             Extension=None
                         ),
                         FaxNumber=None,
@@ -176,9 +180,9 @@ def get_full_estimate_request(
                         Country=payload.recipient.country_code,
                         PostalCode=payload.recipient.postal_code,
                         PhoneNumber=PhoneNumber(
-                            CountryCode="",
-                            AreaCode="",
-                            Phone=payload.recipient.phone_number or "",
+                            CountryCode=recipient_phone_number.country_code,
+                            AreaCode=recipient_phone_number.area_code,
+                            Phone=recipient_phone_number.phone or "",
                             Extension=None
                         ),
                         FaxNumber=None,
@@ -190,7 +194,7 @@ def get_full_estimate_request(
                 FromOnLabelInformation=None,
                 ShipmentDate=datetime.today().strftime("%Y-%m-%d"),
                 PackageInformation=PackageInformation(
-                    ServiceID=service,
+                    ServiceID=(service or default_service),
                     Description=payload.parcel.description,
                     TotalWeight=TotalWeight(
                         Value=package.weight.value,
@@ -241,7 +245,19 @@ def get_full_estimate_request(
                     DangerousGoodsDeclarationDocumentIndicator=None,
                     OptionsInformation=None,
                 ),
-                InternationalInformation=None,
+                InternationalInformation=InternationalInformation(
+                    DocumentsOnlyIndicator=payload.parcel.is_document,
+                    ContentDetails=None,
+                    BuyerInformation=None,
+                    PreferredCustomsBroker=None,
+                    DutyInformation=DutyInformation(
+                        BillDutiesToParty=DutyPaymentType.recipient.value,
+                        BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
+                        Currency=options.currency,
+                    ),
+                    ImportExportType=None,
+                    CustomsInvoiceDocumentIndicator=None
+                ) if is_international else None,
                 ReturnShipmentInformation=None,
                 PaymentInformation=PaymentInformation(
                     PaymentType=PaymentType.SENDER.value,
@@ -257,7 +273,7 @@ def get_full_estimate_request(
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),
-            ShowAlternativeServicesIndicator=True,
+            ShowAlternativeServicesIndicator=service is None,
         ),
     )
     return Serializable(request, standard_request_serializer)

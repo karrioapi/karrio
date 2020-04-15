@@ -33,7 +33,6 @@ class TestPurolatorTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
             )
@@ -71,24 +70,24 @@ PARSED_TRACKING_RESPONSE = [
     [],
 ]
 
-TRACKING_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2" xmlns="http://purolator.com/pws/datatypes/v2">
+TRACKING_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1">
     <soap:Header>
-        <v2:RequestContext>
-            <Version>1.1</Version>
-            <Language>en</Language>
-            <GroupID></GroupID>
-            <RequestReference></RequestReference>
-            <UserToken>token</UserToken>
-        </v2:RequestContext>
+        <v1:RequestContext>
+            <v1:Version>1.2</v1:Version>
+            <v1:Language>en</v1:Language>
+            <v1:GroupID></v1:GroupID>
+            <v1:RequestReference></v1:RequestReference>
+            <v1:UserToken>token</v1:UserToken>
+        </v1:RequestContext>
     </soap:Header>
     <soap:Body>
-        <v2:TrackPackagesByPinRequest>
-            <PINs>
-                <PIN>
-                    <Value>m123</Value>
-                </PIN>
-            </PINs>
-        </v2:TrackPackagesByPinRequest>
+        <v1:TrackPackagesByPinRequest>
+            <v1:PINs>
+                <v1:PIN>
+                    <v1:Value>m123</v1:Value>
+                </v1:PIN>
+            </v1:PINs>
+        </v1:TrackPackagesByPinRequest>
     </soap:Body>
 </soap:Envelope>
 """
