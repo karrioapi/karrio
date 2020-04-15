@@ -1,1 +1,0 @@
-web: gunicorn purplship_core.wsgi --log-file -

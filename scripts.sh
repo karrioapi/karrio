@@ -1,37 +1,87 @@
 #!/usr/bin/env bash
 
+# Python virtual environment helpers
+
 ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
+ENV_DIR=".venv"
+
+activate_env() {
+  echo "Activate $BASE_DIR"
+  deactivate || true
+  # shellcheck source=src/script.sh
+  source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+}
+
+create_env() {
+    echo "create $BASE_DIR Python3 env"
+    deactivate || true
+    rm -rf "${ROOT:?}/$ENV_DIR" || true
+    mkdir -p "${ROOT:?}/$ENV_DIR"
+    python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
+    activate_env &&
+    pip install --upgrade pip
+}
 
 init() {
-    deactivate || true
-    rm -r $ROOT/venv || true
-    mkdir -p $ROOT/venv
-    python3 -m venv $ROOT/venv/$BASE_DIR &&
-    source $ROOT/venv/$BASE_DIR/bin/activate &&
+    create_env &&
     pip install -r requirements.txt &&
-    pip install -r requirements-dev.txt
+    pip install -r requirements.dev.txt &&
+    install_all
+}
+
+
+alias env:new=create_env
+alias env:on=activate_env
+alias env:reset=init
+
+
+# Project helpers
+
+install_all() {
+    pip install -e "${ROOT:?}/purpleserver/core" &&
+    pip install -e "${ROOT:?}/purpleserver/proxy" &&
+    pip install -e "${ROOT:?}/purpleserver"
 }
 
 run_server() {
-    (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'password')" | python manage.py shell) > /dev/null 2>&1;
-    python manage.py makemigrations && python manage.py migrate && python manage.py runserver
+  if [[ "$1" == "-i" ]]; then
+    install_all
+  fi
+  purplship makemigrations &&
+  purplship migrate &&
+  (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+  purplship runserver
 }
 
-run_prod() {
-    APP_STAGE="production"
-    run_server
+clean_builds() {
+    find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; || true
 }
-alias run:prod=run_prod
 
-run_dev() {
-    APP_STAGE="developement"
-    run_server
+backup_wheels() {
+    # shellcheck disable=SC2154
+    [ -d "$wheels" ] &&
+    find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
+    clean_builds
 }
-alias run:dev=run_dev
 
-run_container() {
-    APP_STAGE="containerized"
-    docker-compose up "$@"
+build() {
+  pushd "$1" || false &&
+  python setup.py bdist_wheel
+  popd || true
 }
-alias run:container=run_container
+
+build_all() {
+  clean_builds
+  build "${ROOT:?}/purpleserver/core"
+  build "${ROOT:?}/purpleserver/proxy"
+  build "${ROOT:?}/purpleserver"
+  backup_wheels
+}
+
+
+alias run=run_server
+
+env:on || true

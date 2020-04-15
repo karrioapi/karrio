@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+  web:
+    build: .
+    restart: always
+    entrypoint: |
+      bash -c "bash -s <<EOF
+      purplship makemigrations &&
+      purplship migrate &&
+      (echo \"from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')\" | purplship shell) > /dev/null 2>&1;
+      purplship runserver 0.0.0.0:8000
+      EOF"
+    environment:
+      - DEBUG_MODE=True
+      - DJANGO_ALLOWED_HOSTS=*
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=db
+      - DATABASE_ENGINE=postgresql_psycopg2
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
