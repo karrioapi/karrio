@@ -13,7 +13,8 @@ from purplship.core.models import (
     TrackingDetails,
     TrackingRequest,
     ShipmentDetails,
-    ShipmentRequest as BaseShipmentRequest
+    ShipmentRequest as BaseShipmentRequest,
+    Insurance
 )
 
 

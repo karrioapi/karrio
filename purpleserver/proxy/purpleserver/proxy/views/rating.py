@@ -22,12 +22,13 @@ logger = logging.getLogger(__name__)
 
 @swagger_auto_schema(
     methods=['post'],
+    tags=['PROXY'],
     responses={200: RateResponse()},
     request_body=RateRequest(),
     operation_description=(
         'POST /v1/rating?carrier=[carrier]&carrier_name=[carrier_name]'
     ),
-    operation_id="ShippingRates",
+    operation_id="Rates",
     manual_parameter=[
         openapi.Parameter(
             'carrier',
@@ -36,24 +37,24 @@ logger = logging.getLogger(__name__)
             type=openapi.TYPE_STRING
         ),
         openapi.Parameter(
-            'carrier_name',
+            'carrierName',
             openapi.IN_QUERY,
             description="shipment name",
             type=openapi.TYPE_STRING
         )
-    ]
+    ],
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated, ))
 @throttle_classes([UserRateThrottle, AnonRateThrottle])
-def rate(request: Request):
+def rates(request: Request):
     try:
         try:
             query = request.query_params
             carrier_settings_list = get_carriers(
                 carrier_type=query.get('carrier'),
-                carrier_name=query.get('carrier_name'),
+                carrier_name=query.get('carrierName'),
             )
             rate_request = RateRequest(data=request.data)
 
@@ -75,4 +76,4 @@ def rate(request: Request):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('rating', rate, name='Rates'))
+router.urls.append(path('proxy/rates?<str:carrierName>', rates, name='Rates'))

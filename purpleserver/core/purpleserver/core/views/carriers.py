@@ -5,52 +5,28 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from rest_framework.routers import DefaultRouter
 
 from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
-from purpleserver.core.serializers import CarrierSettingsList
+from purpleserver.core.router import router
+from purpleserver.core.serializers import CarrierSettingsList, CarrierFilters
 from purpleserver.core.gateway import get_carriers
 from purpleserver.core.datatypes import CarrierSettings
 
 logger = logging.getLogger(__name__)
-router = DefaultRouter(trailing_slash=False)
 
 
 @swagger_auto_schema(
     methods=['get'],
+    tags=['CORE'],
     responses={200: CarrierSettingsList()},
     operation_description=("""
-    GET /v1/carriers?carrier=[carrier]&test=[true/false]
-    
-    GET /v1/carriers?carrier_name=[carrierName]
-    
-    GET /v1/carriers?carrier=[carrier]&carrierName=[carrierName]
+    Return the list of configured carriers
     """),
-    operation_id="GetConfiguredCarriers",
-    manual_parameter=[
-        openapi.Parameter(
-            'carrier',
-            openapi.IN_QUERY,
-            description="specific shipping carrier type",
-            type=openapi.TYPE_STRING
-        ),
-        openapi.Parameter(
-            'carrierName',
-            openapi.IN_QUERY,
-            description="shipment name",
-            type=openapi.TYPE_STRING
-        ),
-        openapi.Parameter(
-            'test',
-            openapi.IN_QUERY,
-            description="test mode",
-            type=openapi.TYPE_BOOLEAN
-        )
-    ]
+    operation_id="Carriers",
+    query_serializer=CarrierFilters
 )
 @api_view(['GET'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))

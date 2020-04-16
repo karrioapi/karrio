@@ -20,11 +20,12 @@ logger = logging.getLogger(__name__)
 
 @swagger_auto_schema(
     methods=['get'],
+    tags=['PROXY'],
     responses={200: TrackingResponse()},
     operation_description="""
     GET /v1/tracking/[carrier]/[tracking_number]
     """,
-    operation_id="TrackShipment",
+    operation_id="Tracking",
     manual_parameter=[
         openapi.Parameter(
             'carrier',
@@ -70,4 +71,4 @@ def track(_, carrier: str, tracking_number: str):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('tracking/<carrier>/<tracking_number>', track, name='Tracking'))
+router.urls.append(path('proxy/tracking/<carrier>/<tracking_number>', track, name='Tracking'))

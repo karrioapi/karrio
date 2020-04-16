@@ -21,12 +21,13 @@ logger = logging.getLogger(__name__)
 
 @swagger_auto_schema(
     methods=['post'],
+    tags=['PROXY'],
     request_body=ShipmentRequest(),
     responses={200: ShipmentResponse()},
     operation_description="""
     POST /v1/shipping
     """,
-    operation_id="CreateShipment",
+    operation_id="Shipping",
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
@@ -49,4 +50,4 @@ def ship(request: Request):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('shipping', ship, name='Shipping'))
+router.urls.append(path('proxy/shipments', ship, name='Shipping'))
