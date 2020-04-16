@@ -305,6 +305,6 @@ class PickupDetails:
     confirmation_number: str
     pickup_date: str = None
     pickup_charge: ChargeDetails = None
-    pickup_time: str = None
-    pickup_max_time: str = None
+    ready_time: str = None
+    closing_time: str = None
     id: str = None
