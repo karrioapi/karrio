@@ -242,6 +242,7 @@ RateRequestUsingPackagePresetXML = f"""<mailing-scenario xmlns="http://www.canad
     <parcel-characteristics>
         <weight>0.5</weight>
         <dimensions>
+            <length>1.5</length>
             <width>26.</width>
             <height>15.9</height>
         </dimensions>

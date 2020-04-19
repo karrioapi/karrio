@@ -10,7 +10,6 @@ class PackagePreset:
     length: float = None
     weight: float = None
     volume: float = None
-    thickness: float = None
     weight_unit: str = "LB"
     dimension_unit: str = "IN"
     packaging_type: str = None
@@ -227,10 +226,6 @@ class Package:
     @property
     def volume(self):
         return Volume(self.width, self.length, self.height)
-
-    @property
-    def thickness(self):
-        return Dimension(self._preset.thickness, self.dimension_unit)
 
 
 class Options:

@@ -10,12 +10,12 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    ups_small_express_box = PackagePreset(weight=30, width=13, height=11, length=2)
-    ups_medium_express_box = PackagePreset(weight=30, width=16, height=11, length=3)
-    ups_large_express_box = PackagePreset(weight=30, width=18, height=13, length=3)
-    ups_express_tube = PackagePreset(width=38, height=6, length=6)
-    ups_express_pak = PackagePreset(width=16, height=11.75)
-    ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3)
+    ups_small_express_box = PackagePreset(weight=30.0, width=13.0, height=11.0, length=2.0)
+    ups_medium_express_box = PackagePreset(weight=30.0, width=16.0, height=11.0, length=3.0)
+    ups_large_express_box = PackagePreset(weight=30.0, width=18.0, height=13.0, length=3.0)
+    ups_express_tube = PackagePreset(width=38.0, height=6.0, length=6.0)
+    ups_express_pak = PackagePreset(width=16.0, height=11.75)
+    ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3.0)
 
 
 class WeightUnit(Enum):
@@ -100,7 +100,7 @@ class RatingServiceCode(Enum):
     ups_worldwide_express_plus = "54"
     ups_worldwide_saver = "65"
     ups_2nd_day_air = "02"
-    ups_2nd_day_air_a_m = "59"
+    ups_2nd_day_air_am = "59"
     ups_3_day_select = "12"
     ups_ground = "03"
     ups_next_day_air = "01"
@@ -123,7 +123,7 @@ class RatingServiceCode(Enum):
     ups_worldwide_express_freight = "96"
     ups_freight_ltl = "308"
     ups_freight_ltl_guaranteed = "309"
-    ups_freight_ltl_guaranteed_a_m = "334"
+    ups_freight_ltl_guaranteed_am = "334"
     ups_standard_ltl = "349"
 
 
@@ -176,7 +176,7 @@ class ShippingServiceCode(Enum):
     ups_worldwide_express_plus = "54"
     ups_worldwide_saver = "65"
     ups_2nd_day_air = "02"
-    ups_2nd_day_air_a_m = "59"
+    ups_2nd_day_air_am = "59"
     ups_3_day_select = "12"
     ups_expedited_mail_innovations = "M4"
     ups_first_class_mail = "M2"

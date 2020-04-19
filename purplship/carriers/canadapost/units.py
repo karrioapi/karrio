@@ -30,16 +30,16 @@ class PackagePresets(Flag):
         width=46.0, height=46.0, length=40.6
     )
     canadapost_xexpresspost_certified_envelope = PackagePreset(
-        width=26.0, height=15.9, weight=0.5, thickness=1.5
+        width=26.0, height=15.9, weight=0.5, length=1.5
     )
     canadapost_xexpresspost_national_large_envelope = PackagePreset(
-        width=40.0, height=29.2, weight=1.36, thickness=1.5
+        width=40.0, height=29.2, weight=1.36, length=1.5
     )
     canadapost_xexpresspost_regional_small_envelope = PackagePreset(
-        width=26.0, height=15.9, weight=0.5, thickness=1.5
+        width=26.0, height=15.9, weight=0.5, length=1.5
     )
     canadapost_xexpresspost_regional_large_envelope = PackagePreset(
-        width=40.0, height=29.2, weight=1.36, thickness=1.5
+        width=40.0, height=29.2, weight=1.36, length=1.5
     )
 
 
