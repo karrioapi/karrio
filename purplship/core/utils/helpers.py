@@ -82,7 +82,10 @@ def jsonify(entity: Union[dict, T]) -> str:
     recursively parse a data type using __dict__ into a JSON
     """
     return json.dumps(
-        attr.asdict(JWrapper(value=entity)).get("value"), sort_keys=True, indent=4
+        attr.asdict(JWrapper(value=entity)).get("value"),
+        default=lambda o: o.__dict__ if hasattr(o, '__dict__') else o,
+        sort_keys=True,
+        indent=4
     )
 
 
