@@ -37,6 +37,12 @@ class CarrierFilters(Serializer):
     """)
 
 
+class TestFilters(Serializer):
+    test = BooleanField(required=False, default=False, help_text="""
+    The test flag indicates whether to use a carrier configured for test. 
+    """)
+
+
 class CarrierSettingsList(ListSerializer):
     child = CarrierSettings()
 

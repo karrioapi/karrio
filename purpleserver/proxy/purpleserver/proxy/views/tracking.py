@@ -8,40 +8,26 @@ from rest_framework.response import Response
 from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 from purplship.core.utils import to_dict
-from purpleserver.core.serializers import TrackingRequest, TrackingResponse
+from purpleserver.core.serializers import TrackingRequest, TrackingResponse, TestFilters
 from purpleserver.core.gateway import track_shipment, get_carriers
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
+
+DESCRIPTIONS = """
+You can track a shipment by specifying the carrier and the shipment tracking number.
+"""
 
 
 @swagger_auto_schema(
     methods=['get'],
     tags=['PROXY'],
     responses={200: TrackingResponse()},
-    operation_description="""
-    GET /v1/tracking/[carrier]/[tracking_number]
-    """,
-    operation_id="Tracking",
-    manual_parameter=[
-        openapi.Parameter(
-            'carrier',
-            openapi.IN_PATH,
-            required=True,
-            description="specific shipping carrier",
-            type=openapi.TYPE_STRING
-        ),
-        openapi.Parameter(
-            'tracking_number',
-            openapi.IN_PATH,
-            required=True,
-            description="shipment tracking number",
-            type=openapi.TYPE_STRING
-        )
-    ]
+    operation_description=DESCRIPTIONS,
+    operation_id="Track A Package",
+    query_serializer=TestFilters
 )
 @api_view(['GET'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))

@@ -9,40 +9,41 @@ from rest_framework.response import Response
 from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 from purplship.core.utils.helpers import to_dict
 
-from purpleserver.core.serializers import RateRequest, RateResponse
+from purpleserver.core.serializers import RateRequest, RateResponse, CarrierFilters, ShipmentOption
 from purpleserver.core.gateway import fetch_rates, get_carriers
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
+
+DESCRIPTIONS = """
+The Shipping process begins by fetching rates for your shipment.
+The rate request return the backbone of your shipment object adding
+the rates retrieved from one or many carriers based on your filter.
+"""
+
+
+class RateRequestSchema(RateRequest):
+    options = ShipmentOption(required=False, help_text=f"""
+    The options available for the shipment.
+
+    Note that this is a dictionary in which you can can add as many carrier shipment
+    options you desire to add to your shipment. 
+
+    Please consult the reference for additional specific carriers options.
+    """)
 
 
 @swagger_auto_schema(
     methods=['post'],
     tags=['PROXY'],
     responses={200: RateResponse()},
-    request_body=RateRequest(),
-    operation_description=(
-        'POST /v1/rating?carrier=[carrier]&carrier_name=[carrier_name]'
-    ),
-    operation_id="Rates",
-    manual_parameter=[
-        openapi.Parameter(
-            'carrier',
-            openapi.IN_QUERY,
-            description="specific shipping carrier type",
-            type=openapi.TYPE_STRING
-        ),
-        openapi.Parameter(
-            'carrierName',
-            openapi.IN_QUERY,
-            description="shipment name",
-            type=openapi.TYPE_STRING
-        )
-    ],
+    request_body=RateRequestSchema(),
+    operation_description=DESCRIPTIONS,
+    operation_id="Fetch Rates",
+    query_serializer=CarrierFilters
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
@@ -76,4 +77,4 @@ def rates(request: Request):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('proxy/rates?<str:carrierName>', rates, name='Rates'))
+router.urls.append(path('proxy/rates', rates, name='Rates'))

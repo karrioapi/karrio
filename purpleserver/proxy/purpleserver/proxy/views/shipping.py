@@ -12,22 +12,36 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purplship.core.utils.helpers import to_dict
 
-from purpleserver.core.serializers import ShipmentResponse, ShipmentRequest
+from purpleserver.core.serializers import ShipmentResponse, ShipmentRequest, ShipmentOption
 from purpleserver.core.gateway import create_shipment
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
 
+DESCRIPTIONS = """
+Once a Shipment is initialized by fetching the rates, the remaining requirements might be specified 
+to submit the shipment to the carrier of the selected rate of your choice.
+"""
+
+
+class ShipmentRequestSchema(ShipmentRequest):
+    options = ShipmentOption(required=False, help_text=f"""
+    The options available for the shipment.
+
+    Note that this is a dictionary in which you can can add as many carrier shipment
+    options you desire to add to your shipment. 
+
+    Please consult the reference for additional specific carriers options.
+    """)
+
 
 @swagger_auto_schema(
     methods=['post'],
     tags=['PROXY'],
-    request_body=ShipmentRequest(),
+    request_body=ShipmentRequestSchema(),
     responses={200: ShipmentResponse()},
-    operation_description="""
-    POST /v1/shipping
-    """,
-    operation_id="Shipping",
+    operation_description=DESCRIPTIONS,
+    operation_id="Create A Shipment",
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
