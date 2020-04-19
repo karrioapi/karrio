@@ -17,7 +17,7 @@ jstruct==2020.4.0
 lxml==4.5.0
 MarkupSafe==1.1.1
 packaging==20.3
-purplship.package==2020.4.0
+purplship.package==2020.4.1
 py-australiapost==2020.4.0
 py-canadapost==2020.4.0
 py-dhl==2020.4.0
