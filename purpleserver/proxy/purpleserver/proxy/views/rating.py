@@ -12,7 +12,11 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purplship.core.utils.helpers import to_dict
 
-from purpleserver.core.serializers import RateRequest, RateResponse, CarrierFilters, ShipmentOption
+from purpleserver.core.datatypes import ErrorResponse
+from purpleserver.core.exceptions import ValidationError
+from purpleserver.core.serializers import (
+    RateRequest, RateResponse, CarrierFilters, ShipmentOption, ErrorResponse as ErrorResponseSerializer
+)
 from purpleserver.core.gateway import fetch_rates, get_carriers
 from purpleserver.proxy.router import router
 
@@ -39,7 +43,7 @@ class RateRequestSchema(RateRequest):
 @swagger_auto_schema(
     methods=['post'],
     tags=['PROXY'],
-    responses={200: RateResponse()},
+    responses={200: RateResponse(), 400: ErrorResponseSerializer()},
     request_body=RateRequestSchema(),
     operation_description=DESCRIPTIONS,
     operation_id="Fetch Rates",
@@ -65,13 +69,17 @@ def rates(request: Request):
             rate_request.is_valid(raise_exception=True)
             response = fetch_rates(rate_request.data, carrier_settings_list)
 
+            if isinstance(response, ErrorResponse):
+                Response(to_dict(response), status=status.HTTP_400_BAD_REQUEST)
             return Response(
                 to_dict(response),
-                status=status.HTTP_207_MULTI_STATUS if len(response.messages) > 0 else status.HTTP_200_OK
+                status=status.HTTP_207_MULTI_STATUS if len(response.messages) > 0 else status.HTTP_201_CREATED
             )
-        except Exception as pe:
-            logger.exception(pe)
-            return Response(pe.args, status=status.HTTP_400_BAD_REQUEST)
+
+        except ValidationError as ve:
+            logger.exception(ve)
+            return Response(ve.args, status=status.HTTP_400_BAD_REQUEST)
+
     except Exception as e:
         logger.exception(e)
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

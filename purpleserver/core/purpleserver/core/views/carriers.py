@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
+from rest_framework.request import Request
 
 from django.urls import path
 
@@ -31,7 +32,7 @@ logger = logging.getLogger(__name__)
 @api_view(['GET'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated, ))
-def carriers_settings(request):
+def carriers_settings(request: Request):
     try:
         try:
             query = request.query_params

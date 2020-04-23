@@ -6,13 +6,18 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.reverse import reverse
 from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
 from purplship.core.utils.helpers import to_dict
 
-from purpleserver.core.serializers import ShipmentResponse, ShipmentRequest, ShipmentOption
+from purpleserver.core.datatypes import ErrorResponse
+from purpleserver.core.exceptions import ValidationError
+from purpleserver.core.serializers import (
+    ShipmentResponse, ShipmentRequest, ShipmentOption, ErrorResponse as ErrorResponseSerializer
+)
 from purpleserver.core.gateway import create_shipment
 from purpleserver.proxy.router import router
 
@@ -39,7 +44,7 @@ class ShipmentRequestSchema(ShipmentRequest):
     methods=['post'],
     tags=['PROXY'],
     request_body=ShipmentRequestSchema(),
-    responses={200: ShipmentResponse()},
+    responses={200: ShipmentResponse(), 400: ErrorResponseSerializer()},
     operation_description=DESCRIPTIONS,
     operation_id="Create A Shipment",
 )
@@ -53,12 +58,25 @@ def ship(request: Request):
             shipping_request = ShipmentRequest(data=request.data)
             shipping_request.is_valid(raise_exception=True)
 
-            response = create_shipment(shipping_request.data)
+            response = create_shipment(
+                shipping_request.data,
+                resolve_tracking_url=(
+                    lambda trackin_url, shipping: reverse(
+                        "Tracking",
+                        request=request,
+                        kwargs=dict(tracking_number=shipping.tracking_number, carrier=shipping.carrier)
+                    )
+                )
+            )
 
+            if isinstance(response, ErrorResponse):
+                Response(to_dict(response), status=status.HTTP_400_BAD_REQUEST)
             return Response(to_dict(response), status=status.HTTP_201_CREATED)
-        except Exception as pe:
-            logger.exception(pe)
-            return Response(pe.args, status=status.HTTP_400_BAD_REQUEST)
+
+        except ValidationError as ve:
+            logger.exception(ve)
+            return Response(ve.args, status=status.HTTP_400_BAD_REQUEST)
+
     except Exception as e:
         logger.exception(e)
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
