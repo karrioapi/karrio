@@ -58,8 +58,9 @@ def create_shipment(payload: dict, resolve_tracking_url: Callable[[str, dict], s
         return ErrorResponse(messages=messages)
 
     shipment_rate = shipment.selected_rate or selected_rate
+    is_test = "?test=true" if carrier_settings.settings.get("test") else ""
     tracking_url = (
-        resolve_tracking_url(shipment.tracking_number, shipment)
+        resolve_tracking_url(shipment.tracking_number, shipment) + is_test
         if resolve_tracking_url is not None else None
     )
     return ShipmentResponse(
