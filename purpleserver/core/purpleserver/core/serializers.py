@@ -4,7 +4,7 @@ from purplship.core.units import (
 )
 from rest_framework.serializers import (
     Serializer, CharField, FloatField, BooleanField, IntegerField, ListField,
-    ChoiceField, ListSerializer, UUIDField, DictField
+    ChoiceField, ListSerializer, UUIDField, DictField, URLField
 )
 
 CARRIERS = [(k, k) for k in MODELS.keys()]
@@ -449,8 +449,13 @@ class ShipmentRequest(Serializer):
     """)
 
 
-class Shipment(ShipmentRequest, ShipmentDetails):
+class Shipment(ShipmentDetails, ShipmentRequest):
     selected_rate_id = UUIDField(required=True, help_text="The shipment selected rate.")
+    tracking_url = URLField(required=False, help_text="The shipment tracking url")
+
+
+class ErrorResponse(Serializer):
+    messages = ListField(child=Message(), required=False, help_text="The list of error messages")
 
 
 class RateResponse(Serializer):
@@ -459,10 +464,10 @@ class RateResponse(Serializer):
 
 
 class ShipmentResponse(Serializer):
-    messages = ListField(child=Message(), required=False, help_text="The list of note, error or warning messages")
+    messages = ListField(child=Message(), required=False, help_text="The list of note or warning messages")
     shipment = Shipment(required=False, help_text="The submitted shipment's summary")
 
 
 class TrackingResponse(Serializer):
-    messages = ListField(child=Message(), required=False, help_text="The list of note, error or warning messages")
+    messages = ListField(child=Message(), required=False, help_text="The list of note or warning messages")
     tracking_details = TrackingDetails(required=False, help_text="The tracking details retrieved")

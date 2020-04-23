@@ -65,14 +65,21 @@ class Shipment:
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
 
-    selected_rate: RateDetails = JList[RateDetails, REQUIRED]
+    selected_rate: RateDetails = JStruct[RateDetails, REQUIRED]
     rates: List[RateDetails] = JList[RateDetails, REQUIRED]
+
+    tracking_url: str = None
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
     doc_images: List[Doc] = JList[Doc]
 
     options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class ErrorResponse:
+    messages: List[Message] = JList[Message]
 
 
 @attr.s(auto_attribs=True)
