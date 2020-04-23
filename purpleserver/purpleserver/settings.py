@@ -236,5 +236,10 @@ LOGGING = {
             'level': LOG_LEVEL,
             'propagate': False,
         },
+        'purpleserver': {
+            'handlers': ['file', 'console'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
     },
 }
