@@ -145,7 +145,6 @@ class Parcel(Serializer):
     
     For specific carriers package preset, please consult the reference.
     """)
-    reference = CharField(required=False, help_text="The parcel's shipment reference")
     description = CharField(required=False, help_text="The parcel's description")
     content = CharField(required=False, help_text="The parcel's content description")
     is_document = BooleanField(required=False, help_text="Indicates if the parcel is composed of documents only")
@@ -264,6 +263,7 @@ class RateRequest(Serializer):
 
     Please consult the reference for additional specific carriers options.
     """)
+    reference = CharField(required=False, help_text="The shipment reference")
 
 
 class TrackingRequest(Serializer):
@@ -447,6 +447,7 @@ class ShipmentRequest(Serializer):
     
     eg: Invoices...
     """)
+    reference = CharField(required=False, help_text="The shipment reference")
 
 
 class Shipment(ShipmentDetails, ShipmentRequest):

@@ -50,6 +50,7 @@ class ShipmentRequest(BaseShipmentRequest):
     doc_images: List[Doc] = JList[Doc]
 
     options: Dict = {}
+    reference: str = ""
 
 
 @attr.s(auto_attribs=True)
