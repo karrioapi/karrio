@@ -8,7 +8,7 @@ T = TypeVar('T')
 
 
 class Job:
-    def __init__(self, id: str = None, data: Any = None, fallback: Any = None, **extra):
+    def __init__(self, id: str, data: Any = None, fallback: Any = None, **extra):
         self.id: str = id
         self.data = data
         self.fallback = fallback
