@@ -1,6 +1,6 @@
 _type: export
 __export_format: 4
-__export_date: 2020-04-23T22:21:32.404Z
+__export_date: 2020-04-24T15:00:08.303Z
 __export_source: insomnia.desktop.app:v7.1.1
 resources:
   - _id: req_0ea7e1d6252b4c9c9534312a3b5b31a9
@@ -95,7 +95,7 @@ resources:
     isPrivate: false
     metaSortKey: -1585571781892
     method: POST
-    modified: 1587678138699
+    modified: 1587738493558
     name: Rating
     parameters: []
     parentId: fld_360f1680c37a4d2e98f517cf352142cf
@@ -105,7 +105,59 @@ resources:
     settingRebuildPath: true
     settingSendCookies: true
     settingStoreCookies: true
-    url: http://127.0.0.1:8000/v1/proxy/rates?carrier=canadapost
+    url: http://127.0.0.1:8000/v1/proxy/rates?carrierName=CanadaPost
+    _type: request
+  - _id: req_8260e83bd76e4a02b73872eeeb4ce49a
+    authentication:
+      prefix: Token
+      token: 76362954ae67b980861055440c87b0ae03217649
+      type: bearer
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "shipper": {
+            "postalCode": "V6M2V9",
+            "city": "Vancouver",
+            "countryCode": "CA",
+            "stateCode": "BC",
+            "residential": true,
+            "addressLine1": "5840 Oak St"
+          },
+          "recipient": {
+            "postalCode": "E1C4Z8",
+            "city": "Moncton",
+            "countryCode": "CA",
+            "stateCode": "NB",
+            "residential": false,
+            "addressLine1": "125 Church St"
+          },
+          "parcel": {
+            "weight": 1,
+            "packagePreset": "canadapost_corrugated_small_box"
+          },
+        	"services": ["canadapost_priority", "canadapost_regular_parcel"]
+        }
+    created: 1587738295057
+    description: ""
+    headers:
+      - id: pair_58886c6a6f8c4e4986b8ac442cf1c7b2
+        name: Content-Type
+        value: application/json
+    isPrivate: false
+    metaSortKey: -1585385533399.5
+    method: POST
+    modified: 1587738373029
+    name: Rating - Non contract
+    parameters: []
+    parentId: fld_360f1680c37a4d2e98f517cf352142cf
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    settingRebuildPath: true
+    settingSendCookies: true
+    settingStoreCookies: true
+    url: http://127.0.0.1:8000/v1/proxy/rates?carrier=canadapost&carrierName=CanadaPostNonContract
     _type: request
   - _id: req_71fd21998c104bb2b6b26b259652e3c7
     authentication:
@@ -210,6 +262,119 @@ resources:
     method: POST
     modified: 1587673133395
     name: Shipping
+    parameters: []
+    parentId: fld_360f1680c37a4d2e98f517cf352142cf
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    settingRebuildPath: true
+    settingSendCookies: true
+    settingStoreCookies: true
+    url: http://127.0.0.1:8000/v1/proxy/shipments
+    _type: request
+  - _id: req_9371ffd844d24016a9d2d10b88e43cd2
+    authentication:
+      prefix: Token
+      token: 76362954ae67b980861055440c87b0ae03217649
+      type: bearer
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"selectedRateId": "8c6f1bab-3937-414a-bc42-708dae0005d7",
+        	"options": {},
+        	"recipient": {
+        		"addressLine1": "125 Church St",
+        		"personName": "John Doe",
+        		"companyName": "A corp.",
+        		"phoneNumber": "514-000-0000",
+        		"city": "Moncton",
+        		"countryCode": "CA",
+        		"postalCode": "E1C4Z8",
+        		"residential": false,
+        		"stateCode": "NB"
+        	},
+        	"shipper": {
+        		"addressLine1": "5840 Oak St",
+        		"personName": "Jane Doe",
+        		"companyName": "B corp.",
+        		"phoneNumber": "514-000-0000",
+        		"city": "Vancouver",
+        		"countryCode": "CA",
+        		"postalCode": "V6M2V9",
+        		"residential": false,
+        		"stateCode": "BC"
+        	},
+        	"parcel": {
+        		"weight": 1,
+        		"packagePreset": "canadapost_corrugated_small_box"
+        	},
+        	"rates": [
+        		{
+        			"baseCharge": 101.83,
+        			"carrier": "canadapost",
+        			"carrierName": "CanadaPostNonContract",
+        			"currency": "CAD",
+        			"discount": 1.5,
+        			"dutiesAndTaxes": 15.5,
+        			"estimatedDelivery": "2020-04-28",
+        			"extraCharges": [
+        				{
+        					"amount": 8.53,
+        					"currency": "CAD",
+        					"name": "Fuel surcharge"
+        				},
+        				{
+        					"amount": -7.03,
+        					"currency": "CAD",
+        					"name": "SMB Savings"
+        				}
+        			],
+        			"id": "e21f1da8-92e1-4d0c-a4ae-9ca1c1b523f5",
+        			"service": "canadapost_priority",
+        			"totalCharge": 118.83
+        		},
+        		{
+        			"baseCharge": 27.36,
+        			"carrier": "canadapost",
+        			"carrierName": "CanadaPostNonContract",
+        			"currency": "CAD",
+        			"discount": 0.23,
+        			"dutiesAndTaxes": 4.14,
+        			"estimatedDelivery": "2020-05-07",
+        			"extraCharges": [
+        				{
+        					"amount": 2.28,
+        					"currency": "CAD",
+        					"name": "Fuel surcharge"
+        				},
+        				{
+        					"amount": -2.05,
+        					"currency": "CAD",
+        					"name": "SMB Savings"
+        				}
+        			],
+        			"id": "8c6f1bab-3937-414a-bc42-708dae0005d7",
+        			"service": "canadapost_regular_parcel",
+        			"totalCharge": 31.73
+        		}
+        	],
+        	"payment": {
+        		"currency": "CAD",
+        		"paidBy": "sender"
+        	}
+        }
+    created: 1587738264357
+    description: ""
+    headers:
+      - id: pair_58886c6a6f8c4e4986b8ac442cf1c7b2
+        name: Content-Type
+        value: application/json
+    isPrivate: false
+    metaSortKey: -1585013036514.5
+    method: POST
+    modified: 1587738412165
+    name: Shipping - Non contract
     parameters: []
     parentId: fld_360f1680c37a4d2e98f517cf352142cf
     settingDisableRenderRequestBody: false
