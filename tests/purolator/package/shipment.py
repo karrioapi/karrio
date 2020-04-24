@@ -16,10 +16,10 @@ class TestPurolatorShipment(unittest.TestCase):
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
-        requests = request.serialize()
-        validate_request = requests["validate"]()["data"]
-        create_request = requests["create"](VALIDATE_SHIPMENT_RESPONSE_XML)["data"]
-        document_request = requests["document"](SHIPMENT_RESPONSE_XML)["data"]
+        pipeline = request.serialize()
+        validate_request = pipeline["validate"]().data
+        create_request = pipeline["create"](VALIDATE_SHIPMENT_RESPONSE_XML).data
+        document_request = pipeline["document"](SHIPMENT_RESPONSE_XML).data
 
         self.assertEqual(validate_request, VALIDATE_SHIPMENT_REQUEST_XML)
         self.assertEqual(create_request, SHIPMENT_REQUEST_XML)
@@ -70,7 +70,6 @@ class TestPurolatorShipment(unittest.TestCase):
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
-
             self.assertEqual(
                 to_dict(parsed_response), to_dict(PARSED_INVALID_SHIPMENT_RESPONSE)
             )

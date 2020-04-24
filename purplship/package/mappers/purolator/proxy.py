@@ -1,6 +1,7 @@
 import logging
-from typing import Dict, Callable
+from typing import cast
 from purplship.core.utils.helpers import to_xml, request as http, bundle_xml
+from purplship.core.utils.pipeline import Pipeline, Job as BaseJob
 from purplship.package.proxy import Proxy as BaseProxy
 from purplship.package.mappers.purolator.settings import Settings
 from purplship.core.utils.serializable import Serializable, Deserializable
@@ -22,6 +23,11 @@ SHIPPING_SERVICES = dict(
         action="http://purolator.com/pws/service/v1/GetDocuments"
     )
 )
+
+
+class Job(BaseJob):
+    @property
+    def service(self): return
 
 
 class Proxy(BaseProxy):
@@ -53,30 +59,22 @@ class Proxy(BaseProxy):
         )
         return Deserializable(response, to_xml)
 
-    def create_shipment(
-        self, request: Serializable[Dict[str, Callable]]
-    ) -> Deserializable[str]:
-        def apply(
-            data: str = None, fallback: str = None, service: str = "validate"
-        ) -> str:
+    def create_shipment(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+        def process(job: Job):
             return (
                 http(
-                    url=f"{self.settings.server_url}{SHIPPING_SERVICES[service]['path']}",
-                    data=bytearray(data, "utf-8"),
+                    url=f"{self.settings.server_url}{SHIPPING_SERVICES[job.service]['path']}",
+                    data=bytearray(job.data, "utf-8"),
                     headers={
                         "Content-Type": "text/xml; charset=utf-8",
-                        "soapaction": SHIPPING_SERVICES[service]['action'],
+                        "soapaction": SHIPPING_SERVICES[job.service]['action'],
                         "Authorization": f"Basic {self.settings.authorization}",
                     },
                     method="POST",
                 )
-                if data
-                else fallback
+                if job.data is not None else job.fallback
             )
 
-        requests: Dict[str, Callable] = request.serialize()
-        validate_response = apply(**requests.get("validate")())
-        create_response = apply(**requests.get("create")(validate_response))
-        document_response = apply(**requests.get("document")(create_response))
-
-        return Deserializable(bundle_xml([create_response, document_response]), to_xml)
+        pipeline: Pipeline = request.serialize()
+        _, *response = pipeline.apply(lambda _: process(cast(Job, _)))
+        return Deserializable(bundle_xml(response), to_xml)

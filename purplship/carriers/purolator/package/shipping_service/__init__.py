@@ -1,4 +1,4 @@
-from typing import List, Tuple, cast, Union, Type, Dict
+from typing import List, Tuple, cast, Union, Type
 from functools import partial
 from pypurolator.shipping_service_2_1_3 import (
     CreateShipmentRequest,
@@ -8,9 +8,8 @@ from pypurolator.shipping_service_2_1_3 import (
 )
 from pypurolator.shipping_documents_service_1_3_0 import DocumentDetail
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.xml import Element
-from purplship.core.utils.helpers import to_xml
+from purplship.core.utils import Serializable, Element, to_xml
+from purplship.core.utils.pipeline import Pipeline, Job
 from purplship.carriers.purolator.utils import Settings
 from purplship.carriers.purolator.error import parse_error_response
 from purplship.carriers.purolator.package.shipping_service.get_documents import (
@@ -58,40 +57,33 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def create_shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[Dict]:
-    requests = dict(
-        validate=partial(_validate_shipment, payload=payload, settings=settings),
+def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Pipeline]:
+    requests: Pipeline = Pipeline(
+        validate=lambda *_: partial(_validate_shipment, payload=payload, settings=settings)(),
         create=partial(_create_shipment, payload=payload, settings=settings),
         document=partial(_get_shipment_label, payload=payload, settings=settings),
     )
     return Serializable(requests)
 
 
-def _validate_shipment(payload: ShipmentRequest, settings: Settings) -> Dict:
-    return dict(
-        data=create_shipping_request(
-            payload=payload, settings=settings, validate=True
-        ).serialize()
+def _validate_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
+    return Job(
+        data=create_shipping_request(payload=payload, settings=settings, validate=True).serialize(),
+        service="validate"
     )
 
 
-def _create_shipment(
-    validate_response: str, payload: ShipmentRequest, settings: Settings
-) -> Dict:
+def _create_shipment(validate_response: str, payload: ShipmentRequest, settings: Settings) -> Job:
     errors = parse_error_response(to_xml(validate_response), settings)
     valid = len(errors) == 0
-    return dict(
+    return Job(
         data=create_shipping_request(payload, settings).serialize() if valid else None,
         fallback=(validate_response if not valid else None),
         service="create"
     )
 
 
-def _get_shipment_label(
-    create_response: str, payload: ShipmentRequest, settings: Settings
-) -> Dict:
+def _get_shipment_label(create_response: str, payload: ShipmentRequest, settings: Settings) -> Job:
     errors = parse_error_response(to_xml(create_response), settings)
     valid = len(errors) == 0
     shipment_pin = None
@@ -109,7 +101,7 @@ def _get_shipment_label(
         pin.build(node)
         shipment_pin = pin.Value
 
-    return dict(
+    return Job(
         data=(
             get_shipping_documents_request(shipment_pin, payload, settings).serialize() if valid else None
         ),
