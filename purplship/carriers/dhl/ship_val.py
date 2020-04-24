@@ -218,7 +218,7 @@ def shipment_request(
         if payload.customs is not None and payload.customs.duty is not None
         else None,
         ExportDeclaration=None,
-        Reference=[Reference(ReferenceID=payload.parcel.reference)],
+        Reference=[Reference(ReferenceID=payload.reference)],
         SpecialService=[
             SpecialService(SpecialServiceType=service) for service in special_services
         ],

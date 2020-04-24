@@ -59,11 +59,11 @@ RATE_REQUEST_PAYLOAD = {
         "phone_number": "1 514 2982181",
     },
     "parcel": {
-        "reference": "Reference For Shipment",
         "weight": 10,
         "weight_unit": "LB",
     },
     "services": ["purolator_express"],
+    "reference": "Reference For Shipment",
 }
 
 RATE_REQUEST_WITH_PRESET_PAYLOAD = {
@@ -86,10 +86,10 @@ RATE_REQUEST_WITH_PRESET_PAYLOAD = {
         "phone_number": "2982181",
     },
     "parcel": {
-        "reference": "Reference For Shipment",
         "package_preset": "purolator_express_box",
         "services": ["purolator_express"],
     },
+    "reference": "Reference For Shipment",
 }
 
 PARSED_RATE_RESPONSE = [

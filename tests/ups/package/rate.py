@@ -72,7 +72,6 @@ rate_req_data = {
         "state_code": "StateProvinceCode",
     },
     "parcel": {
-        "reference": "Your Customer Context",
         "height": 3,
         "length": 10,
         "width": 3,
@@ -80,6 +79,7 @@ rate_req_data = {
         "packaging_type": "ups_package",
         "description": "TV",
     },
+    "reference": "Your Customer Context",
     "services": ["ups_standard"],
     "options": {"negotiated_rates_indicator": True},
 }
@@ -102,11 +102,11 @@ rate_req_with_package_preset_data = {
         "state_code": "StateProvinceCode",
     },
     "parcel": {
-        "reference": "Your Customer Context",
         "package_preset": "ups_express_pak",
         "packaging_type": "ups_package",
         "description": "TV",
     },
+    "reference": "Your Customer Context",
     "services": ["ups_standard"],
     "options": {"negotiated_rates_indicator": True},
 }

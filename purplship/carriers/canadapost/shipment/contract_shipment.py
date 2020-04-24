@@ -216,7 +216,7 @@ def contract_shipment_request(
             else None,
             references=ReferencesType(
                 cost_centre=None,
-                customer_ref_1=payload.parcel.reference,
+                customer_ref_1=payload.reference,
                 customer_ref_2=None,
             ),
             settlement_info=SettlementInfoType(

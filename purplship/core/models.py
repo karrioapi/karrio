@@ -55,7 +55,6 @@ class Parcel:
     length: float = None
     packaging_type: str = None
     package_preset: str = None
-    reference: str = ""
     description: str = None
     content: str = None
     is_document: bool = False
@@ -136,6 +135,7 @@ class ShipmentRequest:
     doc_images: List[Doc] = JList[Doc]
 
     options: Dict = {}
+    reference: str = ""
 
 
 @attr.s(auto_attribs=True)
@@ -146,6 +146,7 @@ class RateRequest:
 
     services: List[str] = []
     options: Dict = {}
+    reference: str = ""
 
 
 @attr.s(auto_attribs=True)

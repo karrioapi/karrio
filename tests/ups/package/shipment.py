@@ -74,7 +74,6 @@ package_shipment_data = {
         "country_code": "CountryCode",
     },
     "parcel": {
-        "reference": "Your Customer Context",
         "dimension_unit": "IN",
         "weight_unit": "LB",
         "packaging_type": "ups_customer_supplied_package",
@@ -87,6 +86,7 @@ package_shipment_data = {
     "service": "ups_express",
     "options": {"notification": {"email": "test@mail.com"}},
     "payment": {"paid_by": "sender"},
+    "reference": "Your Customer Context",
 }
 
 
@@ -113,7 +113,6 @@ package_shipment_with_package_preset_data = {
         "country_code": "CountryCode",
     },
     "parcel": {
-        "reference": "Your Customer Context",
         "packaging_type": "ups_customer_supplied_package",
         "description": "Description",
         "package_preset": "ups_medium_express_box",
@@ -121,6 +120,7 @@ package_shipment_with_package_preset_data = {
     "service": "ups_express",
     "payment": {"paid_by": "sender"},
     "options": {"notification": {"email": "test@mail.com"}},
+    "reference": "Your Customer Context",
 }
 
 

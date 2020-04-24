@@ -98,10 +98,10 @@ SHIPMENT_REQUEST_PAYLOAD = {
         "phone_number": "1 514 2982181",
     },
     "parcel": {
-        "reference": "Reference For Shipment",
         "weight": 10,
         "weight_unit": "LB",
     },
+    "reference": "Reference For Shipment",
     "service": "purolator_express",
     "options": {"printing": "thermal"},
 }

@@ -282,7 +282,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
 </shipment>
 """
 
-NonContractShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/ncshipment-v4">
+NonContractShipmentRequestXML = """<non-contract-shipment xmlns="http://www.canadapost.ca/ws/ncshipment-v4">
     <delivery-spec>
         <service-code>DOM.EP</service-code>
         <sender>
@@ -293,7 +293,6 @@ NonContractShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/
                 <address-line-1>502 MAIN ST N</address-line-1>
                 <city>MONTREAL</city>
                 <prov-state>QC</prov-state>
-                <country-code>CA</country-code>
                 <postal-zip-code>H2B1A0</postal-zip-code>
             </address-details>
         </sender>
@@ -338,7 +337,7 @@ NonContractShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/
             <customer-ref-1></customer-ref-1>
         </references>
     </delivery-spec>
-</shipment>
+</non-contract-shipment>
 """
 
 ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>

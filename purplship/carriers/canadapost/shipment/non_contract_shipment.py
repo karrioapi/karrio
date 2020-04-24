@@ -4,7 +4,6 @@ from purplship.carriers.canadapost.units import (
     OptionCode,
     ServiceType,
     PackagePresets,
-    PaymentType,
 )
 from purplship.carriers.canadapost.utils import Settings
 from purplship.core.models import (
@@ -20,7 +19,7 @@ from pycanadapost.ncshipment import (
     NonContractShipmentInfoType,
     DeliverySpecType,
     SenderType,
-    AddressDetailsType,
+    DomesticAddressDetailsType,
     DestinationType,
     DestinationAddressDetailsType,
     ParcelCharacteristicsType,
@@ -33,7 +32,6 @@ from pycanadapost.ncshipment import (
     OptionType,
     CustomsType,
     PreferencesType,
-    SettlementInfoType,
 )
 
 
@@ -65,9 +63,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def non_contract_shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[NonContractShipmentType]:
+def non_contract_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[NonContractShipmentType]:
     parcel_preset = (
         PackagePresets[payload.parcel.package_preset].value
         if payload.parcel.package_preset
@@ -93,11 +89,6 @@ def non_contract_shipment_request(
         for name, value in payload.options.items()
         if name in OptionCode.__members__
     }
-    payment_type = (
-        PaymentType[payload.payment.paid_by].value
-        if payload.payment is not None
-        else None
-    )
 
     request = NonContractShipmentType(
         requested_shipping_point=None,
@@ -107,12 +98,11 @@ def non_contract_shipment_request(
                 name=payload.shipper.person_name,
                 company=payload.shipper.company_name,
                 contact_phone=payload.shipper.phone_number,
-                address_details=AddressDetailsType(
+                address_details=DomesticAddressDetailsType(
                     address_line_1=concat_str(payload.shipper.address_line1, join=True),
                     address_line_2=concat_str(payload.shipper.address_line2, join=True),
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
-                    country_code=payload.shipper.country_code,
                     postal_zip_code=payload.shipper.postal_code,
                 ),
             ),
@@ -172,7 +162,7 @@ def non_contract_shipment_request(
             ),
             references=ReferencesType(
                 cost_centre=None,
-                customer_ref_1=payload.parcel.reference,
+                customer_ref_1=payload.reference,
                 customer_ref_2=None,
             ),
             customs=CustomsType(
@@ -212,6 +202,6 @@ def non_contract_shipment_request(
 def _request_serializer(request: NonContractShipmentType) -> str:
     return export(
         request,
-        name_="shipment",
+        name_="non-contract-shipment",
         namespacedef_='xmlns="http://www.canadapost.ca/ws/ncshipment-v4"',
     )

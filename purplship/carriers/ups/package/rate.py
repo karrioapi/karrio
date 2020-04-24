@@ -144,7 +144,7 @@ def rate_request(
             RequestOption=["Rate"],
             SubVersion=None,
             TransactionReference=TransactionReferenceType(
-                CustomerContext=payload.parcel.reference, TransactionIdentifier=None
+                CustomerContext=payload.reference, TransactionIdentifier=None
             ),
         ),
         PickupType=None,

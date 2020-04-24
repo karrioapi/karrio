@@ -77,7 +77,7 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
     request = ShippingPriceRequest(
         shipments=[
             Shipment(
-                shipment_reference=payload.parcel.reference,
+                shipment_reference=payload.reference,
                 sender_references=None,
                 goods_descriptions=None,
                 despatch_date=None,
@@ -119,7 +119,7 @@ def shipping_price_request(payload: RateRequest) -> Serializable[ShippingPriceRe
                 authorisation_number=None,
                 items=[
                     Item(
-                        item_reference=payload.parcel.reference,
+                        item_reference=payload.reference,
                         product_id=payload.parcel.id,
                         item_description=payload.parcel.description,
                         length=payload.parcel.length,
