@@ -166,10 +166,9 @@ def non_contract_shipment_request(
             if options.notification
             else None,
             preferences=PreferencesType(
-                service_code=None,
                 show_packing_instructions=True,
                 show_postage_rate=True,
-                show_insured_value=True,
+                show_insured_value=("insurance" in payload.options)
             ),
             references=ReferencesType(
                 cost_centre=None,
@@ -204,17 +203,7 @@ def non_contract_shipment_request(
             )
             if payload.customs is not None
             else None,
-            settlement_info=SettlementInfoType(
-                paid_by_customer=(
-                    payload.payment.account_number
-                    if payload.payment is not None
-                    else settings.customer_number
-                ),
-                contract_id=settings.contract_id,
-                cif_shipment=None,
-                intended_method_of_payment=payment_type,
-                promo_code=None,
-            ),
+            settlement_info=None,
         ),
     )
     return Serializable(request, _request_serializer)
@@ -224,5 +213,5 @@ def _request_serializer(request: NonContractShipmentType) -> str:
     return export(
         request,
         name_="shipment",
-        namespacedef_="xmlns=”http://www.canadapost.ca/ws/shipment-v8”",
+        namespacedef_='xmlns="http://www.canadapost.ca/ws/ncshipment-v4"',
     )
