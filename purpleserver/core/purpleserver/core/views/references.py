@@ -1,0 +1,192 @@
+from rest_framework import status
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
+from rest_framework.serializers import Serializer, DictField
+
+from django.urls import path
+from drf_yasg.utils import swagger_auto_schema
+
+from purplship.core.utils import to_dict
+from purplship.core.units import Country, Currency, CountryState
+
+from purpleserver.core.models import MODELS
+from purpleserver.core.router import router
+from purpleserver.core.serializers import StringListField
+
+line = "\n"
+
+TYPE_MAPPING = {
+    float: 'float',
+    str: 'string',
+    object: 'object'
+}
+
+
+def import_pkg(pkg: str):
+    *_, carrier, name = pkg.split(".")
+    if carrier in MODELS.keys():
+        return __import__(pkg, fromlist=[name])
+    return None
+
+
+PACKAGE_MAPPERS = {
+    'canadapost': {
+        'label': "Canada Post",
+        'package': import_pkg('purplship.carriers.canadapost.units'),
+        'services': "ServiceType",
+        'options': "OptionCode",
+        'packagePresets': "PackagePresets"
+    },
+    'dhl': {
+        'label': "DHL",
+        'package': import_pkg('purplship.carriers.dhl.units'),
+        'services': "Product",
+        'options': "SpecialServiceCode",
+        'packagePresets': "PackagePresets"
+    },
+    'fedex': {
+        'label': "FedEx",
+        'package': import_pkg('purplship.carriers.fedex.units'),
+        'services': "ServiceType",
+        'options': "SpecialServiceType",
+        'packagePresets': "PackagePresets"
+    },
+    'purolator': {
+        'label': "Purolator",
+        'package': import_pkg('purplship.carriers.purolator.units'),
+        'services': "Product",
+        'options': "Service",
+        'packagePresets': "PackagePresets"
+    },
+    'ups': {
+        'label': "UPS",
+        'package': import_pkg('purplship.carriers.ups.units'),
+        'services': "ShippingServiceCode",
+        'options': "ServiceOption",
+        'packagePresets': "PackagePresets"
+    }
+}
+
+
+REFERENCE_MODELS = {
+    "countries": {c.name: c.value for c in list(Country)},
+    "currencies": {c.name: c.value for c in list(Currency)},
+    "states": {c.name: {s.name: s.value for s in list(c.value)} for c in list(CountryState)},
+    "services": {
+        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['services']))}
+        for key, mapper in PACKAGE_MAPPERS.items()
+        if mapper.get('services') is not None
+    },
+    "options": {
+        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['options']))}
+        for key, mapper in PACKAGE_MAPPERS.items()
+        if mapper.get('options') is not None
+    },
+    "packagePresets": {
+        key: {c.name: to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
+        for key, mapper in PACKAGE_MAPPERS.items()
+        if mapper.get('packagePresets') is not None
+    }
+}
+
+
+MODELS_DOCUMENTATION = f"""
+# Countries
+
+Code | Name 
+--- | --- 
+{f"{line}".join([f"{code} | {name}" for code, name in REFERENCE_MODELS["countries"].items()])}
+
+
+# States and Provinces
+
+{f"{line}".join([f'''
+## {Country[key].value}
+
+Code | Name 
+--- | --- 
+{f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
+
+'''
+for key, value in REFERENCE_MODELS["states"].items() 
+])}
+
+
+# Currencies
+
+Code | Name 
+--- | --- 
+{f"{line}".join([f"{code} | {name}" for code, name in REFERENCE_MODELS["currencies"].items()])}
+
+
+# Package Preset
+
+{f"{line}".join([f'''
+## {PACKAGE_MAPPERS[key]["label"]}
+
+Code | Dimensions | Note
+--- | --- | ---
+{f"{line}".join([
+    f"{code} | {f' x '.join([str(d) for d in dim.values() if isinstance(d, float)])} | {f' x '.join([k for k in dim.keys() if isinstance(dim[k], float)])}"
+    for code, dim in value.items()
+])}
+
+'''
+for key, value in REFERENCE_MODELS["packagePresets"].items() 
+])}
+
+
+# Shipment Options
+
+{f"{line}".join([f'''
+## {PACKAGE_MAPPERS[key]["label"]}
+
+Code | Identifier
+--- | ---
+{f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
+
+'''
+for key, value in REFERENCE_MODELS["options"].items() 
+])}
+
+
+# Shipment Services
+
+{f"{line}".join([f'''
+## {PACKAGE_MAPPERS[key]["label"]}
+
+Code | Identifier
+--- | ---
+{f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
+
+'''
+for key, value in REFERENCE_MODELS["services"].items() 
+])}
+
+"""
+
+
+class References(Serializer):
+    countries = StringListField()
+    currencies = StringListField()
+    states = DictField()
+    services = DictField()
+    options = DictField()
+    packagePresets = DictField()
+
+
+@swagger_auto_schema(
+    methods=['get'],
+    responses={200: References},
+    tags=['REFERENCE'],
+    operation_description=MODELS_DOCUMENTATION,
+    operation_id="References",
+)
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def references(_):
+    return Response(REFERENCE_MODELS, status=status.HTTP_200_OK)
+
+
+router.urls.append(path('references', references, name='Reference'))

@@ -173,6 +173,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'purpleserver', 'static')]
+
 
 # drf-yasg
 
@@ -230,6 +232,11 @@ LOGGING = {
             'propagate': False,
         },
         'purplship': {
+            'handlers': ['file', 'console'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
+        'purpleserver': {
             'handlers': ['file', 'console'],
             'level': LOG_LEVEL,
             'propagate': False,

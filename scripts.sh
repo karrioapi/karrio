@@ -25,8 +25,8 @@ create_env() {
 
 init() {
     create_env &&
-    pip install -r requirements.txt &&
-    pip install -r requirements.dev.txt &&
+    pip install -r "${ROOT:?}/requirements.txt" &&
+    pip install -r "${ROOT:?}/requirements.dev.txt" &&
     install_all
 }
 
