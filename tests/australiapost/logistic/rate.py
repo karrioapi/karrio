@@ -67,12 +67,12 @@ RATE_PAYLOAD = {
     },
     "parcel": {
         "id": "T28S",
-        "reference": "XYZ-001-01",
         "length": 10,
         "height": 10,
         "width": 10,
         "weight": 1,
     },
+    "reference": "XYZ-001-01",
 }
 
 

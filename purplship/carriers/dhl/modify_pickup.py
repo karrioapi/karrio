@@ -58,8 +58,8 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
         if pickup.NextPickupDate is not None
         else None,
         pickup_charge=pickup_charge,
-        pickup_time=format_time(pickup.ReadyByTime),
-        pickup_max_time=format_time(pickup.CallInTime),
+        ready_time=format_time(pickup.ReadyByTime),
+        closing_time=format_time(pickup.CallInTime),
     )
 
 
@@ -109,8 +109,8 @@ def modify_pickup_request(
         Pickup=Pickup(
             Pieces=len(payload.parcels),
             PickupDate=payload.date,
-            ReadyByTime=payload.ready_time,
-            CloseTime=payload.closing_time,
+            ReadyByTime=f'{payload.ready_time}:00',
+            CloseTime=f'{payload.closing_time}:00',
             SpecialInstructions=[payload.instruction],
             RemotePickupFlag="Y",
             weight=WeightSeg(Weight=weight, WeightUnit=weight_unit.value),

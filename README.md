@@ -1,4 +1,4 @@
-# PurplShip (Multi-carrier API SDK)
+# PurplShip (Multi-carrier API Library)
 
 ![PuprlShip Core Package](https://github.com/PurplShip/purplship/workflows/PuprlShip%20Core%20Package/badge.svg)
 [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)

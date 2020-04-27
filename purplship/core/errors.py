@@ -7,6 +7,12 @@ class PurplShipError(Exception):
     pass
 
 
+class ValidationError(PurplShipError):
+    """Base class for other exceptions."""
+
+    pass
+
+
 class MethodNotSupportedError(PurplShipError):
     """Raised when a method from a base type is not implemented."""
 
@@ -14,7 +20,7 @@ class MethodNotSupportedError(PurplShipError):
         super().__init__(f"{method} not supported by {base}")
 
 
-class RequiredFieldError(PurplShipError):
+class RequiredFieldError(ValidationError):
     """Raised when one or many required fields are missing."""
 
     def __init__(self, field: str):

@@ -83,8 +83,8 @@ if __name__ == "__main__":
 
 book_pickup_payload = {
     "date": "2013-10-19",
-    "ready_time": "10:20:00",
-    "closing_time": "09:20:00",
+    "ready_time": "10:20",
+    "closing_time": "09:20",
     "instruction": "behind the front desk",
     "address": {
         "city": "Montreal",
@@ -102,8 +102,8 @@ book_pickup_payload = {
 modification_data = {
     "date": "2013-10-19",
     "confirmation_number": "100094",
-    "ready_time": "10:20:00",
-    "closing_time": "09:20:00",
+    "ready_time": "10:20",
+    "closing_time": "09:20",
     "address": {
         "city": "Montreal",
         "postal_code": "H8Z2Z3",
@@ -128,8 +128,8 @@ ParsedPickupResponse = [
         "carrier_name": "carrier_name",
         "confirmation_number": "3674",
         "pickup_date": "2013-10-09",
-        "pickup_max_time": "08:30",
-        "pickup_time": "10:30",
+        "closing_time": "08:30",
+        "ready_time": "10:30",
     },
     [
         {

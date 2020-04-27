@@ -280,7 +280,7 @@ def create_shipping_request(
                 if options.notification
                 else None,
                 TrackingReferenceInformation=TrackingReferenceInformation(
-                    Reference1=payload.parcel.reference
+                    Reference1=payload.reference
                 ),
                 OtherInformation=None,
                 ProactiveNotification=None,

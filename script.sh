@@ -25,9 +25,9 @@ create_env() {
 
 init() {
     create_env &&
-    pip install -r requirements.txt &&
-    pip install -r requirements.dev.txt &&
-    pip install -e .
+    pip install -r "${ROOT:?}/requirements.txt" &&
+    pip install -r "${ROOT:?}/requirements.dev.txt" &&
+    pip install -e "${ROOT:?}"
 }
 
 
@@ -40,14 +40,14 @@ alias env:reset=init
 
 # shellcheck disable=SC2120
 test() {
-    pip install -e .
-    pushd tests || exit
+    pip install -e "${ROOT:?}"
+    pushd "${ROOT:?}/tests" || exit
     python -m unittest -v "$@"
     popd || exit
 }
 
 typecheck() {
-    mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
+    mypy "${ROOT:?}/purplship/" --no-strict-optional --no-warn-return-any --no-warn-unused-configs
 }
 
 check() {
@@ -63,25 +63,25 @@ backup_wheels() {
 
 build_package() {
     clean_builds
-    python setup.package.py bdist_wheel
+    python "${ROOT:?}/setup.package.py" bdist_wheel
     backup_wheels
 }
 
 build_freight() {
     clean_builds
-    python setup.freight.py bdist_wheel
+    python "${ROOT:?}/setup.freight.py" bdist_wheel
     backup_wheels
 }
 
 build_core() {
     clean_builds
-    python setup.core.py bdist_wheel
+    python "${ROOT:?}/setup.core.py" bdist_wheel
     backup_wheels
 }
 
 build() {
     clean_builds
-    python setup.py bdist_wheel
+    python "${ROOT:?}/setup.py" bdist_wheel
     backup_wheels
 }
 

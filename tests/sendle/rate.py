@@ -115,13 +115,15 @@ INTERNATIONAL_RATE_WITH_PACKAGE_PRESET_PAYLOAD = {
 DOMESTIC_RATE_MISSING_WEIGHT_PAYLOAD = {
     "shipper": {"address_line1": "Camberwell North", "postal_code": "3124"},
     "recipient": {"address_line1": "Barangaroo", "postal_code": "2000"},
-    "parcel": {"reference": "testing request"},
+    "parcel": {},
+    "reference": "testing request"
 }
 
 INTERNATIONAL_RATE_MISSING_WEIGHT_PAYLOAD = {
     "shipper": {"address_line1": "Sydney", "postal_code": "2000"},
     "recipient": {"country_code": "NZ"},
-    "parcel": {"reference": "testing request"},
+    "parcel": {},
+    "reference": "testing request"
 }
 
 

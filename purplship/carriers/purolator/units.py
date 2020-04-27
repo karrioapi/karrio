@@ -10,9 +10,9 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    purolator_express_envelope = PackagePreset(weight=1)
-    purolator_express_pack = PackagePreset(weight=3)
-    purolator_express_box = PackagePreset(weight=7)
+    purolator_express_envelope = PackagePreset(weight=1.0)
+    purolator_express_pack = PackagePreset(weight=3.0)
+    purolator_express_box = PackagePreset(weight=7.0)
 
 
 class PackagingType(Flag):

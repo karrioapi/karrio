@@ -268,8 +268,8 @@ def get_full_estimate_request(
                 ),
                 NotificationInformation=None,
                 TrackingReferenceInformation=TrackingReferenceInformation(
-                    Reference1=payload.parcel.reference,
-                ) if payload.parcel.reference != "" else None,
+                    Reference1=payload.reference,
+                ) if payload.reference != "" else None,
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),

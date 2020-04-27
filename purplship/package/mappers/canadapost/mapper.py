@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from pycanadapost.rating import mailing_scenario
-from pycanadapost.shipment import ShipmentType
+from purplship.core.utils.pipeline import Pipeline
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.package.mapper import Mapper as BaseMapper
 from purplship.core.models import (
@@ -40,7 +40,7 @@ class Mapper(BaseMapper):
 
     def create_shipment_request(
         self, payload: ShipmentRequest
-    ) -> Serializable[ShipmentType]:
+    ) -> Serializable[Pipeline]:
         return shipment_request(payload, self.settings)
 
     """Response Parsers"""

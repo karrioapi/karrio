@@ -86,7 +86,7 @@ def freight_ship_request(
             RequestOption="1",
             SubVersion=None,
             TransactionReference=common.TransactionReferenceType(
-                CustomerContext=payload.parcel.reference, TransactionIdentifier=None
+                CustomerContext=payload.reference, TransactionIdentifier=None
             ),
         ),
         Shipment=ShipmentType(
