@@ -1,7 +1,6 @@
 # PurplShip (Multi-carrier API Library)
 
-![PuprlShip Core Package](https://github.com/PurplShip/purplship/workflows/PuprlShip%20Core%20Package/badge.svg)
-[![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
+![CI](https://github.com/PurplShip/purplship/workflows/PuprlShip/badge.svg)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 
@@ -40,4 +39,4 @@ Please see [LICENSE.md](https://github.com/PurplShip/purplship/blob/master/LICEN
 
 ## Authors
 
-- **Daniel K.** - *Initial work* - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [PurplShip](https://purplship.com/open-source)
+- **Daniel K.** - *Initial work* - [@DanHK91](https://github.com/DanH91) | [https://danielk.xyz](https://danielk.xyz/) | [PurplShip](https://purplship.com)

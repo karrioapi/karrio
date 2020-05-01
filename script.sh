@@ -20,14 +20,26 @@ create_env() {
     mkdir -p "${ROOT:?}/$ENV_DIR"
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
     activate_env &&
-    pip install --upgrade pip
+    pip install --upgrade pip wheel
+}
+
+submodules() {
+    find "${ROOT:?}/extensions" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
+}
+
+install_submodules() {
+    cd "${ROOT:?}" || false
+    pip install ".[dev]"
+    cd - || false &&
+    for module in $(submodules); do
+      pip install "${module}" || break
+    done
 }
 
 init() {
     create_env &&
     pip install -r "${ROOT:?}/requirements.txt" &&
-    pip install -r "${ROOT:?}/requirements.dev.txt" &&
-    pip install -e "${ROOT:?}"
+    install_submodules
 }
 
 
@@ -40,14 +52,22 @@ alias env:reset=init
 
 # shellcheck disable=SC2120
 test() {
-    pip install -e "${ROOT:?}"
-    pushd "${ROOT:?}/tests" || exit
-    python -m unittest -v "$@"
-    popd || exit
+    if [[ "$1" == "-i" ]]; then
+      install_submodules
+    fi
+    for module in $(submodules); do
+      echo "testing:: ${module}"
+      pushd "${module}" || break
+      r=$(python -m unittest discover -v)
+      popd || false
+      $r || break
+    done
 }
 
 typecheck() {
-    mypy "${ROOT:?}/purplship/" --no-strict-optional --no-warn-return-any --no-warn-unused-configs
+    for module in $(submodules); do
+      mypy "${module}/purplship" --no-strict-optional --no-warn-return-any --no-warn-unused-configs || break
+    done
 }
 
 check() {
@@ -61,27 +81,11 @@ backup_wheels() {
     clean_builds
 }
 
-build_package() {
-    clean_builds
-    python "${ROOT:?}/setup.package.py" bdist_wheel
-    backup_wheels
-}
-
-build_freight() {
-    clean_builds
-    python "${ROOT:?}/setup.freight.py" bdist_wheel
-    backup_wheels
-}
-
-build_core() {
-    clean_builds
-    python "${ROOT:?}/setup.core.py" bdist_wheel
-    backup_wheels
-}
-
 build() {
     clean_builds
-    python "${ROOT:?}/setup.py" bdist_wheel
+    for module in $(submodules); do
+      python "${module}/setup.py" bdist_wheel
+    done
     backup_wheels
 }
 
