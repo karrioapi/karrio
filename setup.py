@@ -3,8 +3,18 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open('VERSION.txt', 'r') as f:
+    version = f.readline()
+
+dev_requirements = [
+      "bandit",
+      "black",
+      "coverage",
+      "mypy",
+]
+
 setup(name='purplship',
-      version='2020.4.1',
+      version=version,
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -18,16 +28,12 @@ setup(name='purplship',
             'jstruct',
             'xmltodict',
             'lxml',
-            'py-fedex',
-            'py-purolator',
-            'py-dhl',
             'py-soap',
-            'py-ups',
-            'py-canadapost',
-            'py-australiapost',
-            'py-sendle',
-            'py-usps',
+            'six',
       ],
+      extras_require={
+            'dev': dev_requirements
+      },
       dependency_links=[
             'https://git.io/purplship',
       ],
@@ -36,4 +42,5 @@ setup(name='purplship',
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
         "Operating System :: OS Independent",
       ],
+      python_requires='>=3.6',
       zip_safe=False)
