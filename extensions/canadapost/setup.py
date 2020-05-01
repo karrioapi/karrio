@@ -1,6 +1,9 @@
+from pathlib import Path
 from setuptools import setup, find_namespace_packages
 
-with open('../../VERSION.txt', 'r') as f:
+VERSION_FILE = str(Path(Path(__file__).resolve().parent, '../../VERSION.txt').resolve())
+
+with open(VERSION_FILE, 'r') as f:
     version = f.readline()
 
 setup(name='purplship.canadapost',

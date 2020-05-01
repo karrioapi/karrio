@@ -1,8 +1,0 @@
--f https://git.io/purplship
-attrs==18.2.0
-jstruct==1.0.0
-xmltodict==0.12.0
-py-fedex==2020.3.0
-py-dhl==2020.3.0
-py-soap==2020.3.0
-py-ups==2020.3.0
