@@ -108,3 +108,72 @@ class Proxy(BaseProxy):
         response = pipeline.apply(process)
 
         return Deserializable(bundle_xml(response), to_xml)
+
+    def cancel_pickup(self, request: Serializable) -> Deserializable:
+        payload = request.serialize()
+        response = http(
+            url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
+            headers={
+                "Accept": "application/vnd.cpc.pickuprequest+xml",
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Accept-language": "en-CA",
+            },
+            method="DELETE",
+        )
+        return Deserializable(response or "<wrapper></wrapper>", to_xml)
+
+    def update_pickup(self, request: Serializable) -> Deserializable:
+        payload = request.serialize()
+        response = http(
+            url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
+            data=bytearray(payload['data'], "utf-8"),
+            headers={
+                "Accept": "application/vnd.cpc.pickuprequest+xml",
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Accept-language": "en-CA",
+            },
+            method="PUT",
+        )
+        return Deserializable(response, to_xml)
+
+    def request_pickup(self, request: Serializable) -> Deserializable:
+
+        def _create_pickup(job: Job):
+            return http(
+                url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest",
+                data=bytearray(job.data, "utf-8"),
+                headers={
+                    "Accept": "application/vnd.cpc.pickuprequest+xml",
+                    "Content-Type": "application/vnd.cpc.pickuprequest+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": "en-CA",
+                },
+                method="POST",
+            )
+
+        def _availability(job: Job):
+            label_string = http(
+                url=f"{self.settings.server_url}/ad/pickup/pickupavailability/{job.data}",
+                headers={
+                    "Accept": "application/vnd.cpc.pickup+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": "en-CA",
+                },
+                method="GET",
+            )
+            return f'<label>{label_string}</label>'
+
+        def process(job: Job):
+            if job.data is None:
+                return job.fallback
+
+            subprocess = {'create_pickup': _create_pickup, 'availability': _availability}
+            if job.id not in subprocess:
+                raise PurplShipError(f"Unknown pickup request job id: {job.id}")
+
+            return subprocess[job.id](job)
+
+        pipeline: Pipeline = request.serialize()
+        response = pipeline.apply(process)
+
+        return Deserializable(bundle_xml(response), to_xml)
