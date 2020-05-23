@@ -28,10 +28,9 @@ submodules() {
 }
 
 install_submodules() {
-    cd "${ROOT:?}" || false
-    pip install ".[dev]"
-    cd - || false &&
+    pip install "${ROOT:?}[dev]" &&
     for module in $(submodules); do
+      echo "installing ${module}..."
       pip install "${module}" || break
     done
 }
@@ -53,7 +52,8 @@ alias env:reset=init
 # shellcheck disable=SC2120
 test() {
     if [[ "$1" == "-i" ]]; then
-      install_submodules
+      i=$(install_submodules)
+      $i || return
     fi
     for module in $(submodules); do
       echo "testing:: ${module}"
@@ -71,7 +71,7 @@ typecheck() {
 }
 
 check() {
-    typecheck && test 
+    typecheck && test
 }
 
 backup_wheels() {

@@ -3,9 +3,6 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-with open('VERSION.txt', 'r') as f:
-    version = f.readline()
-
 dev_requirements = [
       "bandit",
       "black",
@@ -14,7 +11,7 @@ dev_requirements = [
 ]
 
 setup(name='purplship',
-      version=version,
+      version='2020.5.0',
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
