@@ -1,6 +1,7 @@
 # PurplShip (Multi-carrier API Library)
 
 ![CI](https://github.com/PurplShip/purplship/workflows/PuprlShip/badge.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709)](https://app.codacy.com/manual/DanH91/purplship?utm_source=github.com&utm_medium=referral&utm_content=PurplShip/purplship&utm_campaign=Badge_Grade_Dashboard)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
