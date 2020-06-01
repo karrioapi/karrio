@@ -8,10 +8,12 @@ dev_requirements = [
       "black",
       "coverage",
       "mypy",
+      "click",
+      "Jinja2"
 ]
 
 setup(name='purplship',
-      version='2020.5.0',
+      version='2020.5.1',
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",

@@ -96,4 +96,8 @@ clean_builds() {
     find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; || true
 }
 
+cli() {
+  python "${ROOT:?}/cli.py" "$@"
+}
+
 env:on || true
