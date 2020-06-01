@@ -52,16 +52,12 @@ alias env:reset=init
 # shellcheck disable=SC2120
 test() {
     if [[ "$1" == "-i" ]]; then
-      i=$(install_submodules)
-      $i || return
+      install_submodules
     fi
-    for module in $(submodules); do
-      echo "testing:: ${module}"
-      pushd "${module}" || break
-      r=$(python -m unittest discover -v)
-      popd || false
-      $r || break
-    done
+    pushd "${ROOT:?}" || false
+    r=$(coverage run -m unittest discover -v "${ROOT:?}/tests")
+    popd || false
+    $r || false
 }
 
 typecheck() {

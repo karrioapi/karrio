@@ -1,0 +1,10 @@
+# .coveragerc to control coverage.py
+[run]
+branch = True
+
+[report]
+include =
+    */purplship/carriers/*
+    */purplship/core/*
+    */purplship/package/*
+    */purplship/freight/*
