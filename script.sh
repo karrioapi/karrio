@@ -28,10 +28,9 @@ submodules() {
 }
 
 install_submodules() {
-    cd "${ROOT:?}" || false
-    pip install ".[dev]"
-    cd - || false &&
+    pip install "${ROOT:?}[dev]" &&
     for module in $(submodules); do
+      echo "installing ${module}..."
       pip install "${module}" || break
     done
 }
@@ -55,13 +54,10 @@ test() {
     if [[ "$1" == "-i" ]]; then
       install_submodules
     fi
-    for module in $(submodules); do
-      echo "testing:: ${module}"
-      pushd "${module}" || break
-      r=$(python -m unittest discover -v)
-      popd || false
-      $r || break
-    done
+    pushd "${ROOT:?}" || false
+    r=$(coverage run -m unittest discover -v "${ROOT:?}/tests")
+    popd || false
+    $r || false
 }
 
 typecheck() {
@@ -71,7 +67,7 @@ typecheck() {
 }
 
 check() {
-    typecheck && test 
+    typecheck && test
 }
 
 backup_wheels() {

@@ -1,13 +1,7 @@
-from pathlib import Path
 from setuptools import setup, find_namespace_packages
 
-VERSION_FILE = str(Path(Path(__file__).resolve().parent, '../../VERSION.txt').resolve())
-
-with open(VERSION_FILE, 'r') as f:
-    version = f.readline()
-
 setup(name='purplship.canadapost',
-      version=version,
+      version='2020.5.0',
       description='Multi-carrier shipping API integration with python',
       url='https://github.com/PurplShip/purplship',
       author='PurplShip',
