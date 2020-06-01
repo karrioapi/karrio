@@ -1,7 +1,7 @@
 from setuptools import setup, find_namespace_packages
 
 setup(name='purplship.canadapost',
-      version='2020.5.1',
+      version='2020.6.0',
       description='Multi-carrier shipping API integration with python',
       url='https://github.com/PurplShip/purplship',
       author='PurplShip',
