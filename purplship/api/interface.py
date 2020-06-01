@@ -8,6 +8,7 @@ from purplship.api.gateway import Gateway
 from purplship.core.utils import Serializable, Deserializable, jsonify
 from purplship.core.errors import PurplShipDetailedError
 from purplship.core.models import (
+    AddressValidationRequest,
     RateRequest,
     ShipmentRequest,
     TrackingRequest,
@@ -83,6 +84,27 @@ class IRequestWith:
 
     def with_(self, gateway: Gateway) -> IDeserialize:
         return fail_safe(gateway)(self.action)(gateway)
+
+
+class Address:
+    @staticmethod
+    def validate(args: Union[AddressValidationRequest, dict]) -> IRequestFrom:
+        logger.debug(f'validate an address. payload: {jsonify(args)}')
+        payload = (
+            args if isinstance(args, AddressValidationRequest) else AddressValidationRequest(**args)
+        )
+
+        def action(gateway: Gateway) -> IDeserialize:
+            request: Serializable = gateway.mapper.create_address_validation_request(payload)
+            response: Deserializable = gateway.proxy.validate_address(request)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_address_validation_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
 
 
 class Pickup:

@@ -17,6 +17,8 @@ from purplship.core.models import (
     RateDetails,
     TrackingDetails,
     ConfirmationDetails,
+    AddressValidationRequest,
+    AddressValidationDetails
 )
 from purplship.core.errors import MethodNotSupportedError
 from purplship.core.utils.serializable import Deserializable, Serializable
@@ -28,6 +30,20 @@ class Mapper(ABC):
 
     settings: Settings
 
+    def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable:
+        """ Create a carrier specific address validation request data from the payload """
+        raise MethodNotSupportedError(
+            self.__class__.create_address_validation_request.__name__, self.__class__.__name__
+        )
+
+    def parse_address_validation_response(
+        self, response: Deserializable
+    ) -> Tuple[AddressValidationDetails, List[Message]]:
+        """ Create a unified API address validation details from the carrier response  """
+        raise MethodNotSupportedError(
+            self.__class__.parse_address_validation_response.__name__, self.__class__.__name__
+        )
+
     def create_rate_request(self, payload: RateRequest) -> Serializable:
         """ Create a carrier specific rate request data from payload """
         raise MethodNotSupportedError(
@@ -37,7 +53,7 @@ class Mapper(ABC):
     def parse_rate_response(
         self, response: Deserializable
     ) -> Tuple[List[RateDetails], List[Message]]:
-        """ Create a united API quote result list from carrier response  """
+        """ Create a unified API quote result list from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_rate_response.__name__, self.settings.carrier_name
         )
@@ -51,7 +67,7 @@ class Mapper(ABC):
     def parse_tracking_response(
         self, response: Deserializable
     ) -> Tuple[List[TrackingDetails], List[Message]]:
-        """ Create a united API tracking result list from carrier response  """
+        """ Create a unified API tracking result list from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_tracking_response.__name__, self.settings.carrier_name
         )
@@ -65,7 +81,7 @@ class Mapper(ABC):
     def parse_shipment_response(
         self, response: Deserializable
     ) -> Tuple[ShipmentDetails, List[Message]]:
-        """ Create a united API shipment creation result from carrier response  """
+        """ Create a unified API shipment creation result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_shipment_response.__name__, self.settings.carrier_name
         )
@@ -79,7 +95,7 @@ class Mapper(ABC):
     def parse_pickup_response(
         self, response: Deserializable
     ) -> Tuple[PickupDetails, List[Message]]:
-        """ Create a united API pickup result from carrier response  """
+        """ Create a unified API pickup result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_pickup_response.__name__, self.settings.carrier_name
         )
@@ -96,7 +112,7 @@ class Mapper(ABC):
     def parse_modify_pickup_response(
         self, response: Deserializable
     ) -> Tuple[PickupDetails, List[Message]]:
-        """ Create a united API pickup result from carrier response  """
+        """ Create a unified API pickup result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_modify_pickup_response.__name__,
             self.settings.carrier_name,

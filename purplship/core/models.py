@@ -200,6 +200,13 @@ class PickupCancellationRequest:
     country_code: str = None
 
 
+@attr.s(auto_attribs=True)
+class AddressValidationRequest:
+    """address validation request type."""
+
+    address: Address = JStruct[Address, REQUIRED]
+
+
 # *** Unified option data types ***
 
 
@@ -322,3 +329,11 @@ class ConfirmationDetails:
     carrier_name: str
     carrier_id: str
     success: bool
+
+
+class AddressValidationDetails:
+    """PurplShip address validation details type."""
+
+    carrier: str
+    carrier_name: str
+    complete_address: Address = None

@@ -8,10 +8,20 @@ from pydhl.ship_val_global_req_6_2 import ShipmentRequest
 from pydhl.book_pickup_global_req_3_0 import BookPURequest
 from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest
+from pydhl.routing_global_req_2_0 import RouteRequest
 
 
 class Proxy(BaseProxy):
     settings: Settings
+
+    def validate_address(self, request: Serializable[RouteRequest]) -> Deserializable[str]:
+        response = http(
+            url=self.settings.server_url,
+            data=bytearray(request.serialize(), "utf-8"),
+            headers={"Content-Type": "application/xml"},
+            method="POST",
+        )
+        return Deserializable(response, to_xml)
 
     def get_rates(self, request: Serializable[DCTRequest]) -> Deserializable[str]:
         response = http(
