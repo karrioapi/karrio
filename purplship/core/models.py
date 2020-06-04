@@ -234,7 +234,7 @@ class Message:
     carrier_name: str
     message: str = None
     code: str = None
-    details: dict = None
+    details: Dict = None
 
 
 @attr.s(auto_attribs=True)
