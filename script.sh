@@ -80,8 +80,11 @@ backup_wheels() {
 build() {
     clean_builds
     for module in $(submodules); do
-      python "${module}/setup.py" bdist_wheel
+      cd "${module}"
+      python setup.py bdist_wheel
+      popd
     done
+    python "${ROOT:?}/setup.py" bdist_wheel
     backup_wheels
 }
 
