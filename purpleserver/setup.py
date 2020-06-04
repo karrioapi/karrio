@@ -3,9 +3,13 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+dev_requirements = [
+      "wheel",
+]
+
 setup(
       name='purplship-server',
-      version='2020.4.1',
+      version='2020.6.0',
       description='Multi-carrier shipping API',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -24,6 +28,9 @@ setup(
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]
+      },
+      extras_require={
+            'dev': dev_requirements
       },
       dependency_links=[
             'https://git.io/purplship',

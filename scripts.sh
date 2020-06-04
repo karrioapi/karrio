@@ -26,7 +26,6 @@ create_env() {
 init() {
     create_env &&
     pip install -r "${ROOT:?}/requirements.txt" &&
-    pip install -r "${ROOT:?}/requirements.dev.txt" &&
     install_all
 }
 
@@ -41,7 +40,7 @@ alias env:reset=init
 install_all() {
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
-    pip install -e "${ROOT:?}/purpleserver"
+    pip install -e "${ROOT:?}/purpleserver[dev]"
 }
 
 run_server() {

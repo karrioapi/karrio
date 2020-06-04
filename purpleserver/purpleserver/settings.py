@@ -29,7 +29,7 @@ DEBUG = bool(os.environ.get('DEBUG_MODE', True))
 
 SECURE_DOMAIN = os.environ.get('SECURE', False)
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 CORS_ORIGIN_ALLOW_ALL = True
 
