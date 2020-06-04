@@ -94,12 +94,18 @@ REFERENCE_MODELS = {
 MODELS_DOCUMENTATION = f"""
 # Countries
 
+<details>
+
 Code | Name 
 --- | --- 
 {f"{line}".join([f"{code} | {name}" for code, name in REFERENCE_MODELS["countries"].items()])}
 
+</details><br/>
+
 
 # States and Provinces
+
+<details>
 
 {f"{line}".join([f'''
 ## {Country[key].value}
@@ -112,15 +118,22 @@ Code | Name
 for key, value in REFERENCE_MODELS["states"].items() 
 ])}
 
+</details><br/>
 
 # Currencies
+
+<details>
 
 Code | Name 
 --- | --- 
 {f"{line}".join([f"{code} | {name}" for code, name in REFERENCE_MODELS["currencies"].items()])}
 
+</details><br/>
+
 
 # Package Preset
+
+<details>
 
 {f"{line}".join([f'''
 ## {PACKAGE_MAPPERS[key]["label"]}
@@ -136,8 +149,12 @@ Code | Dimensions | Note
 for key, value in REFERENCE_MODELS["packagePresets"].items() 
 ])}
 
+</details><br/>
+
 
 # Shipment Options
+
+<details>
 
 {f"{line}".join([f'''
 ## {PACKAGE_MAPPERS[key]["label"]}
@@ -150,8 +167,12 @@ Code | Identifier
 for key, value in REFERENCE_MODELS["options"].items() 
 ])}
 
+</details><br/>
+
 
 # Shipment Services
+
+<details>
 
 {f"{line}".join([f'''
 ## {PACKAGE_MAPPERS[key]["label"]}
@@ -163,6 +184,8 @@ Code | Identifier
 '''
 for key, value in REFERENCE_MODELS["services"].items() 
 ])}
+
+</details><br/>
 
 """
 
