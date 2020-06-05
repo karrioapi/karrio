@@ -58,8 +58,8 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
         return reduce(lambda r, v: v.text, postage_node.findall(key), None)
 
     return RateDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         service=get("MailService"),
         total_charge=decimal(postage_node.find("Rate").text),
         currency=currency,

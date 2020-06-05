@@ -76,8 +76,8 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
         qtdshp.LocalProductName,
     )
     return RateDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         currency=qtdshp.CurrencyCode,
         estimated_delivery=format_date(delivery_date),
         service=service_name,

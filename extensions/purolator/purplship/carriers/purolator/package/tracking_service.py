@@ -38,8 +38,8 @@ def _extract_tracking(node: Element, settings: Settings) -> TrackingDetails:
     track = TrackingInformation()
     track.build(node)
     return TrackingDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         tracking_number=str(track.PIN.Value),
         events=[
             TrackingEvent(

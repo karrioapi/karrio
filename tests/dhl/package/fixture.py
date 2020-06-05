@@ -4,7 +4,7 @@ gateway = api.gateway["dhl"].create(
     dict(
         site_id="site_id",
         password="password",
-        carrier_name="carrier_name",
+        carrier_id="carrier_id",
         account_number="123456789",
         id="testing_id",
     )

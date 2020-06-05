@@ -59,8 +59,8 @@ ParsedFreightRateResponse = [
     [
         {
             "base_charge": 909.26,
-            "carrier": "ups",
-            "carrier_name": "UPS Freight",
+            "carrier_name": "ups_freight",
+            "carrier_id": "ups_freight",
             "currency": "USD",
             "estimated_delivery": None,
             "discount": 776.36,

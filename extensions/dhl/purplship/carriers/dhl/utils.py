@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     id: str = None
 
     @property
-    def carrier(self):
-        return "dhl"
+    def carrier_name(self):
+        return "dhl_express"
 
     @property
     def server_url(self):

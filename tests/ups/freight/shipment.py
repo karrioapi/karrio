@@ -72,8 +72,8 @@ freight_shipment_data = {
 
 ParsedFreightShipmentResponse = [
     {
-        "carrier": "ups",
-        "carrier_name": "UPS Freight",
+        "carrier_name": "ups_freight",
+        "carrier_id": "ups_freight",
         "tracking_number": "Shipment Number",
         "label": "",
     },

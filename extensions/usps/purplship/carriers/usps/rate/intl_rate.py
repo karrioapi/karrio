@@ -35,8 +35,8 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
     )
 
     return RateDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         service=service.SvcDescription,
         base_charge=decimal(service.Postage),
         total_charge=decimal(service.Postage),

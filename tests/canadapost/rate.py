@@ -98,8 +98,8 @@ ProcessingError = [
     None,
     [
         {
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "code": "500",
             "message": "<parcel.weight> must be specified (required)",
         }
@@ -110,8 +110,8 @@ ParsedQuoteParsingError = [
     [],
     [
         {
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "code": "AA004",
             "message": "You cannot mail on behalf of the requested customer.",
         }
@@ -122,8 +122,8 @@ ParsedQuoteMissingArgsError = [
     [],
     [
         {
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "code": "Server",
             "message": "/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v4}parcel-characteristics with anonymous type, found </parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v4), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v4}weight, {http://www.canadapost.ca/ws/ship/rate-v4}dimensions, {http://www.canadapost.ca/ws/ship/rate-v4}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v4}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v4}oversized]",
         }
@@ -134,8 +134,8 @@ ParsedQuoteResponse = [
     [
         {
             "base_charge": 9.59,
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "currency": "CAD",
             "discount": 0.62,
             "duties_and_taxes": 0.0,
@@ -149,8 +149,8 @@ ParsedQuoteResponse = [
         },
         {
             "base_charge": 22.64,
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "currency": "CAD",
             "discount": 2.56,
             "duties_and_taxes": 0.0,
@@ -164,8 +164,8 @@ ParsedQuoteResponse = [
         },
         {
             "base_charge": 9.59,
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "currency": "CAD",
             "discount": 0.62,
             "duties_and_taxes": 0.0,
@@ -179,8 +179,8 @@ ParsedQuoteResponse = [
         },
         {
             "base_charge": 12.26,
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "currency": "CAD",
             "discount": 1.38,
             "duties_and_taxes": 0.0,

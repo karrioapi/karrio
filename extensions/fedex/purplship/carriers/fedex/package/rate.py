@@ -67,8 +67,8 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
     ]
 
     return RateDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         service=service,
         currency=currency,
         base_charge=decimal(shipment_rate.TotalBaseCharge.Amount),

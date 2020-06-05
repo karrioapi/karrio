@@ -10,7 +10,7 @@ class Settings(ABC):
     Unified API carrier Connection settings (Interface)
     """
 
-    carrier_name: str
+    carrier_id: str
     id: str = None
     test: bool = False
 
@@ -19,5 +19,5 @@ class Settings(ABC):
         return None
 
     @property
-    def carrier(self):
+    def carrier_name(self):
         return None

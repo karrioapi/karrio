@@ -30,5 +30,5 @@ class RequiredFieldError(ValidationError):
 class OriginNotServicedError(PurplShipError):
     """Raised when an origin is not supported by a shipping provider."""
 
-    def __init__(self, origin: str, carrier: str):
-        super().__init__(f"Origin country '{origin}' is not serviced by {carrier}")
+    def __init__(self, origin: str, carrier_name: str):
+        super().__init__(f"Origin country '{origin}' is not serviced by {carrier_name}")

@@ -21,8 +21,8 @@ def _extract_error(
             Message(
                 code=message.code,
                 message=message.description,
-                carrier=settings.carrier,
                 carrier_name=settings.carrier_name,
+                carrier_id=settings.carrier_id,
             )
         ]
 

@@ -13,4 +13,4 @@ class Settings(BaseSettings):
     account_number: str = None
     id: str = None
     test: bool = False
-    carrier_name: str = "DHL Freight"
+    carrier_id: str = "dhl_freight"

@@ -25,8 +25,8 @@ def _extract_tracking(pin_summary_node: Element, settings: Settings) -> Tracking
     pin_summary_ = pin_summary()
     pin_summary_.build(pin_summary_node)
     return TrackingDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         tracking_number=pin_summary_.pin,
         events=[
             TrackingEvent(

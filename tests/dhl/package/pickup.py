@@ -124,8 +124,8 @@ cancellation_data = {
 
 ParsedPickupResponse = [
     {
-        "carrier": "dhl",
-        "carrier_name": "carrier_name",
+        "carrier_name": "dhl_express",
+        "carrier_id": "carrier_id",
         "confirmation_number": "3674",
         "pickup_date": "2013-10-09",
         "closing_time": "08:30",
@@ -133,8 +133,8 @@ ParsedPickupResponse = [
     },
     [
         {
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
+            "carrier_name": "dhl_express",
+            "carrier_id": "carrier_id",
             "code": "PU021",
             "message": " NOTICE!  Packages picked up after hours may\n                be inspected by a DHL Courier for FAA security purposes.",
         }
@@ -144,8 +144,8 @@ ParsedPickupResponse = [
 
 ParsedModifyPUResponse = [
     {
-        "carrier": "dhl",
-        "carrier_name": "carrier_name",
+        "carrier_name": "dhl_express",
+        "carrier_id": "carrier_id",
         "confirmation_number": "100094",
         "pickup_charge": None,
         "pickup_date": None,
@@ -160,8 +160,8 @@ ParsedPickupErrorResponse = [
     None,
     [
         {
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
+            "carrier_name": "dhl_express",
+            "carrier_id": "carrier_id",
             "code": "PU012",
             "message": " Pickup NOT scheduled.  Ready by time is passed the station cutoff time. For pickup assistance call customer service representative.",
         }

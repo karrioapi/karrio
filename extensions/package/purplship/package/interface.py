@@ -28,8 +28,8 @@ def abort(error: Exception, gateway: Gateway):
         [
             Message(
                 code="500",
-                carrier=gateway.settings.carrier,
                 carrier_name=gateway.settings.carrier_name,
+                carrier_id=gateway.settings.carrier_id,
                 message=f"{error}",
             )
         ],

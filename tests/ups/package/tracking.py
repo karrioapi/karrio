@@ -61,8 +61,8 @@ ParsedAuthError = [
     [],
     [
         {
-            "carrier": "ups",
-            "carrier_name": "UPS",
+            "carrier_name": "ups",
+            "carrier_id": "ups",
             "code": "250003",
             "message": "Invalid Access License number",
         }
@@ -72,8 +72,8 @@ ParsedAuthError = [
 ParsedTrackingResponse = [
     [
         {
-            "carrier": "ups",
-            "carrier_name": "UPS",
+            "carrier_name": "ups",
+            "carrier_id": "ups",
             "events": [
                 {
                     "code": "KB",
@@ -128,8 +128,8 @@ ParsedInvalidTrackingNumberResponse = [
     [],
     [
         {
-            "carrier": "ups",
-            "carrier_name": "UPS",
+            "carrier_name": "ups",
+            "carrier_id": "ups",
             "code": "151018",
             "message": "Invalid tracking number",
         }

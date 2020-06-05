@@ -35,7 +35,7 @@ def rate_request(
     """
     if payload.shipper.country_code and payload.shipper.country_code != Country.US.name:
         raise OriginNotServicedError(
-            payload.shipper.country_code, settings.carrier_name
+            payload.shipper.country_code, settings.carrier_id
         )
 
     is_local = (

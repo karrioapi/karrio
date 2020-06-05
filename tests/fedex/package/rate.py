@@ -75,8 +75,8 @@ ParsedRateResponse = [
     [
         {
             "base_charge": 230.49,
-            "carrier": "fedex",
-            "carrier_name": "carrier_name",
+            "carrier_name": "fedex",
+            "carrier_id": "carrier_id",
             "currency": "USD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
@@ -86,8 +86,8 @@ ParsedRateResponse = [
         },
         {
             "base_charge": 207.47,
-            "carrier": "fedex",
-            "carrier_name": "carrier_name",
+            "carrier_name": "fedex",
+            "carrier_id": "carrier_id",
             "currency": "USD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
@@ -103,8 +103,8 @@ ParsedRateErrorResponse = [
     [],
     [
         {
-            "carrier": "fedex",
-            "carrier_name": "carrier_name",
+            "carrier_name": "fedex",
+            "carrier_id": "carrier_id",
             "code": "873",
             "message": "All specified account numbers must match.  ",
         }

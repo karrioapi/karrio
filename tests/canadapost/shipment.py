@@ -127,8 +127,8 @@ shipment_with_package_preset_data = {
 
 ParsedShipmentResponse = [
     {
-        "carrier": "canadapost",
-        "carrier_name": "CanadaPost",
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
         "label": LabelResponse,
         "tracking_number": "123456789012",
     },

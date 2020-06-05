@@ -12,4 +12,4 @@ class Settings(BaseSettings):
     password: str
     id: str = None
     test: bool = False
-    carrier_name: str = "USPS"
+    carrier_id: str = "usps"

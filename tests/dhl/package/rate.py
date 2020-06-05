@@ -114,8 +114,8 @@ ParsedRateParsingError = [
     [],
     [
         {
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
+            "carrier_name": "dhl_express",
+            "carrier_id": "carrier_id",
             "code": "111",
             "message": 'Error in parsing request XML:Error: The\n                    content of element type "ServiceHeader"\n                    must match\n                    "(MessageTime,MessageReference,SiteID,Password)".\n                    at line 9, column 30',
         }
@@ -126,14 +126,14 @@ ParsedRateMissingArgsError = [
     [],
     [
         {
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
+            "carrier_name": "dhl_express",
+            "carrier_id": "carrier_id",
             "code": "340004",
             "message": "The location information is missing. At least one attribute post code, city name or suburb name should be provided",
         },
         {
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
+            "carrier_name": "dhl_express",
+            "carrier_id": "carrier_id",
             "code": "220001",
             "message": "Failure - request",
         },
@@ -144,8 +144,8 @@ ParsedRateResponse = [
     [
         {
             "base_charge": 195.32,
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
+            "carrier_name": "dhl_express",
+            "carrier_id": "carrier_id",
             "currency": "CAD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
@@ -158,8 +158,8 @@ ParsedRateResponse = [
         },
         {
             "base_charge": 213.47,
-            "carrier": "dhl",
-            "carrier_name": "carrier_name",
+            "carrier_name": "dhl_express",
+            "carrier_id": "carrier_id",
             "currency": "CAD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,

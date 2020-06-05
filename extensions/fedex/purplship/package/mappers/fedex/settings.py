@@ -14,4 +14,4 @@ class Settings(BaseSettings):
     account_number: str
     id: str = None
     test: bool = False
-    carrier_name: str = "FedEx"
+    carrier_id: str = "fedex"

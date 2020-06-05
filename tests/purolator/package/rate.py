@@ -96,8 +96,8 @@ PARSED_RATE_RESPONSE = [
     [
         {
             "base_charge": 62.35,
-            "carrier": "purolator",
-            "carrier_name": "PurolatorCourier",
+            "carrier_name": "purolator_courier",
+            "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 5.15,
             "estimated_delivery": "2009-04-17",
@@ -118,8 +118,8 @@ PARSED_RATE_RESPONSE = [
         },
         {
             "base_charge": 55.0,
-            "carrier": "purolator",
-            "carrier_name": "PurolatorCourier",
+            "carrier_name": "purolator_courier",
+            "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 4.77,
             "estimated_delivery": "2009-04-17",
@@ -140,8 +140,8 @@ PARSED_RATE_RESPONSE = [
         },
         {
             "base_charge": 46.15,
-            "carrier": "purolator",
-            "carrier_name": "PurolatorCourier",
+            "carrier_name": "purolator_courier",
+            "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 4.3,
             "estimated_delivery": "2009-04-17",
@@ -162,8 +162,8 @@ PARSED_RATE_RESPONSE = [
         },
         {
             "base_charge": 29.6,
-            "carrier": "purolator",
-            "carrier_name": "PurolatorCourier",
+            "carrier_name": "purolator_courier",
+            "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 3.44,
             "estimated_delivery": "2009-04-22",
@@ -184,8 +184,8 @@ PARSED_RATE_RESPONSE = [
         },
         {
             "base_charge": 87.69,
-            "carrier": "purolator",
-            "carrier_name": "PurolatorCourier",
+            "carrier_name": "purolator_courier",
+            "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 6.47,
             "estimated_delivery": "2009-04-22",
