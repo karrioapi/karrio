@@ -20,7 +20,7 @@ services:
       EOF"
     environment:
       - DEBUG_MODE=True
-      - DJANGO_ALLOWED_HOSTS=*
+      - ALLOWED_HOSTS=*
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - DATABASE_NAME=db
