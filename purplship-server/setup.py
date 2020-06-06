@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='purplship-server.extension',
-    version='2020.4.0',
+    version='2020.6.0',
     description='Purplship-server extension',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,8 +13,7 @@ setup(
     license='LGPLv3',
     packages=find_packages("."),
     install_requires=[
-        'django',
-        'purplship-server.core',
+        'purplship-server.core>=2020.6.0',
     ],
     dependency_links=[],
     classifiers=[

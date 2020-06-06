@@ -12,7 +12,7 @@ class FreightcomSettings(Carrier):
     password = models.CharField(max_length=200)
 
 
-FreightcomSettings._meta.get_field('carrier_name').default = 'Freightcom'
+FreightcomSettings._meta.get_field('carrier_id').default = 'freightcom'
 
 
 def settings():

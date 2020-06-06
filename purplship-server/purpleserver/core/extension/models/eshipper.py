@@ -12,7 +12,7 @@ class EShipperSettings(Carrier):
     password = models.CharField(max_length=200)
 
 
-EShipperSettings._meta.get_field('carrier_name').default = 'eShipper'
+EShipperSettings._meta.get_field('carrier_id').default = 'eshipper'
 
 
 def settings():

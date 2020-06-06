@@ -21,25 +21,15 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Test Freightcom dependencies
       run: |
-        cd purplship/purplship-freightcom
-        python -m venv .env
-        source .env/bin/activate
-        pip install -r requirements.txt
-        pip install -r requirements.dev.txt
-        pip install .
-        pip install coverage
-        coverage run --include='purplship/*' -m unittest -v -f
-        mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
+        cd purplship/freightcom
+        source ./script.sh
+        init &&
+        check &&
         coverage report -m
     - name: Test eShipper dependencies
       run: |
-        cd purplship/purplship-eshipper
-        python -m venv .env
-        source .env/bin/activate
-        pip install -r requirements.txt
-        pip install -r requirements.dev.txt
-        pip install .
-        pip install coverage
-        coverage run --include='purplship/*' -m unittest -v -f
-        mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
+        cd purplship/eshipper
+        source ./script.sh
+        init &&
+        check &&
         coverage report -m

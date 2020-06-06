@@ -59,8 +59,8 @@ build() {
 }
 
 build_all() {
-  build "${ROOT:?}/purplship/purplship-eshipper"
-  build "${ROOT:?}/purplship/purplship-freightcom"
+  build "${ROOT:?}/purplship/eshipper"
+  build "${ROOT:?}/purplship/freightcom"
   build "${ROOT:?}/purplship-server"
 }
 
