@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
     methods=['get'],
     tags=['CORE'],
     responses={200: CarrierSettingsList()},
-    operation_description=("""
-    Return the list of configured carriers
-    """),
+    operation_description=(
+        "Returns the list of configured carriers"
+    ),
     operation_id="Carriers",
     query_serializer=CarrierFilters
 )
@@ -35,16 +35,20 @@ logger = logging.getLogger(__name__)
 def carriers_settings(request: Request):
     try:
         try:
-            query = request.query_params
+            query = CarrierFilters(data=request.query_params)
+            query.is_valid(raise_exception=True)
+
+            test_default = ('test' in request.query_params) or None
             response: List[CarrierSettings] = get_carriers(
-                carrier_type=query.get('carrier'),
-                carrier_name=query.get('carrierName'),
-                test=query.get('test'),
+                carrier_name=query.validated_data.get('carrierName'),
+                carrier_ids=([query.validated_data.get('carrierId')] if 'carrierId' in request.query_params else None),
+                test=query.validated_data.get('test') if query.validated_data.get('test') is not None else test_default,
             )
+
             carriers = [
                 dict(
-                    carrier=carrier.carrier,
-                    carrier_name=carrier.settings['carrier_name'],
+                    carrier_name=carrier.carrier_name,
+                    carrier_id=carrier.settings['carrier_id'],
                     test=carrier.settings['test']
                 )
                 for carrier in response

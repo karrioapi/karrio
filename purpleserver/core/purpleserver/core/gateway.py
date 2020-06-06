@@ -14,23 +14,27 @@ from purpleserver.core import models
 logger = logging.getLogger(__name__)
 
 
-def get_carriers(carrier_type: str = None, carrier_name: str = None, test: bool = None) -> Union[CarrierSettings, List[CarrierSettings]]:
-    filters = dict(carrier_name=carrier_name, test=(bool(test) if test is not None else None))
-    carrier_models = {carrier_type: models.MODELS.get(carrier_type)} if carrier_type is not None else models.MODELS
+def get_carriers(carrier_name: str = None, carrier_ids: List[str] = None, test: bool = None) -> Union[CarrierSettings, List[CarrierSettings]]:
+    mode = dict(test=test)
+    filters: List[dict] = [{"carrier_id": carrier_id, **mode} for carrier_id in (carrier_ids or [])]
+    carrier_models = {carrier_name: models.MODELS.get(carrier_name)} if (carrier_name is not None) else models.MODELS
 
-    if any(carrier_models.values()) and any(filters.values()):
-        query = Q(**{k: v for k, v in filters.items() if v is not None})
+    if any(carrier_models.values()) and (any(filters) or (test is not None)):
+        queries = Q()
+        for query in (filters if any(filters) else [mode]):
+            queries |= Q(**{k: v for k, v in query.items() if v is not None})
+
         return sum([
-            [CarrierSettings(carrier=carrier, settings=model_to_dict(s)) for s in model.objects.filter(query)]
-            for carrier, model in carrier_models.items()
+            [CarrierSettings(carrier_name=name, settings=model_to_dict(s)) for s in model.objects.filter(queries)]
+            for name, model in carrier_models.items()
         ], [])
     elif any(carrier_models.values()):
         return sum([
-            [CarrierSettings(carrier=type_, settings=model_to_dict(s)) for s in model.objects.all()]
-            for type_, model in carrier_models.items()
+            [CarrierSettings(carrier_name=name, settings=model_to_dict(s)) for s in model.objects.all()]
+            for name, model in carrier_models.items()
         ], [])
     else:
-        raise Exception(f'Unknown carrier {carrier_type}')
+        raise Exception(f'Unknown carrier {carrier_name}')
 
 
 def create_shipment(payload: dict, resolve_tracking_url: Callable[[str, dict], str] = None) -> Union[ShipmentResponse, ErrorResponse]:
@@ -45,13 +49,13 @@ def create_shipment(payload: dict, resolve_tracking_url: Callable[[str, dict], s
             f'Please select from {", ".join([r.id for r in payload.get("rates")])}'
         )
 
-    carrier_settings = next(
-        iter(get_carriers(carrier_type=selected_rate.carrier, carrier_name=selected_rate.carrier_name)),
+    carrier_settings: CarrierSettings = next(
+        iter(get_carriers(carrier_name=selected_rate.carrier_name, carrier_ids=[selected_rate.carrier_id])),
         None
     )
 
     request = ShipmentRequest(**{**payload, 'service': selected_rate.service})
-    gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
+    gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.settings)
     shipment, messages = api.Shipment.create(request).with_(gateway).parse()
 
     if shipment is None:
@@ -63,7 +67,7 @@ def create_shipment(payload: dict, resolve_tracking_url: Callable[[str, dict], s
         if(to_dict(selected_rate) == to_dict({**to_dict(shipment_rate), 'id': selected_rate.id})) else
         str(uuid.uuid4())
     )
-    is_test = "?test=true" if carrier_settings.settings.get("test") else ""
+    is_test = "?test" if carrier_settings.settings.get("test") else ""
     tracking_url = (
         resolve_tracking_url(shipment.tracking_number, shipment) + is_test
         if resolve_tracking_url is not None else None
@@ -82,18 +86,18 @@ def create_shipment(payload: dict, resolve_tracking_url: Callable[[str, dict], s
 
 
 def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> Union[RateResponse, ErrorResponse]:
-    request = api.Rating.fetch(payload)
+    request = api.Rating.fetch(ShipmentRate(**payload))
 
     def process(carrier_settings: CarrierSettings):
         try:
-            gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
+            gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.settings)
             return request.from_(gateway).parse()
         except Exception as e:
             logger.exception(e)
             return [[], [Message(
                 code="500",
-                carrier=carrier_settings.carrier,
-                carrier_name=carrier_settings.settings.get('carrier_name'),
+                carrier_name=carrier_settings.carrier_name,
+                carrier_id=carrier_settings.settings.get('carrier_id'),
                 message=str(e)
             )]]
 
@@ -118,7 +122,7 @@ def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> 
 def track_shipment(payload: dict, carrier_settings: CarrierSettings) -> TrackingResponse:
     request = TrackingRequest(**payload)
 
-    gateway = api.gateway[carrier_settings.carrier].create(carrier_settings.settings)
+    gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.settings)
     results, messages = api.Tracking.fetch(request).from_(gateway).parse()
 
     return TrackingResponse(

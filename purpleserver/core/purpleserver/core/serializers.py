@@ -4,7 +4,7 @@ from purplship.core.units import (
 )
 from rest_framework.serializers import (
     Serializer, CharField, FloatField, BooleanField, IntegerField, ListField,
-    ChoiceField, ListSerializer, UUIDField, DictField, URLField
+    ChoiceField, ListSerializer, UUIDField, DictField, URLField, NullBooleanField
 )
 
 CARRIERS = [(k, k) for k in MODELS.keys()]
@@ -22,17 +22,17 @@ class StringListField(ListField):
 
 
 class CarrierSettings(Serializer):
-    carrier = ChoiceField(choices=CARRIERS, required=True, help_text="Indicates a carrier (type)")
-    carrier_name = CharField(required=True, help_text="Indicates a specific carrier configuration name.")
+    carrier_name = ChoiceField(choices=CARRIERS, required=True, help_text="Indicates a carrier (type)")
+    carrier_id = CharField(required=True, help_text="Indicates a specific carrier configuration name.")
     test = BooleanField(required=True, help_text="""
     The test flag indicates whether to use a carrier configured for test. 
     """)
 
 
 class CarrierFilters(Serializer):
-    carrier = ChoiceField(choices=CARRIERS, required=False, help_text="Indicates a carrier (type)")
-    carrierName = CharField(required=False, help_text="Indicates a specific carrier configuration name.")
-    test = BooleanField(required=False, default=False, help_text="""
+    carrierName = ChoiceField(choices=CARRIERS, required=False, help_text="Indicates a carrier (type)")
+    carrierId = CharField(required=False, help_text="Indicates a specific carrier configuration name.")
+    test = NullBooleanField(required=False, help_text="""
     The test flag indicates whether to use a carrier configured for test. 
     """)
 
@@ -264,6 +264,9 @@ class RateRequest(Serializer):
     Please consult the reference for additional specific carriers options.
     """)
     reference = CharField(required=False, help_text="The shipment reference")
+    carrier_ids = StringListField(required=False, help_text="""
+    The list of configured carriers you wish to get rates from.
+    """)
 
 
 class TrackingRequest(Serializer):
@@ -325,8 +328,8 @@ class PickupCancellationRequest(Serializer):
 
 class Message(Serializer):
 
-    carrier = CharField(required=True, help_text="The targeted carrier")
-    carrier_name = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
+    carrier_name = CharField(required=True, help_text="The targeted carrier")
+    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
     message = CharField(required=False, help_text="The error or warning message")
     code = CharField(required=False, help_text="The message code")
     details = DictField(required=False, help_text="any additional details")
@@ -352,8 +355,8 @@ class TrackingEvent(Serializer):
 class RateDetails(Serializer):
 
     id = UUIDField(required=False, help_text="A unique rate identifier")
-    carrier = CharField(required=True, help_text="The rate's carrier")
-    carrier_name = CharField(required=True, help_text="The targeted carrier's name (unique identifier)")
+    carrier_name = CharField(required=True, help_text="The rate's carrier")
+    carrier_id = CharField(required=True, help_text="The targeted carrier's name (unique identifier)")
     currency = CharField(required=True, help_text="The rate monetary values currency code")
     service = CharField(required=False, help_text="The carrier's rate (quote) service")
     discount = FloatField(required=False, help_text="The monetary amount of the discount on the rate")
@@ -374,8 +377,8 @@ class RateDetails(Serializer):
 
 class TrackingDetails(Serializer):
 
-    carrier = CharField(required=True, help_text="The tracking carrier")
-    carrier_name = CharField(required=True, help_text="The tracking carrier configured identifier")
+    carrier_name = CharField(required=True, help_text="The tracking carrier")
+    carrier_id = CharField(required=True, help_text="The tracking carrier configured identifier")
     tracking_number = CharField(required=True, help_text="The shipment tracking number")
     events = ListField(child=TrackingEvent(), help_text="The tracking details events")
 
@@ -383,8 +386,8 @@ class TrackingDetails(Serializer):
 class ShipmentDetails(Serializer):
 
     id = UUIDField(required=False, help_text="A unique shipment identifier")
-    carrier = CharField(required=True, help_text="The shipment carrier")
-    carrier_name = CharField(required=True, help_text="The shipment carrier configured identifier")
+    carrier_name = CharField(required=True, help_text="The shipment carrier")
+    carrier_id = CharField(required=True, help_text="The shipment carrier configured identifier")
     label = CharField(required=True, help_text="The shipment label in base64 string")
     tracking_number = CharField(required=True, help_text="The shipment tracking number")
     selected_rate = RateDetails(required=False, help_text="The shipment selected rate")
@@ -393,8 +396,8 @@ class ShipmentDetails(Serializer):
 class PickupDetails(Serializer):
 
     id = CharField(required=False, help_text="A unique pickup identifier")
-    carrier = CharField(required=True, help_text="The pickup carrier")
-    carrier_name = CharField(required=True, help_text="The pickup carrier configured name")
+    carrier_name = CharField(required=True, help_text="The pickup carrier")
+    carrier_id = CharField(required=True, help_text="The pickup carrier configured name")
     confirmation_number = CharField(required=True, help_text="The pickup confirmation identifier")
     pickup_date = CharField(required=False, help_text="The pickup date")
     pickup_charge = ChargeDetails(required=False, help_text="The pickup cost details")

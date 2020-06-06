@@ -34,8 +34,10 @@ schema_view = get_schema_view(
    openapi.Info(
       title="PurplShip Multi-carrier API",
       default_version='v1',
-      description="The Open Source Multi-carrier API",
-      contact=openapi.Contact(email="support@purplship.com"),
+      description=(
+          "PurplShip is a Multi-carrier Shipping API that simplifies the integration of logistic carrier services"
+      ),
+      contact=openapi.Contact(email="hello@purplship.com"),
       license=openapi.License(name="AGPLv3+ License"),
    ),
    public=True,

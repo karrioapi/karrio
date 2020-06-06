@@ -20,7 +20,7 @@ class CanadaPostSettings(Carrier):
     contract_id = models.CharField(max_length=200, blank=True, default='')
 
 
-CanadaPostSettings._meta.get_field('carrier_name').default = 'CanadaPost'
+CanadaPostSettings._meta.get_field('carrier_id').default = 'canadapost'
 
 
 class DHLSettings(Carrier):
@@ -34,7 +34,7 @@ class DHLSettings(Carrier):
     account_number = models.CharField(max_length=200, blank=True, default='')
 
 
-DHLSettings._meta.get_field('carrier_name').default = 'DHLExpress'
+DHLSettings._meta.get_field('carrier_id').default = 'dhl_express'
 
 
 class PurolatorSettings(Carrier):
@@ -49,7 +49,7 @@ class PurolatorSettings(Carrier):
     user_token = models.CharField(max_length=200, blank=True, default='')
 
 
-PurolatorSettings._meta.get_field('carrier_name').default = 'PurolatorCourrier'
+PurolatorSettings._meta.get_field('carrier_id').default = 'purolator_courrier'
 
 
 class UPSSettings(Carrier):
@@ -64,7 +64,7 @@ class UPSSettings(Carrier):
     account_number = models.CharField(max_length=200)
 
 
-UPSSettings._meta.get_field('carrier_name').default = 'UPS'
+UPSSettings._meta.get_field('carrier_id').default = 'ups'
 
 
 class FedexSettings(Carrier):
@@ -79,7 +79,7 @@ class FedexSettings(Carrier):
     account_number = models.CharField(max_length=200)
 
 
-FedexSettings._meta.get_field('carrier_name').default = 'FedEx'
+FedexSettings._meta.get_field('carrier_id').default = 'fedex'
 
 
 MODELS: Dict[str, Any] = {

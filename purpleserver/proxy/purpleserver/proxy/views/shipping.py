@@ -64,7 +64,7 @@ def ship(request: Request):
                     lambda trackin_url, shipping: reverse(
                         "Tracking",
                         request=request,
-                        kwargs=dict(tracking_number=shipping.tracking_number, carrier=shipping.carrier)
+                        kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
                     )
                 )
             )
