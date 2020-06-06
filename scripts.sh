@@ -80,7 +80,21 @@ build_all() {
   backup_wheels
 }
 
+install_purplship_dev() {
+  p="$(dirname "${ROOT:?}")"
+  sm=(find "$p/purplship/extensions" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;)
 
+  echo "installing ${p}/purplship ..."
+  pip install "$p/purplship"
+
+  $sm | while read module; do
+    echo "installing ${module} ..."
+    pip install "${module}" || break
+  done
+}
+
+
+alias dev:purplship=install_purplship_dev
 alias run=run_server
 
 env:on || true
