@@ -5,6 +5,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.response import Response
+from rest_framework.request import Request
 from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
@@ -38,17 +39,20 @@ You can track a shipment by specifying the carrier and the shipment tracking num
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated, ))
 @throttle_classes([UserRateThrottle, AnonRateThrottle])
-def track(_, carrier: str, tracking_number: str):
+def track(request: Request, carrier_name: str, tracking_number: str):
     try:
         try:
-            carrier_setting = next(iter(get_carriers(carrier_type=carrier)), None)
-            request = TrackingRequest(data=dict(tracking_numbers=[tracking_number]))
+            carrier_setting = next(
+                iter(get_carriers(carrier_name=carrier_name, test='test' in request.query_params or None)),
+                None
+            )
+            tracking_request = TrackingRequest(data=dict(tracking_numbers=[tracking_number]))
 
             if carrier_setting is None:
-                raise Exception(f'No configured carrier of type: {carrier}')
+                raise Exception(f'No configured carrier of type: {carrier_name}')
 
-            request.is_valid(raise_exception=True)
-            response = track_shipment(request.data, carrier_setting)
+            tracking_request.is_valid(raise_exception=True)
+            response = track_shipment(tracking_request.data, carrier_setting)
 
             if isinstance(response, ErrorResponse):
                 Response(to_dict(response), status=status.HTTP_400_BAD_REQUEST)
@@ -66,4 +70,4 @@ def track(_, carrier: str, tracking_number: str):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('proxy/tracking/<carrier>/<tracking_number>', track, name='Tracking'))
+router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track, name='Tracking'))

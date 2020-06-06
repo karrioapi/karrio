@@ -15,7 +15,7 @@ from purplship.core.utils.helpers import to_dict
 from purpleserver.core.datatypes import ErrorResponse
 from purpleserver.core.exceptions import ValidationError
 from purpleserver.core.serializers import (
-    RateRequest, RateResponse, CarrierFilters, ShipmentOption, ErrorResponse as ErrorResponseSerializer
+    RateRequest, RateResponse, ShipmentOption, ErrorResponse as ErrorResponseSerializer
 )
 from purpleserver.core.gateway import fetch_rates, get_carriers
 from purpleserver.proxy.router import router
@@ -47,7 +47,6 @@ class RateRequestSchema(RateRequest):
     request_body=RateRequestSchema(),
     operation_description=DESCRIPTIONS,
     operation_id="Fetch Rates",
-    query_serializer=CarrierFilters
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
@@ -56,17 +55,17 @@ class RateRequestSchema(RateRequest):
 def rates(request: Request):
     try:
         try:
-            query = request.query_params
-            carrier_settings_list = get_carriers(
-                carrier_type=query.get('carrier'),
-                carrier_name=query.get('carrierName'),
-            )
             rate_request = RateRequest(data=request.data)
+            rate_request.is_valid(raise_exception=True)
+
+            carrier_ids = rate_request.data.get('carrier_ids', [])
+            carrier_settings_list = (
+                get_carriers(carrier_ids=carrier_ids) if len(carrier_ids) > 0 else get_carriers()
+            )
 
             if len(carrier_settings_list) == 0:
                 raise Exception(f'No configured carriers specified')
 
-            rate_request.is_valid(raise_exception=True)
             response = fetch_rates(rate_request.data, carrier_settings_list)
 
             if isinstance(response, ErrorResponse):

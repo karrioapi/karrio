@@ -14,25 +14,30 @@ from purplship.core.models import (
     TrackingRequest,
     ShipmentDetails,
     ShipmentRequest as BaseShipmentRequest,
+    RateRequest,
     Insurance
 )
 
 
 @attr.s(auto_attribs=True)
 class CarrierSettings:
-    carrier: str
+    carrier_name: str
     settings: dict
 
 
 @attr.s(auto_attribs=True)
-class ShipmentRate:
+class ShipmentRate(RateRequest):
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
+
     rates: List[RateDetails] = JList[RateDetails]
 
     services: List[str] = []
     options: Dict = {}
+    reference: str = ""
+
+    carrier_ids: List[str] = []
 
 
 @attr.s(auto_attribs=True)
@@ -55,7 +60,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
 @attr.s(auto_attribs=True)
 class Shipment:
-    carrier: str
+    carrier_id: str
     carrier_name: str
     tracking_number: str
     label: str

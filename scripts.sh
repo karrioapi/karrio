@@ -26,7 +26,6 @@ create_env() {
 init() {
     create_env &&
     pip install -r "${ROOT:?}/requirements.txt" &&
-    pip install -r "${ROOT:?}/requirements.dev.txt" &&
     install_all
 }
 
@@ -41,7 +40,7 @@ alias env:reset=init
 install_all() {
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
-    pip install -e "${ROOT:?}/purpleserver"
+    pip install -e "${ROOT:?}/purpleserver[dev]"
 }
 
 run_server() {
@@ -81,7 +80,29 @@ build_all() {
   backup_wheels
 }
 
+install_purplship_dev() {
+  p="$(dirname "${ROOT:?}")"
+  sm=(find "$p/purplship" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;)
 
+  $sm | while read module; do
+    echo "installing ${module} ..."
+    pip install "${module}" || break
+  done
+}
+
+install_extension_dev() {
+  p="$(dirname "${ROOT:?}")"
+  sm=(find "$p/purplship-extension" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;)
+
+  $sm | while read module; do
+    echo "installing ${module} ..."
+    pip install "${module}" || break
+  done
+}
+
+
+alias dev:purplship=install_purplship_dev
+alias dev:extension=install_extension_dev
 alias run=run_server
 
 env:on || true

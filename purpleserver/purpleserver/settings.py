@@ -29,7 +29,7 @@ DEBUG = bool(os.environ.get('DEBUG_MODE', True))
 
 SECURE_DOMAIN = os.environ.get('SECURE', False)
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -198,7 +198,7 @@ REDOC_SETTINGS = {
    'LAZY_RENDERING': False,
 }
 
-LOG_LEVEL = ('DEBUG' if DEBUG else os.getenv('DJANGO_LOG_LEVEL', 'INFO'))
+LOG_LEVEL = ('DEBUG' if DEBUG else os.getenv('LOG_LEVEL', 'INFO'))
 
 # Logging configuration
 LOGGING = {
