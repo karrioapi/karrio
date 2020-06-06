@@ -22,7 +22,6 @@ purplship.package==2020.6.1
 purplship.canadapost==2020.6.1
 purplship.dhl==2020.6.1
 purplship.fedex==2020.6.1
-purplship.package==2020.6.1
 purplship.purolator==2020.6.1
 purplship.ups==2020.6.1
 py-canadapost==2020.4.0

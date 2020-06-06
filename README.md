@@ -21,7 +21,7 @@ docker run \
   -p80:8000 \
   --name=pship --rm \
   --volume=$(pwd):/app \
-  --interactive --tty purplship/purplship-server:2020.4.1 \
+  --interactive --tty purplship/purplship-server:2020.6.1 \
   /bin/bash -c "purplship makemigrations && purplship migrate && purplship createsuperuser ; purplship runserver 0.0.0.0:8000"
 ```
 
@@ -46,7 +46,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
   web:
-    image: purplship/purplship-server:2020.4.1
+    image: purplship/purplship-server:2020.6.1
     restart: always
     entrypoint: |
       bash -c "bash -s <<EOF
@@ -57,7 +57,7 @@ services:
       EOF"
     environment:
       - DEBUG_MODE=True
-      - DJANGO_ALLOWED_HOSTS=*
+      - ALLOWED_HOSTS=*
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - DATABASE_NAME=db
@@ -90,6 +90,64 @@ create a python virtual environment using [python venv](https://docs.python.org/
 ```shell script
 pip install -f https://git.io/purplship purplship-server==2020.6.1
 ```
+
+**For the latest stable installation with frozen version**
+
+<details>
+<summary>Installation from dependencies lock</summary>
+
+copy this in a `requirement.txt` file
+
+```text
+-f https://git.io/purplship
+asgiref==3.2.7
+attrs==19.3.0
+certifi==2020.4.5.1
+chardet==3.0.4
+coreapi==2.3.3
+coreschema==0.0.4
+Django==3.0.7
+djangorestframework==3.11.0
+djangorestframework-camel-case==1.1.2
+drf-yasg==1.17.1
+idna==2.9
+inflection==0.4.0
+itypes==1.2.0
+Jinja2==2.11.2
+jstruct==2020.4.0
+lxml==4.5.1
+MarkupSafe==1.1.1
+packaging==20.4
+purplship==2020.6.1
+purplship.package==2020.6.1
+purplship.canadapost==2020.6.1
+purplship.dhl==2020.6.1
+purplship.fedex==2020.6.1
+purplship.purolator==2020.6.1
+purplship.ups==2020.6.1
+py-canadapost==2020.4.0
+py-dhl==2020.4.0
+py-fedex==2020.3.0
+py-purolator==2020.4.0
+py-soap==2020.3.0
+py-ups==2020.3.0
+pyparsing==2.4.7
+pytz==2020.1
+requests==2.23.0
+ruamel.yaml==0.16.10
+ruamel.yaml.clib==0.2.0
+six==1.15.0
+sqlparse==0.3.1
+uritemplate==3.0.1
+urllib3==1.25.9
+xmltodict==0.12.0
+```
+
+```shell script
+pip install -r requirement.txt
+```
+</details>
+
 
 - Initialize database (Demo)
 
