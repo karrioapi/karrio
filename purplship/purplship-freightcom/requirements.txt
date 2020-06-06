@@ -1,2 +1,0 @@
--f https://git.io/purplship
-purplship.package==2020.4.0
