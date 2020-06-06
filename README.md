@@ -1,8 +1,8 @@
-# PurplShip (Multi-carrier REST API)
+# PurplShip (Multi-carrier private cloud shipping API)
 
 ## Introduction
 
-purplship-server is a private cloud Multi-carrier API.
+purplship-server is a private cloud Multi-carrier Shipping API.
 
 
 ## Documentation
@@ -77,7 +77,7 @@ docker-compose up
 ```
 
 
-### Using Pip
+### Using Pip (For development)
 
 - OS Requirements
 
@@ -88,7 +88,7 @@ Python >= 3.7
 create a python virtual environment using [python venv](https://docs.python.org/3/tutorial/venv.html)
 
 ```shell script
-pip install -f https://git.io/purplship purplship-server
+pip install -f https://git.io/purplship purplship-server==2020.6.1
 ```
 
 - Initialize database (Demo)
