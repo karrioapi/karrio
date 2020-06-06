@@ -8,15 +8,24 @@
 
 ## Introduction
 
-PurplShip is a system for connecting multiple supply chain carriers API.
+PurplShip is a system for connecting multiple logistics carriers API.
 
-In addition to providing a unified and simplified interface across logistics carriers APIs, PurplShip offers a framework to facilitate the full access of advanced and specific carriers capabilities while simplifying the addition of new carrier APIs.
+In addition to providing a unified and simplified interface across logistics carriers APIs, 
+PurplShip offers a framework to facilitate the full access of advanced and specific carriers capabilities 
+while simplifying the addition of new carrier APIs.
 
 With PurplShip you can:
 
 - Integrate multiple carriers web services: DHL, FedEx, UPS, USPS, Canada Post and more with ease
 - Use a modern and intuitive, unified API across carriers
 
+
+## Integration
+
+PurplShip has two layers
+
+- **PurplShip SDK** for an integration as a Python library. *[documentation](#Documentation) bellow*
+- **PurplShip Server** for a self-hosted private cloud REST API. *documentation and usage can be found at [docs.purplship.com](https://docs.purplship.com)*
 
 ## License
 
@@ -78,11 +87,11 @@ This instruction will get you started with `purplship.package` and the support f
 -f https://git.io/purplship
 
 # core packages
-purplship==2020.6.0
-purplship.package==2020.6.0
+purplship==2020.6.1
+purplship.package==2020.6.1
 
 # carriers
-purplship.canadapost==2020.6.0
+purplship.canadapost==2020.6.1
 ```
 
 <details>
@@ -91,10 +100,10 @@ purplship.canadapost==2020.6.0
 You can add additional carriers you desire to work with
 
 ```text
-purplship.dhl==2020.6.0
-purplship.fedex==2020.6.0
-purplship.purolator==2020.6.0
-purplship.ups==2020.6.0
+purplship.dhl==2020.6.1
+purplship.fedex==2020.6.1
+purplship.purolator==2020.6.1
+purplship.ups==2020.6.1
 ```
 
 </details>
