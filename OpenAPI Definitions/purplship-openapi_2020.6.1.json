@@ -1,0 +1,3329 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "PurplShip Multi-carrier API",
+        "description": "PurplShip is a Multi-carrier Shipping API that simplifies the integration of logistic carrier services",
+        "contact": {
+            "email": "hello@purplship.com"
+        },
+        "license": {
+            "name": "AGPLv3+ License"
+        },
+        "version": "v1"
+    },
+    "host": "0.0.0.0:8000",
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/v1",
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "Token": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "security": [{
+        "Token": []
+    }],
+    "paths": {
+        "/carriers": {
+            "get": {
+                "operationId": "Carriers",
+                "description": "Returns the list of configured carriers",
+                "parameters": [{
+                        "name": "carrierName",
+                        "in": "query",
+                        "description": "Indicates a carrier (type)",
+                        "required": false,
+                        "type": "string",
+                        "enum": [
+                            "canadapost",
+                            "dhl",
+                            "fedex",
+                            "purolator",
+                            "ups"
+                        ]
+                    },
+                    {
+                        "name": "carrierId",
+                        "in": "query",
+                        "description": "Indicates a specific carrier configuration name.",
+                        "required": false,
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    {
+                        "name": "test",
+                        "in": "query",
+                        "description": "\nThe test flag indicates whether to use a carrier configured for test. \n",
+                        "required": false,
+                        "type": "boolean",
+                        "x-nullable": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CarrierSettings"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "CORE"
+                ]
+            },
+            "parameters": []
+        },
+        "/labels": {
+            "post": {
+                "operationId": "Print Label",
+                "description": "Returns a label PDF file.",
+                "parameters": [{
+                    "name": "data",
+                    "in": "body",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/LabelPrintingRequest"
+                    }
+                }],
+                "responses": {},
+                "produces": [
+                    "application/octet-stream",
+                    "application/vnd.oai.openapi+json"
+                ],
+                "tags": [
+                    "CORE"
+                ]
+            },
+            "parameters": []
+        },
+        "/proxy/rates": {
+            "post": {
+                "operationId": "Fetch Rates",
+                "description": "\nThe Shipping process begins by fetching rates for your shipment.\nThe rate request return the backbone of your shipment object adding\nthe rates retrieved from one or many carriers based on your filter.\n",
+                "parameters": [{
+                    "name": "data",
+                    "in": "body",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/RateRequestSchema"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/RateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "PROXY"
+                ]
+            },
+            "parameters": []
+        },
+        "/proxy/shipments": {
+            "post": {
+                "operationId": "Create A Shipment",
+                "description": "\nOnce a Shipment is initialized by fetching the rates, the remaining requirements might be specified \nto submit the shipment to the carrier of the selected rate of your choice.\n",
+                "parameters": [{
+                    "name": "data",
+                    "in": "body",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/ShipmentRequestSchema"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ShipmentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "PROXY"
+                ]
+            },
+            "parameters": []
+        },
+        "/proxy/tracking/{carrier_name}/{tracking_number}": {
+            "get": {
+                "operationId": "Track A Package",
+                "description": "\nYou can track a shipment by specifying the carrier and the shipment tracking number.\n",
+                "parameters": [{
+                    "name": "test",
+                    "in": "query",
+                    "description": "\nThe test flag indicates whether to use a carrier configured for test. \n",
+                    "required": false,
+                    "type": "boolean",
+                    "default": false
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/TrackingResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "PROXY"
+                ]
+            },
+            "parameters": [{
+                    "name": "carrier_name",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "name": "tracking_number",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/references": {
+            "get": {
+                "operationId": "References",
+                "description": "\n# Countries\n\n<details>\n\nCode | Name \n--- | --- \nAD | ANDORRA\nAE | UNITED ARAB EMIRATES\nAF | AFGHANISTAN\nAG | ANTIGUA\nAI | ANGUILLA\nAL | ALBANIA\nAM | ARMENIA\nAN | NETHERLANDS ANTILLES\nAO | ANGOLA\nAR | ARGENTINA\nAS | AMERICAN SAMOA\nAT | AUSTRIA\nAU | AUSTRALIA\nAW | ARUBA\nAZ | AZERBAIJAN\nBA | BOSNIA AND HERZEGOVINA\nBB | BARBADOS\nBD | BANGLADESH\nBE | BELGIUM\nBF | BURKINA FASO\nBG | BULGARIA\nBH | BAHRAIN\nBI | BURUNDI\nBJ | BENIN\nBM | BERMUDA\nBN | BRUNEI\nBO | BOLIVIA\nBR | BRAZIL\nBS | BAHAMAS\nBT | BHUTAN\nBW | BOTSWANA\nBY | BELARUS\nBZ | BELIZE\nCA | CANADA\nCD | CONGO, THE DEMOCRATIC REPUBLIC OF\nCF | CENTRAL AFRICAN REPUBLIC\nCG | CONGO\nCH | SWITZERLAND\nCI | COTE D IVOIRE\nCK | COOK ISLANDS\nCL | CHILE\nCM | CAMEROON\nCN | CHINA, PEOPLES REPUBLIC\nCO | COLOMBIA\nCR | COSTA RICA\nCU | CUBA\nCV | CAPE VERDE\nCY | CYPRUS\nCZ | CZECH REPUBLIC, THE\nDE | GERMANY\nDJ | DJIBOUTI\nDK | DENMARK\nDM | DOMINICA\nDO | DOMINICAN REPUBLIC\nDZ | ALGERIA\nEC | ECUADOR\nEE | ESTONIA\nEG | EGYPT\nER | ERITREA\nES | SPAIN\nET | ETHIOPIA\nFI | FINLAND\nFJ | FIJI\nFK | FALKLAND ISLANDS\nFM | MICRONESIA, FEDERATED STATES OF\nFO | FAROE ISLANDS\nFR | FRANCE\nGA | GABON\nGB | UNITED KINGDOM\nGD | GRENADA\nGE | GEORGIA\nGF | FRENCH GUYANA\nGG | GUERNSEY\nGH | GHANA\nGI | GIBRALTAR\nGL | GREENLAND\nGM | GAMBIA\nGN | GUINEA REPUBLIC\nGP | GUADELOUPE\nGQ | GUINEA-EQUATORIAL\nGR | GREECE\nGT | GUATEMALA\nGU | GUAM\nGW | GUINEA-BISSAU\nGY | GUYANA (BRITISH)\nHK | HONG KONG\nHN | HONDURAS\nHR | CROATIA\nHT | HAITI\nHU | HUNGARY\nIC | CANARY ISLANDS, THE\nID | INDONESIA\nIE | IRELAND, REPUBLIC OF\nIL | ISRAEL\nIN | INDIA\nIQ | IRAQ\nIR | IRAN (ISLAMIC REPUBLIC OF)\nIS | ICELAND\nIT | ITALY\nJE | JERSEY\nJM | JAMAICA\nJO | JORDAN\nJP | JAPAN\nKE | KENYA\nKG | KYRGYZSTAN\nKH | CAMBODIA\nKI | KIRIBATI\nKM | COMOROS\nKN | ST. KITTS\nKP | KOREA, THE D.P.R OF (NORTH K.)\nKR | KOREA, REPUBLIC OF (SOUTH K.)\nKV | KOSOVO\nKW | KUWAIT\nKY | CAYMAN ISLANDS\nKZ | KAZAKHSTAN\nLA | LAO PEOPLES DEMOCRATIC REPUBLIC\nLB | LEBANON\nLC | ST. LUCIA\nLI | LIECHTENSTEIN\nLK | SRI LANKA\nLR | LIBERIA\nLS | LESOTHO\nLT | LITHUANIA\nLU | LUXEMBOURG\nLV | LATVIA\nLY | LIBYA\nMA | MOROCCO\nMC | MONACO\nMD | MOLDOVA, REPUBLIC OF\nME | MONTENEGRO, REPUBLIC OF\nMG | MADAGASCAR\nMH | MARSHALL ISLANDS\nMK | MACEDONIA, REPUBLIC OF\nML | MALI\nMM | MYANMAR\nMN | MONGOLIA\nMO | MACAU\nMP | COMMONWEALTH NO. MARIANA ISLANDS\nMQ | MARTINIQUE\nMR | MAURITANIA\nMS | MONTSERRAT\nMT | MALTA\nMU | MAURITIUS\nMV | MALDIVES\nMW | MALAWI\nMX | MEXICO\nMY | MALAYSIA\nMZ | MOZAMBIQUE\nNA | NAMIBIA\nNC | NEW CALEDONIA\nNE | NIGER\nNG | NIGERIA\nNI | NICARAGUA\nNL | NETHERLANDS, THE\nNO | NORWAY\nNP | NEPAL\nNR | NAURU, REPUBLIC OF\nNU | NIUE\nNZ | NEW ZEALAND\nOM | OMAN\nPA | PANAMA\nPE | PERU\nPF | TAHITI\nPG | PAPUA NEW GUINEA\nPH | PHILIPPINES, THE\nPK | PAKISTAN\nPL | POLAND\nPR | PUERTO RICO\nPT | PORTUGAL\nPW | PALAU\nPY | PARAGUAY\nQA | QATAR\nRE | REUNION, ISLAND OF\nRO | ROMANIA\nRS | SERBIA, REPUBLIC OF\nRU | RUSSIAN FEDERATION, THE\nRW | RWANDA\nSA | SAUDI ARABIA\nSB | SOLOMON ISLANDS\nSC | SEYCHELLES\nSD | SUDAN\nSE | SWEDEN\nSG | SINGAPORE\nSH | SAINT HELENA\nSI | SLOVENIA\nSK | SLOVAKIA\nSL | SIERRA LEONE\nSM | SAN MARINO\nSN | SENEGAL\nSO | SOMALIA\nSR | SURINAME\nSS | SOUTH SUDAN\nST | SAO TOME AND PRINCIPE\nSV | EL SALVADOR\nSY | SYRIA\nSZ | SWAZILAND\nTC | TURKS AND CAICOS ISLANDS\nTD | CHAD\nTG | TOGO\nTH | THAILAND\nTJ | TAJIKISTAN\nTL | TIMOR LESTE\nTN | TUNISIA\nTO | TONGA\nTR | TURKEY\nTT | TRINIDAD AND TOBAGO\nTV | TUVALU\nTW | TAIWAN\nTZ | TANZANIA\nUA | UKRAINE\nUG | UGANDA\nUS | UNITED STATES OF AMERICA\nUY | URUGUAY\nUZ | UZBEKISTAN\nVA | VATICAN CITY STATE\nVC | ST. VINCENT\nVE | VENEZUELA\nVG | VIRGIN ISLANDS (BRITISH)\nVI | VIRGIN ISLANDS (US)\nVN | VIETNAM\nVU | VANUATU\nWS | SAMOA\nXB | BONAIRE\nXC | CURACAO\nXE | ST. EUSTATIUS\nXM | ST. MAARTEN\nXN | NEVIS\nXS | SOMALILAND, REP OF (NORTH SOMALIA)\nXY | ST. BARTHELEMY\nYE | YEMEN, REPUBLIC OF\nYT | MAYOTTE\nZA | SOUTH AFRICA\nZM | ZAMBIA\nZW | ZIMBABWE\n\n</details><br/>\n\n\n# States and Provinces\n\n<details>\n\n\n## UNITED ARAB EMIRATES\n\nCode | Name \n--- | --- \nAB | Abu Dhabi\nAJ | Ajman\nDU | Dubai\nFU | Fujairah\nRA | Ras al-Khaimah\nSH | Sharjah\nUM | Umm al-Qaiwain\n\n\n\n## CANADA\n\nCode | Name \n--- | --- \nAB | Alberta\nBC | British Columbia\nMB | Manitoba\nNB | New Brunswick\nNL | Newfoundland\nNT | Northwest Territories\nNS | Nova Scotia\nNU | Nunavut\nON | Ontario\nPE | Prince Edward Island\nQC | Quebec\nSK | Saskatchewan\nYT | Yukon\n\n\n\n## CHINA, PEOPLES REPUBLIC\n\nCode | Name \n--- | --- \nanhui | Anhui\nhainan | Hainan\njiangxi | Jiangxi\nshanghai | Shanghai\nbeijing | Beijing\nhebei | Hebei\njilin | Jilin\nshanxi | Shanxi\nchongqing | Chongqing\nheilongjiang | Heilongjiang\nliaoning | Liaoning\nsichuan | Sichuan\nfujian | Fujian\nhenan | Henan\nnei_mongol | Nei Mongol\ntianjin | Tianjin\ngansu | Gansu\nhubei | Hubei\nqinghai | Qinghai\nxinjiang | Xinjiang\nguangdong | Guangdong\nhunan | Hunan\nshaanxi | Shaanxi\nyunnan | Yunnan\nguizhou | Guizhou\njiangsu | Jiangsu\nshandong | Shandong\nzhejiang | Zhejiang\n\n\n\n## INDIA\n\nCode | Name \n--- | --- \nAN | Andaman & Nicobar (U.T)\nAP | Andhra Pradesh\nAR | Arunachal Pradesh\nAS | Assam\nBR | Bihar\nCG | Chattisgarh\nCH | Chandigarh (U.T.)\nDD | Daman & Diu (U.T.)\nDL | Delhi (U.T.)\nDN | Dadra and Nagar Haveli (U.T.)\nGA | Goa\nGJ | Gujarat\nHP | Himachal Pradesh\nHR | Haryana\nJH | Jharkhand\nJK | Jammu & Kashmir\nKA | Karnataka\nKL | Kerala\nLD | Lakshadweep (U.T)\nMH | Maharashtra\nML | Meghalaya\nMN | Manipur\nMP | Madhya Pradesh\nMZ | Mizoram\nNL | Nagaland\nOR | Orissa\nPB | Punjab\nPY | Puducherry (U.T.)\nRJ | Rajasthan\nSK | Sikkim\nTN | Tamil Nadu\nTR | Tripura\nUA | Uttaranchal\nUP | Uttar Pradesh\nWB | West Bengal\n\n\n\n## MEXICO\n\nCode | Name \n--- | --- \nAG | Aguascalientes\nBC | Baja California\nBS | Baja California Sur\nCM | Campeche\nCS | Chiapas\nCH | Chihuahua\nCO | Coahuila\nCL | Colima\nDF | Ciudad de M\u00e9xico\nDG | Durango\nGT | Guanajuato\nGR | Guerrero\nHG | Hidalgo\nJA | Jalisco\nEM | Estado de M\u00e9xico\nMI | Michoac\u00e1n\nMO | Morelos\nNA | Nayarit\nNL | Nuevo Le\u00f3n\nOA | Oaxaca\nPU | Puebla\nQE | Quer\u00e9taro\nQR | Quintana Roo\nSL | San Luis Potos\u00ed\nSI | Sinaloa\nSO | Sonora\nTB | Tabasco\nTM | Tamaulipas\nTL | Tlaxcala\nVE | Veracruz\nYU | Yucat\u00e1n\nZA | Zacatecas\n\n\n\n## UNITED STATES OF AMERICA\n\nCode | Name \n--- | --- \nAL | Alabama\nAK | Alaska\nAZ | Arizona\nAR | Arkansas\nCA | California\nCO | Colorado\nCT | Connecticut\nDE | Delaware\nDC | District of Columbia\nFL | Florida\nGA | Georgia\nHI | Hawaii\nID | Idaho\nIL | Illinois\nIN | Indiana\nIA | Iowa\nKS | Kansas\nKY | Kentucky\nLA | Louisiana\nME | Maine\nMD | Maryland\nMA | Massachusetts\nMI | Michigan\nMN | Minnesota\nMS | Mississippi\nMO | Missouri\nMT | Montana\nNE | Nebraska\nNV | Nevada\nNH | New Hampshire\nNJ | New Jersey\nNM | New Mexico\nNY | New York\nNC | North Carolina\nND | North Dakota\nOH | Ohio\nOK | Oklahoma\nOR | Oregon\nPA | Pennsylvania\nRI | Rhode Island\nSC | South Carolina\nSD | South Dakota\nTN | Tennessee\nTX | Texas\nUT | Utah\nVT | Vermont\nVA | Virginia\nWA | Washington State\nWV | West Virginia\nWI | Wisconsin\nWY | Wyoming\nPR | Puerto Rico\n\n\n\n</details><br/>\n\n# Currencies\n\n<details>\n\nCode | Name \n--- | --- \nEUR | Euro\nAED | UAE Dirham\nUSD | US Dollar\nXCD | East Caribbean Dollar\nAMD | Dran\nANG | Netherlands Antilles Guilder\nAOA | Kwanza\nARS | Argentine Peso\nAUD | Australian Dollar\nAWG | Aruba Guilder\nAZN | Manat\nBAM | Convertible Marks\nBBD | Barbadian Dollar\nBDT | Taka\nXOF | CFA Franc West Africa\nBGN | Bulgarian Lev\nBHD | Bahraini Dinar\nBIF | Burundese Franc\nBMD | Bermudian Dollar\nBND | Brunei Dollar\nBOB | Boliviano\nBRL | Real\nBSD | Bahamian Dollar\nBTN | Ngultrum\nBWP | Pula\nBYN | Belarussian Ruble\nBZD | Belize Dollar\nCAD | Canadian Dollar\nCDF | Franc Congolais\nXAF | CFA Franc Central Africa\nCHF | Swiss Franc\nNZD | New Zealand Dollar\nCLP | New Chile Peso\nCNY | Yuan (Ren Min Bi)\nCOP | Colombian Peso\nCRC | Costa Rican Colon\nCUC | Peso Convertible\nCVE | Cape Verde Escudo\nCZK | Czech Koruna\nDJF | Djibouti Franc\nDKK | Danish Krone\nDOP | Dominican Republic Peso\nDZD | Algerian Dinar\nEGP | Egyptian Pound\nERN | Nakfa\nETB | Birr\nFJD | Fijian Dollar\nGBP | Pound Sterling\nGEL | Georgian Lari\nGHS | Cedi\nGMD | Dalasi\nGNF | Guinea Franc\nGTQ | Quetzal\nGYD | Guyanan Dollar\nHKD | Hong Kong Dollar\nHNL | Lempira\nHRK | Croatian Kuna\nHTG | Gourde\nHUF | Forint\nIDR | Rupiah\nILS | New Israeli Shekel\nINR | Indian Rupee\nIRR | Iranian Rial\nISK | Icelandic Krona\nJMD | Jamaican Dollar\nJOD | Jordanian Dinar\nJPY | Yen\nKES | Kenyan Shilling\nKGS | Som\nKHR | Khmer Rial\nKMF | Comoros Franc\nKPW | North Korean Won\nKRW | Won\nKWD | Kuwaiti Dinar\nKYD | Cayman Islands Dollar\nKZT | Tenge\nLAK | Kip\nLKR | Sri Lankan Rupee\nLRD | Liberian Dollar\nLSL | Loti\nLYD | Libyan Dinar\nMAD | Moroccan Dirham\nMDL | Leu\nMGA | Ariary\nMKD | Denar\nMMK | Kyat\nMNT | Tugrik\nMOP | Pataca\nMRO | Ouguiya\nMUR | Mauritius Rupee\nMVR | Rufiyaa\nMWK | Kwacha\nMXN | Mexican Nuevo Peso\nMYR | Ringgit\nMZN | Mozambique Metical\nNAD | Namibian Dollar\nXPF | CFP Franc\nNGN | Naira\nNIO | Cordoba Oro\nNOK | Norwegian Krone\nNPR | Nepalese Rupee\nOMR | Omani Rial\nPEN | Nuevo Sol\nPGK | Kina\nPHP | Phillipines Peso\nPKR | Pakistani Rupee\nPLN | Zloty\nPYG | Guarani\nQAR | Qatar Rial\nRSD | Serbia, Dinars\nRUB | Russian Ruble\nRWF | Rwanda Franc\nSAR | Saudi Riyal\nSBD | Solomon Islands Dollar\nSCR | Seychelles Rupee\nSDG | Sudanese Pound\nSEK | Swedish Krona\nSGD | Singapore Dollar\nSHP | St. Helena Pound\nSLL | Leone\nSOS | Somali Shilling\nSRD | Suriname Dollar\nSSP | South Sudanese pound\nSTD | Dobra\nSYP | Syrian Pound\nSZL | Lilangeni\nTHB | Baht\nTJS | Somoni\nTND | Tunisian Dinar\nTOP | Pa'anga\nTRY | New Turkish Lira\nTTD | Trinidad and Tobago Dollar\nTWD | New Taiwan Dollar\nTZS | Tanzanian Shilling\nUAH | Hryvna\nUYU | Peso Uruguayo\nUZS | Sum\nVEF | Bolivar Fuerte\nVND | Dong\nVUV | Vanuatu Vatu\nWST | Tala\nYER | Yemeni Riyal\nZAR | South African Rand\n\n</details><br/>\n\n\n# Package Preset\n\n<details>\n\n\n## Canada Post\n\nCode | Dimensions | Note\n--- | --- | ---\ncanadapost_mailing_box | 15.2 x 10.2 | height x width\ncanadapost_extra_small_mailing_box | 14.0 x 14.0 x 14.0 | height x length x width\ncanadapost_small_mailing_box | 22.9 x 6.4 x 28.6 | height x length x width\ncanadapost_medium_mailing_box | 23.5 x 13.3 x 31.0 | height x length x width\ncanadapost_large_mailing_box | 30.5 x 9.5 x 38.1 | height x length x width\ncanadapost_extra_large_mailing_box | 30.5 x 21.6 x 40.0 | height x length x width\ncanadapost_corrugated_small_box | 32.0 x 32.0 x 42.0 | height x length x width\ncanadapost_corrugated_medium_box | 38.0 x 32.0 x 46.0 | height x length x width\ncanadapost_corrugated_large_box | 46.0 x 40.6 x 46.0 | height x length x width\ncanadapost_xexpresspost_certified_envelope | 15.9 x 1.5 x 0.5 x 26.0 | height x length x weight x width\ncanadapost_xexpresspost_national_large_envelope | 29.2 x 1.5 x 1.36 x 40.0 | height x length x weight x width\n\n\n\n## DHL\n\nCode | Dimensions | Note\n--- | --- | ---\ndhl_express_envelope | 27.5 x 1.0 x 0.5 x 35.0 | height x length x weight x width\ndhl_express_standard_flyer | 30.0 x 2.0 x 40.0 | height x weight x width\ndhl_express_large_flyer | 37.5 x 3.0 x 47.5 | height x weight x width\ndhl_express_box_2 | 18.2 x 10.0 x 1.0 x 33.7 | height x length x weight x width\ndhl_express_box_3 | 32.0 x 5.2 x 2.0 x 33.6 | height x length x weight x width\ndhl_express_box_4 | 32.2 x 18.0 x 5.0 x 33.7 | height x length x weight x width\ndhl_express_box_5 | 32.2 x 34.5 x 10.0 x 33.7 | height x length x weight x width\ndhl_express_box_6 | 35.9 x 36.9 x 15.0 x 41.7 | height x length x weight x width\ndhl_express_box_7 | 40.4 x 38.9 x 20.0 x 48.1 | height x length x weight x width\ndhl_express_box_8 | 44.4 x 40.9 x 25.0 x 54.2 | height x length x weight x width\ndhl_express_tube | 15.0 x 15.0 x 5.0 x 96.0 | height x length x weight x width\ndhl_didgeridoo_box | 13.0 x 162.0 x 10.0 x 13.0 | height x length x weight x width\ndhl_jumbo_box | 42.7 x 33.0 x 30.0 x 45.0 | height x length x weight x width\ndhl_jumbo_box_junior | 34.0 x 24.1 x 20.0 x 39.9 | height x length x weight x width\n\n\n\n## FedEx\n\nCode | Dimensions | Note\n--- | --- | ---\nfedex_envelope_legal_size | 15.5 x 1.0 x 9.5 | height x weight x width\nfedex_padded_pak | 14.75 x 2.2 x 11.75 | height x weight x width\nfedex_polyethylene_pak | 15.5 x 2.2 x 12.0 | height x weight x width\nfedex_clinical_pak | 18.0 x 2.2 x 13.5 | height x weight x width\nfedex_small_box | 10.9 x 1.5 x 20.0 x 12.25 | height x length x weight x width\nfedex_medium_box | 11.5 x 2.38 x 20.0 x 13.25 | height x length x weight x width\nfedex_large_box | 12.38 x 3.0 x 20.0 x 17.88 | height x length x weight x width\nfedex_10_kg_box | 12.94 x 10.19 x 10.0 x 15.81 | height x length x weight x width\nfedex_25_kg_box | 16.56 x 13.19 x 25.0 x 21.56 | height x length x weight x width\nfedex_tube | 6.0 x 6.0 x 20.0 x 38.0 | height x length x weight x width\n\n\n\n## Purolator\n\nCode | Dimensions | Note\n--- | --- | ---\npurolator_express_envelope | 1.0 | weight\npurolator_express_pack | 3.0 | weight\npurolator_express_box | 7.0 | weight\n\n\n\n## UPS\n\nCode | Dimensions | Note\n--- | --- | ---\nups_small_express_box | 11.0 x 2.0 x 30.0 x 13.0 | height x length x weight x width\nups_medium_express_box | 11.0 x 3.0 x 30.0 x 16.0 | height x length x weight x width\nups_large_express_box | 13.0 x 3.0 x 30.0 x 18.0 | height x length x weight x width\nups_express_tube | 6.0 x 6.0 x 38.0 | height x length x width\nups_express_pak | 11.75 x 16.0 | height x width\nups_world_document_box | 12.5 x 3.0 x 17.5 | height x length x width\n\n\n\n</details><br/>\n\n\n# Shipment Options\n\n<details>\n\n\n## Canada Post\n\nCode | Identifier\n--- | ---\ncanadapost_signature | SO\ncanadapost_coverage | COV\ncanadapost_collect_on_delivery | COD\ncanadapost_proof_of_age_required_18 | PA18\ncanadapost_proof_of_age_required_19 | PA19\ncanadapost_card_for_pickup | HFP\ncanadapost_do_not_safe_drop | DNS\ncanadapost_leave_at_door | LAD\ncanadapost_deliver_to_post_office | D2PO\ncanadapost_return_at_senders_expense | RASE\ncanadapost_return_to_sender | RTS\ncanadapost_abandon | ABAN\n\n\n\n## DHL\n\nCode | Identifier\n--- | ---\ndhl_logistics_services | 0A\ndhl_mailroom_management | 0B\ndhl_pallet_administration | 0C\ndhl_warehousing | 0D\ndhl_express_logistics_centre | 0E\ndhl_strategic_parts_centre | 0F\ndhl_local_distribution_centre | 0G\ndhl_terminal_handling | 0H\ndhl_cross_docking | 0I\ndhl_inventory_management | 0J\ndhl_loading_unloading | 0K\ndhl_product_kitting | 0L\ndhl_priority_account_desk | 0M\ndhl_document_archiving | 0N\ndhl_saturday_delivery | AA\ndhl_saturday_pickup | AB\ndhl_holiday_delivery | AC\ndhl_holiday_pickup | AD\ndhl_domestic_saturday_delivery | AG\ndhl_standard | BA\ndhl_globalmail_item | BB\ndhl_letter | BC\ndhl_packet | BD\ndhl_letter_plus | BE\ndhl_packet_plus | BF\ndhl_elevated_risk | CA\ndhl_restricted_destination | CB\ndhl_security_validation | CC\ndhl_secure_protection | CD\ndhl_proof_of_identity | CE\ndhl_secure_storage | CF\ndhl_diplomatic_material | CG\ndhl_smart_sensor | CH\ndhl_visa_program | CI\ndhl_onboard_courier | CJ\ndhl_secure_safebox | CK\ndhl_smart_sentry | CL\ndhl_split_duties_and_tax | DC\ndhl_duties_and_taxes_paid | DD\ndhl_receiver_paid | DE\ndhl_duties_and_taxes_unpaid | DS\ndhl_import_billing | DT\ndhl_importer_of_record | DU\ndhl_go_green_carbon_neutral | EA\ndhl_go_green_carbon_footprint | EB\ndhl_go_green_carbon_estimate | EC\ndhl_fuel_surcharge_b | FB\ndhl_fuel_surcharge_c | FC\ndhl_fuel_surcharge_f | FF\ndhl_smartphone_box | GA\ndhl_laptop_box | GB\ndhl_bottle_box | GC\ndhl_repacking | GD\ndhl_tablet_box | GE\ndhl_filler_material | GF\ndhl_packaging | GG\ndhl_diplomatic_bag | GH\ndhl_pallet_box | GI\ndhl_lock_box | GJ\ndhl_lithium_ion_pi965_section_ii | HB\ndhl_dry_ice_un1845 | HC\ndhl_lithium_ion_pi965_966_section_ii | HD\ndhl_dangerous_goods | HE\ndhl_perishable_cargo | HG\ndhl_excepted_quantity | HH\ndhl_spill_cleaning | HI\ndhl_consumer_commodities | HK\ndhl_limited_quantities_adr | HL\ndhl_lithium_metal_pi969_section_ii | HM\ndhl_adr_load_exemption | HN\ndhl_lithium_ion_pi967_section_ii | HV\ndhl_lithium_metal_pi970_section_ii | HW\ndhl_biological_un3373 | HY\ndhl_extended_liability | IB\ndhl_contract_insurance | IC\ndhl_shipment_insurance | II\ndhl_delivery_notification | JA\ndhl_pickup_notification | JC\ndhl_proactive_tracking | JD\ndhl_performance_reporting | JE\ndhl_prealert_notification | JY\ndhl_change_of_billing | KA\ndhl_cash_on_delivery | KB\ndhl_printed_invoice | KD\ndhl_waybill_copy | KE\ndhl_import_paperwork | KF\ndhl_payment_on_pickup | KY\ndhl_shipment_intercept | LA\ndhl_shipment_redirect | LC\ndhl_storage_at_facility | LE\ndhl_cold_storage | LG\ndhl_specific_routing | LH\ndhl_service_recovery | LV\ndhl_alternative_address | LW\ndhl_hold_for_collection | LX\ndhl_address_correction_a | MA\ndhl_address_correction_b | MB\ndhl_neutral_delivery | NN\ndhl_remote_area_pickup | OB\ndhl_remote_area_delivery_c | OC\ndhl_out_of_service_area | OE\ndhl_remote_area_delivery_o | OO\ndhl_shipment_preparation | PA\ndhl_shipment_labeling | PB\ndhl_shipment_consolidation | PC\ndhl_relabeling_data_entry | PD\ndhl_preprinted_waybill | PE\ndhl_piece_labelling | PS\ndhl_data_staging_03 | PT\ndhl_data_staging_06 | PU\ndhl_data_staging_12 | PV\ndhl_data_staging_24 | PW\ndhl_standard_pickup | PX\ndhl_scheduled_pickup | PY\ndhl_dedicated_pickup | QA\ndhl_early_pickup | QB\ndhl_late_pickup | QD\ndhl_residential_pickup | QE\ndhl_loading_waiting | QF\ndhl_bypass_injection | QH\ndhl_direct_injection | QI\ndhl_drop_off_at_facility | QY\ndhl_delivery_signature | SA\ndhl_content_signature | SB\ndhl_named_signature | SC\ndhl_adult_signature | SD\ndhl_contract_signature | SE\ndhl_alternative_signature | SW\ndhl_no_signature_required | SX\ndhl_dedicated_delivery | TA\ndhl_early_delivery | TB\ndhl_time_window_delivery | TC\ndhl_evening_delivery | TD\ndhl_delivery_on_appointment | TE\ndhl_return_undeliverable | TG\ndhl_swap_delivery | TH\ndhl_unloading_waiting | TJ\ndhl_residential_delivery | TK\ndhl_repeat_delivery | TN\ndhl_alternative_date | TT\ndhl_no_partial_delivery | TU\ndhl_service_point_24_7 | TV\ndhl_pre_9_00 | TW\ndhl_pre_10_30 | TX\ndhl_pre_12_00 | TY\ndhl_thermo_packaging | UA\ndhl_ambient_vialsafe | UB\ndhl_ambient_non_insulated | UC\ndhl_ambient_insulated | UD\ndhl_ambient_extreme | UE\ndhl_chilled_box_s | UF\ndhl_chilled_box_m | UG\ndhl_chilled_box_l | UH\ndhl_frozen_no_ice_s | UI\ndhl_frozen_no_ice_m | UJ\ndhl_frozen_no_ice_l | UK\ndhl_frozen_ice_sticks_s | UL\ndhl_frozen_ice_sticks_m | UM\ndhl_frozen_ice_sticks_l | UN\ndhl_frozen_ice_plates_s | UO\ndhl_frozen_ice_plates_m | UP\ndhl_frozen_ice_plates_l | UQ\ndhl_combination_no_ice | UR\ndhl_combination_dry_ice | US\ndhl_frozen_ice_sticks_e | UT\ndhl_frozen_ice_plates_e | UV\ndhl_customer_tcp_1 | UW\ndhl_thermo_accessories | VA\ndhl_absorbent_sleeve | VB\ndhl_cooland_wrap | VC\ndhl_dry_ice_supplies | VD\ndhl_pressure_bag_s | VE\ndhl_pressure_bag_m | VF\ndhl_pressure_bag_l | VG\ndhl_informal_clearance | WA\ndhl_formal_clearance | WB\ndhl_payment_deferment | WC\ndhl_clearance_authorization | WD\ndhl_multiline_entry | WE\ndhl_post_clearance_modification | WF\ndhl_handover_to_broker | WG\ndhl_physical_intervention | WH\ndhl_bio_phyto_veterinary_controls | WI\ndhl_obtaining_permits_and_licences | WJ\ndhl_bonded_storage | WK\ndhl_bonded_transit_documents | WL\ndhl_temporary_import_export | WM\ndhl_under_bond_guarantee | WN\ndhl_export_declaration | WO\ndhl_exporter_validation | WP\ndhl_certificate_of_origin | WQ\ndhl_document_translation | WR\ndhl_personal_effects | WS\ndhl_paperless_trade | WY\ndhl_import_export_taxes | XB\ndhl_unrecoverable_origin_tax | XC\ndhl_quarantine_inspection | XD\ndhl_merchandise_process | XE\ndhl_domestic_postal_tax | XF\ndhl_tier_two_tax | XG\ndhl_tier_three_tax | XH\ndhl_import_penalty | XI\ndhl_cargo_zone_process | XJ\ndhl_import_export_duties | XX\ndhl_premium_09_00 | Y1\ndhl_premium_10_30 | Y2\ndhl_premium_12_00 | Y3\ndhl_over_sized_piece_b | YB\ndhl_over_handled_piece_c | YC\ndhl_multipiece_shipment | YE\ndhl_over_weight_piece_f | YF\ndhl_over_sized_piece_g | YG\ndhl_over_handled_piece_h | YH\ndhl_premium_9_00_i | YI\ndhl_premium_10_30_j | YJ\ndhl_premium_12_00_k | YK\ndhl_paket_shipment | YV\ndhl_breakbulk_mother | YW\ndhl_breakbulk_baby | YX\ndhl_over_weight_piece_y | YY\ndhl_customer_claim | ZA\ndhl_damage_compensation | ZB\ndhl_loss_compensation | ZC\ndhl_customer_rebate | ZD\ndhl_e_com_discount | ZE\n\n\n\n## FedEx\n\nCode | Identifier\n--- | ---\nblind_shipment | BLIND_SHIPMENT\nbroker_select_option | BROKER_SELECT_OPTION\ncall_before_delivery | CALL_BEFORE_DELIVERY\ncod | COD\ncod_remittance | COD_REMITTANCE\ncustom_delivery_window | CUSTOM_DELIVERY_WINDOW\ncut_flowers | CUT_FLOWERS\ndangerous_goods | DANGEROUS_GOODS\ndelivery_on_invoice_acceptance | DELIVERY_ON_INVOICE_ACCEPTANCE\ndetention | DETENTION\ndo_not_break_down_pallets | DO_NOT_BREAK_DOWN_PALLETS\ndo_not_stack_pallets | DO_NOT_STACK_PALLETS\ndry_ice | DRY_ICE\neast_coast_special | EAST_COAST_SPECIAL\nelectronic_trade_documents | ELECTRONIC_TRADE_DOCUMENTS\nevent_notification | EVENT_NOTIFICATION\nexclude_from_consolidation | EXCLUDE_FROM_CONSOLIDATION\nexclusive_use | EXCLUSIVE_USE\nexhibition_delivery | EXHIBITION_DELIVERY\nexhibition_pickup | EXHIBITION_PICKUP\nexpedited_alternate_delivery_route | EXPEDITED_ALTERNATE_DELIVERY_ROUTE\nexpedited_one_day_earlier | EXPEDITED_ONE_DAY_EARLIER\nexpedited_service_monitoring_and_delivery | EXPEDITED_SERVICE_MONITORING_AND_DELIVERY\nexpedited_standard_day_early_delivery | EXPEDITED_STANDARD_DAY_EARLY_DELIVERY\nextra_labor | EXTRA_LABOR\nextreme_length | EXTREME_LENGTH\nfedex_one_rate | FEDEX_ONE_RATE\nflatbed_trailer | FLATBED_TRAILER\nfood | FOOD\nfreight_guarantee | FREIGHT_GUARANTEE\nfreight_to_collect | FREIGHT_TO_COLLECT\nfuture_day_shipment | FUTURE_DAY_SHIPMENT\nhold_at_location | HOLD_AT_LOCATION\nholiday_delivery | HOLIDAY_DELIVERY\nholiday_guarantee | HOLIDAY_GUARANTEE\nhome_delivery_premium | HOME_DELIVERY_PREMIUM\ninside_delivery | INSIDE_DELIVERY\ninside_pickup | INSIDE_PICKUP\ninternational_controlled_export_service | INTERNATIONAL_CONTROLLED_EXPORT_SERVICE\ninternational_mail_service | INTERNATIONAL_MAIL_SERVICE\ninternational_traffic_in_arms_regulations | INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS\nliftgate_delivery | LIFTGATE_DELIVERY\nliftgate_pickup | LIFTGATE_PICKUP\nlimited_access_delivery | LIMITED_ACCESS_DELIVERY\nlimited_access_pickup | LIMITED_ACCESS_PICKUP\nmarking_or_tagging | MARKING_OR_TAGGING\nnon_business_time | NON_BUSINESS_TIME\npallet_shrinkwrap | PALLET_SHRINKWRAP\npallet_weight_allowance | PALLET_WEIGHT_ALLOWANCE\npallets_provided | PALLETS_PROVIDED\npending_complete | PENDING_COMPLETE\npending_shipment | PENDING_SHIPMENT\npermit | PERMIT\npharmacy_delivery | PHARMACY_DELIVERY\npoison | POISON\nport_delivery | PORT_DELIVERY\nport_pickup | PORT_PICKUP\npre_delivery_notification | PRE_DELIVERY_NOTIFICATION\npre_eig_processing | PRE_EIG_PROCESSING\npre_multiplier_processing | PRE_MULTIPLIER_PROCESSING\nprotection_from_freezing | PROTECTION_FROM_FREEZING\nregional_mall_delivery | REGIONAL_MALL_DELIVERY\nregional_mall_pickup | REGIONAL_MALL_PICKUP\nreturn_shipment | RETURN_SHIPMENT\nreturns_clearance | RETURNS_CLEARANCE\nreturns_clearance_special_routing_required | RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED\nsaturday_delivery | SATURDAY_DELIVERY\nsaturday_pickup | SATURDAY_PICKUP\nshipment_assembly | SHIPMENT_ASSEMBLY\nsort_and_segregate | SORT_AND_SEGREGATE\nspecial_delivery | SPECIAL_DELIVERY\nspecial_equipment | SPECIAL_EQUIPMENT\nstorage | STORAGE\nsunday_delivery | SUNDAY_DELIVERY\nthird_party_consignee | THIRD_PARTY_CONSIGNEE\ntop_load | TOP_LOAD\nusps_delivery | USPS_DELIVERY\nusps_pickup | USPS_PICKUP\nweighing | WEIGHING\n\n\n\n## Purolator\n\nCode | Identifier\n--- | ---\ndangerous_goods | Dangerous Goods\nchain_of_signature | Chain of Signature\nexpress_cheque | ExpressCheque\nhold_for_pickup | Hold For Pickup\nreturn_services | Return Services\nsaturday_service | Saturday Service\norigin_signature_not_required | Origin Signature Not Required (OSNR)\nadult_signature_required | Adult Signature Required (ASR)\nspecial_handling | Special Handling\n\n\n\n## UPS\n\nCode | Identifier\n--- | ---\nsaturday_delivery_indicator | SaturdayDeliveryIndicator\naccess_point_cod | AccessPointCOD\ndeliver_to_addressee_only_indicator | DeliverToAddresseeOnlyIndicator\ndirect_delivery_only_indicator | DirectDeliveryOnlyIndicator\ncod | COD\ndelivery_confirmation | DeliveryConfirmation\nreturn_of_document_indicator | ReturnOfDocumentIndicator\nup_scarbonneutral_indicator | UPScarbonneutralIndicator\ncertificate_of_origin_indicator | CertificateOfOriginIndicator\npickup_options | PickupOptions\ndelivery_options | DeliveryOptions\nrestricted_articles | RestrictedArticles\nshipper_export_declaration_indicator | ShipperExportDeclarationIndicator\ncommercial_invoice_removal_indicator | CommercialInvoiceRemovalIndicator\nimport_control | ImportControl\nreturn_service | ReturnService\nsdl_shipment_indicator | SDLShipmentIndicator\nepra_indicator | EPRAIndicator\n\n\n\n</details><br/>\n\n\n# Shipment Services\n\n<details>\n\n\n## Canada Post\n\nCode | Identifier\n--- | ---\ncanadapost_regular_parcel | DOM.RP\ncanadapost_expedited_parcel | DOM.EP\ncanadapost_xpresspost | DOM.XP\ncanadapost_priority | DOM.PC\ncanadapost_library_books | DOM.LIB\ncanadapost_expedited_parcel_usa | USA.EP\ncanadapost_priority_worldwide_envelope_usa | USA.PW.ENV\ncanadapost_priority_worldwide_pak_usa | USA.PW.PAK\ncanadapost_priority_worldwide_parcel_usa | USA.PW.PARCEL\ncanadapost_small_packet_usa_air | USA.SP.AIR\ncanadapost_tracked_packet_usa | USA.TP\ncanadapost_tracked_packet_usa_lvm | USA.TP.LVM\ncanadapost_xpresspost_usa | USA.XP\ncanadapost_xpresspost_international | INT.XP\ncanadapost_international_parcel_air | INT.IP.AIR\ncanadapost_international_parcel_surface | INT.IP.SURF\ncanadapost_priority_worldwide_envelope_intl | INT.PW.ENV\ncanadapost_priority_worldwide_pak_intl | INT.PW.PAK\ncanadapost_priority_worldwide_parcel_intl | INT.PW.PARCEL\ncanadapost_small_packet_international_air | INT.SP.AIR\ncanadapost_small_packet_international_surface | INT.SP.SURF\ncanadapost_tracked_packet_international | INT.TP\n\n\n\n## DHL\n\nCode | Identifier\n--- | ---\ndhl_logistics_services | LOGISTICS SERVICES\ndhl_domestic_express_12_00_doc | DOMESTIC EXPRESS 12:00 DOC\ndhl_b2_c_doc | B2C DOC\ndhl_b2_c_nondoc | B2C NONDOC\ndhl_jetline | JETLINE\ndhl_sprintline | SPRINTLINE\ndhl_express_easy_doc | EXPRESS EASY DOC\ndhl_express_easy_nondoc | EXPRESS EASY NONDOC\ndhl_europack_doc | EUROPACK DOC\ndhl_auto_reversals | AUTO REVERSALS\ndhl_breakbulk_express_doc | BREAKBULK EXPRESS DOC\ndhl_medical_express_doc | MEDICAL EXPRESS DOC\ndhl_express_worldwide_doc | EXPRESS WORLDWIDE DOC\ndhl_express_9_00_nondoc | EXPRESS 9:00 NONDOC\ndhl_freight_worldwide_nondoc | FREIGHT WORLDWIDE NONDOC\ndhl_domestic_economy_select_doc | DOMESTIC ECONOMY SELECT DOC\ndhl_economy_select_nondoc | ECONOMY SELECT NONDOC\ndhl_domestic_express_9_00_doc | DOMESTIC EXPRESS 9:00 DOC\ndhl_jumbo_box_nondoc | JUMBO BOX NONDOC\ndhl_express_9_00_doc | EXPRESS 9:00 DOC\ndhl_express_10_30_doc | EXPRESS 10:30 DOC\ndhl_express_10_30_nondoc | EXPRESS 10:30 NONDOC\ndhl_domestic_express_doc | DOMESTIC EXPRESS DOC\ndhl_domestic_express_10_30_doc | DOMESTIC EXPRESS 10:30 DOC\ndhl_express_worldwide_nondoc | EXPRESS WORLDWIDE NONDOC\ndhl_medical_express_nondoc | MEDICAL EXPRESS NONDOC\ndhl_globalmail_business_doc | GLOBALMAIL BUSINESS DOC\ndhl_same_day_doc | SAME DAY DOC\ndhl_express_12_00_doc | EXPRESS 12:00 DOC\ndhl_europack_nondoc | EUROPACK NONDOC\ndhl_economy_select_doc | ECONOMY SELECT DOC\ndhl_express_envelope_doc | EXPRESS ENVELOPE DOC\ndhl_express_12_00_nondoc | EXPRESS 12:00 NONDOC\ndhl_destination_charges | Destination Charges\n\n\n\n## FedEx\n\nCode | Identifier\n--- | ---\neurope_first_international_priority | EUROPE_FIRST_INTERNATIONAL_PRIORITY\nfedex_1_day_freight | FEDEX_1_DAY_FREIGHT\nfedex_2_day | FEDEX_2_DAY\nfedex_2_day_am | FEDEX_2_DAY_AM\nfedex_2_day_freight | FEDEX_2_DAY_FREIGHT\nfedex_3_day_freight | FEDEX_3_DAY_FREIGHT\nfedex_cargo_airport_to_airport | FEDEX_CARGO_AIRPORT_TO_AIRPORT\nfedex_cargo_freight_forwarding | FEDEX_CARGO_FREIGHT_FORWARDING\nfedex_cargo_international_express_freight | FEDEX_CARGO_INTERNATIONAL_EXPRESS_FREIGHT\nfedex_cargo_international_premium | FEDEX_CARGO_INTERNATIONAL_PREMIUM\nfedex_cargo_mail | FEDEX_CARGO_MAIL\nfedex_cargo_registered_mail | FEDEX_CARGO_REGISTERED_MAIL\nfedex_cargo_surface_mail | FEDEX_CARGO_SURFACE_MAIL\nfedex_custom_critical_air_expedite | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE\nfedex_custom_critical_air_expedite_exclusive_use | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_EXCLUSIVE_USE\nfedex_custom_critical_air_expedite_network | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_NETWORK\nfedex_custom_critical_charter_air | FEDEX_CUSTOM_CRITICAL_CHARTER_AIR\nfedex_custom_critical_point_to_point | FEDEX_CUSTOM_CRITICAL_POINT_TO_POINT\nfedex_custom_critical_surface_expedite | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE\nfedex_custom_critical_surface_expedite_exclusive_use | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE_EXCLUSIVE_USE\nfedex_custom_critical_temp_assure_air | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_AIR\nfedex_custom_critical_temp_assure_validated_air | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_VALIDATED_AIR\nfedex_custom_critical_white_glove_services | FEDEX_CUSTOM_CRITICAL_WHITE_GLOVE_SERVICES\nfedex_distance_deferred | FEDEX_DISTANCE_DEFERRED\nfedex_express_saver | FEDEX_EXPRESS_SAVER\nfedex_first_freight | FEDEX_FIRST_FREIGHT\nfedex_freight_economy | FEDEX_FREIGHT_ECONOMY\nfedex_freight_priority | FEDEX_FREIGHT_PRIORITY\nfedex_ground | FEDEX_GROUND\nfedex_international_priority_plus | FEDEX_INTERNATIONAL_PRIORITY_PLUS\nfedex_next_day_afternoon | FEDEX_NEXT_DAY_AFTERNOON\nfedex_next_day_early_morning | FEDEX_NEXT_DAY_EARLY_MORNING\nfedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY\nfedex_next_day_freight | FEDEX_NEXT_DAY_FREIGHT\nfedex_next_day_mid_morning | FEDEX_NEXT_DAY_MID_MORNING\nfirst_overnight | FIRST_OVERNIGHT\nground_home_delivery | GROUND_HOME_DELIVERY\ninternational_distribution_freight | INTERNATIONAL_DISTRIBUTION_FREIGHT\ninternational_economy | INTERNATIONAL_ECONOMY\ninternational_economy_distribution | INTERNATIONAL_ECONOMY_DISTRIBUTION\ninternational_economy_freight | INTERNATIONAL_ECONOMY_FREIGHT\ninternational_first | INTERNATIONAL_FIRST\ninternational_ground | INTERNATIONAL_GROUND\ninternational_priority | INTERNATIONAL_PRIORITY\ninternational_priority_distribution | INTERNATIONAL_PRIORITY_DISTRIBUTION\ninternational_priority_express | INTERNATIONAL_PRIORITY_EXPRESS\ninternational_priority_freight | INTERNATIONAL_PRIORITY_FREIGHT\npriority_overnight | PRIORITY_OVERNIGHT\nsame_day | SAME_DAY\nsame_day_city | SAME_DAY_CITY\nsame_day_metro_afternoon | SAME_DAY_METRO_AFTERNOON\nsame_day_metro_morning | SAME_DAY_METRO_MORNING\nsame_day_metro_rush | SAME_DAY_METRO_RUSH\nsmart_post | SMART_POST\nstandard_overnight | STANDARD_OVERNIGHT\ntransborder_distribution_consolidation | TRANSBORDER_DISTRIBUTION_CONSOLIDATION\n\n\n\n## Purolator\n\nCode | Identifier\n--- | ---\npurolator_express_9_am | PurolatorExpress9AM\npurolator_express_us | PurolatorExpressU.S.\npurolator_express_10_30_am | PurolatorExpress10:30AM\npurolator_express_us_9_am | PurolatorExpressU.S.9AM\npurolator_express_12_pm | PurolatorExpress12PM\npurolator_express_us_10_30_am | PurolatorExpressU.S.10:30AM\npurolator_express | PurolatorExpress\npurolator_express_us_12_00 | PurolatorExpressU.S.12:00\npurolator_express_evening | PurolatorExpressEvening\npurolator_express_envelope_us | PurolatorExpressEnvelopeU.S.\npurolator_express_envelope_9_am | PurolatorExpressEnvelope9AM\npurolator_express_us_envelope_9_am | PurolatorExpressU.S.Envelope9AM\npurolator_express_envelope_10_30_am | PurolatorExpressEnvelope10:30AM\npurolator_express_us_envelope_10_30_am | PurolatorExpressU.S.Envelope10:30AM\npurolator_express_envelope_12_pm | PurolatorExpressEnvelope12PM\npurolator_express_us_envelope_12_00 | PurolatorExpressU.S.Envelope12:00\npurolator_express_envelope | PurolatorExpressEnvelope\npurolator_express_pack_us | PurolatorExpressPackU.S.\npurolator_express_envelope_evening | PurolatorExpressEnvelopeEvening\npurolator_express_us_pack_9_am | PurolatorExpressU.S.Pack9AM\npurolator_express_pack_9_am | PurolatorExpressPack9AM\npurolator_express_us_pack_10_30_am | PurolatorExpressU.S.Pack10:30AM\npurolator_express_pack10_30_am | PurolatorExpressPack10:30AM\npurolator_express_us_pack_12_00 | PurolatorExpressU.S.Pack12:00\npurolator_express_pack_12_pm | PurolatorExpressPack12PM\npurolator_express_box_us | PurolatorExpressBoxU.S.\npurolator_express_pack | PurolatorExpressPack\npurolator_express_us_box_9_am | PurolatorExpressU.S.Box9AM\npurolator_express_pack_evening | PurolatorExpressPackEvening\npurolator_express_us_box_10_30_am | PurolatorExpressU.S.Box10:30AM\npurolator_express_box_9_am | PurolatorExpressBox9AM\npurolator_express_us_box_12_00 | PurolatorExpressU.S.Box12:00\npurolator_express_box_10_30_am | PurolatorExpressBox10:30AM\npurolator_ground_us | PurolatorGroundU.S.\npurolator_express_box_12_pm | PurolatorExpressBox12PM\npurolator_express_international | PurolatorExpressInternational\npurolator_express_box | PurolatorExpressBox\npurolator_express_international_9_am | PurolatorExpressInternational9AM\npurolator_express_box_evening | PurolatorExpressBoxEvening\npurolator_express_international_10_30_am | PurolatorExpressInternational10:30AM\npurolator_ground | PurolatorGround\npurolator_express_international_12_00 | PurolatorExpressInternational12:00\npurolator_ground9_am | PurolatorGround9AM\npurolator_express_envelope_international | PurolatorExpressEnvelopeInternational\npurolator_ground10_30_am | PurolatorGround10:30AM\npurolator_express_international_envelope_9_am | PurolatorExpressInternationalEnvelope9AM\npurolator_ground_evening | PurolatorGroundEvening\npurolator_express_international_envelope_10_30_am | PurolatorExpressInternationalEnvelope10:30AM\npurolator_quick_ship | PurolatorQuickShip\npurolator_express_international_envelope_12_00 | PurolatorExpressInternationalEnvelope12:00\npurolator_quick_ship_envelope | PurolatorQuickShipEnvelope\npurolator_express_pack_international | PurolatorExpressPackInternational\npurolator_quick_ship_pack | PurolatorQuickShipPack\npurolator_express_international_pack_9_am | PurolatorExpressInternationalPack9AM\npurolator_quick_ship_box | PurolatorQuickShipBox\npurolator_express_international_pack_10_30_am | PurolatorExpressInternationalPack10:30AM\npurolator_express_international_pack_12_00 | PurolatorExpressInternationalPack12:00\npurolator_express_box_international | PurolatorExpressBoxInternational\npurolator_express_international_box_9_am | PurolatorExpressInternationalBox9AM\npurolator_express_international_box_10_30_am | PurolatorExpressInternationalBox10:30AM\npurolator_express_international_box_12_00 | PurolatorExpressInternationalBox12:00\n\n\n\n## UPS\n\nCode | Identifier\n--- | ---\nups_standard | 11\nups_worldwide_expedited | 08\nups_worldwide_express | 07\nups_worldwide_express_plus | 54\nups_worldwide_saver | 65\nups_2nd_day_air | 02\nups_2nd_day_air_am | 59\nups_3_day_select | 12\nups_expedited_mail_innovations | M4\nups_first_class_mail | M2\nups_ground | 03\nups_next_day_air | 01\nups_next_day_air_early | 14\nups_next_day_air_saver | 13\nups_priority_mail | M3\nups_access_point_economy | 70\nups_today_dedicated_courier | 83\nups_today_express | 85\nups_today_express_saver | 86\nups_today_standard | 82\nups_worldwide_express_freight | 96\nups_priority_mail_innovations | M5\nups_economy_mail_innovations | M6\n\n\n\n</details><br/>\n\n",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/References"
+                        }
+                    }
+                },
+                "tags": [
+                    "REFERENCE"
+                ]
+            },
+            "parameters": []
+        }
+    },
+    "definitions": {
+        "CarrierSettings": {
+            "required": [
+                "carrierName",
+                "carrierId",
+                "test"
+            ],
+            "type": "object",
+            "properties": {
+                "carrierName": {
+                    "title": "Carrier name",
+                    "description": "Indicates a carrier (type)",
+                    "type": "string",
+                    "enum": [
+                        "canadapost",
+                        "dhl",
+                        "fedex",
+                        "purolator",
+                        "ups"
+                    ]
+                },
+                "carrierId": {
+                    "title": "Carrier id",
+                    "description": "Indicates a specific carrier configuration name.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "test": {
+                    "title": "Test",
+                    "description": "\nThe test flag indicates whether to use a carrier configured for test. \n",
+                    "type": "boolean"
+                }
+            }
+        },
+        "LabelPrintingRequest": {
+            "required": [
+                "name",
+                "label"
+            ],
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "description": "\nPDF file name.\n\neg: shipment-[trackingNumber]\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "label": {
+                    "title": "Label",
+                    "description": "Shipment base64 label",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "RateShipperAddress": {
+            "title": "Shipper",
+            "description": "The origin address of the shipment (address from)",
+            "required": [
+                "countryCode"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique address identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "postalCode": {
+                    "title": "Postal code",
+                    "description": "The address postal code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "city": {
+                    "title": "City",
+                    "description": "The address city",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "federalTaxId": {
+                    "title": "Federal tax id",
+                    "description": "The party frederal tax id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateTaxId": {
+                    "title": "State tax id",
+                    "description": "The party state id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "personName": {
+                    "title": "Person name",
+                    "description": "attention to",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "companyName": {
+                    "title": "Company name",
+                    "description": "The company name if the party is a not residential",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "countryCode": {
+                    "title": "Country code",
+                    "description": "The address country code",
+                    "type": "string",
+                    "enum": [
+                        "AD",
+                        "AE",
+                        "AF",
+                        "AG",
+                        "AI",
+                        "AL",
+                        "AM",
+                        "AN",
+                        "AO",
+                        "AR",
+                        "AS",
+                        "AT",
+                        "AU",
+                        "AW",
+                        "AZ",
+                        "BA",
+                        "BB",
+                        "BD",
+                        "BE",
+                        "BF",
+                        "BG",
+                        "BH",
+                        "BI",
+                        "BJ",
+                        "BM",
+                        "BN",
+                        "BO",
+                        "BR",
+                        "BS",
+                        "BT",
+                        "BW",
+                        "BY",
+                        "BZ",
+                        "CA",
+                        "CD",
+                        "CF",
+                        "CG",
+                        "CH",
+                        "CI",
+                        "CK",
+                        "CL",
+                        "CM",
+                        "CN",
+                        "CO",
+                        "CR",
+                        "CU",
+                        "CV",
+                        "CY",
+                        "CZ",
+                        "DE",
+                        "DJ",
+                        "DK",
+                        "DM",
+                        "DO",
+                        "DZ",
+                        "EC",
+                        "EE",
+                        "EG",
+                        "ER",
+                        "ES",
+                        "ET",
+                        "FI",
+                        "FJ",
+                        "FK",
+                        "FM",
+                        "FO",
+                        "FR",
+                        "GA",
+                        "GB",
+                        "GD",
+                        "GE",
+                        "GF",
+                        "GG",
+                        "GH",
+                        "GI",
+                        "GL",
+                        "GM",
+                        "GN",
+                        "GP",
+                        "GQ",
+                        "GR",
+                        "GT",
+                        "GU",
+                        "GW",
+                        "GY",
+                        "HK",
+                        "HN",
+                        "HR",
+                        "HT",
+                        "HU",
+                        "IC",
+                        "ID",
+                        "IE",
+                        "IL",
+                        "IN",
+                        "IQ",
+                        "IR",
+                        "IS",
+                        "IT",
+                        "JE",
+                        "JM",
+                        "JO",
+                        "JP",
+                        "KE",
+                        "KG",
+                        "KH",
+                        "KI",
+                        "KM",
+                        "KN",
+                        "KP",
+                        "KR",
+                        "KV",
+                        "KW",
+                        "KY",
+                        "KZ",
+                        "LA",
+                        "LB",
+                        "LC",
+                        "LI",
+                        "LK",
+                        "LR",
+                        "LS",
+                        "LT",
+                        "LU",
+                        "LV",
+                        "LY",
+                        "MA",
+                        "MC",
+                        "MD",
+                        "ME",
+                        "MG",
+                        "MH",
+                        "MK",
+                        "ML",
+                        "MM",
+                        "MN",
+                        "MO",
+                        "MP",
+                        "MQ",
+                        "MR",
+                        "MS",
+                        "MT",
+                        "MU",
+                        "MV",
+                        "MW",
+                        "MX",
+                        "MY",
+                        "MZ",
+                        "NA",
+                        "NC",
+                        "NE",
+                        "NG",
+                        "NI",
+                        "NL",
+                        "NO",
+                        "NP",
+                        "NR",
+                        "NU",
+                        "NZ",
+                        "OM",
+                        "PA",
+                        "PE",
+                        "PF",
+                        "PG",
+                        "PH",
+                        "PK",
+                        "PL",
+                        "PR",
+                        "PT",
+                        "PW",
+                        "PY",
+                        "QA",
+                        "RE",
+                        "RO",
+                        "RS",
+                        "RU",
+                        "RW",
+                        "SA",
+                        "SB",
+                        "SC",
+                        "SD",
+                        "SE",
+                        "SG",
+                        "SH",
+                        "SI",
+                        "SK",
+                        "SL",
+                        "SM",
+                        "SN",
+                        "SO",
+                        "SR",
+                        "SS",
+                        "ST",
+                        "SV",
+                        "SY",
+                        "SZ",
+                        "TC",
+                        "TD",
+                        "TG",
+                        "TH",
+                        "TJ",
+                        "TL",
+                        "TN",
+                        "TO",
+                        "TR",
+                        "TT",
+                        "TV",
+                        "TW",
+                        "TZ",
+                        "UA",
+                        "UG",
+                        "US",
+                        "UY",
+                        "UZ",
+                        "VA",
+                        "VC",
+                        "VE",
+                        "VG",
+                        "VI",
+                        "VN",
+                        "VU",
+                        "WS",
+                        "XB",
+                        "XC",
+                        "XE",
+                        "XM",
+                        "XN",
+                        "XS",
+                        "XY",
+                        "YE",
+                        "YT",
+                        "ZA",
+                        "ZM",
+                        "ZW"
+                    ]
+                },
+                "email": {
+                    "title": "Email",
+                    "description": "The party email",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "phoneNumber": {
+                    "title": "Phone number",
+                    "description": "\nThe party phone number.\n\nNote that the expected format is: **1 514 0000000**\n\nCountry Code | Area Code | Phone\n--- | --- | ---\n1 | 514 | 0000000\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateCode": {
+                    "title": "State code",
+                    "description": "The address state code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "suburb": {
+                    "title": "Suburb",
+                    "description": "The address suburb if known",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "residential": {
+                    "title": "Residential",
+                    "description": "Indicates if The address is residential or commercial (enterprise)",
+                    "type": "boolean"
+                },
+                "addressLine1": {
+                    "title": "Address line1",
+                    "description": "The address line with street number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "addressLine2": {
+                    "title": "Address line2",
+                    "description": "The address line with suite number",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "RateRecipientAddress": {
+            "title": "Recipient",
+            "description": "The shipment destination address (address to)",
+            "required": [
+                "countryCode"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique address identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "postalCode": {
+                    "title": "Postal code",
+                    "description": "The address postal code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "city": {
+                    "title": "City",
+                    "description": "The address city",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "federalTaxId": {
+                    "title": "Federal tax id",
+                    "description": "The party frederal tax id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateTaxId": {
+                    "title": "State tax id",
+                    "description": "The party state id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "personName": {
+                    "title": "Person name",
+                    "description": "attention to",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "companyName": {
+                    "title": "Company name",
+                    "description": "The company name if the party is a not residential",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "countryCode": {
+                    "title": "Country code",
+                    "description": "The address country code",
+                    "type": "string",
+                    "enum": [
+                        "AD",
+                        "AE",
+                        "AF",
+                        "AG",
+                        "AI",
+                        "AL",
+                        "AM",
+                        "AN",
+                        "AO",
+                        "AR",
+                        "AS",
+                        "AT",
+                        "AU",
+                        "AW",
+                        "AZ",
+                        "BA",
+                        "BB",
+                        "BD",
+                        "BE",
+                        "BF",
+                        "BG",
+                        "BH",
+                        "BI",
+                        "BJ",
+                        "BM",
+                        "BN",
+                        "BO",
+                        "BR",
+                        "BS",
+                        "BT",
+                        "BW",
+                        "BY",
+                        "BZ",
+                        "CA",
+                        "CD",
+                        "CF",
+                        "CG",
+                        "CH",
+                        "CI",
+                        "CK",
+                        "CL",
+                        "CM",
+                        "CN",
+                        "CO",
+                        "CR",
+                        "CU",
+                        "CV",
+                        "CY",
+                        "CZ",
+                        "DE",
+                        "DJ",
+                        "DK",
+                        "DM",
+                        "DO",
+                        "DZ",
+                        "EC",
+                        "EE",
+                        "EG",
+                        "ER",
+                        "ES",
+                        "ET",
+                        "FI",
+                        "FJ",
+                        "FK",
+                        "FM",
+                        "FO",
+                        "FR",
+                        "GA",
+                        "GB",
+                        "GD",
+                        "GE",
+                        "GF",
+                        "GG",
+                        "GH",
+                        "GI",
+                        "GL",
+                        "GM",
+                        "GN",
+                        "GP",
+                        "GQ",
+                        "GR",
+                        "GT",
+                        "GU",
+                        "GW",
+                        "GY",
+                        "HK",
+                        "HN",
+                        "HR",
+                        "HT",
+                        "HU",
+                        "IC",
+                        "ID",
+                        "IE",
+                        "IL",
+                        "IN",
+                        "IQ",
+                        "IR",
+                        "IS",
+                        "IT",
+                        "JE",
+                        "JM",
+                        "JO",
+                        "JP",
+                        "KE",
+                        "KG",
+                        "KH",
+                        "KI",
+                        "KM",
+                        "KN",
+                        "KP",
+                        "KR",
+                        "KV",
+                        "KW",
+                        "KY",
+                        "KZ",
+                        "LA",
+                        "LB",
+                        "LC",
+                        "LI",
+                        "LK",
+                        "LR",
+                        "LS",
+                        "LT",
+                        "LU",
+                        "LV",
+                        "LY",
+                        "MA",
+                        "MC",
+                        "MD",
+                        "ME",
+                        "MG",
+                        "MH",
+                        "MK",
+                        "ML",
+                        "MM",
+                        "MN",
+                        "MO",
+                        "MP",
+                        "MQ",
+                        "MR",
+                        "MS",
+                        "MT",
+                        "MU",
+                        "MV",
+                        "MW",
+                        "MX",
+                        "MY",
+                        "MZ",
+                        "NA",
+                        "NC",
+                        "NE",
+                        "NG",
+                        "NI",
+                        "NL",
+                        "NO",
+                        "NP",
+                        "NR",
+                        "NU",
+                        "NZ",
+                        "OM",
+                        "PA",
+                        "PE",
+                        "PF",
+                        "PG",
+                        "PH",
+                        "PK",
+                        "PL",
+                        "PR",
+                        "PT",
+                        "PW",
+                        "PY",
+                        "QA",
+                        "RE",
+                        "RO",
+                        "RS",
+                        "RU",
+                        "RW",
+                        "SA",
+                        "SB",
+                        "SC",
+                        "SD",
+                        "SE",
+                        "SG",
+                        "SH",
+                        "SI",
+                        "SK",
+                        "SL",
+                        "SM",
+                        "SN",
+                        "SO",
+                        "SR",
+                        "SS",
+                        "ST",
+                        "SV",
+                        "SY",
+                        "SZ",
+                        "TC",
+                        "TD",
+                        "TG",
+                        "TH",
+                        "TJ",
+                        "TL",
+                        "TN",
+                        "TO",
+                        "TR",
+                        "TT",
+                        "TV",
+                        "TW",
+                        "TZ",
+                        "UA",
+                        "UG",
+                        "US",
+                        "UY",
+                        "UZ",
+                        "VA",
+                        "VC",
+                        "VE",
+                        "VG",
+                        "VI",
+                        "VN",
+                        "VU",
+                        "WS",
+                        "XB",
+                        "XC",
+                        "XE",
+                        "XM",
+                        "XN",
+                        "XS",
+                        "XY",
+                        "YE",
+                        "YT",
+                        "ZA",
+                        "ZM",
+                        "ZW"
+                    ]
+                },
+                "email": {
+                    "title": "Email",
+                    "description": "The party email",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "phoneNumber": {
+                    "title": "Phone number",
+                    "description": "\nThe party phone number.\n\nNote that the expected format is: **1 514 0000000**\n\nCountry Code | Area Code | Phone\n--- | --- | ---\n1 | 514 | 0000000\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateCode": {
+                    "title": "State code",
+                    "description": "The address state code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "suburb": {
+                    "title": "Suburb",
+                    "description": "The address suburb if known",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "residential": {
+                    "title": "Residential",
+                    "description": "Indicates if The address is residential or commercial (enterprise)",
+                    "type": "boolean"
+                },
+                "addressLine1": {
+                    "title": "Address line1",
+                    "description": "The address line with street number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "addressLine2": {
+                    "title": "Address line2",
+                    "description": "The address line with suite number",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "Parcel": {
+            "title": "Parcel",
+            "description": "The shipment's parcel",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique parcel identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "weight": {
+                    "title": "Weight",
+                    "description": "The parcel's weight",
+                    "type": "number"
+                },
+                "width": {
+                    "title": "Width",
+                    "description": "The parcel's width",
+                    "type": "number"
+                },
+                "height": {
+                    "title": "Height",
+                    "description": "The parcel's height",
+                    "type": "number"
+                },
+                "length": {
+                    "title": "Length",
+                    "description": "The parcel's length",
+                    "type": "number"
+                },
+                "packagingType": {
+                    "title": "Packaging type",
+                    "description": "\nThe parcel's packaging type.\n\nNote that the packaging is optional when using a package preset\n\nFor specific carriers packaging type, please consult the reference.\n",
+                    "type": "string",
+                    "enum": [
+                        "envelope",
+                        "pak",
+                        "tube",
+                        "pallet",
+                        "small_box",
+                        "medium_box",
+                        "your_packaging"
+                    ]
+                },
+                "packagePreset": {
+                    "title": "Package preset",
+                    "description": "\nThe parcel's package preset.\n\nFor specific carriers package preset, please consult the reference.\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "description": {
+                    "title": "Description",
+                    "description": "The parcel's description",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "content": {
+                    "title": "Content",
+                    "description": "The parcel's content description",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "isDocument": {
+                    "title": "Is document",
+                    "description": "Indicates if the parcel is composed of documents only",
+                    "type": "boolean"
+                },
+                "weightUnit": {
+                    "title": "Weight unit",
+                    "description": "The parcel's weight unit",
+                    "type": "string",
+                    "enum": [
+                        "KG",
+                        "LB"
+                    ]
+                },
+                "dimensionUnit": {
+                    "title": "Dimension unit",
+                    "description": "The parcel's dimension unit",
+                    "type": "string",
+                    "enum": [
+                        "CM",
+                        "IN"
+                    ]
+                }
+            }
+        },
+        "COD": {
+            "title": "Cod",
+            "description": "The cash that should be collected on delivery.",
+            "required": [
+                "amount"
+            ],
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "title": "Amount",
+                    "description": "The amount to collect on delivery",
+                    "type": "number"
+                }
+            }
+        },
+        "Insurance": {
+            "title": "Insurance",
+            "description": "adding an insurance to the shipment",
+            "required": [
+                "amount"
+            ],
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "title": "Amount",
+                    "description": "The insurance coverage amount.",
+                    "type": "number"
+                }
+            }
+        },
+        "Notification": {
+            "title": "Notification",
+            "description": "The notification configuration",
+            "type": "object",
+            "properties": {
+                "email": {
+                    "title": "Email",
+                    "description": "\nThe alternative notification email.\n\nNote that by default the recipient email will be used.\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "locale": {
+                    "title": "Locale",
+                    "type": "string",
+                    "default": "en",
+                    "minLength": 1
+                }
+            }
+        },
+        "ShipmentOption": {
+            "title": "Options",
+            "description": "\nThe options available for the shipment.\n\nNote that this is a dictionary in which you can can add as many carrier shipment\noptions you desire to add to your shipment. \n\nPlease consult the reference for additional specific carriers options.\n",
+            "type": "object",
+            "properties": {
+                "cod": {
+                    "$ref": "#/definitions/COD"
+                },
+                "currency": {
+                    "title": "Currency",
+                    "description": "The shipment currency",
+                    "type": "string",
+                    "enum": [
+                        "EUR",
+                        "AED",
+                        "USD",
+                        "XCD",
+                        "AMD",
+                        "ANG",
+                        "AOA",
+                        "ARS",
+                        "AUD",
+                        "AWG",
+                        "AZN",
+                        "BAM",
+                        "BBD",
+                        "BDT",
+                        "XOF",
+                        "BGN",
+                        "BHD",
+                        "BIF",
+                        "BMD",
+                        "BND",
+                        "BOB",
+                        "BRL",
+                        "BSD",
+                        "BTN",
+                        "BWP",
+                        "BYN",
+                        "BZD",
+                        "CAD",
+                        "CDF",
+                        "XAF",
+                        "CHF",
+                        "NZD",
+                        "CLP",
+                        "CNY",
+                        "COP",
+                        "CRC",
+                        "CUC",
+                        "CVE",
+                        "CZK",
+                        "DJF",
+                        "DKK",
+                        "DOP",
+                        "DZD",
+                        "EGP",
+                        "ERN",
+                        "ETB",
+                        "FJD",
+                        "GBP",
+                        "GEL",
+                        "GHS",
+                        "GMD",
+                        "GNF",
+                        "GTQ",
+                        "GYD",
+                        "HKD",
+                        "HNL",
+                        "HRK",
+                        "HTG",
+                        "HUF",
+                        "IDR",
+                        "ILS",
+                        "INR",
+                        "IRR",
+                        "ISK",
+                        "JMD",
+                        "JOD",
+                        "JPY",
+                        "KES",
+                        "KGS",
+                        "KHR",
+                        "KMF",
+                        "KPW",
+                        "KRW",
+                        "KWD",
+                        "KYD",
+                        "KZT",
+                        "LAK",
+                        "LKR",
+                        "LRD",
+                        "LSL",
+                        "LYD",
+                        "MAD",
+                        "MDL",
+                        "MGA",
+                        "MKD",
+                        "MMK",
+                        "MNT",
+                        "MOP",
+                        "MRO",
+                        "MUR",
+                        "MVR",
+                        "MWK",
+                        "MXN",
+                        "MYR",
+                        "MZN",
+                        "NAD",
+                        "XPF",
+                        "NGN",
+                        "NIO",
+                        "NOK",
+                        "NPR",
+                        "OMR",
+                        "PEN",
+                        "PGK",
+                        "PHP",
+                        "PKR",
+                        "PLN",
+                        "PYG",
+                        "QAR",
+                        "RSD",
+                        "RUB",
+                        "RWF",
+                        "SAR",
+                        "SBD",
+                        "SCR",
+                        "SDG",
+                        "SEK",
+                        "SGD",
+                        "SHP",
+                        "SLL",
+                        "SOS",
+                        "SRD",
+                        "SSP",
+                        "STD",
+                        "SYP",
+                        "SZL",
+                        "THB",
+                        "TJS",
+                        "TND",
+                        "TOP",
+                        "TRY",
+                        "TTD",
+                        "TWD",
+                        "TZS",
+                        "UAH",
+                        "UYU",
+                        "UZS",
+                        "VEF",
+                        "VND",
+                        "VUV",
+                        "WST",
+                        "YER",
+                        "ZAR"
+                    ]
+                },
+                "insurance": {
+                    "$ref": "#/definitions/Insurance"
+                },
+                "notification": {
+                    "$ref": "#/definitions/Notification"
+                },
+                "printing": {
+                    "title": "Printing",
+                    "description": "The label printing type",
+                    "type": "string",
+                    "enum": [
+                        "regular",
+                        "thermal"
+                    ]
+                },
+                "option1": {
+                    "title": "Option1",
+                    "description": "\nPlease consult the reference for additional specific carriers options.\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "option2": {
+                    "title": "Option2",
+                    "description": "\nPlease consult the reference for additional specific carriers options.\n",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "RateRequestSchema": {
+            "required": [
+                "shipper",
+                "recipient",
+                "parcel"
+            ],
+            "type": "object",
+            "properties": {
+                "shipper": {
+                    "$ref": "#/definitions/RateShipperAddress"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/RateRecipientAddress"
+                },
+                "parcel": {
+                    "$ref": "#/definitions/Parcel"
+                },
+                "services": {
+                    "description": "\nThe requested carrier service for the shipment.\n\nPlease consult the reference for specific carriers services.\n\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "options": {
+                    "$ref": "#/definitions/ShipmentOption"
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "The shipment reference",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrierIds": {
+                    "description": "\nThe list of configured carriers you wish to get rates from.\n",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            }
+        },
+        "Message": {
+            "required": [
+                "carrierName",
+                "carrierId"
+            ],
+            "type": "object",
+            "properties": {
+                "carrierName": {
+                    "title": "Carrier name",
+                    "description": "The targeted carrier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrierId": {
+                    "title": "Carrier id",
+                    "description": "The targeted carrier name (unique identifier)",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "message": {
+                    "title": "Message",
+                    "description": "The error or warning message",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "code": {
+                    "title": "Code",
+                    "description": "The message code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "details": {
+                    "title": "Details",
+                    "description": "any additional details",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "ChargeDetails": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "description": "The charge description",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "amount": {
+                    "title": "Amount",
+                    "description": "The charge monetary value",
+                    "type": "number"
+                },
+                "currency": {
+                    "title": "Currency",
+                    "description": "The charge amount currency",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "RateDetails": {
+            "required": [
+                "carrierName",
+                "carrierId",
+                "currency"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique rate identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "carrierName": {
+                    "title": "Carrier name",
+                    "description": "The rate's carrier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrierId": {
+                    "title": "Carrier id",
+                    "description": "The targeted carrier's name (unique identifier)",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "currency": {
+                    "title": "Currency",
+                    "description": "The rate monetary values currency code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "service": {
+                    "title": "Service",
+                    "description": "The carrier's rate (quote) service",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "discount": {
+                    "title": "Discount",
+                    "description": "The monetary amount of the discount on the rate",
+                    "type": "number"
+                },
+                "baseCharge": {
+                    "title": "Base charge",
+                    "description": "\nThe rate's monetary amount of the base charge.\n\nThis is the net amount of the rate before additional charges\n",
+                    "type": "number",
+                    "default": 0.0
+                },
+                "totalCharge": {
+                    "title": "Total charge",
+                    "description": "\nThe rate's monetary amount of the total charge.\n\nThis is the gross amount of the rate after adding the additional charges\n",
+                    "type": "number",
+                    "default": 0.0
+                },
+                "dutiesAndTaxes": {
+                    "title": "Duties and taxes",
+                    "description": "The monetary amount of the duties and taxes if applied",
+                    "type": "number"
+                },
+                "estimatedDelivery": {
+                    "title": "Estimated delivery",
+                    "description": "The estimated delivery date",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "extraCharges": {
+                    "description": "list of the rate's additional charges",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ChargeDetails"
+                    }
+                }
+            }
+        },
+        "ShipmentRate": {
+            "title": "Shipment",
+            "description": "The newly rated shipment",
+            "required": [
+                "shipper",
+                "recipient",
+                "parcel",
+                "rates"
+            ],
+            "type": "object",
+            "properties": {
+                "shipper": {
+                    "$ref": "#/definitions/RateShipperAddress"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/RateRecipientAddress"
+                },
+                "parcel": {
+                    "$ref": "#/definitions/Parcel"
+                },
+                "services": {
+                    "description": "\nThe requested carrier service for the shipment.\n\nPlease consult the reference for specific carriers services.\n\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "options": {
+                    "title": "Options",
+                    "description": "\nThe options available for the shipment.\n\nPlease consult the reference for additional specific carriers options.\n",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "The shipment reference",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrierIds": {
+                    "description": "\nThe list of configured carriers you wish to get rates from.\n",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "rates": {
+                    "description": "The list of returned ",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RateDetails"
+                    }
+                }
+            }
+        },
+        "RateResponse": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "The list of note, error or warning messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    }
+                },
+                "shipment": {
+                    "$ref": "#/definitions/ShipmentRate"
+                }
+            }
+        },
+        "ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "The list of error messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    }
+                }
+            }
+        },
+        "ShipmentShipperAddress": {
+            "title": "Shipper",
+            "description": "The origin address of the shipment (address from)",
+            "required": [
+                "city",
+                "personName",
+                "countryCode",
+                "addressLine1"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique address identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "postalCode": {
+                    "title": "Postal code",
+                    "description": "The address postal code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "city": {
+                    "title": "City",
+                    "description": "The address city",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "federalTaxId": {
+                    "title": "Federal tax id",
+                    "description": "The party frederal tax id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateTaxId": {
+                    "title": "State tax id",
+                    "description": "The party state id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "personName": {
+                    "title": "Person name",
+                    "description": "attention to",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "companyName": {
+                    "title": "Company name",
+                    "description": "The company name if the party is a company",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "countryCode": {
+                    "title": "Country code",
+                    "description": "The address country code",
+                    "type": "string",
+                    "enum": [
+                        "AD",
+                        "AE",
+                        "AF",
+                        "AG",
+                        "AI",
+                        "AL",
+                        "AM",
+                        "AN",
+                        "AO",
+                        "AR",
+                        "AS",
+                        "AT",
+                        "AU",
+                        "AW",
+                        "AZ",
+                        "BA",
+                        "BB",
+                        "BD",
+                        "BE",
+                        "BF",
+                        "BG",
+                        "BH",
+                        "BI",
+                        "BJ",
+                        "BM",
+                        "BN",
+                        "BO",
+                        "BR",
+                        "BS",
+                        "BT",
+                        "BW",
+                        "BY",
+                        "BZ",
+                        "CA",
+                        "CD",
+                        "CF",
+                        "CG",
+                        "CH",
+                        "CI",
+                        "CK",
+                        "CL",
+                        "CM",
+                        "CN",
+                        "CO",
+                        "CR",
+                        "CU",
+                        "CV",
+                        "CY",
+                        "CZ",
+                        "DE",
+                        "DJ",
+                        "DK",
+                        "DM",
+                        "DO",
+                        "DZ",
+                        "EC",
+                        "EE",
+                        "EG",
+                        "ER",
+                        "ES",
+                        "ET",
+                        "FI",
+                        "FJ",
+                        "FK",
+                        "FM",
+                        "FO",
+                        "FR",
+                        "GA",
+                        "GB",
+                        "GD",
+                        "GE",
+                        "GF",
+                        "GG",
+                        "GH",
+                        "GI",
+                        "GL",
+                        "GM",
+                        "GN",
+                        "GP",
+                        "GQ",
+                        "GR",
+                        "GT",
+                        "GU",
+                        "GW",
+                        "GY",
+                        "HK",
+                        "HN",
+                        "HR",
+                        "HT",
+                        "HU",
+                        "IC",
+                        "ID",
+                        "IE",
+                        "IL",
+                        "IN",
+                        "IQ",
+                        "IR",
+                        "IS",
+                        "IT",
+                        "JE",
+                        "JM",
+                        "JO",
+                        "JP",
+                        "KE",
+                        "KG",
+                        "KH",
+                        "KI",
+                        "KM",
+                        "KN",
+                        "KP",
+                        "KR",
+                        "KV",
+                        "KW",
+                        "KY",
+                        "KZ",
+                        "LA",
+                        "LB",
+                        "LC",
+                        "LI",
+                        "LK",
+                        "LR",
+                        "LS",
+                        "LT",
+                        "LU",
+                        "LV",
+                        "LY",
+                        "MA",
+                        "MC",
+                        "MD",
+                        "ME",
+                        "MG",
+                        "MH",
+                        "MK",
+                        "ML",
+                        "MM",
+                        "MN",
+                        "MO",
+                        "MP",
+                        "MQ",
+                        "MR",
+                        "MS",
+                        "MT",
+                        "MU",
+                        "MV",
+                        "MW",
+                        "MX",
+                        "MY",
+                        "MZ",
+                        "NA",
+                        "NC",
+                        "NE",
+                        "NG",
+                        "NI",
+                        "NL",
+                        "NO",
+                        "NP",
+                        "NR",
+                        "NU",
+                        "NZ",
+                        "OM",
+                        "PA",
+                        "PE",
+                        "PF",
+                        "PG",
+                        "PH",
+                        "PK",
+                        "PL",
+                        "PR",
+                        "PT",
+                        "PW",
+                        "PY",
+                        "QA",
+                        "RE",
+                        "RO",
+                        "RS",
+                        "RU",
+                        "RW",
+                        "SA",
+                        "SB",
+                        "SC",
+                        "SD",
+                        "SE",
+                        "SG",
+                        "SH",
+                        "SI",
+                        "SK",
+                        "SL",
+                        "SM",
+                        "SN",
+                        "SO",
+                        "SR",
+                        "SS",
+                        "ST",
+                        "SV",
+                        "SY",
+                        "SZ",
+                        "TC",
+                        "TD",
+                        "TG",
+                        "TH",
+                        "TJ",
+                        "TL",
+                        "TN",
+                        "TO",
+                        "TR",
+                        "TT",
+                        "TV",
+                        "TW",
+                        "TZ",
+                        "UA",
+                        "UG",
+                        "US",
+                        "UY",
+                        "UZ",
+                        "VA",
+                        "VC",
+                        "VE",
+                        "VG",
+                        "VI",
+                        "VN",
+                        "VU",
+                        "WS",
+                        "XB",
+                        "XC",
+                        "XE",
+                        "XM",
+                        "XN",
+                        "XS",
+                        "XY",
+                        "YE",
+                        "YT",
+                        "ZA",
+                        "ZM",
+                        "ZW"
+                    ]
+                },
+                "email": {
+                    "title": "Email",
+                    "description": "The party email",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "phoneNumber": {
+                    "title": "Phone number",
+                    "description": "\nThe party phone number.\n\nNote that the expected format is: **1 514 0000000**\n\nCountry Code | Area Code | Phone\n--- | --- | ---\n1 | 514 | 0000000\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateCode": {
+                    "title": "State code",
+                    "description": "The address state code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "suburb": {
+                    "title": "Suburb",
+                    "description": "The address suburb if known",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "residential": {
+                    "title": "Residential",
+                    "description": "Indicate if the address is residential or commercial (enterprise)",
+                    "type": "boolean"
+                },
+                "addressLine1": {
+                    "title": "Address line1",
+                    "description": "The address line with street number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "addressLine2": {
+                    "title": "Address line2",
+                    "description": "The address line with suite number",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "ShipmentRecipientAddress": {
+            "title": "Recipient",
+            "description": "The shipment destination address (address to)",
+            "required": [
+                "city",
+                "personName",
+                "countryCode",
+                "addressLine1"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique address identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "postalCode": {
+                    "title": "Postal code",
+                    "description": "The address postal code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "city": {
+                    "title": "City",
+                    "description": "The address city",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "federalTaxId": {
+                    "title": "Federal tax id",
+                    "description": "The party frederal tax id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateTaxId": {
+                    "title": "State tax id",
+                    "description": "The party state id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "personName": {
+                    "title": "Person name",
+                    "description": "attention to",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "companyName": {
+                    "title": "Company name",
+                    "description": "The company name if the party is a company",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "countryCode": {
+                    "title": "Country code",
+                    "description": "The address country code",
+                    "type": "string",
+                    "enum": [
+                        "AD",
+                        "AE",
+                        "AF",
+                        "AG",
+                        "AI",
+                        "AL",
+                        "AM",
+                        "AN",
+                        "AO",
+                        "AR",
+                        "AS",
+                        "AT",
+                        "AU",
+                        "AW",
+                        "AZ",
+                        "BA",
+                        "BB",
+                        "BD",
+                        "BE",
+                        "BF",
+                        "BG",
+                        "BH",
+                        "BI",
+                        "BJ",
+                        "BM",
+                        "BN",
+                        "BO",
+                        "BR",
+                        "BS",
+                        "BT",
+                        "BW",
+                        "BY",
+                        "BZ",
+                        "CA",
+                        "CD",
+                        "CF",
+                        "CG",
+                        "CH",
+                        "CI",
+                        "CK",
+                        "CL",
+                        "CM",
+                        "CN",
+                        "CO",
+                        "CR",
+                        "CU",
+                        "CV",
+                        "CY",
+                        "CZ",
+                        "DE",
+                        "DJ",
+                        "DK",
+                        "DM",
+                        "DO",
+                        "DZ",
+                        "EC",
+                        "EE",
+                        "EG",
+                        "ER",
+                        "ES",
+                        "ET",
+                        "FI",
+                        "FJ",
+                        "FK",
+                        "FM",
+                        "FO",
+                        "FR",
+                        "GA",
+                        "GB",
+                        "GD",
+                        "GE",
+                        "GF",
+                        "GG",
+                        "GH",
+                        "GI",
+                        "GL",
+                        "GM",
+                        "GN",
+                        "GP",
+                        "GQ",
+                        "GR",
+                        "GT",
+                        "GU",
+                        "GW",
+                        "GY",
+                        "HK",
+                        "HN",
+                        "HR",
+                        "HT",
+                        "HU",
+                        "IC",
+                        "ID",
+                        "IE",
+                        "IL",
+                        "IN",
+                        "IQ",
+                        "IR",
+                        "IS",
+                        "IT",
+                        "JE",
+                        "JM",
+                        "JO",
+                        "JP",
+                        "KE",
+                        "KG",
+                        "KH",
+                        "KI",
+                        "KM",
+                        "KN",
+                        "KP",
+                        "KR",
+                        "KV",
+                        "KW",
+                        "KY",
+                        "KZ",
+                        "LA",
+                        "LB",
+                        "LC",
+                        "LI",
+                        "LK",
+                        "LR",
+                        "LS",
+                        "LT",
+                        "LU",
+                        "LV",
+                        "LY",
+                        "MA",
+                        "MC",
+                        "MD",
+                        "ME",
+                        "MG",
+                        "MH",
+                        "MK",
+                        "ML",
+                        "MM",
+                        "MN",
+                        "MO",
+                        "MP",
+                        "MQ",
+                        "MR",
+                        "MS",
+                        "MT",
+                        "MU",
+                        "MV",
+                        "MW",
+                        "MX",
+                        "MY",
+                        "MZ",
+                        "NA",
+                        "NC",
+                        "NE",
+                        "NG",
+                        "NI",
+                        "NL",
+                        "NO",
+                        "NP",
+                        "NR",
+                        "NU",
+                        "NZ",
+                        "OM",
+                        "PA",
+                        "PE",
+                        "PF",
+                        "PG",
+                        "PH",
+                        "PK",
+                        "PL",
+                        "PR",
+                        "PT",
+                        "PW",
+                        "PY",
+                        "QA",
+                        "RE",
+                        "RO",
+                        "RS",
+                        "RU",
+                        "RW",
+                        "SA",
+                        "SB",
+                        "SC",
+                        "SD",
+                        "SE",
+                        "SG",
+                        "SH",
+                        "SI",
+                        "SK",
+                        "SL",
+                        "SM",
+                        "SN",
+                        "SO",
+                        "SR",
+                        "SS",
+                        "ST",
+                        "SV",
+                        "SY",
+                        "SZ",
+                        "TC",
+                        "TD",
+                        "TG",
+                        "TH",
+                        "TJ",
+                        "TL",
+                        "TN",
+                        "TO",
+                        "TR",
+                        "TT",
+                        "TV",
+                        "TW",
+                        "TZ",
+                        "UA",
+                        "UG",
+                        "US",
+                        "UY",
+                        "UZ",
+                        "VA",
+                        "VC",
+                        "VE",
+                        "VG",
+                        "VI",
+                        "VN",
+                        "VU",
+                        "WS",
+                        "XB",
+                        "XC",
+                        "XE",
+                        "XM",
+                        "XN",
+                        "XS",
+                        "XY",
+                        "YE",
+                        "YT",
+                        "ZA",
+                        "ZM",
+                        "ZW"
+                    ]
+                },
+                "email": {
+                    "title": "Email",
+                    "description": "The party email",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "phoneNumber": {
+                    "title": "Phone number",
+                    "description": "\nThe party phone number.\n\nNote that the expected format is: **1 514 0000000**\n\nCountry Code | Area Code | Phone\n--- | --- | ---\n1 | 514 | 0000000\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateCode": {
+                    "title": "State code",
+                    "description": "The address state code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "suburb": {
+                    "title": "Suburb",
+                    "description": "The address suburb if known",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "residential": {
+                    "title": "Residential",
+                    "description": "Indicate if the address is residential or commercial (enterprise)",
+                    "type": "boolean"
+                },
+                "addressLine1": {
+                    "title": "Address line1",
+                    "description": "The address line with street number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "addressLine2": {
+                    "title": "Address line2",
+                    "description": "The address line with suite number",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "Card": {
+            "title": "Credit card",
+            "description": "The payment credit card for payment by card",
+            "required": [
+                "type",
+                "number",
+                "expiryMonth",
+                "expiryYear",
+                "securityCode"
+            ],
+            "type": "object",
+            "properties": {
+                "type": {
+                    "title": "Type",
+                    "description": "The credit card type",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "number": {
+                    "title": "Number",
+                    "description": "The credit card number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "expiryMonth": {
+                    "title": "Expiry month",
+                    "description": "The credit card expiry month (MM)",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "expiryYear": {
+                    "title": "Expiry year",
+                    "description": "The credit card expiry year (YYYY)",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "securityCode": {
+                    "title": "Security code",
+                    "description": "The credit card security code often at the back (000)",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "name": {
+                    "title": "Name",
+                    "description": "The name inscribed on the credit card",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "postalCode": {
+                    "title": "Postal code",
+                    "description": "The credit card registration address postal code",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "Address": {
+            "title": "Contact",
+            "description": "The billing address",
+            "required": [
+                "countryCode"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique address identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "postalCode": {
+                    "title": "Postal code",
+                    "description": "The address postal code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "city": {
+                    "title": "City",
+                    "description": "The address city",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "federalTaxId": {
+                    "title": "Federal tax id",
+                    "description": "The party frederal tax id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateTaxId": {
+                    "title": "State tax id",
+                    "description": "The party state id",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "personName": {
+                    "title": "Person name",
+                    "description": "attention to",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "companyName": {
+                    "title": "Company name",
+                    "description": "The company name if the party is a not residential",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "countryCode": {
+                    "title": "Country code",
+                    "description": "The address country code",
+                    "type": "string",
+                    "enum": [
+                        "AD",
+                        "AE",
+                        "AF",
+                        "AG",
+                        "AI",
+                        "AL",
+                        "AM",
+                        "AN",
+                        "AO",
+                        "AR",
+                        "AS",
+                        "AT",
+                        "AU",
+                        "AW",
+                        "AZ",
+                        "BA",
+                        "BB",
+                        "BD",
+                        "BE",
+                        "BF",
+                        "BG",
+                        "BH",
+                        "BI",
+                        "BJ",
+                        "BM",
+                        "BN",
+                        "BO",
+                        "BR",
+                        "BS",
+                        "BT",
+                        "BW",
+                        "BY",
+                        "BZ",
+                        "CA",
+                        "CD",
+                        "CF",
+                        "CG",
+                        "CH",
+                        "CI",
+                        "CK",
+                        "CL",
+                        "CM",
+                        "CN",
+                        "CO",
+                        "CR",
+                        "CU",
+                        "CV",
+                        "CY",
+                        "CZ",
+                        "DE",
+                        "DJ",
+                        "DK",
+                        "DM",
+                        "DO",
+                        "DZ",
+                        "EC",
+                        "EE",
+                        "EG",
+                        "ER",
+                        "ES",
+                        "ET",
+                        "FI",
+                        "FJ",
+                        "FK",
+                        "FM",
+                        "FO",
+                        "FR",
+                        "GA",
+                        "GB",
+                        "GD",
+                        "GE",
+                        "GF",
+                        "GG",
+                        "GH",
+                        "GI",
+                        "GL",
+                        "GM",
+                        "GN",
+                        "GP",
+                        "GQ",
+                        "GR",
+                        "GT",
+                        "GU",
+                        "GW",
+                        "GY",
+                        "HK",
+                        "HN",
+                        "HR",
+                        "HT",
+                        "HU",
+                        "IC",
+                        "ID",
+                        "IE",
+                        "IL",
+                        "IN",
+                        "IQ",
+                        "IR",
+                        "IS",
+                        "IT",
+                        "JE",
+                        "JM",
+                        "JO",
+                        "JP",
+                        "KE",
+                        "KG",
+                        "KH",
+                        "KI",
+                        "KM",
+                        "KN",
+                        "KP",
+                        "KR",
+                        "KV",
+                        "KW",
+                        "KY",
+                        "KZ",
+                        "LA",
+                        "LB",
+                        "LC",
+                        "LI",
+                        "LK",
+                        "LR",
+                        "LS",
+                        "LT",
+                        "LU",
+                        "LV",
+                        "LY",
+                        "MA",
+                        "MC",
+                        "MD",
+                        "ME",
+                        "MG",
+                        "MH",
+                        "MK",
+                        "ML",
+                        "MM",
+                        "MN",
+                        "MO",
+                        "MP",
+                        "MQ",
+                        "MR",
+                        "MS",
+                        "MT",
+                        "MU",
+                        "MV",
+                        "MW",
+                        "MX",
+                        "MY",
+                        "MZ",
+                        "NA",
+                        "NC",
+                        "NE",
+                        "NG",
+                        "NI",
+                        "NL",
+                        "NO",
+                        "NP",
+                        "NR",
+                        "NU",
+                        "NZ",
+                        "OM",
+                        "PA",
+                        "PE",
+                        "PF",
+                        "PG",
+                        "PH",
+                        "PK",
+                        "PL",
+                        "PR",
+                        "PT",
+                        "PW",
+                        "PY",
+                        "QA",
+                        "RE",
+                        "RO",
+                        "RS",
+                        "RU",
+                        "RW",
+                        "SA",
+                        "SB",
+                        "SC",
+                        "SD",
+                        "SE",
+                        "SG",
+                        "SH",
+                        "SI",
+                        "SK",
+                        "SL",
+                        "SM",
+                        "SN",
+                        "SO",
+                        "SR",
+                        "SS",
+                        "ST",
+                        "SV",
+                        "SY",
+                        "SZ",
+                        "TC",
+                        "TD",
+                        "TG",
+                        "TH",
+                        "TJ",
+                        "TL",
+                        "TN",
+                        "TO",
+                        "TR",
+                        "TT",
+                        "TV",
+                        "TW",
+                        "TZ",
+                        "UA",
+                        "UG",
+                        "US",
+                        "UY",
+                        "UZ",
+                        "VA",
+                        "VC",
+                        "VE",
+                        "VG",
+                        "VI",
+                        "VN",
+                        "VU",
+                        "WS",
+                        "XB",
+                        "XC",
+                        "XE",
+                        "XM",
+                        "XN",
+                        "XS",
+                        "XY",
+                        "YE",
+                        "YT",
+                        "ZA",
+                        "ZM",
+                        "ZW"
+                    ]
+                },
+                "email": {
+                    "title": "Email",
+                    "description": "The party email",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "phoneNumber": {
+                    "title": "Phone number",
+                    "description": "\nThe party phone number.\n\nNote that the expected format is: **1 514 0000000**\n\nCountry Code | Area Code | Phone\n--- | --- | ---\n1 | 514 | 0000000\n",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "stateCode": {
+                    "title": "State code",
+                    "description": "The address state code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "suburb": {
+                    "title": "Suburb",
+                    "description": "The address suburb if known",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "residential": {
+                    "title": "Residential",
+                    "description": "Indicates if The address is residential or commercial (enterprise)",
+                    "type": "boolean"
+                },
+                "addressLine1": {
+                    "title": "Address line1",
+                    "description": "The address line with street number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "addressLine2": {
+                    "title": "Address line2",
+                    "description": "The address line with suite number",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "Payment": {
+            "title": "Payment",
+            "description": "The payment details",
+            "required": [
+                "paidBy",
+                "currency"
+            ],
+            "type": "object",
+            "properties": {
+                "paidBy": {
+                    "title": "Paid by",
+                    "description": "The payment payer",
+                    "type": "string",
+                    "enum": [
+                        "sender",
+                        "recipient",
+                        "third_party",
+                        "credit_card"
+                    ]
+                },
+                "amount": {
+                    "title": "Amount",
+                    "description": "The payment amount if known",
+                    "type": "number"
+                },
+                "currency": {
+                    "title": "Currency",
+                    "description": "The payment amount currency",
+                    "type": "string",
+                    "enum": [
+                        "EUR",
+                        "AED",
+                        "USD",
+                        "XCD",
+                        "AMD",
+                        "ANG",
+                        "AOA",
+                        "ARS",
+                        "AUD",
+                        "AWG",
+                        "AZN",
+                        "BAM",
+                        "BBD",
+                        "BDT",
+                        "XOF",
+                        "BGN",
+                        "BHD",
+                        "BIF",
+                        "BMD",
+                        "BND",
+                        "BOB",
+                        "BRL",
+                        "BSD",
+                        "BTN",
+                        "BWP",
+                        "BYN",
+                        "BZD",
+                        "CAD",
+                        "CDF",
+                        "XAF",
+                        "CHF",
+                        "NZD",
+                        "CLP",
+                        "CNY",
+                        "COP",
+                        "CRC",
+                        "CUC",
+                        "CVE",
+                        "CZK",
+                        "DJF",
+                        "DKK",
+                        "DOP",
+                        "DZD",
+                        "EGP",
+                        "ERN",
+                        "ETB",
+                        "FJD",
+                        "GBP",
+                        "GEL",
+                        "GHS",
+                        "GMD",
+                        "GNF",
+                        "GTQ",
+                        "GYD",
+                        "HKD",
+                        "HNL",
+                        "HRK",
+                        "HTG",
+                        "HUF",
+                        "IDR",
+                        "ILS",
+                        "INR",
+                        "IRR",
+                        "ISK",
+                        "JMD",
+                        "JOD",
+                        "JPY",
+                        "KES",
+                        "KGS",
+                        "KHR",
+                        "KMF",
+                        "KPW",
+                        "KRW",
+                        "KWD",
+                        "KYD",
+                        "KZT",
+                        "LAK",
+                        "LKR",
+                        "LRD",
+                        "LSL",
+                        "LYD",
+                        "MAD",
+                        "MDL",
+                        "MGA",
+                        "MKD",
+                        "MMK",
+                        "MNT",
+                        "MOP",
+                        "MRO",
+                        "MUR",
+                        "MVR",
+                        "MWK",
+                        "MXN",
+                        "MYR",
+                        "MZN",
+                        "NAD",
+                        "XPF",
+                        "NGN",
+                        "NIO",
+                        "NOK",
+                        "NPR",
+                        "OMR",
+                        "PEN",
+                        "PGK",
+                        "PHP",
+                        "PKR",
+                        "PLN",
+                        "PYG",
+                        "QAR",
+                        "RSD",
+                        "RUB",
+                        "RWF",
+                        "SAR",
+                        "SBD",
+                        "SCR",
+                        "SDG",
+                        "SEK",
+                        "SGD",
+                        "SHP",
+                        "SLL",
+                        "SOS",
+                        "SRD",
+                        "SSP",
+                        "STD",
+                        "SYP",
+                        "SZL",
+                        "THB",
+                        "TJS",
+                        "TND",
+                        "TOP",
+                        "TRY",
+                        "TTD",
+                        "TWD",
+                        "TZS",
+                        "UAH",
+                        "UYU",
+                        "UZS",
+                        "VEF",
+                        "VND",
+                        "VUV",
+                        "WST",
+                        "YER",
+                        "ZAR"
+                    ]
+                },
+                "accountNumber": {
+                    "title": "Account number",
+                    "description": "The selected rate carrier payer account number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "creditCard": {
+                    "$ref": "#/definitions/Card"
+                },
+                "contact": {
+                    "$ref": "#/definitions/Address"
+                }
+            }
+        },
+        "Commodity": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique commodity's identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "weight": {
+                    "title": "Weight",
+                    "description": "The commodity's weight",
+                    "type": "number"
+                },
+                "width": {
+                    "title": "Width",
+                    "description": "The commodity's width",
+                    "type": "number"
+                },
+                "height": {
+                    "title": "Height",
+                    "description": "The commodity's height",
+                    "type": "number"
+                },
+                "length": {
+                    "title": "Length",
+                    "description": "The commodity's lenght",
+                    "type": "number"
+                },
+                "description": {
+                    "title": "Description",
+                    "description": "A description of the commodity",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "quantity": {
+                    "title": "Quantity",
+                    "description": "The commodity's quantity (number or item)",
+                    "type": "integer"
+                },
+                "sku": {
+                    "title": "Sku",
+                    "description": "The commodity's sku number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "valueAmount": {
+                    "title": "Value amount",
+                    "description": "The monetary value of the commodity",
+                    "type": "number"
+                },
+                "valueCurrency": {
+                    "title": "Value currency",
+                    "description": "The currency of the commodity value amount",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "originCountry": {
+                    "title": "Origin country",
+                    "description": "The origin or manufacture country",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "Invoice": {
+            "title": "Invoice",
+            "description": "The shipment invoice required for commercial shipment.",
+            "required": [
+                "date"
+            ],
+            "type": "object",
+            "properties": {
+                "date": {
+                    "title": "Date",
+                    "description": "The invoice date",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "identifier": {
+                    "title": "Identifier",
+                    "description": "The internal invoice document identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "type": {
+                    "title": "Type",
+                    "description": "The invoice type",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "copies": {
+                    "title": "Copies",
+                    "description": "The number of invoice copies",
+                    "type": "integer"
+                }
+            }
+        },
+        "Customs": {
+            "title": "Customs",
+            "description": "\nThe customs details.\n\nNote that this is required for the shipment of an international Dutiable parcel.\n",
+            "type": "object",
+            "properties": {
+                "noEei": {
+                    "title": "No eei",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "aes": {
+                    "title": "Aes",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "description": {
+                    "title": "Description",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "termsOfTrade": {
+                    "title": "Terms of trade",
+                    "description": "The customs 'term of trade' also known as 'incoterm'",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "commodities": {
+                    "description": "The parcel content items",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Commodity"
+                    }
+                },
+                "duty": {
+                    "$ref": "#/definitions/Payment"
+                },
+                "invoice": {
+                    "$ref": "#/definitions/Invoice"
+                },
+                "commercialInvoice": {
+                    "title": "Commercial invoice",
+                    "description": "Indicates if the shipment is commercial",
+                    "type": "boolean"
+                }
+            }
+        },
+        "Doc": {
+            "required": [
+                "type",
+                "image"
+            ],
+            "type": "object",
+            "properties": {
+                "type": {
+                    "title": "Type",
+                    "description": "The document type",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "image": {
+                    "title": "Image",
+                    "description": "encoded base64 string of the document",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "format": {
+                    "title": "Format",
+                    "description": "The document format",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "ShipmentRequestSchema": {
+            "required": [
+                "selectedRateId",
+                "rates",
+                "shipper",
+                "recipient",
+                "parcel",
+                "payment"
+            ],
+            "type": "object",
+            "properties": {
+                "selectedRateId": {
+                    "title": "Selected rate id",
+                    "description": "The selected shipment rate unique identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "rates": {
+                    "description": "The list for shipment rates fetched previously",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RateDetails"
+                    }
+                },
+                "shipper": {
+                    "$ref": "#/definitions/ShipmentShipperAddress"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/ShipmentRecipientAddress"
+                },
+                "parcel": {
+                    "$ref": "#/definitions/Parcel"
+                },
+                "services": {
+                    "description": "\nThe requested carrier service for the shipment.\n\nPlease consult the reference for specific carriers services.\n\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "options": {
+                    "$ref": "#/definitions/ShipmentOption"
+                },
+                "payment": {
+                    "$ref": "#/definitions/Payment"
+                },
+                "customs": {
+                    "$ref": "#/definitions/Customs"
+                },
+                "docImages": {
+                    "description": "\nThe list of documents to attach for a paperless interantional trade.\n\neg: Invoices...\n",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Doc"
+                    }
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "The shipment reference",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "Shipment": {
+            "title": "Shipment",
+            "description": "The submitted shipment's summary",
+            "required": [
+                "carrierName",
+                "carrierId",
+                "label",
+                "trackingNumber",
+                "selectedRateId",
+                "rates",
+                "shipper",
+                "recipient",
+                "parcel",
+                "payment"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "description": "A unique shipment identifier",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "carrierName": {
+                    "title": "Carrier name",
+                    "description": "The shipment carrier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrierId": {
+                    "title": "Carrier id",
+                    "description": "The shipment carrier configured identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "label": {
+                    "title": "Label",
+                    "description": "The shipment label in base64 string",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "trackingNumber": {
+                    "title": "Tracking number",
+                    "description": "The shipment tracking number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "selectedRate": {
+                    "$ref": "#/definitions/RateDetails"
+                },
+                "selectedRateId": {
+                    "title": "Selected rate id",
+                    "description": "The shipment selected rate.",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "rates": {
+                    "description": "The list for shipment rates fetched previously",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RateDetails"
+                    }
+                },
+                "shipper": {
+                    "$ref": "#/definitions/ShipmentShipperAddress"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/ShipmentRecipientAddress"
+                },
+                "parcel": {
+                    "$ref": "#/definitions/Parcel"
+                },
+                "services": {
+                    "description": "\nThe requested carrier service for the shipment.\n\nPlease consult the reference for specific carriers services.\n\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "options": {
+                    "title": "Options",
+                    "description": "\nThe options available for the shipment.\n\nPlease consult the reference for additional specific carriers options.\n",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "payment": {
+                    "$ref": "#/definitions/Payment"
+                },
+                "customs": {
+                    "$ref": "#/definitions/Customs"
+                },
+                "docImages": {
+                    "description": "\nThe list of documents to attach for a paperless interantional trade.\n\neg: Invoices...\n",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Doc"
+                    }
+                },
+                "reference": {
+                    "title": "Reference",
+                    "description": "The shipment reference",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "trackingUrl": {
+                    "title": "Tracking url",
+                    "description": "The shipment tracking url",
+                    "type": "string",
+                    "format": "uri",
+                    "minLength": 1
+                }
+            }
+        },
+        "ShipmentResponse": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "The list of note or warning messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    }
+                },
+                "shipment": {
+                    "$ref": "#/definitions/Shipment"
+                }
+            }
+        },
+        "TrackingEvent": {
+            "required": [
+                "date",
+                "description",
+                "location"
+            ],
+            "type": "object",
+            "properties": {
+                "date": {
+                    "title": "Date",
+                    "description": "The tracking event's date",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "description": {
+                    "title": "Description",
+                    "description": "The tracking event's description",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "location": {
+                    "title": "Location",
+                    "description": "The tracking event's location",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "code": {
+                    "title": "Code",
+                    "description": "The tracking event's code",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "time": {
+                    "title": "Time",
+                    "description": "The tracking event's time",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "signatory": {
+                    "title": "Signatory",
+                    "description": "The tracking signature on delivery",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "TrackingDetails": {
+            "title": "Tracking details",
+            "description": "The tracking details retrieved",
+            "required": [
+                "carrierName",
+                "carrierId",
+                "trackingNumber",
+                "events"
+            ],
+            "type": "object",
+            "properties": {
+                "carrierName": {
+                    "title": "Carrier name",
+                    "description": "The tracking carrier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "carrierId": {
+                    "title": "Carrier id",
+                    "description": "The tracking carrier configured identifier",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "trackingNumber": {
+                    "title": "Tracking number",
+                    "description": "The shipment tracking number",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "events": {
+                    "description": "The tracking details events",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TrackingEvent"
+                    }
+                }
+            }
+        },
+        "TrackingResponse": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "description": "The list of note or warning messages",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Message"
+                    }
+                },
+                "trackingDetails": {
+                    "$ref": "#/definitions/TrackingDetails"
+                }
+            }
+        },
+        "References": {
+            "required": [
+                "countries",
+                "currencies",
+                "states",
+                "services",
+                "options",
+                "packagePresets"
+            ],
+            "type": "object",
+            "properties": {
+                "countries": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "currencies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "states": {
+                    "title": "States",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "services": {
+                    "title": "Services",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "options": {
+                    "title": "Options",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "packagePresets": {
+                    "title": "Packagepresets",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
