@@ -63,8 +63,8 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     package: PackageResultsType = next(iter(shipment.PackageResults), None)
 
     return ShipmentDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
         label=cast(LabelType, package.ShippingLabel).GraphicImage,
     )

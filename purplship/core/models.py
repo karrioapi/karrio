@@ -230,8 +230,8 @@ class Insurance:
 class Message:
     """PurplShip Message type."""
 
-    carrier: str
     carrier_name: str
+    carrier_id: str
     message: str = None
     code: str = None
     details: Dict = None
@@ -262,8 +262,8 @@ class TrackingEvent:
 class RateDetails:
     """PurplShip rate (quote) details type."""
 
-    carrier: str
     carrier_name: str
+    carrier_id: str
     currency: str
     service: str = None
     discount: float = None
@@ -279,8 +279,8 @@ class RateDetails:
 class TrackingDetails:
     """PurplShip tracking details type."""
 
-    carrier: str
     carrier_name: str
+    carrier_id: str
     tracking_number: str
     events: List[TrackingEvent] = []
 
@@ -289,8 +289,8 @@ class TrackingDetails:
 class ShipmentDetails:
     """PurplShip shipment details type."""
 
-    carrier: str
     carrier_name: str
+    carrier_id: str
     label: str
     tracking_number: str
     selected_rate: RateDetails = None
@@ -301,8 +301,8 @@ class ShipmentDetails:
 class PickupDetails:
     """PurplShip pickup details type."""
 
-    carrier: str
     carrier_name: str
+    carrier_id: str
     confirmation_number: str
     pickup_date: str = None
     pickup_charge: ChargeDetails = None

@@ -46,8 +46,8 @@ TRACKING_REQUEST_PAYLOAD = ["m123"]
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier": "purolator",
-            "carrier_name": "PurolatorCourier",
+            "carrier_name": "purolator_courier",
+            "carrier_id": "purolator_courier",
             "events": [
                 {
                     "code": "Other",

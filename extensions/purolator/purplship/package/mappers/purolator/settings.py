@@ -15,4 +15,4 @@ class Settings(BaseSettings):
     language: str = "en"
     id: str = None
     test: bool = False
-    carrier_name: str = "Purolator"
+    carrier_id: str = "purolator_courier"

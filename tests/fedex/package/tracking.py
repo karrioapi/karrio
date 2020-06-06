@@ -55,8 +55,8 @@ ParsedAuthError = [
     [],
     [
         {
-            "carrier": "fedex",
-            "carrier_name": "carrier_name",
+            "carrier_name": "fedex",
+            "carrier_id": "carrier_id",
             "code": "1000",
             "message": "Authentication Failed",
         }
@@ -66,8 +66,8 @@ ParsedAuthError = [
 ParsedTrackingResponse = [
     [
         {
-            "carrier": "fedex",
-            "carrier_name": "carrier_name",
+            "carrier_name": "fedex",
+            "carrier_id": "carrier_id",
             "events": [
                 {
                     "code": "OC",
@@ -87,8 +87,8 @@ ParsedTrackingResponseError = [
     [],
     [
         {
-            "carrier": "fedex",
-            "carrier_name": "carrier_name",
+            "carrier_name": "fedex",
+            "carrier_id": "carrier_id",
             "code": "6035",
             "message": "Invalid tracking numbers.   Please check the following numbers "
             "and resubmit.",

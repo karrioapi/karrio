@@ -71,8 +71,8 @@ def _extract_freight_rate(detail_node: Element, settings: Settings) -> RateDetai
         for c in detail_node.xpath(".//*[local-name() = $name]", name="CurrencyCode")
     )
     return RateDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         currency=currency_,
         service=detail.Service.Description,
         base_charge=decimal(detail.TotalShipmentCharge.MonetaryValue),

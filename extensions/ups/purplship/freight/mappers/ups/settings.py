@@ -14,4 +14,8 @@ class Settings(BaseSettings):
     account_number: str = None
     id: str = None
     test: bool = False
-    carrier_name: str = "UPS Freight"
+    carrier_id: str = "ups_freight"
+
+    @property
+    def carrier_name(self):
+        return "ups_freight"

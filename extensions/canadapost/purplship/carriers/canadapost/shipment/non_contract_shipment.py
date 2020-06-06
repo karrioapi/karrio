@@ -56,8 +56,8 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     info.build(info_node)
 
     return ShipmentDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         label=label.text if len(errors) == 0 else None,
     )

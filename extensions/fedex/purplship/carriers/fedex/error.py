@@ -24,8 +24,8 @@ def _extract_error(
                 Message(
                     code=notification.Code,
                     message=notification.Message,
-                    carrier=settings.carrier,
                     carrier_name=settings.carrier_name,
+                    carrier_id=settings.carrier_id,
                 )
             )
         return messages

@@ -46,8 +46,8 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         for d in price_quote.price_details.adjustments.adjustment
     ]
     return RateDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         currency=currency,
         estimated_delivery=format_date(
             price_quote.service_standard.expected_delivery_date
@@ -86,7 +86,7 @@ def mailing_scenario_request(
     """
     if payload.shipper.country_code and payload.shipper.country_code != Country.CA.name:
         raise OriginNotServicedError(
-            payload.shipper.country_code, settings.carrier_name
+            payload.shipper.country_code, settings.carrier_id
         )
 
     parcel_preset = (

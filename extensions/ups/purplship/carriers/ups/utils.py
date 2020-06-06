@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     id: str = None
 
     @property
-    def carrier(self):
+    def carrier_name(self):
         return "ups"
 
     @property

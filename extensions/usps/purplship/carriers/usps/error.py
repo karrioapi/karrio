@@ -16,8 +16,8 @@ def parse_error_response(response: Element, settings: Settings) -> List[Message]
     ]
     return [
         Message(
-            carrier=settings.carrier,
             carrier_name=settings.carrier_name,
+            carrier_id=settings.carrier_id,
             code=str(error.Number),
             message=error.Description,
         )

@@ -35,8 +35,8 @@ TRACKING_PAYLOAD = ["XXXXXXXXXXXX1"]
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier": "usps",
-            "carrier_name": "USPS",
+            "carrier_name": "usps",
+            "carrier_id": "usps",
             "events": [
                 {
                     "code": "03",

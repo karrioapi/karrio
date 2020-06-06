@@ -21,8 +21,8 @@ def _extract_error(error_node: Element, settings: Settings) -> Message:
     return Message(
         code=error.Code,
         message=error.Description,
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         details=dict(AdditionalInformation=error.AdditionalInformation)
         if error.AdditionalInformation is not None
         else None,
@@ -35,6 +35,6 @@ def _extract_fault(fault_node: Element, settings: Settings) -> Message:
     return Message(
         code=error.faultcode,
         message=error.faultstring,
-        carrier=settings.carrier,
-        carrier_name=settings.carrier_name
+        carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id
     )

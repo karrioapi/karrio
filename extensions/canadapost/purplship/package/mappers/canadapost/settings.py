@@ -14,4 +14,4 @@ class Settings(BaseSettings):
     contract_id: str = None
     id: str = None
     test: bool = False
-    carrier_name: str = "CanadaPost"
+    carrier_id: str = "canadapost"

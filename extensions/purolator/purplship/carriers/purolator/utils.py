@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     id: str = None
 
     @property
-    def carrier(self):
-        return "purolator"
+    def carrier_name(self):
+        return "purolator_courier"
 
     @property
     def server_url(self):

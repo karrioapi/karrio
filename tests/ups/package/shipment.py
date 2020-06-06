@@ -126,8 +126,8 @@ package_shipment_with_package_preset_data = {
 
 NegotiatedParsedShipmentResponse = [
     {
-        "carrier": "ups",
-        "carrier_name": "UPS",
+        "carrier_name": "ups",
+        "carrier_id": "ups",
         "label": "R0lGODdheAUgA+cAAAAAAAEBAQIC (Truncated)",
         "tracking_number": "1ZWA82900191640782",
     },
@@ -136,8 +136,8 @@ NegotiatedParsedShipmentResponse = [
 
 ParsedShipmentResponse = [
     {
-        "carrier": "ups",
-        "carrier_name": "UPS",
+        "carrier_name": "ups",
+        "carrier_id": "ups",
         "label": "R0lGODdheAUgA+c(Truncated)",
         "tracking_number": "1ZWA82900191640782",
     },

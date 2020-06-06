@@ -60,8 +60,8 @@ ParsedAuthError = [
     [],
     [
         {
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "code": "E002",
             "message": "AAA Authentication Failure",
         }
@@ -71,8 +71,8 @@ ParsedAuthError = [
 ParsedTrackingResponse = [
     [
         {
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "events": [
                 {
                     "code": "INDUCTION",
@@ -91,8 +91,8 @@ ParsedUnknownTrackingNumberResponse = [
     [],
     [
         {
-            "carrier": "canadapost",
-            "carrier_name": "CanadaPost",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
             "code": "004",
             "message": "No Pin History",
         }

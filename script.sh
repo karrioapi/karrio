@@ -54,9 +54,9 @@ test() {
     if [[ "$1" == "-i" ]]; then
       install_submodules
     fi
-    pushd "${ROOT:?}" || false
+    cd "${ROOT:?}"
     r=$(coverage run -m unittest discover -v "${ROOT:?}/tests")
-    popd || false
+    cd -
     $r || false
 }
 

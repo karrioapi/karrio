@@ -82,8 +82,8 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
         (p.name for p in Product if p.value in estimate.ServiceID), estimate.ServiceID
     )
     return RateDetails(
-        carrier=settings.carrier,
         carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
         service=service,
         currency=currency,
         base_charge=decimal(estimate.BasePrice),
