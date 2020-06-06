@@ -10,6 +10,7 @@ dev_requirements = [
     "certifi",
     "chardet",
     "click",
+    "coverage",
     "generateDS",
     "idna",
     "lxml",

@@ -25,7 +25,7 @@ create_env() {
 
 init() {
     create_env &&
-    pip install ".[dev]"
+    pip install ".[dev]" -f https://git.io/purplship
 }
 
 
@@ -39,7 +39,7 @@ alias env:reset=init
 # shellcheck disable=SC2120
 test() {
     pip install "${ROOT:?}"
-    python -m unittest discover -v "${ROOT:?}/tests"
+    coverage run -m unittest discover -v "${ROOT:?}/tests"
 }
 
 typecheck() {
