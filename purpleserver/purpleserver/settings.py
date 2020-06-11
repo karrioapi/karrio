@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import importlib
 from django.urls import reverse_lazy
 from django.templatetags.static import static
 from django.utils.functional import lazy
@@ -47,8 +48,17 @@ static_lazy = lazy(static, str)
 
 # Application definition
 
+PURPLSHIP_CONF = [app for app in [
+    {'app': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},
+    {'app': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
+    {'app': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
+] if importlib.util.find_spec(app['app']) is not None]
+
+PURPLSHIP_APPS = [cfg['app'] for cfg in PURPLSHIP_CONF]
+PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF]
+
 INSTALLED_APPS = [
-    'purpleserver.core',
+    *PURPLSHIP_APPS,
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,10 +69,9 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+
     'oauth2_provider',
-
     'drf_yasg',
-
 ]
 
 MIDDLEWARE = [
@@ -203,7 +212,7 @@ SWAGGER_SETTINGS = {
     'DEFAULT_INFO': 'purpleserver.urls.swagger_info',
 
     'SECURITY_DEFINITIONS': {
-        'Token': {
+        'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'

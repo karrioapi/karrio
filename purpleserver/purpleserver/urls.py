@@ -20,9 +20,8 @@ from django.urls import include, path
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.conf import settings
 
-from purpleserver.proxy.views import router as proxy_router
-from purpleserver.core.views import router as core_router
 
 logging.getLogger('purplship').setLevel(logging.NOTSET)
 
@@ -46,13 +45,13 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path('swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
 
     path('admin/', admin.site.urls),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
-    path('v1/', include(proxy_router.urls + core_router.urls)),
+    *[path('', include(urls)) for urls in settings.PURPLSHIP_URLS],
 ]
