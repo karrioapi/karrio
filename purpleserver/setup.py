@@ -7,6 +7,9 @@ dev_requirements = [
       "wheel",
 ]
 
+proxy_requirements = ['purplship-server.proxy']
+manager_requirements = ['purplship-server.manager']
+
 setup(
       name='purplship-server',
       version='2020.6.2',
@@ -24,13 +27,15 @@ setup(
             'djangorestframework-camel-case',
             'drf-yasg',
             'purplship-server.core',
-            'purplship-server.proxy',
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]
       },
       extras_require={
-            'dev': dev_requirements
+            'dev': dev_requirements,
+            'proxy': proxy_requirements,
+            'manager': manager_requirements,
+            'all': [*proxy_requirements, *manager_requirements],
       },
       dependency_links=[
             'https://git.io/purplship',
