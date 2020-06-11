@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from django.urls import reverse_lazy
+from django.templatetags.static import static
+from django.utils.functional import lazy
 from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -41,6 +43,8 @@ if SECURE_DOMAIN:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
+static_lazy = lazy(static, str)
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -55,6 +59,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+    'oauth2_provider',
 
     'drf_yasg',
 
@@ -89,33 +94,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'purpleserver.wsgi.application'
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_THROTTLE_CLASSES': (
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
-    ),
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '40/minute',
-        'user': '60/minute'
-    },
-
-    'DEFAULT_RENDERER_CLASSES': (
-        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
-        'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
-    ),
-
-    'DEFAULT_PARSER_CLASSES': (
-        'djangorestframework_camel_case.parser.CamelCaseFormParser',
-        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
-        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
-    ),
-}
 
 
 # Database
@@ -178,20 +156,74 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'purpleserver', 'static')]
 
 # drf-yasg
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '40/minute',
+        'user': '60/minute'
+    },
+
+    'DEFAULT_RENDERER_CLASSES': (
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
+        'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
+    ),
+
+    'DEFAULT_PARSER_CLASSES': (
+        'djangorestframework_camel_case.parser.CamelCaseFormParser',
+        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+    ),
+}
+
+OAUTH2_CLIENT_ID = os.environ.get('OAUTH2_CLIENT_ID', get_random_secret_key())
+OAUTH2_CLIENT_SECRET = os.environ.get('OAUTH2_CLIENT_SECRET', get_random_secret_key())
+OAUTH2_APP_NAME = 'PurplShip OAuth2 provider'
+
+OAUTH2_REDIRECT_URL = static_lazy('drf-yasg/swagger-ui-dist/oauth2-redirect.html')
+OAUTH2_AUTHORIZE_URL = reverse_lazy('oauth2_provider:authorize')
+OAUTH2_TOKEN_URL = reverse_lazy('oauth2_provider:token')
+
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'LOGIN_URL': reverse_lazy('admin:login'),
     'LOGOUT_URL': '/admin/logout',
 
-    'DEFAULT_INFO': 'purplship_core.urls.swagger_info',
+    'DEFAULT_INFO': 'purpleserver.urls.swagger_info',
 
     'SECURITY_DEFINITIONS': {
         'Token': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-        }
-    }
+        },
+        'OAuth2 password': {
+            'flow': 'password',
+            'scopes': {
+                'read': 'Read everything.',
+                'write': 'Write everything,',
+            },
+            'tokenUrl': OAUTH2_TOKEN_URL,
+            'type': 'oauth2',
+        },
+    },
+    'OAUTH2_REDIRECT_URL': OAUTH2_REDIRECT_URL,
+    'OAUTH2_CONFIG': {
+        'clientId': OAUTH2_CLIENT_ID,
+        'clientSecret': OAUTH2_CLIENT_SECRET,
+        'appName': OAUTH2_APP_NAME,
+    },
 }
 
 REDOC_SETTINGS = {

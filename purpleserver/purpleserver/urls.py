@@ -48,8 +48,11 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
     path('admin/', admin.site.urls),
+
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
     path('v1/', include(proxy_router.urls + core_router.urls)),
 ]
