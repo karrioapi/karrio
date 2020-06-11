@@ -65,7 +65,7 @@ def create_shipment(payload: dict, resolve_tracking_url: Callable[[str, dict], s
     shipment_rate_id = (
         selected_rate.id
         if(to_dict(selected_rate) == to_dict({**to_dict(shipment_rate), 'id': selected_rate.id})) else
-        str(uuid.uuid4())
+        f'prx_{uuid.uuid4().hex}'
     )
     is_test = "?test" if carrier_settings.settings.get("test") else ""
     tracking_url = (
@@ -112,7 +112,7 @@ def fetch_rates(payload: dict, carrier_settings_list: List[CarrierSettings]) -> 
         shipment=ShipmentRate(**{
             **payload,
             'rates': [
-                {**{**to_dict(r), 'id': str(uuid.uuid4())}} for r in rates
+                {**{**to_dict(r), 'id': f'prx_{uuid.uuid4().hex}'}} for r in rates
             ]
         }) if len(rates) > 0 else None,
         messages=messages

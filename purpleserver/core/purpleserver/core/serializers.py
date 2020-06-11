@@ -45,7 +45,7 @@ class TestFilters(Serializer):
 
 class Address(Serializer):
 
-    id = UUIDField(required=False, help_text="A unique address identifier")
+    id = CharField(required=False, help_text="A unique address identifier")
     postal_code = CharField(required=False, help_text="The address postal code")
     city = CharField(required=False, help_text="""
     The address city. <br/>
@@ -85,7 +85,7 @@ class Address(Serializer):
 
 class Commodity(Serializer):
 
-    id = UUIDField(required=False, help_text="A unique commodity's identifier")
+    id = CharField(required=False, help_text="A unique commodity's identifier")
     weight = FloatField(required=False, help_text="The commodity's weight")
     width = FloatField(required=False, help_text="The commodity's width")
     height = FloatField(required=False, help_text="The commodity's height")
@@ -313,7 +313,7 @@ class TrackingEvent(Serializer):
 
 class Rate(Serializer):
 
-    id = UUIDField(required=False, help_text="A unique rate identifier")
+    id = CharField(required=False, help_text="A unique rate identifier")
     carrier_name = CharField(required=True, help_text="The rate's carrier")
     carrier_id = CharField(required=True, help_text="The targeted carrier's name (unique identifier)")
     currency = CharField(required=True, help_text="The rate monetary values currency code")
@@ -353,7 +353,7 @@ class PickupDetails(Serializer):
 
 
 class ShipmentRequest(Serializer):
-    selected_rate_id = UUIDField(required=True, help_text="The selected shipment rate unique identifier")
+    selected_rate_id = CharField(required=True, help_text="The selected shipment rate unique identifier")
 
     rates = ListField(child=Rate(), help_text="The list for shipment rates fetched previously")
 
