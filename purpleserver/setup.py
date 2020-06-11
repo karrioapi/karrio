@@ -12,7 +12,7 @@ manager_requirements = ['purplship-server.manager']
 
 setup(
       name='purplship-server',
-      version='2020.6.2',
+      version='2020.6.3',
       description='Multi-carrier shipping API',
       long_description=long_description,
       long_description_content_type="text/markdown",

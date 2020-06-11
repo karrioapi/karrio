@@ -201,10 +201,11 @@ class References(Serializer):
 
 @swagger_auto_schema(
     methods=['get'],
-    responses={200: References},
     tags=['Utils'],
+    operation_id="all_references",
+    operation_summary="Get all References",
     operation_description=MODELS_DOCUMENTATION,
-    operation_id="Get Reference",
+    responses={200: References},
 )
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])

@@ -96,8 +96,6 @@ class Rate(Entity):
     estimated_delivery = models.CharField(max_length=100, blank=True)
     extra_charges = JSONField()
 
-    shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE)
-
 
 class Customs(Entity):
     class Meta:
@@ -135,5 +133,6 @@ class Shipment(OwnedEntity):
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True)
     customs = models.ForeignKey('Customs', on_delete=models.CASCADE, blank=True)
     selected_rate = models.ForeignKey('Rate', on_delete=models.CASCADE, blank=True, related_name='selected_rate')
+    rates = models.ManyToManyField('Rate')
 
     options = JSONField(blank=True)

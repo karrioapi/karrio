@@ -32,7 +32,8 @@ You can track a shipment by specifying the carrier and the shipment tracking num
     tags=['Tracking'],
     responses={200: TrackingResponse(), 400: ErrorResponseSerializer()},
     operation_description=DESCRIPTIONS,
-    operation_id="Retrieve",
+    operation_id="proxy_track_shipment",
+    operation_summary="Track a Shipment",
     query_serializer=TestFilters
 )
 @api_view(['GET'])
@@ -70,4 +71,4 @@ def track(request: Request, carrier_name: str, tracking_number: str):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track))
+router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track, name="Tracking"))

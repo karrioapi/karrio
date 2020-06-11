@@ -40,16 +40,21 @@ alias env:reset=init
 install_all() {
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
+    pip install -e "${ROOT:?}/purpleserver/manager" &&
     pip install -e "${ROOT:?}/purpleserver[dev]"
+}
+
+reset_db () {
+  purplship makemigrations &&
+  purplship migrate &&
+  (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
 }
 
 run_server() {
   if [[ "$1" == "-i" ]]; then
     install_all
   fi
-  purplship makemigrations &&
-  purplship migrate &&
-  (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+  reset_db
   purplship runserver
 }
 
@@ -74,9 +79,12 @@ build() {
 
 build_all() {
   clean_builds
-  build "${ROOT:?}/purpleserver/core"
-  build "${ROOT:?}/purpleserver/proxy"
-  build "${ROOT:?}/purpleserver"
+  sm=(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;)
+
+  $sm | while read module; do
+    echo "building ${module} ..."
+    build "${module}" || break
+  done
   backup_wheels
 }
 

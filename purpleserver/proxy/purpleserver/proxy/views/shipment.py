@@ -16,11 +16,13 @@ from purplship.core.utils.helpers import to_dict
 from purpleserver.core.datatypes import ErrorResponse
 from purpleserver.core.exceptions import ValidationError
 from purpleserver.core.serializers import (
-    CharField, ChoiceField, COUNTRIES,
+    CharField, ChoiceField, COUNTRIES, ListField,
 
+    Rate,
+    Payment,
     Address as BaseAddress,
     ShipmentResponse,
-    ShipmentRequest,
+    ShipmentPayload,
     ErrorResponse as ErrorResponseSerializer,
 )
 from purpleserver.core.gateway import create_shipment
@@ -32,6 +34,12 @@ DESCRIPTIONS = """
 Once a Shipment is initialized by fetching the rates, the remaining requirements might be specified 
 to submit the shipment to the carrier of the selected rate of your choice.
 """
+
+
+class ShipmentRequest(ShipmentPayload):
+    selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
+    rates = ListField(child=Rate(), help_text="The list for shipment rates fetched previously")
+    payment = Payment(required=True, help_text="The payment details")
 
 
 class Address(BaseAddress):
@@ -48,11 +56,12 @@ class ShipmentRequestValidation(ShipmentRequest):
 
 @swagger_auto_schema(
     methods=['post'],
-    tags=['Shipments'],
+    tags=['Shipment'],
+    operation_id="proxy_create_shipment",
+    operation_summary="Create a Shipment",
+    operation_description=DESCRIPTIONS,
     request_body=ShipmentRequest(),
     responses={200: ShipmentResponse(), 400: ErrorResponseSerializer()},
-    operation_description=DESCRIPTIONS,
-    operation_id="Create",
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))

@@ -30,11 +30,12 @@ The request returns rates required to create your shipment.
 
 @swagger_auto_schema(
     methods=['post'],
-    tags=['Rates'],
+    tags=['Rate'],
+    operation_id="proxy_fetch_rates",
+    operation_summary="Fetch Shipment Rates",
+    operation_description=DESCRIPTIONS,
     responses={200: RateResponse(), 400: ErrorResponseSerializer()},
     request_body=RateRequest(),
-    operation_description=DESCRIPTIONS,
-    operation_id="Fetch",
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
