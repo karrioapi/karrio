@@ -202,9 +202,9 @@ class References(Serializer):
 @swagger_auto_schema(
     methods=['get'],
     responses={200: References},
-    tags=['REFERENCE'],
+    tags=['Utils'],
     operation_description=MODELS_DOCUMENTATION,
-    operation_id="References",
+    operation_id="Get Reference",
 )
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])
@@ -212,4 +212,4 @@ def references(_):
     return Response(REFERENCE_MODELS, status=status.HTTP_200_OK)
 
 
-router.urls.append(path('references', references, name='Reference'))
+router.urls.append(path('references', references))

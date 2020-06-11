@@ -16,7 +16,12 @@ from purplship.core.utils.helpers import to_dict
 from purpleserver.core.datatypes import ErrorResponse
 from purpleserver.core.exceptions import ValidationError
 from purpleserver.core.serializers import (
-    ShipmentResponse, ShipmentRequest, ShipmentOption, ErrorResponse as ErrorResponseSerializer
+    CharField, ChoiceField, COUNTRIES,
+
+    Address as BaseAddress,
+    ShipmentResponse,
+    ShipmentRequest,
+    ErrorResponse as ErrorResponseSerializer,
 )
 from purpleserver.core.gateway import create_shipment
 from purpleserver.proxy.router import router
@@ -29,24 +34,25 @@ to submit the shipment to the carrier of the selected rate of your choice.
 """
 
 
-class ShipmentRequestSchema(ShipmentRequest):
-    options = ShipmentOption(required=False, help_text=f"""
-    The options available for the shipment.
+class Address(BaseAddress):
+    city = CharField(required=True, help_text="The address city")
+    person_name = CharField(required=True, help_text="attention to")
+    country_code = ChoiceField(required=True, choices=COUNTRIES, help_text="The address country code")
+    address_line1 = CharField(required=True, help_text="The address line with street number")
 
-    Note that this is a dictionary in which you can can add as many carrier shipment
-    options you desire to add to your shipment. 
 
-    Please consult the reference for additional specific carriers options.
-    """)
+class ShipmentRequestValidation(ShipmentRequest):
+    shipper = Address(required=True, help_text="The origin address of the shipment (address from)")
+    recipient = Address(required=True, help_text="The shipment destination address (address to)")
 
 
 @swagger_auto_schema(
     methods=['post'],
-    tags=['PROXY'],
-    request_body=ShipmentRequestSchema(),
+    tags=['Shipments'],
+    request_body=ShipmentRequest(),
     responses={200: ShipmentResponse(), 400: ErrorResponseSerializer()},
     operation_description=DESCRIPTIONS,
-    operation_id="Create A Shipment",
+    operation_id="Create",
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
@@ -55,7 +61,7 @@ class ShipmentRequestSchema(ShipmentRequest):
 def ship(request: Request):
     try:
         try:
-            shipping_request = ShipmentRequest(data=request.data)
+            shipping_request = ShipmentRequestValidation(data=request.data)
             shipping_request.is_valid(raise_exception=True)
 
             response = create_shipment(
@@ -82,4 +88,4 @@ def ship(request: Request):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('proxy/shipments', ship, name='Shipping'))
+router.urls.append(path('proxy/shipments', ship))
