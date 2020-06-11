@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 @swagger_auto_schema(
     methods=['get'],
     tags=['Carriers'],
-    responses={200: CarrierSettings(many=True)},
+    responses={200: CarrierSettings(many=True), 400: ErrorResponseSerializer()},
     operation_description=(
         "Returns the list of configured carriers"
     ),
