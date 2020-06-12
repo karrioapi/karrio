@@ -15,6 +15,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.core.renderers import BinaryFileRenderer
 from purpleserver.core.router import router
+from purpleserver.core.serializers import ErrorResponse
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +31,9 @@ class LabelPrintingRequest(Serializer):
 
 @swagger_auto_schema(
     methods=['post'],
-    tags=['CORE'],
+    tags=['Utils'],
     request_body=LabelPrintingRequest(),
-    responses={201: None},
+    responses={201: None, 400: ErrorResponse()},
     operation_description="Returns a label PDF file.",
     operation_id="Print Label",
 )
@@ -61,4 +62,4 @@ def print_label(request: Request):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('labels', print_label, name='Labels'))
+router.urls.append(path('labels', print_label))

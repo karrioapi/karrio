@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.core',
-      version='2020.6.1',
+      version='2020.6.2',
       description='Multi-carrier shipping API Core module',
       long_description=long_description,
       long_description_content_type="text/markdown",

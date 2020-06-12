@@ -15,7 +15,7 @@ from purplship.core.utils.helpers import to_dict
 from purpleserver.core.datatypes import ErrorResponse
 from purpleserver.core.exceptions import ValidationError
 from purpleserver.core.serializers import (
-    RateRequest, RateResponse, ShipmentOption, ErrorResponse as ErrorResponseSerializer
+    RateRequest, RateResponse, ErrorResponse as ErrorResponseSerializer
 )
 from purpleserver.core.gateway import fetch_rates, get_carriers
 from purpleserver.proxy.router import router
@@ -24,29 +24,17 @@ logger = logging.getLogger(__name__)
 
 DESCRIPTIONS = """
 The Shipping process begins by fetching rates for your shipment.
-The rate request return the backbone of your shipment object adding
-the rates retrieved from one or many carriers based on your filter.
+The request returns rates required to create your shipment.
 """
-
-
-class RateRequestSchema(RateRequest):
-    options = ShipmentOption(required=False, help_text=f"""
-    The options available for the shipment.
-
-    Note that this is a dictionary in which you can can add as many carrier shipment
-    options you desire to add to your shipment. 
-
-    Please consult the reference for additional specific carriers options.
-    """)
 
 
 @swagger_auto_schema(
     methods=['post'],
-    tags=['PROXY'],
+    tags=['Rates'],
     responses={200: RateResponse(), 400: ErrorResponseSerializer()},
-    request_body=RateRequestSchema(),
+    request_body=RateRequest(),
     operation_description=DESCRIPTIONS,
-    operation_id="Fetch Rates",
+    operation_id="Fetch",
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
@@ -84,4 +72,4 @@ def rates(request: Request):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('proxy/rates', rates, name='Rates'))
+router.urls.append(path('proxy/rates', rates))

@@ -12,21 +12,21 @@ from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.core.router import router
-from purpleserver.core.serializers import CarrierSettingsList, CarrierFilters
+from purpleserver.core.serializers import CarrierSettings, CarrierFilters
 from purpleserver.core.gateway import get_carriers
-from purpleserver.core.datatypes import CarrierSettings
+from purpleserver.core.datatypes import CarrierSettings as CarrierSettingsType
 
 logger = logging.getLogger(__name__)
 
 
 @swagger_auto_schema(
     methods=['get'],
-    tags=['CORE'],
-    responses={200: CarrierSettingsList()},
+    tags=['Carriers'],
+    responses={200: CarrierSettings(many=True)},
     operation_description=(
         "Returns the list of configured carriers"
     ),
-    operation_id="Carriers",
+    operation_id="Retrieve",
     query_serializer=CarrierFilters
 )
 @api_view(['GET'])
@@ -39,7 +39,7 @@ def carriers_settings(request: Request):
             query.is_valid(raise_exception=True)
 
             test_default = ('test' in request.query_params) or None
-            response: List[CarrierSettings] = get_carriers(
+            response: List[CarrierSettingsType] = get_carriers(
                 carrier_name=query.validated_data.get('carrierName'),
                 carrier_ids=([query.validated_data.get('carrierId')] if 'carrierId' in request.query_params else None),
                 test=query.validated_data.get('test') if query.validated_data.get('test') is not None else test_default,
