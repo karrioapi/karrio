@@ -20,7 +20,7 @@ create_env() {
     mkdir -p "${ROOT:?}/$ENV_DIR"
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
     activate_env &&
-    pip install --upgrade pip
+    pip install --upgrade pip wheel
 }
 
 init() {

@@ -9,7 +9,7 @@ dev_requirements = [
 
 setup(
       name='purplship-server',
-      version='2020.6.1',
+      version='2020.6.2',
       description='Multi-carrier shipping API',
       long_description=long_description,
       long_description_content_type="text/markdown",
