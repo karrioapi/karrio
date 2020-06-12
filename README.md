@@ -23,7 +23,7 @@ docker run \
   -p80:8000 \
   --name=pship --rm \
   --volume=$(pwd):/app \
-  --interactive --tty purplship/purplship-server:2020.6.1 \
+  --interactive --tty purplship/purplship-server:2020.6.2 \
   /bin/bash -c "purplship makemigrations && purplship migrate && purplship createsuperuser ; purplship runserver 0.0.0.0:8000"
 ```
 
@@ -48,7 +48,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
   web:
-    image: purplship/purplship-server:2020.6.1
+    image: purplship/purplship-server:2020.6.2
     restart: always
     entrypoint: |
       bash -c "bash -s <<EOF
@@ -90,7 +90,7 @@ Python >= 3.7
 create a python virtual environment using [python venv](https://docs.python.org/3/tutorial/venv.html)
 
 ```shell script
-pip install -f https://git.io/purplship purplship-server==2020.6.1
+pip install -f https://git.io/purplship purplship-server==2020.6.2
 ```
 
 **For the latest stable installation with frozen version**
@@ -104,7 +104,7 @@ copy this in a `requirement.txt` file
 -f https://git.io/purplship
 asgiref==3.2.7
 attrs==19.3.0
-certifi==2020.4.5.1
+certifi==2020.4.5.2
 chardet==3.0.4
 coreapi==2.3.3
 coreschema==0.0.4
@@ -113,7 +113,7 @@ djangorestframework==3.11.0
 djangorestframework-camel-case==1.1.2
 drf-yasg==1.17.1
 idna==2.9
-inflection==0.4.0
+inflection==0.5.0
 itypes==1.2.0
 Jinja2==2.11.2
 jstruct==2020.4.0
@@ -121,10 +121,13 @@ lxml==4.5.1
 MarkupSafe==1.1.1
 packaging==20.4
 purplship==2020.6.1
-purplship.package==2020.6.1
+purplship-server==2020.6.2
+purplship-server.core==2020.6.2
+purplship-server.proxy==2020.6.2
 purplship.canadapost==2020.6.1
 purplship.dhl==2020.6.1
 purplship.fedex==2020.6.1
+purplship.package==2020.6.1
 purplship.purolator==2020.6.1
 purplship.ups==2020.6.1
 py-canadapost==2020.4.0
