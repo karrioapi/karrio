@@ -13,6 +13,7 @@ services:
     restart: always
     entrypoint: |
       bash -c "bash -s <<EOF
+      pip freeze
       purplship makemigrations &&
       purplship migrate &&
       (echo \"from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')\" | purplship shell) > /dev/null 2>&1;
