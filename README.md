@@ -5,6 +5,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 [![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709)](https://app.codacy.com/manual/DanH91/purplship?utm_source=github.com&utm_medium=referral&utm_content=PurplShip/purplship&utm_campaign=Badge_Grade_Dashboard)
+[![Join the chat at https://gitter.im/PurplShip/purplship](https://badges.gitter.im/PurplShip/purplship.svg)](https://gitter.im/PurplShip/purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Introduction
 
