@@ -1,6 +1,7 @@
 import attr
-from typing import List, Dict
+from typing import List, Dict, Type, TypeVar
 from jstruct import JStruct, JList, REQUIRED
+from purplship.core.utils import to_dict
 from purplship.core.models import (
     Address,
     Doc,
@@ -19,10 +20,25 @@ from purplship.core.models import (
 )
 
 
-@attr.s(auto_attribs=True)
 class CarrierSettings:
-    carrier_name: str
-    settings: dict
+    def __init__(self, carrier_name: str, carrier_id: str, test: bool = None, **kwargs):
+        self.carrier_name = carrier_name
+        self.carrier_id = carrier_id
+        self.test = test
+
+        for name, value in kwargs.items():
+            if name not in ['carrier_ptr']:
+                self.__setattr__(name, value)
+
+    def dict(self):
+        return {
+            name: value for name, value in self.__dict__.items()
+            if name not in ['carrier_name']
+        }
+
+    @classmethod
+    def create(cls, data: object):
+        return cls(**to_dict(data))
 
 
 @attr.s(auto_attribs=True)

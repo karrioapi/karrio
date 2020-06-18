@@ -17,7 +17,7 @@ from purpleserver.core.exceptions import ValidationError
 from purpleserver.core.serializers import (
     TrackingRequest, TrackingResponse, TestFilters, ErrorResponse as ErrorResponseSerializer
 )
-from purpleserver.core.gateway import track_shipment, get_carriers
+from purpleserver.core.gateway import Shipments, Carriers
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
@@ -40,20 +40,21 @@ You can track a shipment by specifying the carrier and the shipment tracking num
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated, ))
 @throttle_classes([UserRateThrottle, AnonRateThrottle])
-def track(request: Request, carrier_name: str, tracking_number: str):
+def track_shipment(request: Request, carrier_name: str, tracking_number: str):
     try:
         try:
             carrier_setting = next(
-                iter(get_carriers(carrier_name=carrier_name, test='test' in request.query_params or None)),
+                iter(Carriers.list(**{**request.query_params, 'carrier_name': carrier_name})),
                 None
             )
-            tracking_request = TrackingRequest(data=dict(tracking_numbers=[tracking_number]))
 
             if carrier_setting is None:
                 raise Exception(f'No configured carrier of type: {carrier_name}')
 
+            tracking_request = TrackingRequest(data=dict(tracking_numbers=[tracking_number]))
             tracking_request.is_valid(raise_exception=True)
-            response = track_shipment(tracking_request.data, carrier_setting)
+
+            response = Shipments.track(tracking_request.data, carrier_setting)
 
             if isinstance(response, ErrorResponse):
                 Response(to_dict(response), status=status.HTTP_400_BAD_REQUEST)
@@ -71,4 +72,4 @@ def track(request: Request, carrier_name: str, tracking_number: str):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track, name="Tracking"))
+router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track_shipment, name="TrackShipment"))

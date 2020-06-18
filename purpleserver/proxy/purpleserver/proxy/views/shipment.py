@@ -25,7 +25,7 @@ from purpleserver.core.serializers import (
     ShipmentPayload,
     ErrorResponse as ErrorResponseSerializer,
 )
-from purpleserver.core.gateway import create_shipment
+from purpleserver.core.gateway import Shipments
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
@@ -73,11 +73,11 @@ def ship(request: Request):
             shipping_request = ShipmentRequestValidation(data=request.data)
             shipping_request.is_valid(raise_exception=True)
 
-            response = create_shipment(
+            response = Shipments.create(
                 shipping_request.data,
                 resolve_tracking_url=(
                     lambda trackin_url, shipping: reverse(
-                        "Tracking",
+                        "purpleserver.proxy:TrackShipment",
                         request=request,
                         kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
                     )

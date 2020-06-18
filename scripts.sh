@@ -47,6 +47,7 @@ install_all() {
 reset_db () {
   purplship makemigrations &&
   purplship migrate &&
+  purplship collectstatic --noinput &&
   (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
 }
 

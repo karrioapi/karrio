@@ -194,6 +194,10 @@ REST_FRAMEWORK = {
         'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
         'djangorestframework_camel_case.parser.CamelCaseJSONParser',
     ),
+
+    'JSON_UNDERSCOREIZE': {
+        'no_underscore_before_number': True,
+    },
 }
 
 OAUTH2_CLIENT_ID = os.environ.get('OAUTH2_CLIENT_ID', get_random_secret_key())

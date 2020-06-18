@@ -1,5 +1,6 @@
 from functools import partial
 from django.db import models
+
 from purpleserver.core.models.entity import Entity, uuid
 
 

@@ -76,17 +76,17 @@ REFERENCE_MODELS = {
     "services": {
         key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['services']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('services') is not None
+        if mapper.get('package') is not None
     },
     "options": {
         key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['options']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('options') is not None
+        if mapper.get('package') is not None
     },
     "packagePresets": {
         key: {c.name: to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('packagePresets') is not None
+        if mapper.get('package') is not None
     }
 }
 

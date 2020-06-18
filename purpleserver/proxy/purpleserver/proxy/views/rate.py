@@ -17,7 +17,7 @@ from purpleserver.core.exceptions import ValidationError
 from purpleserver.core.serializers import (
     RateRequest, RateResponse, ErrorResponse as ErrorResponseSerializer
 )
-from purpleserver.core.gateway import fetch_rates, get_carriers
+from purpleserver.core.gateway import Carriers, Rates
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
@@ -41,21 +41,20 @@ The request returns rates required to create your shipment.
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated, ))
 @throttle_classes([UserRateThrottle, AnonRateThrottle])
-def rates(request: Request):
+def fetch_rates(request: Request):
     try:
         try:
             rate_request = RateRequest(data=request.data)
             rate_request.is_valid(raise_exception=True)
 
-            carrier_ids = rate_request.data.get('carrier_ids', [])
-            carrier_settings_list = (
-                get_carriers(carrier_ids=carrier_ids) if len(carrier_ids) > 0 else get_carriers()
+            carrier_settings_list = Carriers.list(
+                carrier_ids=rate_request.data.get('carrier_ids', [])
             )
 
             if len(carrier_settings_list) == 0:
                 raise Exception(f'No configured carriers specified')
 
-            response = fetch_rates(rate_request.data, carrier_settings_list)
+            response = Rates.fetch(rate_request.data, carrier_settings_list)
 
             if isinstance(response, ErrorResponse):
                 Response(to_dict(response), status=status.HTTP_400_BAD_REQUEST)
@@ -73,4 +72,4 @@ def rates(request: Request):
         return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-router.urls.append(path('proxy/rates', rates))
+router.urls.append(path('proxy/rates', fetch_rates))

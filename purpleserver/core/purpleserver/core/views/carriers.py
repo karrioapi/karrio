@@ -12,8 +12,9 @@ from django.db.models import Q
 
 from drf_yasg.utils import swagger_auto_schema
 
+from purplship.core.utils import to_dict
 from purpleserver.core.router import router
-from purpleserver.core.models import Carrier, MODELS
+from purpleserver.core.gateway import Carriers
 from purpleserver.core.serializers import CarrierSettings, ErrorResponse, CARRIERS
 
 logger = logging.getLogger(__name__)
@@ -45,16 +46,8 @@ class CarrierList(CarrierAPIView):
         query = CarrierFilters(data=request.query_params)
         query.is_valid(raise_exception=True)
 
-        query_filter = ({} if 'test' not in request.query_params else dict(
-            test=query.validated_data['carrier_name'] or True
-        ))
-
-        if 'carrier_name' in query.validated_data:
-            carriers = MODELS[query.validated_data['carrier_name']].objects.filter(**query_filter)
-        else:
-            carriers = [carrier.settings() for carrier in Carrier.objects.filter(**query_filter)]
-
-        serializer = CarrierSettings(carriers, many=True)
+        carriers = Carriers.list(**query.validated_data)
+        serializer = CarrierSettings(to_dict(carriers), many=True)
         return Response(serializer.data)
 
 
@@ -71,10 +64,11 @@ class CarrierDetails(CarrierAPIView):
         Retrieve a configured carrier instance.
         """
         query = Q(id__startswith=carrier_id_or_pk) | Q(carrier_id__startswith=carrier_id_or_pk)
-        carrier = Carrier.objects.get(query)
-        serializer = CarrierSettings(carrier.settings())
+
+        carrier = Carriers.retrieve(query)
+        serializer = CarrierSettings(to_dict(carrier))
         return Response(serializer.data)
 
 
 router.urls.append(path('carriers', CarrierList.as_view()))
-router.urls.append(path('carriers/<str:pk>', CarrierDetails.as_view()))
+router.urls.append(path('carriers/<str:carrier_id_or_pk>', CarrierDetails.as_view()))

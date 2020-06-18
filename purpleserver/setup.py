@@ -4,11 +4,16 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 dev_requirements = [
-      "wheel",
+      'wheel',
 ]
 
-proxy_requirements = ['purplship-server.proxy']
-manager_requirements = ['purplship-server.manager']
+proxy_requirements = [
+      'purplship-server.proxy'
+]
+
+manager_requirements = [
+      'purplship-server.manager'
+]
 
 setup(
       name='purplship-server',
@@ -27,6 +32,7 @@ setup(
             'djangorestframework-camel-case',
             'drf-yasg',
             'purplship-server.core',
+            'django-oauth-toolkit',
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]

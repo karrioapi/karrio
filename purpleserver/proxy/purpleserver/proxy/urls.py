@@ -8,3 +8,6 @@ app_name = 'purpleserver.proxy'
 urlpatterns = [
     path('v1/', include(router.urls)),
 ]
+
+
+print(router.urls)
