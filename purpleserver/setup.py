@@ -4,12 +4,20 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 dev_requirements = [
-      "wheel",
+      'wheel',
+]
+
+proxy_requirements = [
+      'purplship-server.proxy'
+]
+
+manager_requirements = [
+      'purplship-server.manager'
 ]
 
 setup(
       name='purplship-server',
-      version='2020.6.2',
+      version='2020.6.3',
       description='Multi-carrier shipping API',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -24,13 +32,16 @@ setup(
             'djangorestframework-camel-case',
             'drf-yasg',
             'purplship-server.core',
-            'purplship-server.proxy',
+            'django-oauth-toolkit',
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]
       },
       extras_require={
-            'dev': dev_requirements
+            'dev': dev_requirements,
+            'proxy': proxy_requirements,
+            'manager': manager_requirements,
+            'all': [*proxy_requirements, *manager_requirements],
       },
       dependency_links=[
             'https://git.io/purplship',

@@ -1,6 +1,5 @@
 from django.contrib import admin
+import purpleserver.core.models as models
 
-from purpleserver.core.models import MODELS
-
-for model in MODELS.values():
+for name, model in models.MODELS.items():
     admin.site.register(model)

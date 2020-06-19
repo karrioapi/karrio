@@ -3,8 +3,9 @@ from purplship.core.units import (
     Country, WeightUnit, DimensionUnit, PackagingUnit, PaymentType, Currency, PrinterType
 )
 from rest_framework.serializers import (
-    Serializer, CharField, FloatField, BooleanField, IntegerField, ListField,
-    ChoiceField, UUIDField, DictField, URLField, NullBooleanField
+    Serializer, CharField, FloatField,
+    BooleanField, IntegerField, ListField,
+    ChoiceField, DictField, URLField
 )
 
 CARRIERS = [(k, k) for k in MODELS.keys()]
@@ -15,6 +16,11 @@ DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
 PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
 PRINTER_TYPES = [(c.name, c.name) for c in list(PrinterType)]
+SHIPMENT_STATUS = [
+    ('created', 'created'),
+    ('purchased', 'purchased'),
+    ('cancelled', 'cancelled')
+]
 
 
 class StringListField(ListField):
@@ -22,17 +28,10 @@ class StringListField(ListField):
 
 
 class CarrierSettings(Serializer):
+    id = CharField(required=True, help_text="A unique address identifier")
     carrier_name = ChoiceField(choices=CARRIERS, required=True, help_text="Indicates a carrier (type)")
     carrier_id = CharField(required=True, help_text="Indicates a specific carrier configuration name.")
     test = BooleanField(required=True, help_text="""
-    The test flag indicates whether to use a carrier configured for test. 
-    """)
-
-
-class CarrierFilters(Serializer):
-    carrierName = ChoiceField(choices=CARRIERS, required=False, help_text="Indicates a carrier (type)")
-    carrierId = CharField(required=False, help_text="Indicates a specific carrier configuration name.")
-    test = NullBooleanField(required=False, help_text="""
     The test flag indicates whether to use a carrier configured for test. 
     """)
 
@@ -45,7 +44,7 @@ class TestFilters(Serializer):
 
 class Address(Serializer):
 
-    id = UUIDField(required=False, help_text="A unique address identifier")
+    id = CharField(required=False, help_text="A unique address identifier")
     postal_code = CharField(required=False, help_text="The address postal code")
     city = CharField(required=False, help_text="""
     The address city. <br/>
@@ -85,7 +84,7 @@ class Address(Serializer):
 
 class Commodity(Serializer):
 
-    id = UUIDField(required=False, help_text="A unique commodity's identifier")
+    id = CharField(required=False, help_text="A unique commodity's identifier")
     weight = FloatField(required=False, help_text="The commodity's weight")
     width = FloatField(required=False, help_text="The commodity's width")
     height = FloatField(required=False, help_text="The commodity's height")
@@ -110,12 +109,12 @@ class Parcel(Serializer):
     
     Note that the packaging is optional when using a package preset
     
-    For specific carriers packaging type, please consult the reference.
+    For specific carriers packaging type, please consult [the reference](#operation/all_references).
     """)
     package_preset = CharField(required=False, help_text="""
     The parcel's package preset.
     
-    For specific carriers package preset, please consult the reference.
+    For specific carriers package preset, please consult [the reference](#operation/all_references).
     """)
     description = CharField(required=False, help_text="The parcel's description")
     content = CharField(required=False, help_text="The parcel's content description")
@@ -161,8 +160,7 @@ class Customs(Serializer):
     terms_of_trade = CharField(required=False, help_text="The customs 'term of trade' also known as 'incoterm'")
     commodities = ListField(child=Commodity(), required=False, help_text="The parcel content items")
     duty = Payment(required=False, help_text="""
-    The duty payment details.
-    
+    The payment details.<br/>
     Note that this is required for a Dutiable parcel shipped internationally.
     """)
     invoice = Invoice(required=False, help_text="The shipment invoice required for commercial shipment.")
@@ -196,6 +194,10 @@ class Insurance(Serializer):
     amount = FloatField(required=True, help_text="The insurance coverage amount.")
 
 
+class Options(Serializer):
+    pass
+
+
 class RateRequest(Serializer):
     shipper = Address(required=True, help_text="""
     The address of the party
@@ -213,14 +215,14 @@ class RateRequest(Serializer):
 
     services = StringListField(required=False, help_text="""
     The requested carrier service for the shipment.<br/>
-    Please consult the reference for specific carriers services.
+    Please consult [the reference](#operation/all_references) for specific carriers services.
     
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """)
-    options = DictField(required=False, help_text=f"""
+    options = Options(required=False, help_text=f"""
     The options available for the shipment.
 
-    Please consult the reference for additional specific carriers options.
+    Please consult [the reference](#operation/all_references) for additional specific carriers options.
     """)
     reference = CharField(required=False, help_text="The shipment reference")
     carrier_ids = StringListField(required=False, help_text="""
@@ -313,7 +315,7 @@ class TrackingEvent(Serializer):
 
 class Rate(Serializer):
 
-    id = UUIDField(required=False, help_text="A unique rate identifier")
+    id = CharField(required=False, help_text="A unique rate identifier")
     carrier_name = CharField(required=True, help_text="The rate's carrier")
     carrier_id = CharField(required=True, help_text="The targeted carrier's name (unique identifier)")
     currency = CharField(required=True, help_text="The rate monetary values currency code")
@@ -352,11 +354,7 @@ class PickupDetails(Serializer):
     closing_time = CharField(required=False, help_text="The pickup expected closing or late time")
 
 
-class ShipmentRequest(Serializer):
-    selected_rate_id = UUIDField(required=True, help_text="The selected shipment rate unique identifier")
-
-    rates = ListField(child=Rate(), help_text="The list for shipment rates fetched previously")
-
+class ShipmentPayload(Serializer):
     shipper = Address(required=True, help_text="""
     The address of the party
     
@@ -374,15 +372,14 @@ class ShipmentRequest(Serializer):
     services = StringListField(required=False, help_text="""
     The requested carrier service for the shipment.
 
-    Please consult the reference for specific carriers services.<br/>
+    Please consult [the reference](#operation/all_references) for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """)
-    options = DictField(required=False, help_text="""
+    options = Options(required=False, help_text="""
     The options available for the shipment.<br/>
-    Please consult the reference for additional specific carriers options.
+    Please consult [the reference](#operation/all_references) for additional specific carriers options.
     """)
 
-    payment = Payment(required=True, help_text="The payment details")
     customs = Customs(required=False, help_text="""
     The customs details.<br/>
     Note that this is required for the shipment of an international Dutiable parcel.
@@ -395,20 +392,19 @@ class ShipmentRequest(Serializer):
     reference = CharField(required=False, help_text="The shipment reference")
 
 
-class ErrorResponse(Serializer):
-    messages = ListField(child=Message(), required=False, help_text="The list of error messages")
+class Shipment(ShipmentPayload):
+    id = CharField(required=False, help_text="A unique shipment identifier")
 
-
-class Shipment(ShipmentRequest):
-    selected_rate_id = UUIDField(required=True, help_text="The shipment selected rate.")
-    tracking_url = URLField(required=False, help_text="The shipment tracking url")
-
-    id = UUIDField(required=False, help_text="A unique shipment identifier")
-    carrier_name = CharField(required=True, help_text="The shipment carrier")
-    carrier_id = CharField(required=True, help_text="The shipment carrier configured identifier")
-    label = CharField(required=True, help_text="The shipment label in base64 string")
-    tracking_number = CharField(required=True, help_text="The shipment tracking number")
+    carrier_name = CharField(required=False, help_text="The shipment carrier")
+    carrier_id = CharField(required=False, help_text="The shipment carrier configured identifier")
+    label = CharField(required=False, help_text="The shipment label in base64 string")
+    tracking_number = CharField(required=False, help_text="The shipment tracking number")
     selected_rate = Rate(required=False, help_text="The shipment selected rate")
+
+    payment = Payment(required=False, help_text="The payment details")
+    selected_rate_id = CharField(required=False, help_text="The shipment selected rate.")
+    rates = ListField(required=False, child=Rate(), help_text="The list for shipment rates fetched previously")
+    tracking_url = URLField(required=False, help_text="The shipment tracking url")
 
 
 class RateResponse(Serializer):
@@ -424,3 +420,7 @@ class ShipmentResponse(Serializer):
 class TrackingResponse(Serializer):
     messages = ListField(child=Message(), required=False, help_text="The list of note or warning messages")
     tracking_details = TrackingDetails(required=False, help_text="The tracking details retrieved")
+
+
+class ErrorResponse(Serializer):
+    messages = ListField(child=Message(), required=False, help_text="The list of error messages")

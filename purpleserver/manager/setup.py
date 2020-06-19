@@ -4,9 +4,9 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-      name='purplship-server.core',
-      version='2020.6.3',
-      description='Multi-carrier shipping API Core module',
+      name='purplship-server.manager',
+      version='2020.6.3-alpha',
+      description='Multi-carrier shipping API Shipments manager module',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/PurplShip/purplship-server',
@@ -15,8 +15,8 @@ setup(
       license='AGPLv3',
       packages=find_packages("."),
       install_requires=[
-            'purplship',
-            'purplship.package'
+            'purplship-server.core',
+            'psycopg2-binary'
       ],
       dependency_links=[
             'https://git.io/purplship',

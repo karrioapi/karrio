@@ -11,14 +11,6 @@ services:
   web:
     build: .
     restart: always
-    entrypoint: |
-      bash -c "bash -s <<EOF
-      pip freeze
-      purplship makemigrations &&
-      purplship migrate &&
-      (echo \"from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')\" | purplship shell) > /dev/null 2>&1;
-      purplship runserver 0.0.0.0:8000
-      EOF"
     environment:
       - DEBUG_MODE=True
       - ALLOWED_HOSTS=*
@@ -28,9 +20,7 @@ services:
       - DATABASE_ENGINE=postgresql_psycopg2
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
-    volumes:
-      - .:/app
     ports:
-      - "8000:8000"
+      - "80:8000"
     depends_on:
       - db

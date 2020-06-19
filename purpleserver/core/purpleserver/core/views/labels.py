@@ -32,10 +32,11 @@ class LabelPrintingRequest(Serializer):
 @swagger_auto_schema(
     methods=['post'],
     tags=['Utils'],
+    operation_id="print_label",
+    operation_summary="Print a Label",
+    operation_description="Returns a label PDF file.",
     request_body=LabelPrintingRequest(),
     responses={201: None, 400: ErrorResponse()},
-    operation_description="Returns a label PDF file.",
-    operation_id="Print Label",
 )
 @api_view(['POST'])
 @renderer_classes([BinaryFileRenderer, JSONOpenAPIRenderer])

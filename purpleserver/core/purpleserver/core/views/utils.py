@@ -76,17 +76,17 @@ REFERENCE_MODELS = {
     "services": {
         key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['services']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('services') is not None
+        if mapper.get('package') is not None
     },
     "options": {
         key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['options']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('options') is not None
+        if mapper.get('package') is not None
     },
     "packagePresets": {
         key: {c.name: to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('packagePresets') is not None
+        if mapper.get('package') is not None
     }
 }
 
@@ -201,10 +201,11 @@ class References(Serializer):
 
 @swagger_auto_schema(
     methods=['get'],
-    responses={200: References},
     tags=['Utils'],
+    operation_id="all_references",
+    operation_summary="Get all References",
     operation_description=MODELS_DOCUMENTATION,
-    operation_id="Get Reference",
+    responses={200: References},
 )
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])
