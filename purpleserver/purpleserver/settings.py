@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import importlib
+import distutils.util
 from django.urls import reverse_lazy
 from django.templatetags.static import static
 from django.utils.functional import lazy
@@ -28,15 +29,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get('DEBUG_MODE', True))
+DEBUG = bool(distutils.util.strtobool(os.environ.get('DEBUG_MODE', 'True')))
 
-SECURE_DOMAIN = os.environ.get('SECURE', False)
+USE_HTTPS = bool(distutils.util.strtobool(os.environ.get('USE_HTTPS', 'False')))
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-if SECURE_DOMAIN:
+if USE_HTTPS is True:
+    print('> setting up for HTTPS', USE_HTTPS)
     global SECURE_SSL_REDIRECT
     global SECURE_PROXY_SSL_HEADER
 

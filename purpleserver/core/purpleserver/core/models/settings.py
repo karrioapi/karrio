@@ -93,9 +93,10 @@ MODELS: Dict[str, Any] = {
 
 # Register purplship-server models extensions
 for _, name, _ in pkgutil.iter_modules(extensions.__path__):
-    try:
-        extension = __import__(f"{extensions.__name__}.{name}", fromlist=[name])
-        MODELS.update({name: extension.settings()})
-    except Exception as e:
-        logger.warning(f'Failed to register extension "{name}" Model')
-        logger.exception(e)
+    if name in gateway.providers:
+        try:
+            extension = __import__(f"{extensions.__name__}.{name}", fromlist=[name])
+            MODELS.update({name: extension.settings()})
+        except Exception as e:
+            logger.warning(f'Failed to register extension "{name}" Model')
+            logger.exception(e)

@@ -28,7 +28,7 @@ class StringListField(ListField):
 
 
 class CarrierSettings(Serializer):
-    id = CharField(required=False, help_text="A unique address identifier")
+    id = CharField(required=True, help_text="A unique address identifier")
     carrier_name = ChoiceField(choices=CARRIERS, required=True, help_text="Indicates a carrier (type)")
     carrier_id = CharField(required=True, help_text="Indicates a specific carrier configuration name.")
     test = BooleanField(required=True, help_text="""

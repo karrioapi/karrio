@@ -44,6 +44,20 @@ install_all() {
     pip install -e "${ROOT:?}/purpleserver[dev]"
 }
 
+install_released() {
+  pip install purplship-server \
+    purplship-server.core \
+    purplship-server.proxy \
+    purplship-server.extension \
+    purplship.canadapost \
+    purplship.dhl \
+    purplship.fedex \
+    purplship.purolator \
+    purplship.ups \
+    eshipper.extension \
+    freightcom.extension
+}
+
 reset_db () {
   purplship makemigrations &&
   purplship migrate &&
