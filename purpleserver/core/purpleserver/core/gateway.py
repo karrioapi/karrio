@@ -23,7 +23,11 @@ class Carriers:
     @staticmethod
     def retrieve(*args, **kwargs) -> CarrierSettings:
         carrier = models.Carrier.objects.get(*args, **kwargs).settings()
-        return CarrierSettings.create({**model_to_dict(carrier), 'carrier_name': carrier.CARRIER_NAME})
+        return CarrierSettings.create({
+            **model_to_dict(carrier),
+            'id': carrier.pk,
+            'carrier_name': carrier.CARRIER_NAME
+        })
 
     @staticmethod
     def list(**kwargs) -> List[CarrierSettings]:
@@ -39,8 +43,8 @@ class Carriers:
             query.update(dict(carrier_id__in=list_filter['carrier_ids']))
 
         if 'carrier_name' in list_filter:
-            if list_filter['carrier_name'] not in models.MODELS:
-                raise Exception(f"No configurations for the following carrier: '{list_filter['carrier_name']}'")
+            if list_filter['carrier_name'] not in models.MODELS.keys():
+                raise NotFound(f"No configurations for the following carrier: '{list_filter['carrier_name']}'")
 
             model = models.MODELS[list_filter['carrier_name']]
 
@@ -48,6 +52,7 @@ class Carriers:
             CarrierSettings.create((
                 lambda s: {
                     **model_to_dict(s),
+                    'id': s.pk,
                     'carrier_name': s.CARRIER_NAME
                 }
             )(s.settings() or s))
