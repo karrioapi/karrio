@@ -3,6 +3,8 @@ from purpleserver.core.models.carrier import Carrier
 
 
 class EShipperSettings(Carrier):
+    CARRIER_NAME = 'eshipper'
+
     class Meta:
         db_table = "eshipper-settings"
         verbose_name = 'eShipper Settings'
@@ -10,9 +12,6 @@ class EShipperSettings(Carrier):
 
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
-
-
-EShipperSettings._meta.get_field('carrier_id').default = 'eshipper'
 
 
 def settings():
