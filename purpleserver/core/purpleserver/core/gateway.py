@@ -1,14 +1,20 @@
 import logging
 import uuid
 from typing import List, Union, Callable, Type, Dict, Any
+
 from django.forms.models import model_to_dict
+from rest_framework import status
+from rest_framework.exceptions import NotFound
+
 from purplship import package as api
 from purplship.core.utils import exec_async, to_dict
+
+from purpleserver.core import models
+from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
     RateResponse, TrackingResponse, TrackingRequest, Message, RateDetails, ErrorResponse
 )
-from purpleserver.core import models
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +64,7 @@ class Shipments:
         )
 
         if selected_rate is None:
-            raise Exception(
+            raise NotFound(
                 f'Invalid "selected_rate_id": {payload.get("selected_rate_id")}'
                 f'Please select from {", ".join([r.id for r in payload.get("rates")])}'
             )
@@ -70,7 +76,7 @@ class Shipments:
         shipment, messages = api.Shipment.create(request).with_(gateway).parse()
 
         if shipment is None:
-            return ErrorResponse(messages=messages)
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
         shipment_rate = shipment.selected_rate or selected_rate
         shipment_rate_id = (
@@ -102,6 +108,9 @@ class Shipments:
         gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
         results, messages = api.Tracking.fetch(request).from_(gateway).parse()
 
+        if any(messages):
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
+
         return TrackingResponse(
             tracking_details=next(iter(results), None),
             messages=messages
@@ -110,7 +119,7 @@ class Shipments:
 
 class Rates:
     @staticmethod
-    def fetch(payload: dict, carrier_settings_list: List[CarrierSettings]) -> Union[RateResponse, ErrorResponse]:
+    def fetch(payload: dict, carrier_settings_list: List[CarrierSettings]) -> RateResponse:
         request = api.Rating.fetch(ShipmentRate(**payload))
 
         def process(carrier_settings: CarrierSettings):
@@ -129,9 +138,6 @@ class Rates:
         results = exec_async(process, carrier_settings_list)
         rates = sum((r for r, _ in results if r is not None), [])
         messages = sum((m for _, m in results), [])
-
-        if len(rates) == 0:
-            return ErrorResponse(messages=messages)
 
         return RateResponse(
             shipment=ShipmentRate(**{

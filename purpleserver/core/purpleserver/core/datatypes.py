@@ -120,3 +120,10 @@ class ShipmentResponse:
 class TrackingResponse:
     messages: List[Message] = JList[Message]
     tracking_details: TrackingDetails = JStruct[TrackingDetails]
+
+
+@attr.s(auto_attribs=True)
+class Error:
+    message: str = None
+    code: str = None
+    details: Dict = None

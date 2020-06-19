@@ -163,26 +163,31 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'purpleserver', 'static')]
 
 
-# drf-yasg
+# Django REST framework
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ),
+
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ),
+
     'DEFAULT_THROTTLE_RATES': {
         'anon': '40/minute',
         'user': '60/minute'
     },
+
+    'EXCEPTION_HANDLER': 'purpleserver.core.exceptions.custom_exception_handler',
 
     'DEFAULT_RENDERER_CLASSES': (
         'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
@@ -200,6 +205,9 @@ REST_FRAMEWORK = {
     },
 }
 
+
+# OAUTH2 config
+
 OAUTH2_CLIENT_ID = os.environ.get('OAUTH2_CLIENT_ID', get_random_secret_key())
 OAUTH2_CLIENT_SECRET = os.environ.get('OAUTH2_CLIENT_SECRET', get_random_secret_key())
 OAUTH2_APP_NAME = 'PurplShip OAuth2 provider'
@@ -207,6 +215,9 @@ OAUTH2_APP_NAME = 'PurplShip OAuth2 provider'
 OAUTH2_REDIRECT_URL = static_lazy('drf-yasg/swagger-ui-dist/oauth2-redirect.html')
 OAUTH2_AUTHORIZE_URL = reverse_lazy('oauth2_provider:authorize')
 OAUTH2_TOKEN_URL = reverse_lazy('oauth2_provider:token')
+
+
+# OpenAPI config
 
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,

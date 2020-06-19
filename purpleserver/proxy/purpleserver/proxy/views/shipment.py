@@ -13,8 +13,8 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purplship.core.utils.helpers import to_dict
 
-from purpleserver.core.datatypes import ErrorResponse
-from purpleserver.core.exceptions import ValidationError
+from purpleserver.proxy.router import router
+from purpleserver.core.gateway import Shipments
 from purpleserver.core.serializers import (
     CharField, ChoiceField, COUNTRIES, ListField,
 
@@ -25,8 +25,6 @@ from purpleserver.core.serializers import (
     ShipmentPayload,
     ErrorResponse as ErrorResponseSerializer,
 )
-from purpleserver.core.gateway import Shipments
-from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
 
@@ -68,33 +66,21 @@ class ShipmentRequestValidation(ShipmentRequest):
 @permission_classes((IsAuthenticated, ))
 @throttle_classes([UserRateThrottle, AnonRateThrottle])
 def ship(request: Request):
-    try:
-        try:
-            shipping_request = ShipmentRequestValidation(data=request.data)
-            shipping_request.is_valid(raise_exception=True)
+    shipping_request = ShipmentRequestValidation(data=request.data)
+    shipping_request.is_valid(raise_exception=True)
 
-            response = Shipments.create(
-                shipping_request.data,
-                resolve_tracking_url=(
-                    lambda trackin_url, shipping: reverse(
-                        "purpleserver.proxy:TrackShipment",
-                        request=request,
-                        kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
-                    )
-                )
+    response = Shipments.create(
+        shipping_request.data,
+        resolve_tracking_url=(
+            lambda trackin_url, shipping: reverse(
+                "purpleserver.proxy:TrackShipment",
+                request=request,
+                kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
             )
+        )
+    )
 
-            if isinstance(response, ErrorResponse):
-                Response(to_dict(response), status=status.HTTP_400_BAD_REQUEST)
-            return Response(to_dict(response), status=status.HTTP_201_CREATED)
-
-        except ValidationError as ve:
-            logger.exception(ve)
-            return Response(ve.args, status=status.HTTP_400_BAD_REQUEST)
-
-    except Exception as e:
-        logger.exception(e)
-        return Response(e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(to_dict(response), status=status.HTTP_201_CREATED)
 
 
 router.urls.append(path('proxy/shipments', ship))
