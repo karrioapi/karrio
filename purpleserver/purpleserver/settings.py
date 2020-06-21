@@ -229,7 +229,7 @@ SWAGGER_SETTINGS = {
     'DEFAULT_INFO': 'purpleserver.urls.swagger_info',
 
     'SECURITY_DEFINITIONS': {
-        'Bearer': {
+        'Token': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
