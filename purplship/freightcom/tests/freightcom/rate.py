@@ -83,7 +83,7 @@ ParsedQuoteResponse = [
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
-            "service": "freightcom_2107",
+            "service": "freightcom_estes_us",
             "total_charge": 28.65,
         },
         {
@@ -95,7 +95,7 @@ ParsedQuoteResponse = [
             "extra_charges": [
                 {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
             ],
-            "service": "freightcom_1911",
+            "service": "freightcom_usf_holland_us",
             "total_charge": 52.52,
         },
     ],
@@ -109,7 +109,7 @@ ParsedQuoteResponse = [
 ]
 
 RateRequestXML = f"""<Freightcom xmlns="http://www.freightcom.net/XMLSchema" username="username" password="password" version="3.1.0">
-    <QuoteRequest insuranceType="False" serviceId="2029">
+    <QuoteRequest insuranceType="False" serviceId="1845">
         <From residential="False" country="CA" zip="H8Z2Z3"/>
         <To residential="False" zip="H8Z2V4" country="CA"/>
         <Packages>
@@ -121,11 +121,11 @@ RateRequestXML = f"""<Freightcom xmlns="http://www.freightcom.net/XMLSchema" use
 
 RateResponseXml = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema" version="3.1.0">
     <QuoteReply>
-        <Quote carrierId="20" carrierName="Freightcom" serviceId="2029" serviceName="Central Transport" modeTransport="A" transitDays="1" baseCharge="177.0" fuelSurcharge="0.0" totalCharge="177.0" currency="CAD">
+        <Quote carrierId="20" carrierName="Freightcom" serviceId="1845" serviceName="Central Transport" modeTransport="A" transitDays="1" baseCharge="177.0" fuelSurcharge="0.0" totalCharge="177.0" currency="CAD">
         </Quote>
-        <Quote carrierId="21" carrierName="Freightcom" serviceId="2107" serviceName="Estes" modeTransport="G" transitDays="1" baseCharge="28.650000000000002" fuelSurcharge="0.0" totalCharge="28.65" currency="CAD">
+        <Quote carrierId="21" carrierName="Freightcom" serviceId="1848" serviceName="Estes" modeTransport="G" transitDays="1" baseCharge="28.650000000000002" fuelSurcharge="0.0" totalCharge="28.65" currency="CAD">
         </Quote>
-        <Quote carrierId="19" carrierName="Freightcom" serviceId="1911" serviceName="USF Holland" modeTransport="null" transitDays="0" baseCharge="46.27000045776367" fuelSurcharge="6.25" totalCharge="52.52" currency="CAD">
+        <Quote carrierId="19" carrierName="Freightcom" serviceId="1827" serviceName="USF Holland" modeTransport="null" transitDays="0" baseCharge="46.27000045776367" fuelSurcharge="6.25" totalCharge="52.52" currency="CAD">
         </Quote>
         <CarrierErrorMessage size="1" errorMessage0="Polaris:Military Base Delivery,Saturday Pickup,Construction Site,BORDER FEE,Homeland Security,Limited Access,Saturday Delivery,Sort and Segregate Charge,Pier Charge">
         </CarrierErrorMessage>
