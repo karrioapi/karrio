@@ -65,6 +65,18 @@ PACKAGE_MAPPERS = {
         'services': "ShippingServiceCode",
         'options': "ServiceOption",
         'packagePresets': "PackagePresets"
+    },
+    'freightcom': {
+        'label': "Freightcom",
+        'package': import_pkg('purplship.carriers.freightcom.units'),
+        'services': "Service",
+        'options': "Option",
+    },
+    'eshipper': {
+        'label': "eShipper",
+        'package': import_pkg('purplship.carriers.eshipper.units'),
+        'services': "Service",
+        'options': "Option",
     }
 }
 
@@ -76,17 +88,17 @@ REFERENCE_MODELS = {
     "services": {
         key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['services']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('package') is not None
+        if 'services' in mapper and mapper.get('package') is not None
     },
     "options": {
         key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['options']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('package') is not None
+        if 'options' in mapper and mapper.get('package') is not None
     },
     "packagePresets": {
         key: {c.name: to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('package') is not None
+        if 'packagePresets' in mapper and mapper.get('package') is not None
     }
 }
 
@@ -110,10 +122,13 @@ Code | Name
 {f"{line}".join([f'''
 ## {Country[key].value}
 
+<details>
+
 Code | Name 
 --- | --- 
 {f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
 
+</details><br/>
 '''
 for key, value in REFERENCE_MODELS["states"].items() 
 ])}
@@ -138,6 +153,8 @@ Code | Name
 {f"{line}".join([f'''
 ## {PACKAGE_MAPPERS[key]["label"]}
 
+<details>
+
 Code | Dimensions | Note
 --- | --- | ---
 {f"{line}".join([
@@ -145,6 +162,7 @@ Code | Dimensions | Note
     for code, dim in value.items()
 ])}
 
+</details><br/>
 '''
 for key, value in REFERENCE_MODELS["packagePresets"].items() 
 ])}
@@ -159,10 +177,13 @@ for key, value in REFERENCE_MODELS["packagePresets"].items()
 {f"{line}".join([f'''
 ## {PACKAGE_MAPPERS[key]["label"]}
 
+<details>
+
 Code | Identifier
 --- | ---
 {f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
 
+</details><br/>
 '''
 for key, value in REFERENCE_MODELS["options"].items() 
 ])}
@@ -177,10 +198,13 @@ for key, value in REFERENCE_MODELS["options"].items()
 {f"{line}".join([f'''
 ## {PACKAGE_MAPPERS[key]["label"]}
 
+<details>
+
 Code | Identifier
 --- | ---
 {f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
 
+</details><br/>
 '''
 for key, value in REFERENCE_MODELS["services"].items() 
 ])}

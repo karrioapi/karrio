@@ -13,7 +13,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import logging
 
 from django.contrib import admin
 from django.conf import settings
@@ -25,15 +24,13 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 
-logging.getLogger('purplship').setLevel(logging.NOTSET)
-
 admin.site.site_header = "PurplShip"
 admin.site.site_title = "PurplShip"
 admin.site.index_title = "Administration"
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="PurplShip Multi-carrier API",
+      title="PurplShip Multi-carrier Shipping API",
       default_version='v1',
       description=(
           "PurplShip is a Multi-carrier Shipping API that simplifies the integration of logistic carrier services"
