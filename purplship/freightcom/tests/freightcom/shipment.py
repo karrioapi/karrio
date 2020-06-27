@@ -66,10 +66,7 @@ shipment_data = {
         "weight_unit": "KG",
     },
     "service": "freightcom_central_transport",
-    "options": {
-        "cash_on_delivery": {"amount": 10.5},
-        "insurance": {"amount": 70.0},
-    },
+    "options": {"cash_on_delivery": {"amount": 10.5}, "insurance": {"amount": 70.0},},
 }
 
 ParsedShipmentResponse = [
@@ -95,14 +92,14 @@ ParsedShipmentResponse = [
 ]
 
 ShipmentRequestXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema" username="username" password="password" version="3.1.0">
-    <ShippingRequest insuranceType="True" serviceId="1845">
+    <ShippingRequest insuranceType="True" serviceId="2029">
         <From company="CGI" attention="Bob" phone="1 (450) 823-8432" residential="False" address1="502 MAIN ST N" city="MONTREAL" state="QC" country="CA" zip="H2B1A0"/>
         <To company="CGI" attention="Jain" residential="False" address1="23 jardin private" city="Ottawa" state="ON" zip="K1K4T3" country="CA"/>
         <COD paymentType="Recipient">
             <CODReturnAddress codCompany="CGI" codName="Jain" codAddress1="23 jardin private" codCity="Ottawa" codStateCode="ON" codZip="K1K4T3" codCountry="CA"/>
         </COD>
-        <Packages>
-            <Package length="6." width="12." height="9." weight="20." type="Boxes"/>
+        <Packages type="Package">
+            <Package length="6" width="12" height="9" weight="20" type="Boxes"/>
         </Packages>
     </ShippingRequest>
 </Freightcom>
@@ -128,7 +125,7 @@ ShipmentResponseXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema"
                 <Data>[base-64 encoded String]</Data>
             </Label>
         </LabelData>
-        <Quote carrierId="20" carrierName="Freightcom" serviceId="1845" serviceName="Central Transport" modeTransport="null" transitDays="0" baseCharge="30.739999771118164" fuelSurcharge="0.0" totalCharge="31.82" currency="CAD">
+        <Quote carrierId="20" carrierName="Freightcom" serviceId="2029" serviceName="Central Transport" modeTransport="null" transitDays="0" baseCharge="30.739999771118164" fuelSurcharge="0.0" totalCharge="31.82" currency="CAD">
             <Surcharge id="null" name="Other" amount="1.0800000429153442"/>
         </Quote>
         <BillingAddress CompanyName="Freightcom Inc. FCPC (10)" Address1="7699 Bath Road" Address2="" City="Mississauga" ProvinceCode="ON" CountryCode="CA" zip="L4T3T1" PhoneNo="">

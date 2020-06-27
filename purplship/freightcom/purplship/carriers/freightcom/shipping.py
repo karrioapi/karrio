@@ -28,6 +28,10 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     quote: QuoteType = shipping.Quote
     package: ReplyPackageType = next(iter(shipping.Package), None)
     tracking_number = package.trackingNumber if package is not None else None
+    service = next(
+        (s.name for s in Service if str(quote.serviceId) == s.value),
+        quote.serviceId
+    )
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -37,7 +41,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         selected_rate=RateDetails(
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
-            service=Service(str(quote.serviceId)).name,
+            service=service,
             currency=quote.currency,
             base_charge=decimal(quote.baseCharge),
             total_charge=decimal(quote.totalCharge),
@@ -66,7 +70,10 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
 
     packaging_type = FreightPackagingType[package.packaging_type or "small_box"].value
     options = Options(payload.options)
-    service = Service[payload.service].value
+    service = next(
+        (Service[payload.service].value for s in Service if s.name == payload.service),
+        payload.service
+    )
     freight_class = next(
         (FreightClass[c].value for c in payload.options.keys() if c in FreightClass.__members__),
         None
@@ -86,6 +93,9 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         PaymentType.recipient: payload.recipient,
         PaymentType.third_party: payload.customs.duty.contact if payload.customs is not None else None
     }.get(PaymentType[payload.payment.paid_by]) if payload.payment else None
+
+    def to_int(value):
+        return int(value) if value is not None else None
 
     request = Freightcom(
         username=settings.username,
@@ -162,10 +172,10 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             Packages=PackagesType(
                 Package=[
                     PackageType(
-                        length=package.length.value,
-                        width=package.width.value,
-                        height=package.height.value,
-                        weight=package.weight.value,
+                        length=to_int(package.length.value),
+                        width=to_int(package.width.value),
+                        height=to_int(package.height.value),
+                        weight=to_int(package.weight.value),
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,
@@ -173,7 +183,8 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         codAmount=None,
                         description=payload.parcel.description,
                     )
-                ]
+                ],
+                type_="Package"
             ),
             Payment=RequestPaymentType(
                 type_=payment_type
