@@ -7,10 +7,9 @@ from rest_framework.serializers import Serializer, DictField
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
+from purpleserver.carriers.models import MODELS
 from purplship.core.utils import to_dict
 from purplship.core.units import Country, Currency, CountryState
-
-from purpleserver.core.models import MODELS
 from purpleserver.core.router import router
 from purpleserver.core.serializers import StringListField
 

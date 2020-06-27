@@ -9,7 +9,7 @@ from rest_framework.exceptions import NotFound
 from purplship import package as api
 from purplship.core.utils import exec_async, to_dict
 
-from purpleserver.core import models
+from purpleserver.carriers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment, RateDetails,
