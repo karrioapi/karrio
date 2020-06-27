@@ -21,22 +21,22 @@ from django.core.management.utils import get_random_secret_key
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(distutils.util.strtobool(os.environ.get('DEBUG_MODE', 'True')))
 
+# custom env
+WORK_DIR = os.environ.get('WORK_DIR', '')
 USE_HTTPS = bool(distutils.util.strtobool(os.environ.get('USE_HTTPS', 'False')))
-
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
-
 CORS_ORIGIN_ALLOW_ALL = True
 
+
+# HTTPS configuration
 if USE_HTTPS is True:
     print('> setting up for HTTPS', USE_HTTPS)
     global SECURE_SSL_REDIRECT
@@ -45,8 +45,6 @@ if USE_HTTPS is True:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-
-static_lazy = lazy(static, str)
 
 # Application definition
 
@@ -110,7 +108,6 @@ WSGI_APPLICATION = 'purpleserver.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.{}'.format(os.getenv('DATABASE_ENGINE', 'sqlite3')),
@@ -210,6 +207,7 @@ REST_FRAMEWORK = {
 
 
 # OAUTH2 config
+static_lazy = lazy(static, str)
 
 OAUTH2_CLIENT_ID = os.environ.get('OAUTH2_CLIENT_ID', get_random_secret_key())
 OAUTH2_CLIENT_SECRET = os.environ.get('OAUTH2_CLIENT_SECRET', get_random_secret_key())
@@ -257,9 +255,15 @@ REDOC_SETTINGS = {
    'LAZY_RENDERING': False,
 }
 
-LOG_LEVEL = ('DEBUG' if DEBUG else os.getenv('LOG_LEVEL', 'INFO'))
-
 # Logging configuration
+
+LOG_LEVEL = ('DEBUG' if DEBUG else os.getenv('LOG_LEVEL', 'INFO'))
+DJANGO_LOG_LEVEL = ('INFO' if DEBUG else os.getenv('DJANGO_LOG_LEVEL', 'WARNING'))
+LOG_FILE_DIR = os.getenv('LOG_PATH', WORK_DIR)
+LOG_FILE_NAME = os.path.join(LOG_FILE_DIR, 'debug.log')
+
+print(f'> setting up LOG_LEVEL to: {LOG_LEVEL}')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -277,7 +281,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(os.getenv('LOG_PATH', ''), 'debug.log'),
+            'filename': LOG_FILE_NAME,
         },
         'console': {
             'class': 'logging.StreamHandler',
@@ -287,7 +291,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file', 'console'],
-            'level': 'WARNING',
+            'level': DJANGO_LOG_LEVEL,
             'propagate': False,
         },
         'purplship': {
