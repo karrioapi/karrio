@@ -11,7 +11,7 @@ class PackagingType(Flag):
     envelope = eshipper_envelope
     pak = eshipper_courier_pak
     tube = eshipper_package
-    pallet = eshipper_package
+    pallet = eshipper_pallet
     small_box = eshipper_package
     medium_box = eshipper_package
     your_packaging = eshipper_package

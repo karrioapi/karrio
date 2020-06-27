@@ -1,8 +1,8 @@
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from pyeshipper.quote_request import (
     EShipper, QuoteRequestType, FromType, ToType, PackagesType, PackageType
 )
-from pyeshipper.quote_reply import QuoteType
+from pyeshipper.quote_reply import QuoteType, SurchargeType
 from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
@@ -23,13 +23,21 @@ def parse_quote_reply(response: Element, settings: Settings) -> Tuple[List[RateD
 def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     quote = QuoteType()
     quote.build(node)
-    service = Service(str(quote.serviceId)).name if quote.serviceId is not None else None
+    service = next(
+        (s.name for s in Service if str(quote.serviceId) == s.value),
+        quote.serviceId
+    )
+    surcharges = [ChargeDetails(
+        name=charge.name,
+        amount=decimal(charge.amount),
+        currency=quote.currency
+    ) for charge in cast(List[SurchargeType], quote.Surcharge)]
 
-    extra_charges = [ChargeDetails(
+    fuel_surcharge = ChargeDetails(
         name="Fuel surcharge",
         amount=decimal(quote.fuelSurcharge),
         currency=quote.currency
-    )] if quote.fuelSurcharge is not None else []
+    ) if quote.fuelSurcharge is not None else None
 
     return RateDetails(
         carrier_name=settings.carrier_name,
@@ -39,7 +47,7 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         base_charge=decimal(quote.baseCharge),
         total_charge=decimal(quote.totalCharge),
         transit_days=quote.transitDays,
-        extra_charges=extra_charges
+        extra_charges=[fuel_surcharge] + surcharges
     )
 
 
@@ -55,6 +63,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
         raise FieldError(field_errors)
 
     packaging_type = PackagingType[package.packaging_type or "small_box"].value
+    packaging = "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
     options = Options(payload.options)
     service = next(
         (Service[s].value for s in payload.services if s in Service.__members__),
@@ -143,7 +152,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
                         codAmount=None,
                         description=payload.parcel.description,
                     )
-                ]
+                ],
+                type_=packaging
             ),
         )
     )

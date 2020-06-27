@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Thu Mar 26 17:40:12 2020 by generateDS.py version 2.35.15.
-# Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sat Jun 27 22:49:20 2020 by generateDS.py version 2.35.24.
+# Python 3.7.7 (default, Mar 10 2020, 15:43:27)  [Clang 10.0.0 (clang-1000.11.45.5)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,10 +13,10 @@
 #   ./vendor/schemas/shipping_request.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-eshipper-extension/.venv/purplship-eshipper-extension/bin/generateDS --no-namespace-defs -o "./pyeshipper/shipping_request.py" ./vendor/schemas/shipping_request.xsd
+#   /Users/daniel/Workspace/Project/purplship-extension/purplship/eshipper/.venv/eshipper/bin/generateDS --no-namespace-defs -o "./pyeshipper/shipping_request.py" ./vendor/schemas/shipping_request.xsd
 #
 # Current working directory (os.getcwd()):
-#   purplship-eshipper-extension
+#   eshipper
 #
 
 from six.moves import zip_longest
@@ -247,7 +247,12 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of float values')
             return values
         def gds_format_decimal(self, input_data, input_name=''):
-            return ('%s' % input_data).rstrip('0')
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
         def gds_parse_decimal(self, input_data, node=None, input_name=''):
             try:
                 decimal_value = decimal_.Decimal(input_data)
@@ -261,7 +266,7 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
-            return '%s' % ' '.join(input_data)
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -847,7 +852,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element):
+    def to_etree(self, element, mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -867,7 +872,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self):
+    def to_etree_simple(self, mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -1079,14 +1084,28 @@ class ShippingRequestType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, saturdayPickupRequired=None, homelandSecurity=None, pierCharge=None, exhibitionConventionSite=None, militaryBaseDelivery=None, customsIn_bondFreight=None, limitedAccess=None, excessLength=None, tailgatePickup=None, residentialPickup=None, crossBorderFee=None, notifyRecipient=None, singleShipment=None, tailgateDelivery=None, residentialDelivery=None, insuranceType=None, scheduledShipDate=None, insideDelivery=None, isSaturdayService=None, dangerousGoodsType=None, serviceId=None, stackable=None, From=None, To=None, COD=None, Packages=None, Payment=None, Reference=None, CustomsInvoice=None, gds_collector_=None, **kwargs_):
+    def __init__(self, serviceId=None, destinationCloseMin=None, destinationCloseHrs=None, originCloseTimeMin=None, originCloseTimeHrs=None, readyTimeMin=None, readyTimeHrs=None, SortandSegregateCharge=None, homelandSecurity=None, pierCharge=None, exhibitionConventionSite=None, militaryBaseDelivery=None, customsIn_bondFreight=None, limitedAccess=None, excessLength=None, crossBorderFee=None, singleShipment=None, insidePickup=None, insuranceType=None, scheduledShipDate=None, insideDelivery=None, deliveryAppointment=None, specialEquipment=None, holdForPickupRequired=None, signatureRequired=None, isSaturdayService=None, dangerousGoodsType=None, stackable=None, From=None, To=None, Shipper=None, COD=None, Packages=None, Pickup=None, Payment=None, Reference=None, CustomsInvoice=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.saturdayPickupRequired = _cast(None, saturdayPickupRequired)
-        self.saturdayPickupRequired_nsprefix_ = None
+        self.serviceId = _cast(int, serviceId)
+        self.serviceId_nsprefix_ = None
+        self.destinationCloseMin = _cast(None, destinationCloseMin)
+        self.destinationCloseMin_nsprefix_ = None
+        self.destinationCloseHrs = _cast(None, destinationCloseHrs)
+        self.destinationCloseHrs_nsprefix_ = None
+        self.originCloseTimeMin = _cast(None, originCloseTimeMin)
+        self.originCloseTimeMin_nsprefix_ = None
+        self.originCloseTimeHrs = _cast(None, originCloseTimeHrs)
+        self.originCloseTimeHrs_nsprefix_ = None
+        self.readyTimeMin = _cast(None, readyTimeMin)
+        self.readyTimeMin_nsprefix_ = None
+        self.readyTimeHrs = _cast(None, readyTimeHrs)
+        self.readyTimeHrs_nsprefix_ = None
+        self.SortandSegregateCharge = _cast(None, SortandSegregateCharge)
+        self.SortandSegregateCharge_nsprefix_ = None
         self.homelandSecurity = _cast(None, homelandSecurity)
         self.homelandSecurity_nsprefix_ = None
         self.pierCharge = _cast(None, pierCharge)
@@ -1101,42 +1120,44 @@ class ShippingRequestType(GeneratedsSuper):
         self.limitedAccess_nsprefix_ = None
         self.excessLength = _cast(None, excessLength)
         self.excessLength_nsprefix_ = None
-        self.tailgatePickup = _cast(None, tailgatePickup)
-        self.tailgatePickup_nsprefix_ = None
-        self.residentialPickup = _cast(None, residentialPickup)
-        self.residentialPickup_nsprefix_ = None
         self.crossBorderFee = _cast(None, crossBorderFee)
         self.crossBorderFee_nsprefix_ = None
-        self.notifyRecipient = _cast(None, notifyRecipient)
-        self.notifyRecipient_nsprefix_ = None
         self.singleShipment = _cast(None, singleShipment)
         self.singleShipment_nsprefix_ = None
-        self.tailgateDelivery = _cast(None, tailgateDelivery)
-        self.tailgateDelivery_nsprefix_ = None
-        self.residentialDelivery = _cast(None, residentialDelivery)
-        self.residentialDelivery_nsprefix_ = None
+        self.insidePickup = _cast(None, insidePickup)
+        self.insidePickup_nsprefix_ = None
         self.insuranceType = _cast(None, insuranceType)
         self.insuranceType_nsprefix_ = None
         self.scheduledShipDate = _cast(None, scheduledShipDate)
         self.scheduledShipDate_nsprefix_ = None
         self.insideDelivery = _cast(None, insideDelivery)
         self.insideDelivery_nsprefix_ = None
+        self.deliveryAppointment = _cast(None, deliveryAppointment)
+        self.deliveryAppointment_nsprefix_ = None
+        self.specialEquipment = _cast(None, specialEquipment)
+        self.specialEquipment_nsprefix_ = None
+        self.holdForPickupRequired = _cast(None, holdForPickupRequired)
+        self.holdForPickupRequired_nsprefix_ = None
+        self.signatureRequired = _cast(None, signatureRequired)
+        self.signatureRequired_nsprefix_ = None
         self.isSaturdayService = _cast(None, isSaturdayService)
         self.isSaturdayService_nsprefix_ = None
         self.dangerousGoodsType = _cast(None, dangerousGoodsType)
         self.dangerousGoodsType_nsprefix_ = None
-        self.serviceId = _cast(int, serviceId)
-        self.serviceId_nsprefix_ = None
         self.stackable = _cast(None, stackable)
         self.stackable_nsprefix_ = None
         self.From = From
         self.From_nsprefix_ = None
         self.To = To
         self.To_nsprefix_ = None
+        self.Shipper = Shipper
+        self.Shipper_nsprefix_ = None
         self.COD = COD
         self.COD_nsprefix_ = None
         self.Packages = Packages
         self.Packages_nsprefix_ = None
+        self.Pickup = Pickup
+        self.Pickup_nsprefix_ = None
         self.Payment = Payment
         self.Payment_nsprefix_ = None
         if Reference is None:
@@ -1169,6 +1190,10 @@ class ShippingRequestType(GeneratedsSuper):
         return self.To
     def set_To(self, To):
         self.To = To
+    def get_Shipper(self):
+        return self.Shipper
+    def set_Shipper(self, Shipper):
+        self.Shipper = Shipper
     def get_COD(self):
         return self.COD
     def set_COD(self, COD):
@@ -1177,6 +1202,10 @@ class ShippingRequestType(GeneratedsSuper):
         return self.Packages
     def set_Packages(self, Packages):
         self.Packages = Packages
+    def get_Pickup(self):
+        return self.Pickup
+    def set_Pickup(self, Pickup):
+        self.Pickup = Pickup
     def get_Payment(self):
         return self.Payment
     def set_Payment(self, Payment):
@@ -1195,10 +1224,38 @@ class ShippingRequestType(GeneratedsSuper):
         return self.CustomsInvoice
     def set_CustomsInvoice(self, CustomsInvoice):
         self.CustomsInvoice = CustomsInvoice
-    def get_saturdayPickupRequired(self):
-        return self.saturdayPickupRequired
-    def set_saturdayPickupRequired(self, saturdayPickupRequired):
-        self.saturdayPickupRequired = saturdayPickupRequired
+    def get_serviceId(self):
+        return self.serviceId
+    def set_serviceId(self, serviceId):
+        self.serviceId = serviceId
+    def get_destinationCloseMin(self):
+        return self.destinationCloseMin
+    def set_destinationCloseMin(self, destinationCloseMin):
+        self.destinationCloseMin = destinationCloseMin
+    def get_destinationCloseHrs(self):
+        return self.destinationCloseHrs
+    def set_destinationCloseHrs(self, destinationCloseHrs):
+        self.destinationCloseHrs = destinationCloseHrs
+    def get_originCloseTimeMin(self):
+        return self.originCloseTimeMin
+    def set_originCloseTimeMin(self, originCloseTimeMin):
+        self.originCloseTimeMin = originCloseTimeMin
+    def get_originCloseTimeHrs(self):
+        return self.originCloseTimeHrs
+    def set_originCloseTimeHrs(self, originCloseTimeHrs):
+        self.originCloseTimeHrs = originCloseTimeHrs
+    def get_readyTimeMin(self):
+        return self.readyTimeMin
+    def set_readyTimeMin(self, readyTimeMin):
+        self.readyTimeMin = readyTimeMin
+    def get_readyTimeHrs(self):
+        return self.readyTimeHrs
+    def set_readyTimeHrs(self, readyTimeHrs):
+        self.readyTimeHrs = readyTimeHrs
+    def get_SortandSegregateCharge(self):
+        return self.SortandSegregateCharge
+    def set_SortandSegregateCharge(self, SortandSegregateCharge):
+        self.SortandSegregateCharge = SortandSegregateCharge
     def get_homelandSecurity(self):
         return self.homelandSecurity
     def set_homelandSecurity(self, homelandSecurity):
@@ -1227,34 +1284,18 @@ class ShippingRequestType(GeneratedsSuper):
         return self.excessLength
     def set_excessLength(self, excessLength):
         self.excessLength = excessLength
-    def get_tailgatePickup(self):
-        return self.tailgatePickup
-    def set_tailgatePickup(self, tailgatePickup):
-        self.tailgatePickup = tailgatePickup
-    def get_residentialPickup(self):
-        return self.residentialPickup
-    def set_residentialPickup(self, residentialPickup):
-        self.residentialPickup = residentialPickup
     def get_crossBorderFee(self):
         return self.crossBorderFee
     def set_crossBorderFee(self, crossBorderFee):
         self.crossBorderFee = crossBorderFee
-    def get_notifyRecipient(self):
-        return self.notifyRecipient
-    def set_notifyRecipient(self, notifyRecipient):
-        self.notifyRecipient = notifyRecipient
     def get_singleShipment(self):
         return self.singleShipment
     def set_singleShipment(self, singleShipment):
         self.singleShipment = singleShipment
-    def get_tailgateDelivery(self):
-        return self.tailgateDelivery
-    def set_tailgateDelivery(self, tailgateDelivery):
-        self.tailgateDelivery = tailgateDelivery
-    def get_residentialDelivery(self):
-        return self.residentialDelivery
-    def set_residentialDelivery(self, residentialDelivery):
-        self.residentialDelivery = residentialDelivery
+    def get_insidePickup(self):
+        return self.insidePickup
+    def set_insidePickup(self, insidePickup):
+        self.insidePickup = insidePickup
     def get_insuranceType(self):
         return self.insuranceType
     def set_insuranceType(self, insuranceType):
@@ -1267,6 +1308,22 @@ class ShippingRequestType(GeneratedsSuper):
         return self.insideDelivery
     def set_insideDelivery(self, insideDelivery):
         self.insideDelivery = insideDelivery
+    def get_deliveryAppointment(self):
+        return self.deliveryAppointment
+    def set_deliveryAppointment(self, deliveryAppointment):
+        self.deliveryAppointment = deliveryAppointment
+    def get_specialEquipment(self):
+        return self.specialEquipment
+    def set_specialEquipment(self, specialEquipment):
+        self.specialEquipment = specialEquipment
+    def get_holdForPickupRequired(self):
+        return self.holdForPickupRequired
+    def set_holdForPickupRequired(self, holdForPickupRequired):
+        self.holdForPickupRequired = holdForPickupRequired
+    def get_signatureRequired(self):
+        return self.signatureRequired
+    def set_signatureRequired(self, signatureRequired):
+        self.signatureRequired = signatureRequired
     def get_isSaturdayService(self):
         return self.isSaturdayService
     def set_isSaturdayService(self, isSaturdayService):
@@ -1275,10 +1332,6 @@ class ShippingRequestType(GeneratedsSuper):
         return self.dangerousGoodsType
     def set_dangerousGoodsType(self, dangerousGoodsType):
         self.dangerousGoodsType = dangerousGoodsType
-    def get_serviceId(self):
-        return self.serviceId
-    def set_serviceId(self, serviceId):
-        self.serviceId = serviceId
     def get_stackable(self):
         return self.stackable
     def set_stackable(self, stackable):
@@ -1287,8 +1340,10 @@ class ShippingRequestType(GeneratedsSuper):
         if (
             self.From is not None or
             self.To is not None or
+            self.Shipper is not None or
             self.COD is not None or
             self.Packages is not None or
+            self.Pickup is not None or
             self.Payment is not None or
             self.Reference or
             self.CustomsInvoice is not None
@@ -1320,9 +1375,30 @@ class ShippingRequestType(GeneratedsSuper):
         else:
             outfile.write('/>%s' % (eol_, ))
     def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShippingRequestType'):
-        if self.saturdayPickupRequired is not None and 'saturdayPickupRequired' not in already_processed:
-            already_processed.add('saturdayPickupRequired')
-            outfile.write(' saturdayPickupRequired=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.saturdayPickupRequired), input_name='saturdayPickupRequired')), ))
+        if self.serviceId is not None and 'serviceId' not in already_processed:
+            already_processed.add('serviceId')
+            outfile.write(' serviceId="%s"' % self.gds_format_integer(self.serviceId, input_name='serviceId'))
+        if self.destinationCloseMin is not None and 'destinationCloseMin' not in already_processed:
+            already_processed.add('destinationCloseMin')
+            outfile.write(' destinationCloseMin=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.destinationCloseMin), input_name='destinationCloseMin')), ))
+        if self.destinationCloseHrs is not None and 'destinationCloseHrs' not in already_processed:
+            already_processed.add('destinationCloseHrs')
+            outfile.write(' destinationCloseHrs=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.destinationCloseHrs), input_name='destinationCloseHrs')), ))
+        if self.originCloseTimeMin is not None and 'originCloseTimeMin' not in already_processed:
+            already_processed.add('originCloseTimeMin')
+            outfile.write(' originCloseTimeMin=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.originCloseTimeMin), input_name='originCloseTimeMin')), ))
+        if self.originCloseTimeHrs is not None and 'originCloseTimeHrs' not in already_processed:
+            already_processed.add('originCloseTimeHrs')
+            outfile.write(' originCloseTimeHrs=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.originCloseTimeHrs), input_name='originCloseTimeHrs')), ))
+        if self.readyTimeMin is not None and 'readyTimeMin' not in already_processed:
+            already_processed.add('readyTimeMin')
+            outfile.write(' readyTimeMin=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.readyTimeMin), input_name='readyTimeMin')), ))
+        if self.readyTimeHrs is not None and 'readyTimeHrs' not in already_processed:
+            already_processed.add('readyTimeHrs')
+            outfile.write(' readyTimeHrs=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.readyTimeHrs), input_name='readyTimeHrs')), ))
+        if self.SortandSegregateCharge is not None and 'SortandSegregateCharge' not in already_processed:
+            already_processed.add('SortandSegregateCharge')
+            outfile.write(' SortandSegregateCharge=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.SortandSegregateCharge), input_name='SortandSegregateCharge')), ))
         if self.homelandSecurity is not None and 'homelandSecurity' not in already_processed:
             already_processed.add('homelandSecurity')
             outfile.write(' homelandSecurity=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.homelandSecurity), input_name='homelandSecurity')), ))
@@ -1344,27 +1420,15 @@ class ShippingRequestType(GeneratedsSuper):
         if self.excessLength is not None and 'excessLength' not in already_processed:
             already_processed.add('excessLength')
             outfile.write(' excessLength=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.excessLength), input_name='excessLength')), ))
-        if self.tailgatePickup is not None and 'tailgatePickup' not in already_processed:
-            already_processed.add('tailgatePickup')
-            outfile.write(' tailgatePickup=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.tailgatePickup), input_name='tailgatePickup')), ))
-        if self.residentialPickup is not None and 'residentialPickup' not in already_processed:
-            already_processed.add('residentialPickup')
-            outfile.write(' residentialPickup=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.residentialPickup), input_name='residentialPickup')), ))
         if self.crossBorderFee is not None and 'crossBorderFee' not in already_processed:
             already_processed.add('crossBorderFee')
             outfile.write(' crossBorderFee=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.crossBorderFee), input_name='crossBorderFee')), ))
-        if self.notifyRecipient is not None and 'notifyRecipient' not in already_processed:
-            already_processed.add('notifyRecipient')
-            outfile.write(' notifyRecipient=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.notifyRecipient), input_name='notifyRecipient')), ))
         if self.singleShipment is not None and 'singleShipment' not in already_processed:
             already_processed.add('singleShipment')
             outfile.write(' singleShipment=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.singleShipment), input_name='singleShipment')), ))
-        if self.tailgateDelivery is not None and 'tailgateDelivery' not in already_processed:
-            already_processed.add('tailgateDelivery')
-            outfile.write(' tailgateDelivery=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.tailgateDelivery), input_name='tailgateDelivery')), ))
-        if self.residentialDelivery is not None and 'residentialDelivery' not in already_processed:
-            already_processed.add('residentialDelivery')
-            outfile.write(' residentialDelivery=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.residentialDelivery), input_name='residentialDelivery')), ))
+        if self.insidePickup is not None and 'insidePickup' not in already_processed:
+            already_processed.add('insidePickup')
+            outfile.write(' insidePickup=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.insidePickup), input_name='insidePickup')), ))
         if self.insuranceType is not None and 'insuranceType' not in already_processed:
             already_processed.add('insuranceType')
             outfile.write(' insuranceType=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.insuranceType), input_name='insuranceType')), ))
@@ -1374,15 +1438,24 @@ class ShippingRequestType(GeneratedsSuper):
         if self.insideDelivery is not None and 'insideDelivery' not in already_processed:
             already_processed.add('insideDelivery')
             outfile.write(' insideDelivery=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.insideDelivery), input_name='insideDelivery')), ))
+        if self.deliveryAppointment is not None and 'deliveryAppointment' not in already_processed:
+            already_processed.add('deliveryAppointment')
+            outfile.write(' deliveryAppointment=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.deliveryAppointment), input_name='deliveryAppointment')), ))
+        if self.specialEquipment is not None and 'specialEquipment' not in already_processed:
+            already_processed.add('specialEquipment')
+            outfile.write(' specialEquipment=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.specialEquipment), input_name='specialEquipment')), ))
+        if self.holdForPickupRequired is not None and 'holdForPickupRequired' not in already_processed:
+            already_processed.add('holdForPickupRequired')
+            outfile.write(' holdForPickupRequired=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.holdForPickupRequired), input_name='holdForPickupRequired')), ))
+        if self.signatureRequired is not None and 'signatureRequired' not in already_processed:
+            already_processed.add('signatureRequired')
+            outfile.write(' signatureRequired=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.signatureRequired), input_name='signatureRequired')), ))
         if self.isSaturdayService is not None and 'isSaturdayService' not in already_processed:
             already_processed.add('isSaturdayService')
             outfile.write(' isSaturdayService=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.isSaturdayService), input_name='isSaturdayService')), ))
         if self.dangerousGoodsType is not None and 'dangerousGoodsType' not in already_processed:
             already_processed.add('dangerousGoodsType')
             outfile.write(' dangerousGoodsType=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.dangerousGoodsType), input_name='dangerousGoodsType')), ))
-        if self.serviceId is not None and 'serviceId' not in already_processed:
-            already_processed.add('serviceId')
-            outfile.write(' serviceId="%s"' % self.gds_format_integer(self.serviceId, input_name='serviceId'))
         if self.stackable is not None and 'stackable' not in already_processed:
             already_processed.add('stackable')
             outfile.write(' stackable=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.stackable), input_name='stackable')), ))
@@ -1397,12 +1470,18 @@ class ShippingRequestType(GeneratedsSuper):
         if self.To is not None:
             namespaceprefix_ = self.To_nsprefix_ + ':' if (UseCapturedNS_ and self.To_nsprefix_) else ''
             self.To.export(outfile, level, namespaceprefix_, namespacedef_='', name_='To', pretty_print=pretty_print)
+        if self.Shipper is not None:
+            namespaceprefix_ = self.Shipper_nsprefix_ + ':' if (UseCapturedNS_ and self.Shipper_nsprefix_) else ''
+            self.Shipper.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Shipper', pretty_print=pretty_print)
         if self.COD is not None:
             namespaceprefix_ = self.COD_nsprefix_ + ':' if (UseCapturedNS_ and self.COD_nsprefix_) else ''
             self.COD.export(outfile, level, namespaceprefix_, namespacedef_='', name_='COD', pretty_print=pretty_print)
         if self.Packages is not None:
             namespaceprefix_ = self.Packages_nsprefix_ + ':' if (UseCapturedNS_ and self.Packages_nsprefix_) else ''
             self.Packages.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Packages', pretty_print=pretty_print)
+        if self.Pickup is not None:
+            namespaceprefix_ = self.Pickup_nsprefix_ + ':' if (UseCapturedNS_ and self.Pickup_nsprefix_) else ''
+            self.Pickup.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Pickup', pretty_print=pretty_print)
         if self.Payment is not None:
             namespaceprefix_ = self.Payment_nsprefix_ + ':' if (UseCapturedNS_ and self.Payment_nsprefix_) else ''
             self.Payment.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Payment', pretty_print=pretty_print)
@@ -1424,10 +1503,38 @@ class ShippingRequestType(GeneratedsSuper):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('saturdayPickupRequired', node)
-        if value is not None and 'saturdayPickupRequired' not in already_processed:
-            already_processed.add('saturdayPickupRequired')
-            self.saturdayPickupRequired = value
+        value = find_attr_value_('serviceId', node)
+        if value is not None and 'serviceId' not in already_processed:
+            already_processed.add('serviceId')
+            self.serviceId = self.gds_parse_integer(value, node, 'serviceId')
+        value = find_attr_value_('destinationCloseMin', node)
+        if value is not None and 'destinationCloseMin' not in already_processed:
+            already_processed.add('destinationCloseMin')
+            self.destinationCloseMin = value
+        value = find_attr_value_('destinationCloseHrs', node)
+        if value is not None and 'destinationCloseHrs' not in already_processed:
+            already_processed.add('destinationCloseHrs')
+            self.destinationCloseHrs = value
+        value = find_attr_value_('originCloseTimeMin', node)
+        if value is not None and 'originCloseTimeMin' not in already_processed:
+            already_processed.add('originCloseTimeMin')
+            self.originCloseTimeMin = value
+        value = find_attr_value_('originCloseTimeHrs', node)
+        if value is not None and 'originCloseTimeHrs' not in already_processed:
+            already_processed.add('originCloseTimeHrs')
+            self.originCloseTimeHrs = value
+        value = find_attr_value_('readyTimeMin', node)
+        if value is not None and 'readyTimeMin' not in already_processed:
+            already_processed.add('readyTimeMin')
+            self.readyTimeMin = value
+        value = find_attr_value_('readyTimeHrs', node)
+        if value is not None and 'readyTimeHrs' not in already_processed:
+            already_processed.add('readyTimeHrs')
+            self.readyTimeHrs = value
+        value = find_attr_value_('SortandSegregateCharge', node)
+        if value is not None and 'SortandSegregateCharge' not in already_processed:
+            already_processed.add('SortandSegregateCharge')
+            self.SortandSegregateCharge = value
         value = find_attr_value_('homelandSecurity', node)
         if value is not None and 'homelandSecurity' not in already_processed:
             already_processed.add('homelandSecurity')
@@ -1456,34 +1563,18 @@ class ShippingRequestType(GeneratedsSuper):
         if value is not None and 'excessLength' not in already_processed:
             already_processed.add('excessLength')
             self.excessLength = value
-        value = find_attr_value_('tailgatePickup', node)
-        if value is not None and 'tailgatePickup' not in already_processed:
-            already_processed.add('tailgatePickup')
-            self.tailgatePickup = value
-        value = find_attr_value_('residentialPickup', node)
-        if value is not None and 'residentialPickup' not in already_processed:
-            already_processed.add('residentialPickup')
-            self.residentialPickup = value
         value = find_attr_value_('crossBorderFee', node)
         if value is not None and 'crossBorderFee' not in already_processed:
             already_processed.add('crossBorderFee')
             self.crossBorderFee = value
-        value = find_attr_value_('notifyRecipient', node)
-        if value is not None and 'notifyRecipient' not in already_processed:
-            already_processed.add('notifyRecipient')
-            self.notifyRecipient = value
         value = find_attr_value_('singleShipment', node)
         if value is not None and 'singleShipment' not in already_processed:
             already_processed.add('singleShipment')
             self.singleShipment = value
-        value = find_attr_value_('tailgateDelivery', node)
-        if value is not None and 'tailgateDelivery' not in already_processed:
-            already_processed.add('tailgateDelivery')
-            self.tailgateDelivery = value
-        value = find_attr_value_('residentialDelivery', node)
-        if value is not None and 'residentialDelivery' not in already_processed:
-            already_processed.add('residentialDelivery')
-            self.residentialDelivery = value
+        value = find_attr_value_('insidePickup', node)
+        if value is not None and 'insidePickup' not in already_processed:
+            already_processed.add('insidePickup')
+            self.insidePickup = value
         value = find_attr_value_('insuranceType', node)
         if value is not None and 'insuranceType' not in already_processed:
             already_processed.add('insuranceType')
@@ -1496,6 +1587,22 @@ class ShippingRequestType(GeneratedsSuper):
         if value is not None and 'insideDelivery' not in already_processed:
             already_processed.add('insideDelivery')
             self.insideDelivery = value
+        value = find_attr_value_('deliveryAppointment', node)
+        if value is not None and 'deliveryAppointment' not in already_processed:
+            already_processed.add('deliveryAppointment')
+            self.deliveryAppointment = value
+        value = find_attr_value_('specialEquipment', node)
+        if value is not None and 'specialEquipment' not in already_processed:
+            already_processed.add('specialEquipment')
+            self.specialEquipment = value
+        value = find_attr_value_('holdForPickupRequired', node)
+        if value is not None and 'holdForPickupRequired' not in already_processed:
+            already_processed.add('holdForPickupRequired')
+            self.holdForPickupRequired = value
+        value = find_attr_value_('signatureRequired', node)
+        if value is not None and 'signatureRequired' not in already_processed:
+            already_processed.add('signatureRequired')
+            self.signatureRequired = value
         value = find_attr_value_('isSaturdayService', node)
         if value is not None and 'isSaturdayService' not in already_processed:
             already_processed.add('isSaturdayService')
@@ -1504,10 +1611,6 @@ class ShippingRequestType(GeneratedsSuper):
         if value is not None and 'dangerousGoodsType' not in already_processed:
             already_processed.add('dangerousGoodsType')
             self.dangerousGoodsType = value
-        value = find_attr_value_('serviceId', node)
-        if value is not None and 'serviceId' not in already_processed:
-            already_processed.add('serviceId')
-            self.serviceId = self.gds_parse_integer(value, node, 'serviceId')
         value = find_attr_value_('stackable', node)
         if value is not None and 'stackable' not in already_processed:
             already_processed.add('stackable')
@@ -1523,6 +1626,11 @@ class ShippingRequestType(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.To = obj_
             obj_.original_tagname_ = 'To'
+        elif nodeName_ == 'Shipper':
+            obj_ = ShipperType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Shipper = obj_
+            obj_.original_tagname_ = 'Shipper'
         elif nodeName_ == 'COD':
             obj_ = CODType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -1533,6 +1641,11 @@ class ShippingRequestType(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Packages = obj_
             obj_.original_tagname_ = 'Packages'
+        elif nodeName_ == 'Pickup':
+            obj_ = PickupType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Pickup = obj_
+            obj_.original_tagname_ = 'Pickup'
         elif nodeName_ == 'Payment':
             obj_ = PaymentType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -1555,7 +1668,7 @@ class FromType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, id=None, company=None, instructions=None, email=None, attention=None, phone=None, tailgateRequired=None, residential=None, address1=None, address2=None, city=None, state=None, country=None, zip=None, valueOf_=None, gds_collector_=None, **kwargs_):
+    def __init__(self, id=None, company=None, email=None, attention=None, phone=None, tailgateRequired=None, residential=None, confirmDelivery=None, instructions=None, address1=None, address2=None, city=None, state=None, country=None, zip=None, valueOf_=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1565,8 +1678,6 @@ class FromType(GeneratedsSuper):
         self.id_nsprefix_ = None
         self.company = _cast(None, company)
         self.company_nsprefix_ = None
-        self.instructions = _cast(None, instructions)
-        self.instructions_nsprefix_ = None
         self.email = _cast(None, email)
         self.email_nsprefix_ = None
         self.attention = _cast(None, attention)
@@ -1577,6 +1688,10 @@ class FromType(GeneratedsSuper):
         self.tailgateRequired_nsprefix_ = None
         self.residential = _cast(None, residential)
         self.residential_nsprefix_ = None
+        self.confirmDelivery = _cast(None, confirmDelivery)
+        self.confirmDelivery_nsprefix_ = None
+        self.instructions = _cast(None, instructions)
+        self.instructions_nsprefix_ = None
         self.address1 = _cast(None, address1)
         self.address1_nsprefix_ = None
         self.address2 = _cast(None, address2)
@@ -1613,10 +1728,6 @@ class FromType(GeneratedsSuper):
         return self.company
     def set_company(self, company):
         self.company = company
-    def get_instructions(self):
-        return self.instructions
-    def set_instructions(self, instructions):
-        self.instructions = instructions
     def get_email(self):
         return self.email
     def set_email(self, email):
@@ -1637,6 +1748,14 @@ class FromType(GeneratedsSuper):
         return self.residential
     def set_residential(self, residential):
         self.residential = residential
+    def get_confirmDelivery(self):
+        return self.confirmDelivery
+    def set_confirmDelivery(self, confirmDelivery):
+        self.confirmDelivery = confirmDelivery
+    def get_instructions(self):
+        return self.instructions
+    def set_instructions(self, instructions):
+        self.instructions = instructions
     def get_address1(self):
         return self.address1
     def set_address1(self, address1):
@@ -1700,9 +1819,6 @@ class FromType(GeneratedsSuper):
         if self.company is not None and 'company' not in already_processed:
             already_processed.add('company')
             outfile.write(' company=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.company), input_name='company')), ))
-        if self.instructions is not None and 'instructions' not in already_processed:
-            already_processed.add('instructions')
-            outfile.write(' instructions=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.instructions), input_name='instructions')), ))
         if self.email is not None and 'email' not in already_processed:
             already_processed.add('email')
             outfile.write(' email=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.email), input_name='email')), ))
@@ -1718,6 +1834,12 @@ class FromType(GeneratedsSuper):
         if self.residential is not None and 'residential' not in already_processed:
             already_processed.add('residential')
             outfile.write(' residential=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.residential), input_name='residential')), ))
+        if self.confirmDelivery is not None and 'confirmDelivery' not in already_processed:
+            already_processed.add('confirmDelivery')
+            outfile.write(' confirmDelivery=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.confirmDelivery), input_name='confirmDelivery')), ))
+        if self.instructions is not None and 'instructions' not in already_processed:
+            already_processed.add('instructions')
+            outfile.write(' instructions=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.instructions), input_name='instructions')), ))
         if self.address1 is not None and 'address1' not in already_processed:
             already_processed.add('address1')
             outfile.write(' address1=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.address1), input_name='address1')), ))
@@ -1759,10 +1881,6 @@ class FromType(GeneratedsSuper):
         if value is not None and 'company' not in already_processed:
             already_processed.add('company')
             self.company = value
-        value = find_attr_value_('instructions', node)
-        if value is not None and 'instructions' not in already_processed:
-            already_processed.add('instructions')
-            self.instructions = value
         value = find_attr_value_('email', node)
         if value is not None and 'email' not in already_processed:
             already_processed.add('email')
@@ -1783,6 +1901,14 @@ class FromType(GeneratedsSuper):
         if value is not None and 'residential' not in already_processed:
             already_processed.add('residential')
             self.residential = value
+        value = find_attr_value_('confirmDelivery', node)
+        if value is not None and 'confirmDelivery' not in already_processed:
+            already_processed.add('confirmDelivery')
+            self.confirmDelivery = value
+        value = find_attr_value_('instructions', node)
+        if value is not None and 'instructions' not in already_processed:
+            already_processed.add('instructions')
+            self.instructions = value
         value = find_attr_value_('address1', node)
         if value is not None and 'address1' not in already_processed:
             already_processed.add('address1')
@@ -1816,7 +1942,7 @@ class ToType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, id=None, company=None, notifyRecipient=None, instructions=None, email=None, attention=None, phone=None, tailgateRequired=None, residential=None, address1=None, address2=None, city=None, state=None, zip=None, country=None, valueOf_=None, gds_collector_=None, **kwargs_):
+    def __init__(self, id=None, company=None, email=None, notifyRecipient=None, attention=None, phone=None, tailgateRequired=None, residential=None, instructions=None, address1=None, address2=None, city=None, state=None, country=None, zip=None, valueOf_=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1826,12 +1952,10 @@ class ToType(GeneratedsSuper):
         self.id_nsprefix_ = None
         self.company = _cast(None, company)
         self.company_nsprefix_ = None
-        self.notifyRecipient = _cast(None, notifyRecipient)
-        self.notifyRecipient_nsprefix_ = None
-        self.instructions = _cast(None, instructions)
-        self.instructions_nsprefix_ = None
         self.email = _cast(None, email)
         self.email_nsprefix_ = None
+        self.notifyRecipient = _cast(None, notifyRecipient)
+        self.notifyRecipient_nsprefix_ = None
         self.attention = _cast(None, attention)
         self.attention_nsprefix_ = None
         self.phone = _cast(None, phone)
@@ -1840,6 +1964,8 @@ class ToType(GeneratedsSuper):
         self.tailgateRequired_nsprefix_ = None
         self.residential = _cast(None, residential)
         self.residential_nsprefix_ = None
+        self.instructions = _cast(None, instructions)
+        self.instructions_nsprefix_ = None
         self.address1 = _cast(None, address1)
         self.address1_nsprefix_ = None
         self.address2 = _cast(None, address2)
@@ -1848,10 +1974,10 @@ class ToType(GeneratedsSuper):
         self.city_nsprefix_ = None
         self.state = _cast(None, state)
         self.state_nsprefix_ = None
-        self.zip = _cast(None, zip)
-        self.zip_nsprefix_ = None
         self.country = _cast(None, country)
         self.country_nsprefix_ = None
+        self.zip = _cast(None, zip)
+        self.zip_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -1876,18 +2002,14 @@ class ToType(GeneratedsSuper):
         return self.company
     def set_company(self, company):
         self.company = company
-    def get_notifyRecipient(self):
-        return self.notifyRecipient
-    def set_notifyRecipient(self, notifyRecipient):
-        self.notifyRecipient = notifyRecipient
-    def get_instructions(self):
-        return self.instructions
-    def set_instructions(self, instructions):
-        self.instructions = instructions
     def get_email(self):
         return self.email
     def set_email(self, email):
         self.email = email
+    def get_notifyRecipient(self):
+        return self.notifyRecipient
+    def set_notifyRecipient(self, notifyRecipient):
+        self.notifyRecipient = notifyRecipient
     def get_attention(self):
         return self.attention
     def set_attention(self, attention):
@@ -1904,6 +2026,10 @@ class ToType(GeneratedsSuper):
         return self.residential
     def set_residential(self, residential):
         self.residential = residential
+    def get_instructions(self):
+        return self.instructions
+    def set_instructions(self, instructions):
+        self.instructions = instructions
     def get_address1(self):
         return self.address1
     def set_address1(self, address1):
@@ -1920,14 +2046,14 @@ class ToType(GeneratedsSuper):
         return self.state
     def set_state(self, state):
         self.state = state
-    def get_zip(self):
-        return self.zip
-    def set_zip(self, zip):
-        self.zip = zip
     def get_country(self):
         return self.country
     def set_country(self, country):
         self.country = country
+    def get_zip(self):
+        return self.zip
+    def set_zip(self, zip):
+        self.zip = zip
     def get_valueOf_(self): return self.valueOf_
     def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
     def hasContent_(self):
@@ -1967,15 +2093,12 @@ class ToType(GeneratedsSuper):
         if self.company is not None and 'company' not in already_processed:
             already_processed.add('company')
             outfile.write(' company=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.company), input_name='company')), ))
-        if self.notifyRecipient is not None and 'notifyRecipient' not in already_processed:
-            already_processed.add('notifyRecipient')
-            outfile.write(' notifyRecipient=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.notifyRecipient), input_name='notifyRecipient')), ))
-        if self.instructions is not None and 'instructions' not in already_processed:
-            already_processed.add('instructions')
-            outfile.write(' instructions=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.instructions), input_name='instructions')), ))
         if self.email is not None and 'email' not in already_processed:
             already_processed.add('email')
             outfile.write(' email=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.email), input_name='email')), ))
+        if self.notifyRecipient is not None and 'notifyRecipient' not in already_processed:
+            already_processed.add('notifyRecipient')
+            outfile.write(' notifyRecipient=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.notifyRecipient), input_name='notifyRecipient')), ))
         if self.attention is not None and 'attention' not in already_processed:
             already_processed.add('attention')
             outfile.write(' attention=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.attention), input_name='attention')), ))
@@ -1988,6 +2111,9 @@ class ToType(GeneratedsSuper):
         if self.residential is not None and 'residential' not in already_processed:
             already_processed.add('residential')
             outfile.write(' residential=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.residential), input_name='residential')), ))
+        if self.instructions is not None and 'instructions' not in already_processed:
+            already_processed.add('instructions')
+            outfile.write(' instructions=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.instructions), input_name='instructions')), ))
         if self.address1 is not None and 'address1' not in already_processed:
             already_processed.add('address1')
             outfile.write(' address1=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.address1), input_name='address1')), ))
@@ -2000,12 +2126,12 @@ class ToType(GeneratedsSuper):
         if self.state is not None and 'state' not in already_processed:
             already_processed.add('state')
             outfile.write(' state=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.state), input_name='state')), ))
-        if self.zip is not None and 'zip' not in already_processed:
-            already_processed.add('zip')
-            outfile.write(' zip=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.zip), input_name='zip')), ))
         if self.country is not None and 'country' not in already_processed:
             already_processed.add('country')
             outfile.write(' country=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.country), input_name='country')), ))
+        if self.zip is not None and 'zip' not in already_processed:
+            already_processed.add('zip')
+            outfile.write(' zip=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.zip), input_name='zip')), ))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ToType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
@@ -2029,18 +2155,14 @@ class ToType(GeneratedsSuper):
         if value is not None and 'company' not in already_processed:
             already_processed.add('company')
             self.company = value
-        value = find_attr_value_('notifyRecipient', node)
-        if value is not None and 'notifyRecipient' not in already_processed:
-            already_processed.add('notifyRecipient')
-            self.notifyRecipient = value
-        value = find_attr_value_('instructions', node)
-        if value is not None and 'instructions' not in already_processed:
-            already_processed.add('instructions')
-            self.instructions = value
         value = find_attr_value_('email', node)
         if value is not None and 'email' not in already_processed:
             already_processed.add('email')
             self.email = value
+        value = find_attr_value_('notifyRecipient', node)
+        if value is not None and 'notifyRecipient' not in already_processed:
+            already_processed.add('notifyRecipient')
+            self.notifyRecipient = value
         value = find_attr_value_('attention', node)
         if value is not None and 'attention' not in already_processed:
             already_processed.add('attention')
@@ -2057,6 +2179,10 @@ class ToType(GeneratedsSuper):
         if value is not None and 'residential' not in already_processed:
             already_processed.add('residential')
             self.residential = value
+        value = find_attr_value_('instructions', node)
+        if value is not None and 'instructions' not in already_processed:
+            already_processed.add('instructions')
+            self.instructions = value
         value = find_attr_value_('address1', node)
         if value is not None and 'address1' not in already_processed:
             already_processed.add('address1')
@@ -2073,17 +2199,291 @@ class ToType(GeneratedsSuper):
         if value is not None and 'state' not in already_processed:
             already_processed.add('state')
             self.state = value
-        value = find_attr_value_('zip', node)
-        if value is not None and 'zip' not in already_processed:
-            already_processed.add('zip')
-            self.zip = value
         value = find_attr_value_('country', node)
         if value is not None and 'country' not in already_processed:
             already_processed.add('country')
             self.country = value
+        value = find_attr_value_('zip', node)
+        if value is not None and 'zip' not in already_processed:
+            already_processed.add('zip')
+            self.zip = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
 # end class ToType
+
+
+class ShipperType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, id=None, company=None, email=None, notifyRecipient=None, attention=None, phone=None, tailgateRequired=None, residential=None, instructions=None, address1=None, address2=None, city=None, state=None, country=None, zip=None, valueOf_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.id = _cast(None, id)
+        self.id_nsprefix_ = None
+        self.company = _cast(None, company)
+        self.company_nsprefix_ = None
+        self.email = _cast(None, email)
+        self.email_nsprefix_ = None
+        self.notifyRecipient = _cast(None, notifyRecipient)
+        self.notifyRecipient_nsprefix_ = None
+        self.attention = _cast(None, attention)
+        self.attention_nsprefix_ = None
+        self.phone = _cast(None, phone)
+        self.phone_nsprefix_ = None
+        self.tailgateRequired = _cast(None, tailgateRequired)
+        self.tailgateRequired_nsprefix_ = None
+        self.residential = _cast(None, residential)
+        self.residential_nsprefix_ = None
+        self.instructions = _cast(None, instructions)
+        self.instructions_nsprefix_ = None
+        self.address1 = _cast(None, address1)
+        self.address1_nsprefix_ = None
+        self.address2 = _cast(None, address2)
+        self.address2_nsprefix_ = None
+        self.city = _cast(None, city)
+        self.city_nsprefix_ = None
+        self.state = _cast(None, state)
+        self.state_nsprefix_ = None
+        self.country = _cast(None, country)
+        self.country_nsprefix_ = None
+        self.zip = _cast(None, zip)
+        self.zip_nsprefix_ = None
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, ShipperType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if ShipperType.subclass:
+            return ShipperType.subclass(*args_, **kwargs_)
+        else:
+            return ShipperType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_id(self):
+        return self.id
+    def set_id(self, id):
+        self.id = id
+    def get_company(self):
+        return self.company
+    def set_company(self, company):
+        self.company = company
+    def get_email(self):
+        return self.email
+    def set_email(self, email):
+        self.email = email
+    def get_notifyRecipient(self):
+        return self.notifyRecipient
+    def set_notifyRecipient(self, notifyRecipient):
+        self.notifyRecipient = notifyRecipient
+    def get_attention(self):
+        return self.attention
+    def set_attention(self, attention):
+        self.attention = attention
+    def get_phone(self):
+        return self.phone
+    def set_phone(self, phone):
+        self.phone = phone
+    def get_tailgateRequired(self):
+        return self.tailgateRequired
+    def set_tailgateRequired(self, tailgateRequired):
+        self.tailgateRequired = tailgateRequired
+    def get_residential(self):
+        return self.residential
+    def set_residential(self, residential):
+        self.residential = residential
+    def get_instructions(self):
+        return self.instructions
+    def set_instructions(self, instructions):
+        self.instructions = instructions
+    def get_address1(self):
+        return self.address1
+    def set_address1(self, address1):
+        self.address1 = address1
+    def get_address2(self):
+        return self.address2
+    def set_address2(self, address2):
+        self.address2 = address2
+    def get_city(self):
+        return self.city
+    def set_city(self, city):
+        self.city = city
+    def get_state(self):
+        return self.state
+    def set_state(self, state):
+        self.state = state
+    def get_country(self):
+        return self.country
+    def set_country(self, country):
+        self.country = country
+    def get_zip(self):
+        return self.zip
+    def set_zip(self, zip):
+        self.zip = zip
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def hasContent_(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipperType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipperType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'ShipperType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipperType')
+        if self.hasContent_():
+            outfile.write('>')
+            outfile.write(self.convert_unicode(self.valueOf_))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipperType', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipperType'):
+        if self.id is not None and 'id' not in already_processed:
+            already_processed.add('id')
+            outfile.write(' id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.id), input_name='id')), ))
+        if self.company is not None and 'company' not in already_processed:
+            already_processed.add('company')
+            outfile.write(' company=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.company), input_name='company')), ))
+        if self.email is not None and 'email' not in already_processed:
+            already_processed.add('email')
+            outfile.write(' email=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.email), input_name='email')), ))
+        if self.notifyRecipient is not None and 'notifyRecipient' not in already_processed:
+            already_processed.add('notifyRecipient')
+            outfile.write(' notifyRecipient=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.notifyRecipient), input_name='notifyRecipient')), ))
+        if self.attention is not None and 'attention' not in already_processed:
+            already_processed.add('attention')
+            outfile.write(' attention=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.attention), input_name='attention')), ))
+        if self.phone is not None and 'phone' not in already_processed:
+            already_processed.add('phone')
+            outfile.write(' phone=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.phone), input_name='phone')), ))
+        if self.tailgateRequired is not None and 'tailgateRequired' not in already_processed:
+            already_processed.add('tailgateRequired')
+            outfile.write(' tailgateRequired=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.tailgateRequired), input_name='tailgateRequired')), ))
+        if self.residential is not None and 'residential' not in already_processed:
+            already_processed.add('residential')
+            outfile.write(' residential=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.residential), input_name='residential')), ))
+        if self.instructions is not None and 'instructions' not in already_processed:
+            already_processed.add('instructions')
+            outfile.write(' instructions=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.instructions), input_name='instructions')), ))
+        if self.address1 is not None and 'address1' not in already_processed:
+            already_processed.add('address1')
+            outfile.write(' address1=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.address1), input_name='address1')), ))
+        if self.address2 is not None and 'address2' not in already_processed:
+            already_processed.add('address2')
+            outfile.write(' address2=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.address2), input_name='address2')), ))
+        if self.city is not None and 'city' not in already_processed:
+            already_processed.add('city')
+            outfile.write(' city=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.city), input_name='city')), ))
+        if self.state is not None and 'state' not in already_processed:
+            already_processed.add('state')
+            outfile.write(' state=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.state), input_name='state')), ))
+        if self.country is not None and 'country' not in already_processed:
+            already_processed.add('country')
+            outfile.write(' country=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.country), input_name='country')), ))
+        if self.zip is not None and 'zip' not in already_processed:
+            already_processed.add('zip')
+            outfile.write(' zip=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.zip), input_name='zip')), ))
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipperType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('id', node)
+        if value is not None and 'id' not in already_processed:
+            already_processed.add('id')
+            self.id = value
+        value = find_attr_value_('company', node)
+        if value is not None and 'company' not in already_processed:
+            already_processed.add('company')
+            self.company = value
+        value = find_attr_value_('email', node)
+        if value is not None and 'email' not in already_processed:
+            already_processed.add('email')
+            self.email = value
+        value = find_attr_value_('notifyRecipient', node)
+        if value is not None and 'notifyRecipient' not in already_processed:
+            already_processed.add('notifyRecipient')
+            self.notifyRecipient = value
+        value = find_attr_value_('attention', node)
+        if value is not None and 'attention' not in already_processed:
+            already_processed.add('attention')
+            self.attention = value
+        value = find_attr_value_('phone', node)
+        if value is not None and 'phone' not in already_processed:
+            already_processed.add('phone')
+            self.phone = value
+        value = find_attr_value_('tailgateRequired', node)
+        if value is not None and 'tailgateRequired' not in already_processed:
+            already_processed.add('tailgateRequired')
+            self.tailgateRequired = value
+        value = find_attr_value_('residential', node)
+        if value is not None and 'residential' not in already_processed:
+            already_processed.add('residential')
+            self.residential = value
+        value = find_attr_value_('instructions', node)
+        if value is not None and 'instructions' not in already_processed:
+            already_processed.add('instructions')
+            self.instructions = value
+        value = find_attr_value_('address1', node)
+        if value is not None and 'address1' not in already_processed:
+            already_processed.add('address1')
+            self.address1 = value
+        value = find_attr_value_('address2', node)
+        if value is not None and 'address2' not in already_processed:
+            already_processed.add('address2')
+            self.address2 = value
+        value = find_attr_value_('city', node)
+        if value is not None and 'city' not in already_processed:
+            already_processed.add('city')
+            self.city = value
+        value = find_attr_value_('state', node)
+        if value is not None and 'state' not in already_processed:
+            already_processed.add('state')
+            self.state = value
+        value = find_attr_value_('country', node)
+        if value is not None and 'country' not in already_processed:
+            already_processed.add('country')
+            self.country = value
+        value = find_attr_value_('zip', node)
+        if value is not None and 'zip' not in already_processed:
+            already_processed.add('zip')
+            self.zip = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class ShipperType
 
 
 class CODType(GeneratedsSuper):
@@ -2477,7 +2877,7 @@ class PackageType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, length=None, width=None, height=None, weight=None, type_=None, freightClass=None, nmfcCode=None, insuranceAmount=None, codAmount=None, description=None, valueOf_=None, gds_collector_=None, **kwargs_):
+    def __init__(self, length=None, width=None, height=None, weight=None, weightOz=None, type_=None, freightClass=None, insuranceAmount=None, codAmount=None, description=None, nmfcCode=None, valueOf_=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -2491,18 +2891,20 @@ class PackageType(GeneratedsSuper):
         self.height_nsprefix_ = None
         self.weight = _cast(int, weight)
         self.weight_nsprefix_ = None
+        self.weightOz = _cast(int, weightOz)
+        self.weightOz_nsprefix_ = None
         self.type_ = _cast(None, type_)
         self.type__nsprefix_ = None
-        self.freightClass = _cast(int, freightClass)
+        self.freightClass = _cast(None, freightClass)
         self.freightClass_nsprefix_ = None
-        self.nmfcCode = _cast(None, nmfcCode)
-        self.nmfcCode_nsprefix_ = None
         self.insuranceAmount = _cast(float, insuranceAmount)
         self.insuranceAmount_nsprefix_ = None
         self.codAmount = _cast(float, codAmount)
         self.codAmount_nsprefix_ = None
         self.description = _cast(None, description)
         self.description_nsprefix_ = None
+        self.nmfcCode = _cast(int, nmfcCode)
+        self.nmfcCode_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -2535,6 +2937,10 @@ class PackageType(GeneratedsSuper):
         return self.weight
     def set_weight(self, weight):
         self.weight = weight
+    def get_weightOz(self):
+        return self.weightOz
+    def set_weightOz(self, weightOz):
+        self.weightOz = weightOz
     def get_type(self):
         return self.type_
     def set_type(self, type_):
@@ -2543,10 +2949,6 @@ class PackageType(GeneratedsSuper):
         return self.freightClass
     def set_freightClass(self, freightClass):
         self.freightClass = freightClass
-    def get_nmfcCode(self):
-        return self.nmfcCode
-    def set_nmfcCode(self, nmfcCode):
-        self.nmfcCode = nmfcCode
     def get_insuranceAmount(self):
         return self.insuranceAmount
     def set_insuranceAmount(self, insuranceAmount):
@@ -2559,6 +2961,10 @@ class PackageType(GeneratedsSuper):
         return self.description
     def set_description(self, description):
         self.description = description
+    def get_nmfcCode(self):
+        return self.nmfcCode
+    def set_nmfcCode(self, nmfcCode):
+        self.nmfcCode = nmfcCode
     def get_valueOf_(self): return self.valueOf_
     def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
     def hasContent_(self):
@@ -2604,15 +3010,15 @@ class PackageType(GeneratedsSuper):
         if self.weight is not None and 'weight' not in already_processed:
             already_processed.add('weight')
             outfile.write(' weight="%s"' % self.gds_format_integer(self.weight, input_name='weight'))
+        if self.weightOz is not None and 'weightOz' not in already_processed:
+            already_processed.add('weightOz')
+            outfile.write(' weightOz="%s"' % self.gds_format_integer(self.weightOz, input_name='weightOz'))
         if self.type_ is not None and 'type_' not in already_processed:
             already_processed.add('type_')
             outfile.write(' type=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.type_), input_name='type')), ))
         if self.freightClass is not None and 'freightClass' not in already_processed:
             already_processed.add('freightClass')
-            outfile.write(' freightClass="%s"' % self.gds_format_integer(self.freightClass, input_name='freightClass'))
-        if self.nmfcCode is not None and 'nmfcCode' not in already_processed:
-            already_processed.add('nmfcCode')
-            outfile.write(' nmfcCode=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.nmfcCode), input_name='nmfcCode')), ))
+            outfile.write(' freightClass=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.freightClass), input_name='freightClass')), ))
         if self.insuranceAmount is not None and 'insuranceAmount' not in already_processed:
             already_processed.add('insuranceAmount')
             outfile.write(' insuranceAmount="%s"' % self.gds_format_float(self.insuranceAmount, input_name='insuranceAmount'))
@@ -2622,6 +3028,9 @@ class PackageType(GeneratedsSuper):
         if self.description is not None and 'description' not in already_processed:
             already_processed.add('description')
             outfile.write(' description=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.description), input_name='description')), ))
+        if self.nmfcCode is not None and 'nmfcCode' not in already_processed:
+            already_processed.add('nmfcCode')
+            outfile.write(' nmfcCode="%s"' % self.gds_format_integer(self.nmfcCode, input_name='nmfcCode'))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
@@ -2653,6 +3062,10 @@ class PackageType(GeneratedsSuper):
         if value is not None and 'weight' not in already_processed:
             already_processed.add('weight')
             self.weight = self.gds_parse_integer(value, node, 'weight')
+        value = find_attr_value_('weightOz', node)
+        if value is not None and 'weightOz' not in already_processed:
+            already_processed.add('weightOz')
+            self.weightOz = self.gds_parse_integer(value, node, 'weightOz')
         value = find_attr_value_('type', node)
         if value is not None and 'type' not in already_processed:
             already_processed.add('type')
@@ -2660,11 +3073,7 @@ class PackageType(GeneratedsSuper):
         value = find_attr_value_('freightClass', node)
         if value is not None and 'freightClass' not in already_processed:
             already_processed.add('freightClass')
-            self.freightClass = self.gds_parse_integer(value, node, 'freightClass')
-        value = find_attr_value_('nmfcCode', node)
-        if value is not None and 'nmfcCode' not in already_processed:
-            already_processed.add('nmfcCode')
-            self.nmfcCode = value
+            self.freightClass = value
         value = find_attr_value_('insuranceAmount', node)
         if value is not None and 'insuranceAmount' not in already_processed:
             already_processed.add('insuranceAmount')
@@ -2679,9 +3088,176 @@ class PackageType(GeneratedsSuper):
         if value is not None and 'description' not in already_processed:
             already_processed.add('description')
             self.description = value
+        value = find_attr_value_('nmfcCode', node)
+        if value is not None and 'nmfcCode' not in already_processed:
+            already_processed.add('nmfcCode')
+            self.nmfcCode = self.gds_parse_integer(value, node, 'nmfcCode')
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
 # end class PackageType
+
+
+class PickupType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, contactName=None, phoneNumber=None, pickupDate=None, pickupTime=None, closingTime=None, location=None, valueOf_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.contactName = _cast(None, contactName)
+        self.contactName_nsprefix_ = None
+        self.phoneNumber = _cast(None, phoneNumber)
+        self.phoneNumber_nsprefix_ = None
+        if isinstance(pickupDate, BaseStrType_):
+            initvalue_ = datetime_.datetime.strptime(pickupDate, '%Y-%m-%d').date()
+        else:
+            initvalue_ = pickupDate
+        self.pickupDate = initvalue_
+        self.pickupTime = _cast(None, pickupTime)
+        self.pickupTime_nsprefix_ = None
+        self.closingTime = _cast(None, closingTime)
+        self.closingTime_nsprefix_ = None
+        self.location = _cast(None, location)
+        self.location_nsprefix_ = None
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PickupType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PickupType.subclass:
+            return PickupType.subclass(*args_, **kwargs_)
+        else:
+            return PickupType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_contactName(self):
+        return self.contactName
+    def set_contactName(self, contactName):
+        self.contactName = contactName
+    def get_phoneNumber(self):
+        return self.phoneNumber
+    def set_phoneNumber(self, phoneNumber):
+        self.phoneNumber = phoneNumber
+    def get_pickupDate(self):
+        return self.pickupDate
+    def set_pickupDate(self, pickupDate):
+        self.pickupDate = pickupDate
+    def get_pickupTime(self):
+        return self.pickupTime
+    def set_pickupTime(self, pickupTime):
+        self.pickupTime = pickupTime
+    def get_closingTime(self):
+        return self.closingTime
+    def set_closingTime(self, closingTime):
+        self.closingTime = closingTime
+    def get_location(self):
+        return self.location
+    def set_location(self, location):
+        self.location = location
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def hasContent_(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PickupType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PickupType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PickupType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupType')
+        if self.hasContent_():
+            outfile.write('>')
+            outfile.write(self.convert_unicode(self.valueOf_))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupType', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PickupType'):
+        if self.contactName is not None and 'contactName' not in already_processed:
+            already_processed.add('contactName')
+            outfile.write(' contactName=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.contactName), input_name='contactName')), ))
+        if self.phoneNumber is not None and 'phoneNumber' not in already_processed:
+            already_processed.add('phoneNumber')
+            outfile.write(' phoneNumber=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.phoneNumber), input_name='phoneNumber')), ))
+        if self.pickupDate is not None and 'pickupDate' not in already_processed:
+            already_processed.add('pickupDate')
+            outfile.write(' pickupDate="%s"' % self.gds_format_date(self.pickupDate, input_name='pickupDate'))
+        if self.pickupTime is not None and 'pickupTime' not in already_processed:
+            already_processed.add('pickupTime')
+            outfile.write(' pickupTime=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.pickupTime), input_name='pickupTime')), ))
+        if self.closingTime is not None and 'closingTime' not in already_processed:
+            already_processed.add('closingTime')
+            outfile.write(' closingTime=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.closingTime), input_name='closingTime')), ))
+        if self.location is not None and 'location' not in already_processed:
+            already_processed.add('location')
+            outfile.write(' location=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.location), input_name='location')), ))
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PickupType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('contactName', node)
+        if value is not None and 'contactName' not in already_processed:
+            already_processed.add('contactName')
+            self.contactName = value
+        value = find_attr_value_('phoneNumber', node)
+        if value is not None and 'phoneNumber' not in already_processed:
+            already_processed.add('phoneNumber')
+            self.phoneNumber = value
+        value = find_attr_value_('pickupDate', node)
+        if value is not None and 'pickupDate' not in already_processed:
+            already_processed.add('pickupDate')
+            try:
+                self.pickupDate = self.gds_parse_date(value)
+            except ValueError as exp:
+                raise ValueError('Bad date attribute (pickupDate): %s' % exp)
+        value = find_attr_value_('pickupTime', node)
+        if value is not None and 'pickupTime' not in already_processed:
+            already_processed.add('pickupTime')
+            self.pickupTime = value
+        value = find_attr_value_('closingTime', node)
+        if value is not None and 'closingTime' not in already_processed:
+            already_processed.add('closingTime')
+            self.closingTime = value
+        value = find_attr_value_('location', node)
+        if value is not None and 'location' not in already_processed:
+            already_processed.add('location')
+            self.location = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class PickupType
 
 
 class PaymentType(GeneratedsSuper):
@@ -2885,18 +3461,36 @@ class CustomsInvoiceType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, BillTo=None, Contact=None, Item=None, gds_collector_=None, **kwargs_):
+    def __init__(self, Currency=None, brokerName=None, contactCompany=None, shipperTaxID=None, receiverTaxID=None, contactName=None, contactPhone=None, BillTo=None, Contact=None, Item=None, DutiesTaxes=None, InBondManifest=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
+        self.Currency = _cast(None, Currency)
+        self.Currency_nsprefix_ = None
+        self.brokerName = _cast(None, brokerName)
+        self.brokerName_nsprefix_ = None
+        self.contactCompany = _cast(None, contactCompany)
+        self.contactCompany_nsprefix_ = None
+        self.shipperTaxID = _cast(None, shipperTaxID)
+        self.shipperTaxID_nsprefix_ = None
+        self.receiverTaxID = _cast(None, receiverTaxID)
+        self.receiverTaxID_nsprefix_ = None
+        self.contactName = _cast(None, contactName)
+        self.contactName_nsprefix_ = None
+        self.contactPhone = _cast(None, contactPhone)
+        self.contactPhone_nsprefix_ = None
         self.BillTo = BillTo
         self.BillTo_nsprefix_ = None
         self.Contact = Contact
         self.Contact_nsprefix_ = None
         self.Item = Item
         self.Item_nsprefix_ = None
+        self.DutiesTaxes = DutiesTaxes
+        self.DutiesTaxes_nsprefix_ = None
+        self.InBondManifest = InBondManifest
+        self.InBondManifest_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -2924,11 +3518,49 @@ class CustomsInvoiceType(GeneratedsSuper):
         return self.Item
     def set_Item(self, Item):
         self.Item = Item
+    def get_DutiesTaxes(self):
+        return self.DutiesTaxes
+    def set_DutiesTaxes(self, DutiesTaxes):
+        self.DutiesTaxes = DutiesTaxes
+    def get_InBondManifest(self):
+        return self.InBondManifest
+    def set_InBondManifest(self, InBondManifest):
+        self.InBondManifest = InBondManifest
+    def get_Currency(self):
+        return self.Currency
+    def set_Currency(self, Currency):
+        self.Currency = Currency
+    def get_brokerName(self):
+        return self.brokerName
+    def set_brokerName(self, brokerName):
+        self.brokerName = brokerName
+    def get_contactCompany(self):
+        return self.contactCompany
+    def set_contactCompany(self, contactCompany):
+        self.contactCompany = contactCompany
+    def get_shipperTaxID(self):
+        return self.shipperTaxID
+    def set_shipperTaxID(self, shipperTaxID):
+        self.shipperTaxID = shipperTaxID
+    def get_receiverTaxID(self):
+        return self.receiverTaxID
+    def set_receiverTaxID(self, receiverTaxID):
+        self.receiverTaxID = receiverTaxID
+    def get_contactName(self):
+        return self.contactName
+    def set_contactName(self, contactName):
+        self.contactName = contactName
+    def get_contactPhone(self):
+        return self.contactPhone
+    def set_contactPhone(self, contactPhone):
+        self.contactPhone = contactPhone
     def hasContent_(self):
         if (
             self.BillTo is not None or
             self.Contact is not None or
-            self.Item is not None
+            self.Item is not None or
+            self.DutiesTaxes is not None or
+            self.InBondManifest is not None
         ):
             return True
         else:
@@ -2957,7 +3589,27 @@ class CustomsInvoiceType(GeneratedsSuper):
         else:
             outfile.write('/>%s' % (eol_, ))
     def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CustomsInvoiceType'):
-        pass
+        if self.Currency is not None and 'Currency' not in already_processed:
+            already_processed.add('Currency')
+            outfile.write(' Currency=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Currency), input_name='Currency')), ))
+        if self.brokerName is not None and 'brokerName' not in already_processed:
+            already_processed.add('brokerName')
+            outfile.write(' brokerName=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.brokerName), input_name='brokerName')), ))
+        if self.contactCompany is not None and 'contactCompany' not in already_processed:
+            already_processed.add('contactCompany')
+            outfile.write(' contactCompany=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.contactCompany), input_name='contactCompany')), ))
+        if self.shipperTaxID is not None and 'shipperTaxID' not in already_processed:
+            already_processed.add('shipperTaxID')
+            outfile.write(' shipperTaxID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.shipperTaxID), input_name='shipperTaxID')), ))
+        if self.receiverTaxID is not None and 'receiverTaxID' not in already_processed:
+            already_processed.add('receiverTaxID')
+            outfile.write(' receiverTaxID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.receiverTaxID), input_name='receiverTaxID')), ))
+        if self.contactName is not None and 'contactName' not in already_processed:
+            already_processed.add('contactName')
+            outfile.write(' contactName=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.contactName), input_name='contactName')), ))
+        if self.contactPhone is not None and 'contactPhone' not in already_processed:
+            already_processed.add('contactPhone')
+            outfile.write(' contactPhone=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.contactPhone), input_name='contactPhone')), ))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsInvoiceType', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -2972,6 +3624,12 @@ class CustomsInvoiceType(GeneratedsSuper):
         if self.Item is not None:
             namespaceprefix_ = self.Item_nsprefix_ + ':' if (UseCapturedNS_ and self.Item_nsprefix_) else ''
             self.Item.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Item', pretty_print=pretty_print)
+        if self.DutiesTaxes is not None:
+            namespaceprefix_ = self.DutiesTaxes_nsprefix_ + ':' if (UseCapturedNS_ and self.DutiesTaxes_nsprefix_) else ''
+            self.DutiesTaxes.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DutiesTaxes', pretty_print=pretty_print)
+        if self.InBondManifest is not None:
+            namespaceprefix_ = self.InBondManifest_nsprefix_ + ':' if (UseCapturedNS_ and self.InBondManifest_nsprefix_) else ''
+            self.InBondManifest.export(outfile, level, namespaceprefix_, namespacedef_='', name_='InBondManifest', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -2984,7 +3642,34 @@ class CustomsInvoiceType(GeneratedsSuper):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        pass
+        value = find_attr_value_('Currency', node)
+        if value is not None and 'Currency' not in already_processed:
+            already_processed.add('Currency')
+            self.Currency = value
+        value = find_attr_value_('brokerName', node)
+        if value is not None and 'brokerName' not in already_processed:
+            already_processed.add('brokerName')
+            self.brokerName = value
+        value = find_attr_value_('contactCompany', node)
+        if value is not None and 'contactCompany' not in already_processed:
+            already_processed.add('contactCompany')
+            self.contactCompany = value
+        value = find_attr_value_('shipperTaxID', node)
+        if value is not None and 'shipperTaxID' not in already_processed:
+            already_processed.add('shipperTaxID')
+            self.shipperTaxID = value
+        value = find_attr_value_('receiverTaxID', node)
+        if value is not None and 'receiverTaxID' not in already_processed:
+            already_processed.add('receiverTaxID')
+            self.receiverTaxID = value
+        value = find_attr_value_('contactName', node)
+        if value is not None and 'contactName' not in already_processed:
+            already_processed.add('contactName')
+            self.contactName = value
+        value = find_attr_value_('contactPhone', node)
+        if value is not None and 'contactPhone' not in already_processed:
+            already_processed.add('contactPhone')
+            self.contactPhone = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'BillTo':
             obj_ = BillToType.factory(parent_object_=self)
@@ -3001,6 +3686,16 @@ class CustomsInvoiceType(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Item = obj_
             obj_.original_tagname_ = 'Item'
+        elif nodeName_ == 'DutiesTaxes':
+            obj_ = DutiesTaxesType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DutiesTaxes = obj_
+            obj_.original_tagname_ = 'DutiesTaxes'
+        elif nodeName_ == 'InBondManifest':
+            obj_ = InBondManifestType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.InBondManifest = obj_
+            obj_.original_tagname_ = 'InBondManifest'
 # end class CustomsInvoiceType
 
 
@@ -3283,7 +3978,7 @@ class ItemType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, code=None, description=None, originCountry=None, quantity=None, unitPrice=None, valueOf_=None, gds_collector_=None, **kwargs_):
+    def __init__(self, code=None, description=None, originCountry=None, quantity=None, unitPrice=None, skuCode=None, valueOf_=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -3299,6 +3994,8 @@ class ItemType(GeneratedsSuper):
         self.quantity_nsprefix_ = None
         self.unitPrice = _cast(float, unitPrice)
         self.unitPrice_nsprefix_ = None
+        self.skuCode = _cast(None, skuCode)
+        self.skuCode_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -3335,6 +4032,10 @@ class ItemType(GeneratedsSuper):
         return self.unitPrice
     def set_unitPrice(self, unitPrice):
         self.unitPrice = unitPrice
+    def get_skuCode(self):
+        return self.skuCode
+    def set_skuCode(self, skuCode):
+        self.skuCode = skuCode
     def get_valueOf_(self): return self.valueOf_
     def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
     def hasContent_(self):
@@ -3383,6 +4084,9 @@ class ItemType(GeneratedsSuper):
         if self.unitPrice is not None and 'unitPrice' not in already_processed:
             already_processed.add('unitPrice')
             outfile.write(' unitPrice="%s"' % self.gds_format_float(self.unitPrice, input_name='unitPrice'))
+        if self.skuCode is not None and 'skuCode' not in already_processed:
+            already_processed.add('skuCode')
+            outfile.write(' skuCode=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.skuCode), input_name='skuCode')), ))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ItemType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
@@ -3419,9 +4123,328 @@ class ItemType(GeneratedsSuper):
             already_processed.add('unitPrice')
             value = self.gds_parse_float(value, node, 'unitPrice')
             self.unitPrice = value
+        value = find_attr_value_('skuCode', node)
+        if value is not None and 'skuCode' not in already_processed:
+            already_processed.add('skuCode')
+            self.skuCode = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
 # end class ItemType
+
+
+class DutiesTaxesType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, consigneeAccount=None, sedNumber=None, dutiable=None, billTo=None, valueOf_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.consigneeAccount = _cast(None, consigneeAccount)
+        self.consigneeAccount_nsprefix_ = None
+        self.sedNumber = _cast(None, sedNumber)
+        self.sedNumber_nsprefix_ = None
+        self.dutiable = _cast(None, dutiable)
+        self.dutiable_nsprefix_ = None
+        self.billTo = _cast(None, billTo)
+        self.billTo_nsprefix_ = None
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, DutiesTaxesType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if DutiesTaxesType.subclass:
+            return DutiesTaxesType.subclass(*args_, **kwargs_)
+        else:
+            return DutiesTaxesType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_consigneeAccount(self):
+        return self.consigneeAccount
+    def set_consigneeAccount(self, consigneeAccount):
+        self.consigneeAccount = consigneeAccount
+    def get_sedNumber(self):
+        return self.sedNumber
+    def set_sedNumber(self, sedNumber):
+        self.sedNumber = sedNumber
+    def get_dutiable(self):
+        return self.dutiable
+    def set_dutiable(self, dutiable):
+        self.dutiable = dutiable
+    def get_billTo(self):
+        return self.billTo
+    def set_billTo(self, billTo):
+        self.billTo = billTo
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def hasContent_(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DutiesTaxesType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('DutiesTaxesType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'DutiesTaxesType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DutiesTaxesType')
+        if self.hasContent_():
+            outfile.write('>')
+            outfile.write(self.convert_unicode(self.valueOf_))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DutiesTaxesType', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='DutiesTaxesType'):
+        if self.consigneeAccount is not None and 'consigneeAccount' not in already_processed:
+            already_processed.add('consigneeAccount')
+            outfile.write(' consigneeAccount=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.consigneeAccount), input_name='consigneeAccount')), ))
+        if self.sedNumber is not None and 'sedNumber' not in already_processed:
+            already_processed.add('sedNumber')
+            outfile.write(' sedNumber=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.sedNumber), input_name='sedNumber')), ))
+        if self.dutiable is not None and 'dutiable' not in already_processed:
+            already_processed.add('dutiable')
+            outfile.write(' dutiable=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.dutiable), input_name='dutiable')), ))
+        if self.billTo is not None and 'billTo' not in already_processed:
+            already_processed.add('billTo')
+            outfile.write(' billTo=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.billTo), input_name='billTo')), ))
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='DutiesTaxesType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('consigneeAccount', node)
+        if value is not None and 'consigneeAccount' not in already_processed:
+            already_processed.add('consigneeAccount')
+            self.consigneeAccount = value
+        value = find_attr_value_('sedNumber', node)
+        if value is not None and 'sedNumber' not in already_processed:
+            already_processed.add('sedNumber')
+            self.sedNumber = value
+        value = find_attr_value_('dutiable', node)
+        if value is not None and 'dutiable' not in already_processed:
+            already_processed.add('dutiable')
+            self.dutiable = value
+        value = find_attr_value_('billTo', node)
+        if value is not None and 'billTo' not in already_processed:
+            already_processed.add('billTo')
+            self.billTo = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class DutiesTaxesType
+
+
+class InBondManifestType(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, locationOfGoods=None, nameOfCarrier=None, vehicleIdentification=None, customsClearedBy=None, handlingInfo=None, previousCargoControlNum=None, weight=None, weightUOM=None, valueOf_=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.locationOfGoods = _cast(None, locationOfGoods)
+        self.locationOfGoods_nsprefix_ = None
+        self.nameOfCarrier = _cast(None, nameOfCarrier)
+        self.nameOfCarrier_nsprefix_ = None
+        self.vehicleIdentification = _cast(int, vehicleIdentification)
+        self.vehicleIdentification_nsprefix_ = None
+        self.customsClearedBy = _cast(None, customsClearedBy)
+        self.customsClearedBy_nsprefix_ = None
+        self.handlingInfo = _cast(None, handlingInfo)
+        self.handlingInfo_nsprefix_ = None
+        self.previousCargoControlNum = _cast(int, previousCargoControlNum)
+        self.previousCargoControlNum_nsprefix_ = None
+        self.weight = _cast(float, weight)
+        self.weight_nsprefix_ = None
+        self.weightUOM = _cast(None, weightUOM)
+        self.weightUOM_nsprefix_ = None
+        self.valueOf_ = valueOf_
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, InBondManifestType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if InBondManifestType.subclass:
+            return InBondManifestType.subclass(*args_, **kwargs_)
+        else:
+            return InBondManifestType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_locationOfGoods(self):
+        return self.locationOfGoods
+    def set_locationOfGoods(self, locationOfGoods):
+        self.locationOfGoods = locationOfGoods
+    def get_nameOfCarrier(self):
+        return self.nameOfCarrier
+    def set_nameOfCarrier(self, nameOfCarrier):
+        self.nameOfCarrier = nameOfCarrier
+    def get_vehicleIdentification(self):
+        return self.vehicleIdentification
+    def set_vehicleIdentification(self, vehicleIdentification):
+        self.vehicleIdentification = vehicleIdentification
+    def get_customsClearedBy(self):
+        return self.customsClearedBy
+    def set_customsClearedBy(self, customsClearedBy):
+        self.customsClearedBy = customsClearedBy
+    def get_handlingInfo(self):
+        return self.handlingInfo
+    def set_handlingInfo(self, handlingInfo):
+        self.handlingInfo = handlingInfo
+    def get_previousCargoControlNum(self):
+        return self.previousCargoControlNum
+    def set_previousCargoControlNum(self, previousCargoControlNum):
+        self.previousCargoControlNum = previousCargoControlNum
+    def get_weight(self):
+        return self.weight
+    def set_weight(self, weight):
+        self.weight = weight
+    def get_weightUOM(self):
+        return self.weightUOM
+    def set_weightUOM(self, weightUOM):
+        self.weightUOM = weightUOM
+    def get_valueOf_(self): return self.valueOf_
+    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+    def hasContent_(self):
+        if (
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InBondManifestType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InBondManifestType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'InBondManifestType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InBondManifestType')
+        if self.hasContent_():
+            outfile.write('>')
+            outfile.write(self.convert_unicode(self.valueOf_))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InBondManifestType', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InBondManifestType'):
+        if self.locationOfGoods is not None and 'locationOfGoods' not in already_processed:
+            already_processed.add('locationOfGoods')
+            outfile.write(' locationOfGoods=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.locationOfGoods), input_name='locationOfGoods')), ))
+        if self.nameOfCarrier is not None and 'nameOfCarrier' not in already_processed:
+            already_processed.add('nameOfCarrier')
+            outfile.write(' nameOfCarrier=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.nameOfCarrier), input_name='nameOfCarrier')), ))
+        if self.vehicleIdentification is not None and 'vehicleIdentification' not in already_processed:
+            already_processed.add('vehicleIdentification')
+            outfile.write(' vehicleIdentification="%s"' % self.gds_format_integer(self.vehicleIdentification, input_name='vehicleIdentification'))
+        if self.customsClearedBy is not None and 'customsClearedBy' not in already_processed:
+            already_processed.add('customsClearedBy')
+            outfile.write(' customsClearedBy=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.customsClearedBy), input_name='customsClearedBy')), ))
+        if self.handlingInfo is not None and 'handlingInfo' not in already_processed:
+            already_processed.add('handlingInfo')
+            outfile.write(' handlingInfo=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.handlingInfo), input_name='handlingInfo')), ))
+        if self.previousCargoControlNum is not None and 'previousCargoControlNum' not in already_processed:
+            already_processed.add('previousCargoControlNum')
+            outfile.write(' previousCargoControlNum="%s"' % self.gds_format_integer(self.previousCargoControlNum, input_name='previousCargoControlNum'))
+        if self.weight is not None and 'weight' not in already_processed:
+            already_processed.add('weight')
+            outfile.write(' weight="%s"' % self.gds_format_float(self.weight, input_name='weight'))
+        if self.weightUOM is not None and 'weightUOM' not in already_processed:
+            already_processed.add('weightUOM')
+            outfile.write(' weightUOM=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.weightUOM), input_name='weightUOM')), ))
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InBondManifestType', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        self.valueOf_ = get_all_text_(node)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('locationOfGoods', node)
+        if value is not None and 'locationOfGoods' not in already_processed:
+            already_processed.add('locationOfGoods')
+            self.locationOfGoods = value
+        value = find_attr_value_('nameOfCarrier', node)
+        if value is not None and 'nameOfCarrier' not in already_processed:
+            already_processed.add('nameOfCarrier')
+            self.nameOfCarrier = value
+        value = find_attr_value_('vehicleIdentification', node)
+        if value is not None and 'vehicleIdentification' not in already_processed:
+            already_processed.add('vehicleIdentification')
+            self.vehicleIdentification = self.gds_parse_integer(value, node, 'vehicleIdentification')
+        value = find_attr_value_('customsClearedBy', node)
+        if value is not None and 'customsClearedBy' not in already_processed:
+            already_processed.add('customsClearedBy')
+            self.customsClearedBy = value
+        value = find_attr_value_('handlingInfo', node)
+        if value is not None and 'handlingInfo' not in already_processed:
+            already_processed.add('handlingInfo')
+            self.handlingInfo = value
+        value = find_attr_value_('previousCargoControlNum', node)
+        if value is not None and 'previousCargoControlNum' not in already_processed:
+            already_processed.add('previousCargoControlNum')
+            self.previousCargoControlNum = self.gds_parse_integer(value, node, 'previousCargoControlNum')
+        value = find_attr_value_('weight', node)
+        if value is not None and 'weight' not in already_processed:
+            already_processed.add('weight')
+            value = self.gds_parse_float(value, node, 'weight')
+            self.weight = value
+        value = find_attr_value_('weightUOM', node)
+        if value is not None and 'weightUOM' not in already_processed:
+            already_processed.add('weightUOM')
+            self.weightUOM = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class InBondManifestType
 
 
 GDSClassesMapping = {
@@ -3495,7 +4518,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     return rootObj
 
 
-def parseEtree(inFileName, silence=False, print_warnings=True):
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -3507,8 +4531,10 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
-    mapping = {}
-    rootElement = rootObj.to_etree(None, name_=rootTag, mapping_=mapping)
+    if mapping is None:
+        mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
     reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
     if not SaveElementTreeNode:
         doc = None
@@ -3616,13 +4642,17 @@ __all__ = [
     "CODType",
     "ContactType",
     "CustomsInvoiceType",
+    "DutiesTaxesType",
     "EShipper",
     "FromType",
+    "InBondManifestType",
     "ItemType",
     "PackageType",
     "PackagesType",
     "PaymentType",
+    "PickupType",
     "ReferenceType",
+    "ShipperType",
     "ShippingRequestType",
     "ToType"
 ]

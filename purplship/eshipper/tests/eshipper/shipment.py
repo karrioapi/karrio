@@ -106,17 +106,18 @@ shipment_data = {
 
 ParsedShipmentResponse = [
     {
-        "carrier_name": "eshipper",
         "carrier_id": "eshipper",
+        "carrier_name": "eshipper",
         "label": "[base-64 encoded String]",
         "selected_rate": {
             "base_charge": 30.74,
-            "carrier_name": "eshipper",
             "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
             "currency": "CAD",
             'transit_days': 0,
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel Surcharge"}
+                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
             "service": "eshipper_fedex_ground",
             "total_charge": 31.82,
@@ -127,16 +128,16 @@ ParsedShipmentResponse = [
 ]
 
 ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
-    <ShippingRequest insuranceType="True" serviceId="3">
+    <ShippingRequest serviceId="3" insuranceType="True">
         <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
-        <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA"/>
+        <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" country="CA" zip="V3N4R3"/>
         <COD paymentType="Receiver">
             <CODReturnAddress codCompany="Test Company" codName="RizTo" codAddress1="650 CIT Drive" codCity="Livingston" codStateCode="BC" codZip="V3N4R3" codCountry="CA"/>
         </COD>
-        <Packages>
+        <Packages type="Pallet">
             <Package length="6" width="12" height="9" weight="20" type="Pallet" freightClass="70" description="desc."/>
         </Packages>
-        <Payment type="PaymentType.third_party"/>
+        <Payment type="3rd Party"/>
         <CustomsInvoice>
             <BillTo company="ABC Towing" name="Alfred" address1="444 Highway 401" city="Toronto" state="ON" zip="A1B 2C3" country="CA"/>
             <Contact name="Alfred" phone="555-555-4444"/>

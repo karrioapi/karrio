@@ -8,7 +8,7 @@
               <xs:element name="Quote" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType mixed="true">
                   <xs:sequence>
-                    <xs:element name="Surcharge" minOccurs="0">
+                    <xs:element name="Surcharge" maxOccurs="unbounded" minOccurs="0">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">

@@ -1,10 +1,10 @@
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from pyeshipper.shipping_request import (
     EShipper, ShippingRequestType, FromType, ToType, PackagesType, PackageType,
     PaymentType as RequestPaymentType, CODType, CODReturnAddressType, ContactType,
     ReferenceType, CustomsInvoiceType, ItemType, BillToType,
 )
-from pyeshipper.shipping_reply import ShippingReplyType, QuoteType, PackageType as ReplyPackageType
+from pyeshipper.shipping_reply import ShippingReplyType, QuoteType, PackageType as ReplyPackageType, SurchargeType
 from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import ShipmentRequest, ShipmentDetails, RateDetails, Message, ChargeDetails, Address
@@ -28,6 +28,21 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     quote: QuoteType = shipping.Quote
     package: ReplyPackageType = next(iter(shipping.Package), None)
     tracking_number = package.trackingNumber if package is not None else None
+    service = next(
+        (s.name for s in Service if str(quote.serviceId) == s.value),
+        quote.serviceId
+    )
+    surcharges = [ChargeDetails(
+        name=charge.name,
+        amount=decimal(charge.amount),
+        currency=quote.currency
+    ) for charge in cast(List[SurchargeType], quote.Surcharge)]
+
+    fuel_surcharge = ChargeDetails(
+        name="Fuel surcharge",
+        amount=decimal(quote.fuelSurcharge),
+        currency=quote.currency
+    ) if quote.fuelSurcharge is not None else None
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -37,18 +52,12 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         selected_rate=RateDetails(
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
-            service=Service(str(quote.serviceId)).name,
+            service=service,
             currency=quote.currency,
             base_charge=decimal(quote.baseCharge),
             total_charge=decimal(quote.totalCharge),
             transit_days=quote.transitDays,
-            extra_charges=[
-                ChargeDetails(
-                    name="Fuel Surcharge",
-                    amount=decimal(quote.fuelSurcharge),
-                    currency=quote.currency
-                )
-            ] if quote.fuelSurcharge is not None else []
+            extra_charges=[fuel_surcharge] + surcharges
         ) if quote is not None else None
     )
 
@@ -65,6 +74,7 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         raise FieldError(field_errors)
 
     packaging_type = PackagingType[package.packaging_type or "small_box"].value
+    packaging = "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
     options = Options(payload.options)
     service = Service[payload.service].value
     freight_class = (
@@ -76,7 +86,7 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         Option[s]: "true" for s in payload.options.keys() if s in Option.__members__
     }
     payment_type = (
-        PaymentType[payload.payment.paid_by] if payload.payment else None
+        PaymentType[payload.payment.paid_by].value if payload.payment else None
     )
     item = next(
         iter(payload.customs.commodities if payload.customs is not None else []),
@@ -174,7 +184,8 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         codAmount=None,
                         description=payload.parcel.description,
                     )
-                ]
+                ],
+                type_=packaging
             ),
             Payment=RequestPaymentType(
                 type_=payment_type
