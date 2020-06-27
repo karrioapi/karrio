@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Jun 27 01:42:56 2020 by generateDS.py version 2.35.24.
+# Generated Sat Jun 27 09:45:58 2020 by generateDS.py version 2.35.24.
 # Python 3.7.7 (default, Mar 10 2020, 15:43:27)  [Clang 10.0.0 (clang-1000.11.45.5)]
 #
 # Command line options:
@@ -2038,7 +2038,10 @@ class QuoteType(GeneratedsSuper):
         self.totalCharge_nsprefix_ = None
         self.currency = _cast(None, currency)
         self.currency_nsprefix_ = None
-        self.Surcharge = Surcharge
+        if Surcharge is None:
+            self.Surcharge = []
+        else:
+            self.Surcharge = Surcharge
         self.Surcharge_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -2059,6 +2062,12 @@ class QuoteType(GeneratedsSuper):
         return self.Surcharge
     def set_Surcharge(self, Surcharge):
         self.Surcharge = Surcharge
+    def add_Surcharge(self, value):
+        self.Surcharge.append(value)
+    def insert_Surcharge_at(self, index, value):
+        self.Surcharge.insert(index, value)
+    def replace_Surcharge_at(self, index, value):
+        self.Surcharge[index] = value
     def get_carrierId(self):
         return self.carrierId
     def set_carrierId(self, carrierId):
@@ -2101,7 +2110,7 @@ class QuoteType(GeneratedsSuper):
         self.currency = currency
     def hasContent_(self):
         if (
-            self.Surcharge is not None
+            self.Surcharge
         ):
             return True
         else:
@@ -2165,9 +2174,9 @@ class QuoteType(GeneratedsSuper):
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.Surcharge is not None:
+        for Surcharge_ in self.Surcharge:
             namespaceprefix_ = self.Surcharge_nsprefix_ + ':' if (UseCapturedNS_ and self.Surcharge_nsprefix_) else ''
-            self.Surcharge.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Surcharge', pretty_print=pretty_print)
+            Surcharge_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Surcharge', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -2227,7 +2236,7 @@ class QuoteType(GeneratedsSuper):
         if nodeName_ == 'Surcharge':
             obj_ = SurchargeType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Surcharge = obj_
+            self.Surcharge.append(obj_)
             obj_.original_tagname_ = 'Surcharge'
 # end class QuoteType
 

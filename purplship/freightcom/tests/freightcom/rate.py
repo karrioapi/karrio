@@ -59,7 +59,7 @@ RatePayload = {
         "dimension_unit": "CM",
         "weight_unit": "KG",
     },
-    "services": ["freightcom_central_transport"]
+    "services": ["freightcom_central_transport"],
 }
 
 RateWithPresetMissingDimensionPayload = {

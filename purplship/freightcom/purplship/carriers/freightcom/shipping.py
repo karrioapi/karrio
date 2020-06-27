@@ -1,10 +1,10 @@
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from pyfreightcom.shipping_request import (
     Freightcom, ShippingRequestType, FromType, ToType, PackagesType, PackageType,
     PaymentType as RequestPaymentType, CODType, CODReturnAddressType, ContactType,
     ReferenceType, CustomsInvoiceType, ItemType, BillToType,
 )
-from pyfreightcom.shipping_reply import ShippingReplyType, QuoteType, PackageType as ReplyPackageType
+from pyfreightcom.shipping_reply import ShippingReplyType, QuoteType, PackageType as ReplyPackageType, SurchargeType
 from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import ShipmentRequest, ShipmentDetails, RateDetails, Message, ChargeDetails, Address
@@ -32,6 +32,17 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         (s.name for s in Service if str(quote.serviceId) == s.value),
         quote.serviceId
     )
+    surcharges = [ChargeDetails(
+        name=charge.name,
+        amount=decimal(charge.amount),
+        currency=quote.currency
+    ) for charge in cast(List[SurchargeType], quote.Surcharge)]
+
+    fuel_surcharge = ChargeDetails(
+        name="Fuel surcharge",
+        amount=decimal(quote.fuelSurcharge),
+        currency=quote.currency
+    ) if quote.fuelSurcharge is not None else None
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -46,13 +57,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
             base_charge=decimal(quote.baseCharge),
             total_charge=decimal(quote.totalCharge),
             transit_days=quote.transitDays,
-            extra_charges=[
-                ChargeDetails(
-                    name="Fuel Surcharge",
-                    amount=decimal(quote.fuelSurcharge),
-                    currency=quote.currency
-                )
-            ] if quote.fuelSurcharge is not None else []
+            extra_charges=[fuel_surcharge] + surcharges
         ) if quote is not None else None
     )
 

@@ -71,17 +71,18 @@ shipment_data = {
 
 ParsedShipmentResponse = [
     {
-        "carrier_name": "freightcom",
         "carrier_id": "freightcom",
+        "carrier_name": "freightcom",
         "label": "[base-64 encoded String]",
         "selected_rate": {
             "base_charge": 30.74,
-            "carrier_name": "freightcom",
             "carrier_id": "freightcom",
+            "carrier_name": "freightcom",
             "currency": "CAD",
             'transit_days': 0,
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel Surcharge"}
+                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
             "service": "freightcom_central_transport",
             "total_charge": 31.82,
