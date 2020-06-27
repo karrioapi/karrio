@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='purplship-server.extension',
-    version='2020.6.1',
+    version='2020.7.0',
     description='Purplship-server extension',
     long_description=long_description,
     long_description_content_type="text/markdown",
