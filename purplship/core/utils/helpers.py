@@ -1,6 +1,7 @@
 import attr
 import json
 import asyncio
+import logging
 from io import StringIO
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
@@ -9,6 +10,7 @@ from purplship.core.utils.xml import Element, fromstring, tostring
 from typing import List, TypeVar, Callable, Any, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+logger = logging.getLogger(__name__)
 T = TypeVar("T")
 S = TypeVar("S")
 
@@ -39,16 +41,24 @@ def request(decoder: Callable = decode_bytes, **args) -> str:
 
     make a http request (wrapper around Request method from built in urllib)
     """
+    logger.debug(f'sending request {jsonify(args)}')
     try:
         req = Request(**args)
         with urlopen(req) as f:
             res = f.read()
             try:
-                return decoder(res)
-            except Exception as _:
-                return res
+                res = decoder(res)
+            except Exception as e:
+                logger.exception(e)
+
+            logger.debug(f'response content {res}')
+            return res
     except HTTPError as e:
-        return e.read().decode("utf-8")
+        logger.exception(e)
+        error = e.read().decode("utf-8")
+
+        logger.debug(f'error response content {error}')
+        return error
 
 
 def to_xml(xml_str: str) -> Element:

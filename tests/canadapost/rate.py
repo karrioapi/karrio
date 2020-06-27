@@ -100,7 +100,7 @@ ProcessingError = [
         {
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
-            "code": "500",
+            "code": "PURPLSHIP_INTERNAL_ERROR",
             "message": "<parcel.weight> must be specified (required)",
         }
     ],

@@ -2,11 +2,15 @@
 
 import attr
 import pkgutil
+import logging
 from typing import Callable, Union
 from purplship.core import Settings
 from purplship.package.proxy import Proxy
 from purplship.package.mapper import Mapper
+from purplship.core.errors import PurplShipError
 import purplship.package.mappers as mappers
+
+logger = logging.getLogger(__name__)
 
 
 @attr.s(auto_attribs=True)
@@ -48,9 +52,15 @@ class _ProviderMapper:
                     mapper=provider.Mapper(settings_value),
                 )
             except KeyError as e:
-                raise Exception(f"Unknown provider id '{key}'") from e
+                raise PurplShipError(f"Unknown provider '{key}'") from e
+            except Exception as e:
+                raise PurplShipError(f"Failed to setup provider '{key}'") from e
 
         return GatewayInitializer(initializer)
 
 
 gateway = _ProviderMapper()
+logger.info(f'''
+PurplShip default gateway mapper initialized.
+Registered providers: {','.join(gateway.providers)}
+''')
