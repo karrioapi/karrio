@@ -80,10 +80,10 @@
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
-                            <xs:attribute type="xs:float" name="length" use="required"/>
-                            <xs:attribute type="xs:float" name="width" use="required"/>
-                            <xs:attribute type="xs:float" name="height" use="required"/>
-                            <xs:attribute type="xs:float" name="weight" use="required"/>
+                            <xs:attribute type="xs:int" name="length" use="required"/>
+                            <xs:attribute type="xs:int" name="width" use="required"/>
+                            <xs:attribute type="xs:int" name="height" use="required"/>
+                            <xs:attribute type="xs:int" name="weight" use="required"/>
                             <xs:attribute type="xs:string" name="type" use="optional"/>
                             <xs:attribute type="xs:byte" name="freightClass" use="optional"/>
                             <xs:attribute type="xs:string" name="nmfcCode" use="optional"/>

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Mar 27 12:07:22 2020 by generateDS.py version 2.35.15.
-# Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sat Jun 27 01:42:54 2020 by generateDS.py version 2.35.24.
+# Python 3.7.7 (default, Mar 10 2020, 15:43:27)  [Clang 10.0.0 (clang-1000.11.45.5)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,10 +13,10 @@
 #   ./vendor/schemas/shipping_request.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-freightcom-extension/.venv/purplship-freightcom-extension/bin/generateDS --no-namespace-defs -o "./pyfreightcom/shipping_request.py" ./vendor/schemas/shipping_request.xsd
+#   /Users/daniel/Workspace/Project/purplship-extension/purplship/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./pyfreightcom/shipping_request.py" ./vendor/schemas/shipping_request.xsd
 #
 # Current working directory (os.getcwd()):
-#   purplship-freightcom-extension
+#   freightcom
 #
 
 from six.moves import zip_longest
@@ -247,7 +247,12 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of float values')
             return values
         def gds_format_decimal(self, input_data, input_name=''):
-            return ('%s' % input_data).rstrip('0')
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
         def gds_parse_decimal(self, input_data, node=None, input_name=''):
             try:
                 decimal_value = decimal_.Decimal(input_data)
@@ -261,7 +266,7 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
-            return '%s' % ' '.join(input_data)
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -847,7 +852,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element):
+    def to_etree(self, element, mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -867,7 +872,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self):
+    def to_etree_simple(self, mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -2483,13 +2488,13 @@ class PackageType(GeneratedsSuper):
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.length = _cast(float, length)
+        self.length = _cast(int, length)
         self.length_nsprefix_ = None
-        self.width = _cast(float, width)
+        self.width = _cast(int, width)
         self.width_nsprefix_ = None
-        self.height = _cast(float, height)
+        self.height = _cast(int, height)
         self.height_nsprefix_ = None
-        self.weight = _cast(float, weight)
+        self.weight = _cast(int, weight)
         self.weight_nsprefix_ = None
         self.type_ = _cast(None, type_)
         self.type__nsprefix_ = None
@@ -2594,16 +2599,16 @@ class PackageType(GeneratedsSuper):
     def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PackageType'):
         if self.length is not None and 'length' not in already_processed:
             already_processed.add('length')
-            outfile.write(' length="%s"' % self.gds_format_float(self.length, input_name='length'))
+            outfile.write(' length="%s"' % self.gds_format_integer(self.length, input_name='length'))
         if self.width is not None and 'width' not in already_processed:
             already_processed.add('width')
-            outfile.write(' width="%s"' % self.gds_format_float(self.width, input_name='width'))
+            outfile.write(' width="%s"' % self.gds_format_integer(self.width, input_name='width'))
         if self.height is not None and 'height' not in already_processed:
             already_processed.add('height')
-            outfile.write(' height="%s"' % self.gds_format_float(self.height, input_name='height'))
+            outfile.write(' height="%s"' % self.gds_format_integer(self.height, input_name='height'))
         if self.weight is not None and 'weight' not in already_processed:
             already_processed.add('weight')
-            outfile.write(' weight="%s"' % self.gds_format_float(self.weight, input_name='weight'))
+            outfile.write(' weight="%s"' % self.gds_format_integer(self.weight, input_name='weight'))
         if self.type_ is not None and 'type_' not in already_processed:
             already_processed.add('type_')
             outfile.write(' type=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.type_), input_name='type')), ))
@@ -2640,23 +2645,19 @@ class PackageType(GeneratedsSuper):
         value = find_attr_value_('length', node)
         if value is not None and 'length' not in already_processed:
             already_processed.add('length')
-            value = self.gds_parse_float(value, node, 'length')
-            self.length = value
+            self.length = self.gds_parse_integer(value, node, 'length')
         value = find_attr_value_('width', node)
         if value is not None and 'width' not in already_processed:
             already_processed.add('width')
-            value = self.gds_parse_float(value, node, 'width')
-            self.width = value
+            self.width = self.gds_parse_integer(value, node, 'width')
         value = find_attr_value_('height', node)
         if value is not None and 'height' not in already_processed:
             already_processed.add('height')
-            value = self.gds_parse_float(value, node, 'height')
-            self.height = value
+            self.height = self.gds_parse_integer(value, node, 'height')
         value = find_attr_value_('weight', node)
         if value is not None and 'weight' not in already_processed:
             already_processed.add('weight')
-            value = self.gds_parse_float(value, node, 'weight')
-            self.weight = value
+            self.weight = self.gds_parse_integer(value, node, 'weight')
         value = find_attr_value_('type', node)
         if value is not None and 'type' not in already_processed:
             already_processed.add('type')
@@ -3499,7 +3500,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     return rootObj
 
 
-def parseEtree(inFileName, silence=False, print_warnings=True):
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -3511,8 +3513,10 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
-    mapping = {}
-    rootElement = rootObj.to_etree(None, name_=rootTag, mapping_=mapping)
+    if mapping is None:
+        mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
     reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
     if not SaveElementTreeNode:
         doc = None
