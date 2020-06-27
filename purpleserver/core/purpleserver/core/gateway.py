@@ -71,7 +71,7 @@ class Shipments:
         if selected_rate is None:
             raise NotFound(
                 f'Invalid "selected_rate_id": {payload.get("selected_rate_id")}'
-                f'Please select from {", ".join([r.id for r in payload.get("rates")])}'
+                f'Please select from {", ".join([r.get("id") for r in payload.get("rates")])}'
             )
 
         carrier_settings: CarrierSettings = Carriers.retrieve(carrier_id=selected_rate.carrier_id)
@@ -143,6 +143,9 @@ class Rates:
         results = exec_async(process, carrier_settings_list)
         rates = sum((r for r, _ in results if r is not None), [])
         messages = sum((m for _, m in results), [])
+
+        if not any(rates) and any(messages):
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
         return RateResponse(
             rates=[

@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
@@ -48,7 +49,7 @@ def fetch_rates(request: Request):
     )
 
     if len(carrier_settings_list) == 0:
-        raise Exception(f'No configured carriers specified')
+        raise NotFound("No configured carriers specified")
 
     response = Rates.fetch(rate_request.data, carrier_settings_list)
 
