@@ -1,4 +1,7 @@
 """PurplShip Custom Errors(Exception) definition modules"""
+import warnings
+from enum import Enum
+from typing import Dict
 
 
 class PurplShipError(Exception):
@@ -20,10 +23,24 @@ class MethodNotSupportedError(PurplShipError):
         super().__init__(f"{method} not supported by {base}")
 
 
+class ErrorCode(Enum):
+    required = dict(code="required", message="This field is required")
+    invalid = dict(code="invalid", message="This field is invalid")
+
+
+class FieldError(ValidationError):
+    """Raised when one or many required fields are missing."""
+
+    def __init__(self, fields: Dict[str, ErrorCode]):
+        self.details = {name: code.value for name, code in fields.items()}
+        super().__init__("Invalid request payload")
+
+
 class RequiredFieldError(ValidationError):
     """Raised when one or many required fields are missing."""
 
     def __init__(self, field: str):
+        warnings.warn("deprecated use FieldError instead.", DeprecationWarning)
         super().__init__(f"<{field}> must be specified (required)")
 
 
