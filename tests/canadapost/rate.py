@@ -100,7 +100,7 @@ ProcessingError = [
         {
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
-            "code": "PURPLSHIP_INTERNAL_ERROR",
+            "code": "PURPLSHIP_FIELD_ERROR",
             "message": "Invalid request payload",
             "details": {
                 "parcel.weight": {
