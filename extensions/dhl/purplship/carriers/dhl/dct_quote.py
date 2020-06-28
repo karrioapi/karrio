@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 from functools import reduce
 from typing import List, Tuple
 from pydhl.dct_req_global_2_0 import (
@@ -17,7 +16,7 @@ from pydhl.dct_req_global_2_0 import (
 from pydhl.dct_requestdatatypes_global import DCTDutiable
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils import export, Serializable, Element, decimal, to_date
-from purplship.core.errors import FieldError, ErrorCode
+from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.units import Package, Options
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.carriers.dhl.units import (
@@ -106,7 +105,7 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
-        raise FieldError({"parcel.weight": ErrorCode.required})
+        raise FieldError({"parcel.weight": FieldErrorCode.required})
 
     options = Options(payload.options)
     is_international = payload.shipper.country_code != payload.recipient.country_code

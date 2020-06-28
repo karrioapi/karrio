@@ -23,7 +23,7 @@ class MethodNotSupportedError(PurplShipError):
         super().__init__(f"{method} not supported by {base}")
 
 
-class ErrorCode(Enum):
+class FieldErrorCode(Enum):
     required = dict(code="required", message="This field is required")
     invalid = dict(code="invalid", message="This field is invalid")
 
@@ -31,8 +31,9 @@ class ErrorCode(Enum):
 class FieldError(ValidationError):
     """Raised when one or many required fields are missing."""
 
-    def __init__(self, fields: Dict[str, ErrorCode]):
-        self.details = {name: code.value for name, code in fields.items()}
+    code = "PURPLSHIP_FIELD_ERROR"
+
+    def __init__(self, fields: Dict[str, FieldErrorCode]):
         super().__init__("Invalid request payload")
 
 

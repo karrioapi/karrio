@@ -33,7 +33,7 @@ from pypurolator.estimate_service_2_1_2 import (
 from purplship.core.units import Currency, Package, Options, Phone
 from purplship.core.utils import Serializable, Element, concat_str, format_date, decimal
 from purplship.core.utils.soap import create_envelope
-from purplship.core.errors import FieldError, ErrorCode
+from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.carriers.purolator.utils import Settings, standard_request_serializer
 from purplship.carriers.purolator.error import parse_error_response
@@ -105,7 +105,7 @@ def get_full_estimate_request(
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
-        raise FieldError({"parcel.weight": ErrorCode.required})
+        raise FieldError({"parcel.weight": FieldErrorCode.required})
 
     options = Options(payload.options)
     shipper_phone_number = Phone(payload.shipper.phone_number)

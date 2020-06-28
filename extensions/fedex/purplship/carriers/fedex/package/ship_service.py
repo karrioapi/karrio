@@ -33,7 +33,7 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.errors import FieldError, ErrorCode
+from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.units import Weight, Dimension, Options, Package
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.carriers.fedex.error import parse_error_response
@@ -106,7 +106,7 @@ def process_shipment_request(
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
-        raise FieldError({"parcel.weight": ErrorCode.required})
+        raise FieldError({"parcel.weight": FieldErrorCode.required})
 
     service = ServiceType[payload.service].value
     options = Options(payload.options)
