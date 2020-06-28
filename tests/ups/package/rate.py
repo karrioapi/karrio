@@ -235,6 +235,7 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
         <rate:RateRequest>
             <common:Request>
                 <common:RequestOption>Rate</common:RequestOption>
+                <common:RequestOption>Ratetimeintransit</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
@@ -285,6 +286,9 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 <rate:ShipmentRatingOptions>
                     <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
                 </rate:ShipmentRatingOptions>
+                <rate:DeliveryTimeInformation>
+                    <rate:PackageBillType>03</rate:PackageBillType>
+                </rate:DeliveryTimeInformation>
             </rate:Shipment>
         </rate:RateRequest>
     </tns:Body>
@@ -307,6 +311,7 @@ RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xm
         <rate:RateRequest>
             <common:Request>
                 <common:RequestOption>Rate</common:RequestOption>
+                <common:RequestOption>Ratetimeintransit</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
@@ -350,6 +355,9 @@ RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xm
                 <rate:ShipmentRatingOptions>
                     <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
                 </rate:ShipmentRatingOptions>
+                <rate:DeliveryTimeInformation>
+                    <rate:PackageBillType>03</rate:PackageBillType>
+                </rate:DeliveryTimeInformation>
             </rate:Shipment>
         </rate:RateRequest>
     </tns:Body>

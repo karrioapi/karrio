@@ -16,7 +16,7 @@ from pydhl.dct_req_global_2_0 import (
 )
 from pydhl.dct_requestdatatypes_global import DCTDutiable
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
-from purplship.core.utils import export, Serializable, Element, format_date, decimal
+from purplship.core.utils import export, Serializable, Element, format_date, decimal, to_date
 from purplship.core.errors import RequiredFieldError
 from purplship.core.units import Package, Options
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
@@ -65,11 +65,10 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     DutiesAndTaxes_ = reduce(
         lambda d, ec: d + ec.amount if "TAXES PAID" in ec.name else d, ExtraCharges, 0.0
     )
-    DlvyDateTime = qtdshp.DeliveryDate[0].DlvyDateTime
-    delivery_date = (
-        datetime.strptime(str(DlvyDateTime), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
-        if DlvyDateTime is not None
-        else None
+    delivery_date = to_date(qtdshp.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
+    pricing_date = to_date(qtdshp.PricingDate)
+    transit = (
+        (delivery_date - pricing_date).days if all([delivery_date, pricing_date]) else None
     )
     service_name = next(
         (p.name for p in Product if p.value in qtdshp.LocalProductName),
@@ -79,7 +78,7 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=qtdshp.CurrencyCode,
-        estimated_delivery=format_date(delivery_date),
+        transit_days=transit,
         service=service_name,
         base_charge=decimal(qtdshp.WeightCharge),
         total_charge=decimal(qtdshp.ShippingCharge),

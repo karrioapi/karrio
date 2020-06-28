@@ -1,5 +1,22 @@
+from typing import TypeVar, Type, Optional, cast
 from pysoap.envelope import Header, Body, Envelope
 from purplship.core.utils.xml import Element
+
+T = TypeVar("T")
+
+
+class GenerateDSAbstract:
+    def build(self, *args):
+        pass
+
+
+def build(tp: Type[T], node: Element = None) -> Optional[T]:
+    if node is None:
+        return None
+
+    instance = tp()
+    cast(GenerateDSAbstract, instance).build(node)
+    return instance
 
 
 def create_envelope(

@@ -10,10 +10,11 @@ from pycanadapost.rating import (
     united_statesType,
     internationalType,
     price_quoteType,
+    service_standardType
 )
 from functools import reduce
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from purplship.core.utils import Serializable, export, Element, format_date, decimal
 from purplship.carriers.canadapost.utils import Settings
 from purplship.core.units import Country, Currency, Package
@@ -49,9 +50,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=currency,
-        estimated_delivery=format_date(
-            price_quote.service_standard.expected_delivery_date
-        ),
+        transit_days=cast(service_standardType, price_quote.service_standard).expected_transit_time,
         service=ServiceType(price_quote.service_code).name,
         base_charge=decimal(price_quote.price_details.base or 0),
         total_charge=decimal(price_quote.price_details.due or 0),

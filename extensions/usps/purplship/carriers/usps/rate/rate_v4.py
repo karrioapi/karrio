@@ -9,7 +9,7 @@ from pyusps.ratev4request import (
     SpecialServicesType,
     ShipDateType,
 )
-from purplship.core.utils import export, Serializable, Element, format_date, decimal
+from purplship.core.utils import export, Serializable, Element, format_date, decimal, to_date
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Currency
 from purplship.carriers.usps.utils import Settings
@@ -48,10 +48,9 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
             ".//*[local-name() = $name]", name="SpecialService"
         )
     ]
-    estimated_date = (
-        format_date(postage.CommitmentDate)
-        if postage.CommitmentDate is not None
-        else None
+    estimated_date = to_date(postage.CommitmentDate)
+    transit = (
+        (estimated_date - datetime.now()).days if estimated_date is not None else None
     )
 
     def get(key: str) -> Any:
@@ -63,7 +62,7 @@ def _extract_quote(postage_node: Element, settings: Settings) -> RateDetails:
         service=get("MailService"),
         total_charge=decimal(postage_node.find("Rate").text),
         currency=currency,
-        estimated_delivery=estimated_date,
+        transit_days=transit,
         extra_charges=[
             ChargeDetails(
                 name=SpecialService(str(svc.ServiceID)).name,

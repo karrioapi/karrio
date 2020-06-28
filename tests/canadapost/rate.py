@@ -139,7 +139,7 @@ ParsedQuoteResponse = [
             "currency": "CAD",
             "discount": 0.62,
             "duties_and_taxes": 0.0,
-            "estimated_delivery": "2011-10-24",
+            "transit_days": 2,
             "extra_charges": [
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
@@ -154,7 +154,7 @@ ParsedQuoteResponse = [
             "currency": "CAD",
             "discount": 2.56,
             "duties_and_taxes": 0.0,
-            "estimated_delivery": "2011-10-21",
+            "transit_days": 1,
             "extra_charges": [
                 {"amount": -0.68, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 3.24, "currency": "CAD", "name": "Fuel surcharge"},
@@ -169,7 +169,7 @@ ParsedQuoteResponse = [
             "currency": "CAD",
             "discount": 0.62,
             "duties_and_taxes": 0.0,
-            "estimated_delivery": "2011-10-26",
+            "transit_days": 4,
             "extra_charges": [
                 {"amount": -0.29, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 0.91, "currency": "CAD", "name": "Fuel surcharge"},
@@ -184,7 +184,7 @@ ParsedQuoteResponse = [
             "currency": "CAD",
             "discount": 1.38,
             "duties_and_taxes": 0.0,
-            "estimated_delivery": "2011-10-24",
+            "transit_days": 2,
             "extra_charges": [
                 {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
                 {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"},

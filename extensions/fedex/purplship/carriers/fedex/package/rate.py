@@ -17,7 +17,7 @@ from pyfedex.rate_service_v26 import (
     RequestedPackageLineItem,
     Dimensions
 )
-from purplship.core.utils import export, concat_str, Serializable, format_date, decimal
+from purplship.core.utils import export, concat_str, Serializable, format_date, decimal, to_date
 from purplship.core.utils.soap import create_envelope
 from purplship.core.units import Package, Options
 from purplship.core.utils.xml import Element
@@ -65,6 +65,10 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         )
         for s in shipment_rate.Surcharges + shipment_rate.Taxes
     ]
+    estimated_delivery = to_date(rate.DeliveryTimestamp, "%Y-%m-%d %H:%M:%S")
+    transit = (
+        (estimated_delivery - datetime.now()).days if estimated_delivery is not None else None
+    )
 
     return RateDetails(
         carrier_name=settings.carrier_name,
@@ -75,7 +79,7 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         total_charge=decimal(shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount),
         duties_and_taxes=decimal(duties_and_taxes),
         discount=discount,
-        estimated_delivery=format_date(rate.DeliveryTimestamp, "%Y-%m-%d %H:%M:%S"),
+        transit_days=transit,
         extra_charges=surcharges,
     )
 

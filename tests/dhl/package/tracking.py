@@ -92,7 +92,7 @@ ParsedTrackingResponse = [
             "events": [
                 {
                     "code": "PU",
-                    "date": "2009-08-28 00:00:00",
+                    "date": "2009-08-28",
                     "description": "Shipment picked up",
                     "location": "Barcelona - Spain ",
                     "signatory": "960528602",
@@ -100,105 +100,105 @@ ParsedTrackingResponse = [
                 },
                 {
                     "code": "PO",
-                    "date": "2009-08-28 00:00:00",
+                    "date": "2009-08-28",
                     "description": "Departing origin",
                     "location": "Barcelona - Spain ",
-                    "signatory": " 00:00:00",
+                    "signatory": "00:00:00",
                     "time": "19:27",
                 },
                 {
                     "code": "RW",
-                    "date": "2009-08-28 00:00:00",
+                    "date": "2009-08-28",
                     "location": "Barcelona - Spain ",
                     "time": "19:27",
                 },
                 {
                     "code": "PL",
-                    "date": "2009-08-28 00:00:00",
+                    "date": "2009-08-28",
                     "description": "Processed at Location Barcelona - Spain ",
                     "location": "Barcelona - Spain ",
                     "time": "20:39",
                 },
                 {
                     "code": "AF",
-                    "date": "2009-08-28 00:00:00",
+                    "date": "2009-08-28",
                     "description": "Arrived at DHL facility in Barcelona -\n                        Spain ",
                     "location": "Barcelona - Spain ",
                     "time": "21:17",
                 },
                 {
                     "code": "DF",
-                    "date": "2009-08-28 00:00:00",
+                    "date": "2009-08-28",
                     "description": "Departed from DHL facility in Barcelona\n                        - Spain ",
                     "location": "Barcelona - Spain ",
                     "time": "22:01",
                 },
                 {
                     "code": "AF",
-                    "date": "2009-08-29 00:00:00",
+                    "date": "2009-08-29",
                     "description": "Arrived at DHL facility in Leipzig -\n                        Germany ",
                     "location": "Leipzig - Germany ",
                     "time": "00:32",
                 },
                 {
                     "code": "PL",
-                    "date": "2009-08-29 00:00:00",
+                    "date": "2009-08-29",
                     "description": "Processed at Location Leipzig - Germany ",
                     "location": "Leipzig - Germany ",
                     "time": "01:05",
                 },
                 {
                     "code": "DF",
-                    "date": "2009-08-29 00:00:00",
+                    "date": "2009-08-29",
                     "description": "Departed from DHL facility in Leipzig -\n                        Germany ",
                     "location": "Leipzig - Germany ",
                     "time": "05:52",
                 },
                 {
                     "code": "AF",
-                    "date": "2009-08-30 00:00:00",
+                    "date": "2009-08-30",
                     "description": "Arrived at DHL facility in Bergamo -\n                        Italy ",
                     "location": "Bergamo - Italy ",
                     "time": "19:43",
                 },
                 {
                     "code": "PL",
-                    "date": "2009-08-30 00:00:00",
+                    "date": "2009-08-30",
                     "description": "Processed at Location Bergamo - Italy ",
                     "location": "Bergamo - Italy ",
                     "time": "23:30",
                 },
                 {
                     "code": "DF",
-                    "date": "2009-08-31 00:00:00",
+                    "date": "2009-08-31",
                     "description": "Departed from DHL facility in Bergamo -\n                        Italy ",
                     "location": "Bergamo - Italy ",
                     "time": "02:06",
                 },
                 {
                     "code": "DF",
-                    "date": "2009-08-31 00:00:00",
+                    "date": "2009-08-31",
                     "description": "Departed from DHL facility in Milan -\n                        Italy ",
                     "location": "Milan - Italy ",
                     "time": "06:23",
                 },
                 {
                     "code": "AR",
-                    "date": "2009-08-31 00:00:00",
+                    "date": "2009-08-31",
                     "description": "Arrived at DHL facility in Milan -\n                        Italy ",
                     "location": "Milan - Italy ",
                     "time": "08:59",
                 },
                 {
                     "code": "WC",
-                    "date": "2009-08-31 00:00:00",
+                    "date": "2009-08-31",
                     "description": "With delivery courier",
                     "location": "Milan - Italy ",
                     "time": "09:19",
                 },
                 {
                     "code": "OK",
-                    "date": "2009-08-31 00:00:00",
+                    "date": "2009-08-31",
                     "description": "Shipment delivered",
                     "location": "Milan - Italy ",
                     "signatory": "CAMPAGNA",
@@ -213,7 +213,7 @@ ParsedTrackingResponse = [
             "events": [
                 {
                     "code": "PU",
-                    "date": "2009-08-26 00:00:00",
+                    "date": "2009-08-26",
                     "description": "Shipment picked up",
                     "location": "Singapore - Singapore ",
                     "time": "10:00",
@@ -227,14 +227,14 @@ ParsedTrackingResponse = [
             "events": [
                 {
                     "code": "PU",
-                    "date": "2009-08-13 00:00:00",
+                    "date": "2009-08-13",
                     "description": "Shipment picked up",
                     "location": "Hong Kong - Hong Kong ",
                     "time": "23:58",
                 },
                 {
                     "code": "RW",
-                    "date": "2009-08-14 00:00:00",
+                    "date": "2009-08-14",
                     "location": "Hong Kong - Hong Kong ",
                     "signatory": "21.20",
                     "time": "02:19",
@@ -356,7 +356,7 @@ TrackingResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
                     <EventCode>PO</EventCode>
                     <Description>Departing origin</Description>
                 </ServiceEvent>
-                <Signatory> 00:00:00</Signatory>
+                <Signatory>00:00:00</Signatory>
                 <ServiceArea>
                     <ServiceAreaCode>BCN</ServiceAreaCode>
                     <Description>Barcelona - Spain </Description>

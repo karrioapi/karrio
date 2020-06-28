@@ -1,8 +1,7 @@
 from functools import reduce
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, cast
 from pyups.rate_web_service_schema import (
     RateRequest as UPSRateRequest,
-    PickupType,
     RatedShipmentType,
     ShipmentRatingOptionsType,
     ShipToType,
@@ -16,10 +15,12 @@ from pyups.rate_web_service_schema import (
     DimensionsType,
     RequestType,
     TransactionReferenceType,
+    TimeInTransitRequestType,
+    EstimatedArrivalType,
+    PickupType as ArrivalType
 )
-from purplship.core.utils import export, concat_str, Serializable, format_date, decimal
-from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
-from purplship.core.utils.xml import Element
+from purplship.core.utils import export, concat_str, Serializable, format_date, decimal, Element
+from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, build
 from purplship.core.units import Package
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.core.errors import RequiredFieldError
@@ -46,8 +47,7 @@ def _extract_package_rate(
     settings: Settings,
 ) -> Callable[[List[RateDetails], Element], List[RateDetails]]:
     def extract(rates: List[RateDetails], detail_node: Element) -> List[RateDetails]:
-        rate = RatedShipmentType()
-        rate.build(detail_node)
+        rate = build(RatedShipmentType, detail_node)
 
         if rate.NegotiatedRateCharges is not None:
             total_charges = (
@@ -62,14 +62,10 @@ def _extract_package_rate(
             itemized_charges = rate.ItemizedCharges + taxes
 
         extra_charges = itemized_charges + [rate.ServiceOptionsCharges]
-
-        arrival = PickupType()
-        [
-            arrival.build(arrival)
-            for arrival in detail_node.xpath(
-                ".//*[local-name() = $name]", name="Arrival"
-            )
-        ]
+        estimated_arrival = next(
+            (build(EstimatedArrivalType, n) for n in detail_node.xpath(".//*[local-name() = $name]", name="EstimatedArrival")),
+            EstimatedArrivalType()
+        )
         currency_ = next(
             c.text
             for c in detail_node.xpath(
@@ -104,7 +100,7 @@ def _extract_package_rate(
                     [charge for charge in extra_charges if charge is not None],
                     [],
                 ),
-                estimated_delivery=format_date(arrival.Date),
+                transit_days=estimated_arrival.BusinessDaysInTransit,
             )
         ]
 
@@ -141,7 +137,7 @@ def rate_request(
 
     request = UPSRateRequest(
         Request=RequestType(
-            RequestOption=["Rate"],
+            RequestOption=["Rate", "Ratetimeintransit"],
             SubVersion=None,
             TransactionReference=TransactionReferenceType(
                 CustomerContext=payload.reference, TransactionIdentifier=None
@@ -237,7 +233,9 @@ def rate_request(
             RatingMethodRequestedIndicator=None,
             TaxInformationIndicator=None,
             PromotionalDiscountInformation=None,
-            DeliveryTimeInformation=None,
+            DeliveryTimeInformation=TimeInTransitRequestType(
+                PackageBillType="02" if payload.parcel.is_document else "03"
+            ),
         ),
     )
     return Serializable(
