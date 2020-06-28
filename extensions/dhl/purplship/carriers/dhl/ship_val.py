@@ -22,7 +22,7 @@ from pydhl.ship_val_global_req_6_2 import (
 from pydhl.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError, ErrorCode
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
     ShipmentRequest,
@@ -83,7 +83,7 @@ def shipment_request(
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
-        raise RequiredFieldError("parcel.weight")
+        raise FieldError({"parcel.weight": ErrorCode.required})
 
     is_international = payload.shipper.country_code == payload.recipient.country_code
     options = Options(payload.options)

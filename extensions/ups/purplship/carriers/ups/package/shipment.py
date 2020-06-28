@@ -35,7 +35,7 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Options, Package, PaymentType
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError, ErrorCode
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
 from purplship.carriers.ups.units import (
     ShippingPackagingType,
@@ -85,7 +85,7 @@ def shipment_request(
     if (("freight" in service) or ("ground" in service)) and (
         package.weight.value is None
     ):
-        raise RequiredFieldError("parcel.weight")
+        raise FieldError({"parcel.weight": ErrorCode.required})
 
     charges: Dict[str, Payment] = {
         "01": payload.payment,

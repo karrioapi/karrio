@@ -36,7 +36,7 @@ from pypurolator.shipping_service_2_1_3 import (
 from purplship.core.models import ShipmentRequest
 from purplship.core.units import PrinterType, Options, Package, Phone
 from purplship.core.utils.serializable import Serializable
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError, ErrorCode
 from purplship.core.utils.helpers import concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings, standard_request_serializer
@@ -63,7 +63,7 @@ def create_shipping_request(
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
-        raise RequiredFieldError("parcel.weight")
+        raise FieldError({"parcel.weight": ErrorCode.required})
 
     service = Product[payload.service].value
     is_international = payload.shipper.country_code != payload.recipient.country_code

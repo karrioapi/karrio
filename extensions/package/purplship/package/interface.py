@@ -22,7 +22,7 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
-def abort(error: Exception, gateway: Gateway):
+def abort(error, gateway: Gateway):
     return (
         None,
         [
@@ -31,6 +31,7 @@ def abort(error: Exception, gateway: Gateway):
                 carrier_name=gateway.settings.carrier_name,
                 carrier_id=gateway.settings.carrier_id,
                 message=f"{error}",
+                details=error.details if hasattr(error, 'details') else None
             )
         ],
     )

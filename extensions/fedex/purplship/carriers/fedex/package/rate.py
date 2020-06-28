@@ -21,7 +21,7 @@ from purplship.core.utils import export, concat_str, Serializable, format_date, 
 from purplship.core.utils.soap import create_envelope
 from purplship.core.units import Package, Options
 from purplship.core.utils.xml import Element
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError, ErrorCode
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.carriers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.carriers.fedex.error import parse_error_response
@@ -95,7 +95,7 @@ def rate_request(
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
-        raise RequiredFieldError("parcel.weight")
+        raise FieldError({"parcel.weight": ErrorCode.required})
 
     is_international = payload.shipper.country_code != payload.recipient.country_code
     service = next(
