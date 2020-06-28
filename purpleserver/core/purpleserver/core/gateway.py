@@ -12,7 +12,7 @@ from purplship.core.utils import exec_async, to_dict
 from purpleserver.core import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
-    CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
+    CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment, RateDetails,
     RateResponse, TrackingResponse, TrackingRequest, Message, RateDetails, ErrorResponse
 )
 
@@ -145,11 +145,11 @@ class Rates:
         messages = sum((m for _, m in results), [])
 
         return RateResponse(
-            shipment=ShipmentRate(**{
-                **payload,
-                'rates': [
-                    {**{**to_dict(r), 'id': f'prx_{uuid.uuid4().hex}'}} for r in rates
-                ]
-            }) if len(rates) > 0 else None,
+            rates=[
+                RateDetails(**{
+                    'id': f'prx_{uuid.uuid4().hex}',
+                    **{**to_dict(r)}
+                }) for r in rates
+            ],
             messages=messages
         )
