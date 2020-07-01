@@ -6,6 +6,7 @@ import functools
 from typing import Callable, TypeVar, Union
 from purplship.package.gateway import Gateway
 from purplship.core.utils import Serializable, Deserializable, jsonify
+from purplship.core.errors import PurplShipDetailedError
 from purplship.core.models import (
     RateRequest,
     ShipmentRequest,
@@ -22,15 +23,16 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
-def abort(error: Exception, gateway: Gateway):
+def abort(error: PurplShipDetailedError, gateway: Gateway):
     return (
         None,
         [
             Message(
-                code="PURPLSHIP_INTERNAL_ERROR",
+                code=error.code if hasattr(error, 'code') else PurplShipDetailedError.code,
                 carrier_name=gateway.settings.carrier_name,
                 carrier_id=gateway.settings.carrier_id,
                 message=f"{error}",
+                details=error.details if hasattr(error, 'details') else None
             )
         ],
     )

@@ -23,7 +23,7 @@ from purplship.core.utils import export, concat_str, Serializable, format_date, 
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, build
 from purplship.core.units import Package
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.carriers.ups.units import (
     RatingServiceCode,
     RatingPackagingType,
@@ -133,7 +133,7 @@ def rate_request(
     if (("freight" in service) or ("ground" in service)) and (
         package.weight.value is None
     ):
-        raise RequiredFieldError("parcel.weight")
+        raise FieldError({"parcel.weight": FieldErrorCode.required})
 
     request = UPSRateRequest(
         Request=RequestType(

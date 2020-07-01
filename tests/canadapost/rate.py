@@ -100,8 +100,14 @@ ProcessingError = [
         {
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
-            "code": "PURPLSHIP_INTERNAL_ERROR",
-            "message": "<parcel.weight> must be specified (required)",
+            "code": "PURPLSHIP_FIELD_ERROR",
+            "message": "Invalid request payload",
+            "details": {
+                "parcel.weight": {
+                    "code": "required",
+                    "message": "This field is required"
+                }
+            },
         }
     ],
 ]
