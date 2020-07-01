@@ -149,7 +149,7 @@ ParsedRateResponse = [
             "currency": "CAD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
-            "estimated_delivery": "2018-06-26",
+            "transit_days": 5,
             "extra_charges": [
                 {"amount": 12.7, 'currency': 'CAD', "name": "FUEL SURCHARGE"}
             ],
@@ -163,7 +163,7 @@ ParsedRateResponse = [
             "currency": "CAD",
             "discount": 0.0,
             "duties_and_taxes": 0.0,
-            "estimated_delivery": "2018-06-26",
+            "transit_days": 5,
             "extra_charges": [],
             "service": "dhl_express_easy_doc",
             "total_charge": 213.47,

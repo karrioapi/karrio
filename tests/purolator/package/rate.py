@@ -100,7 +100,7 @@ PARSED_RATE_RESPONSE = [
             "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 5.15,
-            "estimated_delivery": "2009-04-17",
+            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -122,7 +122,7 @@ PARSED_RATE_RESPONSE = [
             "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 4.77,
-            "estimated_delivery": "2009-04-17",
+            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -144,7 +144,7 @@ PARSED_RATE_RESPONSE = [
             "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 4.3,
-            "estimated_delivery": "2009-04-17",
+            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -166,7 +166,7 @@ PARSED_RATE_RESPONSE = [
             "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 3.44,
-            "estimated_delivery": "2009-04-22",
+            "transit_days": 4,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},
@@ -188,7 +188,7 @@ PARSED_RATE_RESPONSE = [
             "carrier_id": "purolator_courier",
             "currency": "CAD",
             "duties_and_taxes": 6.47,
-            "estimated_delivery": "2009-04-22",
+            "transit_days": 4,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "PST/QST"},
                 {"amount": 0.0, "currency": "CAD", "name": "HST"},

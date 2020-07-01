@@ -5,7 +5,7 @@ from purplship.core.utils import (
     export,
     Serializable,
     Element,
-    format_datetime,
+    format_date,
     format_time,
 )
 from purplship.core.models import (
@@ -46,7 +46,7 @@ def _extract_tracking(
         events=list(
             map(
                 lambda e: TrackingEvent(
-                    date=format_datetime(e.Date),
+                    date=format_date(e.Date),
                     time=format_time(e.Time),
                     signatory=e.Signatory,
                     code=e.ServiceEvent.EventCode,

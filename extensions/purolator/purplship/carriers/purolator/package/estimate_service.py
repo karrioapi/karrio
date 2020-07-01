@@ -87,7 +87,7 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
         service=service,
         currency=currency,
         base_charge=decimal(estimate.BasePrice),
-        estimated_delivery=format_date(estimate.ExpectedDeliveryDate),
+        transit_days=estimate.EstimatedTransitDays,
         total_charge=decimal(estimate.TotalPrice),
         duties_and_taxes=decimal(sum(c.amount for c in duties_and_taxes)),
         extra_charges=(duties_and_taxes + surcharges + option_charges),

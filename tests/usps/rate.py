@@ -1,6 +1,6 @@
 import re
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
@@ -281,7 +281,7 @@ PARSED_INTL_RATE_RESPONSE = [
             "carrier_name": "usps",
             "carrier_id": "usps",
             "currency": "USD",
-            "estimated_delivery": "2016-03-30",
+            "transit_days": 2,
             "extra_charges": [
                 {
                     "amount": 0.0,
@@ -391,7 +391,7 @@ INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="username">
 
 INTL_RATE_REQUEST = {"API": "IntlRateV2", "XML": INTL_RATE_REQUEST_STR}
 
-RATE_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
+RATE_RESPONSE = f"""<?xml version="1.0" encoding="UTF-8"?>
 <RateV4Response>
     <Package ID="1ST">
         <ZipOrigination>44106</ZipOrigination>
@@ -498,7 +498,7 @@ RATE_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
         <Postage CLASSID="1">
             <MailService>Priority Mail 2-Day&lt;sup&gt;™&lt;/sup&gt;</MailService>
             <Rate>20.70</Rate>
-            <CommitmentDate>2016-03-28</CommitmentDate>
+            <CommitmentDate>{(datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")}</CommitmentDate>
             <CommitmentName>2-Day</CommitmentName>
             <SpecialServices>
                 <SpecialService>
@@ -619,7 +619,7 @@ RATE_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 </RateV4Response>
 """
 
-INTL_RATE_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
+INTL_RATE_RESPONSE = f"""<?xml version="1.0" encoding="UTF-8"?>
 <IntlRateV2Response>
     <Package ID="1ST">
         <Prohibitions>Coins; bank notes; currency notes (paper money); securities of any kind payable to bearer; traveler's checks; platinum, gold, and silver (except for jewelry items meeting the requirement in "Restrictions" below); precious stones (except when contained in jewelry items meeting the requirement in "Restrictions" below); and other valuable articles are prohibited. Fruit cartons (used or new). Goods bearing the name "Anzac." Goods produced wholly or partly in prisons or by convict labor. Most food, plant, and animal products, including the use of products such as straw and other plant material as packing materials. Perishable infectious biological substances. Radioactive materials. Registered philatelic articles with fictitious addresses. Seditious literature. Silencers for firearms. Used bedding.</Prohibitions>
@@ -695,7 +695,7 @@ INTL_RATE_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
             <SvcDescription>Priority Mail Express International&lt;sup&gt;™&lt;/sup&gt;</SvcDescription>
             <MaxDimensions>Max. length 36", max. length plus girth 97"</MaxDimensions>
             <MaxWeight>66</MaxWeight>
-            <GuaranteeAvailability>03/30/2016</GuaranteeAvailability>
+            <GuaranteeAvailability>{(datetime.now() + timedelta(days=3)).strftime("%m/%d/%Y")}</GuaranteeAvailability>
         </Service>
         <Service ID="2">
             <Pounds>15</Pounds>

@@ -19,7 +19,10 @@ class Serializable(Generic[T]):
 
     def serialize(self) -> Any:
         serialized_value = self._serializer(self.value)
-        logger.debug(serialized_value)
+        logger.info(
+            'serialized request::'
+            f'{serialized_value}'
+        )
         return serialized_value
 
 
@@ -29,5 +32,8 @@ class Deserializable(Generic[T]):
     _deserializer: Callable[[T], Any] = _identity
 
     def deserialize(self) -> Any:
-        logger.debug(self.value)
+        logger.info(
+            'deserialized response::'
+            f'{self.value}'
+        )
         return self._deserializer(self.value)
