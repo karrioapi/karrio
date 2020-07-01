@@ -74,7 +74,6 @@ Table of content
     - [Packaging Types](#packaging-types)
     - [Package Presets](#package-presets)
     - [Services](#Services)
-    - [Create a dependencies file requirements.txt with the content below](#create-a-dependencies-file-requirementstxt-with-the-content-below)
 
 
 ### Installation
@@ -88,11 +87,11 @@ This instruction will get you started with `purplship.package` and the support f
 -f https://git.io/purplship
 
 # core packages
-purplship==2020.6.1
-purplship.package==2020.6.1
+purplship==2020.7.0
+purplship.package==2020.7.0
 
 # carriers
-purplship.canadapost==2020.6.1
+purplship.canadapost==2020.7.0
 ```
 
 <details>
@@ -101,10 +100,10 @@ purplship.canadapost==2020.6.1
 You can add additional carriers you desire to work with
 
 ```text
-purplship.dhl==2020.6.1
-purplship.fedex==2020.6.1
-purplship.purolator==2020.6.1
-purplship.ups==2020.6.1
+purplship.dhl==2020.7.0
+purplship.fedex==2020.7.0
+purplship.purolator==2020.7.0
+purplship.ups==2020.7.0
 ```
 
 </details>
@@ -652,7 +651,7 @@ rates = request.from_(carrier).parse()
     | `base_charge` | `float` |
     | `total_charge` | `float` |
     | `duties_and_taxes` | `float` |
-    | `estimated_delivery` | `str` |
+    | `transit_days` | `int` |
     | `extra_charges` | List[[ChargeDetails](#ChargeDetails)] |
     | `id` | `str` |
 
