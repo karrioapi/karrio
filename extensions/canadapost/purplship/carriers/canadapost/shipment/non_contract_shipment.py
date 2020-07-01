@@ -13,7 +13,7 @@ from purplship.core.models import (
 )
 from purplship.core.units import Currency, WeightUnit, DimensionUnit, Options, Package
 from purplship.core.utils import export, concat_str, Serializable, Element
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError, FieldErrorCode
 from pycanadapost.ncshipment import (
     NonContractShipmentType,
     NonContractShipmentInfoType,
@@ -72,7 +72,7 @@ def non_contract_shipment_request(payload: ShipmentRequest, settings: Settings) 
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
-        raise RequiredFieldError("parcel.weight")
+        raise FieldError({"parcel.weight": FieldErrorCode.required})
 
     service = ServiceType[payload.service].value
     options = Options(payload.options)

@@ -18,7 +18,7 @@ from typing import List, Tuple, cast
 from purplship.core.utils import Serializable, export, Element, format_date, decimal
 from purplship.carriers.canadapost.utils import Settings
 from purplship.core.units import Country, Currency, Package
-from purplship.core.errors import OriginNotServicedError, RequiredFieldError
+from purplship.core.errors import OriginNotServicedError, FieldError, FieldErrorCode
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.carriers.canadapost.error import parse_error_response
 from purplship.carriers.canadapost.units import OptionCode, ServiceType, PackagePresets
@@ -96,7 +96,7 @@ def mailing_scenario_request(
     package = Package(payload.parcel, parcel_preset)
 
     if package.weight.value is None:
-        raise RequiredFieldError("parcel.weight")
+        raise FieldError({"parcel.weight": FieldErrorCode.required})
 
     requested_services = [
         svc for svc in payload.services if svc in ServiceType.__members__
