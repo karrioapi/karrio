@@ -3,7 +3,7 @@ from purplship.core.units import (
     Country, WeightUnit, DimensionUnit, PackagingUnit, PaymentType, Currency, PrinterType
 )
 from rest_framework.serializers import (
-    Serializer, CharField, FloatField,
+    Serializer, CharField, FloatField, IntegerField,
     BooleanField, IntegerField, ListField,
     ChoiceField, DictField, URLField
 )
@@ -330,7 +330,7 @@ class Rate(Serializer):
     This is the gross amount of the rate after adding the additional charges
     """)
     duties_and_taxes = FloatField(required=False, help_text="The monetary amount of the duties and taxes if applied")
-    estimated_delivery = CharField(required=False, help_text="The estimated delivery date")
+    transit_days = IntegerField(required=False, help_text="The estimated delivery transit days")
     extra_charges = ListField(child=Charge(), required=False, help_text="list of the rate's additional charges")
 
 
