@@ -67,7 +67,7 @@ ParsedQuoteResponse = [
             "carrier_name": "freightcom",
             "carrier_id": "freightcom",
             "currency": "CAD",
-            "estimated_delivery": "1",
+            'transit_days': 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
@@ -79,7 +79,7 @@ ParsedQuoteResponse = [
             "carrier_name": "freightcom",
             "carrier_id": "freightcom",
             "currency": "CAD",
-            "estimated_delivery": "1",
+            'transit_days': 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
@@ -91,7 +91,7 @@ ParsedQuoteResponse = [
             "carrier_name": "freightcom",
             "carrier_id": "freightcom",
             "currency": "CAD",
-            "estimated_delivery": "0",
+            'transit_days': 0,
             "extra_charges": [
                 {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
             ],

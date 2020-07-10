@@ -38,7 +38,7 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         service=service,
         base_charge=decimal(quote.baseCharge),
         total_charge=decimal(quote.totalCharge),
-        estimated_delivery=str(quote.transitDays),
+        transit_days=quote.transitDays,
         extra_charges=extra_charges
     )
 

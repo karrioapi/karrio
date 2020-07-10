@@ -41,7 +41,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
             currency=quote.currency,
             base_charge=decimal(quote.baseCharge),
             total_charge=decimal(quote.totalCharge),
-            estimated_delivery=quote.transitDays,
+            transit_days=quote.transitDays,
             extra_charges=[
                 ChargeDetails(
                     name="Fuel Surcharge",
