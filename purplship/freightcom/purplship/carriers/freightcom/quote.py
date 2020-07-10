@@ -7,7 +7,7 @@ from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.core.units import Package, Options
-from purplship.carriers.freightcom.utils import Settings, standard_request_serializer
+from purplship.carriers.freightcom.utils import Settings, standard_request_serializer, ceil
 from purplship.carriers.freightcom.units import Service, FreightPackagingType, FreightClass, Option
 from purplship.carriers.freightcom.error import parse_error_response
 
@@ -76,9 +76,6 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
         Option[s]: True for s in payload.options.keys() if s in Option.__members__
     }
 
-    def to_int(value):
-        return int(value) if value is not None else None
-
     request = Freightcom(
         username=settings.username,
         password=settings.password,
@@ -143,10 +140,10 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
             Packages=PackagesType(
                 Package=[
                     PackageType(
-                        length=to_int(package.length.value),
-                        width=to_int(package.width.value),
-                        height=to_int(package.height.value),
-                        weight=to_int(package.weight.value),
+                        length=ceil(package.length.value),
+                        width=ceil(package.width.value),
+                        height=ceil(package.height.value),
+                        weight=ceil(package.weight.value),
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,

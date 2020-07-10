@@ -13,11 +13,20 @@ class FreightPackagingType(Flag):
     freightcom_pails = "Pails"
     freightcom_reels = "Reels"
 
+    freightcom_envelope = "Envelope"
+    freightcom_courier = "Courier"
+    freightcom_pak = "Pak"
+    freightcom_package = "Package"
+
     """ Unified Packaging type mapping """
+    envelope = freightcom_envelope
+    pak = freightcom_pak
+    tube = freightcom_pipes_tubes
     pallet = freightcom_pallet
     small_box = freightcom_boxes
     medium_box = freightcom_boxes
     large_box = freightcom_boxes
+    your_packaging = freightcom_package
 
 
 class PaymentType(Flag):  # TODO:: retrieve the complete list of payment types

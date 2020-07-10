@@ -2,18 +2,28 @@ from enum import Enum, Flag
 
 
 class PackagingType(Flag):
+    eshipper_pallet = "Pallet"
+    eshipper_drum = "Drum"
+    eshipper_boxes = "Boxes"
+    eshipper_rolls = "Rolls"
+    eshipper_pipes_tubes = "Pipes/Tubes"
+    eshipper_bales = "Bales"
+    eshipper_bags = "Bags"
+    eshipper_cylinder = "Cylinder"
+    eshipper_pails = "Pails"
+    eshipper_reels = "Reels"
+
     eshipper_envelope = "Envelope"
     eshipper_courier_pak = "Courier Pak"
     eshipper_package = "Package"
-    eshipper_pallet = "Pallet"
 
     """ Unified Packaging type mapping """
     envelope = eshipper_envelope
     pak = eshipper_courier_pak
-    tube = eshipper_package
+    tube = eshipper_pipes_tubes
     pallet = eshipper_pallet
-    small_box = eshipper_package
-    medium_box = eshipper_package
+    small_box = eshipper_boxes
+    medium_box = eshipper_boxes
     your_packaging = eshipper_package
 
 

@@ -9,7 +9,7 @@ from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import ShipmentRequest, ShipmentDetails, RateDetails, Message, ChargeDetails, Address
 from purplship.core.units import Package, Options
-from purplship.carriers.freightcom.utils import Settings, standard_request_serializer
+from purplship.carriers.freightcom.utils import Settings, standard_request_serializer, ceil
 from purplship.carriers.freightcom.units import Service, FreightPackagingType, FreightClass, Option, PaymentType
 from purplship.carriers.freightcom.error import parse_error_response
 
@@ -99,9 +99,6 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         PaymentType.third_party: payload.customs.duty.contact if payload.customs is not None else None
     }.get(PaymentType[payload.payment.paid_by]) if payload.payment else None
 
-    def to_int(value):
-        return int(value) if value is not None else None
-
     request = Freightcom(
         username=settings.username,
         password=settings.password,
@@ -177,10 +174,10 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             Packages=PackagesType(
                 Package=[
                     PackageType(
-                        length=to_int(package.length.value),
-                        width=to_int(package.width.value),
-                        height=to_int(package.height.value),
-                        weight=to_int(package.weight.value),
+                        length=ceil(package.length.value),
+                        width=ceil(package.width.value),
+                        height=ceil(package.height.value),
+                        weight=ceil(package.weight.value),
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,

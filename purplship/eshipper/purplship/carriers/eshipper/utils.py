@@ -1,3 +1,5 @@
+import math
+from typing import Optional
 from purplship.core import Settings as BaseSettings
 from purplship.core.utils import Element, export
 
@@ -23,3 +25,9 @@ class Settings(BaseSettings):
 
 def standard_request_serializer(element: Element) -> str:
     return export(element, namespacedef_='xmlns="http://www.eshipper.net/XMLSchema"')
+
+
+def ceil(value: Optional[float]) -> Optional[int]:
+    if value is None:
+        return None
+    return math.ceil(value)

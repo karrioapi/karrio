@@ -7,7 +7,7 @@ from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.core.units import Package, Options
-from purplship.carriers.eshipper.utils import Settings, standard_request_serializer
+from purplship.carriers.eshipper.utils import Settings, standard_request_serializer, ceil
 from purplship.carriers.eshipper.units import Service, PackagingType, FreightClass, Option
 from purplship.carriers.eshipper.error import parse_error_response
 
@@ -141,10 +141,10 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
             Packages=PackagesType(
                 Package=[
                     PackageType(
-                        length=package.length.value,
-                        width=package.width.value,
-                        height=package.height.value,
-                        weight=package.weight.value,
+                        length=ceil(package.length.value),
+                        width=ceil(package.width.value),
+                        height=ceil(package.height.value),
+                        weight=ceil(package.weight.value),
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,
