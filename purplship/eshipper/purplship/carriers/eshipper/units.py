@@ -161,6 +161,9 @@ class Service(Enum):
     eshipper_global_mail_business_standard = "3506"
     eshipper_global_mail_parcel_direct_priority = "3507"
     eshipper_global_mail_parcel_direct_standard = "3508"
+    eshipper_ground = "4500"
+    eshipper_select_parcel = "4504"
+    eshipper_express_parcel = "4507"
 
 
 class Option(Flag):
