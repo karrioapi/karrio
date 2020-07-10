@@ -41,7 +41,7 @@ def request(decoder: Callable = decode_bytes, **args) -> str:
 
     make a http request (wrapper around Request method from built in urllib)
     """
-    logger.debug(f'sending request {jsonify(args)}')
+    logger.debug(f'sending request')
     try:
         req = Request(**args)
         with urlopen(req) as f:
