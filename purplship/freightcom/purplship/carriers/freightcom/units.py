@@ -30,7 +30,7 @@ class FreightPackagingType(Flag):
 
 
 class PaymentType(Flag):  # TODO:: retrieve the complete list of payment types
-    check = 'Check'
+    check = "Check"
 
     sender = "Sender"
     recipient = "Recipient"

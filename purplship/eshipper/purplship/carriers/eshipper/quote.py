@@ -1,22 +1,38 @@
 from typing import List, Tuple, cast
 from pyeshipper.quote_request import (
-    EShipper, QuoteRequestType, FromType, ToType, PackagesType, PackageType
+    EShipper,
+    QuoteRequestType,
+    FromType,
+    ToType,
+    PackagesType,
+    PackageType,
 )
 from pyeshipper.quote_reply import QuoteType, SurchargeType
 from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.core.units import Package, Options
-from purplship.carriers.eshipper.utils import Settings, standard_request_serializer, ceil
-from purplship.carriers.eshipper.units import Service, PackagingType, FreightClass, Option
+from purplship.carriers.eshipper.utils import (
+    Settings,
+    standard_request_serializer,
+    ceil,
+)
+from purplship.carriers.eshipper.units import (
+    Service,
+    PackagingType,
+    FreightClass,
+    Option,
+)
 from purplship.carriers.eshipper.error import parse_error_response
 
 
-def parse_quote_reply(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
+def parse_quote_reply(
+    response: Element, settings: Settings
+) -> Tuple[List[RateDetails], List[Message]]:
     estimates = response.xpath(".//*[local-name() = $name]", name="Quote")
     return (
         [_extract_rate(node, settings) for node in estimates],
-        parse_error_response(response, settings)
+        parse_error_response(response, settings),
     )
 
 
@@ -24,20 +40,24 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     quote = QuoteType()
     quote.build(node)
     service = next(
-        (s.name for s in Service if str(quote.serviceId) == s.value),
-        quote.serviceId
+        (s.name for s in Service if str(quote.serviceId) == s.value), quote.serviceId
     )
-    surcharges = [ChargeDetails(
-        name=charge.name,
-        amount=decimal(charge.amount),
-        currency=quote.currency
-    ) for charge in cast(List[SurchargeType], quote.Surcharge)]
+    surcharges = [
+        ChargeDetails(
+            name=charge.name, amount=decimal(charge.amount), currency=quote.currency
+        )
+        for charge in cast(List[SurchargeType], quote.Surcharge)
+    ]
 
-    fuel_surcharge = ChargeDetails(
-        name="Fuel surcharge",
-        amount=decimal(quote.fuelSurcharge),
-        currency=quote.currency
-    ) if quote.fuelSurcharge is not None else None
+    fuel_surcharge = (
+        ChargeDetails(
+            name="Fuel surcharge",
+            amount=decimal(quote.fuelSurcharge),
+            currency=quote.currency,
+        )
+        if quote.fuelSurcharge is not None
+        else None
+    )
 
     return RateDetails(
         carrier_name=settings.carrier_name,
@@ -47,7 +67,7 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         base_charge=decimal(quote.baseCharge),
         total_charge=decimal(quote.totalCharge),
         transit_days=quote.transitDays,
-        extra_charges=[fuel_surcharge] + surcharges
+        extra_charges=[fuel_surcharge] + surcharges,
     )
 
 
@@ -55,23 +75,32 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
     package = Package(payload.parcel)
 
     dimensions = [
-        ("parcel.weight", package.weight.value), ("parcel.height", package.height.value),
-        ("parcel.width", package.width.value), ("parcel.length", package.length.value)
+        ("parcel.weight", package.weight.value),
+        ("parcel.height", package.height.value),
+        ("parcel.width", package.width.value),
+        ("parcel.length", package.length.value),
     ]
-    field_errors = {key: FieldErrorCode.required for key, dim in dimensions if dim is None}
+    field_errors = {
+        key: FieldErrorCode.required for key, dim in dimensions if dim is None
+    }
     if any(field_errors.items()):
         raise FieldError(field_errors)
 
     packaging_type = PackagingType[package.packaging_type or "small_box"].value
-    packaging = "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
+    packaging = (
+        "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
+    )
     options = Options(payload.options)
     service = next(
-        (Service[s].value for s in payload.services if s in Service.__members__),
-        "0"
+        (Service[s].value for s in payload.services if s in Service.__members__), "0"
     )
     freight_class = next(
-        (FreightClass[c].value for c in payload.options.keys() if c in FreightClass.__members__),
-        None
+        (
+            FreightClass[c].value
+            for c in payload.options.keys()
+            if c in FreightClass.__members__
+        ),
+        None,
     )
     special_services = {
         Option[s]: "true" for s in payload.options.keys() if s in Option.__members__
@@ -82,12 +111,20 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
         password=settings.password,
         version="3.0.0",
         QuoteRequest=QuoteRequestType(
-            saturdayPickupRequired=special_services.get(Option.eshipper_saturday_pickup_required),
+            saturdayPickupRequired=special_services.get(
+                Option.eshipper_saturday_pickup_required
+            ),
             homelandSecurity=special_services.get(Option.eshipper_homeland_security),
             pierCharge=None,
-            exhibitionConventionSite=special_services.get(Option.eshipper_exhibition_convention_site),
-            militaryBaseDelivery=special_services.get(Option.eshipper_military_base_delivery),
-            customsIn_bondFreight=special_services.get(Option.eshipper_customs_in_bond_freight),
+            exhibitionConventionSite=special_services.get(
+                Option.eshipper_exhibition_convention_site
+            ),
+            militaryBaseDelivery=special_services.get(
+                Option.eshipper_military_base_delivery
+            ),
+            customsIn_bondFreight=special_services.get(
+                Option.eshipper_customs_in_bond_freight
+            ),
             limitedAccess=special_services.get(Option.eshipper_limited_access),
             excessLength=special_services.get(Option.eshipper_excess_length),
             tailgatePickup=special_services.get(Option.eshipper_tailgate_pickup),
@@ -96,12 +133,16 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
             notifyRecipient=special_services.get(Option.eshipper_notify_recipient),
             singleShipment=special_services.get(Option.eshipper_single_shipment),
             tailgateDelivery=special_services.get(Option.eshipper_tailgate_delivery),
-            residentialDelivery=special_services.get(Option.eshipper_residential_delivery),
+            residentialDelivery=special_services.get(
+                Option.eshipper_residential_delivery
+            ),
             insuranceType=options.insurance is not None,
             scheduledShipDate=None,
             insideDelivery=special_services.get(Option.eshipper_inside_delivery),
             isSaturdayService=special_services.get(Option.eshipper_is_saturday_service),
-            dangerousGoodsType=special_services.get(Option.eshipper_dangerous_goods_type),
+            dangerousGoodsType=special_services.get(
+                Option.eshipper_dangerous_goods_type
+            ),
             serviceId=service,
             stackable=special_services.get(Option.eshipper_stackable),
             From=FromType(
@@ -118,7 +159,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
                 city=payload.shipper.city,
                 state=payload.shipper.state_code,
                 zip=payload.shipper.postal_code,
-                country=payload.shipper.country_code
+                country=payload.shipper.country_code,
             ),
             To=ToType(
                 id=payload.recipient.id,
@@ -135,7 +176,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
                 city=payload.recipient.city,
                 state=payload.recipient.state_code,
                 zip=payload.recipient.postal_code,
-                country=payload.recipient.country_code
+                country=payload.recipient.country_code,
             ),
             COD=None,
             Packages=PackagesType(
@@ -153,9 +194,9 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
                         description=payload.parcel.description,
                     )
                 ],
-                type_=packaging
+                type_=packaging,
             ),
-        )
+        ),
     )
 
     return Serializable(request, standard_request_serializer)

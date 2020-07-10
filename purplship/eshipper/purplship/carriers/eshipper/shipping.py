@@ -1,24 +1,63 @@
 from typing import List, Tuple, cast
 from pyeshipper.shipping_request import (
-    EShipper, ShippingRequestType, FromType, ToType, PackagesType, PackageType,
-    PaymentType as RequestPaymentType, CODType, CODReturnAddressType, ContactType,
-    ReferenceType, CustomsInvoiceType, ItemType, BillToType,
+    EShipper,
+    ShippingRequestType,
+    FromType,
+    ToType,
+    PackagesType,
+    PackageType,
+    PaymentType as RequestPaymentType,
+    CODType,
+    CODReturnAddressType,
+    ContactType,
+    ReferenceType,
+    CustomsInvoiceType,
+    ItemType,
+    BillToType,
 )
-from pyeshipper.shipping_reply import ShippingReplyType, QuoteType, PackageType as ReplyPackageType, SurchargeType
+from pyeshipper.shipping_reply import (
+    ShippingReplyType,
+    QuoteType,
+    PackageType as ReplyPackageType,
+    SurchargeType,
+)
 from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
-from purplship.core.models import ShipmentRequest, ShipmentDetails, RateDetails, Message, ChargeDetails, Address
+from purplship.core.models import (
+    ShipmentRequest,
+    ShipmentDetails,
+    RateDetails,
+    Message,
+    ChargeDetails,
+    Address,
+)
 from purplship.core.units import Package, Options
-from purplship.carriers.eshipper.utils import Settings, standard_request_serializer, ceil
-from purplship.carriers.eshipper.units import Service, PackagingType, FreightClass, Option, PaymentType
+from purplship.carriers.eshipper.utils import (
+    Settings,
+    standard_request_serializer,
+    ceil,
+)
+from purplship.carriers.eshipper.units import (
+    Service,
+    PackagingType,
+    FreightClass,
+    Option,
+    PaymentType,
+)
 from purplship.carriers.eshipper.error import parse_error_response
 
 
-def parse_shipping_reply(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
-    shipping_node = next(iter(response.xpath(".//*[local-name() = $name]", name="ShippingReply")), None)
+def parse_shipping_reply(
+    response: Element, settings: Settings
+) -> Tuple[ShipmentDetails, List[Message]]:
+    shipping_node = next(
+        iter(response.xpath(".//*[local-name() = $name]", name="ShippingReply")), None
+    )
     return (
-        _extract_shipment(shipping_node, settings) if shipping_node is not None else None,
-        parse_error_response(response, settings)
+        _extract_shipment(shipping_node, settings)
+        if shipping_node is not None
+        else None,
+        parse_error_response(response, settings),
     )
 
 
@@ -29,20 +68,24 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     package: ReplyPackageType = next(iter(shipping.Package), None)
     tracking_number = package.trackingNumber if package is not None else None
     service = next(
-        (s.name for s in Service if str(quote.serviceId) == s.value),
-        quote.serviceId
+        (s.name for s in Service if str(quote.serviceId) == s.value), quote.serviceId
     )
-    surcharges = [ChargeDetails(
-        name=charge.name,
-        amount=decimal(charge.amount),
-        currency=quote.currency
-    ) for charge in cast(List[SurchargeType], quote.Surcharge)]
+    surcharges = [
+        ChargeDetails(
+            name=charge.name, amount=decimal(charge.amount), currency=quote.currency
+        )
+        for charge in cast(List[SurchargeType], quote.Surcharge)
+    ]
 
-    fuel_surcharge = ChargeDetails(
-        name="Fuel surcharge",
-        amount=decimal(quote.fuelSurcharge),
-        currency=quote.currency
-    ) if quote.fuelSurcharge is not None else None
+    fuel_surcharge = (
+        ChargeDetails(
+            name="Fuel surcharge",
+            amount=decimal(quote.fuelSurcharge),
+            currency=quote.currency,
+        )
+        if quote.fuelSurcharge is not None
+        else None
+    )
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -57,24 +100,34 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
             base_charge=decimal(quote.baseCharge),
             total_charge=decimal(quote.totalCharge),
             transit_days=quote.transitDays,
-            extra_charges=[fuel_surcharge] + surcharges
-        ) if quote is not None else None
+            extra_charges=[fuel_surcharge] + surcharges,
+        )
+        if quote is not None
+        else None,
     )
 
 
-def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializable[EShipper]:
+def shipping_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[EShipper]:
     package = Package(payload.parcel)
 
     dimensions = [
-        ("parcel.weight", package.weight.value), ("parcel.height", package.height.value),
-        ("parcel.width", package.width.value), ("parcel.length", package.length.value)
+        ("parcel.weight", package.weight.value),
+        ("parcel.height", package.height.value),
+        ("parcel.width", package.width.value),
+        ("parcel.length", package.length.value),
     ]
-    field_errors = {key: FieldErrorCode.required for key, dim in dimensions if dim is None}
+    field_errors = {
+        key: FieldErrorCode.required for key, dim in dimensions if dim is None
+    }
     if any(field_errors.items()):
         raise FieldError(field_errors)
 
     packaging_type = PackagingType[package.packaging_type or "small_box"].value
-    packaging = "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
+    packaging = (
+        "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
+    )
     options = Options(payload.options)
     service = Service[payload.service].value
     freight_class = (
@@ -89,13 +142,14 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         PaymentType[payload.payment.paid_by].value if payload.payment else None
     )
     item = next(
-        iter(payload.customs.commodities if payload.customs is not None else []),
-        None
+        iter(payload.customs.commodities if payload.customs is not None else []), None
     )
     payer: Address = {
         PaymentType.sender: payload.shipper,
         PaymentType.recipient: payload.recipient,
-        PaymentType.third_party: payload.payment.contact if payload.payment is not None else None
+        PaymentType.third_party: payload.payment.contact
+        if payload.payment is not None
+        else None,
     }.get(PaymentType[payload.payment.paid_by]) if payload.payment else None
 
     request = EShipper(
@@ -103,12 +157,20 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         password=settings.password,
         version="3.0.0",
         ShippingRequest=ShippingRequestType(
-            saturdayPickupRequired=special_services.get(Option.eshipper_saturday_pickup_required),
+            saturdayPickupRequired=special_services.get(
+                Option.eshipper_saturday_pickup_required
+            ),
             homelandSecurity=special_services.get(Option.eshipper_homeland_security),
             pierCharge=None,
-            exhibitionConventionSite=special_services.get(Option.eshipper_exhibition_convention_site),
-            militaryBaseDelivery=special_services.get(Option.eshipper_military_base_delivery),
-            customsIn_bondFreight=special_services.get(Option.eshipper_customs_in_bond_freight),
+            exhibitionConventionSite=special_services.get(
+                Option.eshipper_exhibition_convention_site
+            ),
+            militaryBaseDelivery=special_services.get(
+                Option.eshipper_military_base_delivery
+            ),
+            customsIn_bondFreight=special_services.get(
+                Option.eshipper_customs_in_bond_freight
+            ),
             limitedAccess=special_services.get(Option.eshipper_limited_access),
             excessLength=special_services.get(Option.eshipper_excess_length),
             tailgatePickup=special_services.get(Option.eshipper_tailgate_pickup),
@@ -117,12 +179,16 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             notifyRecipient=special_services.get(Option.eshipper_notify_recipient),
             singleShipment=special_services.get(Option.eshipper_single_shipment),
             tailgateDelivery=special_services.get(Option.eshipper_tailgate_delivery),
-            residentialDelivery=special_services.get(Option.eshipper_residential_delivery),
+            residentialDelivery=special_services.get(
+                Option.eshipper_residential_delivery
+            ),
             insuranceType=options.insurance is not None,
             scheduledShipDate=None,
             insideDelivery=special_services.get(Option.eshipper_inside_delivery),
             isSaturdayService=special_services.get(Option.eshipper_is_saturday_service),
-            dangerousGoodsType=special_services.get(Option.eshipper_dangerous_goods_type),
+            dangerousGoodsType=special_services.get(
+                Option.eshipper_dangerous_goods_type
+            ),
             serviceId=service,
             stackable=special_services.get(Option.eshipper_stackable),
             From=FromType(
@@ -139,7 +205,7 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 city=payload.shipper.city,
                 state=payload.shipper.state_code,
                 zip=payload.shipper.postal_code,
-                country=payload.shipper.country_code
+                country=payload.shipper.country_code,
             ),
             To=ToType(
                 id=payload.recipient.id,
@@ -156,7 +222,7 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 city=payload.recipient.city,
                 state=payload.recipient.state_code,
                 zip=payload.recipient.postal_code,
-                country=payload.recipient.country_code
+                country=payload.recipient.country_code,
             ),
             COD=CODType(
                 paymentType=PaymentType.recipient.value,
@@ -167,9 +233,11 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     codCity=payload.recipient.city,
                     codStateCode=payload.recipient.state_code,
                     codZip=payload.recipient.postal_code,
-                    codCountry=payload.recipient.country_code
-                )
-            ) if options.cash_on_delivery is not None else None,
+                    codCountry=payload.recipient.country_code,
+                ),
+            )
+            if options.cash_on_delivery is not None
+            else None,
             Packages=PackagesType(
                 Package=[
                     PackageType(
@@ -185,17 +253,14 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         description=payload.parcel.description,
                     )
                 ],
-                type_=packaging
+                type_=packaging,
             ),
-            Payment=RequestPaymentType(
-                type_=payment_type
-            ) if payload.payment is not None else None,
-            Reference=[
-                ReferenceType(
-                    name="",
-                    code=payload.reference
-                )
-            ] if payload.reference != "" else None,
+            Payment=RequestPaymentType(type_=payment_type)
+            if payload.payment is not None
+            else None,
+            Reference=[ReferenceType(name="", code=payload.reference)]
+            if payload.reference != ""
+            else None,
             CustomsInvoice=CustomsInvoiceType(
                 BillTo=BillToType(
                     company=payer.company_name,
@@ -206,19 +271,18 @@ def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     zip=payer.postal_code,
                     country=payer.country_code,
                 ),
-                Contact=ContactType(
-                    name=payer.person_name,
-                    phone=payer.phone_number
-                ),
+                Contact=ContactType(name=payer.person_name, phone=payer.phone_number),
                 Item=ItemType(
                     code=item.sku,
                     description=item.description,
                     originCountry=item.origin_country,
                     quantity=item.quantity,
-                    unitPrice=item.value_amount
-                )
-            ) if payload.customs is not None and payer is not None else None
-        )
+                    unitPrice=item.value_amount,
+                ),
+            )
+            if payload.customs is not None and payer is not None
+            else None,
+        ),
     )
 
     return Serializable(request, standard_request_serializer)

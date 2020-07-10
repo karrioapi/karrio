@@ -7,12 +7,13 @@ from purplship.carriers.freightcom.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:
-    carrier_errors = response.xpath(".//*[local-name() = $name]", name="CarrierErrorMessage")
-    errors = response.xpath(".//*[local-name() = $name]", name="Error")
-    return (
-        [_extract_error(node, settings) for node in errors] +
-        [_extract_carrier_error(node, settings) for node in carrier_errors]
+    carrier_errors = response.xpath(
+        ".//*[local-name() = $name]", name="CarrierErrorMessage"
     )
+    errors = response.xpath(".//*[local-name() = $name]", name="Error")
+    return [_extract_error(node, settings) for node in errors] + [
+        _extract_carrier_error(node, settings) for node in carrier_errors
+    ]
 
 
 def _extract_carrier_error(error_node: Element, settings: Settings) -> Message:

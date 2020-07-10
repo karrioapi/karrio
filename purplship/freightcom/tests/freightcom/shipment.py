@@ -79,7 +79,7 @@ ParsedShipmentResponse = [
             "carrier_id": "freightcom",
             "carrier_name": "freightcom",
             "currency": "CAD",
-            'transit_days': 0,
+            "transit_days": 0,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
                 {"amount": 1.08, "currency": "CAD", "name": "Other"},
