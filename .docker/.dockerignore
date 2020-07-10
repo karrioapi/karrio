@@ -2,5 +2,7 @@
 .cache
 __pycache__
 *.pyc
+
 db.sqlite3
 debug.log
+docker-compose.yml
