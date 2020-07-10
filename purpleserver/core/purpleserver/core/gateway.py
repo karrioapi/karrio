@@ -141,18 +141,20 @@ class Rates:
                 )]]
 
         results = exec_async(process, carrier_settings_list)
-        rates = sum((r for r, _ in results if r is not None), [])
+        flattened_rates = sum((r for r, _ in results if r is not None), [])
         messages = sum((m for _, m in results), [])
 
-        if not any(rates) and any(messages):
+        if not any(flattened_rates) and any(messages):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
+        rates: List[RateDetails] = [
+            RateDetails(**{
+                'id': f'prx_{uuid.uuid4().hex}',
+                **{**to_dict(r)}
+            }) for r in flattened_rates
+        ]
+
         return RateResponse(
-            rates=[
-                RateDetails(**{
-                    'id': f'prx_{uuid.uuid4().hex}',
-                    **{**to_dict(r)}
-                }) for r in rates
-            ],
+            rates=sorted(rates, key=lambda rate: rate.total_charge),
             messages=messages
         )
