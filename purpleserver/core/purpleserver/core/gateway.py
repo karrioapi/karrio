@@ -12,7 +12,7 @@ from purplship.core.utils import exec_async, to_dict
 from purpleserver.carriers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
-    CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment, RateDetails,
+    CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
     RateResponse, TrackingResponse, TrackingRequest, Message, RateDetails, ErrorResponse
 )
 
@@ -70,8 +70,8 @@ class Shipments:
 
         if selected_rate is None:
             raise NotFound(
-                f'Invalid "selected_rate_id": {payload.get("selected_rate_id")}'
-                f'Please select from {", ".join([r.get("id") for r in payload.get("rates")])}'
+                f'Invalid selected_rate_id "{payload.get("selected_rate_id")}" \n '
+                f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
             )
 
         carrier_settings: CarrierSettings = Carriers.retrieve(carrier_id=selected_rate.carrier_id)
@@ -99,7 +99,7 @@ class Shipments:
                 **payload,
                 **to_dict(shipment),
                 "service": shipment_rate.service,
-                "selected_rate_id": shipment_rate,
+                "selected_rate_id": shipment_rate_id,
                 "selected_rate": {**to_dict(shipment_rate), 'id': shipment_rate_id},
                 "tracking_url": tracking_url
             }) if shipment is not None else None,
