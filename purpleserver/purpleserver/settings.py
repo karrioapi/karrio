@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import importlib
 import distutils.util
+from pathlib import Path
 from django.urls import reverse_lazy
 from django.templatetags.static import static
 from django.utils.functional import lazy
@@ -31,6 +32,8 @@ DEBUG = bool(distutils.util.strtobool(os.environ.get('DEBUG_MODE', 'True')))
 
 # custom env
 WORK_DIR = os.environ.get('WORK_DIR', '')
+Path(WORK_DIR).mkdir(parents=True, exist_ok=True)
+
 USE_HTTPS = bool(distutils.util.strtobool(os.environ.get('USE_HTTPS', 'False')))
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 CORS_ORIGIN_ALLOW_ALL = True
@@ -108,10 +111,13 @@ WSGI_APPLICATION = 'purpleserver.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+DB_PATH_NAME = os.path.join(WORK_DIR, 'db.sqlite3')
+DB_ENGINE = os.getenv('DATABASE_ENGINE', 'sqlite3')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.{}'.format(os.getenv('DATABASE_ENGINE', 'sqlite3')),
-        'NAME': os.getenv('DATABASE_NAME', 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.{}'.format(DB_ENGINE),
+        'NAME': os.getenv('DATABASE_NAME', DB_PATH_NAME),
         'USER': os.getenv('DATABASE_USERNAME'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': os.getenv('DATABASE_HOST'),
