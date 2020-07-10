@@ -13,7 +13,7 @@ setup(
     license='LGPLv3',
     packages=find_packages("."),
     install_requires=[
-        'purplship-server.core>=2020.6.3',
+        'purplship-server.core>=2020.7.0',
     ],
     dependency_links=[],
     classifiers=[
