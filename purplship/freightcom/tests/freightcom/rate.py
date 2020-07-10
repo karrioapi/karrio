@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError
 from purplship.package import Rating
 from tests.freightcom.fixture import gateway
 
@@ -18,7 +18,7 @@ class TestFreightcomRating(unittest.TestCase):
         self.assertEqual(request.serialize(), RateRequestXML)
 
     def test_create_rate_request_with_package_preset_missing_weight(self):
-        with self.assertRaises(RequiredFieldError):
+        with self.assertRaises(FieldError):
             gateway.mapper.create_rate_request(
                 RateRequest(**RateWithPresetMissingDimensionPayload)
             )

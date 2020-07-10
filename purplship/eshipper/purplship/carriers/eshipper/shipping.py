@@ -5,7 +5,7 @@ from pyeshipper.shipping_request import (
     ReferenceType, CustomsInvoiceType, ItemType, BillToType,
 )
 from pyeshipper.shipping_reply import ShippingReplyType, QuoteType, PackageType as ReplyPackageType
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import ShipmentRequest, ShipmentDetails, RateDetails, Message, ChargeDetails, Address
 from purplship.core.units import Package, Options
@@ -55,11 +55,14 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
 
 def shipping_request(payload: ShipmentRequest, settings: Settings) -> Serializable[EShipper]:
     package = Package(payload.parcel)
-    dimensions = [("weight", package.weight.value), ("height", package.height.value), ("width", package.width.value), ("length", package.length.value)]
 
-    for key, dim in dimensions:
-        if dim is None:
-            raise RequiredFieldError(key)
+    dimensions = [
+        ("parcel.weight", package.weight.value), ("parcel.height", package.height.value),
+        ("parcel.width", package.width.value), ("parcel.length", package.length.value)
+    ]
+    field_errors = {key: FieldErrorCode.required for key, dim in dimensions if dim is None}
+    if any(field_errors.items()):
+        raise FieldError(field_errors)
 
     packaging_type = PackagingType[package.packaging_type or "small_box"].value
     options = Options(payload.options)
