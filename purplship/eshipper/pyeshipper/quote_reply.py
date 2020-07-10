@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Thu Mar 26 17:40:10 2020 by generateDS.py version 2.35.15.
-# Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sat Jun 27 22:49:19 2020 by generateDS.py version 2.35.24.
+# Python 3.7.7 (default, Mar 10 2020, 15:43:27)  [Clang 10.0.0 (clang-1000.11.45.5)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,10 +13,10 @@
 #   ./vendor/schemas/quote_reply.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-eshipper-extension/.venv/purplship-eshipper-extension/bin/generateDS --no-namespace-defs -o "./pyeshipper/quote_reply.py" ./vendor/schemas/quote_reply.xsd
+#   /Users/daniel/Workspace/Project/purplship-extension/purplship/eshipper/.venv/eshipper/bin/generateDS --no-namespace-defs -o "./pyeshipper/quote_reply.py" ./vendor/schemas/quote_reply.xsd
 #
 # Current working directory (os.getcwd()):
-#   purplship-eshipper-extension
+#   eshipper
 #
 
 from six.moves import zip_longest
@@ -247,7 +247,12 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of float values')
             return values
         def gds_format_decimal(self, input_data, input_name=''):
-            return ('%s' % input_data).rstrip('0')
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
         def gds_parse_decimal(self, input_data, node=None, input_name=''):
             try:
                 decimal_value = decimal_.Decimal(input_data)
@@ -261,7 +266,7 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
-            return '%s' % ' '.join(input_data)
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -847,7 +852,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element):
+    def to_etree(self, element, mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -867,7 +872,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self):
+    def to_etree_simple(self, mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -1053,7 +1058,7 @@ class QuoteReplyType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, Quote=None, CarrierErrorMessage=None, gds_collector_=None, **kwargs_):
+    def __init__(self, Quote=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1064,8 +1069,6 @@ class QuoteReplyType(GeneratedsSuper):
         else:
             self.Quote = Quote
         self.Quote_nsprefix_ = None
-        self.CarrierErrorMessage = CarrierErrorMessage
-        self.CarrierErrorMessage_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -1091,14 +1094,9 @@ class QuoteReplyType(GeneratedsSuper):
         self.Quote.insert(index, value)
     def replace_Quote_at(self, index, value):
         self.Quote[index] = value
-    def get_CarrierErrorMessage(self):
-        return self.CarrierErrorMessage
-    def set_CarrierErrorMessage(self, CarrierErrorMessage):
-        self.CarrierErrorMessage = CarrierErrorMessage
     def hasContent_(self):
         if (
-            self.Quote or
-            self.CarrierErrorMessage is not None
+            self.Quote
         ):
             return True
         else:
@@ -1136,9 +1134,6 @@ class QuoteReplyType(GeneratedsSuper):
         for Quote_ in self.Quote:
             namespaceprefix_ = self.Quote_nsprefix_ + ':' if (UseCapturedNS_ and self.Quote_nsprefix_) else ''
             Quote_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Quote', pretty_print=pretty_print)
-        if self.CarrierErrorMessage is not None:
-            namespaceprefix_ = self.CarrierErrorMessage_nsprefix_ + ':' if (UseCapturedNS_ and self.CarrierErrorMessage_nsprefix_) else ''
-            self.CarrierErrorMessage.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CarrierErrorMessage', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -1158,11 +1153,6 @@ class QuoteReplyType(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Quote.append(obj_)
             obj_.original_tagname_ = 'Quote'
-        elif nodeName_ == 'CarrierErrorMessage':
-            obj_ = CarrierErrorMessageType.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.CarrierErrorMessage = obj_
-            obj_.original_tagname_ = 'CarrierErrorMessage'
 # end class QuoteReplyType
 
 
@@ -1170,7 +1160,7 @@ class QuoteType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, carrierId=None, carrierName=None, serviceId=None, serviceName=None, modeTransport=None, transitDays=None, baseCharge=None, fuelSurcharge=None, totalCharge=None, currency=None, valueOf_=None, gds_collector_=None, **kwargs_):
+    def __init__(self, carrierId=None, carrierName=None, serviceId=None, serviceName=None, modeTransport=None, transitDays=None, baseCharge=None, fuelSurcharge=None, totalCharge=None, currency=None, Surcharge=None, valueOf_=None, mixedclass_=None, content_=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1196,6 +1186,20 @@ class QuoteType(GeneratedsSuper):
         self.totalCharge_nsprefix_ = None
         self.currency = _cast(None, currency)
         self.currency_nsprefix_ = None
+        if Surcharge is None:
+            self.Surcharge = []
+        else:
+            self.Surcharge = Surcharge
+        self.Surcharge_nsprefix_ = None
+        self.valueOf_ = valueOf_
+        if mixedclass_ is None:
+            self.mixedclass_ = MixedContainer
+        else:
+            self.mixedclass_ = mixedclass_
+        if content_ is None:
+            self.content_ = []
+        else:
+            self.content_ = content_
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -1212,6 +1216,16 @@ class QuoteType(GeneratedsSuper):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
+    def get_Surcharge(self):
+        return self.Surcharge
+    def set_Surcharge(self, Surcharge):
+        self.Surcharge = Surcharge
+    def add_Surcharge(self, value):
+        self.Surcharge.append(value)
+    def insert_Surcharge_at(self, index, value):
+        self.Surcharge.insert(index, value)
+    def replace_Surcharge_at(self, index, value):
+        self.Surcharge[index] = value
     def get_carrierId(self):
         return self.carrierId
     def set_carrierId(self, carrierId):
@@ -1256,7 +1270,9 @@ class QuoteType(GeneratedsSuper):
     def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
     def hasContent_(self):
         if (
-            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
+            self.Surcharge or
+            (1 if type(self.valueOf_) in [int,float] else self.valueOf_) or
+            self.content_
         ):
             return True
         else:
@@ -1278,9 +1294,9 @@ class QuoteType(GeneratedsSuper):
         already_processed = set()
         self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='QuoteType')
         if self.hasContent_():
-            outfile.write('>')
-            outfile.write(self.convert_unicode(self.valueOf_))
+            outfile.write('>%s' % (eol_, ))
             self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='QuoteType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
@@ -1316,7 +1332,16 @@ class QuoteType(GeneratedsSuper):
             already_processed.add('currency')
             outfile.write(' currency=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.currency), input_name='currency')), ))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='QuoteType', fromsubclass_=False, pretty_print=True):
-        pass
+        if not fromsubclass_:
+            for item_ in self.content_:
+                item_.export(outfile, level, item_.name, namespaceprefix_, pretty_print=pretty_print)
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for Surcharge_ in self.Surcharge:
+            namespaceprefix_ = self.Surcharge_nsprefix_ + ':' if (UseCapturedNS_ and self.Surcharge_nsprefix_) else ''
+            Surcharge_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Surcharge', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -1325,6 +1350,10 @@ class QuoteType(GeneratedsSuper):
         self.ns_prefix_ = node.prefix
         self.buildAttributes(node, node.attrib, already_processed)
         self.valueOf_ = get_all_text_(node)
+        if node.text is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', node.text)
+            self.content_.append(obj_)
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
@@ -1374,48 +1403,67 @@ class QuoteType(GeneratedsSuper):
             already_processed.add('currency')
             self.currency = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        pass
+        if nodeName_ == 'Surcharge':
+            obj_ = SurchargeType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            obj_ = self.mixedclass_(MixedContainer.CategoryComplex,
+                MixedContainer.TypeNone, 'Surcharge', obj_)
+            self.content_.append(obj_)
+            if hasattr(self, 'add_Surcharge'):
+              self.add_Surcharge(obj_.value)
+            elif hasattr(self, 'set_Surcharge'):
+              self.set_Surcharge(obj_.value)
+        if not fromsubclass_ and child_.tail is not None:
+            obj_ = self.mixedclass_(MixedContainer.CategoryText,
+                MixedContainer.TypeNone, '', child_.tail)
+            self.content_.append(obj_)
 # end class QuoteType
 
 
-class CarrierErrorMessageType(GeneratedsSuper):
+class SurchargeType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, size=None, errorMessage0=None, valueOf_=None, gds_collector_=None, **kwargs_):
+    def __init__(self, id=None, name=None, amount=None, valueOf_=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.size = _cast(int, size)
-        self.size_nsprefix_ = None
-        self.errorMessage0 = _cast(None, errorMessage0)
-        self.errorMessage0_nsprefix_ = None
+        self.id = _cast(None, id)
+        self.id_nsprefix_ = None
+        self.name = _cast(None, name)
+        self.name_nsprefix_ = None
+        self.amount = _cast(float, amount)
+        self.amount_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, CarrierErrorMessageType)
+                CurrentSubclassModule_, SurchargeType)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if CarrierErrorMessageType.subclass:
-            return CarrierErrorMessageType.subclass(*args_, **kwargs_)
+        if SurchargeType.subclass:
+            return SurchargeType.subclass(*args_, **kwargs_)
         else:
-            return CarrierErrorMessageType(*args_, **kwargs_)
+            return SurchargeType(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_size(self):
-        return self.size
-    def set_size(self, size):
-        self.size = size
-    def get_errorMessage0(self):
-        return self.errorMessage0
-    def set_errorMessage0(self, errorMessage0):
-        self.errorMessage0 = errorMessage0
+    def get_id(self):
+        return self.id
+    def set_id(self, id):
+        self.id = id
+    def get_name(self):
+        return self.name
+    def set_name(self, name):
+        self.name = name
+    def get_amount(self):
+        return self.amount
+    def set_amount(self, amount):
+        self.amount = amount
     def get_valueOf_(self): return self.valueOf_
     def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
     def hasContent_(self):
@@ -1425,37 +1473,40 @@ class CarrierErrorMessageType(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CarrierErrorMessageType', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CarrierErrorMessageType')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='SurchargeType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('SurchargeType')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'CarrierErrorMessageType':
+        if self.original_tagname_ is not None and name_ == 'SurchargeType':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CarrierErrorMessageType')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='SurchargeType')
         if self.hasContent_():
             outfile.write('>')
             outfile.write(self.convert_unicode(self.valueOf_))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CarrierErrorMessageType', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='SurchargeType', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CarrierErrorMessageType'):
-        if self.size is not None and 'size' not in already_processed:
-            already_processed.add('size')
-            outfile.write(' size="%s"' % self.gds_format_integer(self.size, input_name='size'))
-        if self.errorMessage0 is not None and 'errorMessage0' not in already_processed:
-            already_processed.add('errorMessage0')
-            outfile.write(' errorMessage0=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.errorMessage0), input_name='errorMessage0')), ))
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CarrierErrorMessageType', fromsubclass_=False, pretty_print=True):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='SurchargeType'):
+        if self.id is not None and 'id' not in already_processed:
+            already_processed.add('id')
+            outfile.write(' id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.id), input_name='id')), ))
+        if self.name is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            outfile.write(' name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.name), input_name='name')), ))
+        if self.amount is not None and 'amount' not in already_processed:
+            already_processed.add('amount')
+            outfile.write(' amount="%s"' % self.gds_format_float(self.amount, input_name='amount'))
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='SurchargeType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1470,17 +1521,22 @@ class CarrierErrorMessageType(GeneratedsSuper):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('size', node)
-        if value is not None and 'size' not in already_processed:
-            already_processed.add('size')
-            self.size = self.gds_parse_integer(value, node, 'size')
-        value = find_attr_value_('errorMessage0', node)
-        if value is not None and 'errorMessage0' not in already_processed:
-            already_processed.add('errorMessage0')
-            self.errorMessage0 = value
+        value = find_attr_value_('id', node)
+        if value is not None and 'id' not in already_processed:
+            already_processed.add('id')
+            self.id = value
+        value = find_attr_value_('name', node)
+        if value is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            self.name = value
+        value = find_attr_value_('amount', node)
+        if value is not None and 'amount' not in already_processed:
+            already_processed.add('amount')
+            value = self.gds_parse_float(value, node, 'amount')
+            self.amount = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class CarrierErrorMessageType
+# end class SurchargeType
 
 
 GDSClassesMapping = {
@@ -1554,7 +1610,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     return rootObj
 
 
-def parseEtree(inFileName, silence=False, print_warnings=True):
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -1566,8 +1623,10 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
-    mapping = {}
-    rootElement = rootObj.to_etree(None, name_=rootTag, mapping_=mapping)
+    if mapping is None:
+        mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
     reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
     if not SaveElementTreeNode:
         doc = None
@@ -1670,8 +1729,8 @@ RenameMappings_ = {
 }
 
 __all__ = [
-    "CarrierErrorMessageType",
     "EShipper",
     "QuoteReplyType",
-    "QuoteType"
+    "QuoteType",
+    "SurchargeType"
 ]

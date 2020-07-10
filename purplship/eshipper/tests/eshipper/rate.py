@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.core.errors import RequiredFieldError
+from purplship.core.errors import FieldError
 from purplship.package import Rating
 from tests.eshipper.fixture import gateway
 
@@ -18,7 +18,7 @@ class TestEShipperRating(unittest.TestCase):
         self.assertEqual(request.serialize(), RateRequestXML)
 
     def test_create_rate_request_with_package_preset_missing_weight(self):
-        with self.assertRaises(RequiredFieldError):
+        with self.assertRaises(FieldError):
             gateway.mapper.create_rate_request(
                 RateRequest(**RateWithPresetMissingDimensionPayload)
             )
@@ -94,7 +94,7 @@ ParsedQuoteResponse = [
             "carrier_name": "eshipper",
             "carrier_id": "eshipper",
             "currency": "CAD",
-            "estimated_delivery": "1",
+            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
@@ -106,7 +106,7 @@ ParsedQuoteResponse = [
             "carrier_name": "eshipper",
             "carrier_id": "eshipper",
             "currency": "CAD",
-            "estimated_delivery": "1",
+            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
@@ -118,7 +118,7 @@ ParsedQuoteResponse = [
             "carrier_name": "eshipper",
             "carrier_id": "eshipper",
             "currency": "CAD",
-            "estimated_delivery": "0",
+            "transit_days": 0,
             "extra_charges": [
                 {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
             ],
@@ -130,9 +130,10 @@ ParsedQuoteResponse = [
             "carrier_name": "eshipper",
             "carrier_id": "eshipper",
             "currency": "CAD",
-            "estimated_delivery": "0",
+            "transit_days": 0,
             "extra_charges": [
-                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
+                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
             "service": "eshipper_fedex_ground",
             "total_charge": 31.82,
@@ -142,7 +143,7 @@ ParsedQuoteResponse = [
             "carrier_name": "eshipper",
             "carrier_id": "eshipper",
             "currency": "CAD",
-            "estimated_delivery": "0",
+            "transit_days": 0,
             "extra_charges": [
                 {"amount": 36.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
@@ -154,7 +155,7 @@ ParsedQuoteResponse = [
             "carrier_name": "eshipper",
             "carrier_id": "eshipper",
             "currency": "CAD",
-            "estimated_delivery": "0",
+            "transit_days": 0,
             "extra_charges": [
                 {"amount": 19.8, "currency": "CAD", "name": "Fuel surcharge"}
             ],
@@ -166,10 +167,10 @@ ParsedQuoteResponse = [
 ]
 
 RateRequestXML = f"""<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
-    <QuoteRequest insuranceType="True" serviceId="0">
+    <QuoteRequest serviceId="0" insuranceType="True">
         <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
-        <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA"/>
-        <Packages>
+        <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" country="CA" zip="V3N4R3"/>
+        <Packages type="Pallet">
             <Package length="6" width="12" height="9" weight="20" type="Pallet" description="desc."/>
         </Packages>
     </QuoteRequest>

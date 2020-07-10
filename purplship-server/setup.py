@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='purplship-server.extension',
-    version='2020.6.1',
+    version='2020.7.0',
     description='Purplship-server extension',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,7 +13,7 @@ setup(
     license='LGPLv3',
     packages=find_packages("."),
     install_requires=[
-        'purplship-server.core>=2020.6.3',
+        'purplship-server.core>=2020.7.0',
     ],
     dependency_links=[],
     classifiers=[

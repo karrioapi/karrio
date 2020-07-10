@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Mar 27 12:07:23 2020 by generateDS.py version 2.35.15.
-# Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sat Jun 27 09:45:58 2020 by generateDS.py version 2.35.24.
+# Python 3.7.7 (default, Mar 10 2020, 15:43:27)  [Clang 10.0.0 (clang-1000.11.45.5)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,10 +13,10 @@
 #   ./vendor/schemas/shipping_reply.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-freightcom-extension/.venv/purplship-freightcom-extension/bin/generateDS --no-namespace-defs -o "./pyfreightcom/shipping_reply.py" ./vendor/schemas/shipping_reply.xsd
+#   /Users/daniel/Workspace/Project/purplship-extension/purplship/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./pyfreightcom/shipping_reply.py" ./vendor/schemas/shipping_reply.xsd
 #
 # Current working directory (os.getcwd()):
-#   purplship-freightcom-extension
+#   freightcom
 #
 
 from six.moves import zip_longest
@@ -247,7 +247,12 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of float values')
             return values
         def gds_format_decimal(self, input_data, input_name=''):
-            return ('%s' % input_data).rstrip('0')
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
         def gds_parse_decimal(self, input_data, node=None, input_name=''):
             try:
                 decimal_value = decimal_.Decimal(input_data)
@@ -261,7 +266,7 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
-            return '%s' % ' '.join(input_data)
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -847,7 +852,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element):
+    def to_etree(self, element, mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -867,7 +872,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self):
+    def to_etree_simple(self, mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -2033,7 +2038,10 @@ class QuoteType(GeneratedsSuper):
         self.totalCharge_nsprefix_ = None
         self.currency = _cast(None, currency)
         self.currency_nsprefix_ = None
-        self.Surcharge = Surcharge
+        if Surcharge is None:
+            self.Surcharge = []
+        else:
+            self.Surcharge = Surcharge
         self.Surcharge_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -2054,6 +2062,12 @@ class QuoteType(GeneratedsSuper):
         return self.Surcharge
     def set_Surcharge(self, Surcharge):
         self.Surcharge = Surcharge
+    def add_Surcharge(self, value):
+        self.Surcharge.append(value)
+    def insert_Surcharge_at(self, index, value):
+        self.Surcharge.insert(index, value)
+    def replace_Surcharge_at(self, index, value):
+        self.Surcharge[index] = value
     def get_carrierId(self):
         return self.carrierId
     def set_carrierId(self, carrierId):
@@ -2096,7 +2110,7 @@ class QuoteType(GeneratedsSuper):
         self.currency = currency
     def hasContent_(self):
         if (
-            self.Surcharge is not None
+            self.Surcharge
         ):
             return True
         else:
@@ -2160,9 +2174,9 @@ class QuoteType(GeneratedsSuper):
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.Surcharge is not None:
+        for Surcharge_ in self.Surcharge:
             namespaceprefix_ = self.Surcharge_nsprefix_ + ':' if (UseCapturedNS_ and self.Surcharge_nsprefix_) else ''
-            self.Surcharge.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Surcharge', pretty_print=pretty_print)
+            Surcharge_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Surcharge', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -2222,7 +2236,7 @@ class QuoteType(GeneratedsSuper):
         if nodeName_ == 'Surcharge':
             obj_ = SurchargeType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Surcharge = obj_
+            self.Surcharge.append(obj_)
             obj_.original_tagname_ = 'Surcharge'
 # end class QuoteType
 
@@ -2600,7 +2614,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     return rootObj
 
 
-def parseEtree(inFileName, silence=False, print_warnings=True):
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -2612,8 +2627,10 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
-    mapping = {}
-    rootElement = rootObj.to_etree(None, name_=rootTag, mapping_=mapping)
+    if mapping is None:
+        mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
     reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
     if not SaveElementTreeNode:
         doc = None

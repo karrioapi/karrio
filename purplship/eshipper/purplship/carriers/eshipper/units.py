@@ -2,18 +2,28 @@ from enum import Enum, Flag
 
 
 class PackagingType(Flag):
+    eshipper_pallet = "Pallet"
+    eshipper_drum = "Drum"
+    eshipper_boxes = "Boxes"
+    eshipper_rolls = "Rolls"
+    eshipper_pipes_tubes = "Pipes/Tubes"
+    eshipper_bales = "Bales"
+    eshipper_bags = "Bags"
+    eshipper_cylinder = "Cylinder"
+    eshipper_pails = "Pails"
+    eshipper_reels = "Reels"
+
     eshipper_envelope = "Envelope"
     eshipper_courier_pak = "Courier Pak"
     eshipper_package = "Package"
-    eshipper_pallet = "Pallet"
 
     """ Unified Packaging type mapping """
     envelope = eshipper_envelope
     pak = eshipper_courier_pak
-    tube = eshipper_package
-    pallet = eshipper_package
-    small_box = eshipper_package
-    medium_box = eshipper_package
+    tube = eshipper_pipes_tubes
+    pallet = eshipper_pallet
+    small_box = eshipper_boxes
+    medium_box = eshipper_boxes
     your_packaging = eshipper_package
 
 
@@ -29,18 +39,18 @@ class PaymentType(Flag):
 
 
 class Service(Enum):
-    eshipper_fedex_priority = "1" 
-    eshipper_fedex_first_overnight = "2" 
-    eshipper_fedex_ground = "3" 
+    eshipper_fedex_priority = "1"
+    eshipper_fedex_first_overnight = "2"
+    eshipper_fedex_ground = "3"
     eshipper_fedex_standard_overnight = "28"
     eshipper_fedex_2nd_day = "29"
     eshipper_fedex_express_saver = "30"
-    eshipper_purolator_air = "4" 
-    eshipper_purolator_air_9_am = "5" 
-    eshipper_purolator_air_10_30 = "6" 
-    eshipper_puroletter = "7" 
-    eshipper_puroletter_9_am = "8" 
-    eshipper_puroletter_10_30 = "9" 
+    eshipper_purolator_air = "4"
+    eshipper_purolator_air_9_am = "5"
+    eshipper_purolator_air_10_30 = "6"
+    eshipper_puroletter = "7"
+    eshipper_puroletter_9_am = "8"
+    eshipper_puroletter_10_30 = "9"
     eshipper_puro_pak = "10"
     eshipper_puro_pak_9_am = "11"
     eshipper_puro_pak_10_30 = "12"
@@ -51,28 +61,28 @@ class Service(Enum):
     eshipper_canada_worldwide_next_flight_out = "15"
     eshipper_canada_worldwide_air_freight = "16"
     eshipper_canada_worldwide_ltl = "17"
-    eshipper_dhl_international_express = "106" 
-    eshipper_ups_express_next_day_air = "600" 
-    eshipper_ups_expedited_second_day_air = "601" 
-    eshipper_ups_worldwide_express = "602" 
-    eshipper_ups_worldwide_expedited = "603" 
-    eshipper_ups_standard_ground = "604" 
-    eshipper_ups_express_early_am_next_day_air_early_am = "605" 
-    eshipper_ups_three_day_select = "606" 
-    eshipper_ups_saver = "607" 
-    eshipper_ups_ground = "608" 
-    eshipper_next_day_saver = "609" 
-    eshipper_worldwide_express_plus = "610" 
-    eshipper_second_day_air_am = "611" 
-    eshipper_canada_post_priority = "500" 
-    eshipper_canada_post_xpress_post = "501" 
-    eshipper_canada_post_expedited = "502" 
-    eshipper_canada_post_regular = "503" 
-    eshipper_canada_post_xpress_post_usa = "504" 
-    eshipper_canada_post_xpress_post_intl = "505" 
-    eshipper_canada_post_air_parcel_intl = "506" 
-    eshipper_canada_post_surface_parcel_intl = "507" 
-    eshipper_canada_post_expedited_parcel_usa = "508" 
+    eshipper_dhl_international_express = "106"
+    eshipper_ups_express_next_day_air = "600"
+    eshipper_ups_expedited_second_day_air = "601"
+    eshipper_ups_worldwide_express = "602"
+    eshipper_ups_worldwide_expedited = "603"
+    eshipper_ups_standard_ground = "604"
+    eshipper_ups_express_early_am_next_day_air_early_am = "605"
+    eshipper_ups_three_day_select = "606"
+    eshipper_ups_saver = "607"
+    eshipper_ups_ground = "608"
+    eshipper_next_day_saver = "609"
+    eshipper_worldwide_express_plus = "610"
+    eshipper_second_day_air_am = "611"
+    eshipper_canada_post_priority = "500"
+    eshipper_canada_post_xpress_post = "501"
+    eshipper_canada_post_expedited = "502"
+    eshipper_canada_post_regular = "503"
+    eshipper_canada_post_xpress_post_usa = "504"
+    eshipper_canada_post_xpress_post_intl = "505"
+    eshipper_canada_post_air_parcel_intl = "506"
+    eshipper_canada_post_surface_parcel_intl = "507"
+    eshipper_canada_post_expedited_parcel_usa = "508"
     eshipper_tst_ltl = "1100"
     eshipper_ltl_chicago_suburban_express = "1500"
     eshipper_ltl_fedex_freight_east = "1501"
@@ -161,6 +171,9 @@ class Service(Enum):
     eshipper_global_mail_business_standard = "3506"
     eshipper_global_mail_parcel_direct_priority = "3507"
     eshipper_global_mail_parcel_direct_standard = "3508"
+    eshipper_ground = "4500"
+    eshipper_select_parcel = "4504"
+    eshipper_express_parcel = "4507"
 
 
 class Option(Flag):

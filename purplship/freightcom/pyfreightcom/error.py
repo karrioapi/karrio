@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Jun 27 09:45:56 2020 by generateDS.py version 2.35.24.
+# Generated Sat Jun 27 09:46:00 2020 by generateDS.py version 2.35.24.
 # Python 3.7.7 (default, Mar 10 2020, 15:43:27)  [Clang 10.0.0 (clang-1000.11.45.5)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './pyfreightcom/quote_reply.py')
+#   ('-o', './pyfreightcom/error.py')
 #
 # Command line arguments:
-#   ./vendor/schemas/quote_reply.xsd
+#   ./vendor/schemas/error.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-extension/purplship/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./pyfreightcom/quote_reply.py" ./vendor/schemas/quote_reply.xsd
+#   /Users/daniel/Workspace/Project/purplship-extension/purplship/freightcom/.venv/freightcom/bin/generateDS --no-namespace-defs -o "./pyfreightcom/error.py" ./vendor/schemas/error.xsd
 #
 # Current working directory (os.getcwd()):
 #   freightcom
@@ -954,7 +954,7 @@ class Freightcom(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, version=None, QuoteReply=None, gds_collector_=None, **kwargs_):
+    def __init__(self, version=None, ErrorReply=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -962,8 +962,8 @@ class Freightcom(GeneratedsSuper):
         self.ns_prefix_ = None
         self.version = _cast(None, version)
         self.version_nsprefix_ = None
-        self.QuoteReply = QuoteReply
-        self.QuoteReply_nsprefix_ = None
+        self.ErrorReply = ErrorReply
+        self.ErrorReply_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -979,17 +979,17 @@ class Freightcom(GeneratedsSuper):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_QuoteReply(self):
-        return self.QuoteReply
-    def set_QuoteReply(self, QuoteReply):
-        self.QuoteReply = QuoteReply
+    def get_ErrorReply(self):
+        return self.ErrorReply
+    def set_ErrorReply(self, ErrorReply):
+        self.ErrorReply = ErrorReply
     def get_version(self):
         return self.version
     def set_version(self, version):
         self.version = version
     def hasContent_(self):
         if (
-            self.QuoteReply is not None
+            self.ErrorReply is not None
         ):
             return True
         else:
@@ -1026,9 +1026,9 @@ class Freightcom(GeneratedsSuper):
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.QuoteReply is not None:
-            namespaceprefix_ = self.QuoteReply_nsprefix_ + ':' if (UseCapturedNS_ and self.QuoteReply_nsprefix_) else ''
-            self.QuoteReply.export(outfile, level, namespaceprefix_, namespacedef_='', name_='QuoteReply', pretty_print=pretty_print)
+        if self.ErrorReply is not None:
+            namespaceprefix_ = self.ErrorReply_nsprefix_ + ':' if (UseCapturedNS_ and self.ErrorReply_nsprefix_) else ''
+            self.ErrorReply.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ErrorReply', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -1046,104 +1046,85 @@ class Freightcom(GeneratedsSuper):
             already_processed.add('version')
             self.version = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'QuoteReply':
-            obj_ = QuoteReplyType.factory(parent_object_=self)
+        if nodeName_ == 'ErrorReply':
+            obj_ = ErrorReplyType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.QuoteReply = obj_
-            obj_.original_tagname_ = 'QuoteReply'
+            self.ErrorReply = obj_
+            obj_.original_tagname_ = 'ErrorReply'
 # end class Freightcom
 
 
-class QuoteReplyType(GeneratedsSuper):
+class ErrorReplyType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, Quote=None, CarrierErrorMessage=None, gds_collector_=None, **kwargs_):
+    def __init__(self, Error=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        if Quote is None:
-            self.Quote = []
-        else:
-            self.Quote = Quote
-        self.Quote_nsprefix_ = None
-        self.CarrierErrorMessage = CarrierErrorMessage
-        self.CarrierErrorMessage_nsprefix_ = None
+        self.Error = Error
+        self.Error_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, QuoteReplyType)
+                CurrentSubclassModule_, ErrorReplyType)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if QuoteReplyType.subclass:
-            return QuoteReplyType.subclass(*args_, **kwargs_)
+        if ErrorReplyType.subclass:
+            return ErrorReplyType.subclass(*args_, **kwargs_)
         else:
-            return QuoteReplyType(*args_, **kwargs_)
+            return ErrorReplyType(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_Quote(self):
-        return self.Quote
-    def set_Quote(self, Quote):
-        self.Quote = Quote
-    def add_Quote(self, value):
-        self.Quote.append(value)
-    def insert_Quote_at(self, index, value):
-        self.Quote.insert(index, value)
-    def replace_Quote_at(self, index, value):
-        self.Quote[index] = value
-    def get_CarrierErrorMessage(self):
-        return self.CarrierErrorMessage
-    def set_CarrierErrorMessage(self, CarrierErrorMessage):
-        self.CarrierErrorMessage = CarrierErrorMessage
+    def get_Error(self):
+        return self.Error
+    def set_Error(self, Error):
+        self.Error = Error
     def hasContent_(self):
         if (
-            self.Quote or
-            self.CarrierErrorMessage is not None
+            self.Error is not None
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='QuoteReplyType', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('QuoteReplyType')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ErrorReplyType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ErrorReplyType')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'QuoteReplyType':
+        if self.original_tagname_ is not None and name_ == 'ErrorReplyType':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='QuoteReplyType')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ErrorReplyType')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='QuoteReplyType', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ErrorReplyType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='QuoteReplyType'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ErrorReplyType'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='QuoteReplyType', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ErrorReplyType', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        for Quote_ in self.Quote:
-            namespaceprefix_ = self.Quote_nsprefix_ + ':' if (UseCapturedNS_ and self.Quote_nsprefix_) else ''
-            Quote_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Quote', pretty_print=pretty_print)
-        if self.CarrierErrorMessage is not None:
-            namespaceprefix_ = self.CarrierErrorMessage_nsprefix_ + ':' if (UseCapturedNS_ and self.CarrierErrorMessage_nsprefix_) else ''
-            self.CarrierErrorMessage.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CarrierErrorMessage', pretty_print=pretty_print)
+        if self.Error is not None:
+            namespaceprefix_ = self.Error_nsprefix_ + ':' if (UseCapturedNS_ and self.Error_nsprefix_) else ''
+            self.Error.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Error', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -1158,310 +1139,46 @@ class QuoteReplyType(GeneratedsSuper):
     def buildAttributes(self, node, attrs, already_processed):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Quote':
-            obj_ = QuoteType.factory(parent_object_=self)
+        if nodeName_ == 'Error':
+            obj_ = ErrorType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Quote.append(obj_)
-            obj_.original_tagname_ = 'Quote'
-        elif nodeName_ == 'CarrierErrorMessage':
-            obj_ = CarrierErrorMessageType.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.CarrierErrorMessage = obj_
-            obj_.original_tagname_ = 'CarrierErrorMessage'
-# end class QuoteReplyType
+            self.Error = obj_
+            obj_.original_tagname_ = 'Error'
+# end class ErrorReplyType
 
 
-class QuoteType(GeneratedsSuper):
+class ErrorType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, carrierId=None, carrierName=None, serviceId=None, serviceName=None, modeTransport=None, transitDays=None, currency=None, baseCharge=None, fuelSurcharge=None, totalCharge=None, cubedWeight=None, Surcharge=None, gds_collector_=None, **kwargs_):
+    def __init__(self, Message=None, valueOf_=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.carrierId = _cast(int, carrierId)
-        self.carrierId_nsprefix_ = None
-        self.carrierName = _cast(None, carrierName)
-        self.carrierName_nsprefix_ = None
-        self.serviceId = _cast(int, serviceId)
-        self.serviceId_nsprefix_ = None
-        self.serviceName = _cast(None, serviceName)
-        self.serviceName_nsprefix_ = None
-        self.modeTransport = _cast(None, modeTransport)
-        self.modeTransport_nsprefix_ = None
-        self.transitDays = _cast(int, transitDays)
-        self.transitDays_nsprefix_ = None
-        self.currency = _cast(None, currency)
-        self.currency_nsprefix_ = None
-        self.baseCharge = _cast(float, baseCharge)
-        self.baseCharge_nsprefix_ = None
-        self.fuelSurcharge = _cast(float, fuelSurcharge)
-        self.fuelSurcharge_nsprefix_ = None
-        self.totalCharge = _cast(float, totalCharge)
-        self.totalCharge_nsprefix_ = None
-        self.cubedWeight = _cast(float, cubedWeight)
-        self.cubedWeight_nsprefix_ = None
-        if Surcharge is None:
-            self.Surcharge = []
-        else:
-            self.Surcharge = Surcharge
-        self.Surcharge_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, QuoteType)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if QuoteType.subclass:
-            return QuoteType.subclass(*args_, **kwargs_)
-        else:
-            return QuoteType(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_Surcharge(self):
-        return self.Surcharge
-    def set_Surcharge(self, Surcharge):
-        self.Surcharge = Surcharge
-    def add_Surcharge(self, value):
-        self.Surcharge.append(value)
-    def insert_Surcharge_at(self, index, value):
-        self.Surcharge.insert(index, value)
-    def replace_Surcharge_at(self, index, value):
-        self.Surcharge[index] = value
-    def get_carrierId(self):
-        return self.carrierId
-    def set_carrierId(self, carrierId):
-        self.carrierId = carrierId
-    def get_carrierName(self):
-        return self.carrierName
-    def set_carrierName(self, carrierName):
-        self.carrierName = carrierName
-    def get_serviceId(self):
-        return self.serviceId
-    def set_serviceId(self, serviceId):
-        self.serviceId = serviceId
-    def get_serviceName(self):
-        return self.serviceName
-    def set_serviceName(self, serviceName):
-        self.serviceName = serviceName
-    def get_modeTransport(self):
-        return self.modeTransport
-    def set_modeTransport(self, modeTransport):
-        self.modeTransport = modeTransport
-    def get_transitDays(self):
-        return self.transitDays
-    def set_transitDays(self, transitDays):
-        self.transitDays = transitDays
-    def get_currency(self):
-        return self.currency
-    def set_currency(self, currency):
-        self.currency = currency
-    def get_baseCharge(self):
-        return self.baseCharge
-    def set_baseCharge(self, baseCharge):
-        self.baseCharge = baseCharge
-    def get_fuelSurcharge(self):
-        return self.fuelSurcharge
-    def set_fuelSurcharge(self, fuelSurcharge):
-        self.fuelSurcharge = fuelSurcharge
-    def get_totalCharge(self):
-        return self.totalCharge
-    def set_totalCharge(self, totalCharge):
-        self.totalCharge = totalCharge
-    def get_cubedWeight(self):
-        return self.cubedWeight
-    def set_cubedWeight(self, cubedWeight):
-        self.cubedWeight = cubedWeight
-    def hasContent_(self):
-        if (
-            self.Surcharge
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='QuoteType', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('QuoteType')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'QuoteType':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='QuoteType')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='QuoteType', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='QuoteType'):
-        if self.carrierId is not None and 'carrierId' not in already_processed:
-            already_processed.add('carrierId')
-            outfile.write(' carrierId="%s"' % self.gds_format_integer(self.carrierId, input_name='carrierId'))
-        if self.carrierName is not None and 'carrierName' not in already_processed:
-            already_processed.add('carrierName')
-            outfile.write(' carrierName=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.carrierName), input_name='carrierName')), ))
-        if self.serviceId is not None and 'serviceId' not in already_processed:
-            already_processed.add('serviceId')
-            outfile.write(' serviceId="%s"' % self.gds_format_integer(self.serviceId, input_name='serviceId'))
-        if self.serviceName is not None and 'serviceName' not in already_processed:
-            already_processed.add('serviceName')
-            outfile.write(' serviceName=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.serviceName), input_name='serviceName')), ))
-        if self.modeTransport is not None and 'modeTransport' not in already_processed:
-            already_processed.add('modeTransport')
-            outfile.write(' modeTransport=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.modeTransport), input_name='modeTransport')), ))
-        if self.transitDays is not None and 'transitDays' not in already_processed:
-            already_processed.add('transitDays')
-            outfile.write(' transitDays="%s"' % self.gds_format_integer(self.transitDays, input_name='transitDays'))
-        if self.currency is not None and 'currency' not in already_processed:
-            already_processed.add('currency')
-            outfile.write(' currency=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.currency), input_name='currency')), ))
-        if self.baseCharge is not None and 'baseCharge' not in already_processed:
-            already_processed.add('baseCharge')
-            outfile.write(' baseCharge="%s"' % self.gds_format_float(self.baseCharge, input_name='baseCharge'))
-        if self.fuelSurcharge is not None and 'fuelSurcharge' not in already_processed:
-            already_processed.add('fuelSurcharge')
-            outfile.write(' fuelSurcharge="%s"' % self.gds_format_float(self.fuelSurcharge, input_name='fuelSurcharge'))
-        if self.totalCharge is not None and 'totalCharge' not in already_processed:
-            already_processed.add('totalCharge')
-            outfile.write(' totalCharge="%s"' % self.gds_format_float(self.totalCharge, input_name='totalCharge'))
-        if self.cubedWeight is not None and 'cubedWeight' not in already_processed:
-            already_processed.add('cubedWeight')
-            outfile.write(' cubedWeight="%s"' % self.gds_format_float(self.cubedWeight, input_name='cubedWeight'))
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='QuoteType', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        for Surcharge_ in self.Surcharge:
-            namespaceprefix_ = self.Surcharge_nsprefix_ + ':' if (UseCapturedNS_ and self.Surcharge_nsprefix_) else ''
-            Surcharge_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Surcharge', pretty_print=pretty_print)
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('carrierId', node)
-        if value is not None and 'carrierId' not in already_processed:
-            already_processed.add('carrierId')
-            self.carrierId = self.gds_parse_integer(value, node, 'carrierId')
-        value = find_attr_value_('carrierName', node)
-        if value is not None and 'carrierName' not in already_processed:
-            already_processed.add('carrierName')
-            self.carrierName = value
-        value = find_attr_value_('serviceId', node)
-        if value is not None and 'serviceId' not in already_processed:
-            already_processed.add('serviceId')
-            self.serviceId = self.gds_parse_integer(value, node, 'serviceId')
-        value = find_attr_value_('serviceName', node)
-        if value is not None and 'serviceName' not in already_processed:
-            already_processed.add('serviceName')
-            self.serviceName = value
-        value = find_attr_value_('modeTransport', node)
-        if value is not None and 'modeTransport' not in already_processed:
-            already_processed.add('modeTransport')
-            self.modeTransport = value
-        value = find_attr_value_('transitDays', node)
-        if value is not None and 'transitDays' not in already_processed:
-            already_processed.add('transitDays')
-            self.transitDays = self.gds_parse_integer(value, node, 'transitDays')
-        value = find_attr_value_('currency', node)
-        if value is not None and 'currency' not in already_processed:
-            already_processed.add('currency')
-            self.currency = value
-        value = find_attr_value_('baseCharge', node)
-        if value is not None and 'baseCharge' not in already_processed:
-            already_processed.add('baseCharge')
-            value = self.gds_parse_float(value, node, 'baseCharge')
-            self.baseCharge = value
-        value = find_attr_value_('fuelSurcharge', node)
-        if value is not None and 'fuelSurcharge' not in already_processed:
-            already_processed.add('fuelSurcharge')
-            value = self.gds_parse_float(value, node, 'fuelSurcharge')
-            self.fuelSurcharge = value
-        value = find_attr_value_('totalCharge', node)
-        if value is not None and 'totalCharge' not in already_processed:
-            already_processed.add('totalCharge')
-            value = self.gds_parse_float(value, node, 'totalCharge')
-            self.totalCharge = value
-        value = find_attr_value_('cubedWeight', node)
-        if value is not None and 'cubedWeight' not in already_processed:
-            already_processed.add('cubedWeight')
-            value = self.gds_parse_float(value, node, 'cubedWeight')
-            self.cubedWeight = value
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Surcharge':
-            obj_ = SurchargeType.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.Surcharge.append(obj_)
-            obj_.original_tagname_ = 'Surcharge'
-# end class QuoteType
-
-
-class SurchargeType(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, id=None, name=None, amount=None, valueOf_=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.id = _cast(None, id)
-        self.id_nsprefix_ = None
-        self.name = _cast(None, name)
-        self.name_nsprefix_ = None
-        self.amount = _cast(float, amount)
-        self.amount_nsprefix_ = None
+        self.Message = _cast(None, Message)
+        self.Message_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, SurchargeType)
+                CurrentSubclassModule_, ErrorType)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if SurchargeType.subclass:
-            return SurchargeType.subclass(*args_, **kwargs_)
+        if ErrorType.subclass:
+            return ErrorType.subclass(*args_, **kwargs_)
         else:
-            return SurchargeType(*args_, **kwargs_)
+            return ErrorType(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_id(self):
-        return self.id
-    def set_id(self, id):
-        self.id = id
-    def get_name(self):
-        return self.name
-    def set_name(self, name):
-        self.name = name
-    def get_amount(self):
-        return self.amount
-    def set_amount(self, amount):
-        self.amount = amount
+    def get_Message(self):
+        return self.Message
+    def set_Message(self, Message):
+        self.Message = Message
     def get_valueOf_(self): return self.valueOf_
     def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
     def hasContent_(self):
@@ -1471,40 +1188,34 @@ class SurchargeType(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='SurchargeType', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('SurchargeType')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ErrorType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ErrorType')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'SurchargeType':
+        if self.original_tagname_ is not None and name_ == 'ErrorType':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='SurchargeType')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ErrorType')
         if self.hasContent_():
             outfile.write('>')
             outfile.write(self.convert_unicode(self.valueOf_))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='SurchargeType', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ErrorType', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='SurchargeType'):
-        if self.id is not None and 'id' not in already_processed:
-            already_processed.add('id')
-            outfile.write(' id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.id), input_name='id')), ))
-        if self.name is not None and 'name' not in already_processed:
-            already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.name), input_name='name')), ))
-        if self.amount is not None and 'amount' not in already_processed:
-            already_processed.add('amount')
-            outfile.write(' amount="%s"' % self.gds_format_float(self.amount, input_name='amount'))
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='SurchargeType', fromsubclass_=False, pretty_print=True):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ErrorType'):
+        if self.Message is not None and 'Message' not in already_processed:
+            already_processed.add('Message')
+            outfile.write(' Message=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.Message), input_name='Message')), ))
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ErrorType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
@@ -1519,127 +1230,13 @@ class SurchargeType(GeneratedsSuper):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('id', node)
-        if value is not None and 'id' not in already_processed:
-            already_processed.add('id')
-            self.id = value
-        value = find_attr_value_('name', node)
-        if value is not None and 'name' not in already_processed:
-            already_processed.add('name')
-            self.name = value
-        value = find_attr_value_('amount', node)
-        if value is not None and 'amount' not in already_processed:
-            already_processed.add('amount')
-            value = self.gds_parse_float(value, node, 'amount')
-            self.amount = value
+        value = find_attr_value_('Message', node)
+        if value is not None and 'Message' not in already_processed:
+            already_processed.add('Message')
+            self.Message = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
-# end class SurchargeType
-
-
-class CarrierErrorMessageType(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, size=None, errorMessage0=None, valueOf_=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.size = _cast(int, size)
-        self.size_nsprefix_ = None
-        self.errorMessage0 = _cast(None, errorMessage0)
-        self.errorMessage0_nsprefix_ = None
-        self.valueOf_ = valueOf_
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, CarrierErrorMessageType)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if CarrierErrorMessageType.subclass:
-            return CarrierErrorMessageType.subclass(*args_, **kwargs_)
-        else:
-            return CarrierErrorMessageType(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_size(self):
-        return self.size
-    def set_size(self, size):
-        self.size = size
-    def get_errorMessage0(self):
-        return self.errorMessage0
-    def set_errorMessage0(self, errorMessage0):
-        self.errorMessage0 = errorMessage0
-    def get_valueOf_(self): return self.valueOf_
-    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
-    def hasContent_(self):
-        if (
-            (1 if type(self.valueOf_) in [int,float] else self.valueOf_)
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CarrierErrorMessageType', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CarrierErrorMessageType')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'CarrierErrorMessageType':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CarrierErrorMessageType')
-        if self.hasContent_():
-            outfile.write('>')
-            outfile.write(self.convert_unicode(self.valueOf_))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CarrierErrorMessageType', pretty_print=pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CarrierErrorMessageType'):
-        if self.size is not None and 'size' not in already_processed:
-            already_processed.add('size')
-            outfile.write(' size="%s"' % self.gds_format_integer(self.size, input_name='size'))
-        if self.errorMessage0 is not None and 'errorMessage0' not in already_processed:
-            already_processed.add('errorMessage0')
-            outfile.write(' errorMessage0=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.errorMessage0), input_name='errorMessage0')), ))
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CarrierErrorMessageType', fromsubclass_=False, pretty_print=True):
-        pass
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        self.valueOf_ = get_all_text_(node)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('size', node)
-        if value is not None and 'size' not in already_processed:
-            already_processed.add('size')
-            self.size = self.gds_parse_integer(value, node, 'size')
-        value = find_attr_value_('errorMessage0', node)
-        if value is not None and 'errorMessage0' not in already_processed:
-            already_processed.add('errorMessage0')
-            self.errorMessage0 = value
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        pass
-# end class CarrierErrorMessageType
+# end class ErrorType
 
 
 GDSClassesMapping = {
@@ -1801,8 +1398,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from quote_reply import *\n\n')
-        sys.stdout.write('import quote_reply as model_\n\n')
+        sys.stdout.write('#from error import *\n\n')
+        sys.stdout.write('import error as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')
@@ -1832,9 +1429,7 @@ RenameMappings_ = {
 }
 
 __all__ = [
-    "CarrierErrorMessageType",
-    "Freightcom",
-    "QuoteReplyType",
-    "QuoteType",
-    "SurchargeType"
+    "ErrorReplyType",
+    "ErrorType",
+    "Freightcom"
 ]

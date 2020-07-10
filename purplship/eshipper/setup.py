@@ -24,27 +24,21 @@ dev_requirements = [
 ]
 
 setup(
-    name='eshipper.extension',
-    version='2020.6.0',
-    description='eShipper purplship extension',
+    name="eshipper.extension",
+    version="2020.7.0",
+    description="eShipper purplship extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/PurplShip/purplship-eshipper-extension',
-    license='LGPLv3',
+    url="https://github.com/PurplShip/purplship-eshipper-extension",
+    license="LGPLv3",
     packages=find_namespace_packages(exclude=["tests*"]),
-    install_requires=[
-        'six',
-        'purplship>=2020.6.1',
-        'purplship.package>=2020.6.1'
-    ],
-    extras_require={
-        'dev': dev_requirements
-    },
+    install_requires=["six", "purplship>=2020.7.0", "purplship.package>=2020.7.0"],
+    extras_require={"dev": dev_requirements},
     dependency_links=[],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
         "Operating System :: OS Independent",
     ],
-    zip_safe=False
+    zip_safe=False,
 )

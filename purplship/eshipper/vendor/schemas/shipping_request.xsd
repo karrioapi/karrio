@@ -103,13 +103,13 @@
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
-                            <xs:attribute type="xs:float" name="length" use="required"/>
-                            <xs:attribute type="xs:float" name="width" use="required"/>
-                            <xs:attribute type="xs:float" name="height" use="required"/>
-                            <xs:attribute type="xs:float" name="weight" use="required"/>
-                            <xs:attribute type="xs:float" name="weightOz" use="optional"/>
+                            <xs:attribute type="xs:int" name="length" use="required"/>
+                            <xs:attribute type="xs:int" name="width" use="required"/>
+                            <xs:attribute type="xs:int" name="height" use="required"/>
+                            <xs:attribute type="xs:int" name="weight" use="required"/>
+                            <xs:attribute type="xs:int" name="weightOz" use="optional"/>
                             <xs:attribute type="xs:string" name="type" use="optional"/>
-                            <xs:attribute type="xs:byte" name="freightClass" use="optional"/>
+                            <xs:attribute type="xs:string" name="freightClass" use="optional"/>
                             <xs:attribute type="xs:float" name="insuranceAmount" use="optional"/>
                             <xs:attribute type="xs:float" name="codAmount" use="optional"/>
                             <xs:attribute type="xs:string" name="description" use="optional"/>
@@ -190,7 +190,7 @@
                             <xs:attribute type="xs:string" name="code" use="required"/>
                             <xs:attribute type="xs:string" name="description" use="required"/>
                             <xs:attribute type="xs:string" name="originCountry" use="required"/>
-                            <xs:attribute type="xs:byte" name="quantity" use="required"/>
+                            <xs:attribute type="xs:int" name="quantity" use="required"/>
                             <xs:attribute type="xs:float" name="unitPrice" use="required"/>
                             <xs:attribute type="xs:string" name="skuCode"/>
                           </xs:extension>

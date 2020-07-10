@@ -72,7 +72,7 @@
               <xs:element name="Quote">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="Surcharge">
+                    <xs:element name="Surcharge" maxOccurs="unbounded" minOccurs="0">
                       <xs:complexType>
                         <xs:simpleContent>
                           <xs:extension base="xs:string">
