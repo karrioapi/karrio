@@ -25,7 +25,6 @@ create_env() {
 
 init() {
     create_env &&
-    pip install -r "${ROOT:?}/requirements.txt" &&
     install_all
 }
 
@@ -109,7 +108,7 @@ install_purplship_dev() {
 
   $sm | while read module; do
     echo "installing ${module} ..."
-    pip install "${module}" || break
+    pip install "${module}" --upgrade || break
   done
 }
 
@@ -119,7 +118,7 @@ install_extension_dev() {
 
   $sm | while read module; do
     echo "installing ${module} ..."
-    pip install "${module}" || break
+    pip install "${module}" --upgrade || break
   done
 }
 
