@@ -107,7 +107,7 @@ class ErrorResponse:
 @attr.s(auto_attribs=True)
 class RateResponse:
     messages: List[Message] = JList[Message]
-    shipment: ShipmentRate = JStruct[ShipmentRate]
+    rates: List[RateDetails] = JList[RateDetails]
 
 
 @attr.s(auto_attribs=True)

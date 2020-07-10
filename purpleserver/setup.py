@@ -5,6 +5,17 @@ with open("README.md", "r") as fh:
 
 dev_requirements = [
       'wheel',
+
+      'purplship.canadapost',
+      'purplship.dhl',
+      'purplship.fedex',
+      'purplship.package',
+      'purplship.purolator',
+      'purplship.ups',
+
+      'purplship-server.extension',
+      'eshipper.extension',
+      'freightcom.extension',
 ]
 
 proxy_requirements = [
@@ -17,7 +28,7 @@ manager_requirements = [
 
 setup(
       name='purplship-server',
-      version='2020.6.3',
+      version='2020.7.0',
       description='Multi-carrier shipping API',
       long_description=long_description,
       long_description_content_type="text/markdown",

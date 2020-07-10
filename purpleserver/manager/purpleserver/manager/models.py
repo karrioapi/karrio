@@ -1,8 +1,8 @@
 from functools import partial
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from purpleserver.core.models.carrier import Carrier
-from purpleserver.core.models.entity import Entity, OwnedEntity, uuid
+from purpleserver.carriers.models import Carrier
+from purpleserver.core.models import Entity, OwnedEntity, uuid
 from purpleserver.core.serializers import (
     WEIGHT_UNIT, DIMENSION_UNIT, CURRENCIES, PAYMENT_TYPES
 )

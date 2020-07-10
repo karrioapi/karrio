@@ -1,5 +1,6 @@
 import logging
 from django.utils.translation import gettext_lazy as _
+from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import (
@@ -63,6 +64,13 @@ def custom_exception_handler(exc, context):
                 message=exc.detail if isinstance(exc.detail, str) else None,
                 details=to_dict(exc.get_full_details()) if not isinstance(exc.detail, str) else None
             ))
+        )
+
+    elif isinstance(exc, Exception):
+        message, *_ = list(exc.args)
+        response = Response(
+            dict(error=to_dict(Error(message=message))),
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
     return response

@@ -103,8 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# PurplShip stuff:
 *.DS_Store
-
 .idea/
-
-staticfiles
+staticfiles/

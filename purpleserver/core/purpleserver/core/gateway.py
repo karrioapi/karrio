@@ -9,7 +9,7 @@ from rest_framework.exceptions import NotFound
 from purplship import package as api
 from purplship.core.utils import exec_async, to_dict
 
-from purpleserver.core import models
+from purpleserver.carriers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
@@ -70,8 +70,8 @@ class Shipments:
 
         if selected_rate is None:
             raise NotFound(
-                f'Invalid "selected_rate_id": {payload.get("selected_rate_id")}'
-                f'Please select from {", ".join([r.id for r in payload.get("rates")])}'
+                f'Invalid selected_rate_id "{payload.get("selected_rate_id")}" \n '
+                f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
             )
 
         carrier_settings: CarrierSettings = Carriers.retrieve(carrier_id=selected_rate.carrier_id)
@@ -99,7 +99,7 @@ class Shipments:
                 **payload,
                 **to_dict(shipment),
                 "service": shipment_rate.service,
-                "selected_rate_id": shipment_rate,
+                "selected_rate_id": shipment_rate_id,
                 "selected_rate": {**to_dict(shipment_rate), 'id': shipment_rate_id},
                 "tracking_url": tracking_url
             }) if shipment is not None else None,
@@ -141,15 +141,20 @@ class Rates:
                 )]]
 
         results = exec_async(process, carrier_settings_list)
-        rates = sum((r for r, _ in results if r is not None), [])
+        flattened_rates = sum((r for r, _ in results if r is not None), [])
         messages = sum((m for _, m in results), [])
 
+        if not any(flattened_rates) and any(messages):
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        rates: List[RateDetails] = [
+            RateDetails(**{
+                'id': f'prx_{uuid.uuid4().hex}',
+                **{**to_dict(r)}
+            }) for r in flattened_rates
+        ]
+
         return RateResponse(
-            shipment=ShipmentRate(**{
-                **payload,
-                'rates': [
-                    {**{**to_dict(r), 'id': f'prx_{uuid.uuid4().hex}'}} for r in rates
-                ]
-            }) if len(rates) > 0 else None,
+            rates=sorted(rates, key=lambda rate: rate.total_charge),
             messages=messages
         )
