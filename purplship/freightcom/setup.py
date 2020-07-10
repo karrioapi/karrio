@@ -34,8 +34,8 @@ setup(
     packages=find_namespace_packages(exclude=["tests*"]),
     install_requires=[
         'six',
-        'purplship>=2020.6.1',
-        'purplship.package>=2020.6.1'
+        'purplship>=2020.7.0',
+        'purplship.package>=2020.7.0'
     ],
     extras_require={
         'dev': dev_requirements
