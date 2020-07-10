@@ -106,7 +106,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
             stackable=special_services.get(Option.eshipper_stackable),
             From=FromType(
                 id=payload.shipper.id,
-                company=payload.shipper.company_name,
+                company=payload.shipper.company_name or " ",
                 instructions=None,
                 email=payload.shipper.email,
                 attention=payload.shipper.person_name,
@@ -122,7 +122,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
             ),
             To=ToType(
                 id=payload.recipient.id,
-                company=payload.recipient.company_name,
+                company=payload.recipient.company_name or " ",
                 notifyRecipient=None,
                 instructions=None,
                 email=payload.recipient.email,
