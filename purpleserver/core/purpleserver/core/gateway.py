@@ -130,8 +130,13 @@ class Shipments:
 
 class Rates:
     @staticmethod
-    def fetch(payload: dict, carrier_settings_list: List[CarrierSettings]) -> RateResponse:
-        request = api.Rating.fetch(ShipmentRate(**payload))
+    def fetch(payload: dict) -> RateResponse:
+        request = api.Rating.fetch(ShipmentRate(**to_dict(payload)))
+
+        carrier_settings_list: List[CarrierSettings] = Carriers.list(carrier_ids=payload.get('carrier_ids', []))
+
+        if len(carrier_settings_list) == 0:
+            raise NotFound("No configured carriers specified")
 
         def process(carrier_settings: CarrierSettings):
             try:
