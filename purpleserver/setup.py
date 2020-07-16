@@ -28,7 +28,7 @@ manager_requirements = [
 
 setup(
       name='purplship-server',
-      version='2020.7.0',
+      version='2020.7.1',
       description='Multi-carrier shipping API',
       long_description=long_description,
       long_description_content_type="text/markdown",
