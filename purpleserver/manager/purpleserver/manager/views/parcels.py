@@ -11,11 +11,11 @@ from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
+from purpleserver.core.utils import update_model
 from purpleserver.core.serializers import (
     ErrorResponse as ErrorResponseSerializer, Parcel as ParcelSerializer
 )
 from purpleserver.manager.router import router
-from purpleserver.manager.models import Parcel
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +44,7 @@ class ParcelList(ParcelAPIView):
     @swagger_auto_schema(
         tags=['Parcels'],
         operation_summary="Create a Parcel",
+        request_body=ParcelSerializer(),
         responses={200: ParcelSerializer(), 400: ErrorResponseSerializer()}
     )
     def post(self, request: Request):
@@ -52,8 +53,8 @@ class ParcelList(ParcelAPIView):
         """
         serializer = ParcelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        Parcel.objects.create(**serializer.validated_data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        parcel = request.user.parcel_set.create(**serializer.validated_data)
+        return Response(ParcelSerializer(parcel).data, status=status.HTTP_201_CREATED)
 
 
 class ParcelDetail(ParcelAPIView):
@@ -83,11 +84,9 @@ class ParcelDetail(ParcelAPIView):
         """
         parcel = request.user.parcel_set.get(pk=pk)
         serializer = ParcelSerializer(parcel, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        for key, val in serializer.validated_data:
-            setattr(parcel, key, val)
-        parcel.save()
-        return Response(serializer.data)
+        updated_parcel = update_model(parcel, serializer)
+        updated_parcel.save()
+        return Response(ParcelSerializer(updated_parcel).data)
 
 
 router.urls.append(path('parcels', ParcelList.as_view()))
