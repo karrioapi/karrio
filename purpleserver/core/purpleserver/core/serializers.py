@@ -3,7 +3,7 @@ from purplship.core.units import (
     Country, WeightUnit, DimensionUnit, PackagingUnit, PaymentType, Currency, PrinterType
 )
 from rest_framework.serializers import (
-    Serializer, CharField, FloatField, IntegerField,
+    Serializer, CharField, FloatField,
     BooleanField, IntegerField, ListField,
     ChoiceField, DictField, URLField
 )
