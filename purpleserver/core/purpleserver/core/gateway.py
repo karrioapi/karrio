@@ -76,7 +76,7 @@ class Shipments:
 
         carrier_settings: CarrierSettings = Carriers.retrieve(carrier_id=selected_rate.carrier_id)
 
-        request = ShipmentRequest(**{**payload, 'service': selected_rate.service})
+        request = ShipmentRequest(**{**to_dict(payload), 'service': selected_rate.service})
         gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
         shipment, messages = api.Shipment.create(request).with_(gateway).parse()
 
