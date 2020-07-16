@@ -30,10 +30,10 @@ You can track a shipment by specifying the carrier and the shipment tracking num
 @swagger_auto_schema(
     methods=['get'],
     tags=['Tracking'],
-    responses={200: TrackingResponse(), 400: ErrorResponseSerializer()},
-    operation_description=DESCRIPTIONS,
-    operation_id="proxy_track_shipment",
+    operation_id="proxy_fetch_tracking",
     operation_summary="Track a Shipment",
+    operation_description=DESCRIPTIONS,
+    responses={200: TrackingResponse(), 400: ErrorResponseSerializer()},
     query_serializer=TestFilters
 )
 @api_view(['GET'])
