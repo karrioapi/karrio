@@ -89,11 +89,17 @@ class Shipments:
             if(to_dict(selected_rate) == to_dict({**to_dict(shipment_rate), 'id': selected_rate.id})) else
             f'prx_{uuid.uuid4().hex}'
         )
-        is_test = "?test" if carrier_settings.test else ""
-        tracking_url = (
-            resolve_tracking_url(shipment.tracking_number, shipment) + is_test
-            if resolve_tracking_url is not None else None
-        )
+        tracking_url = None
+
+        try:
+            is_test = "?test" if carrier_settings.test else ""
+            tracking_url = (
+                resolve_tracking_url(shipment.tracking_number, shipment) + is_test
+                if resolve_tracking_url is not None else None
+            )
+        except Exception as e:
+            logger.warning(f"Failed to generate tracking url: {e}")
+
         return ShipmentResponse(
             shipment=Shipment(**{
                 **payload,
