@@ -160,7 +160,7 @@ class Rates:
 
         rates: List[RateDetails] = [
             RateDetails(**{
-                'id': f'prx_{uuid.uuid4().hex}',
+                'id': f'rat_{uuid.uuid4().hex}',
                 **{**to_dict(r)}
             }) for r in flattened_rates
         ]
