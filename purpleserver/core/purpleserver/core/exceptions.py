@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import (
-    ValidationError as DRFValidationError, APIException
+    ValidationError as DRFValidationError, APIException,
 )
+from django.core.exceptions import ObjectDoesNotExist
 
 from purplship.core.utils import to_dict
 from purplship.core.errors import ValidationError as PurplShipValidationError
@@ -42,10 +43,15 @@ def custom_exception_handler(exc, context):
 
     response = exception_handler(exc, context)
     code = None
+    status_code = None
 
     if isinstance(exc, DRFValidationError) or isinstance(exc, PurplShipValidationError):
         response.status_code = status.HTTP_400_BAD_REQUEST
         code = 'validation'
+
+    if isinstance(exc, ObjectDoesNotExist):
+        status_code = status.HTTP_404_NOT_FOUND
+        code = 'not_found'
 
     if isinstance(exc, PurplShipApiException):
         response.status_code = exc.status_code
@@ -69,8 +75,8 @@ def custom_exception_handler(exc, context):
     elif isinstance(exc, Exception):
         message, *_ = list(exc.args)
         response = Response(
-            dict(error=to_dict(Error(message=message))),
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            dict(error=to_dict(Error(code=code, message=message))),
+            status=status_code or status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
     return response
