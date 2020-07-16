@@ -11,11 +11,11 @@ from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
+from purpleserver.core.utils import update_model
 from purpleserver.core.serializers import (
     ErrorResponse as ErrorResponseSerializer, Address as AddressSerializer
 )
 from purpleserver.manager.router import router
-from purpleserver.manager.models import Address
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +44,7 @@ class AddressList(AddressAPIView):
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_summary="Create an Address",
+        request_body=AddressSerializer(),
         responses={200: AddressSerializer(), 400: ErrorResponseSerializer()}
     )
     def post(self, request: Request):
@@ -52,8 +53,8 @@ class AddressList(AddressAPIView):
         """
         serializer = AddressSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        Address.objects.create(**serializer.validated_data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        address = request.user.address_set.create(**serializer.validated_data)
+        return Response(AddressSerializer(address).data, status=status.HTTP_201_CREATED)
 
 
 class AddressDetail(AddressAPIView):
@@ -75,6 +76,7 @@ class AddressDetail(AddressAPIView):
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_summary="Update an Address",
+        request_body=AddressSerializer(),
         responses={200: AddressSerializer(), 400: ErrorResponseSerializer()}
     )
     def put(self, request: Request, pk: str):
@@ -83,11 +85,9 @@ class AddressDetail(AddressAPIView):
         """
         address = request.user.address_set.get(pk=pk)
         serializer = AddressSerializer(address, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        for key, val in serializer.validated_data:
-            setattr(address, key, val)
-        address.save()
-        return Response(serializer.data)
+        updated_address = update_model(address, serializer)
+        updated_address.save()
+        return Response(AddressSerializer(updated_address).data)
 
 
 router.urls.append(path('addresses', AddressList.as_view()))
