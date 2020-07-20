@@ -1,40 +1,44 @@
 import logging
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework import status
 
 from django.urls import path
-
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.serializers import (
-    Serializer, CharField,
+from purplship.core.utils.helpers import to_dict
 
-    ErrorResponse as ErrorResponseSerializer,
+from purpleserver.core.exceptions import PurplShipApiException
+from purpleserver.core.utils import validate_and_save
+from purpleserver.core.serializers import (
+    ShipmentStatus,
+    ErrorResponse,
+    Shipment,
+    ShipmentData,
     ShipmentResponse,
-    Shipment as ShipmentSerializer,
-    ShipmentPayload,
-    Options,
-    Payment
+    RateResponse,
+    Message,
+    Rate
 )
 from purpleserver.manager.router import router
-from purpleserver.manager.models import Shipment
+from purpleserver.manager.serializers import (
+    ShipmentSerializer,
+    ShipmentPurchaseData,
+    ShipmentValidationData,
+    RateSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
 
-class ShipmentPurchaseRequest(Serializer):
-    selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
-    payment = Payment(required=True, help_text="The payment details")
-
-
 class ShipmentAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
 
 
 class ShipmentList(ShipmentAPIView):
@@ -45,12 +49,12 @@ class ShipmentList(ShipmentAPIView):
         operation_description="""
         Retrieve all shipments.
         """,
-        responses={200: ShipmentSerializer(many=True), 400: ErrorResponseSerializer()}
+        responses={200: Shipment(many=True), 400: ErrorResponse()}
     )
     def get(self, request: Request):
         shipments = request.user.shipment_set.all()
-        serializer = ShipmentSerializer(shipments, many=True)
-        return Response(serializer.data)
+
+        return Response(Shipment(shipments, many=True).data)
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -58,11 +62,15 @@ class ShipmentList(ShipmentAPIView):
         operation_description="""
         Create a new shipment instance.
         """,
-        responses={200: ShipmentResponse(), 400: ErrorResponseSerializer()},
-        request_body=ShipmentPayload()
+        responses={200: Shipment(), 400: ErrorResponse()},
+        request_body=ShipmentData()
     )
     def post(self, request: Request):
-        pass
+        serializer = ShipmentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        shipment = serializer.save(user=request.user)
+
+        return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
 
 class ShipmentDetail(ShipmentAPIView):
@@ -74,12 +82,12 @@ class ShipmentDetail(ShipmentAPIView):
         operation_description="""
         Retrieve a shipment.
         """,
-        responses={200: ShipmentSerializer(), 400: ErrorResponseSerializer()}
+        responses={200: Shipment(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
         address = request.user.shipment_set.get(pk=pk)
-        serializer = ShipmentSerializer(address)
-        return Response(serializer.data)
+
+        return Response(Shipment(address).data)
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -87,11 +95,22 @@ class ShipmentDetail(ShipmentAPIView):
         operation_description="""
         Refresh the list of the shipment rates
         """,
-        responses={200: ShipmentSerializer(), 400: ErrorResponseSerializer()},
-        request_body=ShipmentPayload()
+        responses={200: Shipment(), 400: ErrorResponse()},
+        request_body=ShipmentData(),
     )
-    def put(self, request: Request, pk: str):
-        pass
+    def patch(self, request: Request, pk: str):
+        shipment = request.user.shipment_set.get(pk=pk)
+
+        if shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
+            )
+
+        serializer = ShipmentSerializer(shipment, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(Shipment(shipment).data)
 
 
 class ShipmentRates(ShipmentAPIView):
@@ -103,10 +122,23 @@ class ShipmentRates(ShipmentAPIView):
         operation_description="""
         Refresh the list of the shipment rates
         """,
-        responses={200: ShipmentSerializer(), 400: ErrorResponseSerializer()}
+        responses={200: ShipmentResponse(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
-        pass
+        shipment = request.user.shipment_set.get(pk=pk)
+
+        rate_response: RateResponse = validate_and_save(RateSerializer, ShipmentData(shipment).data)
+        payload: dict = dict(rates=Rate(rate_response.rates, many=True).data)
+
+        serializer = ShipmentSerializer(shipment, data=to_dict(payload), partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        response = dict(
+            shipment=Shipment(shipment).data,
+            messages=Message(rate_response.messages, many=True).data
+        )
+        return Response(ShipmentResponse(response).data)
 
 
 class ShipmentOptions(ShipmentAPIView):
@@ -122,14 +154,36 @@ class ShipmentOptions(ShipmentAPIView):
         - specify the preferred transaction **currency**
         - setup a **cash collected on delivery** option
         
+        ```json
+        {
+            "insurane": {
+                "amount": 120,
+            },
+            "currency": "USD"
+        }
+        ```
         
         And many more, check additional options available in the [reference](#operation/all_references).
         """,
-        responses={200: ShipmentResponse(), 400: ErrorResponseSerializer()},
-        request_body=Options()
+        responses={200: Shipment(), 400: ErrorResponse()},
     )
     def post(self, request: Request, pk: str):
-        pass
+        shipment = request.user.shipment_set.get(pk=pk)
+
+        if shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
+            )
+
+        payload: dict = dict(options={
+            **ShipmentData(shipment).data.get('options'),
+            **request.data
+        })
+
+        serializer = ShipmentSerializer(shipment, data=to_dict(payload), partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(Shipment(shipment).data)
 
 
 class ShipmentPurchase(ShipmentAPIView):
@@ -141,11 +195,30 @@ class ShipmentPurchase(ShipmentAPIView):
         operation_description="""
         Select your preferred rates to buy a shipment label.
         """,
-        responses={200: ShipmentResponse(), 400: ErrorResponseSerializer()},
-        request_body=ShipmentPurchaseRequest()
+        responses={200: ShipmentResponse(), 400: ErrorResponse()},
+        request_body=ShipmentPurchaseData()
     )
     def post(self, request: Request, pk: str):
-        pass
+        shipment = request.user.shipment_set.get(pk=pk)
+
+        if shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
+            )
+
+        payload = {
+            **Shipment(shipment).data,
+            **ShipmentPurchaseData(request.data).data
+        }
+
+        shipment_response: ShipmentResponse = validate_and_save(ShipmentValidationData, data=payload, request=request)
+        validate_and_save(ShipmentSerializer, data=to_dict(shipment_response.shipment), instance=shipment)
+
+        response = dict(
+            shipment=Shipment(shipment).data,
+            messages=Message(shipment_response.messages, many=True).data
+        )
+        return Response(ShipmentResponse(response).data)
 
 
 router.urls.append(path('shipments', ShipmentList.as_view()))
