@@ -22,13 +22,16 @@ class Carrier(Entity):
     def __str__(self):
         return self.carrier_id
 
-    def settings(self):
+    def settings(self) -> 'Carrier':
         for field in [f for f in self._meta.get_fields() if isinstance(f, models.OneToOneRel)]:
             try:
                 return getattr(self, field.get_accessor_name())
             except:
                 pass
         return None
+
+    def carrier_name(self) -> str:
+        return self.settings().CARRIER_NAME
 
 
 class CanadaPostSettings(Carrier):
