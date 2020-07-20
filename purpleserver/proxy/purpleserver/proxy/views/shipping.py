@@ -16,14 +16,12 @@ from purplship.core.utils.helpers import to_dict
 from purpleserver.proxy.router import router
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.serializers import (
-    CharField, ChoiceField, COUNTRIES, ListField,
+    CharField, ChoiceField, COUNTRIES,
 
-    Rate,
-    Payment,
+    ShippingRequest,
     Address as BaseAddress,
     ShipmentResponse,
-    ShipmentRequest,
-    ErrorResponse as ErrorResponseSerializer,
+    ErrorResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -32,12 +30,6 @@ DESCRIPTIONS = """
 Once the shipment rates are retrieved, provide the required info to
 submit the shipment by specifying your preferred rate.
 """
-
-
-class ShippingRequest(ShipmentRequest):
-    selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
-    rates = ListField(child=Rate(), help_text="The list for shipment rates fetched previously")
-    payment = Payment(required=True, help_text="The payment details")
 
 
 class Address(BaseAddress):
@@ -59,7 +51,7 @@ class ShippingRequestValidation(ShippingRequest):
     operation_summary="Submit a Shipment",
     operation_description=DESCRIPTIONS,
     request_body=ShippingRequest(),
-    responses={200: ShipmentResponse(), 400: ErrorResponseSerializer()},
+    responses={200: ShipmentResponse(), 400: ErrorResponse()},
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))

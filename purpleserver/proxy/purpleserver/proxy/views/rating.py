@@ -13,7 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 from purplship.core.utils.helpers import to_dict
 
 from purpleserver.core.serializers import (
-    RateRequest, RateResponse, ErrorResponse as ErrorResponseSerializer
+    RateRequest, RateResponse, ErrorResponse
 )
 from purpleserver.core.gateway import Rates
 from purpleserver.proxy.router import router
@@ -32,7 +32,7 @@ The request returns a list of rate available.
     operation_id="proxy_fetch_rates",
     operation_summary="Fetch Shipment Rates",
     operation_description=DESCRIPTIONS,
-    responses={200: RateResponse(), 400: ErrorResponseSerializer()},
+    responses={200: RateResponse(), 400: ErrorResponse()},
     request_body=RateRequest(),
 )
 @api_view(['POST'])
