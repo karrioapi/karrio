@@ -60,8 +60,10 @@ install_released() {
 reset_db () {
   purplship makemigrations &&
   purplship migrate &&
-  purplship collectstatic --noinput &&
+  purplship collectstatic --noinput
   (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+  (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first())" | purplship shell) > /dev/null 2>&1;
+  (echo "from purpleserver.carriers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
 }
 
 run_server() {
