@@ -1,14 +1,14 @@
 import attr
-from typing import List, Dict, Type, TypeVar
+from typing import List, Dict
+from  enum import Enum
 from jstruct import JStruct, JList, REQUIRED
 from purplship.core.utils import to_dict
 from purplship.core.models import (
     Address,
     Doc,
-    Payment,
-    Customs,
+    Payment as BasePayment,
+    Customs as BaseCustoms,
     Parcel,
-    RateDetails,
     Parcel,
     Message,
     TrackingDetails,
@@ -16,15 +16,17 @@ from purplship.core.models import (
     ShipmentDetails,
     ShipmentRequest as BaseShipmentRequest,
     RateRequest,
-    Insurance
+    Insurance,
+    ChargeDetails
 )
 
 
 class CarrierSettings:
-    def __init__(self, carrier_name: str, carrier_id: str, test: bool = None, **kwargs):
+    def __init__(self, carrier_name: str, carrier_id: str, test: bool = None, id: str = None, **kwargs):
         self.carrier_name = carrier_name
         self.carrier_id = carrier_id
         self.test = test
+        self.id = id
 
         for name, value in kwargs.items():
             if name not in ['carrier_ptr']:
@@ -41,19 +43,38 @@ class CarrierSettings:
         return cls(**to_dict(data))
 
 
+class ShipmentStatus(Enum):
+    created = 'created'
+    cancelled = 'cancelled'
+    purchased = 'purchased'
+
+
 @attr.s(auto_attribs=True)
-class ShipmentRate(RateRequest):
-    shipper: Address = JStruct[Address, REQUIRED]
-    recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+class Rate:
+    """PurplShip rate (quote) details type."""
 
-    rates: List[RateDetails] = JList[RateDetails]
+    carrier_name: str
+    carrier_id: str
+    currency: str
+    transit_days: int = None
+    service: str = None
+    discount: float = None
+    base_charge: float = 0.0
+    total_charge: float = 0.0
+    duties_and_taxes: float = None
+    extra_charges: List[ChargeDetails] = []
+    id: str = None
+    carrier_ref: str = None
 
-    services: List[str] = []
-    options: Dict = {}
-    reference: str = ""
 
-    carrier_ids: List[str] = []
+@attr.s(auto_attribs=True)
+class Payment(BasePayment):
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class Customs(BaseCustoms):
+    id: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -64,7 +85,7 @@ class ShipmentRequest(BaseShipmentRequest):
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
-    rates: List[RateDetails] = JList[RateDetails, REQUIRED]
+    rates: List[Rate] = JList[Rate, REQUIRED]
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
@@ -72,6 +93,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     options: Dict = {}
     reference: str = ""
+    id: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -86,17 +108,17 @@ class Shipment:
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
     parcel: Parcel = JStruct[Parcel, REQUIRED]
-
-    selected_rate: RateDetails = JStruct[RateDetails, REQUIRED]
-    rates: List[RateDetails] = JList[RateDetails, REQUIRED]
-
-    tracking_url: str = None
+    rates: List[Rate] = JList[Rate, REQUIRED]
+    selected_rate: Rate = JStruct[Rate, REQUIRED]
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
     doc_images: List[Doc] = JList[Doc]
 
     options: Dict = {}
+    reference: str = ""
+    tracking_url: str = None
+    status: str = ""
 
 
 @attr.s(auto_attribs=True)
@@ -107,7 +129,7 @@ class ErrorResponse:
 @attr.s(auto_attribs=True)
 class RateResponse:
     messages: List[Message] = JList[Message]
-    rates: List[RateDetails] = JList[RateDetails]
+    rates: List[Rate] = JList[Rate]
 
 
 @attr.s(auto_attribs=True)

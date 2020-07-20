@@ -12,9 +12,10 @@ from purplship.core.utils import exec_async, to_dict
 from purpleserver.carriers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
-    CarrierSettings, ShipmentRequest, ShipmentResponse, ShipmentRate, Shipment,
-    RateResponse, TrackingResponse, TrackingRequest, Message, RateDetails, ErrorResponse
+    CarrierSettings, ShipmentRequest, ShipmentResponse, RateRequest, Shipment,
+    RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse
 )
+from purpleserver.core.serializers import ShipmentStatus
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +65,7 @@ class Shipments:
     @staticmethod
     def create(payload: dict, resolve_tracking_url: Callable[[str, dict], str] = None) -> Union[ShipmentResponse, ErrorResponse]:
         selected_rate = next(
-            (RateDetails(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
+            (Rate(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
             None
         )
 
@@ -75,7 +76,6 @@ class Shipments:
             )
 
         carrier_settings: CarrierSettings = Carriers.retrieve(carrier_id=selected_rate.carrier_id)
-
         request = ShipmentRequest(**{**to_dict(payload), 'service': selected_rate.service})
         gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
         shipment, messages = api.Shipment.create(request).with_(gateway).parse()
@@ -107,7 +107,8 @@ class Shipments:
                 "service": shipment_rate.service,
                 "selected_rate_id": shipment_rate_id,
                 "selected_rate": {**to_dict(shipment_rate), 'id': shipment_rate_id},
-                "tracking_url": tracking_url
+                "tracking_url": tracking_url,
+                "status": ShipmentStatus.purchased.value
             }) if shipment is not None else None,
             messages=messages
         )
@@ -131,7 +132,7 @@ class Shipments:
 class Rates:
     @staticmethod
     def fetch(payload: dict) -> RateResponse:
-        request = api.Rating.fetch(ShipmentRate(**to_dict(payload)))
+        request = api.Rating.fetch(RateRequest(**to_dict(payload)))
 
         carrier_settings_list: List[CarrierSettings] = Carriers.list(carrier_ids=payload.get('carrier_ids', []))
 
@@ -158,9 +159,10 @@ class Rates:
         if not any(flattened_rates) and any(messages):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        rates: List[RateDetails] = [
-            RateDetails(**{
+        rates: List[Rate] = [
+            Rate(**{
                 'id': f'rat_{uuid.uuid4().hex}',
+                'carrier_ref': next((c.id for c in carrier_settings_list if c.carrier_id == r.carrier_id)),
                 **{**to_dict(r)}
             }) for r in flattened_rates
         ]
