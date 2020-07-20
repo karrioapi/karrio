@@ -44,6 +44,7 @@ setup(
             'drf-yasg',
             'purplship-server.core',
             'django-oauth-toolkit',
+            'jsonfield',
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]
