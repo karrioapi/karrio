@@ -45,6 +45,7 @@ class ShipmentList(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
+        operation_id="list_shipments",
         operation_summary="List all Shipments",
         operation_description="""
         Retrieve all shipments.
@@ -58,6 +59,7 @@ class ShipmentList(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
+        operation_id="create_shipment",
         operation_summary="Create a Shipment",
         operation_description="""
         Create a new shipment instance.
@@ -77,7 +79,7 @@ class ShipmentDetail(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="shipments_retrieve",
+        operation_id="retrieve_shipment",
         operation_summary="Retrieve a Shipment",
         operation_description="""
         Retrieve a shipment.
@@ -91,6 +93,7 @@ class ShipmentDetail(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
+        operation_id="update_shipment",
         operation_summary="Update a Shipment",
         operation_description="""
         Refresh the list of the shipment rates
@@ -117,7 +120,7 @@ class ShipmentRates(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="shipments_fetch_rates",
+        operation_id="fetch_shipments_rates",
         operation_summary="Fetch new Shipment Rates",
         operation_description="""
         Refresh the list of the shipment rates
@@ -145,7 +148,7 @@ class ShipmentOptions(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="shipments_add_options",
+        operation_id="add_shipment_options",
         operation_summary="Add Shipment Options",
         operation_description="""
         Add one or many options to your shipment.<br/>
@@ -190,7 +193,7 @@ class ShipmentPurchase(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="shipments_purchase",
+        operation_id="purchase_shipment",
         operation_summary="Buy a Shipment",
         operation_description="""
         Select your preferred rates to buy a shipment label.
@@ -211,7 +214,9 @@ class ShipmentPurchase(ShipmentAPIView):
             **ShipmentPurchaseData(request.data).data
         }
 
+        # Submit shipment to carriers
         shipment_response: ShipmentResponse = validate_and_save(ShipmentValidationData, data=payload, request=request)
+        # Update shipment state
         validate_and_save(ShipmentSerializer, data=to_dict(shipment_response.shipment), instance=shipment)
 
         response = dict(

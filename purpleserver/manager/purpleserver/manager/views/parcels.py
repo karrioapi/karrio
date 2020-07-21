@@ -11,6 +11,7 @@ from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
+from purpleserver.core.utils import validate_and_save
 from purpleserver.core.serializers import ErrorResponse, ParcelData, Parcel
 from purpleserver.manager.serializers import ParcelSerializer
 from purpleserver.manager.router import router
@@ -28,6 +29,7 @@ class ParcelList(ParcelAPIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
+        operation_id="list_parcels",
         operation_summary="List all Parcels",
         responses={200: Parcel(many=True), 400: ErrorResponse()}
     )
@@ -41,6 +43,7 @@ class ParcelList(ParcelAPIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
+        operation_id="create_parcel",
         operation_summary="Create a Parcel",
         request_body=ParcelData(),
         responses={200: Parcel(), 400: ErrorResponse()}
@@ -49,9 +52,7 @@ class ParcelList(ParcelAPIView):
         """
         Create a new parcel.
         """
-        serializer = ParcelSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        parcel = serializer.save(user=request.user)
+        parcel = validate_and_save(ParcelSerializer, request.data, user=request.user)
         return Response(Parcel(parcel).data, status=status.HTTP_201_CREATED)
 
 
@@ -59,7 +60,7 @@ class ParcelDetail(ParcelAPIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
-        operation_id="parcels_retrieve",
+        operation_id="retrieve_parcel",
         operation_summary="Retrieve a Parcel",
         responses={200: Parcel(), 400: ErrorResponse()}
     )
@@ -72,6 +73,7 @@ class ParcelDetail(ParcelAPIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
+        operation_id="update_parcel",
         operation_summary="Update a Parcel",
         request_body=ParcelData(),
         responses={200: Parcel(), 400: ErrorResponse()}
@@ -81,9 +83,7 @@ class ParcelDetail(ParcelAPIView):
         modify an existing parcel's details.
         """
         parcel = request.user.parcel_set.get(pk=pk)
-        serializer = ParcelSerializer(parcel, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        validate_and_save(ParcelSerializer, request.data, instance=parcel)
         return Response(Parcel(parcel).data)
 
 
