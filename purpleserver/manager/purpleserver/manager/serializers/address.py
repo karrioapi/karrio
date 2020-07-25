@@ -4,6 +4,14 @@ from purpleserver.manager.models import Address
 
 class AddressSerializer(AddressData):
 
+    def __init__(self, *args, **kwargs):
+        if 'data' in kwargs and isinstance(kwargs['data'], str):
+            kwargs.update(
+                data=AddressData(Address.objects.get(pk=kwargs['data'])).data
+            )
+
+        super().__init__(*args, **kwargs)
+
     def create(self, validated_data: dict) -> Address:
         return Address.objects.create(**validated_data)
 

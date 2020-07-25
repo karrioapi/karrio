@@ -51,7 +51,7 @@ class Parcel(OwnedEntity):
     package_preset = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=250, null=True, blank=True)
     content = models.CharField(max_length=100, null=True, blank=True)
-    is_document = models.BooleanField(default=False)
+    is_document = models.BooleanField(default=False, blank=True, null=True)
     weight_unit = models.CharField(max_length=2, choices=WEIGHT_UNIT, null=True, blank=True)
     dimension_unit = models.CharField(max_length=2, choices=DIMENSION_UNIT, null=True, blank=True)
 

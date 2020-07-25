@@ -1,24 +1,29 @@
 import attr
 from typing import List, Dict
-from  enum import Enum
+from enum import Enum
 from jstruct import JStruct, JList, REQUIRED
 from purplship.core.utils import to_dict
 from purplship.core.models import (
-    Address,
     Doc,
-    Payment as BasePayment,
-    Customs as BaseCustoms,
-    Parcel,
     Parcel,
     Message,
+    Address,
+    Insurance,
     TrackingDetails,
     TrackingRequest,
     ShipmentDetails,
+    Payment as BasePayment,
+    Customs as BaseCustoms,
+    RateRequest as BaseRateRequest,
     ShipmentRequest as BaseShipmentRequest,
-    RateRequest,
-    Insurance,
     ChargeDetails
 )
+
+
+class ShipmentStatus(Enum):
+    created = 'created'
+    cancelled = 'cancelled'
+    purchased = 'purchased'
 
 
 class CarrierSettings:
@@ -43,16 +48,8 @@ class CarrierSettings:
         return cls(**to_dict(data))
 
 
-class ShipmentStatus(Enum):
-    created = 'created'
-    cancelled = 'cancelled'
-    purchased = 'purchased'
-
-
 @attr.s(auto_attribs=True)
 class Rate:
-    """PurplShip rate (quote) details type."""
-
     carrier_name: str
     carrier_id: str
     currency: str
@@ -75,6 +72,19 @@ class Payment(BasePayment):
 @attr.s(auto_attribs=True)
 class Customs(BaseCustoms):
     id: str = None
+
+
+@attr.s(auto_attribs=True)
+class RateRequest(BaseRateRequest):
+    shipper: Address = JStruct[Address, REQUIRED]
+    recipient: Address = JStruct[Address, REQUIRED]
+    parcel: Parcel = JStruct[Parcel, REQUIRED]
+
+    services: List[str] = []
+    options: Dict = {}
+    reference: str = ""
+
+    carrier_ids: List[str] = []
 
 
 @attr.s(auto_attribs=True)

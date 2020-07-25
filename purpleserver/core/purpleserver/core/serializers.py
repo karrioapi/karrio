@@ -131,7 +131,7 @@ class ParcelData(Serializer):
     """)
     description = CharField(required=False, allow_blank=True, allow_null=True, help_text="The parcel's description")
     content = CharField(required=False, allow_blank=True, allow_null=True, help_text="The parcel's content description")
-    is_document = BooleanField(required=False, allow_null=True, help_text="Indicates if the parcel is composed of documents only")
+    is_document = BooleanField(required=False, allow_null=True, default=False, help_text="Indicates if the parcel is composed of documents only")
     weight_unit = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=WEIGHT_UNIT, help_text="The parcel's weight unit")
     dimension_unit = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=DIMENSION_UNIT, help_text="The parcel's dimension unit")
 
@@ -432,7 +432,7 @@ class ShipmentContent(Serializer):
     # Process result properties
 
     status = ChoiceField(
-        required=False, default=SHIPMENT_STATUS[0][0], choices=SHIPMENT_STATUS, help_text="The current Shipment status")
+        required=False, default=ShipmentStatus.created.value, choices=SHIPMENT_STATUS, help_text="The current Shipment status")
 
     carrier_name = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment carrier")
     carrier_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment carrier configured identifier")

@@ -1,7 +1,7 @@
 from django.db import transaction
 
-from purpleserver.core.utils import validate_and_save
-from purpleserver.core.serializers import PaymentData, AddressData
+from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.serializers import PaymentData
 
 from purpleserver.manager.serializers.address import AddressSerializer
 import purpleserver.manager.models as models
@@ -10,17 +10,16 @@ import purpleserver.manager.models as models
 class PaymentSerializer(PaymentData):
 
     def __init__(self, *args, **kwargs):
-        if 'data' in kwargs:
-            payload = kwargs['data'].copy()
+        if kwargs.get('data') is not None:
+            if isinstance(kwargs['data'], str):
+                payload = PaymentData(models.Payment.objects.get(pk=kwargs['data'])).data
 
-            if 'contact' in payload:
-                payload.update(
-                    shipper=(
-                        AddressData(models.Address.objects.get(pk=payload.get('contact'))).data
-                        if isinstance(payload.get('contact'), str) else
-                        payload.get('contact')
+            else:
+                payload = kwargs['data'].copy()
+                if payload.get('contact') is not None:
+                    payload.update(
+                        payment=SerializerDecorator[AddressSerializer](data=payload['contact']).data
                     )
-                )
 
             kwargs.update(data=payload)
 
@@ -33,9 +32,8 @@ class PaymentSerializer(PaymentData):
         }
 
         related_data = dict(
-            contact=validate_and_save(
-                AddressSerializer, validated_data.get('contact'), user=validated_data['user']
-            ),
+            contact=SerializerDecorator[AddressSerializer](
+                data=validated_data.get('contact')).save(user=validated_data['user']).instance,
         )
 
         payment = models.Payment.objects.create(**{
@@ -51,14 +49,14 @@ class PaymentSerializer(PaymentData):
             if key in models.Payment.DIRECT_PROPS:
                 setattr(instance, key, val)
 
-        if 'contact' in validated_data:
+        if validated_data.get('contact') is not None:
             data = validated_data.get('contact')
             if instance.contact is not None and data is None:
                 instance.contact.delete()
                 instance.contact = None
             else:
-                instance.contact = validate_and_save(
-                    AddressSerializer, data, instance=instance.contact, user=validated_data['user'])
+                instance.contact = SerializerDecorator[AddressSerializer](
+                    instance.contact, data=data).save(user=validated_data['user']).instance
 
         instance.save()
         return instance

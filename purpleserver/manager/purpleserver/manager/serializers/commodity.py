@@ -4,6 +4,14 @@ from purpleserver.manager.models import Commodity
 
 class CommoditySerializer(CommodityData):
 
+    def __init__(self, *args, **kwargs):
+        if 'data' in kwargs and isinstance(kwargs['data'], str):
+            kwargs.update(
+                data=CommodityData(Commodity.objects.get(pk=kwargs['data'])).data
+            )
+
+        super().__init__(*args, **kwargs)
+
     def create(self, validated_data: dict) -> Commodity:
         return Commodity.objects.create(**validated_data)
 

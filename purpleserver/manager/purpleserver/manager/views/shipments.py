@@ -13,7 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 from purplship.core.utils.helpers import to_dict
 
 from purpleserver.core.exceptions import PurplShipApiException
-from purpleserver.core.utils import validate_and_save
+from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import (
     ShipmentStatus,
     ErrorResponse,
@@ -68,9 +68,7 @@ class ShipmentList(ShipmentAPIView):
         request_body=ShipmentData()
     )
     def post(self, request: Request):
-        serializer = ShipmentSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        shipment = serializer.save(user=request.user)
+        shipment = SerializerDecorator[ShipmentSerializer](data=request.data).save(user=request.user).instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -87,9 +85,9 @@ class ShipmentDetail(ShipmentAPIView):
         responses={200: Shipment(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
-        address = request.user.shipment_set.get(pk=pk)
+        shipment = request.user.shipment_set.get(pk=pk)
 
-        return Response(Shipment(address).data)
+        return Response(Shipment(shipment).data)
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -109,10 +107,7 @@ class ShipmentDetail(ShipmentAPIView):
                 "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        serializer = ShipmentSerializer(shipment, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
+        SerializerDecorator[ShipmentSerializer](shipment, data=request.data).save()
         return Response(Shipment(shipment).data)
 
 
@@ -130,12 +125,11 @@ class ShipmentRates(ShipmentAPIView):
     def get(self, request: Request, pk: str):
         shipment = request.user.shipment_set.get(pk=pk)
 
-        rate_response: RateResponse = validate_and_save(RateSerializer, ShipmentData(shipment).data)
-        payload: dict = dict(rates=Rate(rate_response.rates, many=True).data)
+        rate_response: RateResponse = SerializerDecorator[RateSerializer](
+            data=ShipmentData(shipment).data).save().instance
+        payload: dict = to_dict(dict(rates=Rate(rate_response.rates, many=True).data))
 
-        serializer = ShipmentSerializer(shipment, data=to_dict(payload), partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
 
         response = dict(
             shipment=Shipment(shipment).data,
@@ -178,14 +172,12 @@ class ShipmentOptions(ShipmentAPIView):
                 "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        payload: dict = dict(options={
+        payload: dict = to_dict(dict(options={
             **ShipmentData(shipment).data.get('options'),
             **request.data
-        })
+        }))
 
-        serializer = ShipmentSerializer(shipment, data=to_dict(payload), partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
         return Response(Shipment(shipment).data)
 
 
@@ -215,9 +207,11 @@ class ShipmentPurchase(ShipmentAPIView):
         }
 
         # Submit shipment to carriers
-        shipment_response: ShipmentResponse = validate_and_save(ShipmentValidationData, data=payload, request=request)
+        shipment_response: ShipmentResponse = SerializerDecorator[ShipmentValidationData](
+            data=payload).save(request=request).instance
         # Update shipment state
-        validate_and_save(ShipmentSerializer, data=to_dict(shipment_response.shipment), instance=shipment)
+        SerializerDecorator[ShipmentSerializer](
+            shipment, data=to_dict(shipment_response.shipment)).save()
 
         response = dict(
             shipment=Shipment(shipment).data,
