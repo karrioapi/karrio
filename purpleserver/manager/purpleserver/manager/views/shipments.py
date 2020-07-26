@@ -68,7 +68,8 @@ class ShipmentList(ShipmentAPIView):
         request_body=ShipmentData()
     )
     def post(self, request: Request):
-        shipment = SerializerDecorator[ShipmentSerializer](data=request.data).save(user=request.user).instance
+        shipment = SerializerDecorator[ShipmentSerializer](
+            data=request.data).save(user=request.user).instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -220,8 +221,8 @@ class ShipmentPurchase(ShipmentAPIView):
         return Response(ShipmentResponse(response).data)
 
 
-router.urls.append(path('shipments', ShipmentList.as_view()))
-router.urls.append(path('shipments/<str:pk>', ShipmentDetail.as_view()))
-router.urls.append(path('shipments/<str:pk>/rates', ShipmentRates.as_view()))
-router.urls.append(path('shipments/<str:pk>/options', ShipmentOptions.as_view()))
-router.urls.append(path('shipments/<str:pk>/purchase', ShipmentPurchase.as_view()))
+router.urls.append(path('shipments', ShipmentList.as_view(), name="shipment-list"))
+router.urls.append(path('shipments/<str:pk>', ShipmentDetail.as_view(), name="shipment-details"))
+router.urls.append(path('shipments/<str:pk>/rates', ShipmentRates.as_view(), name="shipment-rates"))
+router.urls.append(path('shipments/<str:pk>/options', ShipmentOptions.as_view(), name="shipment-options"))
+router.urls.append(path('shipments/<str:pk>/purchase', ShipmentPurchase.as_view(), name="shipment-purchase"))

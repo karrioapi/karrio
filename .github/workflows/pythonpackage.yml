@@ -24,4 +24,5 @@ jobs:
         source ./scripts.sh
         init &&
         purplship makemigrations &&
-        purplship test purpleserver.proxy.tests
+        purplship test purpleserver.proxy.tests &&
+        purplship test purpleserver.manager.tests

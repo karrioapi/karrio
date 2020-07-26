@@ -85,5 +85,5 @@ class AddressDetail(AddressAPIView):
         return Response(Address(address).data)
 
 
-router.urls.append(path('addresses', AddressList.as_view()))
-router.urls.append(path('addresses/<str:pk>', AddressDetail.as_view()))
+router.urls.append(path('addresses', AddressList.as_view(), name="address-list"))
+router.urls.append(path('addresses/<str:pk>', AddressDetail.as_view(), name="address-details"))

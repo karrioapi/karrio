@@ -10,7 +10,7 @@ import purpleserver.manager.models as models
 
 class CustomsSerializer(CustomsData):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, instance: models.Customs = None, **kwargs):
         if kwargs.get('data') is not None:
             if isinstance(kwargs['data'], str):
                 payload = CustomsData(models.Customs.objects.get(pk=kwargs['data'])).data
@@ -19,7 +19,10 @@ class CustomsSerializer(CustomsData):
                 payload = kwargs['data'].copy()
                 if payload.get('duty') is not None:
                     payload.update(
-                        payment=SerializerDecorator[PaymentSerializer](data=payload['duty']).data)
+                        payment=SerializerDecorator[PaymentSerializer](
+                            data=payload['duty']
+                        ).data
+                    )
 
                 if payload.get('commodities') is not None:
                     payload.update(
@@ -31,7 +34,7 @@ class CustomsSerializer(CustomsData):
 
             kwargs.update(data=payload)
 
-        super().__init__(*args, **kwargs)
+        super().__init__(instance, **kwargs)
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Customs:

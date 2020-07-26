@@ -87,5 +87,5 @@ class ParcelDetail(ParcelAPIView):
         return Response(Parcel(parcel).data)
 
 
-router.urls.append(path('parcels', ParcelList.as_view()))
-router.urls.append(path('parcels/<str:pk>', ParcelDetail.as_view()))
+router.urls.append(path('parcels', ParcelList.as_view(), name="parcel-list"))
+router.urls.append(path('parcels/<str:pk>', ParcelDetail.as_view(), name="parcel-details"))

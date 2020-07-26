@@ -31,7 +31,7 @@ class ShipmentSerializer(ShipmentData):
     selected_rate = Rate(required=False, allow_null=True)
     tracking_url = URLField(required=False, allow_blank=True, allow_null=True)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, instance: models.Shipment = None, **kwargs):
         if kwargs.get('data') is not None:
             if isinstance(kwargs['data'], str):
                 payload = ShipmentData(models.Shipment.objects.get(pk=kwargs['data'])).data
@@ -40,27 +40,47 @@ class ShipmentSerializer(ShipmentData):
                 payload = kwargs['data'].copy()
                 if payload.get('shipper') is not None:
                     payload.update(
-                        shipper=SerializerDecorator[AddressSerializer](data=payload['shipper']).data)
+                        shipper=SerializerDecorator[AddressSerializer](
+                            (instance.shipper if instance is not None else None),
+                            data=payload['shipper']
+                        ).data
+                    )
 
                 if payload.get('recipient') is not None:
                     payload.update(
-                        recipient=SerializerDecorator[AddressSerializer](data=payload['recipient']).data)
+                        recipient=SerializerDecorator[AddressSerializer](
+                            (instance.recipient if instance is not None else None),
+                            data=payload['recipient']
+                        ).data
+                    )
 
                 if payload.get('parcel') is not None:
                     payload.update(
-                        parcel=SerializerDecorator[ParcelSerializer](data=payload['parcel']).data)
+                        parcel=SerializerDecorator[ParcelSerializer](
+                            (instance.parcel if instance is not None else None),
+                            data=payload['parcel']
+                        ).data
+                    )
 
                 if payload.get('customs') is not None:
                     payload.update(
-                        customs=SerializerDecorator[CustomsSerializer](data=payload['customs']).data)
+                        customs=SerializerDecorator[CustomsSerializer](
+                            (instance.customs if instance is not None else None),
+                            data=payload['customs']
+                        ).data
+                    )
 
                 if payload.get('payment') is not None:
                     payload.update(
-                        payment=SerializerDecorator[PaymentSerializer](data=payload['payment']).data)
+                        payment=SerializerDecorator[PaymentSerializer](
+                            (instance.payment if instance is not None else None),
+                            data=payload['payment']
+                        ).data
+                    )
 
             kwargs.update(data=payload)
 
-        super().__init__(*args, **kwargs)
+        super().__init__(instance, **kwargs)
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
@@ -163,7 +183,7 @@ class ShipmentValidationData(Shipment):
             ShippingRequest(validated_data).data,
             resolve_tracking_url=(
                 lambda trackin_url, shipping: reverse(
-                    "purpleserver.proxy:TrackShipment",
+                    "purpleserver.proxy:shipment-tracking",
                     request=validated_data.get('request'),
                     kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
                 )

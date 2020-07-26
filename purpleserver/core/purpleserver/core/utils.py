@@ -41,7 +41,7 @@ class _SerializerDecoratorInitializer(Generic[T]):
 
             @property
             def data(self) -> Optional[dict]:
-                return self._serializer.data if self._serializer is not None else None
+                return self._serializer.validated_data if self._serializer is not None else None
 
             @property
             def instance(self):
