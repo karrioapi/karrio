@@ -6,6 +6,8 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export PIP_FIND_LINKS="https://git.io/purplship"
+
 activate_env() {
   echo "Activate $BASE_DIR"
   deactivate || true

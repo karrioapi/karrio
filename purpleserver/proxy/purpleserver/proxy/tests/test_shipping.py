@@ -8,7 +8,7 @@ from purpleserver.core.tests import APITestCase
 
 class TestShipping(APITestCase):
 
-    def test_fetch_shipment_rates(self):
+    def test_shipping_request(self):
         url = reverse('purpleserver.proxy:shipping-request')
         data = SHIPPING_DATA
 

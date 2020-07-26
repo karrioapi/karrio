@@ -8,7 +8,7 @@ from purpleserver.core.tests import APITestCase
 
 class TestTracking(APITestCase):
 
-    def test_fetch_shipment_rates(self):
+    def test_tracking_shipment(self):
         url = reverse(
             'purpleserver.proxy:shipment-tracking',
             kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups")

@@ -8,8 +8,8 @@ class APITestCase(BaseAPITestCase):
 
     def setUp(self) -> None:
         self.maxDiff = None
-        user = User.objects.create_superuser('test', 'admin@example.com', 'test')
-        token = Token.objects.create(user=user)
+        self.user = User.objects.create_superuser('test', 'admin@example.com', 'test')
+        self.token = Token.objects.create(user=self.user)
         CanadaPostSettings.objects.create(
             carrier_id='canadapost', test=True, username='6e93d53968881714',
             customer_number='2004381', contract_id='42708517',
@@ -19,4 +19,4 @@ class APITestCase(BaseAPITestCase):
             account_number='000000', access_license_number='000000',
             password='test')
         self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
