@@ -65,7 +65,7 @@ def submit_shipment(request: Request):
         shipping_request.data,
         resolve_tracking_url=(
             lambda trackin_url, shipping: reverse(
-                "purpleserver.proxy:TrackShipment",
+                "purpleserver.proxy:shipment-tracking",
                 request=request,
                 kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
             )
@@ -75,4 +75,4 @@ def submit_shipment(request: Request):
     return Response(to_dict(response), status=status.HTTP_201_CREATED)
 
 
-router.urls.append(path('proxy/shipping', submit_shipment))
+router.urls.append(path('proxy/shipping', submit_shipment, name="shipping-request"))

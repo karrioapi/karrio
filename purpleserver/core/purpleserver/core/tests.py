@@ -1,3 +1,22 @@
-from django.test import TestCase
+from django.contrib.auth.models import User
+from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
+from rest_framework.authtoken.models import Token
+from purpleserver.carriers.models import CanadaPostSettings, UPSSettings
 
-# Create your tests here.
+
+class APITestCase(BaseAPITestCase):
+
+    def setUp(self) -> None:
+        self.maxDiff = None
+        user = User.objects.create_superuser('test', 'admin@example.com', 'test')
+        token = Token.objects.create(user=user)
+        CanadaPostSettings.objects.create(
+            carrier_id='canadapost', test=True, username='6e93d53968881714',
+            customer_number='2004381', contract_id='42708517',
+            password='0bfa9fcb9853d1f51ee57a')
+        UPSSettings.objects.create(
+            carrier_id='ups', test=True, username='test',
+            account_number='000000', access_license_number='000000',
+            password='test')
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)

@@ -51,4 +51,4 @@ def fetch_rates(request: Request):
     )
 
 
-router.urls.append(path('proxy/rates', fetch_rates))
+router.urls.append(path('proxy/rates', fetch_rates, name="shipment-rates"))

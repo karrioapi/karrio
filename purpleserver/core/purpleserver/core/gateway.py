@@ -16,6 +16,7 @@ from purpleserver.core.datatypes import (
     RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse
 )
 from purpleserver.core.serializers import ShipmentStatus
+from purpleserver.core.utils import identity
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +79,9 @@ class Shipments:
         carrier_settings: CarrierSettings = Carriers.retrieve(carrier_id=selected_rate.carrier_id)
         request = ShipmentRequest(**{**to_dict(payload), 'service': selected_rate.service})
         gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
-        shipment, messages = api.Shipment.create(request).with_(gateway).parse()
+
+        # The request is wrapped in identity to simplify mocking in tests
+        shipment, messages = identity(lambda: api.Shipment.create(request).with_(gateway).parse())
 
         if shipment is None:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
@@ -118,7 +121,8 @@ class Shipments:
         request = TrackingRequest(**payload)
 
         gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
-        results, messages = api.Tracking.fetch(request).from_(gateway).parse()
+        # The request call is wrapped in identity to simplify mocking in tests
+        results, messages = identity(lambda: api.Tracking.fetch(request).from_(gateway).parse())
 
         if any(messages):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
@@ -152,7 +156,8 @@ class Rates:
                     message=str(e)
                 )]]
 
-        results = exec_async(process, carrier_settings_list)
+        # The request call is wrapped in identity to simplify mocking in tests
+        results = identity(lambda: exec_async(process, carrier_settings_list))
         flattened_rates = sum((r for r, _ in results if r is not None), [])
         messages = sum((m for _, m in results), [])
 

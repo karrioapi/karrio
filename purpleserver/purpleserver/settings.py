@@ -209,6 +209,8 @@ REST_FRAMEWORK = {
     'JSON_UNDERSCOREIZE': {
         'no_underscore_before_number': True,
     },
+
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 

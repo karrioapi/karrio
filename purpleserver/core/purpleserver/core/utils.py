@@ -1,7 +1,15 @@
-from typing import Type, TypeVar, Generic, Optional, Union
+from typing import Type, TypeVar, Generic, Optional, Union, Callable, Any
 from rest_framework.serializers import Serializer
 
 T = TypeVar('T')
+
+
+def identity(value: Union[Any, Callable]) -> T:
+    """
+    :param value: function or value desired to be wrapped
+    :return: value or callable return
+    """
+    return value() if callable(value) else value
 
 
 def validate_and_save(serializer_type: Type, data, instance=None, **kwargs):

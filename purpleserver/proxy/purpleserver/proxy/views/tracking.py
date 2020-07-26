@@ -63,4 +63,4 @@ def track_shipment(request: Request, carrier_name: str, tracking_number: str):
     )
 
 
-router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track_shipment, name="TrackShipment"))
+router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track_shipment, name="shipment-tracking"))
