@@ -11,7 +11,7 @@ from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.utils import validate_and_save
+from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import ErrorResponse, ParcelData, Parcel
 from purpleserver.manager.serializers import ParcelSerializer
 from purpleserver.manager.router import router
@@ -52,7 +52,7 @@ class ParcelList(ParcelAPIView):
         """
         Create a new parcel.
         """
-        parcel = validate_and_save(ParcelSerializer, request.data, user=request.user)
+        parcel = SerializerDecorator[ParcelSerializer](data=request.data).save(user=request.user).instance
         return Response(Parcel(parcel).data, status=status.HTTP_201_CREATED)
 
 
@@ -83,7 +83,7 @@ class ParcelDetail(ParcelAPIView):
         modify an existing parcel's details.
         """
         parcel = request.user.parcel_set.get(pk=pk)
-        validate_and_save(ParcelSerializer, request.data, instance=parcel)
+        SerializerDecorator[ParcelSerializer](parcel, data=request.data).save()
         return Response(Parcel(parcel).data)
 
 

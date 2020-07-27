@@ -46,7 +46,7 @@ RATING_DATA = {
     "carrierIds": ["canadapost"]
 }
 
-RETURNED_VALUE = [[
+RETURNED_VALUE = [(
     [
         RateDetails(
             carrier_id="canadapost",
@@ -73,7 +73,7 @@ RETURNED_VALUE = [[
         )
     ],
     [],
-]]
+)]
 
 RATING_RESPONSE = {
     "rates": [

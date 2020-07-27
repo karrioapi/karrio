@@ -9,7 +9,7 @@ from rest_framework import status
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.utils import validate_and_save
+from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import ErrorResponse, AddressData, Address
 from purpleserver.manager.serializers import AddressSerializer
 from purpleserver.manager.router import router
@@ -50,7 +50,7 @@ class AddressList(AddressAPIView):
         """
         Create a new address.
         """
-        address = validate_and_save(AddressSerializer, request.data, user=request.user)
+        address = SerializerDecorator[AddressSerializer](data=request.data).save(user=request.user).instance
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
@@ -81,7 +81,7 @@ class AddressDetail(AddressAPIView):
         update an address.
         """
         address = request.user.address_set.get(pk=pk)
-        validate_and_save(AddressSerializer, request.data, instance=address)
+        SerializerDecorator[AddressSerializer](address, data=request.data).save()
         return Response(Address(address).data)
 
 

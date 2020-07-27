@@ -23,7 +23,7 @@ class TestTracking(APITestCase):
             self.assertDictEqual(response_data, TRACKING_RESPONSE)
 
 
-RETURNED_VALUE = [
+RETURNED_VALUE = (
     [
         TrackingDetails(
             carrier_id="ups",
@@ -41,7 +41,7 @@ RETURNED_VALUE = [
         )
     ],
     [],
-]
+)
 
 TRACKING_RESPONSE = {
   "trackingDetails": {

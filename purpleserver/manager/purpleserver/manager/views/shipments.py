@@ -204,7 +204,7 @@ class ShipmentPurchase(ShipmentAPIView):
 
         payload = {
             **Shipment(shipment).data,
-            **ShipmentPurchaseData(request.data).data
+            **SerializerDecorator[ShipmentPurchaseData](data=request.data).data
         }
 
         # Submit shipment to carriers

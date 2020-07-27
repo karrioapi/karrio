@@ -12,7 +12,6 @@ from purpleserver.core.serializers import (
     Shipment,
     Payment,
     ListField,
-    URLField,
     Rate,
     ShippingRequest
 )
@@ -29,7 +28,7 @@ class ShipmentSerializer(ShipmentData):
     label = CharField(required=False, allow_blank=True, allow_null=True)
     tracking_number = CharField(required=False, allow_blank=True, allow_null=True)
     selected_rate = Rate(required=False, allow_null=True)
-    tracking_url = URLField(required=False, allow_blank=True, allow_null=True)
+    tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
 
     def __init__(self, instance: models.Shipment = None, **kwargs):
         if kwargs.get('data') is not None:
@@ -85,6 +84,7 @@ class ShipmentSerializer(ShipmentData):
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
         carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
+        user = validated_data['user']
 
         shipment_data = {
             key: value for key, value in validated_data.items()
@@ -93,19 +93,19 @@ class ShipmentSerializer(ShipmentData):
 
         related_data = dict(
             shipper=SerializerDecorator[AddressSerializer](
-                data=validated_data.get('shipper')).save(user=validated_data['user']).instance,
+                data=validated_data.get('shipper')).save(user=user).instance,
 
             recipient=SerializerDecorator[AddressSerializer](
-                data=validated_data.get('recipient')).save(user=validated_data['user']).instance,
+                data=validated_data.get('recipient')).save(user=user).instance,
 
             parcel=SerializerDecorator[ParcelSerializer](
-                data=validated_data.get('parcel')).save(user=validated_data['user']).instance,
+                data=validated_data.get('parcel')).save(user=user).instance,
 
             customs=SerializerDecorator[CustomsSerializer](
-                data=validated_data.get('customs')).save(user=validated_data['user']).instance,
+                data=validated_data.get('customs')).save(user=user).instance,
 
             payment=SerializerDecorator[PaymentSerializer](
-                data=validated_data.get('payment')).save(user=validated_data['user']).instance
+                data=validated_data.get('payment')).save(user=user).instance
         )
 
         shipment = models.Shipment.objects.create(**{
