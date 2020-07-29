@@ -63,3 +63,12 @@ class OriginNotServicedError(PurplShipError):
 
     def __init__(self, origin: str, carrier_name: str):
         super().__init__(f"Origin country '{origin}' is not serviced by {carrier_name}")
+
+
+class MultiParcelNotSupportedError(PurplShipError):
+    """Raised when an origin is not supported by a shipping provider."""
+
+    code = "PURPLSHIP_MULTI_PARCEL_NOT_SUPPORTED_ERROR"
+
+    def __init__(self, carrier_name: str):
+        super().__init__(f"Multi-parcel shipment not supported by {carrier_name}")
