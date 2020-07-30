@@ -92,7 +92,7 @@ def intl_rate_request(
                 Width=package.width.IN,
                 Length=package.length.IN,
                 Height=package.height.IN,
-                Girth=None,
+                Girth=package.girth.value,
                 OriginZip=payload.shipper.postal_code,
                 CommercialFlag=None,
                 CommercialPlusFlag=None,

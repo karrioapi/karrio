@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Type, Optional, Iterator, Iterable
 from enum import Enum
+from purplship.core.utils import decimal
 from purplship.core.models import Insurance, COD, Notification, Parcel
 from purplship.core.errors import FieldError, FieldErrorCode, MultiParcelNotSupportedError
 
@@ -71,25 +72,25 @@ class Dimension:
         if self._unit is None or self._value is None:
             return None
         if self._unit == DimensionUnit.CM:
-            return float(self._value)
+            return decimal(self._value)
         else:
-            return float(self._value * 0.393701)
+            return decimal(self._value * 0.393701)
 
     @property
     def IN(self):
         if self._unit is None or self._value is None:
             return None
         if self._unit == DimensionUnit.IN:
-            return float(self._value)
+            return decimal(self._value)
         else:
-            return float(self._value * 2.54)
+            return decimal(self._value * 2.54)
 
     @property
     def M(self):
         if self._unit is None or self._value is None:
             return None
         else:
-            return self.CM / 100
+            return decimal(self.CM / 100)
 
 
 class Volume:
@@ -105,13 +106,13 @@ class Volume:
         if not any([self._side1.value, self._side2.value, self._side3.value]):
             return None
 
-        return self._side1.M * self._side2.M * self._side3.M
+        return decimal(self._side1.M * self._side2.M * self._side3.M)
 
     @property
     def cubic_meter(self):
         if self.value is None:
             return None
-        return self.value * 250
+        return decimal(self.value * 250)
 
 
 class Girth:
@@ -130,7 +131,7 @@ class Girth:
 
         sides.sort()
         small_side1, small_side2, _ = sides
-        return (small_side1 + small_side2) * 2
+        return decimal((small_side1 + small_side2) * 2)
 
 
 class Weight:
@@ -147,27 +148,32 @@ class Weight:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.KG:
-            return float(self._value)
-        else:
-            return float(self._value * 0.453592)
+            return decimal(self._value)
+        elif self._unit == WeightUnit.LB:
+            return decimal(self._value * 0.453592)
+
+        return None
 
     @property
     def LB(self):
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
-            return float(self._value)
-        else:
-            return float(self._value * 2.204620823516057)
+            return decimal(self._value)
+        elif self._unit == WeightUnit.KG:
+            return decimal(self._value * 2.204620823516057)
+
+        return None
 
     @property
     def OZ(self):
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
-            return float(self._value * 16)
+            return decimal(self._value * 16)
         elif self._unit == WeightUnit.KG:
-            return float(self._value * 35.274)
+            return decimal(self._value * 35.274)
+
         return None
 
 
