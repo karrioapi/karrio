@@ -73,7 +73,7 @@ package_shipment_data = {
         "postal_code": "PostalCode",
         "country_code": "CountryCode",
     },
-    "parcel": {
+    "parcels": [{
         "dimension_unit": "IN",
         "weight_unit": "LB",
         "packaging_type": "ups_customer_supplied_package",
@@ -82,7 +82,7 @@ package_shipment_data = {
         "width": 5,
         "height": 2,
         "weight": 10,
-    },
+    }],
     "service": "ups_express",
     "options": {"notification": {"email": "test@mail.com"}},
     "payment": {"paid_by": "sender"},
@@ -112,11 +112,11 @@ package_shipment_with_package_preset_data = {
         "postal_code": "PostalCode",
         "country_code": "CountryCode",
     },
-    "parcel": {
+    "parcels": [{
         "packaging_type": "ups_customer_supplied_package",
         "description": "Description",
         "package_preset": "ups_medium_express_box",
-    },
+    }],
     "service": "ups_express",
     "payment": {"paid_by": "sender"},
     "options": {"notification": {"email": "test@mail.com"}},

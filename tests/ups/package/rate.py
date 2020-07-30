@@ -71,14 +71,14 @@ rate_req_data = {
         "country_code": "US",
         "state_code": "StateProvinceCode",
     },
-    "parcel": {
+    "parcels": [{
         "height": 3,
         "length": 10,
         "width": 3,
         "weight": 4.0,
         "packaging_type": "ups_package",
         "description": "TV",
-    },
+    }],
     "reference": "Your Customer Context",
     "services": ["ups_standard"],
     "options": {"negotiated_rates_indicator": True},
@@ -101,11 +101,11 @@ rate_req_with_package_preset_data = {
         "country_code": "US",
         "state_code": "StateProvinceCode",
     },
-    "parcel": {
+    "parcels": [{
         "package_preset": "ups_express_pak",
         "packaging_type": "ups_package",
         "description": "TV",
-    },
+    }],
     "reference": "Your Customer Context",
     "services": ["ups_standard"],
     "options": {"negotiated_rates_indicator": True},

@@ -60,14 +60,14 @@ if __name__ == "__main__":
 RateRequestPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcel": {"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0},
+    "parcels": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}],
     "options": {"currency": "USD"},
 }
 
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcel": {"id": "1", "package_preset": "fedex_pak"},
+    "parcels": [{"id": "1", "package_preset": "fedex_pak"}],
     "options": {"currency": "USD"},
 }
 
@@ -185,9 +185,9 @@ RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 </Recipient>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
+                <PackageCount>1</PackageCount>
                 <RequestedPackageLineItems>
                     <SequenceNumber>1</SequenceNumber>
-                    <GroupPackageCount>1</GroupPackageCount>
                     <Weight>
                         <Units>LB</Units>
                         <Value>4.</Value>
@@ -253,9 +253,9 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
                 </Recipient>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
+                <PackageCount>1</PackageCount>
                 <RequestedPackageLineItems>
                     <SequenceNumber>1</SequenceNumber>
-                    <GroupPackageCount>1</GroupPackageCount>
                     <Weight>
                         <Units>LB</Units>
                         <Value>2.2</Value>

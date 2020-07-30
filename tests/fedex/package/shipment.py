@@ -66,7 +66,7 @@ shipment_data = {
         "postal_code": "V7C4v7",
         "country_code": "CA",
     },
-    "parcel": {
+    "parcels": [{
         "packaging_type": "your_packaging",
         "weight_unit": "LB",
         "dimension_unit": "IN",
@@ -74,7 +74,7 @@ shipment_data = {
         "length": 12,
         "width": 12,
         "height": 12,
-    },
+    }],
     "service": "international_priority",
     "options": {"currency": "USD", "international_traffic_in_arms_regulations": True},
     "payment": {"paid_by": "THIRD_PARTY", "account_number": "2349857"},
@@ -168,6 +168,20 @@ ShipmentRequestXml = """<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xml
                 </SpecialServicesRequested>
                 <RateRequestTypes>LIST</RateRequestTypes>
                 <RateRequestTypes>PREFERRED</RateRequestTypes>
+                <PackageCount>1</PackageCount>
+                <RequestedPackageLineItems>
+                    <SequenceNumber>1</SequenceNumber>
+                    <Weight>
+                        <Units>LB</Units>
+                        <Value>20.</Value>
+                    </Weight>
+                    <Dimensions>
+                        <Length>12</Length>
+                        <Width>12</Width>
+                        <Height>12</Height>
+                        <Units>IN</Units>
+                    </Dimensions>
+                </RequestedPackageLineItems>
             </RequestedShipment>
         </ns:ProcessShipmentRequest>
     </tns:Body>
