@@ -34,9 +34,7 @@ def rate_request(
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier
     """
     if payload.shipper.country_code and payload.shipper.country_code != Country.US.name:
-        raise OriginNotServicedError(
-            payload.shipper.country_code, settings.carrier_id
-        )
+        raise OriginNotServicedError(payload.shipper.country_code)
 
     is_local = (
         payload.recipient.country_code is None

@@ -128,7 +128,7 @@ class ShipmentRequest:
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
@@ -142,7 +142,7 @@ class ShipmentRequest:
 class RateRequest:
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
     services: List[str] = []
     options: Dict = {}

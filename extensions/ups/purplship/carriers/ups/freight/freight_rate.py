@@ -18,13 +18,14 @@ from pyups.freight_rate_web_service_schema import (
 )
 from purplship.core.utils import export, concat_str, decimal, Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit
+from purplship.core.units import Packages
 from purplship.core.utils.xml import Element
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.carriers.ups.units import (
     RatingServiceCode,
     WeightUnit as UPSWeightUnit,
     FreightPackagingType,
+    PackagePresets,
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -86,8 +87,7 @@ def _extract_freight_rate(detail_node: Element, settings: Settings) -> RateDetai
 def freight_rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[FreightRateRequest]:
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    packages = Packages(payload.parcels, PackagePresets)
     service = (
         [
             RatingServiceCode[svc]
@@ -145,28 +145,29 @@ def freight_rate_request(
         TimeInTransitIndicator="",
         Commodity=[
             CommodityType(
-                Description=payload.parcel.description or "...",
+                Description=package.parcel.description or "...",
                 Weight=WeightType(
                     UnitOfMeasurement=UnitOfMeasurementType(
-                        Code=UPSWeightUnit[weight_unit.name].value
+                        Code=UPSWeightUnit[package.weight_unit].value
                     ),
-                    Value=Weight(payload.parcel.weight, weight_unit).value,
+                    Value=package.weight.value,
                 ),
                 Dimensions=DimensionsType(
-                    UnitOfMeasurement=UnitOfMeasurementType(Code=dimension_unit.value),
-                    Width=Dimension(payload.parcel.width, dimension_unit).value,
-                    Height=Dimension(payload.parcel.height, dimension_unit).value,
-                    Length=Dimension(payload.parcel.length, dimension_unit).value,
+                    UnitOfMeasurement=UnitOfMeasurementType(Code=package.dimension_unit),
+                    Width=package.width.value,
+                    Height=package.height.value,
+                    Length=package.length.value,
                 ),
                 NumberOfPieces=None,
                 PackagingType=RateCodeDescriptionType(
                     Code=FreightPackagingType[
-                        payload.parcel.packaging_type or "small_box"
+                        package.packaging_type or "small_box"
                     ].value,
                     Description=None,
                 ),
                 FreightClass=50,
             )
+            for package in packages
         ],
     )
     return Serializable(

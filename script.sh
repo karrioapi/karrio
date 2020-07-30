@@ -55,7 +55,7 @@ test() {
       install_submodules
     fi
     cd "${ROOT:?}"
-    r=$(coverage run -m unittest discover -v "${ROOT:?}/tests")
+    r=$(coverage run -m unittest discover -f -v "${ROOT:?}/tests")
     cd -
     $r || false
 }

@@ -34,9 +34,8 @@ from pypurolator.shipping_service_2_1_3 import (
     ArrayOfContentDetail
 )
 from purplship.core.models import ShipmentRequest
-from purplship.core.units import PrinterType, Options, Package, Phone
+from purplship.core.units import PrinterType, Options, Packages, Phone
 from purplship.core.utils.serializable import Serializable
-from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils.helpers import concat_str
 from purplship.core.utils.soap import create_envelope
 from purplship.carriers.purolator.utils import Settings, standard_request_serializer
@@ -55,16 +54,10 @@ def create_shipping_request(
     payload: ShipmentRequest, settings: Settings, validate: bool = None
 ) -> Serializable[Envelope]:
     RequestType: ShipmentRequestType = ValidateShipmentRequest if validate else CreateShipmentRequest
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
-    )
-    package = Package(payload.parcel, parcel_preset)
 
-    if package.weight.value is None:
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
-
+    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    is_document = all([parcel.is_document for parcel in payload.parcels])
+    package_description = (packages[0].parcel.description if len(packages) == 1 else None)
     service = Product[payload.service].value
     is_international = payload.shipper.country_code != payload.recipient.country_code
     options = Options(payload.options)
@@ -156,12 +149,12 @@ def create_shipping_request(
                 ShipmentDate=datetime.today().strftime("%Y-%m-%d"),
                 PackageInformation=PackageInformation(
                     ServiceID=service,
-                    Description=payload.parcel.description,
+                    Description=package_description,
                     TotalWeight=TotalWeight(
-                        Value=package.weight.value,
-                        WeightUnit=PurolatorWeightUnit[package.weight_unit.value].value,
+                        Value=packages.weight.value,
+                        WeightUnit=PurolatorWeightUnit.LB.value,
                     )
-                    if package.weight.value
+                    if packages.weight.value
                     else None,
                     TotalPieces=1,
                     PiecesInformation=ArrayOfPiece(
@@ -201,6 +194,7 @@ def create_shipping_request(
                                 else None,
                                 Options=None,
                             )
+                            for package in packages
                         ]
                     ),
                     DangerousGoodsDeclarationDocumentIndicator=None,
@@ -214,7 +208,7 @@ def create_shipping_request(
                     else None,
                 ),
                 InternationalInformation=InternationalInformation(
-                    DocumentsOnlyIndicator=payload.parcel.is_document,
+                    DocumentsOnlyIndicator=is_document,
                     ContentDetails=ArrayOfContentDetail(
                         ContentDetail=[
                             ContentDetail(
@@ -233,7 +227,7 @@ def create_shipping_request(
                             )
                             for c in payload.customs.commodities
                         ]
-                    ) if not payload.parcel.is_document else None,
+                    ) if not is_document else None,
                     BuyerInformation=None,
                     PreferredCustomsBroker=None,
                     DutyInformation=DutyInformation(

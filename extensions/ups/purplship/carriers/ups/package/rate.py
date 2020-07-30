@@ -1,5 +1,5 @@
 from functools import reduce
-from typing import Callable, List, Tuple, cast
+from typing import Callable, List, Tuple
 from pyups.rate_web_service_schema import (
     RateRequest as UPSRateRequest,
     RatedShipmentType,
@@ -17,11 +17,10 @@ from pyups.rate_web_service_schema import (
     TransactionReferenceType,
     TimeInTransitRequestType,
     EstimatedArrivalType,
-    PickupType as ArrivalType
 )
-from purplship.core.utils import export, concat_str, Serializable, format_date, decimal, Element
+from purplship.core.utils import export, concat_str, Serializable, decimal, Element
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, build
-from purplship.core.units import Package
+from purplship.core.units import Packages
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.carriers.ups.units import (
@@ -110,12 +109,8 @@ def _extract_package_rate(
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[UPSRateRequest]:
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
-    )
-    package = Package(payload.parcel, parcel_preset)
+    packages = Packages(payload.parcels, PackagePresets)
+    is_document = all([parcel.is_document for parcel in payload.parcels])
     is_international = payload.shipper.country_code != payload.recipient.country_code
     service: str = next(
         (
@@ -131,7 +126,7 @@ def rate_request(
     ).value
 
     if (("freight" in service) or ("ground" in service)) and (
-        package.weight.value is None
+        packages.weight.value is None
     ):
         raise FieldError({"parcel.weight": FieldErrorCode.required})
 
@@ -185,12 +180,12 @@ def rate_request(
             Service=UOMCodeDescriptionType(Code=service, Description=None),
             NumOfPieces=None,  # Only required for Freight
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
-            DocumentsOnlyIndicator="" if payload.parcel.is_document else None,
+            DocumentsOnlyIndicator="" if is_document else None,
             Package=[
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
                         Code=RatingPackagingType[
-                            payload.parcel.packaging_type or "small_box"
+                            package.packaging_type or "small_box"
                         ].value,
                         Description=None,
                     ),
@@ -224,6 +219,7 @@ def rate_request(
                     PackageServiceOptions=None,
                     AdditionalHandlingIndicator=None,
                 )
+                for package in packages
             ],
             ShipmentServiceOptions=None,
             ShipmentRatingOptions=ShipmentRatingOptionsType(
@@ -234,7 +230,7 @@ def rate_request(
             TaxInformationIndicator=None,
             PromotionalDiscountInformation=None,
             DeliveryTimeInformation=TimeInTransitRequestType(
-                PackageBillType="02" if payload.parcel.is_document else "03"
+                PackageBillType="02" if is_document else "03"
             ),
         ),
     )

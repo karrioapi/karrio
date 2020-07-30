@@ -89,14 +89,14 @@ if __name__ == "__main__":
 RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcel": {
+    "parcels": [{
         "id": "1",
         "height": 3,
         "length": 10,
         "width": 3,
         "weight": 4.0,
         "is_document": True,
-    },
+    }],
     "services": ["dhl_express_worldwide_doc"],
     "options": {"currency": "CAD", "insurance": {"amount": 75}},
 }
@@ -105,7 +105,7 @@ RatePayload = {
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcel": {"package_preset": "dhl_express_tube",},
+    "parcels": [{"package_preset": "dhl_express_tube",}],
     "services": ["dhl_express_worldwide_nondoc"],
     "options": {"currency": "CAD"},
 }

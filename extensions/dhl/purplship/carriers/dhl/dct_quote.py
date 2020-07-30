@@ -1,6 +1,6 @@
 import time
 from functools import reduce
-from typing import List, Tuple
+from typing import List, Tuple, cast, Iterable
 from pydhl.dct_req_global_2_0 import (
     DCTRequest,
     DCTTo,
@@ -11,13 +11,12 @@ from pydhl.dct_req_global_2_0 import (
     MetaData,
     PieceType,
     QtdShpType,
-    QtdShpExChrgType
+    QtdShpExChrgType,
 )
 from pydhl.dct_requestdatatypes_global import DCTDutiable
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils import export, Serializable, Element, decimal, to_date
-from purplship.core.errors import FieldError, FieldErrorCode
-from purplship.core.units import Package, Options
+from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.carriers.dhl.units import (
     Product,
@@ -25,7 +24,7 @@ from purplship.carriers.dhl.units import (
     DCTPackageType,
     PackagePresets,
     SpecialServiceCode,
-    NetworkType
+    NetworkType,
 )
 from purplship.carriers.dhl.utils import Settings
 from purplship.carriers.dhl.error import parse_error_response
@@ -97,19 +96,11 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 
 
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
-    )
-    package = Package(payload.parcel, parcel_preset)
-
-    if package.weight.value is None:
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
-
+    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     options = Options(payload.options)
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    is_dutiable = not payload.parcel.is_document
+    is_document = all([parcel.is_document for parcel in payload.parcels])
+    is_dutiable = not is_document
     products = [
         ProductCode[svc].value
         for svc in payload.services
@@ -125,11 +116,11 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
     if len(products) == 0:
         if is_international:
             products = [
-                (ProductCode.dhl_express_worldwide_doc if payload.parcel.is_document else ProductCode.dhl_express_worldwide_nondoc).value
+                (ProductCode.dhl_express_worldwide_doc if is_document else ProductCode.dhl_express_worldwide_nondoc).value
             ]
         else:
             products = [
-                (ProductCode.dhl_express_easy_doc if payload.parcel.is_document else ProductCode.dhl_express_easy_nondoc).value
+                (ProductCode.dhl_express_easy_doc if is_document else ProductCode.dhl_express_easy_nondoc).value
             ]
 
     request = DCTRequest(
@@ -152,27 +143,28 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
             BkgDetails=BkgDetailsType(
                 PaymentCountryCode=payload.shipper.country_code,
                 NetworkTypeCode=NetworkType.both_time_and_day_definite.value,
-                WeightUnit=package.weight_unit.value,
-                DimensionUnit=package.dimension_unit.value,
+                WeightUnit=WeightUnit.LB.value,
+                DimensionUnit=DimensionUnit.IN.value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
                 IsDutiable=("Y" if is_dutiable else "N"),
                 Pieces=PiecesType(
                     Piece=[
                         PieceType(
-                            PieceID=payload.parcel.id or "1",
+                            PieceID=package.parcel.id or f"{index}",
                             PackageTypeCode=DCTPackageType[
                                 package.packaging_type or "your_packaging"
                             ].value,
-                            Depth=package.length.value,
-                            Width=package.width.value,
-                            Height=package.height.value,
-                            Weight=package.weight.value,
+                            Depth=package.length.IN,
+                            Width=package.width.IN,
+                            Height=package.height.IN,
+                            Weight=package.weight.LB,
                         )
+                        for index, package in enumerate(cast(Iterable[Package], packages), 1)
                     ]
                 ),
-                NumberOfPieces=1,
-                ShipmentWeight=package.weight.value,
+                NumberOfPieces=len(packages),
+                ShipmentWeight=packages.weight.LB,
                 Volume=None,
                 PaymentAccountNumber=settings.account_number,
                 InsuredCurrency=options.currency if options.insurance is not None else None,

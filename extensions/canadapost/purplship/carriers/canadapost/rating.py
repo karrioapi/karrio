@@ -15,10 +15,10 @@ from pycanadapost.rating import (
 from functools import reduce
 from datetime import datetime
 from typing import List, Tuple, cast
-from purplship.core.utils import Serializable, export, Element, format_date, decimal
+from purplship.core.utils import Serializable, export, Element, decimal
 from purplship.carriers.canadapost.utils import Settings
-from purplship.core.units import Country, Currency, Package
-from purplship.core.errors import OriginNotServicedError, FieldError, FieldErrorCode
+from purplship.core.units import Country, Currency, Packages
+from purplship.core.errors import OriginNotServicedError, FieldError, FieldErrorCode, MultiParcelNotSupportedError
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.carriers.canadapost.error import parse_error_response
 from purplship.carriers.canadapost.units import OptionCode, ServiceType, PackagePresets
@@ -84,20 +84,9 @@ def mailing_scenario_request(
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier
     """
     if payload.shipper.country_code and payload.shipper.country_code != Country.CA.name:
-        raise OriginNotServicedError(
-            payload.shipper.country_code, settings.carrier_id
-        )
+        raise OriginNotServicedError(payload.shipper.country_code)
 
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
-    )
-    package = Package(payload.parcel, parcel_preset)
-
-    if package.weight.value is None:
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
-
+    package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     requested_services = [
         svc for svc in payload.services if svc in ServiceType.__members__
     ]

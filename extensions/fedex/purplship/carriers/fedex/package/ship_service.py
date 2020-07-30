@@ -28,13 +28,13 @@ from pyfedex.ship_service_v25 import (
     ShippingDocumentPart,
     Payment,
     Payor,
+    WeightUnits,
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.errors import FieldError, FieldErrorCode
-from purplship.core.units import Weight, Dimension, Options, Package
+from purplship.core.units import Weight, Dimension, Options, Packages
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.carriers.fedex.error import parse_error_response
 from purplship.carriers.fedex.utils import Settings
@@ -98,15 +98,11 @@ def _extract_shipment(
 def process_shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ProcessShipmentRequest]:
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
+    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    package_type = (
+        PackagingType[packages[0].packaging_type or "your_packaging"].value
+        if len(packages) == 1 else None
     )
-    package = Package(payload.parcel, parcel_preset)
-
-    if package.weight.value is None:
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
 
     service = ServiceType[payload.service].value
     options = Options(payload.options)
@@ -125,13 +121,9 @@ def process_shipment_request(
             ShipTimestamp=datetime.now(),
             DropoffType="REGULAR_PICKUP",
             ServiceType=service,
-            PackagingType=PackagingType[
-                payload.parcel.packaging_type or "small_box"
-            ].value,
+            PackagingType=package_type,
             ManifestDetail=None,
-            TotalWeight=FedexWeight(
-                Units=package.weight_unit.value, Value=package.weight.value,
-            ),
+            TotalWeight=FedexWeight(Units=WeightUnits.LB.value, Value=packages.weight.LB),
             TotalInsuredValue=options.insurance.amount if options.insurance else None,
             PreferredCurrency=options.currency,
             ShipmentAuthorizationDetail=None,
@@ -313,40 +305,38 @@ def process_shipment_request(
             ),
             EdtRequestType=None,
             MasterTrackingId=None,
-            PackageCount=None,
+            PackageCount=len(packages),
             ConfigurationData=None,
             RequestedPackageLineItems=[
                 RequestedPackageLineItem(
                     SequenceNumber=index,
                     GroupNumber=None,
-                    GroupPackageCount=index,
+                    GroupPackageCount=None,
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
                     Weight=FedexWeight(
                         Units=package.weight_unit.value,
-                        Value=Weight(pkg.weight, package.weight_unit).value,
+                        Value=package.weight.value,
                     )
-                    if pkg.weight
+                    if package.weight.value
                     else None,
                     Dimensions=FedexDimensions(
-                        Length=Dimension(pkg.length, package.dimension_unit).value,
-                        Width=Dimension(pkg.width, package.dimension_unit).value,
-                        Height=Dimension(pkg.height, package.dimension_unit).value,
+                        Length=package.length.value,
+                        Width=package.width.value,
+                        Height=package.height.value,
                         Units=package.dimension_unit.value,
                     )
-                    if any([pkg.length, pkg.width, pkg.height])
+                    if any([package.length, package.width, package.height])
                     else None,
                     PhysicalPackaging=None,
-                    ItemDescription=pkg.description,
+                    ItemDescription=package.parcel.description,
                     ItemDescriptionForClearance=None,
                     CustomerReferences=None,
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
-                for index, pkg in enumerate(payload.customs.commodities, 1)
+                for index, package in enumerate(packages, 1)
             ]
-            if payload.customs is not None
-            else None,
         ),
     )
     return Serializable(request, _request_serializer)

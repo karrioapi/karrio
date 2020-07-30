@@ -9,9 +9,9 @@ from pyusps.ratev4request import (
     SpecialServicesType,
     ShipDateType,
 )
-from purplship.core.utils import export, Serializable, Element, format_date, decimal, to_date
+from purplship.core.utils import export, Serializable, Element, decimal, to_date
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Currency
+from purplship.core.units import Weight, Packages, Currency
 from purplship.carriers.usps.utils import Settings
 from purplship.carriers.usps.error import parse_error_response
 from purplship.carriers.usps.units import (
@@ -83,7 +83,7 @@ def rate_v4_request(
         Revision="2",
         Package=[
             PackageType(
-                ID=payload.parcel.id,
+                ID=payload.package.parcel.id,
                 SortationLevel=None,
                 DestinationEntryFacilityType=None,
                 Nonprofit=None,
@@ -91,14 +91,14 @@ def rate_v4_request(
                 FirstClassMailType=payload.mail_type,
                 ZipOrigination=payload.shipper.postal_code,
                 ZipDestination=payload.recipient.postal_code,
-                Pounds=payload.weight.LB,
-                Ounces=payload.weight.OZ,
+                Pounds=payload.package.weight.LB,
+                Ounces=payload.package.weight.OZ,
                 Container=payload.container,
                 Size=payload.size,
-                Width=payload.width,
-                Length=payload.length,
-                Height=payload.height,
-                Girth=payload.girth,
+                Width=payload.package.width.IN,
+                Length=payload.package.length.IN,
+                Height=payload.package.height.IN,
+                Girth=payload.package.girth.value,
                 Value=None,
                 AmountToCollect=None,  # TODO:: compute this with COD option
                 SpecialServices=SpecialServicesType(
@@ -131,8 +131,8 @@ class RateRequestExtensionV4:
     request: RateRequest
 
     @property
-    def parcel(self):
-        return self.request.parcel
+    def package(self):
+        return Packages(self.request.parcels).single
 
     @property
     def shipper(self):
@@ -145,30 +145,6 @@ class RateRequestExtensionV4:
     @property
     def options(self):
         return self.request.options
-
-    @property
-    def dimension_unit(self):
-        return DimensionUnit[self.parcel.dimension_unit or "IN"]
-
-    @property
-    def weight_unit(self):
-        return WeightUnit[self.parcel.weight_unit or "LB"]
-
-    @property
-    def weight(self):
-        return Weight(self.parcel.weight, self.weight_unit)
-
-    @property
-    def width(self):
-        return Dimension(self.parcel.width, self.dimension_unit).IN
-
-    @property
-    def height(self):
-        return Dimension(self.parcel.height, self.dimension_unit).IN
-
-    @property
-    def length(self):
-        return Dimension(self.parcel.length, self.dimension_unit).IN
 
     @property
     def service(self):
@@ -184,14 +160,14 @@ class RateRequestExtensionV4:
     @property
     def mail_type(self):
         return (
-            FirstClassMailType[self.parcel.packaging_type or "small_box"].value
+            FirstClassMailType[self.package.packaging_type or "small_box"].value
             if Service(self.service) in REQUIRED_MAIL_TYPE_SERVICES
             else None
         )
 
     @property
     def size(self):
-        dimensions = [self.width, self.length, self.height]
+        dimensions = [self.package.width.value, self.package.length.value, self.package.height.value]
         dimension_above_12_in = any(dim for dim in dimensions if dim and dim > 12)
         return Size.large.value if dimension_above_12_in else Size.regular.value
 

@@ -30,10 +30,9 @@ from pypurolator.estimate_service_2_1_2 import (
     DutyInformation,
     BusinessRelationship
 )
-from purplship.core.units import Currency, Package, Options, Phone
-from purplship.core.utils import Serializable, Element, concat_str, format_date, decimal
+from purplship.core.units import Currency, Packages, Options, Phone
+from purplship.core.utils import Serializable, Element, concat_str, decimal
 from purplship.core.utils.soap import create_envelope
-from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.carriers.purolator.utils import Settings, standard_request_serializer
 from purplship.carriers.purolator.error import parse_error_response
@@ -97,16 +96,9 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
 def get_full_estimate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[Envelope]:
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
-    )
-    package = Package(payload.parcel, parcel_preset)
-
-    if package.weight.value is None:
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
-
+    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    package_description = (packages[0].parcel.description if len(packages) == 1 else None)
+    is_document = all([parcel.is_document for parcel in payload.parcels])
     options = Options(payload.options)
     shipper_phone_number = Phone(payload.shipper.phone_number)
     recipient_phone_number = Phone(payload.recipient.phone_number)
@@ -195,12 +187,12 @@ def get_full_estimate_request(
                 ShipmentDate=datetime.today().strftime("%Y-%m-%d"),
                 PackageInformation=PackageInformation(
                     ServiceID=(service or default_service),
-                    Description=payload.parcel.description,
+                    Description=package_description,
                     TotalWeight=TotalWeight(
-                        Value=package.weight.value,
-                        WeightUnit=PurolatorWeightUnit[package.weight_unit.value].value,
+                        Value=packages.weight.LB,
+                        WeightUnit=PurolatorWeightUnit.LB.value,
                     )
-                    if payload.parcel.weight
+                    if packages.weight.value is not None
                     else None,
                     TotalPieces=1,
                     PiecesInformation=ArrayOfPiece(
@@ -212,7 +204,7 @@ def get_full_estimate_request(
                                         package.weight_unit.value
                                     ].value,
                                 )
-                                if payload.parcel.weight
+                                if package.weight.value
                                 else None,
                                 Length=PurolatorDimension(
                                     Value=package.length.value,
@@ -240,13 +232,14 @@ def get_full_estimate_request(
                                 else None,
                                 Options=None,
                             )
+                            for package in packages
                         ]
                     ),
                     DangerousGoodsDeclarationDocumentIndicator=None,
                     OptionsInformation=None,
                 ),
                 InternationalInformation=InternationalInformation(
-                    DocumentsOnlyIndicator=payload.parcel.is_document,
+                    DocumentsOnlyIndicator=is_document,
                     ContentDetails=None,
                     BuyerInformation=None,
                     PreferredCustomsBroker=None,
