@@ -34,7 +34,7 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import Options, Package, PaymentType
+from purplship.core.units import Options, Packages, PaymentType
 from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
 from purplship.carriers.ups.units import (
@@ -73,17 +73,14 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[UPSShipmentRequest]:
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
-    )
-    package = Package(payload.parcel, parcel_preset)
+    packages = Packages(payload.parcels, PackagePresets)
+    is_document = all([parcel.is_document for parcel in payload.parcels])
+    package_description = (packages[0].parcel.description if len(packages) == 1 else None)
     options = Options(payload.options)
     service = ShippingServiceCode[payload.service].value
 
     if (("freight" in service) or ("ground" in service)) and (
-        package.weight.value is None
+        packages.weight.value is None
     ):
         raise FieldError({"parcel.weight": FieldErrorCode.required})
 
@@ -101,8 +98,8 @@ def shipment_request(
             ),
         ),
         Shipment=ShipmentType(
-            Description=payload.parcel.description,
-            DocumentsOnlyIndicator="" if payload.parcel.is_document else None,
+            Description=package_description,
+            DocumentsOnlyIndicator="" if is_document else None,
             Shipper=ShipperType(
                 Name=payload.shipper.company_name,
                 AttentionName=payload.shipper.person_name,
@@ -236,14 +233,14 @@ def shipment_request(
             else None,
             Package=[
                 PackageType(
-                    Description=payload.parcel.description,
+                    Description=package.parcel.description,
                     Packaging=(
                         PackagingType(
                             Code=ShippingPackagingType[
-                                payload.parcel.packaging_type
+                                package.packaging_type
                             ].value,
                         )
-                        if payload.parcel.packaging_type is not None
+                        if package.packaging_type is not None
                         else None
                     ),
                     Dimensions=DimensionsType(
@@ -261,6 +258,7 @@ def shipment_request(
                         Weight=package.weight.value,
                     ),
                 )
+                for package in packages
             ],
         ),
         LabelSpecification=None,

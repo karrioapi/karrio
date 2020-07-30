@@ -1,6 +1,8 @@
 from dataclasses import dataclass
+from typing import List, Type, Optional, Iterator, Iterable
 from enum import Enum
 from purplship.core.models import Insurance, COD, Notification, Parcel
+from purplship.core.errors import FieldError, FieldErrorCode, MultiParcelNotSupportedError
 
 
 @dataclass
@@ -171,16 +173,16 @@ class Weight:
 
 class Package:
     def __init__(self, parcel: Parcel, template: PackagePreset = None):
-        self._parcel = parcel
-        self._preset = template or PackagePreset()
+        self.parcel = parcel
+        self.preset = template or PackagePreset()
 
     @property
     def dimension_unit(self):
-        dimensions = [self._parcel.height, self._parcel.width, self._parcel.length]
+        dimensions = [self.parcel.height, self.parcel.width, self.parcel.length]
         unit = (
-            (self._parcel.dimension_unit or self._preset.dimension_unit)
+            (self.parcel.dimension_unit or self.preset.dimension_unit)
             if any(dimensions)
-            else self._preset.dimension_unit
+            else self.preset.dimension_unit
         )
 
         return DimensionUnit[unit]
@@ -188,35 +190,35 @@ class Package:
     @property
     def weight_unit(self):
         unit = (
-            self._preset.weight_unit
-            if self._parcel.weight is None
-            else (self._parcel.weight_unit or self._preset.weight_unit)
+            self.preset.weight_unit
+            if self.parcel.weight is None
+            else (self.parcel.weight_unit or self.preset.weight_unit)
         )
 
         return WeightUnit[unit]
 
     @property
     def packaging_type(self):
-        return self._parcel.packaging_type or self._preset.packaging_type
+        return self.parcel.packaging_type or self.preset.packaging_type
 
     @property
     def weight(self):
-        return Weight(self._parcel.weight or self._preset.weight, self.weight_unit)
+        return Weight(self.parcel.weight or self.preset.weight, self.weight_unit)
 
     @property
     def width(self):
-        return Dimension(self._preset.width or self._parcel.width, self.dimension_unit)
+        return Dimension(self.preset.width or self.parcel.width, self.dimension_unit)
 
     @property
     def height(self):
         return Dimension(
-            self._preset.height or self._parcel.height, self.dimension_unit
+            self.preset.height or self.parcel.height, self.dimension_unit
         )
 
     @property
     def length(self):
         return Dimension(
-            self._preset.length or self._parcel.length, self.dimension_unit
+            self.preset.length or self.parcel.length, self.dimension_unit
         )
 
     @property
@@ -229,7 +231,52 @@ class Package:
 
     @property
     def thickness(self):
-        return Dimension(self._preset.thickness, self.dimension_unit)
+        return Dimension(self.preset.thickness, self.dimension_unit)
+
+
+class Packages(Iterable[Package]):
+    def __init__(self, parcels: List[Parcel], presets: Type[Enum] = None, required: List[str] = None):
+        def compute_preset(parcel) -> Optional[PackagePreset]:
+            if (presets is None) | (presets is not None and parcel.package_preset not in presets.__members__):
+                return None
+
+            return presets[parcel.package_preset].value
+
+        self._items = [Package(parcel, compute_preset(parcel)) for parcel in parcels]
+
+        if required is not None:
+            errors = {}
+            for index, package in enumerate(self._items):
+                for field in required:
+                    prop = getattr(package, field)
+
+                    if prop is None or (hasattr(prop, 'value') and prop.value is None):
+                        errors.update({f"parcel[{index}].{field}": FieldErrorCode.required})
+
+            if any(errors.items()):
+                raise FieldError(errors)
+
+    def __getitem__(self, index: int) -> Package:
+        return self._items[index]
+
+    def __len__(self):
+        return len(self._items)
+
+    def __iter__(self) -> Iterator[Package]:
+        return iter(self._items)
+
+    @property
+    def single(self) -> Package:
+        if len(self._items) > 1:
+            raise MultiParcelNotSupportedError()
+        return self._items[0]
+
+    @property
+    def weight(self) -> Weight:
+        return Weight(
+            unit=WeightUnit.LB,
+            value=sum(pkg.weight.LB for pkg in self._items if pkg.weight.value is not None) or None
+        )
 
 
 class Options:

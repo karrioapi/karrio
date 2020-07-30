@@ -15,13 +15,14 @@ from pyfedex.rate_service_v26 import (
     ShipmentRateDetail,
     Surcharge,
     RequestedPackageLineItem,
-    Dimensions
+    Dimensions,
+    WeightUnits,
+    DistanceUnits
 )
-from purplship.core.utils import export, concat_str, Serializable, format_date, decimal, to_date
+from purplship.core.utils import export, concat_str, Serializable, decimal, to_date
 from purplship.core.utils.soap import create_envelope
-from purplship.core.units import Package, Options
+from purplship.core.units import Packages, Options
 from purplship.core.utils.xml import Element
-from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.carriers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.carriers.fedex.error import parse_error_response
@@ -87,16 +88,11 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[FedexRateRequest]:
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
+    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    package_type = (
+        PackagingType[packages[0].packaging_type or "your_packaging"].value
+        if len(packages) == 1 else None
     )
-    package = Package(payload.parcel, parcel_preset)
-
-    if package.weight.value is None:
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
-
     is_international = payload.shipper.country_code != payload.recipient.country_code
     service = next(
         (
@@ -121,12 +117,11 @@ def rate_request(
             ShipTimestamp=datetime.now(),
             DropoffType="REGULAR_PICKUP",
             ServiceType=service,
-            PackagingType=PackagingType[
-                package.packaging_type or "your_packaging"
-            ].value,
+            PackagingType=package_type,
             VariationOptions=None,
             TotalWeight=FedexWeight(
-                Units=package.weight_unit.value, Value=package.weight.value,
+                Units=WeightUnits.LB.value,
+                Value=packages.weight.LB,
             ),
             TotalInsuredValue=None,
             PreferredCurrency=options.currency,
@@ -241,17 +236,18 @@ def rate_request(
             BlockInsightVisibility=None,
             LabelSpecification=None,
             ShippingDocumentSpecification=None,
-            RateRequestTypes=["LIST"]
-            + ([] if "currency" not in payload.options else ["PREFERRED"]),
+            RateRequestTypes=(
+                ["LIST"] + ([] if "currency" not in payload.options else ["PREFERRED"])
+            ),
             EdtRequestType=None,
-            PackageCount=None,
+            PackageCount=len(packages),
             ShipmentOnlyFields=None,
             ConfigurationData=None,
             RequestedPackageLineItems=[
                 RequestedPackageLineItem(
-                    SequenceNumber=1,
+                    SequenceNumber=index,
                     GroupNumber=None,
-                    GroupPackageCount=1,
+                    GroupPackageCount=None,
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
                     Weight=FedexWeight(
@@ -269,12 +265,13 @@ def rate_request(
                     if any([package.length.value, package.width.value, package.height.value])
                     else None,
                     PhysicalPackaging=None,
-                    ItemDescription=payload.parcel.description,
+                    ItemDescription=package.parcel.description,
                     ItemDescriptionForClearance=None,
                     CustomerReferences=None,
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
+                for index, package in enumerate(packages, 1)
             ],
         ),
     )

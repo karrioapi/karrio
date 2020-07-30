@@ -18,24 +18,23 @@ from pydhl.ship_val_global_req_6_2 import (
     MetaData,
     Notification,
     SpecialService,
+    WeightUnit,
+    DimensionUnit
 )
 from pydhl.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
-from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
     ShipmentRequest,
     Message,
     ShipmentDetails,
 )
-from purplship.core.units import Options, Package, Country
+from purplship.core.units import Options, Packages, Country
 from purplship.carriers.dhl.units import (
     PackageType,
     ProductCode,
     PaymentType,
-    Dimension as DHLDimensionUnit,
-    WeightUnit as DHLWeightUnit,
     CountryRegion,
     SpecialServiceCode,
     DeliveryType,
@@ -75,19 +74,14 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
 def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[DHLShipmentRequest]:
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
-    )
-    package = Package(payload.parcel, parcel_preset)
-
-    if package.weight.value is None:
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
-
+    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     is_international = payload.shipper.country_code == payload.recipient.country_code
     options = Options(payload.options)
     product = ProductCode[payload.service].value
+    package_type = (
+        PackageType[packages[0].packaging_type or "your_packaging"].value
+        if len(packages) == 1 else None
+    )
     delivery_type = next(
         (d for d in DeliveryType if d.name in payload.options.keys()), None
     )
@@ -176,29 +170,30 @@ def shipment_request(
             ),
         ),
         ShipmentDetails=DHLShipmentDetails(
-            NumberOfPieces=1,
+            NumberOfPieces=len(packages),
             Pieces=Pieces(
                 Piece=[
                     Piece(
-                        PieceID=payload.parcel.id,
-                        PackageType=PackageType[
-                            package.packaging_type or "your_packaging"
-                        ].value,
-                        Depth=package.length.value,
-                        Width=package.width.value,
-                        Height=package.height.value,
-                        Weight=package.weight.value,
+                        PieceID=payload.parcels[index].id,
+                        PackageType=(
+                            package_type or PackageType[package.packaging_type or "your_packaging"].value
+                        ),
+                        Depth=package.length.IN,
+                        Width=package.width.IN,
+                        Height=package.height.IN,
+                        Weight=package.weight.LB,
                         DimWeight=None,
-                        PieceContents=payload.parcel.description,
+                        PieceContents=payload.parcels[index].description,
                     )
+                    for index, package in enumerate(packages)
                 ]
             ),
-            Weight=package.weight.value,
+            Weight=packages.weight.LB,
             CurrencyCode=options.currency or "USD",
-            WeightUnit=DHLWeightUnit[package.weight_unit.name].value,
-            DimensionUnit=DHLDimensionUnit[package.dimension_unit.name].value,
+            WeightUnit=WeightUnit.L.value,
+            DimensionUnit=DimensionUnit.I.value,
             Date=time.strftime("%Y-%m-%d"),
-            PackageType=PackageType[package.packaging_type].value,
+            PackageType=package_type,
             IsDutiable="Y" if payload.customs is not None else "N",
             InsuredAmount=options.insurance.amount if options.insurance else None,
             ShipmentCharges=options.cash_on_delivery.amount

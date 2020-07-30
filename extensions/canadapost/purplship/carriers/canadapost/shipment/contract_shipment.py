@@ -13,7 +13,7 @@ from purplship.core.models import (
     ShipmentDetails,
     ShipmentRequest,
 )
-from purplship.core.units import Currency, WeightUnit, DimensionUnit, Options, Package
+from purplship.core.units import Currency, WeightUnit, DimensionUnit, Options, Packages
 from purplship.core.utils import export, concat_str, Serializable, Element
 from purplship.core.errors import FieldError, FieldErrorCode
 from pycanadapost.shipment import (
@@ -71,12 +71,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 def contract_shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ShipmentType]:
-    parcel_preset = (
-        PackagePresets[payload.parcel.package_preset].value
-        if payload.parcel.package_preset
-        else None
-    )
-    package = Package(payload.parcel, parcel_preset)
+    package = Packages(payload.parcels, PackagePresets).single
 
     if package.weight.value is None:
         raise FieldError({"parcel.weight": FieldErrorCode.required})

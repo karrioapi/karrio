@@ -2,9 +2,9 @@ from typing import Tuple, List
 from datetime import datetime
 from pyusps.intlratev2request import IntlRateV2Request, PackageType
 from pyusps.intlratev2response import ServiceType, ExtraServiceType
-from purplship.core.utils import export, Serializable, Element, format_date, decimal, to_date
+from purplship.core.utils import export, Serializable, Element, decimal, to_date
 from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
-from purplship.core.units import Weight, WeightUnit, Dimension, DimensionUnit, Country
+from purplship.core.units import Packages, Country
 from purplship.carriers.usps.units import IntlContainer, ExtraService, IntlMailType
 from purplship.carriers.usps.error import parse_error_response
 from purplship.carriers.usps import Settings
@@ -55,18 +55,17 @@ def _extract_intl_rates(service_node: Element, settings: Settings) -> RateDetail
 def intl_rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[IntlRateV2Request]:
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
+    package = Packages(payload.parcels).single
     request = IntlRateV2Request(
         USERID=settings.username,
         Revision="2",
         Package=[
             PackageType(
-                ID=payload.parcel.id or 1,
-                Pounds=Weight(payload.parcel.weight, weight_unit).LB,
-                Ounces=Weight(payload.parcel.weight, weight_unit).OZ,
+                ID=package.parcel.id or 1,
+                Pounds=package.weight.LB,
+                Ounces=package.weight.OZ,
                 Machinable=None,
-                MailType=IntlMailType[payload.parcel.packaging_type].value,
+                MailType=IntlMailType[package.packaging_type].value,
                 GXG=None,
                 ValueOfContents=None,
                 Country=(
@@ -75,24 +74,24 @@ def intl_rate_request(
                     else None
                 ),
                 Container=(
-                    IntlContainer[payload.parcel.packaging_type].value
-                    if payload.parcel.packaging_type
+                    IntlContainer[package.packaging_type].value
+                    if package.packaging_type
                     else None
                 ),
                 Size="LARGE"
                 if any(
                     dim
                     for dim in [
-                        Dimension(payload.parcel.width, dimension_unit).IN,
-                        Dimension(payload.parcel.length, dimension_unit).IN,
-                        Dimension(payload.parcel.height, dimension_unit).IN,
+                        package.width.IN,
+                        package.length.IN,
+                        package.height.IN,
                     ]
                     if dim > 12
                 )
                 else "REGULAR",
-                Width=Dimension(payload.parcel.width, dimension_unit).IN,
-                Length=Dimension(payload.parcel.length, dimension_unit).IN,
-                Height=Dimension(payload.parcel.height, dimension_unit).IN,
+                Width=package.width.IN,
+                Length=package.length.IN,
+                Height=package.height.IN,
                 Girth=None,
                 OriginZip=payload.shipper.postal_code,
                 CommercialFlag=None,

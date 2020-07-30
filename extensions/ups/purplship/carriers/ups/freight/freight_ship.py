@@ -26,7 +26,7 @@ from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
 from purplship.core.utils.xml import Element
-from purplship.core.units import DimensionUnit, Dimension, Weight, WeightUnit, Options
+from purplship.core.units import Packages, Options
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
@@ -34,8 +34,9 @@ from purplship.core.models import (
 )
 from purplship.carriers.ups.units import (
     ShippingServiceCode,
-    WeightUnit as UPSWeightUnit,
+    WeightUnit,
     FreightClass,
+    PackagePresets
 )
 from purplship.carriers.ups.error import parse_error_response
 from purplship.carriers.ups.utils import Settings
@@ -73,8 +74,7 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
 def freight_ship_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[FreightShipRequest]:
-    dimension_unit = DimensionUnit[payload.parcel.dimension_unit or "IN"]
-    weight_unit = WeightUnit[payload.parcel.weight_unit or "LB"]
+    packages = Packages(payload.parcels, PackagePresets)
     options = Options(payload.options)
     service = ShippingServiceCode[payload.service].value
     freight_class = FreightClass[
@@ -152,27 +152,27 @@ def freight_ship_request(
             ShipmentTotalWeight=None,
             Commodity=[
                 CommodityType(
-                    CommodityID=payload.parcel.id,
-                    Description=payload.parcel.description,
+                    CommodityID=package.parcel.id,
+                    Description=package.parcel.description,
                     Weight=WeightType(
                         UnitOfMeasurement=FreightShipUnitOfMeasurementType(
-                            Code=UPSWeightUnit[weight_unit.name].value
+                            Code=WeightUnit[package.weight_unit].value
                         ),
-                        Value=Weight(payload.parcel.weight, weight_unit).value,
+                        Value=package.weight.value,
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=FreightShipUnitOfMeasurementType(
-                            Code=dimension_unit.value
+                            Code=package.dimension_unit
                         ),
-                        Width=Dimension(payload.parcel.width, dimension_unit).value,
-                        Height=Dimension(payload.parcel.height, dimension_unit).value,
-                        Length=Dimension(payload.parcel.length, dimension_unit).value,
+                        Width=package.width.value,
+                        Height=package.height.value,
+                        Length=package.length.value,
                     )
                     if any(
                         [
-                            payload.parcel.width,
-                            payload.parcel.height,
-                            payload.parcel.length,
+                            package.width.value,
+                            package.height.value,
+                            package.length.value,
                         ]
                     )
                     else None,
@@ -184,6 +184,7 @@ def freight_ship_request(
                     NMFCCommodityCode=None,
                     NMFCCommodity=None,
                 )
+                for package in packages
             ],
             Reference=None,
             ShipmentServiceOptions=ShipmentServiceOptionsType(
