@@ -85,8 +85,8 @@ run_server() {
 
 test() {
   purplship makemigrations &&
-  purplship test purpleserver.proxy.tests &&
-  purplship test purpleserver.manager.tests
+  purplship test --failfast purpleserver.proxy.tests &&
+  purplship test --failfast purpleserver.manager.tests
 }
 
 clean_builds() {
