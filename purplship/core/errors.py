@@ -48,14 +48,6 @@ class FieldError(PurplShipDetailedError):
         self.details = {name: code.value for name, code in fields.items()}
 
 
-class RequiredFieldError(ValidationError):
-    """Raised when one or many required fields are missing."""
-
-    def __init__(self, field: str):
-        warnings.warn("deprecated use FieldError instead.", DeprecationWarning)
-        super().__init__(f"<{field}> must be specified (required)")
-
-
 class OriginNotServicedError(PurplShipError):
     """Raised when an origin is not supported by a shipping provider."""
 
