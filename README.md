@@ -618,6 +618,7 @@ rates = request.from_(carrier).parse()
     | `total_charge` | `float` |
     | `duties_and_taxes` | `float` |
     | `extra_charges` | List[[ChargeDetails](#ChargeDetails)] |
+    | `meta` | `dict` |
     | `id` | `str` |
 
 
@@ -640,6 +641,7 @@ rates = request.from_(carrier).parse()
     | `label` | `str` |
     | `tracking_number` | `str` |
     | `selected_rate` | [RateDetails](#RateDetails) |
+    | `meta` | `dict` |
     | `id` | `str` |
 
 
