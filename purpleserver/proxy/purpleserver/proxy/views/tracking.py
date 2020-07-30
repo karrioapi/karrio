@@ -6,7 +6,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.exceptions import NotFound
 
 from django.urls import path
 
@@ -17,7 +16,7 @@ from purplship.core.utils import to_dict
 from purpleserver.core.serializers import (
     TrackingRequest, TrackingResponse, TestFilters, ErrorResponse
 )
-from purpleserver.core.gateway import Shipments, Carriers
+from purpleserver.core.gateway import Shipments
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
@@ -44,18 +43,13 @@ def track_shipment(request: Request, carrier_name: str, tracking_number: str):
     params = TestFilters(data=request.query_params)
     params.is_valid(raise_exception=True)
 
-    carrier_setting = next(
-        iter(Carriers.list(**{**request.query_params, 'carrier_name': carrier_name})),
-        None
-    )
-
-    if carrier_setting is None:
-        raise NotFound(f'No configured carrier of type: {carrier_name}')
-
     tracking_request = TrackingRequest(data=dict(tracking_numbers=[tracking_number]))
     tracking_request.is_valid(raise_exception=True)
 
-    response = Shipments.track(tracking_request.data, carrier_setting)
+    response = Shipments.track(
+        tracking_request.data,
+        carrier_filter={**request.query_params, 'carrier_name': carrier_name}
+    )
 
     return Response(
         to_dict(response),

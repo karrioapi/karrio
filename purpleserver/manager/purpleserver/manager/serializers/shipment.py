@@ -184,10 +184,10 @@ class ShipmentValidationData(Shipment):
         return Shipments.create(
             ShippingRequest(validated_data).data,
             resolve_tracking_url=(
-                lambda trackin_url, shipping: reverse(
-                    "purpleserver.proxy:shipment-tracking",
+                lambda shipment: reverse(
+                    "purpleserver.manager:shipment-tracking",
                     request=validated_data.get('request'),
-                    kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
+                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_id=shipment.carrier_id)
                 )
             )
         )

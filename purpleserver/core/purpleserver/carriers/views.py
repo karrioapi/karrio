@@ -12,7 +12,6 @@ from django.db.models import Q
 
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.core.utils import to_dict
 from purpleserver.carriers.router import router
 from purpleserver.core.gateway import Carriers
 from purpleserver.core.serializers import CarrierSettings, ErrorResponse, CARRIERS
@@ -46,8 +45,8 @@ class CarrierList(CarrierAPIView):
         query = CarrierFilters(data=request.query_params)
         query.is_valid(raise_exception=True)
 
-        carriers = Carriers.list(**query.validated_data)
-        serializer = CarrierSettings(to_dict(carriers), many=True)
+        carriers = [carrier.data for carrier in Carriers.list(**query.validated_data)]
+        serializer = CarrierSettings(carriers, many=True)
         return Response(serializer.data)
 
 
@@ -66,8 +65,7 @@ class CarrierDetails(CarrierAPIView):
         query = Q(id__startswith=carrier_id_or_pk) | Q(carrier_id__startswith=carrier_id_or_pk)
 
         carrier = Carriers.retrieve(query)
-        serializer = CarrierSettings(to_dict(carrier))
-        return Response(serializer.data)
+        return Response(CarrierSettings(carrier.data).data)
 
 
 router.urls.append(path('carriers', CarrierList.as_view()))

@@ -361,7 +361,11 @@ class TrackingDetails(Serializer):
     carrier_name = CharField(required=True, help_text="The tracking carrier")
     carrier_id = CharField(required=True, help_text="The tracking carrier configured identifier")
     tracking_number = CharField(required=True, help_text="The shipment tracking number")
-    events = ListField(child=TrackingEvent(), help_text="The tracking details events")
+    events = ListField(child=TrackingEvent(), required=False, allow_null=True, help_text="The tracking details events")
+
+
+class Tracking(EntitySerializer, TrackingDetails):
+    shipment_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system shipment associated.")
 
 
 class PickupDetails(Serializer):

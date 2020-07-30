@@ -64,10 +64,10 @@ def submit_shipment(request: Request):
     response = Shipments.create(
         shipping_request.data,
         resolve_tracking_url=(
-            lambda trackin_url, shipping: reverse(
+            lambda shipment: reverse(
                 "purpleserver.proxy:shipment-tracking",
                 request=request,
-                kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
+                kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
             )
         )
     )

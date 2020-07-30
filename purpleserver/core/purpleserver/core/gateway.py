@@ -1,8 +1,7 @@
-import logging
 import uuid
-from typing import List, Union, Callable, Type, Dict, Any
+import logging
+from typing import List, Callable, Dict, Any
 
-from django.forms.models import model_to_dict
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 
@@ -23,23 +22,20 @@ logger = logging.getLogger(__name__)
 
 class Carriers:
     @staticmethod
-    def retrieve(*args, **kwargs) -> CarrierSettings:
-        carrier = models.Carrier.objects.get(*args, **kwargs).settings()
-        return CarrierSettings.create({
-            **model_to_dict(carrier),
-            'id': carrier.pk,
-            'carrier_name': carrier.CARRIER_NAME
-        })
+    def retrieve(*args, **kwargs) -> models.Carrier:
+        return models.Carrier.objects.get(*args, **kwargs)
 
     @staticmethod
-    def list(**kwargs) -> List[CarrierSettings]:
+    def list(**kwargs) -> List[models.Carrier]:
         list_filter: Dict[str: Any] = kwargs
         query = {}
-        model: Type[models.Carrier] = models.Carrier
 
         if 'test' in list_filter:
             test = False if list_filter['test'] is False else True
             query.update(dict(test=test))
+
+        if 'carrier_id' in list_filter:
+            query.update(dict(carrier_id=list_filter['carrier_id']))
 
         if any(list_filter.get('carrier_ids', [])):
             query.update(dict(carrier_id__in=list_filter['carrier_ids']))
@@ -48,23 +44,18 @@ class Carriers:
             if list_filter['carrier_name'] not in models.MODELS.keys():
                 raise NotFound(f"No configurations for the following carrier: '{list_filter['carrier_name']}'")
 
-            model = models.MODELS[list_filter['carrier_name']]
+            carriers = [
+                setting.carrier_ptr for setting in models.MODELS[list_filter['carrier_name']].objects.filter(**query)
+            ]
+        else:
+            carriers = models.Carrier.objects.filter(**query)
 
-        return [
-            CarrierSettings.create((
-                lambda s: {
-                    **model_to_dict(s),
-                    'id': s.pk,
-                    'carrier_name': s.CARRIER_NAME
-                }
-            )(s.settings() or s))
-            for s in model.objects.filter(**query)
-        ]
+        return carriers
 
 
 class Shipments:
     @staticmethod
-    def create(payload: dict, resolve_tracking_url: Callable[[str, dict], str] = None) -> Union[ShipmentResponse, ErrorResponse]:
+    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None) -> ShipmentResponse:
         selected_rate = next(
             (Rate(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
             None
@@ -76,9 +67,9 @@ class Shipments:
                 f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
             )
 
-        carrier_settings: CarrierSettings = Carriers.retrieve(carrier_id=selected_rate.carrier_id)
+        carrier = Carriers.retrieve(carrier_id=selected_rate.carrier_id).data
         request = ShipmentRequest(**{**to_dict(payload), 'service': selected_rate.service})
-        gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
+        gateway = api.gateway[carrier.carrier_name].create(carrier.dict())
 
         # The request is wrapped in identity to simplify mocking in tests
         shipment, messages = identity(lambda: api.Shipment.create(request).with_(gateway).parse())
@@ -95,9 +86,9 @@ class Shipments:
         tracking_url = None
 
         try:
-            is_test = "?test" if carrier_settings.test else ""
+            is_test = "?test" if carrier.test else ""
             tracking_url = (
-                resolve_tracking_url(shipment.tracking_number, shipment) + is_test
+                resolve_tracking_url(shipment) + is_test
                 if resolve_tracking_url is not None else None
             )
         except Exception as e:
@@ -117,18 +108,23 @@ class Shipments:
         )
 
     @staticmethod
-    def track(payload: dict, carrier_settings: CarrierSettings) -> TrackingResponse:
-        request = TrackingRequest(**payload)
+    def track(payload: dict, carrier_filter: dict) -> TrackingResponse:
+        carrier = next(iter(Carriers.list(**carrier_filter)), None)
 
-        gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = api.Tracking.fetch(TrackingRequest(**payload))
+        gateway = api.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
         # The request call is wrapped in identity to simplify mocking in tests
-        results, messages = identity(lambda: api.Tracking.fetch(request).from_(gateway).parse())
+        results, messages = identity(lambda: request.from_(gateway).parse())
 
-        if any(messages):
+        if any(messages) and not any(results):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
         return TrackingResponse(
-            tracking_details=next(iter(results), None),
+            tracking_details=results[0],
             messages=messages
         )
 
@@ -138,7 +134,9 @@ class Rates:
     def fetch(payload: dict) -> RateResponse:
         request = api.Rating.fetch(RateRequest(**to_dict(payload)))
 
-        carrier_settings_list: List[CarrierSettings] = Carriers.list(carrier_ids=payload.get('carrier_ids', []))
+        carrier_settings_list = [
+            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []))
+        ]
 
         if len(carrier_settings_list) == 0:
             raise NotFound("No configured carriers specified")

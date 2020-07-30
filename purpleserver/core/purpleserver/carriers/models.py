@@ -1,11 +1,15 @@
 import pkgutil
 import logging
+import warnings
 from functools import partial
 from typing import Any, Dict
 
 from django.db import models
+from django.forms.models import model_to_dict
+
 from purplship.package import gateway
 from purpleserver.core.models import Entity, uuid
+from purpleserver.core.datatypes import CarrierSettings
 import purpleserver.carriers.extension.models as extensions
 
 logger = logging.getLogger(__name__)
@@ -22,7 +26,7 @@ class Carrier(Entity):
     def __str__(self):
         return self.carrier_id
 
-    def settings(self) -> 'Carrier':
+    def _linked_settings(self):
         for field in [f for f in self._meta.get_fields() if isinstance(f, models.OneToOneRel)]:
             try:
                 return getattr(self, field.get_accessor_name())
@@ -30,8 +34,14 @@ class Carrier(Entity):
                 pass
         return None
 
-    def carrier_name(self) -> str:
-        return self.settings().CARRIER_NAME
+    @property
+    def data(self) -> CarrierSettings:
+        settings = self._linked_settings()
+        return CarrierSettings.create({
+            'id': settings.pk,
+            'carrier_name': settings.CARRIER_NAME,
+            **model_to_dict(settings)
+        })
 
 
 class CanadaPostSettings(Carrier):

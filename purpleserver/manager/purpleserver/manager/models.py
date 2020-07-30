@@ -2,7 +2,6 @@ from functools import partial
 from typing import List, cast, Optional
 from django.db import models
 from jsonfield import JSONField
-from rest_framework.reverse import reverse
 
 from purpleserver.carriers.models import Carrier
 from purpleserver.core.models import OwnedEntity, uuid
@@ -121,8 +120,45 @@ class Customs(OwnedEntity):
         return self.commodity_set.all()
 
 
+class Tracking(OwnedEntity):
+    DIRECT_PROPS = []
+    RELATIONAL_PROPS = []
+
+    class Meta:
+        db_table = "tracking"
+        verbose_name = 'Tracking'
+        verbose_name_plural = 'Tracking Info'
+
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
+    tracking_number = models.CharField(max_length=50, unique=True)
+    events = JSONField(blank=True, null=True, default=[])
+
+    # System Reference fields
+
+    tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
+    tracking_shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE, blank=True, null=True)
+
+    # Computed properties
+
+    @property
+    def carrier_id(self) -> str:
+        return cast(Carrier, self.tracking_carrier).carrier_id
+
+    @property
+    def carrier_name(self) -> str:
+        return cast(Carrier, self.tracking_carrier).data.carrier_name
+
+    @property
+    def shipment_id(self) -> Optional[str]:
+        return self.tracking_shipment.primary_key if self.tracking_shipment is not None else None
+
+
 class Shipment(OwnedEntity):
-    DIRECT_PROPS = ['label', 'options', 'services', 'status', 'service', 'shipment_rates', 'tracking_number', 'doc_images']
+    DIRECT_PROPS = [
+        'label', 'options', 'services', 'status', 'service',
+        'shipment_rates', 'tracking_number', 'doc_images',
+        'tracking_url'
+    ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcel', 'payment', 'customs', 'selected_rate']
 
     class Meta:
@@ -139,6 +175,7 @@ class Shipment(OwnedEntity):
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
     label = models.TextField(max_length=None, null=True, blank=True)
+    tracking_url = models.TextField(max_length=None, null=True, blank=True)
 
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
     customs = models.ForeignKey('Customs', on_delete=models.CASCADE, blank=True, null=True)
@@ -150,9 +187,11 @@ class Shipment(OwnedEntity):
     doc_images = JSONField(blank=True, null=True, default=[])
 
     # System Reference fields
+
     shipment_rates = JSONField(blank=True, null=True, default=[])
-    selected_rate_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE, related_name='selected_rate_carrier', blank=True, null=True)
     carriers = models.ManyToManyField(Carrier, blank=True, related_name='rating_carriers')
+    selected_rate_carrier = models.ForeignKey(
+        Carrier, on_delete=models.CASCADE, related_name='selected_rate_carrier', blank=True, null=True)
 
     # Computed properties
 
@@ -162,7 +201,7 @@ class Shipment(OwnedEntity):
 
     @property
     def carrier_name(self) -> str:
-        return cast(Carrier, self.selected_rate_carrier).carrier_name()
+        return cast(Carrier, self.selected_rate_carrier).data.carrier_name
 
     @property
     def carrier_ids(self) -> List[str]:
@@ -186,20 +225,10 @@ class Shipment(OwnedEntity):
     def rates(self) -> List[dict]:
         rates: List[dict] = []
         for stored_rate in cast(List[dict], self.shipment_rates):
-            carrier = Carrier.objects.get(id=stored_rate['carrier_ref'])
+            carrier = Carrier.objects.get(id=stored_rate['carrier_ref']).data
             rates.append({
                 **stored_rate,
                 'carrier_id': carrier.carrier_id,
-                'carrier_name': carrier.carrier_name(),
+                'carrier_name': carrier.carrier_name,
             })
         return rates
-
-    @property
-    def tracking_url(self) -> Optional[str]:
-        if self.tracking_number is None:
-            return None
-
-        return reverse(
-            "purpleserver.proxy:shipment-tracking",
-            kwargs=dict(tracking_number=self.tracking_number, carrier_name=self.carrier_name)
-        )

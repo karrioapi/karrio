@@ -473,7 +473,7 @@ PURCHASED_SHIPMENT = {
         "selectedRate": SELECTED_RATE,
         "selectedRateId": ANY,
         "rates": [SELECTED_RATE],
-        "trackingUrl": ANY,
+        "trackingUrl": "http://testserver/v1/tracking/canadapost/123456789012?test",
         "shipper": {
             "id": ANY,
             "postalCode": "E1C4Z8",
