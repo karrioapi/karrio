@@ -6,6 +6,8 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export PIP_FIND_LINKS="https://git.io/purplship"
+
 activate_env() {
   echo "Activate $BASE_DIR"
   deactivate || true
@@ -37,10 +39,17 @@ alias env:reset=init
 # Project helpers
 
 install_all() {
+#  TODO:: Revert when extension version constraint is fixed
+#    pip install -e "${ROOT:?}/purpleserver/core" &&
+#    pip install -e "${ROOT:?}/purpleserver/proxy" &&
+#    pip install -e "${ROOT:?}/purpleserver/manager" &&
+#    pip install -e "${ROOT:?}/purpleserver[dev]"
+
+    pip install -e "${ROOT:?}/purpleserver[dev]" &&
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
     pip install -e "${ROOT:?}/purpleserver/manager" &&
-    pip install -e "${ROOT:?}/purpleserver[dev]"
+    pip uninstall -y purplship-server.core
 }
 
 install_released() {
@@ -60,8 +69,10 @@ install_released() {
 reset_db () {
   purplship makemigrations &&
   purplship migrate &&
-  purplship collectstatic --noinput &&
+  purplship collectstatic --noinput
   (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+  (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
+  (echo "from purpleserver.carriers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
 }
 
 run_server() {
@@ -70,6 +81,12 @@ run_server() {
   fi
   reset_db
   purplship runserver
+}
+
+test() {
+  purplship makemigrations &&
+  purplship test purpleserver.proxy.tests &&
+  purplship test purpleserver.manager.tests
 }
 
 clean_builds() {

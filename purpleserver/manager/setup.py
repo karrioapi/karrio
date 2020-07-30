@@ -15,8 +15,7 @@ setup(
       license='AGPLv3',
       packages=find_packages("."),
       install_requires=[
-            'purplship-server.core',
-            'psycopg2-binary'
+            'purplship-server.core'
       ],
       dependency_links=[
             'https://git.io/purplship',

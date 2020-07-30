@@ -16,28 +16,20 @@ from purplship.core.utils.helpers import to_dict
 from purpleserver.proxy.router import router
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.serializers import (
-    CharField, ChoiceField, COUNTRIES, ListField,
+    CharField, ChoiceField, COUNTRIES,
 
-    Rate,
-    Payment,
+    ShippingRequest,
     Address as BaseAddress,
     ShipmentResponse,
-    ShipmentPayload,
-    ErrorResponse as ErrorResponseSerializer,
+    ErrorResponse,
 )
 
 logger = logging.getLogger(__name__)
 
 DESCRIPTIONS = """
-Once a Shipment is initialized by fetching the rates, the remaining requirements might be specified 
-to submit the shipment to the carrier of the selected rate of your choice.
+Once the shipment rates are retrieved, provide the required info to
+submit the shipment by specifying your preferred rate.
 """
-
-
-class ShipmentRequest(ShipmentPayload):
-    selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
-    rates = ListField(child=Rate(), help_text="The list for shipment rates fetched previously")
-    payment = Payment(required=True, help_text="The payment details")
 
 
 class Address(BaseAddress):
@@ -47,33 +39,33 @@ class Address(BaseAddress):
     address_line1 = CharField(required=True, help_text="The address line with street number")
 
 
-class ShipmentRequestValidation(ShipmentRequest):
+class ShippingRequestValidation(ShippingRequest):
     shipper = Address(required=True, help_text="The origin address of the shipment (address from)")
     recipient = Address(required=True, help_text="The shipment destination address (address to)")
 
 
 @swagger_auto_schema(
     methods=['post'],
-    tags=['Shipment'],
-    operation_id="proxy_create_shipment",
-    operation_summary="Create a Shipment",
+    tags=['Shipping'],
+    operation_id="proxy_create_shipping",
+    operation_summary="Submit a Shipment",
     operation_description=DESCRIPTIONS,
-    request_body=ShipmentRequest(),
-    responses={200: ShipmentResponse(), 400: ErrorResponseSerializer()},
+    request_body=ShippingRequest(),
+    responses={200: ShipmentResponse(), 400: ErrorResponse()},
 )
 @api_view(['POST'])
 @authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated, ))
 @throttle_classes([UserRateThrottle, AnonRateThrottle])
-def ship(request: Request):
-    shipping_request = ShipmentRequestValidation(data=request.data)
+def submit_shipment(request: Request):
+    shipping_request = ShippingRequestValidation(data=request.data)
     shipping_request.is_valid(raise_exception=True)
 
     response = Shipments.create(
         shipping_request.data,
         resolve_tracking_url=(
             lambda trackin_url, shipping: reverse(
-                "purpleserver.proxy:TrackShipment",
+                "purpleserver.proxy:shipment-tracking",
                 request=request,
                 kwargs=dict(tracking_number=shipping.tracking_number, carrier_name=shipping.carrier_name)
             )
@@ -83,4 +75,4 @@ def ship(request: Request):
     return Response(to_dict(response), status=status.HTTP_201_CREATED)
 
 
-router.urls.append(path('proxy/shipments', ship))
+router.urls.append(path('proxy/shipping', submit_shipment, name="shipping-request"))

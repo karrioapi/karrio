@@ -1,4 +1,4 @@
 import purpleserver.proxy.views.tracking
-import purpleserver.proxy.views.rate
-import purpleserver.proxy.views.shipment
+import purpleserver.proxy.views.rating
+import purpleserver.proxy.views.shipping
 from purpleserver.proxy.router import router

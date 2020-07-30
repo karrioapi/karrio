@@ -15,7 +15,7 @@ from drf_yasg.utils import swagger_auto_schema
 from purplship.core.utils import to_dict
 
 from purpleserver.core.serializers import (
-    TrackingRequest, TrackingResponse, TestFilters, ErrorResponse as ErrorResponseSerializer
+    TrackingRequest, TrackingResponse, TestFilters, ErrorResponse
 )
 from purpleserver.core.gateway import Shipments, Carriers
 from purpleserver.proxy.router import router
@@ -30,10 +30,10 @@ You can track a shipment by specifying the carrier and the shipment tracking num
 @swagger_auto_schema(
     methods=['get'],
     tags=['Tracking'],
-    responses={200: TrackingResponse(), 400: ErrorResponseSerializer()},
-    operation_description=DESCRIPTIONS,
-    operation_id="proxy_track_shipment",
+    operation_id="proxy_fetch_tracking",
     operation_summary="Track a Shipment",
+    operation_description=DESCRIPTIONS,
+    responses={200: TrackingResponse(), 400: ErrorResponse()},
     query_serializer=TestFilters
 )
 @api_view(['GET'])
@@ -63,4 +63,4 @@ def track_shipment(request: Request, carrier_name: str, tracking_number: str):
     )
 
 
-router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track_shipment, name="TrackShipment"))
+router.urls.append(path('proxy/tracking/<carrier_name>/<tracking_number>', track_shipment, name="shipment-tracking"))

@@ -6,16 +6,14 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework import status
-
 from django.urls import path
-
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.serializers import (
-    ErrorResponse as ErrorResponseSerializer, Address as AddressSerializer
-)
+from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.serializers import ErrorResponse, AddressData, Address
+from purpleserver.manager.serializers import AddressSerializer
 from purpleserver.manager.router import router
-from purpleserver.manager.models import Address
+
 
 logger = logging.getLogger(__name__)
 
@@ -30,65 +28,62 @@ class AddressList(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
+        operation_id="list_addresses",
         operation_summary="List all Addresses",
-        responses={200: AddressSerializer(many=True), 400: ErrorResponseSerializer()}
+        responses={200: Address(many=True), 400: ErrorResponse()}
     )
     def get(self, request: Request):
         """
         Retrieve all addresses.
         """
         addresses = request.user.address_set.all()
-        serializer = AddressSerializer(addresses, many=True)
-        return Response(serializer.data)
+        return Response(Address(addresses, many=True).data)
 
     @swagger_auto_schema(
         tags=['Addresses'],
+        operation_id="create_address",
         operation_summary="Create an Address",
-        responses={200: AddressSerializer(), 400: ErrorResponseSerializer()}
+        request_body=AddressData(),
+        responses={200: Address(), 400: ErrorResponse()}
     )
     def post(self, request: Request):
         """
         Create a new address.
         """
-        serializer = AddressSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        Address.objects.create(**serializer.validated_data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        address = SerializerDecorator[AddressSerializer](data=request.data).save(user=request.user).instance
+        return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
 class AddressDetail(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="addresses_retrieve",
+        operation_id="retrieve_address",
         operation_summary="Retrieve an Address",
-        responses={200: AddressSerializer(), 400: ErrorResponseSerializer()}
+        responses={200: Address(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
         """
         Retrieve an address.
         """
         address = request.user.address_set.get(pk=pk)
-        serializer = AddressSerializer(address)
-        return Response(serializer.data)
+        return Response(Address(address).data)
 
     @swagger_auto_schema(
         tags=['Addresses'],
+        operation_id="update_address",
         operation_summary="Update an Address",
-        responses={200: AddressSerializer(), 400: ErrorResponseSerializer()}
+        request_body=AddressData(),
+        responses={200: Address(), 400: ErrorResponse()}
     )
-    def put(self, request: Request, pk: str):
+    def patch(self, request: Request, pk: str):
         """
         update an address.
         """
         address = request.user.address_set.get(pk=pk)
-        serializer = AddressSerializer(address, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        for key, val in serializer.validated_data:
-            setattr(address, key, val)
-        address.save()
-        return Response(serializer.data)
+        SerializerDecorator[AddressSerializer](address, data=request.data).save()
+        return Response(Address(address).data)
 
 
-router.urls.append(path('addresses', AddressList.as_view()))
-router.urls.append(path('addresses/<str:pk>', AddressDetail.as_view()))
+router.urls.append(path('addresses', AddressList.as_view(), name="address-list"))
+router.urls.append(path('addresses/<str:pk>', AddressDetail.as_view(), name="address-details"))

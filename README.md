@@ -1,5 +1,7 @@
 # PurplShip (Multi-carrier private cloud shipping API)
 
+[![CI](https://github.com/PurplShip/purplship-server/workflows/PuprlShip-Server/badge.svg)](https://github.com/PurplShip/purplship-server/actions)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Join the chat at https://gitter.im/PurplShip/purplship](https://badges.gitter.im/PurplShip/purplship.svg)](https://gitter.im/PurplShip/purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Introduction
