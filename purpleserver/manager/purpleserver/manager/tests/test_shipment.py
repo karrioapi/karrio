@@ -145,7 +145,7 @@ class TestShipmentDetails(APITestCase):
             response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(dict(rates=response_data['shipment']['rates']), SHIPMENT_RATES)
+        self.assertDictEqual(response_data, PURCHASED_SHIPMENT)
 
 
 SHIPMENT_DATA = {
@@ -426,7 +426,7 @@ SHIPMENT_PURCHASE_DATA = {
 }
 
 SELECTED_RATE = {
-    "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
+    "id": ANY,
     "carrierRef": ANY,
     "baseCharge": 101.83,
     "carrierId": "canadapost",
@@ -464,8 +464,8 @@ CREATED_SHIPMENT_RESPONSE = (
 PURCHASED_SHIPMENT = {
     "messages": [],
     "shipment": {
-        "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
-        "status": "created",
+        "id": ANY,
+        "status": "purchased",
         "carrierName": "canadapost",
         "carrierId": "canadapost",
         "label": ANY,
@@ -475,23 +475,6 @@ PURCHASED_SHIPMENT = {
         "rates": [SELECTED_RATE],
         "trackingUrl": ANY,
         "shipper": {
-            "id": ANY,
-            "postalCode": "V6M2V9",
-            "city": "Vancouver",
-            "federalTaxId": None,
-            "stateTaxId": None,
-            "personName": "Jane Doe",
-            "companyName": "B corp.",
-            "countryCode": "CA",
-            "email": None,
-            "phoneNumber": "514 000 9999",
-            "stateCode": "BC",
-            "suburb": None,
-            "residential": False,
-            "addressLine1": "5840 Oak St",
-            "addressLine2": None
-        },
-        "recipient": {
             "id": ANY,
             "postalCode": "E1C4Z8",
             "city": "Moncton",
@@ -506,6 +489,23 @@ PURCHASED_SHIPMENT = {
             "suburb": None,
             "residential": False,
             "addressLine1": "125 Church St",
+            "addressLine2": None
+        },
+        "recipient": {
+            "id": ANY,
+            "postalCode": "V6M2V9",
+            "city": "Vancouver",
+            "federalTaxId": None,
+            "stateTaxId": None,
+            "personName": "Jane Doe",
+            "companyName": "B corp.",
+            "countryCode": "CA",
+            "email": None,
+            "phoneNumber": "514 000 9999",
+            "stateCode": "BC",
+            "suburb": None,
+            "residential": False,
+            "addressLine1": "5840 Oak St",
             "addressLine2": None
         },
         "parcel": {

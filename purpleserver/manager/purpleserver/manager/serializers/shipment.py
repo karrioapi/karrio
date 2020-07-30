@@ -1,19 +1,20 @@
 from django.db import transaction
 from rest_framework.reverse import reverse
-from rest_framework.serializers import Serializer, CharField
+from rest_framework.serializers import Serializer, CharField, ChoiceField
 
 from purplship.core.utils import to_dict
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.carriers.models import Carrier
 from purpleserver.core.serializers import (
+    SHIPMENT_STATUS,
     ShipmentData,
     ShipmentResponse,
     Shipment,
     Payment,
     ListField,
     Rate,
-    ShippingRequest
+    ShippingRequest,
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.payment import PaymentSerializer
@@ -23,6 +24,7 @@ import purpleserver.manager.models as models
 
 
 class ShipmentSerializer(ShipmentData):
+    status = ChoiceField(required=False, choices=SHIPMENT_STATUS)
     selected_rate_id = CharField(required=False)
     rates = ListField(child=Rate(), required=False)
     label = CharField(required=False, allow_blank=True, allow_null=True)

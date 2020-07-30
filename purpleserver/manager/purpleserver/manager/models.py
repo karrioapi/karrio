@@ -1,7 +1,9 @@
 from functools import partial
-from typing import List, cast
+from typing import List, cast, Optional
 from django.db import models
 from jsonfield import JSONField
+from rest_framework.reverse import reverse
+
 from purpleserver.carriers.models import Carrier
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.serializers import (
@@ -191,3 +193,13 @@ class Shipment(OwnedEntity):
                 'carrier_name': carrier.carrier_name(),
             })
         return rates
+
+    @property
+    def tracking_url(self) -> Optional[str]:
+        if self.tracking_number is None:
+            return None
+
+        return reverse(
+            "purpleserver.proxy:shipment-tracking",
+            kwargs=dict(tracking_number=self.tracking_number, carrier_name=self.carrier_name)
+        )
