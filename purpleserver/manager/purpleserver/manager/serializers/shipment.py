@@ -141,18 +141,6 @@ class ShipmentSerializer(ShipmentData):
                     setattr(instance, key, None)
                     validated_data.pop(key)
 
-        if validated_data.get('shipper') is not None:
-            SerializerDecorator[AddressSerializer](
-                instance.shipper, data=validated_data['shipper']).save()
-
-        if validated_data.get('recipient') is not None:
-            SerializerDecorator[AddressSerializer](
-                instance.recipient, data=validated_data['recipient']).save()
-
-        if validated_data.get('customs') is not None:
-            instance.customs = SerializerDecorator[CustomsSerializer](
-                instance.customs, data=validated_data['customs']).save(user=instance.user).instance
-
         if validated_data.get('payment') is not None:
             instance.payment = SerializerDecorator[PaymentSerializer](
                 instance.payment, data=validated_data['payment']).save(user=instance.user).instance

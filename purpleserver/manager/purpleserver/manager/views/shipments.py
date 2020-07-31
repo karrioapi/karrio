@@ -90,27 +90,6 @@ class ShipmentDetail(ShipmentAPIView):
 
         return Response(Shipment(shipment).data)
 
-    @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id="update_shipment",
-        operation_summary="Update a Shipment",
-        operation_description="""
-        Refresh the list of the shipment rates
-        """,
-        responses={200: Shipment(), 400: ErrorResponse()},
-        request_body=ShipmentData(),
-    )
-    def patch(self, request: Request, pk: str):
-        shipment = request.user.shipment_set.get(pk=pk)
-
-        if shipment.status == ShipmentStatus.purchased.value:
-            raise PurplShipApiException(
-                "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
-            )
-
-        SerializerDecorator[ShipmentSerializer](shipment, data=request.data).save()
-        return Response(Shipment(shipment).data)
-
 
 class ShipmentRates(ShipmentAPIView):
 

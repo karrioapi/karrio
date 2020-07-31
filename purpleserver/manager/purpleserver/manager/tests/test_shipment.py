@@ -76,16 +76,6 @@ class TestShipmentDetails(APITestCase):
         )
         self.shipment.shipment_parcels.set([self.parcel])
 
-    def test_update_shipment(self):
-        url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
-        data = SHIPMENT_UPDATE_DATA
-
-        response = self.client.patch(url, data)
-        response_data = json.loads(response.content)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(response_data, SHIPMENT_UPDATE_RESPONSE)
-
     def test_add_shipment_option(self):
         url = reverse('purpleserver.manager:shipment-options', kwargs=dict(pk=self.shipment.pk))
         data = SHIPMENT_OPTIONS
@@ -260,100 +250,6 @@ SHIPMENT_RESPONSE = {
     ]
 }
 
-SHIPMENT_UPDATE_DATA = {
-    "shipper": {
-        "personName": "John Doe",
-    },
-    "customs": {
-        "terms_of_trade": "DDU"
-    }
-}
-
-SHIPMENT_UPDATE_RESPONSE = {
-    "id": ANY,
-    "status": "created",
-    "carrierName": None,
-    "carrierId": None,
-    "label": None,
-    "trackingNumber": None,
-    "selectedRate": None,
-    "selectedRateId": None,
-    "rates": [],
-    "trackingUrl": None,
-    "shipper": {
-        "id": ANY,
-        "postalCode": "E1C4Z8",
-        "city": "Moncton",
-        "federalTaxId": None,
-        "stateTaxId": None,
-        "personName": "John Doe",
-        "companyName": "A corp.",
-        "countryCode": "CA",
-        "email": None,
-        "phoneNumber": "514 000 0000",
-        "stateCode": "NB",
-        "suburb": None,
-        "residential": False,
-        "addressLine1": "125 Church St",
-        "addressLine2": None
-    },
-    "recipient": {
-        "id": ANY,
-        "postalCode": "V6M2V9",
-        "city": "Vancouver",
-        "federalTaxId": None,
-        "stateTaxId": None,
-        "personName": "Jane Doe",
-        "companyName": "B corp.",
-        "countryCode": "CA",
-        "email": None,
-        "phoneNumber": "514 000 9999",
-        "stateCode": "BC",
-        "suburb": None,
-        "residential": False,
-        "addressLine1": "5840 Oak St",
-        "addressLine2": None
-    },
-    "parcels": [{
-        "id": ANY,
-        "weight": 1.0,
-        "width": None,
-        "height": None,
-        "length": None,
-        "packagingType": None,
-        "packagePreset": "canadapost_corrugated_small_box",
-        "description": None,
-        "content": None,
-        "isDocument": False,
-        "weightUnit": None,
-        "dimensionUnit": None
-    }],
-    "services": [],
-    "options": {},
-    "payment": {
-        "id": ANY,
-        "paidBy": "sender",
-        "amount": None,
-        "currency": "CAD",
-        "accountNumber": None,
-        "creditCard": None,
-        "contact": None
-    },
-    "customs": {
-        "id": ANY,
-        "noEei": None,
-        "aes": None,
-        "description": None,
-        "termsOfTrade": "DDU",
-        "commodities": [],
-        "duty": None,
-        "invoice": None,
-        "commercialInvoice": None
-    },
-    "docImages": [],
-    "reference": None,
-    "carrierIds": []
-}
 
 SHIPMENT_OPTIONS = {
     "insurance": {
@@ -361,6 +257,7 @@ SHIPMENT_OPTIONS = {
     },
     "currency": "CAD"
 }
+
 
 RETURNED_RATES_VALUE = [(
     [
@@ -420,6 +317,7 @@ SHIPMENT_RATES = {
         }
     ]
 }
+
 
 SHIPMENT_PURCHASE_DATA = {
     "selectedRateId": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4"
