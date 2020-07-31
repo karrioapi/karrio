@@ -71,10 +71,10 @@ class TestShipmentDetails(APITestCase):
         self.shipment: models.Shipment = models.Shipment.objects.create(
             shipper=self.shipper,
             recipient=self.recipient,
-            parcel=self.parcel,
             payment=self.payment,
             user=self.user
         )
+        self.shipment.shipment_parcels.set([self.parcel])
 
     def test_update_shipment(self):
         url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
@@ -171,10 +171,10 @@ SHIPMENT_DATA = {
         "residential": False,
         "stateCode": "BC"
     },
-    "parcel": {
+    "parcels": [{
         "weight": 1,
         "packagePreset": "canadapost_corrugated_small_box"
-    },
+    }],
     "payment": {
         "currency": "CAD",
         "paidBy": "sender"
@@ -227,7 +227,7 @@ SHIPMENT_RESPONSE = {
         "addressLine1": "125 Church St",
         "addressLine2": None
     },
-    "parcel": {
+    "parcels": [{
         "id": ANY,
         "weight": 1.0,
         "width": None,
@@ -240,7 +240,7 @@ SHIPMENT_RESPONSE = {
         "isDocument": False,
         "weightUnit": None,
         "dimensionUnit": None
-    },
+    }],
     "services": [],
     "options": {},
     "payment": {
@@ -314,7 +314,7 @@ SHIPMENT_UPDATE_RESPONSE = {
         "addressLine1": "5840 Oak St",
         "addressLine2": None
     },
-    "parcel": {
+    "parcels": [{
         "id": ANY,
         "weight": 1.0,
         "width": None,
@@ -327,7 +327,7 @@ SHIPMENT_UPDATE_RESPONSE = {
         "isDocument": False,
         "weightUnit": None,
         "dimensionUnit": None
-    },
+    }],
     "services": [],
     "options": {},
     "payment": {
@@ -345,7 +345,7 @@ SHIPMENT_UPDATE_RESPONSE = {
         "aes": None,
         "description": None,
         "termsOfTrade": "DDU",
-        "commodities": None,
+        "commodities": [],
         "duty": None,
         "invoice": None,
         "commercialInvoice": None
@@ -508,7 +508,7 @@ PURCHASED_SHIPMENT = {
             "addressLine1": "5840 Oak St",
             "addressLine2": None
         },
-        "parcel": {
+        "parcels": [{
             "id": ANY,
             "weight": 1.0,
             "width": None,
@@ -521,7 +521,7 @@ PURCHASED_SHIPMENT = {
             "isDocument": False,
             "weightUnit": None,
             "dimensionUnit": None
-        },
+        }],
         "services": [],
         "options": {},
         "payment": {

@@ -38,10 +38,10 @@ RATING_DATA = {
         "residential": False,
         "addressLine1": "125 Church St"
     },
-    "parcel": {
+    "parcels": [{
         "weight": 1,
         "packagePreset": "canadapost_corrugated_small_box"
-    },
+    }],
     "services": ["canadapost_priority"],
     "carrierIds": ["canadapost"]
 }

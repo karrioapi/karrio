@@ -55,12 +55,12 @@ class ShipmentSerializer(ShipmentData):
                         ).data
                     )
 
-                if payload.get('parcel') is not None:
+                if payload.get('parcels') is not None:
                     payload.update(
-                        parcel=SerializerDecorator[ParcelSerializer](
-                            (instance.parcel if instance is not None else None),
-                            data=payload['parcel']
-                        ).data
+                        parcels=[
+                            SerializerDecorator[ParcelSerializer](data=parcel).data
+                            for parcel in payload.get('parcels', [])
+                        ]
                     )
 
                 if payload.get('customs') is not None:
@@ -100,9 +100,6 @@ class ShipmentSerializer(ShipmentData):
             recipient=SerializerDecorator[AddressSerializer](
                 data=validated_data.get('recipient')).save(user=user).instance,
 
-            parcel=SerializerDecorator[ParcelSerializer](
-                data=validated_data.get('parcel')).save(user=user).instance,
-
             customs=SerializerDecorator[CustomsSerializer](
                 data=validated_data.get('customs')).save(user=user).instance,
 
@@ -116,6 +113,14 @@ class ShipmentSerializer(ShipmentData):
             'user': validated_data['user']
         })
         shipment.carriers.set(carriers)
+
+        if validated_data.get('parcels') is not None:
+            shipment_parcels = [
+                SerializerDecorator[ParcelSerializer](data=data).save(user=validated_data['user']).instance
+                for data in validated_data.get('parcels', [])
+            ]
+            shipment.shipment_parcels.set(shipment_parcels)
+
         return shipment
 
     @transaction.atomic
@@ -143,10 +148,6 @@ class ShipmentSerializer(ShipmentData):
         if validated_data.get('recipient') is not None:
             SerializerDecorator[AddressSerializer](
                 instance.recipient, data=validated_data['recipient']).save()
-
-        if validated_data.get('parcel') is not None:
-            SerializerDecorator[ParcelSerializer](
-                instance.parcel, data=validated_data['parcel']).save()
 
         if validated_data.get('customs') is not None:
             instance.customs = SerializerDecorator[CustomsSerializer](

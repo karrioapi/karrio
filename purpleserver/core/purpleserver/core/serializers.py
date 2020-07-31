@@ -232,7 +232,7 @@ class RateRequest(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcel = Parcel(required=True, help_text="The shipment's parcel")
+    parcels = ListField(child=Parcel(), required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, help_text="""
     The requested carrier service for the shipment.<br/>
@@ -393,7 +393,7 @@ class ShippingData(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcel = ParcelData(required=True, help_text="The shipment's parcel")
+    parcels = ListField(child=ParcelData(), required=True, help_text="The shipment's parcels")
     options = DictField(required=False, allow_null=True, help_text="""
     The options available for the shipment.<br/>
     Please consult [the reference](#operation/all_references) for additional specific carriers options.
@@ -462,7 +462,7 @@ class ShipmentContent(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcel = Parcel(required=True, help_text="The shipment's parcel")
+    parcels = ListField(child=Parcel(), required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, help_text="""
     The requested carrier service for the shipment.

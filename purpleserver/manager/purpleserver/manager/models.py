@@ -117,7 +117,7 @@ class Customs(OwnedEntity):
 
     @property
     def commodities(self):
-        return self.commodity_set.all()
+        return self.shipment_commodities.all()
 
 
 class Tracking(OwnedEntity):
@@ -159,7 +159,7 @@ class Shipment(OwnedEntity):
         'shipment_rates', 'tracking_number', 'doc_images',
         'tracking_url'
     ]
-    RELATIONAL_PROPS = ['shipper', 'recipient', 'parcel', 'payment', 'customs', 'selected_rate']
+    RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
 
     class Meta:
         db_table = "shipment"
@@ -171,7 +171,6 @@ class Shipment(OwnedEntity):
 
     recipient = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='recipient')
     shipper = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='shipper')
-    parcel = models.ForeignKey('Parcel', on_delete=models.CASCADE, related_name='parcel')
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
     label = models.TextField(max_length=None, null=True, blank=True)
@@ -189,11 +188,16 @@ class Shipment(OwnedEntity):
     # System Reference fields
 
     shipment_rates = JSONField(blank=True, null=True, default=[])
+    shipment_parcels = models.ManyToManyField('Parcel', related_name='shipment_parcels')
     carriers = models.ManyToManyField(Carrier, blank=True, related_name='rating_carriers')
     selected_rate_carrier = models.ForeignKey(
         Carrier, on_delete=models.CASCADE, related_name='selected_rate_carrier', blank=True, null=True)
 
     # Computed properties
+
+    @property
+    def parcels(self):
+        return self.shipment_parcels.all()
 
     @property
     def carrier_id(self) -> str:

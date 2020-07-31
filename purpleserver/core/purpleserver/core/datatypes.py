@@ -78,7 +78,7 @@ class Customs(BaseCustoms):
 class RateRequest(BaseRateRequest):
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
     services: List[str] = []
     options: Dict = {}
@@ -94,7 +94,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
     rates: List[Rate] = JList[Rate, REQUIRED]
 
     payment: Payment = JStruct[Payment]
@@ -117,7 +117,7 @@ class Shipment:
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
     rates: List[Rate] = JList[Rate, REQUIRED]
     selected_rate: Rate = JStruct[Rate, REQUIRED]
 
