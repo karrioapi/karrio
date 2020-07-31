@@ -78,12 +78,5 @@ class CustomsSerializer(CustomsData):
                 instance.duty = SerializerDecorator[PaymentSerializer](
                     instance.duty, data=data).save(user=validated_data['user']).instance
 
-        if validated_data.get('commodities') is not None:
-            instance.commodities.all().delete()
-            instance.commodities.set([
-                SerializerDecorator[CommoditySerializer](data=data).save(user=validated_data['user']).instance
-                for data in validated_data.get('commodities', []) or []
-            ])
-
         instance.save()
         return instance
