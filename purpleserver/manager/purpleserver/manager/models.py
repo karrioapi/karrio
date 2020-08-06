@@ -3,7 +3,7 @@ from typing import List, cast, Optional
 from django.db import models
 from jsonfield import JSONField
 
-from purpleserver.carriers.models import Carrier
+from purpleserver.providers.models import Carrier
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.serializers import (
     WEIGHT_UNIT, DIMENSION_UNIT, PAYMENT_TYPES, CURRENCIES, SHIPMENT_STATUS, COUNTRIES

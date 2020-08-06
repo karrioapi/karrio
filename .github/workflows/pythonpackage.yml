@@ -22,5 +22,5 @@ jobs:
     - name: Install and Run tests
       run: |
         source ./scripts.sh
-        init &&
+        create_env && test_install
         test

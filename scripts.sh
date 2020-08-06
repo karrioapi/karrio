@@ -39,17 +39,15 @@ alias env:reset=init
 # Project helpers
 
 install_all() {
-#  TODO:: Revert when extension version constraint is fixed
-#    pip install -e "${ROOT:?}/purpleserver/core" &&
-#    pip install -e "${ROOT:?}/purpleserver/proxy" &&
-#    pip install -e "${ROOT:?}/purpleserver/manager" &&
-#    pip install -e "${ROOT:?}/purpleserver[dev]"
-
     pip install -e "${ROOT:?}/purpleserver[dev]" &&
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
-    pip install -e "${ROOT:?}/purpleserver/manager" &&
-    pip uninstall -y purplship-server.core
+    pip install -e "${ROOT:?}/purpleserver/manager"
+}
+
+test_install() {
+    pip install -r "${ROOT:?}/requirements.test.txt" &&
+    install_all
 }
 
 install_released() {

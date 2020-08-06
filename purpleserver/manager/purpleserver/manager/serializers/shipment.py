@@ -5,7 +5,7 @@ from rest_framework.serializers import Serializer, CharField, ChoiceField
 from purplship.core.utils import to_dict
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.utils import SerializerDecorator
-from purpleserver.carriers.models import Carrier
+from purpleserver.providers.models import Carrier
 from purpleserver.core.serializers import (
     SHIPMENT_STATUS,
     ShipmentData,

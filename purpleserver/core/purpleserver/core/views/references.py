@@ -7,7 +7,7 @@ from rest_framework.serializers import Serializer, DictField
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.carriers.models import MODELS
+from purpleserver.providers.models import MODELS
 from purplship.core.utils import to_dict
 from purplship.core.units import Country, Currency, CountryState
 from purpleserver.core.router import router
@@ -32,48 +32,48 @@ def import_pkg(pkg: str):
 PACKAGE_MAPPERS = {
     'canadapost': {
         'label': "Canada Post",
-        'package': import_pkg('purplship.carriers.canadapost.units'),
+        'package': import_pkg('purplship.providers.canadapost.units'),
         'services': "ServiceType",
         'options': "OptionCode",
         'packagePresets': "PackagePresets"
     },
     'dhl': {
         'label': "DHL",
-        'package': import_pkg('purplship.carriers.dhl.units'),
+        'package': import_pkg('purplship.providers.dhl.units'),
         'services': "Product",
         'options': "SpecialServiceCode",
         'packagePresets': "PackagePresets"
     },
     'fedex': {
         'label': "FedEx",
-        'package': import_pkg('purplship.carriers.fedex.units'),
+        'package': import_pkg('purplship.providers.fedex.units'),
         'services': "ServiceType",
         'options': "SpecialServiceType",
         'packagePresets': "PackagePresets"
     },
     'purolator': {
         'label': "Purolator",
-        'package': import_pkg('purplship.carriers.purolator.units'),
+        'package': import_pkg('purplship.providers.purolator.units'),
         'services': "Product",
         'options': "Service",
         'packagePresets': "PackagePresets"
     },
     'ups': {
         'label': "UPS",
-        'package': import_pkg('purplship.carriers.ups.units'),
+        'package': import_pkg('purplship.providers.ups.units'),
         'services': "ShippingServiceCode",
         'options': "ServiceOption",
         'packagePresets': "PackagePresets"
     },
     'freightcom': {
         'label': "Freightcom",
-        'package': import_pkg('purplship.carriers.freightcom.units'),
+        'package': import_pkg('purplship.providers.freightcom.units'),
         'services': "Service",
         'options': "Option",
     },
     'eshipper': {
         'label': "eShipper",
-        'package': import_pkg('purplship.carriers.eshipper.units'),
+        'package': import_pkg('purplship.providers.eshipper.units'),
         'services': "Service",
         'options': "Option",
     }

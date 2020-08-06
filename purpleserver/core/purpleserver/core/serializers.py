@@ -1,5 +1,5 @@
 from enum import Enum
-from purpleserver.carriers.models import MODELS
+from purpleserver.providers.models import MODELS
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit, PackagingUnit, PaymentType, Currency, PrinterType
 )

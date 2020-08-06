@@ -2,7 +2,7 @@
 purplship server carriers module urls
 """
 from django.urls import include, path
-from purpleserver.carriers.views import router
+from purpleserver.providers.views import router
 
 app_name = 'purpleserver.carriers'
 urlpatterns = [
