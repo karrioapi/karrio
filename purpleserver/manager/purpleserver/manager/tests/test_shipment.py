@@ -13,8 +13,10 @@ class TestShipments(APITestCase):
         url = reverse('purpleserver.manager:shipment-list')
         data = SHIPMENT_DATA
 
-        response = self.client.post(url, data)
-        response_data = json.loads(response.content)
+        with patch("purpleserver.core.gateway.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertDictEqual(response_data, SHIPMENT_RESPONSE)
@@ -172,6 +174,37 @@ SHIPMENT_DATA = {
     "carrierIds": ["canadapost"]
 }
 
+SHIPMENT_RATES = {
+    "rates": [
+        {
+            "id": ANY,
+            "carrierRef": ANY,
+            "baseCharge": 101.83,
+            "carrierId": "canadapost",
+            "carrierName": "canadapost",
+            "currency": "CAD",
+            "discount": -9.04,
+            "dutiesAndTaxes": 13.92,
+            "extraCharges": [
+                {
+                    "amount": 2.7,
+                    "currency": "CAD",
+                    "name": "Fuel surcharge"
+                },
+                {
+                    "amount": -11.74,
+                    "currency": "CAD",
+                    "name": "SMB Savings"
+                }
+            ],
+            "service": "canadapost_priority",
+            "totalCharge": 106.71,
+            "transitDays": 2,
+            "meta": None
+        }
+    ]
+}
+
 SHIPMENT_RESPONSE = {
     "id": ANY,
     "status": "created",
@@ -182,7 +215,7 @@ SHIPMENT_RESPONSE = {
     "trackingNumber": None,
     "selectedRate": None,
     "selectedRateId": None,
-    "rates": [],
+    **SHIPMENT_RATES,
     "trackingUrl": None,
     "shipper": {
         "id": ANY,
@@ -288,37 +321,6 @@ RETURNED_RATES_VALUE = [(
     ],
     [],
 )]
-
-SHIPMENT_RATES = {
-    "rates": [
-        {
-            "id": ANY,
-            "carrierRef": ANY,
-            "baseCharge": 101.83,
-            "carrierId": "canadapost",
-            "carrierName": "canadapost",
-            "currency": "CAD",
-            "discount": -9.04,
-            "dutiesAndTaxes": 13.92,
-            "extraCharges": [
-                {
-                    "amount": 2.7,
-                    "currency": "CAD",
-                    "name": "Fuel surcharge"
-                },
-                {
-                    "amount": -11.74,
-                    "currency": "CAD",
-                    "name": "SMB Savings"
-                }
-            ],
-            "service": "canadapost_priority",
-            "totalCharge": 106.71,
-            "transitDays": 2,
-            "meta": None
-        }
-    ]
-}
 
 
 SHIPMENT_PURCHASE_DATA = {

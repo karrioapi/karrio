@@ -5,6 +5,7 @@ from rest_framework.serializers import Serializer, CharField, ChoiceField
 from purplship.core.utils import to_dict
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.datatypes import RateResponse
 from purpleserver.providers.models import Carrier
 from purpleserver.core.serializers import (
     SHIPMENT_STATUS,
@@ -20,6 +21,7 @@ from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.payment import PaymentSerializer
 from purpleserver.manager.serializers.customs import CustomsSerializer
 from purpleserver.manager.serializers.parcel import ParcelSerializer
+from purpleserver.manager.serializers.rate import RateSerializer
 import purpleserver.manager.models as models
 
 
@@ -86,6 +88,7 @@ class ShipmentSerializer(ShipmentData):
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
         carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
+        rate_response: RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save().instance
         user = validated_data['user']
 
         shipment_data = {
@@ -104,13 +107,14 @@ class ShipmentSerializer(ShipmentData):
                 data=validated_data.get('customs')).save(user=user).instance,
 
             payment=SerializerDecorator[PaymentSerializer](
-                data=validated_data.get('payment')).save(user=user).instance
+                data=validated_data.get('payment')).save(user=user).instance,
         )
 
         shipment = models.Shipment.objects.create(**{
             **shipment_data,
             **{k: v for k, v in related_data.items() if v is not None},
-            'user': validated_data['user']
+            'user': user,
+            'shipment_rates': to_dict(rate_response.rates),
         })
         shipment.carriers.set(carriers)
 
