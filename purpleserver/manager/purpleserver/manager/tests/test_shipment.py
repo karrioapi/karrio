@@ -178,6 +178,7 @@ SHIPMENT_RESPONSE = {
     "carrierName": None,
     "carrierId": None,
     "label": None,
+    "meta": {},
     "trackingNumber": None,
     "selectedRate": None,
     "selectedRateId": None,
@@ -313,7 +314,8 @@ SHIPMENT_RATES = {
             ],
             "service": "canadapost_priority",
             "totalCharge": 106.71,
-            "transitDays": 2
+            "transitDays": 2,
+            "meta": None
         }
     ]
 }
@@ -346,7 +348,8 @@ SELECTED_RATE = {
     ],
     "service": "canadapost_priority",
     "totalCharge": 106.71,
-    "transitDays": 2
+    "transitDays": 2,
+    "meta": None
 }
 
 CREATED_SHIPMENT_RESPONSE = (
@@ -367,6 +370,7 @@ PURCHASED_SHIPMENT = {
         "carrierName": "canadapost",
         "carrierId": "canadapost",
         "label": ANY,
+        "meta": {},
         "trackingNumber": "123456789012",
         "selectedRate": SELECTED_RATE,
         "selectedRateId": ANY,

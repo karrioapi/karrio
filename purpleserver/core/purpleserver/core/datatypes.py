@@ -61,6 +61,7 @@ class Rate:
     duties_and_taxes: float = None
     extra_charges: List[ChargeDetails] = []
     id: str = None
+    meta: dict = None
     carrier_ref: str = None
 
 
@@ -129,6 +130,8 @@ class Shipment:
     reference: str = ""
     tracking_url: str = None
     status: str = ""
+    id: str = None
+    meta: dict = None
 
 
 @attr.s(auto_attribs=True)

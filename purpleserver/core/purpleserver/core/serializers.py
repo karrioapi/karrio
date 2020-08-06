@@ -352,6 +352,7 @@ class Rate(EntitySerializer):
     duties_and_taxes = FloatField(required=False, allow_null=True, help_text="The monetary amount of the duties and taxes if applied")
     transit_days = IntegerField(required=False, allow_null=True, help_text="The estimated delivery transit days")
     extra_charges = ListField(child=Charge(), required=False, allow_null=True, help_text="list of the rate's additional charges")
+    meta = DictField(required=False, allow_null=True, help_text="provider specific metadata")
 
     carrier_ref = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system carrier configuration id")
 
@@ -491,6 +492,7 @@ class ShipmentContent(Serializer):
 
     *Note that the request will be sent to all carriers in nothing is specified*
     """)
+    meta = DictField(required=False, allow_null=True, help_text="provider specific metadata")
 
 
 class Shipment(EntitySerializer, ShipmentContent):
