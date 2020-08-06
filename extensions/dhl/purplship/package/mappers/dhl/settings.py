@@ -1,7 +1,7 @@
 """PurplShip DHL client settings."""
 
 import attr
-from purplship.carriers.dhl.utils import Settings as BaseSettings
+from purplship.providers.dhl.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

@@ -11,7 +11,7 @@ from purplship.core.models import (
     TrackingDetails,
     Message,
 )
-from purplship.carriers.ups.package import (
+from purplship.providers.ups.package import (
     parse_shipment_response,
     parse_track_response,
     parse_rate_response,

@@ -1,13 +1,13 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 
 setup(name='purplship.package',
-      version='2020.7.0',
+      version='2020.8.0',
       description='Multi-carrier shipping API integration with python',
       url='https://github.com/PurplShip/purplship',
       author='PurplShip',
       license='LGPLv3',
-      packages=find_packages(".", exclude=["tests*"]),
+      packages=find_namespace_packages(),
       install_requires=[
             'purplship',
       ],

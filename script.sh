@@ -28,10 +28,10 @@ submodules() {
 }
 
 install_submodules() {
-    pip install "${ROOT:?}[dev]" &&
+    pip install -e "${ROOT:?}[dev]" &&
     for module in $(submodules); do
       echo "installing ${module}..."
-      pip install "${module}" || break
+      pip install -e "${module}" || break
     done
 }
 

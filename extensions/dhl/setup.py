@@ -7,7 +7,7 @@ setup(name='purplship.dhl',
       url='https://github.com/PurplShip/purplship',
       author='PurplShip',
       license='LGPLv3',
-      packages=find_namespace_packages(exclude=["tests*"]),
+      packages=find_namespace_packages(),
       install_requires=[
             'purplship',
             'py-dhl',

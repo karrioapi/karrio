@@ -12,7 +12,7 @@ from purplship.core.models import (
     TrackingDetails,
     Message,
 )
-from purplship.carriers.purolator.package import (
+from purplship.providers.purolator.package import (
     parse_track_package_response,
     track_package_by_pin_request,
     parse_full_estimate_response,
