@@ -7,8 +7,9 @@ services:
       POSTGRES_DB: "db"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-  web:
-    build: .
+  purpleserver:
+    image: python:3.8
+    working_dir: /app
     environment:
       - DEBUG_MODE=True
       - ALLOWED_HOSTS=*
@@ -20,7 +21,16 @@ services:
       - DATABASE_PASSWORD=postgres
     volumes:
       - .:/app
+      - ./.venv/temp:/app/.venv
     ports:
       - "80:8000"
     depends_on:
       - db
+    entrypoint: |
+      bash -c "bash -s <<EOF
+      . ./scripts.sh
+      activate_env || create_env && activate_env
+      pip install psycopg2 &&
+      test_install &&
+      test
+      EOF"

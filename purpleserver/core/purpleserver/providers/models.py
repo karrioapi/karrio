@@ -1,6 +1,5 @@
 import pkgutil
 import logging
-import warnings
 from functools import partial
 from typing import Any, Dict
 
@@ -10,7 +9,7 @@ from django.forms.models import model_to_dict
 from purplship.package import gateway
 from purpleserver.core.models import Entity, uuid
 from purpleserver.core.datatypes import CarrierSettings
-import purpleserver.carriers.extension.models as extensions
+import purpleserver.providers.extension.models as extensions
 
 logger = logging.getLogger(__name__)
 

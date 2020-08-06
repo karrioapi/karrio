@@ -8,16 +8,25 @@ ENV_DIR=".venv"
 
 export PIP_FIND_LINKS="https://git.io/purplship"
 
+deactivate_env() {
+  if command -v COMMAND &> /dev/null
+  then
+    deactivate
+  fi
+}
+
 activate_env() {
-  echo "Activate $BASE_DIR"
-  deactivate || true
-  # shellcheck source=src/script.sh
-  source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+  if [[ -d "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin" ]]; then
+    echo "Activate $BASE_DIR"
+    deactivate_env
+    # shellcheck source=src/script.sh
+    source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+  fi
 }
 
 create_env() {
     echo "create $BASE_DIR Python3 env"
-    deactivate || true
+    deactivate_env
     rm -rf "${ROOT:?}/$ENV_DIR" || true
     mkdir -p "${ROOT:?}/$ENV_DIR"
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
@@ -39,17 +48,15 @@ alias env:reset=init
 # Project helpers
 
 install_all() {
-#  TODO:: Revert when extension version constraint is fixed
-#    pip install -e "${ROOT:?}/purpleserver/core" &&
-#    pip install -e "${ROOT:?}/purpleserver/proxy" &&
-#    pip install -e "${ROOT:?}/purpleserver/manager" &&
-#    pip install -e "${ROOT:?}/purpleserver[dev]"
-
     pip install -e "${ROOT:?}/purpleserver[dev]" &&
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
-    pip install -e "${ROOT:?}/purpleserver/manager" &&
-    pip uninstall -y purplship-server.core
+    pip install -e "${ROOT:?}/purpleserver/manager"
+}
+
+test_install() {
+    pip install -r "${ROOT:?}/requirements.test.txt" &&
+    install_all
 }
 
 install_released() {
@@ -87,6 +94,12 @@ test() {
   purplship makemigrations &&
   purplship test --failfast purpleserver.proxy.tests &&
   purplship test --failfast purpleserver.manager.tests
+}
+
+test_with_postgres() {
+  echo "clean env dir"
+  [ -d "${ROOT:?}/$ENV_DIR/temp" ] && rm -rf "${ROOT:?}/$ENV_DIR/temp" && echo "env dir purged"
+  docker-compose -f "${ROOT:?}/postgres.yml" up --force-recreate --exit-code-from purpleserver
 }
 
 clean_builds() {
@@ -144,4 +157,4 @@ alias dev:purplship=install_purplship_dev
 alias dev:extension=install_extension_dev
 alias run=run_server
 
-env:on || true
+activate_env

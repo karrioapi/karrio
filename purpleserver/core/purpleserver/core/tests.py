@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 from rest_framework.authtoken.models import Token
-from purpleserver.carriers.models import CanadaPostSettings, UPSSettings
+from purpleserver.providers.models import CanadaPostSettings, UPSSettings
 
 
 class APITestCase(BaseAPITestCase):

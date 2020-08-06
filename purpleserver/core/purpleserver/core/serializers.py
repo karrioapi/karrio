@@ -1,5 +1,5 @@
 from enum import Enum
-from purpleserver.carriers.models import MODELS
+from purpleserver.providers.models import MODELS
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit, PackagingUnit, PaymentType, Currency, PrinterType
 )
@@ -232,7 +232,7 @@ class RateRequest(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcel = Parcel(required=True, help_text="The shipment's parcel")
+    parcels = ListField(child=Parcel(), required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, help_text="""
     The requested carrier service for the shipment.<br/>
@@ -352,6 +352,7 @@ class Rate(EntitySerializer):
     duties_and_taxes = FloatField(required=False, allow_null=True, help_text="The monetary amount of the duties and taxes if applied")
     transit_days = IntegerField(required=False, allow_null=True, help_text="The estimated delivery transit days")
     extra_charges = ListField(child=Charge(), required=False, allow_null=True, help_text="list of the rate's additional charges")
+    meta = DictField(required=False, allow_null=True, help_text="provider specific metadata")
 
     carrier_ref = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system carrier configuration id")
 
@@ -393,7 +394,7 @@ class ShippingData(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcel = ParcelData(required=True, help_text="The shipment's parcel")
+    parcels = ListField(child=ParcelData(), required=True, help_text="The shipment's parcels")
     options = DictField(required=False, allow_null=True, help_text="""
     The options available for the shipment.<br/>
     Please consult [the reference](#operation/all_references) for additional specific carriers options.
@@ -462,7 +463,7 @@ class ShipmentContent(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcel = Parcel(required=True, help_text="The shipment's parcel")
+    parcels = ListField(child=Parcel(), required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, help_text="""
     The requested carrier service for the shipment.
@@ -491,6 +492,7 @@ class ShipmentContent(Serializer):
 
     *Note that the request will be sent to all carriers in nothing is specified*
     """)
+    meta = DictField(required=False, allow_null=True, help_text="provider specific metadata")
 
 
 class Shipment(EntitySerializer, ShipmentContent):

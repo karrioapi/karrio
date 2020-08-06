@@ -46,10 +46,10 @@ SHIPPING_DATA = {
         "residential": False,
         "stateCode": "BC"
     },
-    "parcel": {
+    "parcels": [{
         "weight": 1,
         "packagePreset": "canadapost_corrugated_small_box"
-    },
+    }],
     "rates": [
         {
             "baseCharge": 101.83,
@@ -125,11 +125,11 @@ SHIPPING_RESPONSE = {
     ],
     "label": ANY,
     "options": {},
-    "parcel": {
+    "parcels": [{
       "isDocument": False,
       "packagePreset": "canadapost_corrugated_small_box",
       "weight": 1.0
-    },
+    }],
     "payment": {
       "currency": "CAD",
       "paidBy": "sender"

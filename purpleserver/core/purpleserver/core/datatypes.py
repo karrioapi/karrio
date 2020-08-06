@@ -61,6 +61,7 @@ class Rate:
     duties_and_taxes: float = None
     extra_charges: List[ChargeDetails] = []
     id: str = None
+    meta: dict = None
     carrier_ref: str = None
 
 
@@ -78,7 +79,7 @@ class Customs(BaseCustoms):
 class RateRequest(BaseRateRequest):
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
     services: List[str] = []
     options: Dict = {}
@@ -94,7 +95,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
     rates: List[Rate] = JList[Rate, REQUIRED]
 
     payment: Payment = JStruct[Payment]
@@ -117,7 +118,7 @@ class Shipment:
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
     rates: List[Rate] = JList[Rate, REQUIRED]
     selected_rate: Rate = JStruct[Rate, REQUIRED]
 
@@ -129,6 +130,8 @@ class Shipment:
     reference: str = ""
     tracking_url: str = None
     status: str = ""
+    id: str = None
+    meta: dict = None
 
 
 @attr.s(auto_attribs=True)

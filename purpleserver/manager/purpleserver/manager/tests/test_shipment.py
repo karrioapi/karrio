@@ -13,8 +13,10 @@ class TestShipments(APITestCase):
         url = reverse('purpleserver.manager:shipment-list')
         data = SHIPMENT_DATA
 
-        response = self.client.post(url, data)
-        response_data = json.loads(response.content)
+        with patch("purpleserver.core.gateway.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertDictEqual(response_data, SHIPMENT_RESPONSE)
@@ -71,20 +73,10 @@ class TestShipmentDetails(APITestCase):
         self.shipment: models.Shipment = models.Shipment.objects.create(
             shipper=self.shipper,
             recipient=self.recipient,
-            parcel=self.parcel,
             payment=self.payment,
             user=self.user
         )
-
-    def test_update_shipment(self):
-        url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
-        data = SHIPMENT_UPDATE_DATA
-
-        response = self.client.patch(url, data)
-        response_data = json.loads(response.content)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(response_data, SHIPMENT_UPDATE_RESPONSE)
+        self.shipment.shipment_parcels.set([self.parcel])
 
     def test_add_shipment_option(self):
         url = reverse('purpleserver.manager:shipment-options', kwargs=dict(pk=self.shipment.pk))
@@ -171,15 +163,46 @@ SHIPMENT_DATA = {
         "residential": False,
         "stateCode": "BC"
     },
-    "parcel": {
+    "parcels": [{
         "weight": 1,
         "packagePreset": "canadapost_corrugated_small_box"
-    },
+    }],
     "payment": {
         "currency": "CAD",
         "paidBy": "sender"
     },
     "carrierIds": ["canadapost"]
+}
+
+SHIPMENT_RATES = {
+    "rates": [
+        {
+            "id": ANY,
+            "carrierRef": ANY,
+            "baseCharge": 101.83,
+            "carrierId": "canadapost",
+            "carrierName": "canadapost",
+            "currency": "CAD",
+            "discount": -9.04,
+            "dutiesAndTaxes": 13.92,
+            "extraCharges": [
+                {
+                    "amount": 2.7,
+                    "currency": "CAD",
+                    "name": "Fuel surcharge"
+                },
+                {
+                    "amount": -11.74,
+                    "currency": "CAD",
+                    "name": "SMB Savings"
+                }
+            ],
+            "service": "canadapost_priority",
+            "totalCharge": 106.71,
+            "transitDays": 2,
+            "meta": None
+        }
+    ]
 }
 
 SHIPMENT_RESPONSE = {
@@ -188,10 +211,11 @@ SHIPMENT_RESPONSE = {
     "carrierName": None,
     "carrierId": None,
     "label": None,
+    "meta": {},
     "trackingNumber": None,
     "selectedRate": None,
     "selectedRateId": None,
-    "rates": [],
+    **SHIPMENT_RATES,
     "trackingUrl": None,
     "shipper": {
         "id": ANY,
@@ -227,7 +251,7 @@ SHIPMENT_RESPONSE = {
         "addressLine1": "125 Church St",
         "addressLine2": None
     },
-    "parcel": {
+    "parcels": [{
         "id": ANY,
         "weight": 1.0,
         "width": None,
@@ -240,7 +264,7 @@ SHIPMENT_RESPONSE = {
         "isDocument": False,
         "weightUnit": None,
         "dimensionUnit": None
-    },
+    }],
     "services": [],
     "options": {},
     "payment": {
@@ -260,100 +284,6 @@ SHIPMENT_RESPONSE = {
     ]
 }
 
-SHIPMENT_UPDATE_DATA = {
-    "shipper": {
-        "personName": "John Doe",
-    },
-    "customs": {
-        "terms_of_trade": "DDU"
-    }
-}
-
-SHIPMENT_UPDATE_RESPONSE = {
-    "id": ANY,
-    "status": "created",
-    "carrierName": None,
-    "carrierId": None,
-    "label": None,
-    "trackingNumber": None,
-    "selectedRate": None,
-    "selectedRateId": None,
-    "rates": [],
-    "trackingUrl": None,
-    "shipper": {
-        "id": ANY,
-        "postalCode": "E1C4Z8",
-        "city": "Moncton",
-        "federalTaxId": None,
-        "stateTaxId": None,
-        "personName": "John Doe",
-        "companyName": "A corp.",
-        "countryCode": "CA",
-        "email": None,
-        "phoneNumber": "514 000 0000",
-        "stateCode": "NB",
-        "suburb": None,
-        "residential": False,
-        "addressLine1": "125 Church St",
-        "addressLine2": None
-    },
-    "recipient": {
-        "id": ANY,
-        "postalCode": "V6M2V9",
-        "city": "Vancouver",
-        "federalTaxId": None,
-        "stateTaxId": None,
-        "personName": "Jane Doe",
-        "companyName": "B corp.",
-        "countryCode": "CA",
-        "email": None,
-        "phoneNumber": "514 000 9999",
-        "stateCode": "BC",
-        "suburb": None,
-        "residential": False,
-        "addressLine1": "5840 Oak St",
-        "addressLine2": None
-    },
-    "parcel": {
-        "id": ANY,
-        "weight": 1.0,
-        "width": None,
-        "height": None,
-        "length": None,
-        "packagingType": None,
-        "packagePreset": "canadapost_corrugated_small_box",
-        "description": None,
-        "content": None,
-        "isDocument": False,
-        "weightUnit": None,
-        "dimensionUnit": None
-    },
-    "services": [],
-    "options": {},
-    "payment": {
-        "id": ANY,
-        "paidBy": "sender",
-        "amount": None,
-        "currency": "CAD",
-        "accountNumber": None,
-        "creditCard": None,
-        "contact": None
-    },
-    "customs": {
-        "id": ANY,
-        "noEei": None,
-        "aes": None,
-        "description": None,
-        "termsOfTrade": "DDU",
-        "commodities": None,
-        "duty": None,
-        "invoice": None,
-        "commercialInvoice": None
-    },
-    "docImages": [],
-    "reference": None,
-    "carrierIds": []
-}
 
 SHIPMENT_OPTIONS = {
     "insurance": {
@@ -361,6 +291,7 @@ SHIPMENT_OPTIONS = {
     },
     "currency": "CAD"
 }
+
 
 RETURNED_RATES_VALUE = [(
     [
@@ -391,35 +322,6 @@ RETURNED_RATES_VALUE = [(
     [],
 )]
 
-SHIPMENT_RATES = {
-    "rates": [
-        {
-            "id": ANY,
-            "carrierRef": ANY,
-            "baseCharge": 101.83,
-            "carrierId": "canadapost",
-            "carrierName": "canadapost",
-            "currency": "CAD",
-            "discount": -9.04,
-            "dutiesAndTaxes": 13.92,
-            "extraCharges": [
-                {
-                    "amount": 2.7,
-                    "currency": "CAD",
-                    "name": "Fuel surcharge"
-                },
-                {
-                    "amount": -11.74,
-                    "currency": "CAD",
-                    "name": "SMB Savings"
-                }
-            ],
-            "service": "canadapost_priority",
-            "totalCharge": 106.71,
-            "transitDays": 2
-        }
-    ]
-}
 
 SHIPMENT_PURCHASE_DATA = {
     "selectedRateId": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4"
@@ -448,7 +350,8 @@ SELECTED_RATE = {
     ],
     "service": "canadapost_priority",
     "totalCharge": 106.71,
-    "transitDays": 2
+    "transitDays": 2,
+    "meta": None
 }
 
 CREATED_SHIPMENT_RESPONSE = (
@@ -469,6 +372,7 @@ PURCHASED_SHIPMENT = {
         "carrierName": "canadapost",
         "carrierId": "canadapost",
         "label": ANY,
+        "meta": {},
         "trackingNumber": "123456789012",
         "selectedRate": SELECTED_RATE,
         "selectedRateId": ANY,
@@ -508,7 +412,7 @@ PURCHASED_SHIPMENT = {
             "addressLine1": "5840 Oak St",
             "addressLine2": None
         },
-        "parcel": {
+        "parcels": [{
             "id": ANY,
             "weight": 1.0,
             "width": None,
@@ -521,7 +425,7 @@ PURCHASED_SHIPMENT = {
             "isDocument": False,
             "weightUnit": None,
             "dimensionUnit": None
-        },
+        }],
         "services": [],
         "options": {},
         "payment": {

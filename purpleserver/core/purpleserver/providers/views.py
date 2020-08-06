@@ -12,7 +12,7 @@ from django.db.models import Q
 
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.carriers.router import router
+from purpleserver.providers.router import router
 from purpleserver.core.gateway import Carriers
 from purpleserver.core.serializers import CarrierSettings, ErrorResponse, CARRIERS
 

@@ -5,4 +5,3 @@ __pycache__
 
 db.sqlite3
 debug.log
-docker-compose.yml

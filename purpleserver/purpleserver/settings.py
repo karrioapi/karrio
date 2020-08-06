@@ -53,7 +53,7 @@ if USE_HTTPS is True:
 
 PURPLSHIP_CONF = [app for app in [
     {'app': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},
-    {'app': 'purpleserver.carriers', 'urls': 'purpleserver.carriers.urls'},
+    {'app': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
     {'app': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
     {'app': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
 ] if importlib.util.find_spec(app['app']) is not None]
