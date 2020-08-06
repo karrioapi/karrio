@@ -97,9 +97,6 @@ class Address(EntitySerializer, AddressData):
 class CommodityData(Serializer):
 
     weight = FloatField(required=False, allow_null=True, help_text="The commodity's weight")
-    width = FloatField(required=False, allow_null=True, help_text="The commodity's width")
-    height = FloatField(required=False, allow_null=True, help_text="The commodity's height")
-    length = FloatField(required=False, allow_null=True, help_text="The commodity's lenght")
     description = CharField(required=False, allow_blank=True, allow_null=True, help_text="A description of the commodity")
     quantity = IntegerField(required=False, allow_null=True, help_text="The commodity's quantity (number or item)")
     sku = CharField(required=False, allow_blank=True, allow_null=True, help_text="The commodity's sku number")

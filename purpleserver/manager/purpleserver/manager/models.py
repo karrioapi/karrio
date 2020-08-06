@@ -66,9 +66,6 @@ class Commodity(OwnedEntity):
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='comdty_'), editable=False)
 
     weight = models.FloatField(blank=True, null=True)
-    width = models.FloatField(blank=True, null=True)
-    height = models.FloatField(blank=True, null=True)
-    length = models.FloatField(blank=True, null=True)
     description = models.CharField(max_length=250, null=True, blank=True)
     quantity = models.IntegerField(blank=True, null=True)
     sku = models.CharField(max_length=100, null=True, blank=True)
