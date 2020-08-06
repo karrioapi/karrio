@@ -8,16 +8,25 @@ ENV_DIR=".venv"
 
 export PIP_FIND_LINKS="https://git.io/purplship"
 
+deactivate_env() {
+  if command -v COMMAND &> /dev/null
+  then
+    deactivate
+  fi
+}
+
 activate_env() {
-  echo "Activate $BASE_DIR"
-  deactivate || true
-  # shellcheck source=src/script.sh
-  source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+  if [[ -d "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin" ]]; then
+    echo "Activate $BASE_DIR"
+    deactivate_env
+    # shellcheck source=src/script.sh
+    source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+  fi
 }
 
 create_env() {
     echo "create $BASE_DIR Python3 env"
-    deactivate || true
+    deactivate_env
     rm -rf "${ROOT:?}/$ENV_DIR" || true
     mkdir -p "${ROOT:?}/$ENV_DIR"
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
@@ -87,6 +96,12 @@ test() {
   purplship test --failfast purpleserver.manager.tests
 }
 
+test_with_postgres() {
+  echo "clean env dir"
+  [ -d "${ROOT:?}/$ENV_DIR/temp" ] && rm -rf "${ROOT:?}/$ENV_DIR/temp" && echo "env dir purged"
+  docker-compose -f "${ROOT:?}/postgres.yml" up --force-recreate --exit-code-from purpleserver
+}
+
 clean_builds() {
     find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; || true
     find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; || true
@@ -142,4 +157,4 @@ alias dev:purplship=install_purplship_dev
 alias dev:extension=install_extension_dev
 alias run=run_server
 
-env:on || true
+activate_env

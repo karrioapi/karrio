@@ -24,12 +24,12 @@ class Address(OwnedEntity):
     state_tax_id = models.CharField(max_length=50, null=True, blank=True)
     person_name = models.CharField(max_length=50, null=True, blank=True)
     company_name = models.CharField(max_length=50, null=True, blank=True)
-    country_code = models.CharField(max_length=3, choices=COUNTRIES)
+    country_code = models.CharField(max_length=20, choices=COUNTRIES)
     email = models.EmailField(null=True, blank=True)
     phone_number = models.CharField(max_length=50, null=True, blank=True)
 
-    state_code = models.CharField(max_length=3, null=True, blank=True)
-    suburb = models.CharField(max_length=3, null=True, blank=True)
+    state_code = models.CharField(max_length=20, null=True, blank=True)
+    suburb = models.CharField(max_length=20, null=True, blank=True)
     residential = models.BooleanField(null=True)
 
     address_line1 = models.CharField(max_length=100, null=True, blank=True)

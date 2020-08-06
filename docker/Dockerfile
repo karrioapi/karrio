@@ -11,7 +11,6 @@ ENV WORK_DIR "/app"
 
 RUN mkdir /app
 WORKDIR /app
-VOLUME /app
 
 COPY requirements.txt /app/
 RUN pip install -r requirements.txt && \
