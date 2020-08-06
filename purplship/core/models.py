@@ -33,9 +33,6 @@ class Commodity:
 
     id: str = None
     weight: float = None
-    width: float = None
-    height: float = None
-    length: float = None
     description: str = None
     quantity: int = 1
     sku: str = None

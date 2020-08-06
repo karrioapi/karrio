@@ -13,7 +13,7 @@ from purplship.core.models import (
     ShipmentDetails,
     ShipmentRequest,
 )
-from purplship.core.units import Currency, WeightUnit, DimensionUnit, Options, Packages
+from purplship.core.units import Currency, WeightUnit, Options, Packages
 from purplship.core.utils import export, concat_str, Serializable, Element
 from purplship.core.errors import FieldError, FieldErrorCode
 from pycanadapost.shipment import (
@@ -199,7 +199,7 @@ def contract_shipment_request(
                             hs_tariff_code=None,
                             unit_weight=WeightUnit.KG.value,
                             customs_value_per_unit=item.value_amount,
-                            customs_unit_of_measure=DimensionUnit.CM.value,
+                            customs_unit_of_measure=None,
                             country_of_origin=payload.shipper.country_code,
                             province_of_origin=None,
                         )
