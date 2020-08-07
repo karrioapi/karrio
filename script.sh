@@ -62,7 +62,9 @@ test() {
 
 typecheck() {
     for module in $(submodules); do
-      mypy "${module}/purplship" --no-strict-optional --no-warn-return-any --no-warn-unused-configs || break
+      for submodule in $(find "$module" -type f -name "__init__.py" -exec dirname {} \;); do
+        mypy "$submodule" || break
+      done || break
     done
 }
 
