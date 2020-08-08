@@ -18,7 +18,6 @@ deactivate_env() {
 activate_env() {
   if [[ -d "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin" ]]; then
     echo "Activate $BASE_DIR"
-    deactivate_env
     # shellcheck source=src/script.sh
     source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
   fi
@@ -51,7 +50,8 @@ install_all() {
     pip install -e "${ROOT:?}/purpleserver[dev]" &&
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
-    pip install -e "${ROOT:?}/purpleserver/manager"
+    pip install -e "${ROOT:?}/purpleserver/manager" &&
+    pip install -e "${ROOT:?}/purpleserver/tenants"
 }
 
 test_install() {
@@ -90,6 +90,16 @@ run_server() {
   purplship runserver
 }
 
+postgres_env() {
+  export DATABASE_HOST=$(docker-machine ip)
+  export DATABASE_PORT=5432
+  export DATABASE_NAME=db
+  export DATABASE_ENGINE=postgresql_psycopg2
+  export DATABASE_USERNAME=postgres
+  export DATABASE_PASSWORD=postgres
+  export MULTI_TENANT_ENABLE=True
+}
+
 test() {
   purplship makemigrations &&
   purplship test --failfast purpleserver.proxy.tests &&
@@ -98,6 +108,7 @@ test() {
 
 test_with_postgres() {
   echo "clean env dir"
+  deactivate_env
   [ -d "${ROOT:?}/$ENV_DIR/temp" ] && rm -rf "${ROOT:?}/$ENV_DIR/temp" && echo "env dir purged"
   docker-compose -f "${ROOT:?}/postgres.yml" up --force-recreate --exit-code-from purpleserver
 }

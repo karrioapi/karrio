@@ -59,11 +59,10 @@ PURPLSHIP_CONF = [app for app in [
 ] if importlib.util.find_spec(app['app']) is not None]
 
 PURPLSHIP_APPS = [cfg['app'] for cfg in PURPLSHIP_CONF]
-PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF]
+PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF if 'urls' in cfg]
 
-INSTALLED_APPS = [
-    *PURPLSHIP_APPS,
 
+DJANGO_INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,6 +75,11 @@ INSTALLED_APPS = [
 
     'oauth2_provider',
     'drf_yasg',
+]
+
+INSTALLED_APPS = [
+    *PURPLSHIP_APPS,
+    *DJANGO_INSTALLED_APPS,
 ]
 
 MIDDLEWARE = [
