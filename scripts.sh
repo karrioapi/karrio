@@ -74,23 +74,53 @@ install_released() {
 }
 
 reset_db () {
+  if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
+  then
+    run_postgres
+    migrate="purplship migrate_schemas --shared"
+#    collectstatic="purplship collectstatic_schemas"
+    collectstatic="echo 'TODO::'"
+  else
+    migrate="purplship migrate"
+    collectstatic="purplship collectstatic --noinput"
+  fi
+
   purplship makemigrations &&
-  purplship migrate &&
-  purplship collectstatic --noinput
-  (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
-  (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
-  (echo "from purpleserver.carriers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
+  eval "$migrate" &&
+  eval "$collectstatic"
+
+  if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
+  then
+    (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='public', schema_name='public', domain_url='127.0.0.1')" | purplship shell) > /dev/null 2>&1;
+    (echo "from django.contrib.auth.models import User; User.objects.create_superuser('root', 'root@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+
+    (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='purpleserver', schema_name='purpleserver', domain_url='localhost')" | purplship shell) > /dev/null 2>&1;
+    (echo "from tenant_schemas.utils import tenant_context; from django.contrib.auth.models import User; from purpleserver.tenants.models import Client;
+with tenant_context(Client.objects.get(schema_name='purpleserver')):
+  User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell);
+  else
+    (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+    (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
+    (echo "from purpleserver.carriers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
+  fi
+
 }
 
 run_server() {
-  if [[ "$1" == "-i" ]]; then
+  if [[ "$*" == *--install* ]]; then
     install_all
   fi
-  reset_db
+  if [[ "$*" == *--newdb* ]]; then
+    reset_db
+  fi
+
   purplship runserver
 }
 
-postgres_env() {
+run_postgres() {
+  docker-compose -f "${ROOT:?}/postgres.yml" down &&
+  docker-compose -f "${ROOT:?}/postgres.yml" up -d db
+
   export DATABASE_HOST=$(docker-machine ip)
   export DATABASE_PORT=5432
   export DATABASE_NAME=db
@@ -166,6 +196,7 @@ install_extension_dev() {
 
 alias dev:purplship=install_purplship_dev
 alias dev:extension=install_extension_dev
-alias run=run_server
+alias run:purl=run_server
+alias run:db=run_postgres
 
 activate_env

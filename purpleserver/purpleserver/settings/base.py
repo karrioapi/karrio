@@ -62,24 +62,24 @@ PURPLSHIP_APPS = [cfg['app'] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF if 'urls' in cfg]
 
 
-DJANGO_INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
+
+INSTALLED_APPS = [
+    *PURPLSHIP_APPS,
+    *DJANGO_APPS,
 
     'rest_framework',
     'rest_framework.authtoken',
 
     'oauth2_provider',
     'drf_yasg',
-]
-
-INSTALLED_APPS = [
-    *PURPLSHIP_APPS,
-    *DJANGO_INSTALLED_APPS,
 ]
 
 MIDDLEWARE = [
