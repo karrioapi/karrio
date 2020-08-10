@@ -17,8 +17,8 @@ DATABASE_ROUTERS = (
 )
 
 SHARED_APPS = [
-    "tenant_schemas",
     "purpleserver.tenants",
+    "tenant_schemas",
 
     *DJANGO_APPS
 ]
@@ -26,14 +26,22 @@ SHARED_APPS = [
 TENANT_APPS = [*INSTALLED_APPS]
 
 INSTALLED_APPS = [
-    "tenant_schemas",
     "purpleserver.tenants",
+    "tenant_schemas",
 
     *INSTALLED_APPS
 ]
 
-PUBLIC_SCHEMA_NAME = 'public'
 TENANT_MODEL = "tenants.Client"
-DEFAULT_FILE_STORAGE = 'tenant_schemas.storage.TenantFileSystemStorage'
-TENANT_LIMIT_SET_CALLS = True
+
+PUBLIC_SCHEMA_NAME = 'public'
 PUBLIC_SCHEMA_URLCONF = 'purpleserver.tenants.urls'
+TENANT_LIMIT_SET_CALLS = True
+
+
+# Storage config
+MEDIA_ROOT = '/data/media'
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'tenant_schemas.storage.TenantFileSystemStorage'
+
+
