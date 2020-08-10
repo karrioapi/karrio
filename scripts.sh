@@ -18,7 +18,6 @@ deactivate_env() {
 activate_env() {
   if [[ -d "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin" ]]; then
     echo "Activate $BASE_DIR"
-    deactivate_env
     # shellcheck source=src/script.sh
     source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
   fi
@@ -51,7 +50,8 @@ install_all() {
     pip install -e "${ROOT:?}/purpleserver[dev]" &&
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
-    pip install -e "${ROOT:?}/purpleserver/manager"
+    pip install -e "${ROOT:?}/purpleserver/manager" &&
+    pip install -e "${ROOT:?}/purpleserver/tenants"
 }
 
 test_install() {
@@ -74,20 +74,57 @@ install_released() {
 }
 
 reset_db () {
+  if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
+  then
+    run_postgres
+    migrate="purplship migrate_schemas --shared"
+  else
+    migrate="purplship migrate"
+  fi
+
   purplship makemigrations &&
-  purplship migrate &&
+  eval "$migrate" &&
   purplship collectstatic --noinput
-  (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
-  (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
-  (echo "from purpleserver.carriers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
+
+  if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
+  then
+    (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='public', schema_name='public', domain_url='localhost')" | purplship shell) > /dev/null 2>&1;
+    (echo "from django.contrib.auth.models import User; User.objects.create_superuser('root', 'root@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+
+    (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='purpleserver', schema_name='purpleserver', domain_url='127.0.0.1')" | purplship shell) > /dev/null 2>&1;
+    (echo "from tenant_schemas.utils import tenant_context; from django.contrib.auth.models import User; from purpleserver.tenants.models import Client;
+with tenant_context(Client.objects.get(schema_name='purpleserver')):
+  User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+  else
+    (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+    (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
+    (echo "from purpleserver.carriers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
+  fi
+
 }
 
 run_server() {
-  if [[ "$1" == "-i" ]]; then
+  if [[ "$*" == *--install* ]]; then
     install_all
   fi
-  reset_db
+  if [[ "$*" == *--newdb* ]]; then
+    reset_db
+  fi
+
   purplship runserver
+}
+
+run_postgres() {
+  docker-compose -f "${ROOT:?}/postgres.yml" down &&
+  docker-compose -f "${ROOT:?}/postgres.yml" up -d db
+
+  export DATABASE_HOST=$(docker-machine ip)
+  export DATABASE_PORT=5432
+  export DATABASE_NAME=db
+  export DATABASE_ENGINE=postgresql_psycopg2
+  export DATABASE_USERNAME=postgres
+  export DATABASE_PASSWORD=postgres
+  export MULTI_TENANT_ENABLE=True
 }
 
 test() {
@@ -98,6 +135,7 @@ test() {
 
 test_with_postgres() {
   echo "clean env dir"
+  deactivate_env
   [ -d "${ROOT:?}/$ENV_DIR/temp" ] && rm -rf "${ROOT:?}/$ENV_DIR/temp" && echo "env dir purged"
   docker-compose -f "${ROOT:?}/postgres.yml" up --force-recreate --exit-code-from purpleserver
 }
@@ -155,6 +193,7 @@ install_extension_dev() {
 
 alias dev:purplship=install_purplship_dev
 alias dev:extension=install_extension_dev
-alias run=run_server
+alias run:purl=run_server
+alias run:db=run_postgres
 
 activate_env
