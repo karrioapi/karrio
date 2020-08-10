@@ -78,26 +78,23 @@ reset_db () {
   then
     run_postgres
     migrate="purplship migrate_schemas --shared"
-#    collectstatic="purplship collectstatic_schemas"
-    collectstatic="echo 'TODO::'"
   else
     migrate="purplship migrate"
-    collectstatic="purplship collectstatic --noinput"
   fi
 
   purplship makemigrations &&
   eval "$migrate" &&
-  eval "$collectstatic"
+  purplship collectstatic --noinput
 
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
-    (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='public', schema_name='public', domain_url='127.0.0.1')" | purplship shell) > /dev/null 2>&1;
+    (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='public', schema_name='public', domain_url='localhost')" | purplship shell) > /dev/null 2>&1;
     (echo "from django.contrib.auth.models import User; User.objects.create_superuser('root', 'root@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
 
-    (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='purpleserver', schema_name='purpleserver', domain_url='localhost')" | purplship shell) > /dev/null 2>&1;
+    (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='purpleserver', schema_name='purpleserver', domain_url='127.0.0.1')" | purplship shell) > /dev/null 2>&1;
     (echo "from tenant_schemas.utils import tenant_context; from django.contrib.auth.models import User; from purpleserver.tenants.models import Client;
 with tenant_context(Client.objects.get(schema_name='purpleserver')):
-  User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell);
+  User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
   else
     (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
     (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
