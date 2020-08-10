@@ -1,3 +1,4 @@
+from django.conf.global_settings import CACHES
 from purpleserver.settings.base import (
     DATABASES,
     MIDDLEWARE,
@@ -44,4 +45,5 @@ MEDIA_ROOT = '/data/media'
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'tenant_schemas.storage.TenantFileSystemStorage'
 
-
+# Cache config
+CACHES["default"]['KEY_FUNCTION'] = 'tenant_schemas.cache.make_key'
