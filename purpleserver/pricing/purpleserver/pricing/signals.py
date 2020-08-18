@@ -13,8 +13,8 @@ def register_rate_post_processing(*_, **__):
         Rates.post_process_functions = [
             charge.apply_charge for charge in models.PricingCharge.objects.all()
         ]
-    except Exception as e:
-        logger.warning(f"Failed to register custom charge processing: {e}")
+    except:
+        logger.warning("Failed to register custom charge processing")
 
 
 post_save.connect(register_rate_post_processing, sender=models.PricingCharge)
