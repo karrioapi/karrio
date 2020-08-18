@@ -15,7 +15,7 @@ from purpleserver.core.datatypes import (
     RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse
 )
 from purpleserver.core.serializers import ShipmentStatus
-from purpleserver.core.utils import identity
+from purpleserver.core.utils import identity, post_processing
 
 logger = logging.getLogger(__name__)
 
@@ -129,7 +129,10 @@ class Shipments:
         )
 
 
+@post_processing(methods=['fetch'])
 class Rates:
+    post_process_functions: List[Callable] = []
+
     @staticmethod
     def fetch(payload: dict) -> RateResponse:
         request = api.Rating.fetch(RateRequest(**to_dict(payload)))

@@ -34,5 +34,6 @@ services:
       activate_env || create_env && activate_env
       pip install psycopg2 &&
       test_install &&
+      purplship makemigrations &&
       test
       EOF"
