@@ -51,7 +51,8 @@ install_all() {
     pip install -e "${ROOT:?}/purpleserver/core" &&
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
     pip install -e "${ROOT:?}/purpleserver/manager" &&
-    pip install -e "${ROOT:?}/purpleserver/tenants"
+    pip install -e "${ROOT:?}/purpleserver/tenants" &&
+    pip install -e "${ROOT:?}/purpleserver/pricing"
 }
 
 test_install() {
@@ -74,9 +75,12 @@ install_released() {
 }
 
 reset_db () {
+  if [[ "$*" == *--postgres* ]]; then
+    run_postgres
+  fi
+
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
-    run_postgres
     migrate="purplship migrate_schemas --shared"
   else
     migrate="purplship migrate"
@@ -98,22 +102,31 @@ with tenant_context(Client.objects.get(schema_name='purpleserver')):
   else
     (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
     (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
-    (echo "from purpleserver.carriers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
+    (echo "from purpleserver.providers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
   fi
 
 }
 
 run_server() {
+  if [[ "$*" = *--tenants* ]];
+  then
+    export MULTI_TENANT_ENABLE=True
+  else
+    export MULTI_TENANT_ENABLE=False
+  fi
+
   if [[ "$*" == *--install* ]]; then
     install_all
   fi
+
   if [[ "$*" == *--newdb* ]]; then
-    reset_db
+    reset_db "$@"
   fi
 
   purplship runserver
 }
 
+# shellcheck disable=SC2120
 run_postgres() {
   docker-compose -f "${ROOT:?}/postgres.yml" down &&
   docker-compose -f "${ROOT:?}/postgres.yml" up -d db
@@ -124,7 +137,6 @@ run_postgres() {
   export DATABASE_ENGINE=postgresql_psycopg2
   export DATABASE_USERNAME=postgres
   export DATABASE_PASSWORD=postgres
-  export MULTI_TENANT_ENABLE=True
 }
 
 test() {
