@@ -56,6 +56,7 @@ PURPLSHIP_CONF = [app for app in [
     {'app': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
     {'app': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
     {'app': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
+    {'app': 'purpleserver.pricing'},
 ] if importlib.util.find_spec(app['app']) is not None]
 
 PURPLSHIP_APPS = [cfg['app'] for cfg in PURPLSHIP_CONF]
