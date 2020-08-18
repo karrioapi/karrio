@@ -1,4 +1,5 @@
-from typing import Type, TypeVar, Generic, Optional, Union, Callable, Any
+import functools
+from typing import Type, TypeVar, Generic, Optional, Union, Callable, Any, List
 from rest_framework.serializers import Serializer
 
 T = TypeVar('T')
@@ -12,13 +13,26 @@ def identity(value: Union[Any, Callable]) -> T:
     return value() if callable(value) else value
 
 
-def validate_and_save(serializer_type: Type, data, instance=None, **kwargs):
-    if data is None:
-        return None
+def post_processing(methods: List[str] = None):
 
-    serializer = serializer_type(data=data) if instance is None else serializer_type(instance, data=data, partial=True)
-    serializer.is_valid(raise_exception=True)
-    return serializer.save(**kwargs)
+    def class_wrapper(klass):
+        setattr(klass, 'post_process_functions', getattr(klass, 'post_process_functions') or [])
+
+        for name in methods:
+            method = getattr(klass, name)
+
+            def wrapper(*args, **kwargs):
+                result = method(*args, **kwargs)
+                processes = klass.post_process_functions
+                return functools.reduce(
+                    lambda processed_result, process: process(processed_result), processes, result
+                )
+
+            setattr(klass, name, wrapper)
+
+        return klass
+
+    return class_wrapper
 
 
 class _SerializerDecoratorInitializer(Generic[T]):
