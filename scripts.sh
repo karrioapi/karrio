@@ -142,12 +142,12 @@ run_postgres() {
 test() {
   purplship makemigrations &&
   purplship test --failfast purpleserver.proxy.tests &&
+  purplship test --failfast purpleserver.pricing.tests &&
   purplship test --failfast purpleserver.manager.tests
 }
 
 test_with_postgres() {
   echo "clean env dir"
-  deactivate_env
   [ -d "${ROOT:?}/$ENV_DIR/temp" ] && rm -rf "${ROOT:?}/$ENV_DIR/temp" && echo "env dir purged"
   docker-compose -f "${ROOT:?}/postgres.yml" up --force-recreate --exit-code-from purpleserver
 }

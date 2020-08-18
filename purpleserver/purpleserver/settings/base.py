@@ -51,13 +51,16 @@ if USE_HTTPS is True:
 
 # Application definition
 
-PURPLSHIP_CONF = [app for app in [
-    {'app': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},
-    {'app': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
-    {'app': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
-    {'app': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
-    {'app': 'purpleserver.pricing'},
-] if importlib.util.find_spec(app['app']) is not None]
+PURPLSHIP_CONF = [
+    app for app in [
+        {'app': 'purpleserver.core', 'module': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},
+        {'app': 'purpleserver.providers', 'module': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
+        {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
+        {'app': 'purpleserver.manager', 'module': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
+        {'app': 'purpleserver.pricing', 'module': 'purpleserver.pricing'},
+    ]
+    if importlib.util.find_spec(app['module']) is not None
+]
 
 PURPLSHIP_APPS = [cfg['app'] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF if 'urls' in cfg]

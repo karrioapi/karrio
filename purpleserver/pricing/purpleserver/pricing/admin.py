@@ -1,4 +1,4 @@
 from django.contrib import admin
-from purpleserver.pricing.models import Charge
+from purpleserver.pricing.models import PricingCharge
 
-admin.site.register(Charge)
+admin.site.register(PricingCharge)

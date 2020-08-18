@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 SERVICES = [(code, code) for services in REFERENCE_MODELS["services"].values() for code in services]
 
 
-class Charge(OwnedEntity):
+class PricingCharge(OwnedEntity):
     class Meta:
         db_table = "pricing-charge"
         verbose_name = 'Pricing Charge'
@@ -55,7 +55,7 @@ class Charge(OwnedEntity):
                     **to_dict(rate),
                     'total_charge': decimal(rate.total_charge + cast(float, self.amount)),
                     'extra_charges': (rate.extra_charges + [
-                        ChargeDetails(name="service margin", amount=cast(float, self.amount), currency=rate.currency)
+                        ChargeDetails(name="Service charge", amount=cast(float, self.amount), currency=rate.currency)
                     ])
                 })
 
