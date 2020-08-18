@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "purpleserver/css/base.css" %}{% endblock %}">
+{% block extrastyle %}{% endblock %}
+{% block extrahead %}
+    <link rel="shortcut icon" href="{% static 'purpleserver/img/brand/favicon.ico' %}">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="{% static 'purpleserver/vendor/nucleo/css/nucleo.css' %}" rel="stylesheet">
+    <link href="{% static 'purpleserver/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+
+    <!-- Argon CSS -->
+    <link type="text/css" href="{% static 'purpleserver/css/argon.min.css' %}" rel="stylesheet">
+{% endblock %}

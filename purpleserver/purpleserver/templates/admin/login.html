@@ -1,0 +1,201 @@
+{% extends "purpleserver/base_site.html" %}
+
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+{{ form.media }}
+{% endblock %}
+
+{% block bodyclass %}bg-default{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block branding %}{% endblock %}
+
+{% block nav-global %}
+
+<!-- Navbar -->
+<nav class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light" id="navbar-main">
+    <div class="container">
+        <a class="navbar-brand" href="dashboard.html">
+            <img src="{% static "purpleserver/img/brand/white.png" %}">
+        </a>
+        <button aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                data-target="#navbar-collapse" data-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse navbar-custom-collapse collapse" id="navbar-collapse">
+            <div class="navbar-collapse-header">
+                <div class="row">
+                    <div class="col-6 collapse-brand">
+                        <a href="dashboard.html">
+                            <img src="{% static "purpleserver/img/brand/blue.png" %}">
+                        </a>
+                    </div>
+                    <div class="col-6 collapse-close">
+                        <button aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation"
+                                class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse"
+                                type="button">
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="nav-link-inner--text">Login</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="register.html">
+                        <span class="nav-link-inner--text">Register</span>
+                    </a>
+                </li>
+            </ul>
+            <hr class="d-lg-none"/>
+        </div>
+    </div>
+</nav>
+
+<!-- Main content -->
+<div class="main-content">
+
+{% endblock %}
+
+{% block content_title %}
+    <!-- Header -->
+    <div class="header bg-gradient-primary py-7 py-lg-8 pt-lg-9">
+        <div class="container">
+            <div class="header-body text-center mb-7">
+                <div class="row justify-content-center">
+                    <div class="col-xl-5 col-lg-6 col-md-8 px-5">
+                        <h1 class="text-white">Welcome!</h1>
+                        <p class="text-lead text-white">Use these awesome forms to login or create new account in your
+                            project for free.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="separator separator-bottom separator-skew zindex-100">
+            <svg preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" xmlns="http://www.w3.org/2000/svg"
+                 y="0">
+                <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+            </svg>
+        </div>
+    </div>
+{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+    <!-- Page content -->
+    <div class="container mt--8 pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+
+                <div class="card bg-secondary border-0 mb-0">
+                    <div class="card-header bg-transparent pb-5">
+                        <div class="text-muted text-center mt-2 mb-3"><small>Sign in with credentials</small></div>
+                    </div>
+
+                    {% if form.errors and not form.non_field_errors %}
+                    <p class="errornote">
+                    {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+                    </p>
+                    {% endif %}
+
+                    {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                    <p class="errornote">
+                        {{ error }}
+                    </p>
+                    {% endfor %}
+                    {% endif %}
+
+                    <div class="card-body px-lg-5 py-lg-5">
+
+                        {% if user.is_authenticated %}
+                        <p class="errornote">
+                        {% blocktrans trimmed %}
+                            You are authenticated as {{ username }}, but are not authorized to
+                            access this page. Would you like to login to a different account?
+                        {% endblocktrans %}
+                        </p>
+                        {% endif %}
+
+                        <form action="{{ app_path }}" id="login-form" method="post">{% csrf_token %}
+                            <div class="form-group mb-3">
+                                {{ form.username.errors }}
+                                <div class="input-group input-group-merge input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                                    </div>
+                                    <input class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" type="text" placeholder="{% trans 'Username' %}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.password.errors }}
+                                <div class="input-group input-group-merge input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                                    </div>
+                                    <input class="form-control" id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}" type="password" placeholder="{% trans 'Password' %}">
+                                </div>
+                                <input type="hidden" name="next" value="{{ next }}">
+                            </div>
+                            <div class="custom-control custom-control-alternative custom-checkbox">
+                                <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
+                                <label class="custom-control-label" for=" customCheckLogin">
+                                    <span class="text-muted">Remember me</span>
+                                </label>
+                            </div>
+                            <div class="text-center">
+                                <input class="btn btn-primary my-4" type="submit" value="{% trans 'Log in' %}">
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <a href="#" class="text-light"><small>Forgot password?</small></a>
+                    </div>
+                    <div class="col-6 text-right">
+                        <a href="#" class="text-light"><small>Create new account</small></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+  <!-- Footer -->
+<footer class="py-5" id="footer-main">
+    <div class="container">
+        <div class="row align-items-center justify-content-xl-between">
+            <div class="col-xl-6">
+                <div class="copyright text-center text-xl-left text-muted">
+                &copy; 2020 <a href="https://www.purplship.com" class="font-weight-bold ml-1" target="_blank">PurplShip Team</a>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <ul class="nav nav-footer justify-content-center justify-content-xl-end">
+                    <li class="nav-item">
+                        <a href="https://docs.purplship.com" class="nav-link" target="_blank">Docs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="http://blog.purplship.com" class="nav-link" target="_blank">Blog</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
