@@ -52,6 +52,7 @@ install_all() {
     pip install -e "${ROOT:?}/purpleserver/proxy" &&
     pip install -e "${ROOT:?}/purpleserver/manager" &&
     pip install -e "${ROOT:?}/purpleserver/tenants" &&
+    pip install -e "${ROOT:?}/purpleserver/accounts" &&
     pip install -e "${ROOT:?}/purpleserver/pricing"
 }
 

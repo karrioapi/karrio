@@ -57,6 +57,7 @@ PURPLSHIP_CONF = [
         {'app': 'purpleserver.providers', 'module': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
         {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
         {'app': 'purpleserver.manager', 'module': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
+        {'app': 'purpleserver.accounts', 'module': 'purpleserver.accounts', 'urls': 'purpleserver.accounts.urls'},
         {'app': 'purpleserver.pricing', 'module': 'purpleserver.pricing'},
     ]
     if importlib.util.find_spec(app['module']) is not None
@@ -97,7 +98,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'purpleserver.urls'
-LOGOUT_REDIRECT_URL = '/admin/login/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
 
 TEMPLATES = [
     {
@@ -206,7 +208,6 @@ REST_FRAMEWORK = {
 
     'DEFAULT_RENDERER_CLASSES': (
         'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
-        'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
     ),
 
     'DEFAULT_PARSER_CLASSES': (
