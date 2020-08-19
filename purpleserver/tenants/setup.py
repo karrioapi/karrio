@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -13,7 +13,7 @@ setup(
       author='PurplShip',
       author_email='danielk.developer@gmail.com',
       license='AGPLv3',
-      packages=find_packages("."),
+      packages=find_namespace_packages("."),
       install_requires=[
             'purplship-server.core',
             'django-tenant-schemas',
