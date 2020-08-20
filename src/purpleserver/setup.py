@@ -18,14 +18,6 @@ dev_requirements = [
       'freightcom.extension',
 ]
 
-proxy_requirements = [
-      'purplship-server.proxy'
-]
-
-manager_requirements = [
-      'purplship-server.manager'
-]
-
 setup(
       name='purplship-server',
       version='2020.8.0',
@@ -45,15 +37,13 @@ setup(
             'purplship-server.core',
             'django-oauth-toolkit',
             'jsonfield',
+            'python-decouple',
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]
       },
       extras_require={
             'dev': dev_requirements,
-            'proxy': proxy_requirements,
-            'manager': manager_requirements,
-            'all': [*proxy_requirements, *manager_requirements],
       },
       dependency_links=[
             'https://git.io/purplship',

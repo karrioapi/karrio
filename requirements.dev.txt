@@ -1,5 +1,6 @@
 -f https://git.io/purplship
 Django==3.0.9
+
 -e git+https://github.com/PurplShip/purplship.git@release-2020.8.0#egg=purplship
 -e git+https://github.com/PurplShip/purplship.git@release-2020.8.0#egg=purplship.canadapost&subdirectory=extensions/canadapost
 -e git+https://github.com/PurplShip/purplship.git@release-2020.8.0#egg=purplship.dhl&subdirectory=extensions/dhl
@@ -7,3 +8,11 @@ Django==3.0.9
 -e git+https://github.com/PurplShip/purplship.git@release-2020.8.0#egg=purplship.package&subdirectory=extensions/package
 -e git+https://github.com/PurplShip/purplship.git@release-2020.8.0#egg=purplship.purolator&subdirectory=extensions/purolator
 -e git+https://github.com/PurplShip/purplship.git@release-2020.8.0#egg=purplship.ups&subdirectory=extensions/ups
+
+-e ./src/apps/core
+-e ./src/purpleserver[dev]
+-e ./src/apps/accounts
+-e ./src/apps/proxy
+-e ./src/apps/tenants
+-e ./src/apps/manager
+-e ./src/apps/pricing

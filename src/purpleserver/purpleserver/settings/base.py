@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import importlib
-import distutils.util
 from pathlib import Path
+from decouple import config
 from django.urls import reverse_lazy
 from django.templatetags.static import static
 from django.utils.functional import lazy
@@ -25,23 +25,22 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__ + '/../..'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', get_random_secret_key())
+SECRET_KEY = config('SECRET_KEY', default='n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(distutils.util.strtobool(os.environ.get('DEBUG_MODE', 'True')))
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 # custom env
-WORK_DIR = os.environ.get('WORK_DIR', '')
+WORK_DIR = config('WORK_DIR', default='')
 Path(WORK_DIR).mkdir(parents=True, exist_ok=True)
 
-USE_HTTPS = bool(distutils.util.strtobool(os.environ.get('USE_HTTPS', 'False')))
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+USE_HTTPS = config('USE_HTTPS', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 CORS_ORIGIN_ALLOW_ALL = True
 
 
 # HTTPS configuration
 if USE_HTTPS is True:
-    print('> setting up for HTTPS', USE_HTTPS)
     global SECURE_SSL_REDIRECT
     global SECURE_PROXY_SSL_HEADER
 
@@ -98,7 +97,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'purpleserver.urls'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
 TEMPLATES = [
@@ -123,16 +122,16 @@ WSGI_APPLICATION = 'purpleserver.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DB_PATH_NAME = os.path.join(WORK_DIR, 'db.sqlite3')
-DB_ENGINE = os.getenv('DATABASE_ENGINE', 'sqlite3')
+DB_ENGINE = config('DATABASE_ENGINE', default='sqlite3')
 
 DATABASES = {
     'default': {
+        'NAME': config('DATABASE_NAME', default=DB_PATH_NAME),
         'ENGINE': 'django.db.backends.{}'.format(DB_ENGINE),
-        'NAME': os.getenv('DATABASE_NAME', DB_PATH_NAME),
-        'USER': os.getenv('DATABASE_USERNAME'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'USER': config('DATABASE_USERNAME'),
+        'HOST': config('DATABASE_HOST'),
+        'PORT': config('DATABASE_PORT'),
     }
 }
 
@@ -227,8 +226,8 @@ REST_FRAMEWORK = {
 # OAUTH2 config
 static_lazy = lazy(static, str)
 
-OAUTH2_CLIENT_ID = os.environ.get('OAUTH2_CLIENT_ID', get_random_secret_key())
-OAUTH2_CLIENT_SECRET = os.environ.get('OAUTH2_CLIENT_SECRET', get_random_secret_key())
+OAUTH2_CLIENT_ID = config('OAUTH2_CLIENT_ID', default=get_random_secret_key())
+OAUTH2_CLIENT_SECRET = config('OAUTH2_CLIENT_SECRET', default=get_random_secret_key())
 OAUTH2_APP_NAME = 'PurplShip OAuth2 provider'
 
 OAUTH2_REDIRECT_URL = static_lazy('drf-yasg/swagger-ui-dist/oauth2-redirect.html')
@@ -275,12 +274,10 @@ REDOC_SETTINGS = {
 
 # Logging configuration
 
-LOG_LEVEL = ('DEBUG' if DEBUG else os.getenv('LOG_LEVEL', 'INFO'))
-DJANGO_LOG_LEVEL = ('INFO' if DEBUG else os.getenv('DJANGO_LOG_LEVEL', 'WARNING'))
-LOG_FILE_DIR = os.getenv('LOG_PATH', WORK_DIR)
+LOG_LEVEL = ('DEBUG' if DEBUG else config('LOG_LEVEL', default='INFO'))
+DJANGO_LOG_LEVEL = ('INFO' if DEBUG else config('DJANGO_LOG_LEVEL', default='WARNING'))
+LOG_FILE_DIR = config('LOG_PATH', default=WORK_DIR)
 LOG_FILE_NAME = os.path.join(LOG_FILE_DIR, 'debug.log')
-
-print(f'> setting up LOG_LEVEL to: {LOG_LEVEL}')
 
 LOGGING = {
     'version': 1,
