@@ -26,6 +26,7 @@ services:
         source /temp/dev/scripts.sh && test
       else
         export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
+        export RELOAD=${RELOAD:-False}
         ./docker-entrypoint.sh
       fi
       EOF"
