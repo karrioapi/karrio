@@ -6,7 +6,9 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
+[ -d "$wheels" ] && export PIP_FIND_LINKS=file://$wheels
 
 deactivate_env() {
   if command -v COMMAND &> /dev/null
@@ -35,7 +37,7 @@ create_env() {
 
 init() {
     create_env &&
-    install_all
+    install_dev
 }
 
 
@@ -46,18 +48,8 @@ alias env:reset=init
 
 # Project helpers
 
-install_all() {
-    pip install -e "${ROOT:?}/purpleserver[dev]" &&
-    pip install -e "${ROOT:?}/purpleserver/core" &&
-    pip install -e "${ROOT:?}/purpleserver/proxy" &&
-    pip install -e "${ROOT:?}/purpleserver/manager" &&
-    pip install -e "${ROOT:?}/purpleserver/tenants" &&
-    pip install -e "${ROOT:?}/purpleserver/pricing"
-}
-
-test_install() {
-    pip install -r "${ROOT:?}/requirements.test.txt" &&
-    install_all
+install_dev() {
+    pip install -r "${ROOT:?}/requirements.dev.txt"
 }
 
 install_released() {
@@ -116,7 +108,7 @@ run_server() {
   fi
 
   if [[ "$*" == *--install* ]]; then
-    install_all
+    install_dev
   fi
 
   if [[ "$*" == *--newdb* ]]; then
@@ -128,8 +120,8 @@ run_server() {
 
 # shellcheck disable=SC2120
 run_postgres() {
-  docker-compose -f "${ROOT:?}/postgres.yml" down &&
-  docker-compose -f "${ROOT:?}/postgres.yml" up -d db
+  docker-compose down &&
+  docker-compose up -d db
 
   export DATABASE_HOST=$(docker-machine ip)
   export DATABASE_PORT=5432
@@ -147,9 +139,7 @@ test() {
 }
 
 test_with_postgres() {
-  echo "clean env dir"
-  [ -d "${ROOT:?}/$ENV_DIR/temp" ] && rm -rf "${ROOT:?}/$ENV_DIR/temp" && echo "env dir purged"
-  docker-compose -f "${ROOT:?}/postgres.yml" up --force-recreate --exit-code-from purpleserver
+  TEST=True docker-compose up --exit-code-from=purpleserver purpleserver
 }
 
 clean_builds() {
