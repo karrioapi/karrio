@@ -5,7 +5,8 @@ services:
     build:
       context: ./
       dockerfile: ./docker/Dockerfile
-    env_file: .env-file
+    image: purplship/purplship-server:latest
+    env_file: .env
     volumes:
       - .:/temp/dev
     ports:
@@ -24,6 +25,7 @@ services:
       then
         source /temp/dev/scripts.sh && test
       else
+        export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
         ./docker-entrypoint.sh
       fi
       EOF"
