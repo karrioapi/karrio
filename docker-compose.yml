@@ -2,6 +2,7 @@ version: '3'
 
 services:
   purpleserver:
+    restart: always
     build:
       context: ./
       dockerfile: ./docker/Dockerfile

@@ -11,7 +11,7 @@ Django==3.0.9
 
 -e ./src/apps/core
 -e ./src/purpleserver[dev]
--e ./src/apps/accounts
+-e ./src/apps/client
 -e ./src/apps/proxy
 -e ./src/apps/tenants
 -e ./src/apps/manager

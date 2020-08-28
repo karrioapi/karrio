@@ -16,7 +16,7 @@ Including another URLconf
 from django.urls import path
 from purpleserver.tenants import admin as tenants_admin
 
-# TODO: set landing page here and move tenants_admin to `/admin`
+
 urlpatterns = [
     path('', tenants_admin.site.urls, name='tenants_admin')
 ]

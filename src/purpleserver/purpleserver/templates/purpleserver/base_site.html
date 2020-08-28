@@ -6,29 +6,31 @@
 
         <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "purpleserver/css/base.css" %}{% endblock %}">
 
-        <link rel="apple-touch-icon" sizes="57x57" href="{% static 'purpleserver/img/favicon-set/apple-icon-57x57.png' %}">
-        <link rel="apple-touch-icon" sizes="60x60" href="{% static 'purpleserver/img/favicon-set/apple-icon-60x60.png' %}">
-        <link rel="apple-touch-icon" sizes="72x72" href="{% static 'purpleserver/img/favicon-set/apple-icon-72x72.png' %}">
-        <link rel="apple-touch-icon" sizes="76x76" href="{% static 'purpleserver/img/favicon-set/apple-icon-76x76.png' %}">
-        <link rel="apple-touch-icon" sizes="114x114" href="{% static 'purpleserver/img/favicon-set/apple-icon-114x114.png' %}">
-        <link rel="apple-touch-icon" sizes="120x120" href="{% static 'purpleserver/img/favicon-set/apple-icon-120x120.png' %}">
-        <link rel="apple-touch-icon" sizes="144x144" href="{% static 'purpleserver/img/favicon-set/apple-icon-144x144.png' %}">
-        <link rel="apple-touch-icon" sizes="152x152" href="{% static 'purpleserver/img/favicon-set/apple-icon-152x152.png' %}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'purpleserver/img/favicon-set/apple-icon-180x180.png' %}">
-        <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'purpleserver/img/favicon-set/android-icon-192x192.png' %}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'purpleserver/img/favicon-set/favicon-32x32.png' %}">
-        <link rel="icon" type="image/png" sizes="96x96" href="{% static 'purpleserver/img/favicon-set/favicon-96x96.png' %}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'purpleserver/img/favicon-set/favicon-16x16.png' %}">
+        <link rel="apple-touch-icon" sizes="57x57" href="{% static 'purpleserver/favicon-set/apple-icon-57x57.png' %}">
+        <link rel="apple-touch-icon" sizes="60x60" href="{% static 'purpleserver/favicon-set/apple-icon-60x60.png' %}">
+        <link rel="apple-touch-icon" sizes="72x72" href="{% static 'purpleserver/favicon-set/apple-icon-72x72.png' %}">
+        <link rel="apple-touch-icon" sizes="76x76" href="{% static 'purpleserver/favicon-set/apple-icon-76x76.png' %}">
+        <link rel="apple-touch-icon" sizes="114x114" href="{% static 'purpleserver/favicon-set/apple-icon-114x114.png' %}">
+        <link rel="apple-touch-icon" sizes="120x120" href="{% static 'purpleserver/favicon-set/apple-icon-120x120.png' %}">
+        <link rel="apple-touch-icon" sizes="144x144" href="{% static 'purpleserver/favicon-set/apple-icon-144x144.png' %}">
+        <link rel="apple-touch-icon" sizes="152x152" href="{% static 'purpleserver/favicon-set/apple-icon-152x152.png' %}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'purpleserver/favicon-set/apple-icon-180x180.png' %}">
+        <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'purpleserver/favicon-set/android-icon-192x192.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'purpleserver/favicon-set/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="96x96" href="{% static 'purpleserver/favicon-set/favicon-96x96.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'purpleserver/favicon-set/favicon-16x16.png' %}">
+
+        <link rel="icon" href="{% static 'purpleserver/favicon-set/favicon.ico' %}">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
 
         <!-- Icons -->
-        <link href="{% static 'purpleserver/vendor/nucleo/css/nucleo.css' %}" rel="stylesheet">
-        <link href="{% static 'purpleserver/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+        <link type="text/css" href="{% static 'purpleserver/css/spectre-icons.min.css' %}" rel="stylesheet">
 
-        <!-- Argon CSS -->
-        <link type="text/css" href="{% static 'purpleserver/css/argon.min.css' %}" rel="stylesheet">
+        <!-- Theme CSS -->
+        <link type="text/css" href="{% static 'purpleserver/css/spectre.min.css' %}" rel="stylesheet">
+        <link type="text/css" href="{% static 'purpleserver/css/spectre-exp.min.css' %}" rel="stylesheet">
 
         {% block extrastyle %}{% endblock %}
 
@@ -50,7 +52,7 @@
         <nav class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light" id="navbar-main">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                    <img src="{% static "purpleserver/img/brand/logo-white.png" %}">
+                    <img src="{% static "purpleserver/img/logo-white.png" %}">
                 </a>
                 <button aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
                         data-target="#navbar-collapse" data-toggle="collapse" type="button">
@@ -61,7 +63,7 @@
                         <div class="row">
                             <div class="col-6 collapse-brand">
                                 <a href="dashboard.html">
-                                    <img src="{% static "purpleserver/img/brand/logo-monochrome.png" %}">
+                                    <img src="{% static "purpleserver/img/logo-monochrome.png" %}">
                                 </a>
                             </div>
                             <div class="col-6 collapse-close">

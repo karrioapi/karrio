@@ -1,15 +1,1 @@
-@charset 'UTF-8';
-/*!
 
-=========================================================
-* Purple server base css
-=========================================================
-*/
-
-.main-content {
-    min-height: 88vh;
-}
-
-.purpleserver-bg-gradient-primary {
-    background: linear-gradient(87deg,#9504af 0,#e669fc 100%)!important;
-}

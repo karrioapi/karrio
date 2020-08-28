@@ -56,7 +56,7 @@ PURPLSHIP_CONF = [
         {'app': 'purpleserver.providers', 'module': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
         {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
         {'app': 'purpleserver.manager', 'module': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
-        {'app': 'purpleserver.accounts', 'module': 'purpleserver.accounts', 'urls': 'purpleserver.accounts.urls'},
+        {'app': 'purpleserver.client', 'module': 'purpleserver.client', 'urls': 'purpleserver.client.urls'},
         {'app': 'purpleserver.pricing', 'module': 'purpleserver.pricing'},
     ]
     if importlib.util.find_spec(app['module']) is not None
