@@ -99,6 +99,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'purpleserver.urls'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
 
 TEMPLATES = [
     {

@@ -1,0 +1,9 @@
+// purpleserver.scss
+// Define variables to override default ones
+$primary-color: #9504af;
+$dark-color: #3e396b;
+
+// Import full Spectre source code
+@import "node_modules/spectre.css/src/spectre";
+@import "node_modules/spectre.css/src/spectre-exp";
+@import "node_modules/spectre.css/src/spectre-icons";

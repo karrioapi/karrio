@@ -1,90 +1,75 @@
 {% extends "purpleserver/base_site.html" %}
 {% load i18n static %}
 
-{% block content_title %}
-    <div class="header purpleserver-bg-gradient-primary py-7 py-lg-8 pt-lg-9">
-        <div class="container">
-            <div class="header-body text-center mb-7">
-                <div class="row justify-content-center">
-                    <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-                        <h1 class="text-white">Create an account</h1>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="separator separator-bottom separator-skew zindex-100">
-            <svg preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" xmlns="http://www.w3.org/2000/svg"
-                 y="0">
-                <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-            </svg>
-        </div>
-    </div>
+{% block extranavsection %}
+<a href="{% url 'login' %}" class="btn btn-link hide-sm">{% trans 'Already have an account?' %}</a>
+<a href="{% url 'login' %}" class="btn btn-primary">{% trans 'Login' %}</a>
 {% endblock %}
 
 {% block content %}
-    <div class="container mt--8 pb-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8">
+<div class="columns offset-top">
+    <div class="column col-5 col-sm-12 col-mx-auto">
 
-                <div class="card bg-secondary border-0 mb-0">
-                    <div class="card-header bg-transparent pb-5">
-                        <div class="text-muted text-center mt-2 mb-4"><small>Sign up with credentials</small></div>
+        <div class="card">
+            <div class="card-header text-center">
+                <div class="card-title h3">{% trans 'Create an account' %}</div>
+                <div class="card-subtitle text-dark">{% trans 'Sign up with credentials' %}</div>
+            </div>
+
+            <div class="card-body">
+
+                {% if form.errors and not form.non_field_errors %}
+                <p class="text-error">
+                {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+                </p>
+                {% endif %}
+
+                {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                <p class="text-error">
+                    {{ error }}
+                </p>
+                {% endfor %}
+                {% endif %}
+
+                <form method="post">{% csrf_token %}
+                    <div class="form-group">
+                        {{ form.username.errors }}
+                        <label class="form-label" for="{{ form.username.id_for_label }}">
+                            {% trans 'Username' %}
+                        </label>
+                        <input class="form-input" id="{{ form.username.id_for_label }}"
+                               name="{{ form.username.html_name }}" type="text"
+                               placeholder="{% trans 'Username' %}">
+                    </div>
+                    <div class="form-group">
+                        {{ form.password1.errors }}
+                        <label class="form-label" for="{{ form.password1.id_for_label }}">
+                            {% trans 'Password' %}
+                        </label>
+                        <input class="form-input" id="{{ form.password1.id_for_label }}"
+                               name="{{ form.password1.html_name }}" type="password"
+                               placeholder="{% trans 'Password' %}">
+                    </div>
+                    <div class="form-group">
+                        {{ form.password2.errors }}
+                        <label class="form-label" for="{{ form.password2.id_for_label }}">
+                            {% trans 'Password Confirmation' %}
+                        </label>
+                        <input class="form-input" id="{{ form.password2.id_for_label }}"
+                               name="{{ form.password2.html_name }}" type="password"
+                               placeholder="{% trans 'Password Confirmation' %}">
                     </div>
 
-                    {% if form.errors and not form.non_field_errors %}
-                    <p class="errornote">
-                    {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
-                    </p>
-                    {% endif %}
-
-                    {% if form.non_field_errors %}
-                    {% for error in form.non_field_errors %}
-                    <p class="errornote">
-                        {{ error }}
-                    </p>
-                    {% endfor %}
-                    {% endif %}
-
-                    <div class="card-body px-lg-5 py-lg-5">
-
-                        <form method="post">{% csrf_token %}
-                            <div class="form-group mb-3">
-                                {{ form.username.errors }}
-                                <div class="input-group input-group-merge input-group-alternative">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                                    </div>
-                                    <input class="form-control" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" type="text" placeholder="{% trans 'Username' %}">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                {{ form.password1.errors }}
-                                <div class="input-group input-group-merge input-group-alternative">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
-                                    </div>
-                                    <input class="form-control" id="{{ form.password1.id_for_label }}" name="{{ form.password1.html_name }}" type="password" placeholder="{% trans 'Password' %}">
-                                </div>
-                                <input type="hidden" name="next" value="{{ next }}">
-                            </div>
-                            <div class="form-group">
-                                {{ form.password2.errors }}
-                                <div class="input-group input-group-merge input-group-alternative">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
-                                    </div>
-                                    <input class="form-control" id="{{ form.password2.id_for_label }}" name="{{ form.password2.html_name }}" type="password" placeholder="{% trans 'Password Confirmation' %}">
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <input class="btn btn-primary my-4" type="submit" value="{% trans 'Create account' %}">
-                            </div>
-                        </form>
+                    <div class="form-group">
+                        <input class="btn btn-primary column col-12" type="submit" value="{% trans 'Create account' %}">
                     </div>
-                </div>
+
+                </form>
 
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 

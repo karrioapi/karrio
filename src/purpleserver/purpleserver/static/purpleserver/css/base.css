@@ -1,1 +1,18 @@
 
+.bg-default {
+    background: #eeeeee;
+}
+
+.content {
+    height: 44rem;
+    min-height: 500px;
+}
+
+.offset-top {
+    padding: 8rem 0;
+}
+
+.base-navbar {
+    padding: 0 15px;
+    height: 50px;
+}

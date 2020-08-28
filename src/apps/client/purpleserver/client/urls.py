@@ -7,6 +7,6 @@ from purpleserver.client.views import SignUp, index
 
 urlpatterns = [
     path('', index, name='index'),
-    path('', include(urls), name="client"),
+    path('', include(urls)),
     path('signup', SignUp.as_view(), name='signup'),
 ]

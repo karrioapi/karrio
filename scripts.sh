@@ -179,6 +179,19 @@ build_all() {
   backup_wheels
 }
 
+build_theme() {
+  pushd "${ROOT:?}/src/theme" || false &&
+  yarn && yarn build
+  popd || true
+}
+
+build_board() {
+  pushd "${ROOT:?}/src/purpleboard" || false &&
+  export PUBLIC_URL="${ROOT:?}/src/apps/client/purpleserver/client/templates/client"
+  yarn && yarn build
+  popd || true
+}
+
 install_purplship_dev() {
   p="$(dirname "${ROOT:?}")"
   sm=find "$p/purplship" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
