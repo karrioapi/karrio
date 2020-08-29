@@ -185,11 +185,13 @@ build_theme() {
   popd || true
 }
 
-build_board() {
-  pushd "${ROOT:?}/src/purpleboard" || false &&
-  export PUBLIC_URL="${ROOT:?}/src/apps/client/purpleserver/client/templates/client"
+build_client() {
+  pushd "${ROOT:?}/src/frontend" || false &&
   yarn && yarn build
-  popd || true
+  popd || true &&
+  if [[ "$*" == *-u* ]]; then
+    purplship collectstatic --noinput
+  fi
 }
 
 install_purplship_dev() {

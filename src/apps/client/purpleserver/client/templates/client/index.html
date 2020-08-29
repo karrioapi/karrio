@@ -1,0 +1,18 @@
+{% extends "purpleserver/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+<link href="{% static 'purpleserver/client/purpleboard.min.css' %}" type="text/css" rel="stylesheet">
+{% endblock %}
+
+{% block navbar %}
+<noscript>You need to enable JavaScript to run this app.</noscript>
+{% endblock %}
+
+{% block content %}
+<div id="root"></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'purpleserver/client/purpleboard.min.js' %}"></script>
+{% endblock %}
