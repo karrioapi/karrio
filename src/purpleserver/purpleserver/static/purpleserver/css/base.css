@@ -1,18 +1,33 @@
+html, body {
+  height: 100%;
+}
 
-.bg-default {
-    background: #eeeeee;
+body {
+  display: flex;
+  flex-direction: column;
+  background: #eeeeee;
+}
+
+.header {
+    padding: 4px 15px;
+    height: 50px;
 }
 
 .content {
-    height: 44rem;
-    min-height: 500px;
+  flex: 1 0 auto;
 }
 
-.offset-top {
-    padding: 8rem 0;
+.centered-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.base-navbar {
-    padding: 0 15px;
-    height: 50px;
+.footer {
+  flex-shrink: 0;
+  padding: 4px;
+}
+
+.centered-box {
+  max-width: 350px !important;
 }

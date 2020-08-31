@@ -41,45 +41,44 @@
 
     {% load i18n %}
 
-    <body class="{% block bodyclass %}bg-default{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
-        <div class="container">
+    <body class="{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
 
-            <!-- Navbar -->
-            {% block navbar %}
-            <header class="navbar base-navbar">
-                <section class="navbar-section">
-                    <a href="/" class="navbar-brand mr-2">
-                        <img src="{% static 'purpleserver/img/logo-monochrome.png' %}" width="100" height="20" alt="Bulma">
-                    </a>
-                    {% block extrabrandsection %}{% endblock %}
-                </section>
-                <section class="navbar-section">
-                    {% block extranavsection %}{% endblock %}
-                </section>
-            </header>
-            {% endblock %}
+        <!-- Navbar -->
+        {% block navbar %}
+        <header class="navbar header">
+            <section class="navbar-section">
+                <a href="/" class="navbar-brand mr-2">
+                    <img src="{% static 'purpleserver/img/logo-monochrome.png' %}" width="100" height="20" alt="PurplShip">
+                </a>
+                {% block extrabrandsection %}{% endblock %}
+            </section>
+            <section class="navbar-section">
+                {% block extranavsection %}{% endblock %}
+            </section>
+        </header>
+        {% endblock %}
 
-            <!-- Main content -->
-            <div id="root" class="{% block contentclass %}container content{% endblock %}">
-            {% block content_title %}{% endblock %}
-            {% block content %}{% endblock %}
-            </div>
+        <!-- Main content -->
+        <div id="root" class="{% block contentclass %}content{% endblock %}">
 
-            <!-- Footer -->
-            {% block footer %}
-            <footer class="navbar columns">
-                <div class="column col-6">
-                    <a href="https://purplship.com" class="btn btn-link">purplship.com</a>
-                    <a href="http://blog.purplship.com" class="btn btn-link">Blogs</a>
-                    <a href="https://docs.purplship.com" class="btn btn-link">Documentation</a>
-                </div>
-                <div class="column col-6 text-right">
-                    <div class="btn btn-link">&copy; 2020 purplship</div>
-                </div>
-            </footer>
-            {% endblock %}
+        {% block content_title %}{% endblock %}
+        {% block content %}{% endblock %}
 
         </div>
+
+        <!-- Footer -->
+        {% block footer %}
+        <footer class="navbar columns footer">
+            <div class="column col-6">
+                <a href="https://purplship.com" class="btn btn-link">purplship.com</a>
+                <a href="http://blog.purplship.com" class="btn btn-link">Blogs</a>
+                <a href="https://docs.purplship.com" class="btn btn-link">Documentation</a>
+            </div>
+            <div class="column col-6 text-right">
+                <div class="btn btn-link">&copy; 2020 purplship</div>
+            </div>
+        </footer>
+        {% endblock %}
 
         {% block scripts %}
         {% endblock %}
