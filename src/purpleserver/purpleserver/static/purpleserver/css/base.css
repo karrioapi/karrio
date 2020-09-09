@@ -1,15 +1,33 @@
-@charset 'UTF-8';
-/*!
-
-=========================================================
-* Purple server base css
-=========================================================
-*/
-
-.main-content {
-    min-height: 88vh;
+html, body {
+  height: 100%;
 }
 
-.purpleserver-bg-gradient-primary {
-    background: linear-gradient(87deg,#9504af 0,#e669fc 100%)!important;
+body {
+  display: flex;
+  flex-direction: column;
+  background: #eeeeee;
+}
+
+.header {
+    padding: 4px 15px;
+    height: 50px;
+}
+
+.content {
+  flex: 1 0 auto;
+}
+
+.centered-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer {
+  flex-shrink: 0;
+  padding: 4px;
+}
+
+.centered-box {
+  max-width: 350px !important;
 }

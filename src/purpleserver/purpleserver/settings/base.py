@@ -56,7 +56,7 @@ PURPLSHIP_CONF = [
         {'app': 'purpleserver.providers', 'module': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
         {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
         {'app': 'purpleserver.manager', 'module': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
-        {'app': 'purpleserver.accounts', 'module': 'purpleserver.accounts', 'urls': 'purpleserver.accounts.urls'},
+        {'app': 'purpleserver.client', 'module': 'purpleserver.client', 'urls': 'purpleserver.client.urls'},
         {'app': 'purpleserver.pricing', 'module': 'purpleserver.pricing'},
     ]
     if importlib.util.find_spec(app['module']) is not None
@@ -99,11 +99,14 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'purpleserver.urls'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'purpleserver', 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'purpleserver', 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -176,7 +179,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'purpleserver', 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'purpleserver', 'static')
+]
 
 
 # Django REST framework

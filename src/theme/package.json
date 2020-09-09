@@ -1,0 +1,17 @@
+{
+  "name": "purpleserver-theme",
+  "version": "1.0.0",
+  "description": "PurplShip server CSS theme",
+  "main": "index.js",
+  "author": "PuprlShip Team",
+  "license": "MIT",
+  "devDependencies": {
+    "sass": "^1.26.10"
+  },
+  "scripts": {
+    "build": "sass --style=compressed purpleserver.scss ../purpleserver/purpleserver/static/purpleserver/css/purpleserver.min.css"
+  },
+  "dependencies": {
+    "spectre.css": "^0.5.9"
+  }
+}

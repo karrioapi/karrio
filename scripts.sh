@@ -8,10 +8,10 @@ ENV_DIR=".venv"
 
 export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
-[ -d "$wheels" ] && export PIP_FIND_LINKS=file://$wheels
+[[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
 
 deactivate_env() {
-  if command -v COMMAND &> /dev/null
+  if command -v deactivate &> /dev/null
   then
     deactivate
   fi
@@ -43,6 +43,7 @@ init() {
 
 alias env:new=create_env
 alias env:on=activate_env
+alias env:off=deactivate_env
 alias env:reset=init
 
 
@@ -123,7 +124,13 @@ run_postgres() {
   docker-compose down &&
   docker-compose up -d db
 
-  export DATABASE_HOST=$(docker-machine ip)
+  if command -v docker-machine &> /dev/null
+  then
+    export DATABASE_HOST=$(docker-machine ip)
+  else
+    export DATABASE_HOST="0.0.0.0"
+  fi
+
   export DATABASE_PORT=5432
   export DATABASE_NAME=db
   export DATABASE_ENGINE=postgresql_psycopg2
@@ -150,7 +157,7 @@ clean_builds() {
 
 backup_wheels() {
     # shellcheck disable=SC2154
-    [ -d "$wheels" ] &&
+    [[ -d "$wheels" ]] &&
     find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
     clean_builds
 }
@@ -163,7 +170,7 @@ build() {
 
 build_all() {
   clean_builds
-  sm=(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;)
+  sm=find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
 
   $sm | while read module; do
     echo "building ${module} ..."
@@ -172,9 +179,21 @@ build_all() {
   backup_wheels
 }
 
+build_theme() {
+  pushd "${ROOT:?}/src/theme" || false &&
+  yarn && yarn build
+  popd || true
+}
+
+build_client() {
+  pushd "${ROOT:?}/src/frontend" || false &&
+  yarn && yarn build "$@"
+  popd
+}
+
 install_purplship_dev() {
   p="$(dirname "${ROOT:?}")"
-  sm=(find "$p/purplship" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;)
+  sm=find "$p/purplship" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
 
   $sm | while read module; do
     echo "installing ${module} ..."
@@ -184,7 +203,7 @@ install_purplship_dev() {
 
 install_extension_dev() {
   p="$(dirname "${ROOT:?}")"
-  sm=(find "$p/purplship-extension" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;)
+  sm=find "$p/purplship-extension" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
 
   $sm | while read module; do
     echo "installing ${module} ..."
@@ -197,5 +216,6 @@ alias dev:purplship=install_purplship_dev
 alias dev:extension=install_extension_dev
 alias run:purl=run_server
 alias run:db=run_postgres
+alias env:dev=install_dev
 
 activate_env

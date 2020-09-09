@@ -6,105 +6,76 @@
 
         <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "purpleserver/css/base.css" %}{% endblock %}">
 
-        <link rel="shortcut icon" href="{% static 'purpleserver/favicon.ico' %}">
+        <link rel="apple-touch-icon" sizes="57x57" href="{% static 'purpleserver/favicon-set/apple-icon-57x57.png' %}">
+        <link rel="apple-touch-icon" sizes="60x60" href="{% static 'purpleserver/favicon-set/apple-icon-60x60.png' %}">
+        <link rel="apple-touch-icon" sizes="72x72" href="{% static 'purpleserver/favicon-set/apple-icon-72x72.png' %}">
+        <link rel="apple-touch-icon" sizes="76x76" href="{% static 'purpleserver/favicon-set/apple-icon-76x76.png' %}">
+        <link rel="apple-touch-icon" sizes="114x114" href="{% static 'purpleserver/favicon-set/apple-icon-114x114.png' %}">
+        <link rel="apple-touch-icon" sizes="120x120" href="{% static 'purpleserver/favicon-set/apple-icon-120x120.png' %}">
+        <link rel="apple-touch-icon" sizes="144x144" href="{% static 'purpleserver/favicon-set/apple-icon-144x144.png' %}">
+        <link rel="apple-touch-icon" sizes="152x152" href="{% static 'purpleserver/favicon-set/apple-icon-152x152.png' %}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'purpleserver/favicon-set/apple-icon-180x180.png' %}">
+        <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'purpleserver/favicon-set/android-icon-192x192.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'purpleserver/favicon-set/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="96x96" href="{% static 'purpleserver/favicon-set/favicon-96x96.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'purpleserver/favicon-set/favicon-16x16.png' %}">
+        <link rel="icon" href="{% static 'purpleserver/favicon-set/favicon.ico' %}">
+
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
 
-        <!-- Icons -->
-        <link href="{% static 'purpleserver/vendor/nucleo/css/nucleo.css' %}" rel="stylesheet">
-        <link href="{% static 'purpleserver/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
-
-        <!-- Argon CSS -->
-        <link type="text/css" href="{% static 'purpleserver/css/argon.min.css' %}" rel="stylesheet">
+        <!-- Theme CSS -->
+        <link type="text/css" href="{% static 'purpleserver/css/purpleserver.min.css' %}" rel="stylesheet">
 
         {% block extrastyle %}{% endblock %}
-
-        {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">{% endif %}
         {% block extrahead %}{% endblock %}
+
         {% block responsive %}
             <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
         {% endblock %}
         {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
+
+        <meta name="theme-color" content="#9504af" />
+        <link rel="manifest" href="{% static 'purpleserver/favicon-set/manifest.json' %}" />
     </head>
 
     {% load i18n %}
 
-    <body class="{% block bodyclass %}bg-default{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
+    <body class="{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
 
         <!-- Navbar -->
         {% block navbar %}
-        <nav class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light" id="navbar-main">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <img src="{% static "purpleserver/img/brand/white.png" %}">
+        <header class="navbar header">
+            <section class="navbar-section">
+                <a href="/" class="navbar-brand mr-2">
+                    <img src="{% static 'purpleserver/img/logo-monochrome.png' %}" width="100" height="20" alt="PurplShip">
                 </a>
-                <button aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
-                        data-target="#navbar-collapse" data-toggle="collapse" type="button">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse navbar-custom-collapse collapse" id="navbar-collapse">
-                    <div class="navbar-collapse-header">
-                        <div class="row">
-                            <div class="col-6 collapse-brand">
-                                <a href="dashboard.html">
-                                    <img src="{% static "purpleserver/img/brand/purple.png" %}">
-                                </a>
-                            </div>
-                            <div class="col-6 collapse-close">
-                                <button aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation"
-                                        class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse"
-                                        type="button">
-                                    <span></span>
-                                    <span></span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">
-                                <span class="nav-link-inner--text">Login</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'signup' %}">
-                                <span class="nav-link-inner--text">Register</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <hr class="d-lg-none"/>
-                </div>
-            </div>
-        </nav>
+                {% block extrabrandsection %}{% endblock %}
+            </section>
+            <section class="navbar-section">
+                {% block extranavsection %}{% endblock %}
+            </section>
+        </header>
         {% endblock %}
 
         <!-- Main content -->
-        <div class="main-content">
+        <div id="root" class="{% block contentclass %}content{% endblock %}">
+
         {% block content_title %}{% endblock %}
         {% block content %}{% endblock %}
+
         </div>
 
         <!-- Footer -->
         {% block footer %}
-        <footer class="py-5" id="footer-main">
-            <div class="container">
-                <div class="row align-items-center justify-content-xl-between">
-                    <div class="col-xl-6">
-                        <div class="copyright text-center text-xl-left text-muted">
-                        &copy; 2020 <a href="/" class="font-weight-bold ml-1" target="_blank">PurplShip Team</a>
-                        </div>
-                    </div>
-                    <div class="col-xl-6">
-                        <ul class="nav nav-footer justify-content-center justify-content-xl-end">
-                            <li class="nav-item">
-                                <a href="https://docs.purplship.com" class="nav-link" target="_blank">Docs</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="http://blog.purplship.com" class="nav-link" target="_blank">Blog</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+        <footer class="navbar columns footer">
+            <div class="column col-6">
+                <a href="https://purplship.com" class="btn btn-link">purplship.com</a>
+                <a href="http://blog.purplship.com" class="btn btn-link">Blogs</a>
+                <a href="https://docs.purplship.com" class="btn btn-link">Documentation</a>
+            </div>
+            <div class="column col-6 text-right">
+                <div class="btn btn-link">&copy; 2020 purplship</div>
             </div>
         </footer>
         {% endblock %}
