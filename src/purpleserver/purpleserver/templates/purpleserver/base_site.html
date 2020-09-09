@@ -4,8 +4,6 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
 
-        <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "purpleserver/css/base.css" %}{% endblock %}">
-
         <link rel="apple-touch-icon" sizes="180x180" href="{% static 'purpleserver/favicon-set/apple-touch-icon.png' %}">
         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'purpleserver/favicon-set/favicon-32x32.png' %}">
         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'purpleserver/favicon-set/favicon-16x16.png' %}">
@@ -36,47 +34,41 @@
 
     <body class="{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
 
-        <!-- Navbar -->
-        {% block navbar %}
-        <header class="navbar header">
-            <section class="navbar-section">
-                <a href="/" class="navbar-brand mr-2">
-                    <img src="{% static 'purpleserver/img/logo.svg' %}" width="112" height="28" alt="PurplShip">
-                </a>
-                {% block extrabrandsection %}{% endblock %}
-            </section>
-            <section class="navbar-section">
-                {% block extranavsection %}{% endblock %}
-            </section>
-        </header>
-        {% endblock %}
+        {% block root %}
+        <section id="root" class="{% block rootclass %}hero is-fullheight{% endblock %}">
 
-        <!-- Main content -->
-        <div id="root" class="{% block contentclass %}content{% endblock %}">
+            {% block header %}{% endblock %}
 
-        {% block content_title %}{% endblock %}
-        {% block content %}{% endblock %}
+            <!-- Main content -->
+            <div class="{% block contentclass %}container{% endblock %}">
+                {% block contenttitle %}
+                <div class="has-text-centered my-6">
+                    <a href="/">
+                        <img src="{% static 'purpleserver/img/logo.svg' %}" width="100" alt="PurplShip" />
+                    </a>
+                </div>
+                {% endblock %}
 
-        </div>
-
-        <!-- Footer -->
-        {% block footer %}
-        <footer class="navbar columns footer">
-            <div class="column col-6">
-                <a href="https://purplship.com" class="btn btn-link">purplship.com</a>
-                <a href="http://blog.purplship.com" class="btn btn-link">Blogs</a>
-                <a href="https://docs.purplship.com" class="btn btn-link">Documentation</a>
+                {% block content %}{% endblock %}
             </div>
-            <div class="column col-6 text-right">
-                <div class="btn btn-link">&copy; 2020 purplship</div>
+
+            <!-- Footer -->
+            {% block footer %}
+            <div class="{% block footerclass %}hero-footer{% endblock %}">
+                <div class="content has-text-centered">
+                    <p>
+                        <a href="https://purplship.com" class="button is-white">&copy; Purplship</a>
+                        <a href="http://blog.purplship.com" class="button is-white">Blogs</a>
+                        <a href="https://docs.purplship.com" class="button is-white">Documentation</a>
+                    </p>
+                </div>
             </div>
-        </footer>
+            {% endblock %}
+
+        </section>
         {% endblock %}
 
-        {% block scripts %}
-        {% endblock %}
-
-        {% block extrascripts %}{% endblock %}
+        {% block scripts %}{% endblock %}
 
     </body>
 </html>

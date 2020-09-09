@@ -1,36 +1,31 @@
 {% extends "purpleserver/base_site.html" %}
 {% load i18n static %}
 
-{% block contentclass %}content centered-content{% endblock %}
-
 {% block content %}
-<div class="column col-5 col-md-6 col-sm-12 centered-box">
 
-    <div class="card">
-        <div class="card-header text-center">
-            <div class="card-title h3">{% trans 'Welcome!' %}</div>
-            <div class="card-subtitle text-dark">{% trans 'Log in to your account' %}</div>
-        </div>
+<div class="card isolated-card">
+    <div class="card-content">
+        <p class="subtitle">{% trans 'Sign in to your account' %}</p>
 
-        <div class="card-body">
+        <form method="post" action="{% url 'login' %}">{% csrf_token %}
 
             {% if form.errors and not form.non_field_errors %}
-            <p class="text-error">
-                {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{%
-                trans "Please correct the errors below." %}{% endif %}
+            <p class="has-text-danger">
+                {% if form.errors.items|length == 1 %}
+                {% trans "Please correct the error below." %}
+                {% else %}{% trans "Please correct the errors below." %}
+                {% endif %}
             </p>
             {% endif %}
 
             {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}
-            <p class="text-error">
-                {{ error }}
-            </p>
+            <p class="has-text-danger">{{ error }}</p>
             {% endfor %}
             {% endif %}
 
             {% if user.is_authenticated %}
-            <p class="text-error">
+            <p class="has-text-danger">
                 {% blocktrans trimmed %}
                 You are authenticated as {{ username }}, but are not authorized to
                 access this page. Would you like to login to a different account?
@@ -38,44 +33,45 @@
             </p>
             {% endif %}
 
-            <form method="post" action="{% url 'login' %}">{% csrf_token %}
-                <div class="form-group">
-                    {{ form.username.errors }}
-                    <label class="form-label" for="{{ form.username.id_for_label }}">
-                        {% trans 'Username' %}
-                    </label>
-                    <input class="form-input" id="{{ form.username.id_for_label }}"
-                           name="{{ form.username.html_name }}" type="text"
-                           placeholder="{% trans 'Username' %}">
+            <div class="field mt-6">
+                {{ form.username.errors }}
+                <label class="label" for="{{ form.username.id_for_label }}">{% trans 'Username' %}</label>
+                <div class="control">
+                    <input class="input" id="{{ form.username.id_for_label }}"
+                       name="{{ form.username.html_name }}" type="text"
+                       placeholder="{% trans 'Username' %}">
                 </div>
-                <div class="form-group">
-                    {{ form.password.errors }}
-                    <label class="form-label" for="{{ form.password.id_for_label }}">
-                        {% trans 'Password' %}
-                    </label>
-                    <input class="form-input" id="{{ form.password.id_for_label }}"
-                           name="{{ form.password.html_name }}" type="password"
-                           placeholder="{% trans 'Password' %}">
+            </div>
+            <div class="field mt-5">
+                {{ form.password.errors }}
+                <label class="label level" for="{{ form.password.id_for_label }}">
+                    <span>{% trans 'Password' %}</span>
+                    <a href="{% url 'password_reset' %}">Forgot your password?</a>
+                </label>
+
+                <div class="control">
+                    <input class="input" id="{{ form.password.id_for_label }}"
+                       name="{{ form.password.html_name }}" type="password"
+                       placeholder="{% trans 'Password' %}">
                     <input type="hidden" name="next" value="{{ next }}">
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <input class="btn btn-primary column col-12" type="submit" value="{% trans 'Log in' %}">
+            <div class="field mt-6">
+                <div class="control">
+                    <input class="button is-primary is-fullwidth" type="submit" value="{% trans 'Log in' %}"/>
                 </div>
+            </div>
 
-            </form>
-        </div>
+        </form>
     </div>
-
-    <div class="columns">
-        <div class="column col-6">
-            <a href="{% url 'password_reset' %}" class="btn btn-link"><small>Forgot password?</small></a>
-        </div>
-        <div class="column col-6 text-right">
-            <a href="{% url 'signup' %}" class="btn btn-link"><small>Create new account</small></a>
-        </div>
-    </div>
-
 </div>
+
+<div class="has-text-centered my-4 is-size-6">
+    Don't have an account? <a href="{% url 'signup' %}">Sign Up</a>
+</div>
+
 {% endblock %}
+
+{% block footerclass %}footer{% endblock %}
 

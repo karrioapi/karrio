@@ -103,7 +103,7 @@ venv.bak/
 .mypy_cache/
 
 # node
-node_modules
+node_modules/
 
 # PurplShip stuff:
 *.DS_Store
