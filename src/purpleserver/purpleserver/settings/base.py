@@ -98,8 +98,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'purpleserver.urls'
 LOGOUT_REDIRECT_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/api' if importlib.util.find_spec('purpleserver.client') is None else '/'
 LOGIN_URL = '/login/'
+
 
 TEMPLATES = [
     {
