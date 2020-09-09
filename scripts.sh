@@ -187,11 +187,8 @@ build_theme() {
 
 build_client() {
   pushd "${ROOT:?}/src/frontend" || false &&
-  yarn && yarn build
-  popd || true &&
-  if [[ "$*" == *-u* ]]; then
-    purplship collectstatic --noinput
-  fi
+  yarn && yarn build "$@"
+  popd
 }
 
 install_purplship_dev() {

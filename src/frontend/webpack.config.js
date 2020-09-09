@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const build_path = '../apps/client/purpleserver/client/static/purpleserver/client';
 
@@ -33,14 +34,16 @@ module.exports = {
   },
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ],
+    alias: {
+      "@": path.resolve(__dirname, 'src'),
+    }
   },
   output: {
     filename: 'purpleboard.min.js',
     path: path.resolve(__dirname, build_path),
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'purpleboard.min.css',
-    }),
+    new MiniCssExtractPlugin({ filename: 'purpleboard.min.css' }),
+    new WebpackShellPlugin({ onBuildEnd:['purplship collectstatic --noinput'] }),
   ],
 };
