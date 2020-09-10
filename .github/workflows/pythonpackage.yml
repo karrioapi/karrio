@@ -21,14 +21,14 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Test Freightcom dependencies
       run: |
-        cd purplship/freightcom
+        cd src/freightcom
         source ./script.sh
         init &&
         check &&
         coverage report -m
     - name: Test eShipper dependencies
       run: |
-        cd purplship/eshipper
+        cd src/eshipper
         source ./script.sh
         init &&
         check &&

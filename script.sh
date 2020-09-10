@@ -38,7 +38,7 @@ alias env:reset=init
 
 backup_wheels() {
     # shellcheck disable=SC2154
-    [ -d "$wheels" ] &&
+    [[ -d "$wheels" ]] &&
     find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
     clean_builds
 }
@@ -59,9 +59,8 @@ build() {
 }
 
 build_all() {
-  build "${ROOT:?}/purplship/eshipper"
-  build "${ROOT:?}/purplship/freightcom"
-  build "${ROOT:?}/purplship-server"
+  build "${ROOT:?}/src/eshipper"
+  build "${ROOT:?}/src/freightcom"
 }
 
 env:on || true
