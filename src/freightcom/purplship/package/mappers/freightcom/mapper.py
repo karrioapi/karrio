@@ -10,7 +10,7 @@ from purplship.core.models import (
     RateDetails,
     Message,
 )
-from purplship.carriers.freightcom import (
+from purplship.providers.freightcom import (
     parse_quote_reply,
     quote_request,
     parse_shipping_reply,

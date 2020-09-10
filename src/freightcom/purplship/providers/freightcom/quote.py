@@ -8,22 +8,21 @@ from pyfreightcom.quote_request import (
     PackageType,
 )
 from pyfreightcom.quote_reply import QuoteType, SurchargeType
-from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.utils import Element, Serializable, concat_str, decimal
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
-from purplship.core.units import Package, Options
-from purplship.carriers.freightcom.utils import (
+from purplship.core.units import Packages, Options
+from purplship.providers.freightcom.utils import (
     Settings,
     standard_request_serializer,
     ceil,
 )
-from purplship.carriers.freightcom.units import (
+from purplship.providers.freightcom.units import (
     Service,
     FreightPackagingType,
     FreightClass,
     Option,
 )
-from purplship.carriers.freightcom.error import parse_error_response
+from purplship.providers.freightcom.error import parse_error_response
 
 
 def parse_quote_reply(
@@ -72,21 +71,12 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
 
 
 def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Freightcom]:
-    package = Package(payload.parcel)
+    packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
+    packaging_type = (
+        FreightPackagingType[packages[0].packaging_type or "small_box"].value
+        if len(packages) == 1 else "small_box"
+    )
 
-    dimensions = [
-        ("parcel.weight", package.weight.value),
-        ("parcel.height", package.height.value),
-        ("parcel.width", package.width.value),
-        ("parcel.length", package.length.value),
-    ]
-    field_errors = {
-        key: FieldErrorCode.required for key, dim in dimensions if dim is None
-    }
-    if any(field_errors.items()):
-        raise FieldError(field_errors)
-
-    packaging_type = FreightPackagingType[package.packaging_type or "small_box"].value
     options = Options(payload.options)
     service = next(
         (Service[s].value for s in payload.services if s in Service.__members__), None
@@ -192,8 +182,9 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                         nmfcCode=None,
                         insuranceAmount=None,
                         codAmount=None,
-                        description=payload.parcel.description,
+                        description=package.parcel.description,
                     )
+                    for package in packages
                 ],
                 type_="Package",
             ),

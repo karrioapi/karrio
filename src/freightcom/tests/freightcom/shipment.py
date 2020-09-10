@@ -57,14 +57,14 @@ shipment_data = {
         "person_name": "Jain",
         "state_code": "ON",
     },
-    "parcel": {
+    "parcels": [{
         "height": 9,
         "length": 6,
         "width": 12,
         "weight": 20.0,
         "dimension_unit": "CM",
         "weight_unit": "KG",
-    },
+    }],
     "service": "freightcom_central_transport",
     "options": {"cash_on_delivery": {"amount": 10.5}, "insurance": {"amount": 70.0},},
 }

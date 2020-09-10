@@ -38,12 +38,15 @@ alias env:reset=init
 
 # shellcheck disable=SC2120
 test() {
-    pip install "${ROOT:?}"
     coverage run -m unittest discover -v "${ROOT:?}/tests"
 }
 
 typecheck() {
-    mypy purplship/ --no-strict-optional --no-warn-return-any --no-warn-unused-configs
+  cd "${ROOT:?}"
+  for submodule in $(find "purplship" -type f -name "__init__.py" -exec dirname {} \;); do
+    mypy -p "${submodule//'\/'/.}" || break
+  done || break
+  cd -
 }
 
 check() {

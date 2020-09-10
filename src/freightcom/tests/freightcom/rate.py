@@ -51,21 +51,21 @@ if __name__ == "__main__":
 RatePayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcel": {
+    "parcels": [{
         "height": 3,
         "length": 10,
         "width": 3,
         "weight": 4.0,
         "dimension_unit": "CM",
         "weight_unit": "KG",
-    },
+    }],
     "services": ["freightcom_central_transport"],
 }
 
 RateWithPresetMissingDimensionPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcel": {},
+    "parcels": [{}],
 }
 
 ParsedQuoteResponse = [
