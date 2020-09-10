@@ -93,14 +93,13 @@ def rate_request(
         PackagingType[packages[0].packaging_type or "your_packaging"].value
         if len(packages) == 1 else None
     )
-    is_international = payload.shipper.country_code != payload.recipient.country_code
     service = next(
         (
             ServiceType[s].value
             for s in payload.services
             if s in ServiceType.__members__
         ),
-        ServiceType.international_first.value if is_international else ServiceType.standard_overnight.value,
+        None
     )
     options = Options(payload.options)
 
@@ -247,7 +246,7 @@ def rate_request(
                 RequestedPackageLineItem(
                     SequenceNumber=index,
                     GroupNumber=None,
-                    GroupPackageCount=None,
+                    GroupPackageCount=1,
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
                     Weight=FedexWeight(

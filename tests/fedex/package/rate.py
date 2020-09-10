@@ -163,7 +163,6 @@ RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
             <RequestedShipment>
                 
                 <DropoffType>REGULAR_PICKUP</DropoffType>
-                <ServiceType>INTERNATIONAL_FIRST</ServiceType>
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <TotalWeight>
                     <Units>LB</Units>
@@ -188,6 +187,7 @@ RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
                 <PackageCount>1</PackageCount>
                 <RequestedPackageLineItems>
                     <SequenceNumber>1</SequenceNumber>
+                    <GroupPackageCount>1</GroupPackageCount>
                     <Weight>
                         <Units>LB</Units>
                         <Value>4.</Value>
@@ -231,7 +231,6 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
             <RequestedShipment>
                 
                 <DropoffType>REGULAR_PICKUP</DropoffType>
-                <ServiceType>INTERNATIONAL_FIRST</ServiceType>
                 <PackagingType>FEDEX_PAK</PackagingType>
                 <TotalWeight>
                     <Units>LB</Units>
@@ -256,6 +255,7 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
                 <PackageCount>1</PackageCount>
                 <RequestedPackageLineItems>
                     <SequenceNumber>1</SequenceNumber>
+                    <GroupPackageCount>1</GroupPackageCount>
                     <Weight>
                         <Units>LB</Units>
                         <Value>2.2</Value>
