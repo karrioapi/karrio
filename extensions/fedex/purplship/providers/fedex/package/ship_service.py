@@ -29,10 +29,15 @@ from pyfedex.ship_service_v25 import (
     Payment,
     Payor,
     WeightUnits,
+    LabelSpecification,
+    LabelFormatType,
+    LabelStockType,
+    ShippingDocumentImageType,
+    LabelPrintingOrientationType
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.soap import clean_namespaces, create_envelope
+from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Weight, Dimension, Options, Packages
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
@@ -43,6 +48,7 @@ from purplship.providers.fedex.units import (
     ServiceType,
     SpecialServiceType,
     PackagePresets,
+    PaymentType,
 )
 
 
@@ -99,9 +105,11 @@ def process_shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[ProcessShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    # Only the master package is selected here because even for MPS only one package is accepted for a master tracking.
+    master_package = packages[0]
     package_type = (
-        PackagingType[packages[0].packaging_type or "your_packaging"].value
-        if len(packages) == 1 else None
+        PackagingType[master_package.packaging_type or "your_packaging"].value
+        if len(packages) == 1 else PackagingType.your_packaging.value
     )
 
     service = ServiceType[payload.service].value
@@ -111,11 +119,12 @@ def process_shipment_request(
         for name, value in payload.options.items()
         if name in SpecialServiceType.__members__
     ]
+    payment_type = PaymentType[payload.payment.paid_by or "sender"].value
 
     request = ProcessShipmentRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
-        TransactionDetail=TransactionDetail(CustomerTransactionId="IE_v18_Ship"),
+        TransactionDetail=TransactionDetail(CustomerTransactionId="IE_v25_Ship"),
         Version=VersionId(ServiceId="ship", Major=25, Intermediate=0, Minor=0),
         RequestedShipment=RequestedShipment(
             ShipTimestamp=datetime.now(),
@@ -226,10 +235,10 @@ def process_shipment_request(
             Origin=None,
             SoldTo=None,
             ShippingChargesPayment=Payment(
-                PaymentType=None,
+                PaymentType=payment_type,
                 Payor=Payor(
                     ResponsibleParty=Party(
-                        AccountNumber=payload.payment.account_number,
+                        AccountNumber=payload.payment.account_number or settings.account_number,
                         Tins=None,
                         Contact=None,
                         Address=None,
@@ -298,44 +307,50 @@ def process_shipment_request(
             PickupDetail=None,
             SmartPostDetail=None,
             BlockInsightVisibility=None,
-            LabelSpecification=None,
-            ShippingDocumentSpecification=None,
-            RateRequestTypes=(
-                ["LIST"] + ([] if options.currency is None else ["PREFERRED"])
+            LabelSpecification=LabelSpecification(
+                Dispositions=None,
+                LabelFormatType=LabelFormatType.COMMON_2_D.value,
+                ImageType=ShippingDocumentImageType.PDF.value,
+                LabelStockType=LabelStockType.PAPER__7_X_4_75.value,
+                LabelPrintingOrientation=LabelPrintingOrientationType.TOP_EDGE_OF_TEXT_FIRST.value,
+                LabelOrder=None,
+                PrintedLabelOrigin=None,
+                CustomerSpecifiedDetail=None,
             ),
+            ShippingDocumentSpecification=None,
+            RateRequestTypes=None,
             EdtRequestType=None,
             MasterTrackingId=None,
             PackageCount=len(packages),
             ConfigurationData=None,
             RequestedPackageLineItems=[
                 RequestedPackageLineItem(
-                    SequenceNumber=index,
+                    SequenceNumber=1,
                     GroupNumber=None,
                     GroupPackageCount=None,
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
                     Weight=FedexWeight(
-                        Units=package.weight_unit.value,
-                        Value=package.weight.value,
+                        Units=master_package.weight_unit.value,
+                        Value=master_package.weight.value,
                     )
-                    if package.weight.value
+                    if master_package.weight.value
                     else None,
                     Dimensions=FedexDimensions(
-                        Length=package.length.value,
-                        Width=package.width.value,
-                        Height=package.height.value,
-                        Units=package.dimension_unit.value,
+                        Length=master_package.length.value,
+                        Width=master_package.width.value,
+                        Height=master_package.height.value,
+                        Units=master_package.dimension_unit.value,
                     )
-                    if any([package.length, package.width, package.height])
+                    if any([master_package.length, master_package.width, master_package.height])
                     else None,
                     PhysicalPackaging=None,
-                    ItemDescription=package.parcel.description,
+                    ItemDescription=master_package.parcel.description,
                     ItemDescriptionForClearance=None,
                     CustomerReferences=None,
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
-                for index, package in enumerate(packages, 1)
             ]
         ),
     )
@@ -343,12 +358,10 @@ def process_shipment_request(
 
 
 def _request_serializer(request: ProcessShipmentRequest) -> str:
-    return clean_namespaces(
-        export(
-            create_envelope(body_content=request),
-            namespacedef_='tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/ship/v25"',
-        ),
-        envelope_prefix="tns:",
-        body_child_prefix="ns:",
-        body_child_name="ProcessShipmentRequest",
-    )
+    namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v25="http://fedex.com/ws/ship/v25"'
+
+    envelope = create_envelope(body_content=request)
+    envelope.Body.ns_prefix_ = envelope.ns_prefix_
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v25")
+
+    return export(envelope, namespacedef_=namespacedef_)

@@ -64,6 +64,37 @@ class PackagingType(Flag):
     large_box = fedex_25_kg_box
 
 
+class PhysicalPackagingType(Flag):
+    bag = "BAG"
+    barrel = "BBL"
+    basket = "BSK"
+    box = "BOX"
+    bucket = "BXT"
+    bundle = "BDL"
+    carton = "CTN"
+    case = "CAS"
+    container = "CNT"
+    crate = "CRT"
+    cylinder = "CYL"
+    drum = "DRM"
+    envelope = "ENV"
+    pail = "PAL"
+    pallet = "PLT"
+    piece = "PC "
+    reel = "REL"
+    roll = "ROL"
+    skid = "SKD"
+    tank = "TNK"
+    tube = "TBE"
+
+    """ Unified Packaging type mapping """
+    pak = roll
+    small_box = box
+    medium_box = box
+    large_box = carton
+    pieces = piece
+
+
 class FreightPackagingType(Flag):
     fedex_10_kg_box = "FEDEX_10KG_BOX"
     fedex_25_kg_box = "FEDEX_25KG_BOX"
@@ -93,30 +124,6 @@ class PaymentType(Flag):
     recipient = "RECIPIENT"
     sender = "SENDER"
     third_party = "THIRD_PARTY"
-
-
-class PhysicalPackagingType(Flag):
-    bag = "BAG"
-    barrel = "BBL"
-    basket = "BSK"
-    box = "BOX"
-    bucket = "BXT"
-    bundle = "BDL"
-    carton = "CTN"
-    case = "CAS"
-    container = "CNT"
-    crate = "CRT"
-    cylinder = "CYL"
-    drum = "DRM"
-    envelope = "ENV"
-    pail = "PAL"
-    pallet = "PLT"
-    piece = "PC "
-    reel = "REL"
-    roll = "ROL"
-    skid = "SKD"
-    tank = "TNK"
-    tube = "TBE"
 
 
 class ServiceType(Enum):

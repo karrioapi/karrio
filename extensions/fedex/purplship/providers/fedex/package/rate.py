@@ -20,7 +20,7 @@ from pyfedex.rate_service_v26 import (
     DistanceUnits
 )
 from purplship.core.utils import export, concat_str, Serializable, decimal, to_date
-from purplship.core.utils.soap import create_envelope
+from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
 from purplship.core.units import Packages, Options
 from purplship.core.utils.xml import Element
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
@@ -278,7 +278,10 @@ def rate_request(
 
 
 def _request_serializer(request: FedexRateRequest) -> str:
-    return export(
-        create_envelope(body_content=request),
-        namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://fedex.com/ws/rate/v26"',
-    ).replace('tns:RateRequest', 'RateRequest')
+    namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:v26="http://fedex.com/ws/rate/v26"'
+
+    envelope = create_envelope(body_content=request)
+    envelope.Body.ns_prefix_ = envelope.ns_prefix_
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v26")
+
+    return export(envelope, namespacedef_=namespacedef_)

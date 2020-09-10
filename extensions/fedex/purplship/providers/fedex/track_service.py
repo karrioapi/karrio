@@ -9,7 +9,7 @@ from pyfedex.track_service_v18 import (
     TrackPackageIdentifier,
 )
 from purplship.core.utils import export, Serializable, Element, format_date, format_time
-from purplship.core.utils.soap import clean_namespaces, create_envelope
+from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
 from purplship.core.models import (
     TrackingRequest,
     TrackingDetails,
@@ -67,10 +67,10 @@ def track_request(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
         TransactionDetail=TransactionDetail(
-            CustomerTransactionId="Track By Number_v14",
+            CustomerTransactionId="Track By Number_v18",
             Localization=Localization(LanguageCode=payload.language_code or "en"),
         ),
-        Version=VersionId(ServiceId="trck", Major=14, Intermediate=0, Minor=0),
+        Version=VersionId(ServiceId="trck", Major=18, Intermediate=0, Minor=0),
         SelectionDetails=[
             TrackSelectionDetail(
                 CarrierCode="FDXE",  # Read doc for carrier code customization
@@ -96,12 +96,10 @@ def track_request(
 
 
 def _request_serializer(request: TrackRequest) -> str:
-    return clean_namespaces(
-        export(
-            create_envelope(body_content=request),
-            namespacedef_='tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v18="http://fedex.com/ws/track/v18"',
-        ),
-        envelope_prefix="tns:",
-        body_child_prefix="ns:",
-        body_child_name="TrackRequest",
-    )
+    namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v18="http://fedex.com/ws/track/v18"'
+
+    envelope = create_envelope(body_content=request)
+    envelope.Body.ns_prefix_ = envelope.ns_prefix_
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v18")
+
+    return export(envelope, namespacedef_=namespacedef_)

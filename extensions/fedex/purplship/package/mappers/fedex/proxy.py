@@ -13,7 +13,7 @@ class Proxy(BaseProxy):
 
     def get_rates(self, request: Serializable[RateRequest]) -> Deserializable[str]:
         response = http(
-            url=self.settings.server_url,
+            url=f"{self.settings.server_url}/rate",
             data=bytearray(request.serialize(), "utf-8"),
             headers={"Content-Type": "application/xml"},
             method="POST",
@@ -22,7 +22,7 @@ class Proxy(BaseProxy):
 
     def get_tracking(self, request: Serializable[TrackRequest]) -> Deserializable[str]:
         response = http(
-            url=self.settings.server_url,
+            url=f"{self.settings.server_url}/track",
             data=bytearray(request.serialize(), "utf-8"),
             headers={"Content-Type": "application/xml"},
             method="POST",
@@ -33,7 +33,7 @@ class Proxy(BaseProxy):
         self, request: Serializable[ProcessShipmentRequest]
     ) -> Deserializable[str]:
         response = http(
-            url=self.settings.server_url,
+            url=f"{self.settings.server_url}/ship",
             data=bytearray(request.serialize(), "utf-8"),
             headers={"Content-Type": "application/xml"},
             method="POST",
@@ -44,7 +44,7 @@ class Proxy(BaseProxy):
         self, request: Serializable[CreatePickupRequest]
     ) -> Deserializable[str]:
         response = http(
-            url=self.settings.server_url,
+            url=f"{self.settings.server_url}/pickup",
             data=bytearray(request.serialize(), "utf-8"),
             headers={"Content-Type": "application/xml"},
             method="POST",
@@ -55,7 +55,7 @@ class Proxy(BaseProxy):
         self, request: Serializable[CancelPickupRequest]
     ) -> Deserializable[str]:
         response = http(
-            url=self.settings.server_url,
+            url=f"{self.settings.server_url}/pickup",
             data=bytearray(request.serialize(), "utf-8"),
             headers={"Content-Type": "application/xml"},
             method="POST",

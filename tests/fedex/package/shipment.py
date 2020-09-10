@@ -1,10 +1,13 @@
 import re
 import unittest
+import logging
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
 from purplship.package import Shipment
 from tests.fedex.package.fixture import gateway
+
+logger = logging.getLogger(__name__)
 
 
 class TestFedExShipment(unittest.TestCase):
@@ -16,7 +19,7 @@ class TestFedExShipment(unittest.TestCase):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         # Remove timeStamp for testing
         serialized_request = re.sub(
-            "<ShipTimestamp>[^>]+</ShipTimestamp>", "", request.serialize()
+            "<v25:ShipTimestamp>[^>]+</v25:ShipTimestamp>", "", request.serialize()
         )
 
         self.assertEqual(serialized_request, ShipmentRequestXml)
@@ -26,7 +29,7 @@ class TestFedExShipment(unittest.TestCase):
         Shipment.create(self.ShipmentRequest).with_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, gateway.settings.server_url)
+        self.assertEqual(url, f"{gateway.settings.server_url}/ship")
 
     def test_parse_shipment_response(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
@@ -77,7 +80,7 @@ shipment_data = {
     }],
     "service": "international_priority",
     "options": {"currency": "USD", "international_traffic_in_arms_regulations": True},
-    "payment": {"paid_by": "THIRD_PARTY", "account_number": "2349857"},
+    "payment": {"paid_by": "third_party", "account_number": "2349857"},
     "customs": {"duty": {"paid_by": "sender", "amount": "100."}},
 }
 
@@ -91,99 +94,104 @@ ParsedShipmentResponse = [
     [],
 ]
 
-ShipmentRequestXml = """<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://fedex.com/ws/ship/v25">
+ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v25="http://fedex.com/ws/ship/v25">
     <tns:Body>
-        <ns:ProcessShipmentRequest>
-            <WebAuthenticationDetail>
-                <UserCredential>
-                    <Key>user_key</Key>
-                    <Password>password</Password>
-                </UserCredential>
-            </WebAuthenticationDetail>
-            <ClientDetail>
-                <AccountNumber>2349857</AccountNumber>
-                <MeterNumber>1293587</MeterNumber>
-            </ClientDetail>
-            <TransactionDetail>
-                <CustomerTransactionId>IE_v18_Ship</CustomerTransactionId>
-            </TransactionDetail>
-            <Version>
-                <ServiceId>ship</ServiceId>
-                <Major>25</Major>
-                <Intermediate>0</Intermediate>
-                <Minor>0</Minor>
-            </Version>
-            <RequestedShipment>
+        <v25:ProcessShipmentRequest>
+            <v25:WebAuthenticationDetail>
+                <v25:UserCredential>
+                    <v25:Key>user_key</v25:Key>
+                    <v25:Password>password</v25:Password>
+                </v25:UserCredential>
+            </v25:WebAuthenticationDetail>
+            <v25:ClientDetail>
+                <v25:AccountNumber>2349857</v25:AccountNumber>
+                <v25:MeterNumber>1293587</v25:MeterNumber>
+            </v25:ClientDetail>
+            <v25:TransactionDetail>
+                <v25:CustomerTransactionId>IE_v25_Ship</v25:CustomerTransactionId>
+            </v25:TransactionDetail>
+            <v25:Version>
+                <v25:ServiceId>ship</v25:ServiceId>
+                <v25:Major>25</v25:Major>
+                <v25:Intermediate>0</v25:Intermediate>
+                <v25:Minor>0</v25:Minor>
+            </v25:Version>
+            <v25:RequestedShipment>
                 
-                <DropoffType>REGULAR_PICKUP</DropoffType>
-                <ServiceType>INTERNATIONAL_PRIORITY</ServiceType>
-                <PackagingType>YOUR_PACKAGING</PackagingType>
-                <TotalWeight>
-                    <Units>LB</Units>
-                    <Value>20.</Value>
-                </TotalWeight>
-                <PreferredCurrency>USD</PreferredCurrency>
-                <Shipper>
-                    <AccountNumber>2349857</AccountNumber>
-                    <Contact>
-                        <PersonName>Input Your Information</PersonName>
-                        <CompanyName>Input Your Information</CompanyName>
-                        <PhoneNumber>Input Your Information</PhoneNumber>
-                        <EMailAddress>Input Your Information</EMailAddress>
-                    </Contact>
-                    <Address>
-                        <StreetLines>Input Your Information</StreetLines>
-                        <StreetLines>Input Your Information</StreetLines>
-                        <City>MEMPHIS</City>
-                        <StateOrProvinceCode>TN</StateOrProvinceCode>
-                        <PostalCode>38117</PostalCode>
-                        <CountryCode>US</CountryCode>
-                    </Address>
-                </Shipper>
-                <Recipient>
-                    <Contact>
-                        <PersonName>Input Your Information</PersonName>
-                        <CompanyName>Input Your Information</CompanyName>
-                        <PhoneNumber>Input Your Information</PhoneNumber>
-                        <EMailAddress>Input Your Information</EMailAddress>
-                    </Contact>
-                    <Address>
-                        <StreetLines>Input Your Information</StreetLines>
-                        <StreetLines>Input Your Information</StreetLines>
-                        <City>RICHMOND</City>
-                        <StateOrProvinceCode>BC</StateOrProvinceCode>
-                        <PostalCode>V7C4v7</PostalCode>
-                        <CountryCode>CA</CountryCode>
-                    </Address>
-                </Recipient>
-                <ShippingChargesPayment>
-                    <Payor>
-                        <ResponsibleParty>
-                            <AccountNumber>2349857</AccountNumber>
-                        </ResponsibleParty>
-                    </Payor>
-                </ShippingChargesPayment>
-                <SpecialServicesRequested>
-                    <SpecialServiceTypes>INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS</SpecialServiceTypes>
-                </SpecialServicesRequested>
-                <RateRequestTypes>LIST</RateRequestTypes>
-                <RateRequestTypes>PREFERRED</RateRequestTypes>
-                <PackageCount>1</PackageCount>
-                <RequestedPackageLineItems>
-                    <SequenceNumber>1</SequenceNumber>
-                    <Weight>
-                        <Units>LB</Units>
-                        <Value>20.</Value>
-                    </Weight>
-                    <Dimensions>
-                        <Length>12</Length>
-                        <Width>12</Width>
-                        <Height>12</Height>
-                        <Units>IN</Units>
-                    </Dimensions>
-                </RequestedPackageLineItems>
-            </RequestedShipment>
-        </ns:ProcessShipmentRequest>
+                <v25:DropoffType>REGULAR_PICKUP</v25:DropoffType>
+                <v25:ServiceType>INTERNATIONAL_PRIORITY</v25:ServiceType>
+                <v25:PackagingType>YOUR_PACKAGING</v25:PackagingType>
+                <v25:TotalWeight>
+                    <v25:Units>LB</v25:Units>
+                    <v25:Value>20.</v25:Value>
+                </v25:TotalWeight>
+                <v25:PreferredCurrency>USD</v25:PreferredCurrency>
+                <v25:Shipper>
+                    <v25:AccountNumber>2349857</v25:AccountNumber>
+                    <v25:Contact>
+                        <v25:PersonName>Input Your Information</v25:PersonName>
+                        <v25:CompanyName>Input Your Information</v25:CompanyName>
+                        <v25:PhoneNumber>Input Your Information</v25:PhoneNumber>
+                        <v25:EMailAddress>Input Your Information</v25:EMailAddress>
+                    </v25:Contact>
+                    <v25:Address>
+                        <v25:StreetLines>Input Your Information</v25:StreetLines>
+                        <v25:StreetLines>Input Your Information</v25:StreetLines>
+                        <v25:City>MEMPHIS</v25:City>
+                        <v25:StateOrProvinceCode>TN</v25:StateOrProvinceCode>
+                        <v25:PostalCode>38117</v25:PostalCode>
+                        <v25:CountryCode>US</v25:CountryCode>
+                    </v25:Address>
+                </v25:Shipper>
+                <v25:Recipient>
+                    <v25:Contact>
+                        <v25:PersonName>Input Your Information</v25:PersonName>
+                        <v25:CompanyName>Input Your Information</v25:CompanyName>
+                        <v25:PhoneNumber>Input Your Information</v25:PhoneNumber>
+                        <v25:EMailAddress>Input Your Information</v25:EMailAddress>
+                    </v25:Contact>
+                    <v25:Address>
+                        <v25:StreetLines>Input Your Information</v25:StreetLines>
+                        <v25:StreetLines>Input Your Information</v25:StreetLines>
+                        <v25:City>RICHMOND</v25:City>
+                        <v25:StateOrProvinceCode>BC</v25:StateOrProvinceCode>
+                        <v25:PostalCode>V7C4v7</v25:PostalCode>
+                        <v25:CountryCode>CA</v25:CountryCode>
+                    </v25:Address>
+                </v25:Recipient>
+                <v25:ShippingChargesPayment>
+                    <v25:PaymentType>THIRD_PARTY</v25:PaymentType>
+                    <v25:Payor>
+                        <v25:ResponsibleParty>
+                            <v25:AccountNumber>2349857</v25:AccountNumber>
+                        </v25:ResponsibleParty>
+                    </v25:Payor>
+                </v25:ShippingChargesPayment>
+                <v25:SpecialServicesRequested>
+                    <v25:SpecialServiceTypes>INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS</v25:SpecialServiceTypes>
+                </v25:SpecialServicesRequested>
+                <v25:LabelSpecification>
+                    <v25:LabelFormatType>COMMON2D</v25:LabelFormatType>
+                    <v25:ImageType>PDF</v25:ImageType>
+                    <v25:LabelStockType>PAPER_7X4.75</v25:LabelStockType>
+                    <v25:LabelPrintingOrientation>TOP_EDGE_OF_TEXT_FIRST</v25:LabelPrintingOrientation>
+                </v25:LabelSpecification>
+                <v25:PackageCount>1</v25:PackageCount>
+                <v25:RequestedPackageLineItems>
+                    <v25:SequenceNumber>1</v25:SequenceNumber>
+                    <v25:Weight>
+                        <v25:Units>LB</v25:Units>
+                        <v25:Value>20.</v25:Value>
+                    </v25:Weight>
+                    <v25:Dimensions>
+                        <v25:Length>12</v25:Length>
+                        <v25:Width>12</v25:Width>
+                        <v25:Height>12</v25:Height>
+                        <v25:Units>IN</v25:Units>
+                    </v25:Dimensions>
+                </v25:RequestedPackageLineItems>
+            </v25:RequestedShipment>
+        </v25:ProcessShipmentRequest>
     </tns:Body>
 </tns:Envelope>
 """
