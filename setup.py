@@ -29,6 +29,7 @@ setup(name='purplship',
             'lxml',
             'py-soap',
             'six',
+            'Pillow'
       ],
       extras_require={
             'dev': dev_requirements

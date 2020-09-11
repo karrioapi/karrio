@@ -29,8 +29,10 @@ from pyups.ship_web_service_schema import (
     CreditCardType,
     CreditCardAddressType,
     BillReceiverAddressType,
+    LabelSpecificationType,
+    LabelImageFormatType,
 )
-from purplship.core.utils.helpers import export, concat_str
+from purplship.core.utils.helpers import export, concat_str, gif_to_pdf
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
@@ -61,12 +63,13 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     shipment = ShipmentResultsType()
     shipment.build(node)
     package: PackageResultsType = next(iter(shipment.PackageResults), None)
+    graphic = cast(LabelType, package.ShippingLabel).GraphicImage
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
-        label=cast(LabelType, package.ShippingLabel).GraphicImage,
+        label=gif_to_pdf(graphic),
     )
 
 
@@ -88,6 +91,7 @@ def shipment_request(
         "01": payload.payment,
         "02": payload.customs.duty if payload.customs is not None else None,
     }
+    mps_packaging = ShippingPackagingType.your_packaging.value if len(packages) > 1 else None
 
     request = UPSShipmentRequest(
         Request=common.RequestType(
@@ -234,14 +238,8 @@ def shipment_request(
             Package=[
                 PackageType(
                     Description=package.parcel.description,
-                    Packaging=(
-                        PackagingType(
-                            Code=ShippingPackagingType[
-                                package.packaging_type
-                            ].value,
-                        )
-                        if package.packaging_type is not None
-                        else None
+                    Packaging=PackagingType(
+                        Code=mps_packaging or ShippingPackagingType[package.packaging_type or "your_packaging"].value
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
@@ -261,7 +259,16 @@ def shipment_request(
                 for package in packages
             ],
         ),
-        LabelSpecification=None,
+        LabelSpecification=LabelSpecificationType(
+            LabelImageFormat=LabelImageFormatType(
+                Code='GIF',
+                Description=None
+            ),
+            HTTPUserAgent=None,
+            LabelStockSize=None,
+            Instruction=None,
+            CharacterSet=None
+        ),
         ReceiptSpecification=None,
     )
     return Serializable(

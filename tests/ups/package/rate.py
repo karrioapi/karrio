@@ -234,8 +234,8 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
+                <common:RequestOption>Shop</common:RequestOption>
                 <common:RequestOption>Rate</common:RequestOption>
-                <common:RequestOption>Ratetimeintransit</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
@@ -310,8 +310,8 @@ RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xm
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
+                <common:RequestOption>Shop</common:RequestOption>
                 <common:RequestOption>Rate</common:RequestOption>
-                <common:RequestOption>Ratetimeintransit</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
