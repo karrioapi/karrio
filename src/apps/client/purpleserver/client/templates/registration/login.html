@@ -46,7 +46,7 @@
                 {{ form.password.errors }}
                 <label class="label level" for="{{ form.password.id_for_label }}">
                     <span>{% trans 'Password' %}</span>
-                    <a href="{% url 'password_reset' %}">Forgot your password?</a>
+                    <a class="is-size-7" href="{% url 'password_reset' %}" tabindex="-1">Forgot your password?</a>
                 </label>
 
                 <div class="control">

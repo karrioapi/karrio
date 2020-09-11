@@ -8,7 +8,7 @@ exit
 
 if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
 then
-  (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='public', schema_name='public', domain_url='system.purpleserver.local')" | purplship shell) > /dev/null 2>&1;
+  (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='public', schema_name='public', domain_url='console.purpleserver.local')" | purplship shell) > /dev/null 2>&1;
   (echo "from django.contrib.auth.models import User; User.objects.create_superuser('root', 'root@example.com', '${ADMIN_PASSWORD}')" | purplship shell) > /dev/null 2>&1;
 
   (echo "from purpleserver.tenants.models import Client; Client.objects.create(name='general', schema_name='general', domain_url='app.purpleserver.local')" | purplship shell) > /dev/null 2>&1;

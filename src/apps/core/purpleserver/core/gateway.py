@@ -120,7 +120,7 @@ class Shipments:
         # The request call is wrapped in identity to simplify mocking in tests
         results, messages = identity(lambda: request.from_(gateway).parse())
 
-        if any(messages) and not any(results):
+        if any(messages or []) and not any(results or []):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
         return TrackingResponse(

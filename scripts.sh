@@ -138,6 +138,11 @@ run_postgres() {
   export DATABASE_PASSWORD=postgres
 }
 
+run_services() {
+  docker-compose down &&
+  docker-compose up "$@"
+}
+
 test() {
   purplship makemigrations &&
   purplship test --failfast purpleserver.proxy.tests &&
@@ -146,7 +151,7 @@ test() {
 }
 
 test_with_postgres() {
-  TEST=True docker-compose up --exit-code-from=purpleserver purpleserver
+  TEST=True docker-compose up --build --exit-code-from=purpleserver purpleserver
 }
 
 clean_builds() {
@@ -216,6 +221,7 @@ alias dev:purplship=install_purplship_dev
 alias dev:extension=install_extension_dev
 alias run:purl=run_server
 alias run:db=run_postgres
+alias run:svc=run_services
 alias env:dev=install_dev
 
 activate_env

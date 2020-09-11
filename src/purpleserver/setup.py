@@ -13,7 +13,6 @@ dev_requirements = [
       'purplship.purolator',
       'purplship.ups',
 
-      'purplship-server.extension',
       'eshipper.extension',
       'freightcom.extension',
 ]
