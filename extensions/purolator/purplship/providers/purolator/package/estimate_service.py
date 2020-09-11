@@ -139,9 +139,9 @@ def get_full_estimate_request(
                         Country=payload.shipper.country_code,
                         PostalCode=payload.shipper.postal_code,
                         PhoneNumber=PhoneNumber(
-                            CountryCode=shipper_phone_number.country_code,
-                            AreaCode=shipper_phone_number.area_code,
-                            Phone=shipper_phone_number.phone or "",
+                            CountryCode=shipper_phone_number.country_code or "0",
+                            AreaCode=shipper_phone_number.area_code or "0",
+                            Phone=shipper_phone_number.phone or "0",
                             Extension=None
                         ),
                         FaxNumber=None,
@@ -172,9 +172,9 @@ def get_full_estimate_request(
                         Country=payload.recipient.country_code,
                         PostalCode=payload.recipient.postal_code,
                         PhoneNumber=PhoneNumber(
-                            CountryCode=recipient_phone_number.country_code,
-                            AreaCode=recipient_phone_number.area_code,
-                            Phone=recipient_phone_number.phone or "",
+                            CountryCode=recipient_phone_number.country_code or "0",
+                            AreaCode=recipient_phone_number.area_code or "0",
+                            Phone=recipient_phone_number.phone or "0",
                             Extension=None
                         ),
                         FaxNumber=None,
