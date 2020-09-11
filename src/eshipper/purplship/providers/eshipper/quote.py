@@ -9,6 +9,7 @@ from pyeshipper.quote_request import (
 )
 from pyeshipper.quote_reply import QuoteType, SurchargeType
 from purplship.core.utils import Element, Serializable, concat_str, decimal
+from purplship.core.utils.soap import build
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.core.units import Packages, Options
 from purplship.providers.eshipper.utils import (
@@ -36,8 +37,7 @@ def parse_quote_reply(
 
 
 def _extract_rate(node: Element, settings: Settings) -> RateDetails:
-    quote = QuoteType()
-    quote.build(node)
+    quote = build(QuoteType, node)
     service = next(
         (s.name for s in Service if str(quote.serviceId) == s.value), quote.serviceId
     )
@@ -66,7 +66,7 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         base_charge=decimal(quote.baseCharge),
         total_charge=decimal(quote.totalCharge),
         transit_days=quote.transitDays,
-        extra_charges=[fuel_surcharge] + surcharges,
+        extra_charges=[fuel_surcharge] + surcharges
     )
 
 

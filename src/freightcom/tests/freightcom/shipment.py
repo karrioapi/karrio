@@ -74,6 +74,7 @@ ParsedShipmentResponse = [
         "carrier_id": "freightcom",
         "carrier_name": "freightcom",
         "label": "[base-64 encoded String]",
+        "meta": {"carrier_name": "freightcom"},
         "selected_rate": {
             "base_charge": 30.74,
             "carrier_id": "freightcom",

@@ -103,6 +103,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         )
         if quote is not None
         else None,
+        meta=dict(carrier_name=shipping.Carrier.carrierName.lower())
     )
 
 

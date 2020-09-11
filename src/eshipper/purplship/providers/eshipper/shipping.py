@@ -22,6 +22,7 @@ from pyeshipper.shipping_reply import (
     SurchargeType,
 )
 from purplship.core.utils import Element, Serializable, concat_str, decimal
+from purplship.core.utils.soap import build
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
@@ -61,8 +62,7 @@ def parse_shipping_reply(
 
 
 def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
-    shipping = ShippingReplyType()
-    shipping.build(node)
+    shipping = build(ShippingReplyType, node)
     quote: QuoteType = shipping.Quote
     package: ReplyPackageType = next(iter(shipping.Package), None)
     tracking_number = package.trackingNumber if package is not None else None
@@ -103,6 +103,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         )
         if quote is not None
         else None,
+        meta=dict(carrier_name=shipping.Carrier.carrierName.lower())
     )
 
 
