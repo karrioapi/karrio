@@ -137,7 +137,7 @@ def shipment_request(
             Contact=(
                 Contact(
                     PersonName=payload.recipient.person_name,
-                    PhoneNumber=payload.recipient.phone_number,
+                    PhoneNumber=payload.recipient.phone_number or "0000",
                     Email=payload.recipient.email,
                 )
             ),
@@ -164,7 +164,7 @@ def shipment_request(
             Contact=(
                 Contact(
                     PersonName=payload.shipper.person_name,
-                    PhoneNumber=payload.shipper.phone_number,
+                    PhoneNumber=payload.shipper.phone_number or "0000",
                     Email=payload.shipper.email,
                 )
             ),
