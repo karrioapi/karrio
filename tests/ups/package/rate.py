@@ -71,14 +71,14 @@ rate_req_data = {
         "country_code": "US",
         "state_code": "StateProvinceCode",
     },
-    "parcel": {
+    "parcels": [{
         "height": 3,
         "length": 10,
         "width": 3,
         "weight": 4.0,
         "packaging_type": "ups_package",
         "description": "TV",
-    },
+    }],
     "reference": "Your Customer Context",
     "services": ["ups_standard"],
     "options": {"negotiated_rates_indicator": True},
@@ -101,11 +101,11 @@ rate_req_with_package_preset_data = {
         "country_code": "US",
         "state_code": "StateProvinceCode",
     },
-    "parcel": {
+    "parcels": [{
         "package_preset": "ups_express_pak",
         "packaging_type": "ups_package",
         "description": "TV",
-    },
+    }],
     "reference": "Your Customer Context",
     "services": ["ups_standard"],
     "options": {"negotiated_rates_indicator": True},
@@ -234,8 +234,8 @@ RateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/en
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
+                <common:RequestOption>Shop</common:RequestOption>
                 <common:RequestOption>Rate</common:RequestOption>
-                <common:RequestOption>Ratetimeintransit</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
@@ -310,8 +310,8 @@ RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xm
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
+                <common:RequestOption>Shop</common:RequestOption>
                 <common:RequestOption>Rate</common:RequestOption>
-                <common:RequestOption>Ratetimeintransit</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>

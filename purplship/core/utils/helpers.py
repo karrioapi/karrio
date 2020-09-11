@@ -1,8 +1,10 @@
+import io
 import attr
 import json
 import asyncio
 import logging
-from io import StringIO
+import base64
+from PIL import Image
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 from xmltodict import parse
@@ -27,13 +29,23 @@ def export(xml_element: Element, **kwds) -> str:
 
     invoke the export method of generated type to return the subsequent XML represented
     """
-    output = StringIO()
+    output = io.StringIO()
     xml_element.export(output, 0, **kwds)
     return output.getvalue()
 
 
 def decode_bytes(byte):
     return byte.decode("utf-8")
+
+
+def gif_to_pdf(gif_str: str) -> str:
+    content = base64.b64decode(gif_str)
+    buffer = io.BytesIO()
+    buffer.write(content)
+    image = Image.open(buffer)
+    new_buffer = io.BytesIO()
+    image.save(new_buffer, format="PDF")
+    return base64.b64encode(new_buffer.getvalue()).decode('utf-8')
 
 
 def request(decoder: Callable = decode_bytes, **args) -> str:

@@ -28,10 +28,10 @@ submodules() {
 }
 
 install_submodules() {
-    pip install "${ROOT:?}[dev]" &&
+    pip install -e "${ROOT:?}[dev]" &&
     for module in $(submodules); do
       echo "installing ${module}..."
-      pip install "${module}" || break
+      pip install -e "${module}" || break
     done
 }
 
@@ -55,14 +55,16 @@ test() {
       install_submodules
     fi
     cd "${ROOT:?}"
-    r=$(coverage run -m unittest discover -v "${ROOT:?}/tests")
+    r=$(coverage run -m unittest discover -f -v "${ROOT:?}/tests")
     cd -
     $r || false
 }
 
 typecheck() {
     for module in $(submodules); do
-      mypy "${module}/purplship" --no-strict-optional --no-warn-return-any --no-warn-unused-configs || break
+      for submodule in $(find "$module" -type f -name "__init__.py" -exec dirname {} \;); do
+        mypy "$submodule" || break
+      done || break
     done
 }
 

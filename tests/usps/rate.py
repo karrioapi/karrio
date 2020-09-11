@@ -61,14 +61,14 @@ if __name__ == "__main__":
 RATE_PAYLOAD = {
     "shipper": {"postal_code": "44106"},
     "recipient": {"postal_code": "20770"},
-    "parcel": {
+    "parcels": [{
         "dimension_unit": "IN",
         "id": "1ST",
         "width": 15,
         "height": 15,
         "length": 30,
         "weight": 1,
-    },
+    }],
     "services": ["priority"],
     "options": {"signature_confirmation": True},
 }
@@ -76,7 +76,7 @@ RATE_PAYLOAD = {
 INTL_RATE_PAYLOAD = {
     "shipper": {"postal_code": "18701"},
     "recipient": {"postal_code": "2046", "country_code": "AU"},
-    "parcel": {
+    "parcels": [{
         "dimension_unit": "IN",
         "id": "1ST",
         "width": 10,
@@ -84,7 +84,7 @@ INTL_RATE_PAYLOAD = {
         "length": 10,
         "weight": 3.123,
         "packaging_type": "sm",
-    },
+    }],
     "options": {"insurance_global_express_guaranteed": True},
 }
 
@@ -360,6 +360,7 @@ RATE_REQUEST_STR = f"""<RateV4Request USERID="username">
         <Width>15.0</Width>
         <Length>30.0</Length>
         <Height>15.0</Height>
+        <Girth>23.64</Girth>
         <SpecialServices>
             <SpecialService>108</SpecialService>
         </SpecialServices>
@@ -373,8 +374,8 @@ RATE_REQUEST = {"API": "RateV4", "XML": RATE_REQUEST_STR}
 INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="username">
     <Revision>2</Revision>
     <Package ID="1ST">
-        <Pounds>3.123</Pounds>
-        <Ounces>49.968000000000004</Ounces>
+        <Pounds>3.12</Pounds>
+        <Ounces>49.969999999999999</Ounces>
         <MailType>ENVELOPE</MailType>
         <Country>AUSTRALIA</Country>
         <Container>NONRECTANGULAR</Container>
@@ -382,6 +383,7 @@ INTL_RATE_REQUEST_STR = f"""<IntlRateV2Request USERID="username">
         <Width>10</Width>
         <Length>10</Length>
         <Height>10</Height>
+        <Girth>15</Girth>
         <OriginZip>18701</OriginZip>
         
         <DestinationPostalCode>2046</DestinationPostalCode>

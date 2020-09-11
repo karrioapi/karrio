@@ -1,7 +1,7 @@
 """PurplShip FedEx client settings."""
 
 import attr
-from purplship.carriers.fedex.utils import Settings as BaseSettings
+from purplship.providers.fedex.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

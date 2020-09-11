@@ -14,8 +14,8 @@ from purplship.core.models import (
     ShipmentDetails,
     Message,
 )
-from purplship.carriers.fedex import track_request, parse_track_response
-from purplship.carriers.fedex.package import (
+from purplship.providers.fedex import track_request, parse_track_response
+from purplship.providers.fedex.package import (
     rate_request,
     parse_rate_response,
     process_shipment_request,

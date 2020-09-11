@@ -12,7 +12,7 @@ from purplship.core.models import (
     RateRequest,
     ShipmentDetails,
 )
-from purplship.carriers.canadapost import (
+from purplship.providers.canadapost import (
     mailing_scenario_request,
     parse_price_quotes,
     tracking_pins_request,

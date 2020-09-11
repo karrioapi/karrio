@@ -1,9 +1,13 @@
 import unittest
+import logging
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
 from purplship.package import Tracking
 from tests.fedex.package.fixture import gateway
+
+
+logger = logging.getLogger(__name__)
 
 
 class TestFeDexTracking(unittest.TestCase):
@@ -21,7 +25,7 @@ class TestFeDexTracking(unittest.TestCase):
         Tracking.fetch(self.TrackRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, gateway.settings.server_url)
+        self.assertEqual(url, f"{gateway.settings.server_url}/track")
 
     def test_parse_tracking_response(self):
         with patch("purplship.package.mappers.fedex.proxy.http") as mock:
@@ -203,39 +207,39 @@ TrackingAuthErrorXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmls
 </SOAP-ENV:Envelope>
 """
 
-TrackingRequestXML = """<tns:Envelope tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v18="http://fedex.com/ws/track/v18">
+TrackingRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v18="http://fedex.com/ws/track/v18">
     <tns:Body>
-        <ns:TrackRequest>
-            <WebAuthenticationDetail>
-                <UserCredential>
-                    <Key>user_key</Key>
-                    <Password>password</Password>
-                </UserCredential>
-            </WebAuthenticationDetail>
-            <ClientDetail>
-                <AccountNumber>2349857</AccountNumber>
-                <MeterNumber>1293587</MeterNumber>
-            </ClientDetail>
-            <TransactionDetail>
-                <CustomerTransactionId>Track By Number_v14</CustomerTransactionId>
-                <Localization>
-                    <LanguageCode>en</LanguageCode>
-                </Localization>
-            </TransactionDetail>
-            <Version>
-                <ServiceId>trck</ServiceId>
-                <Major>14</Major>
-                <Intermediate>0</Intermediate>
-                <Minor>0</Minor>
-            </Version>
-            <SelectionDetails>
-                <CarrierCode>FDXE</CarrierCode>
-                <PackageIdentifier>
-                    <Type>TRACKING_NUMBER_OR_DOORTAG</Type>
-                    <Value>794887075005</Value>
-                </PackageIdentifier>
-            </SelectionDetails>
-        </ns:TrackRequest>
+        <v18:TrackRequest>
+            <v18:WebAuthenticationDetail>
+                <v18:UserCredential>
+                    <v18:Key>user_key</v18:Key>
+                    <v18:Password>password</v18:Password>
+                </v18:UserCredential>
+            </v18:WebAuthenticationDetail>
+            <v18:ClientDetail>
+                <v18:AccountNumber>2349857</v18:AccountNumber>
+                <v18:MeterNumber>1293587</v18:MeterNumber>
+            </v18:ClientDetail>
+            <v18:TransactionDetail>
+                <v18:CustomerTransactionId>Track By Number_v18</v18:CustomerTransactionId>
+                <v18:Localization>
+                    <v18:LanguageCode>en</v18:LanguageCode>
+                </v18:Localization>
+            </v18:TransactionDetail>
+            <v18:Version>
+                <v18:ServiceId>trck</v18:ServiceId>
+                <v18:Major>18</v18:Major>
+                <v18:Intermediate>0</v18:Intermediate>
+                <v18:Minor>0</v18:Minor>
+            </v18:Version>
+            <v18:SelectionDetails>
+                <v18:CarrierCode>FDXE</v18:CarrierCode>
+                <v18:PackageIdentifier>
+                    <v18:Type>TRACKING_NUMBER_OR_DOORTAG</v18:Type>
+                    <v18:Value>794887075005</v18:Value>
+                </v18:PackageIdentifier>
+            </v18:SelectionDetails>
+        </v18:TrackRequest>
     </tns:Body>
 </tns:Envelope>
 """

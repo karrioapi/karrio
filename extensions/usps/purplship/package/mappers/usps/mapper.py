@@ -12,7 +12,7 @@ from purplship.core.models import (
     RateDetails,
     Message,
 )
-from purplship.carriers.usps import (
+from purplship.providers.usps import (
     rate_request,
     parse_rate_request,
     track_field_request,

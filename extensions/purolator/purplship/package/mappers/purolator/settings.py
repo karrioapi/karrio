@@ -1,7 +1,7 @@
 """PurplShip UPS connection settings."""
 
 import attr
-from purplship.carriers.purolator.utils import Settings as BaseSettings
+from purplship.providers.purolator.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

@@ -1,7 +1,7 @@
 """PurplShip USPS client settings."""
 
 import attr
-from purplship.carriers.usps.utils import Settings as BaseSettings
+from purplship.providers.usps.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)

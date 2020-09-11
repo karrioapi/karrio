@@ -78,14 +78,14 @@ shipment_data = {
         "person_name": "Jain",
         "state_code": "ON",
     },
-    "parcel": {
+    "parcels": [{
         "height": 9,
         "length": 6,
         "width": 12,
         "weight": 20.0,
         "dimension_unit": "CM",
         "weight_unit": "KG",
-    },
+    }],
     "service": "canadapost_expedited_parcel",
     "options": {
         "canadapost_signature": True,
@@ -115,11 +115,11 @@ shipment_with_package_preset_data = {
         "person_name": "Jain",
         "state_code": "ON",
     },
-    "parcel": {
+    "parcels": [{
         "weight": 20.0,
         "weight_unit": "LB",
         "package_preset": "canadapost_corrugated_large_box",
-    },
+    }],
     "service": "canadapost_expedited_parcel",
     "options": {"cash_on_delivery": {"amount": 25.5}},
 }
@@ -256,7 +256,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             </option>
         </options>
         <parcel-characteristics>
-            <weight>9.07184</weight>
+            <weight>9.07</weight>
             <dimensions>
                 <length>40.6</length>
                 <width>46.0</width>

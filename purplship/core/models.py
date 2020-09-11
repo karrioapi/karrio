@@ -33,9 +33,6 @@ class Commodity:
 
     id: str = None
     weight: float = None
-    width: float = None
-    height: float = None
-    length: float = None
     description: str = None
     quantity: int = 1
     sku: str = None
@@ -128,7 +125,7 @@ class ShipmentRequest:
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
@@ -142,7 +139,7 @@ class ShipmentRequest:
 class RateRequest:
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcel: Parcel = JStruct[Parcel, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
     services: List[str] = []
     options: Dict = {}
@@ -271,7 +268,8 @@ class RateDetails:
     base_charge: float = 0.0
     total_charge: float = 0.0
     duties_and_taxes: float = None
-    extra_charges: List[ChargeDetails] = []
+    extra_charges: List[ChargeDetails] = JList[ChargeDetails]
+    meta: dict = None
     id: str = None
 
 
@@ -282,7 +280,7 @@ class TrackingDetails:
     carrier_name: str
     carrier_id: str
     tracking_number: str
-    events: List[TrackingEvent] = []
+    events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
 
 
 @attr.s(auto_attribs=True)
@@ -293,7 +291,8 @@ class ShipmentDetails:
     carrier_id: str
     label: str
     tracking_number: str
-    selected_rate: RateDetails = None
+    selected_rate: RateDetails = JStruct[RateDetails]
+    meta: dict = None
     id: str = None
 
 
@@ -305,7 +304,7 @@ class PickupDetails:
     carrier_id: str
     confirmation_number: str
     pickup_date: str = None
-    pickup_charge: ChargeDetails = None
+    pickup_charge: ChargeDetails = JStruct[ChargeDetails]
     ready_time: str = None
     closing_time: str = None
     id: str = None

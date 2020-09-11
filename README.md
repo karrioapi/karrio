@@ -416,7 +416,6 @@ rates = request.from_(carrier).parse()
 <summary>Carrier models</summary>
 
 - <a name="Address"></a> Address
-
     | Name | Type | Description
     | --- | --- | --- |
     | `id` | `str` |
@@ -436,17 +435,13 @@ rates = request.from_(carrier).parse()
     | `address_line2` | `str` |
 
 
-
 - <a name="COD"></a> COD
-
     | Name | Type | Description
     | --- | --- | --- |
     | `amount` | `float` |
 
 
-
 - <a name="Card"></a> Card
-
     | Name | Type | Description
     | --- | --- | --- |
     | `type` | `str` |
@@ -458,9 +453,7 @@ rates = request.from_(carrier).parse()
     | `postal_code` | `str` |
 
 
-
 - <a name="ChargeDetails"></a> ChargeDetails
-
     | Name | Type | Description
     | --- | --- | --- |
     | `name` | `str` |
@@ -468,9 +461,7 @@ rates = request.from_(carrier).parse()
     | `currency` | `str` |
 
 
-
 - <a name="Commodity"></a> Commodity
-
     | Name | Type | Description
     | --- | --- | --- |
     | `id` | `str` |
@@ -486,9 +477,7 @@ rates = request.from_(carrier).parse()
     | `origin_country` | `str` |
 
 
-
 - <a name="Customs"></a> Customs
-
     | Name | Type | Description
     | --- | --- | --- |
     | `no_eei` | `str` |
@@ -501,9 +490,7 @@ rates = request.from_(carrier).parse()
     | `commercial_invoice` | `bool` |
 
 
-
 - <a name="Doc"></a> Doc
-
     | Name | Type | Description
     | --- | --- | --- |
     | `type` | `str` |
@@ -511,17 +498,13 @@ rates = request.from_(carrier).parse()
     | `image` | `str` |
 
 
-
 - <a name="Insurance"></a> Insurance
-
     | Name | Type | Description
     | --- | --- | --- |
     | `amount` | `float` |
 
 
-
 - <a name="Invoice"></a> Invoice
-
     | Name | Type | Description
     | --- | --- | --- |
     | `date` | `str` |
@@ -530,30 +513,24 @@ rates = request.from_(carrier).parse()
     | `copies` | `int` |
 
 
-
 - <a name="Message"></a> Message
-
     | Name | Type | Description
     | --- | --- | --- |
-    | `carrier` | `str` |
     | `carrier_name` | `str` |
+    | `carrier_id` | `str` |
     | `message` | `str` |
     | `code` | `str` |
     | `details` | `dict` |
 
 
-
 - <a name="Notification"></a> Notification
-
     | Name | Type | Description
     | --- | --- | --- |
     | `email` | `str` |
     | `locale` | `str` |
 
 
-
 - <a name="Parcel"></a> Parcel
-
     | Name | Type | Description
     | --- | --- | --- |
     | `id` | `str` |
@@ -570,9 +547,7 @@ rates = request.from_(carrier).parse()
     | `dimension_unit` | `str` |
 
 
-
 - <a name="Payment"></a> Payment
-
     | Name | Type | Description
     | --- | --- | --- |
     | `paid_by` | `str` |
@@ -583,9 +558,7 @@ rates = request.from_(carrier).parse()
     | `contact` | [Address](#Address) |
 
 
-
 - <a name="PickupCancellationRequest"></a> PickupCancellationRequest
-
     | Name | Type | Description
     | --- | --- | --- |
     | `pickup_date` | `str` |
@@ -594,13 +567,11 @@ rates = request.from_(carrier).parse()
     | `country_code` | `str` |
 
 
-
 - <a name="PickupDetails"></a> PickupDetails
-
     | Name | Type | Description
     | --- | --- | --- |
-    | `carrier` | `str` |
     | `carrier_name` | `str` |
+    | `carrier_id` | `str` |
     | `confirmation_number` | `str` |
     | `pickup_date` | `str` |
     | `pickup_charge` | [ChargeDetails](#ChargeDetails) |
@@ -609,9 +580,7 @@ rates = request.from_(carrier).parse()
     | `id` | `str` |
 
 
-
 - <a name="PickupRequest"></a> PickupRequest
-
     | Name | Type | Description
     | --- | --- | --- |
     | `date` | `str` |
@@ -623,9 +592,7 @@ rates = request.from_(carrier).parse()
     | `package_location` | `str` |
 
 
-
 - <a name="PickupUpdateRequest"></a> PickupUpdateRequest
-
     | Name | Type | Description
     | --- | --- | --- |
     | `date` | `str` |
@@ -638,59 +605,53 @@ rates = request.from_(carrier).parse()
     | `package_location` | `str` |
 
 
-
 - <a name="RateDetails"></a> RateDetails
-
     | Name | Type | Description
     | --- | --- | --- |
-    | `carrier` | `str` |
     | `carrier_name` | `str` |
+    | `carrier_id` | `str` |
     | `currency` | `str` |
+    | `transit_days` | `int` |
     | `service` | `str` |
     | `discount` | `float` |
     | `base_charge` | `float` |
     | `total_charge` | `float` |
     | `duties_and_taxes` | `float` |
-    | `transit_days` | `int` |
     | `extra_charges` | List[[ChargeDetails](#ChargeDetails)] |
+    | `meta` | `dict` |
     | `id` | `str` |
 
 
-
 - <a name="RateRequest"></a> RateRequest
-
     | Name | Type | Description
     | --- | --- | --- |
     | `shipper` | [Address](#Address) |
     | `recipient` | [Address](#Address) |
-    | `parcel` | [Parcel](#Parcel) |
+    | `parcels` | List[[Parcel](#Parcel)] |
     | `services` | List[str] |
     | `options` | `dict` |
     | `reference` | `str` |
 
 
-
 - <a name="ShipmentDetails"></a> ShipmentDetails
-
     | Name | Type | Description
     | --- | --- | --- |
-    | `carrier` | `str` |
     | `carrier_name` | `str` |
+    | `carrier_id` | `str` |
     | `label` | `str` |
     | `tracking_number` | `str` |
     | `selected_rate` | [RateDetails](#RateDetails) |
+    | `meta` | `dict` |
     | `id` | `str` |
 
 
-
 - <a name="ShipmentRequest"></a> ShipmentRequest
-
     | Name | Type | Description
     | --- | --- | --- |
     | `service` | `str` |
     | `shipper` | [Address](#Address) |
     | `recipient` | [Address](#Address) |
-    | `parcel` | [Parcel](#Parcel) |
+    | `parcels` | List[[Parcel](#Parcel)] |
     | `payment` | [Payment](#Payment) |
     | `customs` | [Customs](#Customs) |
     | `doc_images` | List[[Doc](#Doc)] |
@@ -698,20 +659,16 @@ rates = request.from_(carrier).parse()
     | `reference` | `str` |
 
 
-
 - <a name="TrackingDetails"></a> TrackingDetails
-
     | Name | Type | Description
     | --- | --- | --- |
-    | `carrier` | `str` |
     | `carrier_name` | `str` |
+    | `carrier_id` | `str` |
     | `tracking_number` | `str` |
     | `events` | List[[TrackingEvent](#TrackingEvent)] |
 
 
-
 - <a name="TrackingEvent"></a> TrackingEvent
-
     | Name | Type | Description
     | --- | --- | --- |
     | `date` | `str` |
@@ -722,9 +679,7 @@ rates = request.from_(carrier).parse()
     | `signatory` | `str` |
 
 
-
 - <a name="TrackingRequest"></a> TrackingRequest
-
     | Name | Type | Description
     | --- | --- | --- |
     | `tracking_numbers` | List[str] |

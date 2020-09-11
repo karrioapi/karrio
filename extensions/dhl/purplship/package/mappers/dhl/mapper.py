@@ -20,7 +20,7 @@ from purplship.core.models import (
     PickupCancellationRequest,
     Message,
 )
-from purplship.carriers.dhl import (
+from purplship.providers.dhl import (
     dct_request,
     parse_dct_response,
     known_tracking_request,
