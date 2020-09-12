@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  purpleserver:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    image: purplship/purplship-server:latest
+    env_file: .env
+    volumes:
+      - .:/temp/dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - db_network
+      - web_network
+    entrypoint: |
+      bash -c "bash -s <<EOF
+      cd /temp/dev &&
+      pip install -r requirements.dev.txt --upgrade --src /temp/src &&
+      cd /app &&
+      if [[ "${TEST:-False}" == "True" ]];
+      then
+        source /temp/dev/scripts.sh && test
+      else
+        export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
+        export RELOAD=${RELOAD:-False}
+        ./docker-entrypoint.sh
+      fi
+      EOF"
+
+  nginx:
+    restart: always
+    image: "nginx:latest"
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./src/purpleserver/staticfiles:/static
+    networks:
+      - web_network
+    depends_on:
+      - purpleserver
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    networks:
+      - db_network
+
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
