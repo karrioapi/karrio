@@ -27,7 +27,9 @@ from purpleserver.core.serializers import (
 logger = logging.getLogger(__name__)
 
 DESCRIPTIONS = """
-Once the shipment rates are retrieved, provide the required info to
+**[proxy]**
+
+Once the shipping rates are retrieved, provide the required info to
 submit the shipment by specifying your preferred rate.
 """
 

@@ -21,8 +21,10 @@ from purpleserver.proxy.router import router
 logger = logging.getLogger(__name__)
 
 DESCRIPTIONS = """
+**[proxy]**
+
 The Shipping process begins by fetching rates for your shipment.
-The request returns a list of rate available.
+Use this service to fetch a shipping rates available.
 """
 
 

@@ -173,8 +173,8 @@ class Payment(EntitySerializer, PaymentData):
 class CustomsData(Serializer):
 
     no_eei = CharField(required=False, allow_blank=True, allow_null=True)
-    aes = CharField(required=False, allow_null=True)
-    description = CharField(required=False, allow_null=True)
+    aes = CharField(required=False, allow_blank=True, allow_null=True)
+    description = CharField(required=False, allow_blank=True, allow_null=True)
     terms_of_trade = CharField(required=False, allow_null=True, help_text="The customs 'term of trade' also known as 'incoterm'")
     commodities = ListField(child=Commodity(), required=False, allow_null=True, help_text="The parcel content items")
     duty = Payment(required=False, allow_null=True, help_text="""

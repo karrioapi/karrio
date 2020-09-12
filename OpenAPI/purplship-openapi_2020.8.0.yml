@@ -1,15 +1,20 @@
 swagger: '2.0'
 info:
-  title: PurplShip Multi-carrier Shipping API
-  description: >-
-    PurplShip is a Multi-carrier Shipping API that simplifies the integration of
-    logistic carrier services
+  title: Purplship Open Source Multi-carrier Shipping API
+  description: >
+
+    Purplship is an open source multi-carrier shipping API that simplifies the
+    integration of logistic carrier services
+
+
+    The **proxy** endpoints are stateless and forwards calls to carriers web
+    services.
   contact:
     email: hello@purplship.com
   license:
     name: AGPLv3+ License
-  version: v1
-host: instance.purplship.api
+  version: v1-2020.8.0
+host: 'instance.purplship.api'
 schemes:
   - http
   - https
@@ -375,8 +380,10 @@ paths:
       summary: Fetch Shipment Rates
       description: |
 
+        **[proxy]**
+
         The Shipping process begins by fetching rates for your shipment.
-        The request returns a list of rate available.
+        Use this service to fetch a shipping rates available.
       parameters:
         - name: data
           in: body
@@ -401,7 +408,9 @@ paths:
       summary: Submit a Shipment
       description: |
 
-        Once the shipment rates are retrieved, provide the required info to
+        **[proxy]**
+
+        Once the shipping rates are retrieved, provide the required info to
         submit the shipment by specifying your preferred rate.
       parameters:
         - name: data
@@ -426,6 +435,9 @@ paths:
       operationId: proxy_fetch_tracking
       summary: Track a Shipment
       description: >
+
+        **[proxy]**
+
 
         You can track a shipment by specifying the carrier and the shipment
         tracking number.
@@ -3616,6 +3628,7 @@ paths:
 
 
         </details>
+
       parameters: []
       responses:
         '200':
@@ -4205,7 +4218,7 @@ definitions:
         title: City
         description: |
 
-          The address city.
+          The address city. 
           **(required to create as shipment)**
         type: string
         x-nullable: true
@@ -5155,12 +5168,10 @@ definitions:
       aes:
         title: Aes
         type: string
-        minLength: 1
         x-nullable: true
       description:
         title: Description
         type: string
-        minLength: 1
         x-nullable: true
       termsOfTrade:
         title: Terms of trade
@@ -5193,12 +5204,10 @@ definitions:
       aes:
         title: Aes
         type: string
-        minLength: 1
         x-nullable: true
       description:
         title: Description
         type: string
-        minLength: 1
         x-nullable: true
       termsOfTrade:
         title: Terms of trade

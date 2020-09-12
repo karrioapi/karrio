@@ -1,15 +1,15 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "PurplShip Multi-carrier Shipping API",
-    "description": "PurplShip is a Multi-carrier Shipping API that simplifies the integration of logistic carrier services",
+    "title": "Purplship Open Source Multi-carrier Shipping API",
+    "description": "\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services\n\nThe **proxy** endpoints are stateless and forwards calls to carriers web services.\n",
     "contact": {
       "email": "hello@purplship.com"
     },
     "license": {
       "name": "AGPLv3+ License"
     },
-    "version": "v1"
+    "version": "v1-2020.8.0"
   },
   "host": "instance.purplship.api",
   "schemes": [
@@ -550,7 +550,7 @@
       "post": {
         "operationId": "proxy_fetch_rates",
         "summary": "Fetch Shipment Rates",
-        "description": "\nThe Shipping process begins by fetching rates for your shipment.\nThe request returns a list of rate available.\n",
+        "description": "\n**[proxy]**\n\nThe Shipping process begins by fetching rates for your shipment.\nUse this service to fetch a shipping rates available.\n",
         "parameters": [
           {
             "name": "data",
@@ -585,7 +585,7 @@
       "post": {
         "operationId": "proxy_create_shipping",
         "summary": "Submit a Shipment",
-        "description": "\nOnce the shipment rates are retrieved, provide the required info to\nsubmit the shipment by specifying your preferred rate.\n",
+        "description": "\n**[proxy]**\n\nOnce the shipping rates are retrieved, provide the required info to\nsubmit the shipment by specifying your preferred rate.\n",
         "parameters": [
           {
             "name": "data",
@@ -620,7 +620,7 @@
       "get": {
         "operationId": "proxy_fetch_tracking",
         "summary": "Track a Shipment",
-        "description": "\nYou can track a shipment by specifying the carrier and the shipment tracking number.\n",
+        "description": "\n**[proxy]**\n\nYou can track a shipment by specifying the carrier and the shipment tracking number.\n",
         "parameters": [
           {
             "name": "test",
@@ -1326,7 +1326,7 @@
         },
         "city": {
           "title": "City",
-          "description": "\nThe address city.\n**(required to create as shipment)**\n",
+          "description": "\nThe address city. \n**(required to create as shipment)**\n",
           "type": "string",
           "x-nullable": true
         },
@@ -2315,13 +2315,11 @@
         "aes": {
           "title": "Aes",
           "type": "string",
-          "minLength": 1,
           "x-nullable": true
         },
         "description": {
           "title": "Description",
           "type": "string",
-          "minLength": 1,
           "x-nullable": true
         },
         "termsOfTrade": {
@@ -2364,13 +2362,11 @@
         "aes": {
           "title": "Aes",
           "type": "string",
-          "minLength": 1,
           "x-nullable": true
         },
         "description": {
           "title": "Description",
           "type": "string",
-          "minLength": 1,
           "x-nullable": true
         },
         "termsOfTrade": {

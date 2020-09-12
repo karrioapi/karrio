@@ -22,6 +22,8 @@ from purpleserver.proxy.router import router
 logger = logging.getLogger(__name__)
 
 DESCRIPTIONS = """
+**[proxy]**
+
 You can track a shipment by specifying the carrier and the shipment tracking number.
 """
 
