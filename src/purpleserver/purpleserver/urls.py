@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from rest_framework import permissions
 
@@ -56,3 +57,6 @@ urlpatterns = [
 
     *[path('', include(urls)) for urls in settings.PURPLSHIP_URLS],
 ]
+
+urlpatterns += staticfiles_urlpatterns()
+
