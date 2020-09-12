@@ -12,6 +12,7 @@ djangorestframework-camel-case==1.2.0
 drf-yasg==1.17.1
 eshipper.extension==2020.9.0
 freightcom.extension==2020.9.0
+gunicorn==20.0.4
 idna==2.10
 inflection==0.5.1
 itypes==1.2.0

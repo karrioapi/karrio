@@ -1,4 +1,4 @@
-# PurplShip (Multi-carrier private cloud shipping API)
+# Purplship (Multi-carrier private cloud shipping API)
 
 [![CI](https://github.com/PurplShip/purplship-server/workflows/PuprlShip-Server/badge.svg)](https://github.com/PurplShip/purplship-server/actions)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
@@ -11,20 +11,30 @@ purplship-server is a private cloud Multi-carrier Shipping API.
 
 ## Documentation
 
-PurplShip has usage and reference documentation at [docs.purplship.com](https://docs.purplship.com).
+Purplship has usage and reference documentation at [docs.purplship.com](https://docs.purplship.com).
 
 
-## Try out PurplShip
+## Try out purplship
 
 ### Docker
 
-- Docker Image
+#### Docker Image
 
-```shell script
-docker run -p80:8000 purplship/purplship-server:2020.7.0 
+
+<details>
+<summary>Start a postgres SQL Database Instance</summary>
+
+```bash
+docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres
 ```
 
-- Docker Compose
+</details>
+
+```shell script
+docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.8.0
+```
+
+#### Docker Compose
 
 create a configuration file
 
@@ -45,7 +55,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
   web:
-    image: purplship/purplship-server:2020.7.0
+    image: purplship/purplship-server:2020.8.0
     restart: always
     environment:
       - DEBUG_MODE=True
@@ -53,11 +63,10 @@ services:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - DATABASE_NAME=db
-      - DATABASE_ENGINE=postgresql_psycopg2
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
     ports:
-      - "80:8000"
+      - "5002:5002"
     depends_on:
       - db
 ```
@@ -89,7 +98,21 @@ curl -L -O https://raw.githubusercontent.com/PurplShip/purplship-server/main/req
 pip install -r requirements.txt
 ```
 
-#### Initialize database (Demo)
+#### Initialize the data (Demo)
+
+Make sure to have a running postgres SQL database instance running
+
+- Set database connection environment variables
+
+```bash
+export DATABASE_HOST=database
+export DATABASE_PORT=5432
+export DATABASE_NAME=db
+export DATABASE_USERNAME=postgres
+export DATABASE_PASSWORD=postgres
+```
+
+- Initialize database and admin user
 
 ```shell script
 purplship makemigrations
