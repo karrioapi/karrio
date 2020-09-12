@@ -33,10 +33,11 @@ setup(
             'djangorestframework',
             'djangorestframework-camel-case',
             'drf-yasg',
-            'purplship-server.core',
             'django-oauth-toolkit',
+            'gunicorn',
             'jsonfield',
             'python-decouple',
+            'purplship-server.core',
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]
