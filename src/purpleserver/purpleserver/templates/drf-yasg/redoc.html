@@ -17,6 +17,29 @@
         .fLUKgj {
             background-color: #9504af !important;
         }
+
+        .admin-link {
+            position: fixed;
+            bottom: 44px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: rgba(50, 50, 159, 70%);
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 20px;
+        }
+        @media screen and (max-width: 50rem) {
+            .admin-link {
+                bottom: 110px;
+            }
+        }
     </style>
+{% endblock %}
+
+{% block extra_body %}
+<a class="admin-link" href="/admin">
+    <img src="{% static 'purpleserver/img/settings.svg' %}" width="40" style="margin: 10px;">
+</a>
 {% endblock %}
 

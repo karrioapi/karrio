@@ -96,11 +96,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+HAS_CLIENT_APP = importlib.util.find_spec('purpleserver.client') is not None
+
 ROOT_URLCONF = 'purpleserver.urls'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/login/' if HAS_CLIENT_APP else '/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
-OPEN_API_PATH = '/' if importlib.util.find_spec('purpleserver.client') is None else 'api/'
+OPEN_API_PATH = 'api/' if HAS_CLIENT_APP else ''
 
 
 TEMPLATES = [
@@ -126,12 +128,11 @@ WSGI_APPLICATION = 'purpleserver.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-DB_PATH_NAME = os.path.join(WORK_DIR, 'db.sqlite3')
-DB_ENGINE = config('DATABASE_ENGINE', default='sqlite3')
+DB_ENGINE = config('DATABASE_ENGINE', default='postgresql_psycopg2')
 
 DATABASES = {
     'default': {
-        'NAME': config('DATABASE_NAME', default=DB_PATH_NAME),
+        'NAME': config('DATABASE_NAME', default='db'),
         'ENGINE': 'django.db.backends.{}'.format(DB_ENGINE),
         'PASSWORD': config('DATABASE_PASSWORD'),
         'USER': config('DATABASE_USERNAME'),

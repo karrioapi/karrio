@@ -36,8 +36,7 @@ create_env() {
 }
 
 init() {
-    create_env &&
-    install_dev
+    create_env && pip install -r "${ROOT:?}/requirements.dev.txt"
 }
 
 
@@ -48,10 +47,6 @@ alias env:reset=init
 
 
 # Project helpers
-
-install_dev() {
-    pip install -r "${ROOT:?}/requirements.dev.txt"
-}
 
 install_released() {
   pip install purplship-server \
@@ -67,10 +62,8 @@ install_released() {
     freightcom.extension
 }
 
-reset_db () {
-  if [[ "$*" == *--postgres* ]]; then
-    run_postgres
-  fi
+reset_data () {
+  run_postgres
 
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
@@ -100,27 +93,13 @@ with tenant_context(Client.objects.get(schema_name='purpleserver')):
 
 }
 
-run_server() {
-  if [[ "$*" = *--tenants* ]];
-  then
-    export MULTI_TENANT_ENABLE=True
-  else
-    export MULTI_TENANT_ENABLE=False
-  fi
-
-  if [[ "$*" == *--install* ]]; then
-    install_dev
-  fi
-
-  if [[ "$*" == *--newdb* ]]; then
-    reset_db "$@"
-  fi
-
-  purplship runserver
+runservices() {
+  docker-compose down &&
+  docker-compose up "$@"
 }
 
 # shellcheck disable=SC2120
-run_postgres() {
+rundb() {
   docker-compose down &&
   docker-compose up -d db
 
@@ -138,9 +117,19 @@ run_postgres() {
   export DATABASE_PASSWORD=postgres
 }
 
-run_services() {
-  docker-compose down &&
-  docker-compose up "$@"
+runserver() {
+  if [[ "$*" = *--tenants* ]];
+  then
+    export MULTI_TENANT_ENABLE=True
+  else
+    export MULTI_TENANT_ENABLE=False
+  fi
+
+  if [[ "$*" == *--newdb* ]]; then
+    reset_data "$@"
+  fi
+
+  purplship runserver
 }
 
 test() {
@@ -150,37 +139,37 @@ test() {
   purplship test --failfast purpleserver.manager.tests
 }
 
-test_with_postgres() {
+test_services() {
   TEST=True docker-compose up --build --exit-code-from=purpleserver purpleserver
 }
 
 clean_builds() {
-    find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; || true
-    find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; || true
-    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; 2>/dev/null || true
+    find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; 2>/dev/null || true
+    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; 2>/dev/null || true
 }
 
 backup_wheels() {
     # shellcheck disable=SC2154
     [[ -d "$wheels" ]] &&
-    find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
+    find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; 2>/dev/null &&
     clean_builds
 }
 
-build() {
+_build() {
   pushd "$1" || false &&
   python setup.py bdist_wheel
   popd || true
 }
 
-build_all() {
+build() {
   clean_builds
-  sm=find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
+  sm=$(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;  2>&1 | grep -v 'permission denied')
 
-  $sm | while read module; do
-    echo "building ${module} ..."
-    build "${module}" || break
-  done
+  while read -r module; do
+    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> building ${module} ..."
+    _build "${module}" || break
+  done <<< $sm
   backup_wheels
 }
 
@@ -196,32 +185,9 @@ build_client() {
   popd
 }
 
-install_purplship_dev() {
-  p="$(dirname "${ROOT:?}")"
-  sm=find "$p/purplship" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
 
-  $sm | while read module; do
-    echo "installing ${module} ..."
-    pip install "${module}" --upgrade || break
-  done
-}
-
-install_extension_dev() {
-  p="$(dirname "${ROOT:?}")"
-  sm=find "$p/purplship-extension" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
-
-  $sm | while read module; do
-    echo "installing ${module} ..."
-    pip install "${module}" --upgrade || break
-  done
-}
-
-
-alias dev:purplship=install_purplship_dev
-alias dev:extension=install_extension_dev
-alias run:purl=run_server
-alias run:db=run_postgres
-alias run:svc=run_services
-alias env:dev=install_dev
+alias run:server=runserver
+alias run:db=rundb
+alias run:micro=run_services
 
 activate_env

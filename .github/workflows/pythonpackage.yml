@@ -15,4 +15,4 @@ jobs:
     - name: Install and Run tests
       run: |
         source ./scripts.sh
-        test_with_postgres
+        test_services

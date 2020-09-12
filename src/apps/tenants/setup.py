@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.tenants',
-      version='2020.8.0',
+      version='2020.8.0-alpha',
       description='Multi-carrier shipping API muti-tenant module',
       long_description=long_description,
       long_description_content_type="text/markdown",

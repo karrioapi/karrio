@@ -24,8 +24,8 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 
-admin.site.site_header = "PurplShip"
-admin.site.site_title = "PurplShip"
+admin.site.site_header = "purplship"
+admin.site.site_title = "purplphip shipping API"
 admin.site.index_title = "Administration"
 
 schema_view = get_schema_view(
