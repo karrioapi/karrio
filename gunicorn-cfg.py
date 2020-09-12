@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import decouple
 
-PURPLSHIP_PORT = decouple.config("PURPLSHIP_PORT", default=8000)
+PURPLSHIP_PORT = decouple.config("PURPLSHIP_PORT", default=5002)
 
 bind = f'0.0.0.0:{PURPLSHIP_PORT}'
 workers = 1

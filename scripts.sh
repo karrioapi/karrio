@@ -185,6 +185,10 @@ build_client() {
   popd
 }
 
+build_image() {
+  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/docker/Dockerfile" "${ROOT:?}"
+}
+
 
 alias run:server=runserver
 alias run:db=rundb
