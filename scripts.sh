@@ -36,7 +36,7 @@ create_env() {
 }
 
 init() {
-    create_env && pip install -r "${ROOT:?}/requirements.dev.txt"
+    create_env && pip install -r --update "${ROOT:?}/requirements.dev.txt"
 }
 
 
