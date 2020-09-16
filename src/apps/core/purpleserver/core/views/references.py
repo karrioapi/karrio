@@ -102,7 +102,7 @@ REFERENCE_MODELS = {
 
 
 MODELS_DOCUMENTATION = f"""
-# Countries
+## Countries
 
 <details>
 
@@ -113,12 +113,12 @@ Code | Name
 </details><br/>
 
 
-# States and Provinces
+## States and Provinces
 
 <details>
 
 {f"{line}".join([f'''
-## {Country[key].value}
+### {Country[key].value}
 
 <details>
 
@@ -133,7 +133,7 @@ for key, value in REFERENCE_MODELS["states"].items()
 
 </details><br/>
 
-# Currencies
+## Currencies
 
 <details>
 
@@ -144,12 +144,12 @@ Code | Name
 </details><br/>
 
 
-# Package Preset
+## Package Preset
 
 <details>
 
 {f"{line}".join([f'''
-## {PACKAGE_MAPPERS[key]["label"]}
+### {PACKAGE_MAPPERS[key]["label"]}
 
 <details>
 
@@ -168,12 +168,12 @@ for key, value in REFERENCE_MODELS["packagePresets"].items()
 </details><br/>
 
 
-# Shipment Options
+## Shipment Options
 
 <details>
 
 {f"{line}".join([f'''
-## {PACKAGE_MAPPERS[key]["label"]}
+### {PACKAGE_MAPPERS[key]["label"]}
 
 <details>
 
@@ -189,12 +189,12 @@ for key, value in REFERENCE_MODELS["options"].items()
 </details><br/>
 
 
-# Shipment Services
+## Shipment Services
 
 <details>
 
 {f"{line}".join([f'''
-## {PACKAGE_MAPPERS[key]["label"]}
+### {PACKAGE_MAPPERS[key]["label"]}
 
 <details>
 
