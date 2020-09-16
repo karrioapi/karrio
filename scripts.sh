@@ -63,7 +63,7 @@ install_released() {
 }
 
 reset_data () {
-  run_postgres
+  rundb
 
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
