@@ -114,10 +114,12 @@ class ParcelData(Serializer):
     width = FloatField(required=False, allow_null=True, help_text="The parcel's width")
     height = FloatField(required=False, allow_null=True, help_text="The parcel's height")
     length = FloatField(required=False, allow_null=True, help_text="The parcel's length")
-    packaging_type = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=PACKAGING_UNIT, help_text="""
+    packaging_type = CharField(required=False, allow_blank=True, allow_null=True, help_text=f"""
     The parcel's packaging type.
     
-    Note that the packaging is optional when using a package preset
+    **Note that the packaging is optional when using a package preset**
+    
+    values: <br/>- {'<br/>- '.join([f'**{pkg}**' for pkg, _ in PACKAGING_UNIT])}
     
     For specific carriers packaging type, please consult [the reference](#operation/all_references).
     """)
