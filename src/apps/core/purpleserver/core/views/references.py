@@ -2,15 +2,16 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from rest_framework.serializers import Serializer
 
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 from purpleserver.providers.models import MODELS
 from purplship.core.utils import to_dict
 from purplship.core.units import Country, Currency, CountryState
 from purpleserver.core.router import router
+from purpleserver.core.serializers import StringListField, PlainDictField
 
 line = "\n"
 
@@ -212,18 +213,22 @@ for key, value in REFERENCE_MODELS["services"].items()
 """
 
 
+class References(Serializer):
+    countries = StringListField()
+    currencies = StringListField()
+    states = PlainDictField()
+    services = PlainDictField()
+    options = PlainDictField()
+    packagePresets = PlainDictField()
+
+
 @swagger_auto_schema(
     methods=['get'],
     tags=['Utils'],
     operation_id="all_references",
     operation_summary="Get all References",
     operation_description=MODELS_DOCUMENTATION,
-    responses={
-        200: openapi.Response(
-            schema=openapi.Schema(type=openapi.TYPE_OBJECT, additional_properties=True),
-            description="Data references for countries, currencies, services and more..."
-        )
-    }
+    responses={200: References()}
 )
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])
