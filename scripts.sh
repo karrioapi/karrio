@@ -192,6 +192,6 @@ build_image() {
 
 alias run:server=runserver
 alias run:db=rundb
-alias run:micro=run_services
+alias run:micro=runservices
 
 activate_env
