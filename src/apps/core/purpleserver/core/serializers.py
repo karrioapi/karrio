@@ -6,7 +6,7 @@ from purplship.core.units import (
 from rest_framework.serializers import (
     Serializer, CharField, FloatField,
     BooleanField, IntegerField, ListField,
-    ChoiceField, DictField, URLField,
+    ChoiceField, DictField, URLField, NullBooleanField
 )
 
 CARRIERS = [(k, k) for k in MODELS.keys()]
@@ -46,7 +46,7 @@ class CarrierSettings(Serializer):
 
 
 class TestFilters(Serializer):
-    test = BooleanField(required=False, default=False, help_text="""
+    test = NullBooleanField(required=False, default=False, help_text="""
     The test flag indicates whether to use a carrier configured for test. 
     """)
 
