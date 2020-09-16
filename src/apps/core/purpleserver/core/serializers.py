@@ -1,4 +1,5 @@
 from enum import Enum
+from drf_yasg import openapi
 from purpleserver.providers.models import MODELS
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit, PackagingUnit, PaymentType, Currency, PrinterType
@@ -6,7 +7,7 @@ from purplship.core.units import (
 from rest_framework.serializers import (
     Serializer, CharField, FloatField,
     BooleanField, IntegerField, ListField,
-    ChoiceField, DictField, URLField,
+    ChoiceField, DictField, URLField, NullBooleanField
 )
 
 CARRIERS = [(k, k) for k in MODELS.keys()]
@@ -32,6 +33,14 @@ class StringListField(ListField):
     child = CharField()
 
 
+class PlainDictField(DictField):
+    class Meta:
+        swagger_schema_fields = {
+            "type": openapi.TYPE_OBJECT,
+            "additional_properties": True,
+        }
+
+
 class EntitySerializer(Serializer):
     id = CharField(required=False, help_text="A unique identifier")
 
@@ -46,7 +55,7 @@ class CarrierSettings(Serializer):
 
 
 class TestFilters(Serializer):
-    test = BooleanField(required=False, default=False, help_text="""
+    test = NullBooleanField(required=False, default=False, help_text="""
     The test flag indicates whether to use a carrier configured for test. 
     """)
 
@@ -114,10 +123,12 @@ class ParcelData(Serializer):
     width = FloatField(required=False, allow_null=True, help_text="The parcel's width")
     height = FloatField(required=False, allow_null=True, help_text="The parcel's height")
     length = FloatField(required=False, allow_null=True, help_text="The parcel's length")
-    packaging_type = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=PACKAGING_UNIT, help_text="""
+    packaging_type = CharField(required=False, allow_blank=True, allow_null=True, help_text=f"""
     The parcel's packaging type.
     
-    Note that the packaging is optional when using a package preset
+    **Note that the packaging is optional when using a package preset**
+    
+    values: <br/>- {'<br/>- '.join([f'**{pkg}**' for pkg, _ in PACKAGING_UNIT])}
     
     For specific carriers packaging type, please consult [the reference](#operation/all_references).
     """)
@@ -237,7 +248,7 @@ class RateRequest(Serializer):
     
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """)
-    options = DictField(required=False, allow_null=True, help_text=f"""
+    options = PlainDictField(required=False, allow_null=True, help_text=f"""
     The options available for the shipment.
 
     Please consult [the reference](#operation/all_references) for additional specific carriers options.
@@ -349,7 +360,7 @@ class Rate(EntitySerializer):
     duties_and_taxes = FloatField(required=False, allow_null=True, help_text="The monetary amount of the duties and taxes if applied")
     transit_days = IntegerField(required=False, allow_null=True, help_text="The estimated delivery transit days")
     extra_charges = ListField(child=Charge(), required=False, allow_null=True, help_text="list of the rate's additional charges")
-    meta = DictField(required=False, allow_null=True, help_text="provider specific metadata")
+    meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
 
     carrier_ref = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system carrier configuration id")
 
@@ -392,7 +403,7 @@ class ShippingData(Serializer):
     Destination address (ship to) for the **recipient**
     """)
     parcels = ListField(child=ParcelData(), required=True, help_text="The shipment's parcels")
-    options = DictField(required=False, allow_null=True, help_text="""
+    options = PlainDictField(required=False, allow_null=True, help_text="""
     The options available for the shipment.<br/>
     Please consult [the reference](#operation/all_references) for additional specific carriers options.
     """)
@@ -468,7 +479,7 @@ class ShipmentContent(Serializer):
     Please consult [the reference](#operation/all_references) for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """)
-    options = DictField(required=False, allow_null=True, help_text="""
+    options = PlainDictField(required=False, allow_null=True, help_text="""
     The options available for the shipment.<br/>
     Please consult [the reference](#operation/all_references) for additional specific carriers options.
     """)
@@ -489,7 +500,7 @@ class ShipmentContent(Serializer):
 
     *Note that the request will be sent to all carriers in nothing is specified*
     """)
-    meta = DictField(required=False, allow_null=True, help_text="provider specific metadata")
+    meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
 
 
 class Shipment(EntitySerializer, ShipmentContent):

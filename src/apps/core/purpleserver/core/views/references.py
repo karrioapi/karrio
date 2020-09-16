@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from rest_framework.serializers import Serializer, DictField
+from rest_framework.serializers import Serializer
 
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
@@ -11,7 +11,7 @@ from purpleserver.providers.models import MODELS
 from purplship.core.utils import to_dict
 from purplship.core.units import Country, Currency, CountryState
 from purpleserver.core.router import router
-from purpleserver.core.serializers import StringListField
+from purpleserver.core.serializers import StringListField, PlainDictField
 
 line = "\n"
 
@@ -103,7 +103,7 @@ REFERENCE_MODELS = {
 
 
 MODELS_DOCUMENTATION = f"""
-# Countries
+## Countries
 
 <details>
 
@@ -114,12 +114,12 @@ Code | Name
 </details><br/>
 
 
-# States and Provinces
+## States and Provinces
 
 <details>
 
 {f"{line}".join([f'''
-## {Country[key].value}
+### {Country[key].value}
 
 <details>
 
@@ -134,7 +134,7 @@ for key, value in REFERENCE_MODELS["states"].items()
 
 </details><br/>
 
-# Currencies
+## Currencies
 
 <details>
 
@@ -145,12 +145,12 @@ Code | Name
 </details><br/>
 
 
-# Package Preset
+## Package Preset
 
 <details>
 
 {f"{line}".join([f'''
-## {PACKAGE_MAPPERS[key]["label"]}
+### {PACKAGE_MAPPERS[key]["label"]}
 
 <details>
 
@@ -169,12 +169,12 @@ for key, value in REFERENCE_MODELS["packagePresets"].items()
 </details><br/>
 
 
-# Shipment Options
+## Shipment Options
 
 <details>
 
 {f"{line}".join([f'''
-## {PACKAGE_MAPPERS[key]["label"]}
+### {PACKAGE_MAPPERS[key]["label"]}
 
 <details>
 
@@ -190,12 +190,12 @@ for key, value in REFERENCE_MODELS["options"].items()
 </details><br/>
 
 
-# Shipment Services
+## Shipment Services
 
 <details>
 
 {f"{line}".join([f'''
-## {PACKAGE_MAPPERS[key]["label"]}
+### {PACKAGE_MAPPERS[key]["label"]}
 
 <details>
 
@@ -216,10 +216,10 @@ for key, value in REFERENCE_MODELS["services"].items()
 class References(Serializer):
     countries = StringListField()
     currencies = StringListField()
-    states = DictField()
-    services = DictField()
-    options = DictField()
-    packagePresets = DictField()
+    states = PlainDictField()
+    services = PlainDictField()
+    options = PlainDictField()
+    packagePresets = PlainDictField()
 
 
 @swagger_auto_schema(
@@ -228,7 +228,7 @@ class References(Serializer):
     operation_id="all_references",
     operation_summary="Get all References",
     operation_description=MODELS_DOCUMENTATION,
-    responses={200: References},
+    responses={200: References()}
 )
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])

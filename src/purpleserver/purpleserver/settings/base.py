@@ -277,7 +277,8 @@ SWAGGER_SETTINGS = {
 }
 
 REDOC_SETTINGS = {
-   'LAZY_RENDERING': False,
+    'LAZY_RENDERING': False,
+    'HIDE_HOSTNAME': True
 }
 
 # Logging configuration

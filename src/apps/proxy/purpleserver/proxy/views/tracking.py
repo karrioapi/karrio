@@ -50,7 +50,7 @@ def track_shipment(request: Request, carrier_name: str, tracking_number: str):
 
     response = Shipments.track(
         tracking_request.data,
-        carrier_filter={**request.query_params, 'carrier_name': carrier_name}
+        carrier_filter={**params.validated_data, 'carrier_name': carrier_name}
     )
 
     return Response(

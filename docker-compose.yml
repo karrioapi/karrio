@@ -10,7 +10,7 @@ services:
     volumes:
       - .:/temp/dev
     ports:
-      - "8000:8000"
+      - "5002:5002"
     depends_on:
       - db
     networks:

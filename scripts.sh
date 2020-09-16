@@ -36,7 +36,7 @@ create_env() {
 }
 
 init() {
-    create_env && pip install -r "${ROOT:?}/requirements.dev.txt"
+    create_env && pip install -r --update "${ROOT:?}/requirements.dev.txt"
 }
 
 
@@ -63,7 +63,7 @@ install_released() {
 }
 
 reset_data () {
-  run_postgres
+  rundb
 
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
@@ -192,6 +192,6 @@ build_image() {
 
 alias run:server=runserver
 alias run:db=rundb
-alias run:micro=run_services
+alias run:micro=runservices
 
 activate_env
