@@ -9,6 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.providers.models import MODELS
 from purplship.core.utils import to_dict
+import purplship.core.units
 from purplship.core.units import Country, Currency, CountryState
 from purpleserver.core.router import router
 from purpleserver.core.serializers import StringListField, PlainDictField
@@ -30,6 +31,11 @@ def import_pkg(pkg: str):
 
 
 PACKAGE_MAPPERS = {
+    'purplship': {
+        'label': "Multi-carrier (purplship)",
+        'package': purplship.core.units,
+        'packagingTypes': "PackagingUnit"
+    },
     'canadapost': {
         'label': "Canada Post",
         'package': import_pkg('purplship.providers.canadapost.units'),
@@ -79,7 +85,6 @@ PACKAGE_MAPPERS = {
     }
 }
 
-
 REFERENCE_MODELS = {
     "countries": {c.name: c.value for c in list(Country)},
     "currencies": {c.name: c.value for c in list(Currency)},
@@ -94,13 +99,17 @@ REFERENCE_MODELS = {
         for key, mapper in PACKAGE_MAPPERS.items()
         if 'options' in mapper and mapper.get('package') is not None
     },
+    "packagingTypes": {
+        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['packagingTypes']))}
+        for key, mapper in PACKAGE_MAPPERS.items()
+        if 'packagingTypes' in mapper and mapper.get('package') is not None
+    },
     "packagePresets": {
         key: {c.name: to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
         for key, mapper in PACKAGE_MAPPERS.items()
         if 'packagePresets' in mapper and mapper.get('package') is not None
     }
 }
-
 
 MODELS_DOCUMENTATION = f"""
 ## Countries
@@ -141,6 +150,27 @@ for key, value in REFERENCE_MODELS["states"].items()
 Code | Name 
 --- | --- 
 {f"{line}".join([f"{code} | {name}" for code, name in REFERENCE_MODELS["currencies"].items()])}
+
+</details><br/>
+
+
+## Packaging Type
+
+<details>
+
+{f"{line}".join([f'''
+### {PACKAGE_MAPPERS[key]["label"]}
+
+<details>
+
+Code | Identifier
+--- | ---
+{f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
+
+</details><br/>
+'''
+for key, value in REFERENCE_MODELS["packagingTypes"].items() 
+])}
 
 </details><br/>
 
@@ -220,6 +250,7 @@ class References(Serializer):
     services = PlainDictField()
     options = PlainDictField()
     packagePresets = PlainDictField()
+    packagingTypes = PlainDictField()
 
 
 @swagger_auto_schema(
