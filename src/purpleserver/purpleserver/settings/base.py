@@ -28,7 +28,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__ + '/../..'))
 SECRET_KEY = config('SECRET_KEY', default='n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG_MODE', default=True, cast=bool)
 
 # custom env
 WORK_DIR = config('WORK_DIR', default='')
