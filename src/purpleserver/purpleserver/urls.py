@@ -32,7 +32,7 @@ admin.site.index_title = "Administration"
 schema_view = get_schema_view(
    openapi.Info(
       title="Purplship Open Source Multi-carrier Shipping API",
-      default_version='v1-2020.8.0',
+      default_version=f'v1-{settings.VERSION}',
       description=("""
       Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services
       
@@ -48,7 +48,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path(settings.OPEN_API_PATH, schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('api/swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
 
     path('admin/', admin.site.urls, name='app_admin'),
 

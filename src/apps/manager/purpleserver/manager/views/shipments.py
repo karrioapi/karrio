@@ -4,8 +4,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, generics
 
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
@@ -33,9 +32,10 @@ from purpleserver.manager.serializers import (
 )
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class ShipmentAPIView(APIView):
+class ShipmentAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
@@ -45,7 +45,7 @@ class ShipmentList(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="list_shipments",
+        operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all Shipments",
         operation_description="""
         Retrieve all shipments.
@@ -55,11 +55,12 @@ class ShipmentList(ShipmentAPIView):
     def get(self, request: Request):
         shipments = request.user.shipment_set.all()
 
-        return Response(Shipment(shipments, many=True).data)
+        response = self.paginate_queryset(Shipment(shipments, many=True).data)
+        return Response(response)
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="create_shipment",
+        operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a Shipment",
         operation_description="""
         Create a new shipment instance.
@@ -78,7 +79,7 @@ class ShipmentDetail(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="retrieve_shipment",
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a Shipment",
         operation_description="""
         Retrieve a shipment.
@@ -95,7 +96,7 @@ class ShipmentRates(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="fetch_shipments_rates",
+        operation_id=f"{ENDPOINT_ID}rates",
         operation_summary="Fetch new Shipment Rates",
         operation_description="""
         Refresh the list of the shipment rates
@@ -122,7 +123,7 @@ class ShipmentOptions(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="add_shipment_options",
+        operation_id=f"{ENDPOINT_ID}options",
         operation_summary="Add Shipment Options",
         operation_description="""
         Add one or many options to your shipment.<br/>
@@ -165,7 +166,7 @@ class ShipmentPurchase(ShipmentAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id="purchase_shipment",
+        operation_id=f"{ENDPOINT_ID}purchase",
         operation_summary="Buy a Shipment",
         operation_description="""
         Select your preferred rates to buy a shipment label.

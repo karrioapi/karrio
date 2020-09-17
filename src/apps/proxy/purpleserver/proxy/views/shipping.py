@@ -25,6 +25,7 @@ from purpleserver.core.serializers import (
 )
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 DESCRIPTIONS = """
 **[proxy]**
@@ -49,8 +50,8 @@ class ShippingRequestValidation(ShippingRequest):
 @swagger_auto_schema(
     methods=['post'],
     tags=['Shipping'],
-    operation_id="proxy_create_shipping",
-    operation_summary="Submit a Shipment",
+    operation_id=f"{ENDPOINT_ID}buy_label",
+    operation_summary="Buy a shipment label",
     operation_description=DESCRIPTIONS,
     request_body=ShippingRequest(),
     responses={200: ShipmentResponse(), 400: ErrorResponse()},

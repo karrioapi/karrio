@@ -4,8 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, generics
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
@@ -16,9 +15,10 @@ from purpleserver.manager.router import router
 
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class AddressAPIView(APIView):
+class AddressAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
@@ -28,7 +28,7 @@ class AddressList(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="list_addresses",
+        operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all Addresses",
         responses={200: Address(many=True), 400: ErrorResponse()}
     )
@@ -37,11 +37,12 @@ class AddressList(AddressAPIView):
         Retrieve all addresses.
         """
         addresses = request.user.address_set.all()
-        return Response(Address(addresses, many=True).data)
+        response = self.paginate_queryset(Address(addresses, many=True).data)
+        return Response(response)
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="create_address",
+        operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create an Address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()}
@@ -58,7 +59,7 @@ class AddressDetail(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="retrieve_address",
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve an Address",
         responses={200: Address(), 400: ErrorResponse()}
     )
@@ -71,7 +72,7 @@ class AddressDetail(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="update_address",
+        operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update an Address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()}
