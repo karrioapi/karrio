@@ -1,4 +1,5 @@
 include LICENSE
 include README.md
 recursive-include purpleserver/static *
+recursive-include purpleserver/VERSION
 recursive-include purpleserver/templates *
