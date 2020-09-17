@@ -427,13 +427,13 @@ class ShippingRequest(ShippingData):
 
 
 class ShipmentData(ShippingData):
-    services = StringListField(required=False, allow_null=True, help_text="""
+    services = StringListField(required=False, allow_null=True, default=[], help_text="""
     The requested carrier service for the shipment.
 
     Please consult [the reference](#operation/all_references) for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """)
-    carrier_ids = StringListField(required=False, allow_null=True, help_text="""
+    carrier_ids = StringListField(required=False, allow_null=True, default=[], help_text="""
     The list of configured carriers you wish to get rates from.
     
     *Note that the request will be sent to all carriers in nothing is specified*
@@ -473,7 +473,7 @@ class ShipmentContent(Serializer):
     """)
     parcels = ListField(child=Parcel(), required=True, help_text="The shipment's parcels")
 
-    services = StringListField(required=False, allow_null=True, help_text="""
+    services = StringListField(required=False, allow_null=True, default=[], help_text="""
     The requested carrier service for the shipment.
 
     Please consult [the reference](#operation/all_references) for specific carriers services.<br/>
@@ -489,13 +489,13 @@ class ShipmentContent(Serializer):
     The customs details.<br/>
     Note that this is required for the shipment of an international Dutiable parcel.
     """)
-    doc_images = ListField(child=Doc(), required=False, allow_null=True, help_text="""
+    doc_images = ListField(child=Doc(), required=False, allow_null=True, default=[], help_text="""
     The list of documents to attach for a paperless interantional trade.
 
     eg: Invoices...
     """)
     reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
-    carrier_ids = StringListField(required=False, allow_null=True, help_text="""
+    carrier_ids = StringListField(required=False, allow_null=True, default=[], help_text="""
     The list of configured carriers you wish to get rates from.
 
     *Note that the request will be sent to all carriers in nothing is specified*

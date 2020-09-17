@@ -45,7 +45,7 @@ def fetch_rates(request: Request):
     rate_request = RateRequest(data=request.data)
     rate_request.is_valid(raise_exception=True)
 
-    response = Rates.fetch(rate_request.data)
+    response = Rates.fetch(rate_request.validated_data)
 
     return Response(
         to_dict(response),
