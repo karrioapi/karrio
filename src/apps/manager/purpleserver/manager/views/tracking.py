@@ -31,7 +31,7 @@ class ShipmentTracking(TrackingAPIView):
         operation_id="track_shipment",
         operation_summary="Track a shipment",
         operation_description="""Track a shipment.""",
-        responses={200: Tracking(), 404: ErrorResponse()}
+        responses={200: TrackingStatus(), 404: ErrorResponse()}
     )
     def get(self, request: Request, carrier_id: str, tracking_number: str):
         tracking = request.user.tracking_set.filter(tracking_number=tracking_number).first()
@@ -44,7 +44,7 @@ class ShipmentTracking(TrackingAPIView):
         )
 
         tracking = SerializerDecorator[TrackingSerializer](tracking, data=data).save(user=request.user).instance
-        return Response(Tracking(tracking).data)
+        return Response(TrackingStatus(tracking).data)
 
 
 router.urls.append(path('tracking/<carrier_id>/<tracking_number>', ShipmentTracking.as_view(), name="shipment-tracking"))

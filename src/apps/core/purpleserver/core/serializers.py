@@ -373,7 +373,7 @@ class TrackingDetails(Serializer):
     events = ListField(child=TrackingEvent(), required=False, allow_null=True, help_text="The tracking details events")
 
 
-class Tracking(EntitySerializer, TrackingDetails):
+class TrackingStatus(EntitySerializer, TrackingDetails):
     shipment_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system shipment associated.")
 
 
