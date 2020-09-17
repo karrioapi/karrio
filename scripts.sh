@@ -36,7 +36,7 @@ create_env() {
 }
 
 init() {
-    create_env && pip install -r --update "${ROOT:?}/requirements.dev.txt"
+    create_env && pip install -r "${ROOT:?}/requirements.dev.txt"
 }
 
 
@@ -62,9 +62,7 @@ install_released() {
     freightcom.extension
 }
 
-reset_data () {
-  rundb
-
+migrate () {
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
     migrate="purplship migrate_schemas --shared"
@@ -125,8 +123,12 @@ runserver() {
     export MULTI_TENANT_ENABLE=False
   fi
 
-  if [[ "$*" == *--newdb* ]]; then
-    reset_data "$@"
+  if [[ "$*" == *--rdata* ]]; then
+    migrate "$@"
+  fi
+
+  if [[ "$*" == *--rdb* ]]; then
+    rundb
   fi
 
   purplship runserver
