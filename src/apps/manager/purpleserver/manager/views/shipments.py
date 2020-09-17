@@ -4,8 +4,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, generics
 
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
@@ -36,7 +35,7 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class ShipmentAPIView(APIView):
+class ShipmentAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
@@ -56,7 +55,8 @@ class ShipmentList(ShipmentAPIView):
     def get(self, request: Request):
         shipments = request.user.shipment_set.all()
 
-        return Response(Shipment(shipments, many=True).data)
+        response = self.paginate_queryset(Shipment(shipments, many=True).data)
+        return Response(response)
 
     @swagger_auto_schema(
         tags=['Shipments'],

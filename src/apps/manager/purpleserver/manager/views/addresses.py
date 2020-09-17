@@ -4,8 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, generics
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class AddressAPIView(APIView):
+class AddressAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
@@ -38,7 +37,8 @@ class AddressList(AddressAPIView):
         Retrieve all addresses.
         """
         addresses = request.user.address_set.all()
-        return Response(Address(addresses, many=True).data)
+        response = self.paginate_queryset(Address(addresses, many=True).data)
+        return Response(response)
 
     @swagger_auto_schema(
         tags=['Addresses'],
