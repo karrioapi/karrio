@@ -9,7 +9,7 @@
     "license": {
       "name": "AGPLv3+ License"
     },
-    "version": "v1-2020.8.0"
+    "version": "v1-2020.8.1"
   },
   "host": "instance.purplship.api",
   "schemes": [
