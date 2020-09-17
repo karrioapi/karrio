@@ -25,9 +25,6 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 
-with open("VERSION", "r") as v:
-    version = v.read()
-
 admin.site.site_header = "purplship"
 admin.site.site_title = "purplphip shipping API"
 admin.site.index_title = "Administration"
@@ -35,7 +32,7 @@ admin.site.index_title = "Administration"
 schema_view = get_schema_view(
    openapi.Info(
       title="Purplship Open Source Multi-carrier Shipping API",
-      default_version=f'v1-{version}',
+      default_version=f'v1-{settings.VERSION}',
       description=("""
       Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services
       

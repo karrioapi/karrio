@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__ + '/../..'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r')
+SECRET_KEY = config('SECRET_KEY', default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG_MODE', default=True, cast=bool)
@@ -38,6 +38,8 @@ USE_HTTPS = config('USE_HTTPS', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 CORS_ORIGIN_ALLOW_ALL = True
 
+with open(f"{BASE_DIR}/VERSION", "r") as v:
+    VERSION = v.read()
 
 # HTTPS configuration
 if USE_HTTPS is True:
