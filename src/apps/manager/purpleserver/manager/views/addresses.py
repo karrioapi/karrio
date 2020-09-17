@@ -16,6 +16,7 @@ from purpleserver.manager.router import router
 
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class AddressAPIView(APIView):
@@ -28,7 +29,7 @@ class AddressList(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="list_addresses",
+        operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all Addresses",
         responses={200: Address(many=True), 400: ErrorResponse()}
     )
@@ -41,7 +42,7 @@ class AddressList(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="create_address",
+        operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create an Address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()}
@@ -58,7 +59,7 @@ class AddressDetail(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="retrieve_address",
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve an Address",
         responses={200: Address(), 400: ErrorResponse()}
     )
@@ -71,7 +72,7 @@ class AddressDetail(AddressAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
-        operation_id="update_address",
+        operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update an Address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()}

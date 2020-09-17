@@ -17,6 +17,7 @@ from purpleserver.manager.serializers import ParcelSerializer
 from purpleserver.manager.router import router
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class ParcelAPIView(APIView):
@@ -29,7 +30,7 @@ class ParcelList(ParcelAPIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
-        operation_id="list_parcels",
+        operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all Parcels",
         responses={200: Parcel(many=True), 400: ErrorResponse()}
     )
@@ -43,7 +44,7 @@ class ParcelList(ParcelAPIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
-        operation_id="create_parcel",
+        operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a Parcel",
         request_body=ParcelData(),
         responses={200: Parcel(), 400: ErrorResponse()}
@@ -60,7 +61,7 @@ class ParcelDetail(ParcelAPIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
-        operation_id="retrieve_parcel",
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a Parcel",
         responses={200: Parcel(), 400: ErrorResponse()}
     )
@@ -73,7 +74,7 @@ class ParcelDetail(ParcelAPIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
-        operation_id="update_parcel",
+        operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a Parcel",
         request_body=ParcelData(),
         responses={200: Parcel(), 400: ErrorResponse()}

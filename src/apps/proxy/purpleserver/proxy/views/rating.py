@@ -19,6 +19,7 @@ from purpleserver.core.gateway import Rates
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 DESCRIPTIONS = """
 **[proxy]**
@@ -31,7 +32,7 @@ Use this service to fetch a shipping rates available.
 @swagger_auto_schema(
     methods=['post'],
     tags=['Rates'],
-    operation_id="proxy_fetch_rates",
+    operation_id=f"{ENDPOINT_ID}fetch",
     operation_summary="Fetch Shipment Rates",
     operation_description=DESCRIPTIONS,
     responses={200: RateResponse(), 400: ErrorResponse()},

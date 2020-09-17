@@ -17,6 +17,7 @@ from purpleserver.core.gateway import Carriers
 from purpleserver.core.serializers import CarrierSettings, ErrorResponse, CARRIERS
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class CarrierFilters(Serializer):
@@ -34,6 +35,7 @@ class CarrierList(CarrierAPIView):
 
     @swagger_auto_schema(
         tags=['Carriers'],
+        operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all Carriers",
         responses={200: CarrierSettings(many=True), 400: ErrorResponse()},
         query_serializer=CarrierFilters
@@ -54,7 +56,7 @@ class CarrierDetails(CarrierAPIView):
 
     @swagger_auto_schema(
         tags=['Carriers'],
-        operation_id="carriers_retrieve",
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a Carrier",
         responses={200: CarrierSettings(), 400: ErrorResponse()}
     )

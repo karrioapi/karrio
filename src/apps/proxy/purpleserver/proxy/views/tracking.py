@@ -20,6 +20,7 @@ from purpleserver.core.gateway import Shipments
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 DESCRIPTIONS = """
 **[proxy]**
@@ -31,7 +32,7 @@ You can track a shipment by specifying the carrier and the shipment tracking num
 @swagger_auto_schema(
     methods=['get'],
     tags=['Tracking'],
-    operation_id="proxy_fetch_tracking",
+    operation_id=f"{ENDPOINT_ID}fetch",
     operation_summary="Track a Shipment",
     operation_description=DESCRIPTIONS,
     responses={200: TrackingResponse(), 400: ErrorResponse()},

@@ -256,8 +256,8 @@ class References(Serializer):
 @swagger_auto_schema(
     methods=['get'],
     tags=['Utils'],
-    operation_id="all_references",
-    operation_summary="Get all References",
+    operation_id="references",
+    operation_summary="Data References",
     operation_description=MODELS_DOCUMENTATION,
     responses={200: References()}
 )

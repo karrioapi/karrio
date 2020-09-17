@@ -17,6 +17,7 @@ from purpleserver.manager.serializers import CustomsSerializer
 from purpleserver.manager.router import router
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class CustomsAPIView(APIView):
@@ -29,7 +30,7 @@ class CustomsList(CustomsAPIView):
 
     @swagger_auto_schema(
         tags=['Customs'],
-        operation_id="list_customs_info",
+        operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all Customs Info",
         responses={200: Customs(many=True), 400: ErrorResponse()}
     )
@@ -43,7 +44,7 @@ class CustomsList(CustomsAPIView):
 
     @swagger_auto_schema(
         tags=['Customs'],
-        operation_id="create_customs_info",
+        operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a Customs Info",
         request_body=CustomsData(),
         responses={200: Customs(), 400: ErrorResponse()}
@@ -60,7 +61,7 @@ class CustomsDetail(CustomsAPIView):
 
     @swagger_auto_schema(
         tags=['Customs'],
-        operation_id="retrieve_customs_info",
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a Customs Info",
         responses={200: Customs(), 400: ErrorResponse()}
     )
@@ -73,7 +74,7 @@ class CustomsDetail(CustomsAPIView):
 
     @swagger_auto_schema(
         tags=['Customs'],
-        operation_id="update_customs_info",
+        operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a Customs Info",
         request_body=CustomsData(),
         responses={200: Customs(), 400: ErrorResponse()}
