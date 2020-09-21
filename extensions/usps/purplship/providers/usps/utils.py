@@ -1,4 +1,4 @@
-"""PurplShip USPS client settings."""
+"""Purplship USPS client settings."""
 
 from purplship.core.settings import Settings as BaseSettings
 

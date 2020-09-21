@@ -1,4 +1,4 @@
-"""PurplShip API Gateway modules."""
+"""Purplship API Gateway modules."""
 
 import attr
 import pkgutil
@@ -31,7 +31,7 @@ class GatewayInitializer:
 class _ProviderMapper:
     @property
     def providers(self):
-        # Register PurplShip mappers
+        # Register Purplship mappers
         return {
             name: __import__(f"{mappers.__name__}.{name}", fromlist=[name])
             for _, name, _ in pkgutil.iter_modules(mappers.__path__)
@@ -62,7 +62,7 @@ class _ProviderMapper:
 gateway = _ProviderMapper()
 logger.info(
     f"""
-PurplShip default gateway mapper initialized.
+Purplship default gateway mapper initialized.
 Registered providers: {','.join(gateway.providers)}
 """
 )

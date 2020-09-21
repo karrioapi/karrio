@@ -1,4 +1,4 @@
-"""PurplShip FedEx client settings."""
+"""Purplship FedEx client settings."""
 
 import attr
 from purplship.providers.fedex.utils import Settings as BaseSettings

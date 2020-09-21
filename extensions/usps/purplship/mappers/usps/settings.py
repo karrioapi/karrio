@@ -1,4 +1,4 @@
-"""PurplShip USPS client settings."""
+"""Purplship USPS client settings."""
 
 import attr
 from purplship.providers.usps.utils import Settings as BaseSettings

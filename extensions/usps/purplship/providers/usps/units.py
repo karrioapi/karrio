@@ -1,4 +1,4 @@
-"""PurplShip USPS enumerations module"""
+"""Purplship USPS enumerations module"""
 
 from enum import Enum
 

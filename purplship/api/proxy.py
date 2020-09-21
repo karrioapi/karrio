@@ -1,4 +1,4 @@
-"""PurplShip Proxy base class definition module."""
+"""Purplship Proxy base class definition module."""
 
 import attr
 from abc import ABC

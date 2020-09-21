@@ -1,4 +1,4 @@
-"""PurplShip Canada post client settings."""
+"""Purplship Canada post client settings."""
 
 import attr
 from purplship.providers.canadapost import Settings as BaseSettings
