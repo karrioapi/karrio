@@ -7,6 +7,7 @@ Carrier services Python data types libraries
 - [Canada Post - py-canadapost](https://github.com/PurplShip/purplship-carriers/tree/master/py-canadapost)
 - [Canpar - py-canpar](https://github.com/PurplShip/purplship-carriers/tree/master/py-canpar)
 - [DHL - py-dhl](https://github.com/PurplShip/purplship-carriers/tree/master/py-dhl)
+- [Dicom - py-dicom](https://github.com/PurplShip/purplship-carriers/tree/master/py-dicom)
 - [FedEx - py-fedex](https://github.com/PurplShip/purplship-carriers/tree/master/py-fedex)
 - [Purolator - py-purolator](https://github.com/PurplShip/purplship-carriers/tree/master/py-purolator)
 - [Royalmail - py-royalmail](https://github.com/PurplShip/purplship-carriers/tree/master/py-royalmail)

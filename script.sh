@@ -6,6 +6,10 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export wheels=~/Wheels
+export PIP_FIND_LINKS="https://git.io/purplship"
+[[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
+
 activate_env() {
   echo "Activate $BASE_DIR"
   deactivate || true
@@ -50,7 +54,7 @@ clean_builds() {
 
 backup_wheels() {
   # shellcheck disable=SC2154
-  [ -d "$wheels" ] &&
+  [[ -d "$wheels" ]] &&
   find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
   clean_builds
 }
