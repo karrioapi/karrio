@@ -16,7 +16,7 @@ class PackagePresets(Flag):
 
 
 class PackagingType(Flag):
-    purolator_express_envelope = "Envelop"
+    purolator_express_envelope = "Envelope"
     purolator_express_pack = "Pack"
     purolator_express_box = "Box"
     purolator_customer_packaging = "Customer Packaging"
