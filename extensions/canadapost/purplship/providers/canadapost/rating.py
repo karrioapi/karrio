@@ -85,8 +85,8 @@ def mailing_scenario_request(
 ) -> Serializable[mailing_scenario]:
     """Create the appropriate Canada Post rate request depending on the destination
 
-    :param settings: PurplShip carrier connection settings
-    :param payload: PurplShip unified API rate request data
+    :param settings: Purplship carrier connection settings
+    :param payload: Purplship unified API rate request data
     :return: a domestic or international Canada post compatible request
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier
     """
