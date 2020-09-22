@@ -27,9 +27,8 @@ EXPOSE $PURPLSHIP_PORT
 RUN mkdir /app
 WORKDIR /app
 
-COPY LICENSES/APACHE-LICENSE-2.0 /APACHE-LICENSE-2.0
 COPY requirements.txt /temp/
-COPY gunicorn-cfg.py docker/docker-entrypoint.sh /app/
+COPY gunicorn-cfg.py docker/docker-entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
 
 RUN pip install --upgrade pip \
     pip install -r /temp/requirements.txt \
