@@ -1,12 +1,12 @@
 FROM python:3.8
 
 LABEL maintainer="hello@purplship.com"
-LABEL org.opencontainers.image.title="PurplShip Server"
-LABEL org.opencontainers.image.description="PurplShip Server runtime image"
+LABEL org.opencontainers.image.title="Purplship Server"
+LABEL org.opencontainers.image.description="Purplship Server runtime image"
 LABEL org.opencontainers.image.url="https://purplship.com"
 LABEL org.opencontainers.image.documentation="https://docs.purplship.com"
 LABEL org.opencontainers.image.source="https://github.com/purplship/purplship-server"
-LABEL org.opencontainers.image.vendor="PurplShip Software, Inc."
+LABEL org.opencontainers.image.vendor="Purplship Team."
 LABEL org.opencontainers.image.authors="hello@purplship.com"
 
 ENV DEBUG_MODE False
@@ -28,7 +28,7 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY requirements.txt /temp/
-COPY gunicorn-cfg.py docker/docker-entrypoint.sh /app/
+COPY gunicorn-cfg.py docker/docker-entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
 
 RUN pip install --upgrade pip \
     pip install -r /temp/requirements.txt \
