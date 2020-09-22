@@ -1,12 +1,23 @@
-# Purplship (Multi-carrier private cloud shipping API)
+<p align="center">
+  <p align="center">
+    <a href="https://purplship.com" target="_blank">
+      <img src="https://github.com/PurplShip/purplship-server/raw/main/src/purpleserver/purpleserver/static/purpleserver/img/icon.png" alt="Purplship" height="200">
+    </a>
+  </p>
+  <h2 align="center">
+    Modern Multi-carrier Shipping API
+  </h2>
+  <p align="center">
+    <a href="https://github.com/PurplShip/purplship-server/actions"><img src="https://github.com/PurplShip/purplship-server/workflows/PuprlShip-Server/badge.svg" alt="CI" style="max-width:100%;"></a>
+    <a href="https://www.gnu.org/licenses/agpl-3.0" rel="nofollow"><img src="https://camo.githubusercontent.com/cb1d26ec555a33e9f09fe279b5edc49996a3bb3b/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4c6963656e73652d4147504c25323076332d626c75652e737667" alt="License: AGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
+    <a href="https://gitter.im/PurplShip/purplship?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge" rel="nofollow"><img src="https://camo.githubusercontent.com/01e8eacc7691f9db65721966fd30df70567aa1dc/68747470733a2f2f6261646765732e6769747465722e696d2f507572706c536869702f707572706c736869702e737667" alt="Join the chat at https://gitter.im/PurplShip/purplship" data-canonical-src="https://badges.gitter.im/PurplShip/purplship.svg" style="max-width:100%;"></a>
+  </p>
+</p>
 
-[![CI](https://github.com/PurplShip/purplship-server/workflows/PuprlShip-Server/badge.svg)](https://github.com/PurplShip/purplship-server/actions)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Join the chat at https://gitter.im/PurplShip/purplship](https://badges.gitter.im/PurplShip/purplship.svg)](https://gitter.im/PurplShip/purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-## Introduction
+**Purplship server is an On-prem, private cloud Multi-carrier Shipping API** from https://purplship.com.
 
-purplship-server is a private cloud Multi-carrier Shipping API.
+The server is in Python, but you can use any programming language to send API request to any supported shipping carriers, in any application.
 
 
 ## Documentation
@@ -14,7 +25,7 @@ purplship-server is a private cloud Multi-carrier Shipping API.
 Purplship has usage and reference documentation at [docs.purplship.com](https://docs.purplship.com).
 
 
-## Try out purplship
+## Try out Purplship
 
 ### Docker
 
@@ -31,7 +42,7 @@ docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres 
 </details>
 
 ```shell script
-docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.8.2
+docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.8.3
 ```
 
 #### Docker Compose
@@ -55,7 +66,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
   web:
-    image: purplship/purplship-server:2020.8.2
+    image: purplship/purplship-server:2020.8.3
     restart: always
     environment:
       - DEBUG_MODE=True
@@ -100,7 +111,7 @@ pip install -r requirements.txt
 
 #### Initialize the data (Demo)
 
-Make sure to have a running postgres SQL database instance running
+Make sure to have a running postgres SQL database instance
 
 - Set database connection environment variables
 
@@ -125,5 +136,20 @@ purplship createsuperuser
 #### Start the server (Demo)
 
 ```shell script
-purplship runserver 0.0.0.0:8000
+purplship runserver 0.0.0.0:5002
 ```
+
+
+## Official Purplship client libraries
+
+- [Python](https://github.com/PurplShip/purplship-python-client)
+- [PHP](https://github.com/PurplShip/purplship-php-client)
+
+Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with our [OpenAPI References](https://github.com/PurplShip/purplship-server/tree/main/openapi)
+
+## Get the Latest News
+
+- **Blog** - Get the latest updates from the [Puprlship blog](https://blog.purplship.com).
+- **Twitter** - Follow [Purplship](https://twitter.com/purplship).
+
+Any other questions, mail us at hello@purplship.com. We’d love to meet you!
