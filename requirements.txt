@@ -28,7 +28,6 @@ psycopg2-binary==2.8.6
 purplship==2020.8.0
 purplship-server==2020.8.0
 purplship-server.core==2020.8.2
-purplship-server.pricing==2020.8.0a0
 purplship-server.proxy==2020.8.2
 purplship.canadapost==2020.8.0
 purplship.dhl==2020.8.0
