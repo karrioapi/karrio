@@ -308,3 +308,12 @@ class PickupDetails:
     ready_time: str = None
     closing_time: str = None
     id: str = None
+
+
+@attr.s(auto_attribs=True)
+class ConfirmationDetails:
+    """PurplShip binary operation confirmation type."""
+
+    carrier_id: str
+    carrier_name: str
+    success: bool
