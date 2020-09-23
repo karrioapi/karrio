@@ -1,4 +1,4 @@
-from typing import TypeVar, Type, Optional, cast
+from typing import TypeVar, Type, Optional, cast, List
 from pysoap.envelope import Header, Body, Envelope, Fault
 from purplship.core.utils.xml import Element
 from purplship.core.settings import Settings
@@ -91,7 +91,7 @@ def apply_namespaceprefix(item, prefix: str):
             apply_namespaceprefix(child, prefix)
 
 
-def extract_fault(response: Element, settings: Type[Settings]) -> Message:
+def extract_fault(response: Element, settings: Settings) -> List[Message]:
     faults = [build(Fault, node) for node in response.xpath(".//*[local-name() = $name]", name="Fault")]
     return [
         Message(

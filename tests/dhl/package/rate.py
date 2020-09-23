@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.package import Rating
+from purplship.api import Rating
 from tests.dhl.package.fixture import gateway
 
 
@@ -46,7 +46,7 @@ class TestDHLRating(unittest.TestCase):
 
         self.assertEqual(serialized_request, RateRequestFromPresetXML)
 
-    @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
+    @patch("purplship.api.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -54,19 +54,19 @@ class TestDHLRating(unittest.TestCase):
         self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_rate_response(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_rate_parsing_error(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = RateParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateParsingError))
 
     def test_parse_rate_missing_args_error(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = RateMissingArgsError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -74,7 +74,7 @@ class TestDHLRating(unittest.TestCase):
             )
 
     def test_parse_rate_vol_weight_higher_response(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = RateVolWeightHigher
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(

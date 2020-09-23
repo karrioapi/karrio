@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
-from purplship.package import Shipment
+from purplship.api import Shipment
 from tests.dhl.package.fixture import gateway
 
 
@@ -24,7 +24,7 @@ class TestDHLShipment(unittest.TestCase):
 
         self.assertEqual(serialized_request, ShipmentRequestXml)
 
-    @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
+    @patch("purplship.api.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         Shipment.create(self.ShipmentRequest).with_(gateway)
 
@@ -32,7 +32,7 @@ class TestDHLShipment(unittest.TestCase):
         self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_shipment_error(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentParsingError
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
@@ -42,7 +42,7 @@ class TestDHLShipment(unittest.TestCase):
             )
 
     def test_shipment_missing_args_error_parsing(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentMissingArgsError
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
@@ -52,7 +52,7 @@ class TestDHLShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = ShipmentResponseXml
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()

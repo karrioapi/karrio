@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
-from purplship.package import Tracking
+from purplship.api import Tracking
 from tests.dhl.package.fixture import gateway
 
 
@@ -20,7 +20,7 @@ class TestDHLTracking(unittest.TestCase):
             TrackingRequestXML,
         )
 
-    @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
+    @patch("purplship.api.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -28,7 +28,7 @@ class TestDHLTracking(unittest.TestCase):
         self.assertEqual(url, gateway.settings.server_url)
 
     def test_tracking_auth_error_parsing(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = AuthError
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -36,7 +36,7 @@ class TestDHLTracking(unittest.TestCase):
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = TrackingResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -45,7 +45,7 @@ class TestDHLTracking(unittest.TestCase):
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_single_not_found_parsing(self):
-        with patch("purplship.package.mappers.dhl.proxy.http") as mock:
+        with patch("purplship.api.mappers.dhl.proxy.http") as mock:
             mock.return_value = TrackingSingleNotFound
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

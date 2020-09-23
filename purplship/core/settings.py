@@ -1,6 +1,7 @@
 """PurplShip Settings base class definition"""
 
 import attr
+from typing import Optional
 from abc import ABC
 
 
@@ -15,9 +16,9 @@ class Settings(ABC):
     test: bool = False
 
     @property
-    def server_url(self):
+    def server_url(self) -> Optional[str]:
         return None
 
     @property
-    def carrier_name(self):
+    def carrier_name(self) -> Optional[str]:
         return None

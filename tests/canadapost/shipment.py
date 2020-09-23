@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
-from purplship.package import Shipment
+from purplship.api import Shipment
 from tests.canadapost.fixture import gateway, LabelResponse, api
 
 
@@ -35,7 +35,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         self.assertEqual(request.data.serialize(), NonContractShipmentRequestXML)
 
     def test_create_shipment(self):
-        with patch("purplship.package.mappers.canadapost.proxy.http") as mocks:
+        with patch("purplship.api.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = ["<a></a>", ""]
             Shipment.create(self.ShipmentRequest).with_(gateway)
 
@@ -46,7 +46,7 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.package.mappers.canadapost.proxy.http") as mocks:
+        with patch("purplship.api.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = [ShipmentResponseXML, LabelResponse]
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()

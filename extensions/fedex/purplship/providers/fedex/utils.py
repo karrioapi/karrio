@@ -16,10 +16,6 @@ class Settings(BaseSettings):
     id: str = None
 
     @property
-    def carrier_name(self):
-        return "fedex"
-
-    @property
     def server_url(self):
         return (
             "https://wsbeta.fedex.com:443/web-services"

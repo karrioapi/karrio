@@ -1,2 +1,2 @@
-from .freight_rate import freight_rate_request, parse_freight_rate_response
-from .freight_ship import freight_ship_request, parse_freight_ship_response
+from purplship.providers.ups.freight.ship import shipment_request, parse_shipment_response
+from purplship.providers.ups.freight.rate import rate_request, parse_rate_response

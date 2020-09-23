@@ -12,10 +12,6 @@ class Settings(BaseSettings):
     id: str = None
 
     @property
-    def carrier_name(self):
-        return "ups"
-
-    @property
     def server_url(self):
         return (
             "https://wwwcie.ups.com/webservices"
