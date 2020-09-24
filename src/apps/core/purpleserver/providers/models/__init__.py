@@ -26,12 +26,12 @@ class CanadaPostSettings(Carrier):
 
 
 class DHLSettings(Carrier):
-    CARRIER_NAME = 'dhl'
+    CARRIER_NAME = 'dhl_express'
 
     class Meta:
-        db_table = "dhl-settings"
-        verbose_name = 'DHL Settings'
-        verbose_name_plural = 'DHL Settings'
+        db_table = "dhl_express-settings"
+        verbose_name = 'DHL Express Settings'
+        verbose_name_plural = 'DHL Express Settings'
 
     site_id = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
@@ -39,12 +39,12 @@ class DHLSettings(Carrier):
 
 
 class FedexSettings(Carrier):
-    CARRIER_NAME = 'fedex'
+    CARRIER_NAME = 'fedex_express'
 
     class Meta:
-        db_table = "fedex-settings"
-        verbose_name = 'FedEx Settings'
-        verbose_name_plural = 'FedEx Settings'
+        db_table = "fedex_express-settings"
+        verbose_name = 'FedEx Express Settings'
+        verbose_name_plural = 'FedEx Express Settings'
 
     user_key = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
@@ -53,12 +53,12 @@ class FedexSettings(Carrier):
 
 
 class PurolatorSettings(Carrier):
-    CARRIER_NAME = 'purolator'
+    CARRIER_NAME = 'purolator_courier'
 
     class Meta:
-        db_table = "purolator-settings"
-        verbose_name = 'Purolator Settings'
-        verbose_name_plural = 'Purolator Settings'
+        db_table = "purolator_courier-settings"
+        verbose_name = 'Purolator Courier Settings'
+        verbose_name_plural = 'Purolator Courier Settings'
 
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
@@ -67,12 +67,12 @@ class PurolatorSettings(Carrier):
 
 
 class UPSSettings(Carrier):
-    CARRIER_NAME = 'ups'
+    CARRIER_NAME = 'ups_package'
 
     class Meta:
-        db_table = "ups-settings"
-        verbose_name = 'UPS Settings'
-        verbose_name_plural = 'UPS Settings'
+        db_table = "ups_package-settings"
+        verbose_name = 'UPS Package Settings'
+        verbose_name_plural = 'UPS Package Settings'
 
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)

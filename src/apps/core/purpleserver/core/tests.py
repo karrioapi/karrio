@@ -15,7 +15,7 @@ class APITestCase(BaseAPITestCase):
             customer_number='2004381', contract_id='42708517',
             password='0bfa9fcb9853d1f51ee57a')
         UPSSettings.objects.create(
-            carrier_id='ups', test=True, username='test',
+            carrier_id='ups_package', test=True, username='test',
             account_number='000000', access_license_number='000000',
             password='test')
         self.client = APIClient()
