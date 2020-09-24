@@ -87,11 +87,11 @@ This instruction will get you started with `purplship.package` and the support f
 -f https://git.io/purplship
 
 # core packages
-purplship==2020.7.0
-purplship.package==2020.7.0
+purplship
+purplship.package
 
 # carriers
-purplship.canadapost==2020.7.0
+purplship.canadapost
 ```
 
 <details>
@@ -100,10 +100,10 @@ purplship.canadapost==2020.7.0
 You can add additional carriers you desire to work with
 
 ```text
-purplship.dhl==2020.7.0
-purplship.fedex==2020.7.0
-purplship.purolator==2020.7.0
-purplship.ups==2020.7.0
+purplship.dhl_express
+purplship.fedex_express
+purplship.purolator_courier
+purplship.ups_package
 ```
 
 </details>

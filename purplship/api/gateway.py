@@ -8,7 +8,7 @@ from purplship.core import Settings
 from purplship.api.proxy import Proxy
 from purplship.api.mapper import Mapper
 from purplship.core.errors import PurplShipError
-import purplship.api.mappers as mappers
+import purplship.mappers as mappers
 
 logger = logging.getLogger(__name__)
 

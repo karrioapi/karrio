@@ -1,6 +1,6 @@
-import purplship.api as api
+import purplship
 
-gateway = api.gateway["fedex_express"].create(
+gateway = purplship.gateway["fedex_express"].create(
     dict(
         user_key="user_key",
         password="password",

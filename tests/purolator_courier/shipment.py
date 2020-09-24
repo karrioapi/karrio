@@ -4,7 +4,7 @@ from datetime import datetime
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
-from purplship.api import Shipment
+from purplship import Shipment
 from tests.purolator_courier.fixture import gateway
 
 
@@ -26,7 +26,7 @@ class TestPurolatorShipment(unittest.TestCase):
         self.assertEqual(document_request, SHIPMENT_DOCUMENT_REQUEST_XML)
 
     def test_send_valid_shipment(self):
-        with patch("purplship.api.mappers.purolator_courier.proxy.http") as mocks:
+        with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
             mocks.side_effect = [
                 VALIDATE_SHIPMENT_RESPONSE_XML,
                 SHIPMENT_RESPONSE_XML,
@@ -50,7 +50,7 @@ class TestPurolatorShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.api.mappers.purolator_courier.proxy.http") as mocks:
+        with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
             mocks.side_effect = [
                 VALIDATE_SHIPMENT_RESPONSE_XML,
                 SHIPMENT_RESPONSE_XML,
@@ -65,7 +65,7 @@ class TestPurolatorShipment(unittest.TestCase):
             )
 
     def test_parse_invalid_shipment_response(self):
-        with patch("purplship.api.mappers.purolator_courier.proxy.http") as mocks:
+        with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
             mocks.side_effect = [VALIDATE_SHIPMENT_ERROR_RESPONSE_XML]
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()

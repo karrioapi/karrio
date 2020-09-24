@@ -1,7 +1,7 @@
-import purplship.api as api
-from purplship.api.mappers.ups_package import Settings
+import purplship
+from purplship.mappers.ups_package import Settings
 
-gateway = api.gateway["ups_package"].create(
+gateway = purplship.gateway["ups_package"].create(
     Settings(
         username="username",
         password="password",

@@ -3,7 +3,7 @@ from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
 from tests.ups_package.fixture import gateway
-from purplship.api import Tracking
+from purplship import Tracking
 
 
 class TestUPSTracking(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestUPSTracking(unittest.TestCase):
 
         self.assertEqual(request.serialize(), [TrackingRequestXml])
 
-    @patch("purplship.api.mappers.ups_package.proxy.http", return_value="<a></a>")
+    @patch("purplship.mappers.ups_package.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -24,7 +24,7 @@ class TestUPSTracking(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/Track")
 
     def test_tracking_auth_error_parsing(self):
-        with patch("purplship.api.mappers.ups_package.proxy.http") as mock:
+        with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = AuthError
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -32,7 +32,7 @@ class TestUPSTracking(unittest.TestCase):
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
 
     def test_tracking_response_parsing(self):
-        with patch("purplship.api.mappers.ups_package.proxy.http") as mock:
+        with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = TrackingResponseXml
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -41,7 +41,7 @@ class TestUPSTracking(unittest.TestCase):
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
-        with patch("purplship.api.mappers.ups_package.proxy.http") as mock:
+        with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = InvalidTrackingNumberResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

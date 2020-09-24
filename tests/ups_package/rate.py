@@ -3,7 +3,7 @@ from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
 from tests.ups_package.fixture import gateway
-from purplship.api import Rating
+from purplship import Rating
 
 
 class TestUPSRating(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestUPSRating(unittest.TestCase):
         )
         self.assertEqual(request.serialize(), RateRequestWithPackagePresetXML)
 
-    @patch("purplship.api.mappers.ups_package.proxy.http", return_value="<a></a>")
+    @patch("purplship.mappers.ups_package.proxy.http", return_value="<a></a>")
     def test_package_get_quotes(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -29,13 +29,13 @@ class TestUPSRating(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/Rate")
 
     def test_parse_package_quote_response(self):
-        with patch("purplship.api.mappers.ups_package.proxy.http") as mock:
+        with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
 
     def test_parse_rate_error(self):
-        with patch("purplship.api.mappers.ups_package.proxy.http") as mock:
+        with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = RateteParsingErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -43,7 +43,7 @@ class TestUPSRating(unittest.TestCase):
             )
 
     def test_parse_rate_missing_args_error(self):
-        with patch("purplship.api.mappers.ups_package.proxy.http") as mock:
+        with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = RateMissingArgsErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(

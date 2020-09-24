@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
+import purplship
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
-from purplship.api import Shipment
-from tests.canadapost.fixture import gateway, LabelResponse, api
+from tests.canadapost.fixture import gateway, LabelResponse
 
 
 class TestCanadaPostShipment(unittest.TestCase):
@@ -26,7 +26,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         self.assertEqual(request.data.serialize(), ShipmentRequestWithPackagePresetXML)
 
     def test_create_non_contract_shipment_request(self):
-        non_contract_gateway = api.gateway["canadapost"].create(
+        non_contract_gateway = purplship.gateway["canadapost"].create(
             dict(username="username", password="password", customer_number="2004381")
         )
         requests = non_contract_gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -35,9 +35,9 @@ class TestCanadaPostShipment(unittest.TestCase):
         self.assertEqual(request.data.serialize(), NonContractShipmentRequestXML)
 
     def test_create_shipment(self):
-        with patch("purplship.api.mappers.canadapost.proxy.http") as mocks:
+        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = ["<a></a>", ""]
-            Shipment.create(self.ShipmentRequest).with_(gateway)
+            purplship.Shipment.create(self.ShipmentRequest).with_(gateway)
 
             url = mocks.call_args[1]["url"]
             self.assertEqual(
@@ -46,10 +46,10 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.api.mappers.canadapost.proxy.http") as mocks:
+        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = [ShipmentResponseXML, LabelResponse]
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                purplship.Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))

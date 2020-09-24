@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import TrackingRequest
-from purplship.api import Tracking
+from purplship import Tracking
 from tests.purolator_courier.fixture import gateway
 
 
@@ -18,7 +18,7 @@ class TestPurolatorTracking(unittest.TestCase):
 
         self.assertEqual(request.serialize(), TRACKING_REQUEST_XML)
 
-    @patch("purplship.api.mappers.purolator_courier.proxy.http", return_value="<a></a>")
+    @patch("purplship.mappers.purolator_courier.proxy.http", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -28,7 +28,7 @@ class TestPurolatorTracking(unittest.TestCase):
         )
 
     def test_tracking_response_parsing(self):
-        with patch("purplship.api.mappers.purolator_courier.proxy.http") as mock:
+        with patch("purplship.mappers.purolator_courier.proxy.http") as mock:
             mock.return_value = TRACKING_RESPONSE_XML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

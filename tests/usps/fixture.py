@@ -1,3 +1,3 @@
-import purplship.api as api
+import purplship
 
-gateway = api.gateway["usps"].create({"username": "username", "password": "password"})
+gateway = purplship.gateway["usps"].create({"username": "username", "password": "password"})

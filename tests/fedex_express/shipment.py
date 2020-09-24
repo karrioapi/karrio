@@ -4,7 +4,7 @@ import logging
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
-from purplship.api import Shipment
+from purplship import Shipment
 from tests.fedex_express.fixture import gateway
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ class TestFedExShipment(unittest.TestCase):
 
         self.assertEqual(serialized_request, ShipmentRequestXml)
 
-    @patch("purplship.api.mappers.fedex_express.proxy.http", return_value="<a></a>")
+    @patch("purplship.mappers.fedex_express.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         Shipment.create(self.ShipmentRequest).with_(gateway)
 
@@ -32,7 +32,7 @@ class TestFedExShipment(unittest.TestCase):
         self.assertEqual(url, f"{gateway.settings.server_url}/ship")
 
     def test_parse_shipment_response(self):
-        with patch("purplship.api.mappers.fedex_express.proxy.http") as mock:
+        with patch("purplship.mappers.fedex_express.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
