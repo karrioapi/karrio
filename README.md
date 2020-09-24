@@ -135,7 +135,7 @@ ___
 #### Initialize a carrier gateway
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.package.mappers.canadapost import Settings
 
 canadapost = purplship.gateway["canadapost"].create(
@@ -156,7 +156,7 @@ canadapost = purplship.gateway["canadapost"].create(
 Using the fluent API with the gateway previously initialized, you can fetch the price for a shipment.
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import Address, Parcel, RateRequest
 
 shipper = Address(
@@ -187,7 +187,7 @@ request = purplship.Rating.fetch(
     RateRequest(
         shipper=shipper,
         recipient=recipient,
-        parcel=parcel,
+        parcels=[parcel],
         services=["canadapost_priority"]
     )
 )
@@ -219,7 +219,7 @@ print(to_dict(rates))
         "currency": "CAD",
         "discount": -3.63,
         "duties_and_taxes": 14.73,
-        "estimated_delivery": "2020-05-06",
+        "transit": 3,
         "extra_charges": [
           {
             "amount": 8.11,
@@ -232,7 +232,6 @@ print(to_dict(rates))
             "name": "SMB Savings"
           }
         ],
-        "id": "da75bd1d-caf6-4e1a-8362-7e6e3e7e75d8",
         "service": "canadapost_priority",
         "total_charge": 112.93
       }
@@ -254,7 +253,7 @@ ___
 - Booking
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import PickupRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -269,7 +268,7 @@ rates = request.with_(carrier).parse()
 - Update
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import PickupUpdateRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -284,7 +283,7 @@ rates = request.from_(carrier).parse()
 - Cancel
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import PickupCancellationRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -301,7 +300,7 @@ rates = request.from_(carrier).parse()
 - Fetch
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import RateRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -318,7 +317,7 @@ rates = request.from_(carrier).parse()
 - Create
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import ShipmentRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -335,7 +334,7 @@ rates = request.with_(carrier).parse()
 - Fetch
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import TrackingRequest
 
 carrier = purplship.gateway['carrier'].create(...)
