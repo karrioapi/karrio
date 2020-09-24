@@ -1,5 +1,14 @@
 -f https://git.io/purplship
-Django==3.0.9
+
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship.canadapost&subdirectory=extensions/canadapost
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship.dhl_express&subdirectory=extensions/dhl_express
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship.fedex&subdirectory=extensions/fedex
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship.fedex_express&subdirectory=extensions/fedex_express
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship.purolator&subdirectory=extensions/purolator
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship.purolator_courier&subdirectory=extensions/purolator_courier
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship.ups&subdirectory=extensions/ups
+-e git+https://github.com/PurplShip/purplship.git@freight-extensions-integration#egg=purplship.ups_package&subdirectory=extensions/ups_package
 
 -e ./src/apps/core
 -e ./src/purpleserver[dev]
