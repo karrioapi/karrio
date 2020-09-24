@@ -127,12 +127,12 @@ runserver() {
     export MULTI_TENANT_ENABLE=False
   fi
 
-  if [[ "$*" == *--rdata* ]]; then
-    migrate "$@"
-  fi
-
   if [[ "$*" == *--rdb* ]]; then
     rundb
+  fi
+
+  if [[ "$*" == *--rdata* ]]; then
+    migrate "$@"
   fi
 
   purplship runserver
