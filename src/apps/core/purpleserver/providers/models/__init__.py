@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 from django.db import models
 
-from purplship.package import gateway
+from purplship import gateway
 from purpleserver.providers.models.carrier import Carrier
 import purpleserver.providers.extension.models as extensions
 
