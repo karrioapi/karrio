@@ -321,6 +321,6 @@ class PickupDetails:
 class ConfirmationDetails:
     """PurplShip binary operation confirmation type."""
 
-    carrier_id: str
     carrier_name: str
+    carrier_id: str
     success: bool
