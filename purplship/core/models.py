@@ -176,13 +176,12 @@ class PickupUpdateRequest:
     """pickup update request type."""
 
     date: str
+    ready_time: str
+    closing_time: str
     address: Address = JStruct[Address, REQUIRED]
 
     confirmation_number: str = None
     parcels: List[Parcel] = JList[Parcel]
-    service: str = None
-    ready_time: str = None
-    closing_time: str = None
     instruction: str = None
     package_location: str = None
     options: Dict = {}

@@ -34,11 +34,6 @@ class Proxy(ABC):
             self.__class__.request_pickup.__name__, self.settings.carrier_name
         )
 
-    def update_pickup(self, request: Serializable) -> Deserializable:
-        raise MethodNotSupportedError(
-            self.__class__.update_pickup.__name__, self.settings.carrier_name
-        )
-
     def modify_pickup(self, request: Serializable) -> Deserializable:
         raise MethodNotSupportedError(
             self.__class__.modify_pickup.__name__, self.settings.carrier_name

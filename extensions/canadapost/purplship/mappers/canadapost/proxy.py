@@ -109,50 +109,10 @@ class Proxy(BaseProxy):
 
         return Deserializable(bundle_xml(response), to_xml)
 
-    def cancel_pickup(self, request: Serializable) -> Deserializable:
-        payload = request.serialize()
-        response = http(
-            url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
-            headers={
-                "Accept": "application/vnd.cpc.pickuprequest+xml",
-                "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": "en-CA",
-            },
-            method="DELETE",
-        )
-        return Deserializable(response or "<wrapper></wrapper>", to_xml)
+    def request_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
 
-    def update_pickup(self, request: Serializable) -> Deserializable:
-        payload = request.serialize()
-        response = http(
-            url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
-            data=bytearray(payload['data'], "utf-8"),
-            headers={
-                "Accept": "application/vnd.cpc.pickuprequest+xml",
-                "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": "en-CA",
-            },
-            method="PUT",
-        )
-        return Deserializable(response, to_xml)
-
-    def request_pickup(self, request: Serializable) -> Deserializable:
-
-        def _create_pickup(job: Job):
+        def _availability(job: Job) -> str:
             return http(
-                url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest",
-                data=bytearray(job.data, "utf-8"),
-                headers={
-                    "Accept": "application/vnd.cpc.pickuprequest+xml",
-                    "Content-Type": "application/vnd.cpc.pickuprequest+xml",
-                    "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
-                },
-                method="POST",
-            )
-
-        def _availability(job: Job):
-            label_string = http(
                 url=f"{self.settings.server_url}/ad/pickup/pickupavailability/{job.data}",
                 headers={
                     "Accept": "application/vnd.cpc.pickup+xml",
@@ -161,7 +121,19 @@ class Proxy(BaseProxy):
                 },
                 method="GET",
             )
-            return f'<label>{label_string}</label>'
+
+        def _create_pickup(job: Job) -> str:
+            return http(
+                url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest",
+                data=bytearray(job.data.serialize(), "utf-8"),
+                headers={
+                    "Accept": "application/vnd.cpc.pickuprequest+xml",
+                    "Content-Type": "application/vnd.cpc.pickuprequest+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": "en-CA",
+                },
+                method="POST",
+            )
 
         def process(job: Job):
             if job.data is None:
@@ -177,3 +149,30 @@ class Proxy(BaseProxy):
         response = pipeline.apply(process)
 
         return Deserializable(bundle_xml(response), to_xml)
+
+    def modify_pickup(self, request: Serializable[dict]) -> Deserializable[str]:
+        payload = request.serialize()
+        response = http(
+            url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
+            data=bytearray(payload['data'], "utf-8"),
+            headers={
+                "Accept": "application/vnd.cpc.pickuprequest+xml",
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Accept-language": "en-CA",
+            },
+            method="PUT",
+        )
+        return Deserializable(response, to_xml)
+
+    def cancel_pickup(self, request: Serializable[str]) -> Deserializable[str]:
+        pickuprequest = request.serialize()
+        response = http(
+            url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{pickuprequest}",
+            headers={
+                "Accept": "application/vnd.cpc.pickuprequest+xml",
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Accept-language": "en-CA",
+            },
+            method="DELETE",
+        )
+        return Deserializable(response or "<wrapper></wrapper>", to_xml)
