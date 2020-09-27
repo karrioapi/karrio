@@ -41,7 +41,7 @@ def _extract_pickup_details(response: Element, settings: Settings) -> PickupDeta
     )
     header: PickupRequestHeaderType = pickup_info.pickup_request_header
     price: PickupRequestPriceType = pickup_info.pickup_request_price
-    print([price.hst_amount or 0.0, price.gst_amount or 0.0, price.due_amount or 0.0])
+
     price_amount = sum([
         decimal(price.hst_amount or 0.0),
         decimal(price.gst_amount or 0.0),

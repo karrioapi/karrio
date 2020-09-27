@@ -1,6 +1,6 @@
 from typing import cast
 from functools import partial
-from pyfedex.pickup_service_v20 import PickupAvailabilityReply, CreatePickupReply
+from pyfedex.pickup_service_v20 import PickupAvailabilityReply, CreatePickupReply, NotificationSeverityType
 from purplship.core.utils import Job, Pipeline, to_xml, Serializable, build
 from purplship.core.models import PickupRequest, PickupUpdateRequest, PickupCancellationRequest
 from purplship.providers.fedex.utils import Settings
@@ -45,6 +45,12 @@ def update_pickup_request(payload: PickupUpdateRequest, settings: Settings) -> S
     return Serializable(request)
 
 
+def _get_availability(payload: PickupRequest, settings: Settings):
+    data = pickup_availability_request(payload, settings)
+
+    return Job(id="availability", data=data)
+
+
 def _create_pickup(availability_response: str, payload: PickupRequest, settings: Settings):
     availability = build(PickupAvailabilityReply, to_xml(availability_response))
     data = pickup_request(payload, settings) if availability else None
@@ -52,18 +58,13 @@ def _create_pickup(availability_response: str, payload: PickupRequest, settings:
     return Job(id="create_pickup", data=data, fallback="")
 
 
-def _get_availability(payload: PickupRequest, settings: Settings):
-    data = pickup_availability_request(payload, settings)
-
-    return Job(id="availability", data=data)
-
-
 def _cancel_pickup_request(response: str, payload: PickupUpdateRequest, settings: Settings):
-    reply = next(to_xml(response).xpath(".//*[local-name() = $name]", name="CreatePickupReply"), None)
+    reply = next(iter(to_xml(response).xpath(".//*[local-name() = $name]", name="CreatePickupReply")), None)
     new_pickup = build(CreatePickupReply, reply)
     data = (
         cancel_pickup_request(PickupCancellationRequest(confirmation_number=payload.confirmation_number), settings)
-        if new_pickup is not None and new_pickup.HighestSeverity == "SUCCESS" else None
+        if new_pickup is not None and new_pickup.HighestSeverity == NotificationSeverityType.SUCCESS.value
+        else None
     )
 
     return Job(id="cancel_pickup", data=data, fallback="")
