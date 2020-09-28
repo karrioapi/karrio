@@ -15,7 +15,8 @@ from purplship.core.models import (
     PickupDetails,
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancellationRequest
+    PickupCancellationRequest,
+    ConfirmationDetails
 )
 from purplship.providers.fedex import track_request, parse_track_response
 from purplship.providers.fedex.pickup import (
@@ -97,5 +98,5 @@ class Mapper(BaseMapper):
 
     def parse_cancel_pickup_response(
         self, response: Deserializable[str]
-    ) -> Tuple[dict, List[Message]]:
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
         return parse_cancel_pickup_reply(response.deserialize(), self.settings)

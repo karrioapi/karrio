@@ -16,6 +16,7 @@ from purplship.core.models import (
     PickupDetails,
     RateDetails,
     TrackingDetails,
+    ConfirmationDetails
 )
 from purplship.core.errors import MethodNotSupportedError
 from purplship.core.utils.serializable import Deserializable, Serializable
@@ -113,7 +114,7 @@ class Mapper(ABC):
 
     def parse_cancel_pickup_response(
         self, response: Deserializable
-    ) -> Tuple[dict, List[Message]]:
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
         """ Create a united API pickup cancellation result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_cancel_pickup_response.__name__,
