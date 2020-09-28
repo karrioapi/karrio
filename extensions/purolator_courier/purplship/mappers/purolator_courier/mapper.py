@@ -1,8 +1,8 @@
 from typing import List, Tuple
 from purplship.api.mapper import Mapper as BaseMapper
 from purplship.mappers.purolator_courier.settings import Settings
-from purplship.core.utils.serializable import Deserializable, Serializable
-from purplship.core.utils.xml import Element
+from purplship.core.utils import Deserializable, Serializable, Pipeline
+from purplship.core.utils.soap import Envelope
 from purplship.core.models import (
     RateRequest,
     ShipmentRequest,
@@ -11,6 +11,11 @@ from purplship.core.models import (
     RateDetails,
     TrackingDetails,
     Message,
+    PickupRequest,
+    PickupUpdateRequest,
+    PickupDetails,
+    ConfirmationDetails,
+    PickupCancellationRequest,
 )
 from purplship.providers.purolator.package import (
     parse_track_package_response,
@@ -19,6 +24,12 @@ from purplship.providers.purolator.package import (
     get_full_estimate_request,
     parse_shipment_creation_response,
     create_shipment_request,
+    void_pickup_request,
+    parse_void_pickup_reply,
+    schedule_pickup_pipeline,
+    parse_schedule_pickup_reply,
+    modify_pickup_pipeline,
+    parse_modify_pickup_reply,
 )
 
 
@@ -27,18 +38,31 @@ class Mapper(BaseMapper):
 
     """Request Mappers"""
 
-    def create_rate_request(self, payload: RateRequest) -> Serializable[Element]:
+    def create_rate_request(self, payload: RateRequest) -> Serializable[Envelope]:
         return get_full_estimate_request(payload, self.settings)
 
     def create_tracking_request(
         self, payload: TrackingRequest
-    ) -> Serializable[Element]:
+    ) -> Serializable[Envelope]:
         return track_package_by_pin_request(payload, self.settings)
 
     def create_shipment_request(
         self, payload: ShipmentRequest
-    ) -> Serializable[Element]:
+    ) -> Serializable[Pipeline]:
         return create_shipment_request(payload, self.settings)
+
+    def create_pickup_request(self, payload: PickupRequest) -> Serializable[Pipeline]:
+        return schedule_pickup_pipeline(payload, self.settings)
+
+    def create_modify_pickup_request(
+        self, payload: PickupUpdateRequest
+    ) -> Serializable[Pipeline]:
+        return modify_pickup_pipeline(payload, self.settings)
+
+    def create_cancel_pickup_request(
+        self, payload: PickupCancellationRequest
+    ) -> Serializable[Envelope]:
+        return void_pickup_request(payload, self.settings)
 
     """Response Parsers"""
 
@@ -56,3 +80,18 @@ class Mapper(BaseMapper):
         self, response: Deserializable[str]
     ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_creation_response(response.deserialize(), self.settings)
+
+    def parse_pickup_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[PickupDetails, List[Message]]:
+        return parse_schedule_pickup_reply(response.deserialize(), self.settings)
+
+    def parse_modify_pickup_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[PickupDetails, List[Message]]:
+        return parse_modify_pickup_reply(response.deserialize(), self.settings)
+
+    def parse_cancel_pickup_response(
+        self, response: Deserializable
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_void_pickup_reply(response.deserialize(), self.settings)

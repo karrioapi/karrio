@@ -7,13 +7,11 @@ from .utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:
-    notifications = (
-            response.xpath(".//*[local-name() = $name]", name="Notifications") +
-            response.xpath(".//*[local-name() = $name]", name="Notification")
-    )
-    errors = (
-        [_extract_error(node, settings) for node in notifications] +
-        extract_fault(response, settings)
+    notifications = response.xpath(
+        ".//*[local-name() = $name]", name="Notifications"
+    ) + response.xpath(".//*[local-name() = $name]", name="Notification")
+    errors = [_extract_error(node, settings) for node in notifications] + extract_fault(
+        response, settings
     )
     return [error for error in errors if error is not None]
 

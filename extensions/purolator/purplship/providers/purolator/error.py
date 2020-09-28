@@ -8,9 +8,8 @@ from .utils import Settings
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:
     errors = response.xpath(".//*[local-name() = $name]", name="Error")
-    return (
-        [_extract_error(node, settings) for node in errors] +
-        extract_fault(response, settings)
+    return [_extract_error(node, settings) for node in errors] + extract_fault(
+        response, settings
     )
 
 

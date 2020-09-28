@@ -19,6 +19,7 @@ from purplship.core.models import (
     PickupUpdateRequest,
     PickupCancellationRequest,
     Message,
+    ConfirmationDetails,
 )
 from purplship.providers.dhl_express import (
     dct_request,
@@ -99,5 +100,5 @@ class Mapper(BaseMapper):
 
     def parse_cancel_pickup_response(
         self, response: Deserializable[str]
-    ) -> Tuple[dict, List[Message]]:
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
         return parse_cancel_pickup_response(response.deserialize(), self.settings)

@@ -1,4 +1,5 @@
 from typing import List, Tuple, cast
+from functools import partial
 from pypurolator.tracking_service_1_2_2 import (
     TrackPackagesByPinRequest,
     PIN,
@@ -14,11 +15,11 @@ from purplship.core.models import (
     Message,
     TrackingEvent,
 )
-from purplship.core.utils import Element, format_date, format_timestamp, export
-from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
+from purplship.core.utils import Element, format_date, format_timestamp
+from purplship.core.utils.soap import create_envelope
 from pysoap.envelope import Envelope
 from purplship.core.utils.serializable import Serializable
-from purplship.providers.purolator.utils import Settings
+from purplship.providers.purolator.utils import Settings, standard_request_serializer
 from purplship.providers.purolator.error import parse_error_response
 
 
@@ -69,14 +70,4 @@ def track_package_by_pin_request(
             PINs=ArrayOfPIN(PIN=[PIN(Value=pin) for pin in payload.tracking_numbers])
         ),
     )
-    return Serializable(request, _request_serializer)
-
-
-def _request_serializer(envelope: Envelope) -> str:
-    namespacedef_ = 'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1"'
-    envelope.ns_prefix_ = "soap"
-    envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    envelope.Header.ns_prefix_ = envelope.ns_prefix_
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v1")
-    apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "v1")
-    return export(envelope, namespacedef_=namespacedef_)
+    return Serializable(request, partial(standard_request_serializer, version="v1"))

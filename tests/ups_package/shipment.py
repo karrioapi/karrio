@@ -34,7 +34,9 @@ class TestUPSShipment(unittest.TestCase):
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
-            self.assertListEqual(to_dict(parsed_response), NegotiatedParsedShipmentResponse)
+            self.assertListEqual(
+                to_dict(parsed_response), NegotiatedParsedShipmentResponse
+            )
 
     def test_parse_publish_rate_shipment_response(self):
         with patch("purplship.mappers.ups_package.proxy.http") as mock:
@@ -71,16 +73,18 @@ package_shipment_data = {
         "postal_code": "PostalCode",
         "country_code": "CountryCode",
     },
-    "parcels": [{
-        "dimension_unit": "IN",
-        "weight_unit": "LB",
-        "packaging_type": "ups_customer_supplied_package",
-        "description": "Description",
-        "length": 7,
-        "width": 5,
-        "height": 2,
-        "weight": 10,
-    }],
+    "parcels": [
+        {
+            "dimension_unit": "IN",
+            "weight_unit": "LB",
+            "packaging_type": "ups_customer_supplied_package",
+            "description": "Description",
+            "length": 7,
+            "width": 5,
+            "height": 2,
+            "weight": 10,
+        }
+    ],
     "service": "ups_express",
     "options": {"notification": {"email": "test@mail.com"}},
     "payment": {"paid_by": "sender"},
@@ -110,11 +114,13 @@ package_shipment_with_package_preset_data = {
         "postal_code": "PostalCode",
         "country_code": "CountryCode",
     },
-    "parcels": [{
-        "packaging_type": "ups_customer_supplied_package",
-        "description": "Description",
-        "package_preset": "ups_medium_express_box",
-    }],
+    "parcels": [
+        {
+            "packaging_type": "ups_customer_supplied_package",
+            "description": "Description",
+            "package_preset": "ups_medium_express_box",
+        }
+    ],
     "service": "ups_express",
     "payment": {"paid_by": "sender"},
     "options": {"notification": {"email": "test@mail.com"}},

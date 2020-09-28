@@ -17,7 +17,7 @@ from pyfedex.rate_service_v26 import (
     RequestedPackageLineItem,
     Dimensions,
     WeightUnits,
-    DistanceUnits
+    DistanceUnits,
 )
 from purplship.core.utils import export, concat_str, Serializable, decimal, to_date
 from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
@@ -48,27 +48,37 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
 
     service = ServiceType(rate.ServiceType).name
     rate_type = rate.ActualRateType
-    shipment_rate, shipment_discount = cast(Tuple[ShipmentRateDetail, Money], next(
-        (
-            (r.ShipmentRateDetail, r.EffectiveNetDiscount) for r in rate.RatedShipmentDetails
-            if cast(ShipmentRateDetail, r.ShipmentRateDetail).RateType == rate_type
+    shipment_rate, shipment_discount = cast(
+        Tuple[ShipmentRateDetail, Money],
+        next(
+            (
+                (r.ShipmentRateDetail, r.EffectiveNetDiscount)
+                for r in rate.RatedShipmentDetails
+                if cast(ShipmentRateDetail, r.ShipmentRateDetail).RateType == rate_type
+            ),
+            (None, None),
         ),
-        (None, None)
-    ))
-    discount = decimal(shipment_discount.Amount) if shipment_discount is not None else None
+    )
+    discount = (
+        decimal(shipment_discount.Amount) if shipment_discount is not None else None
+    )
     currency = cast(Money, shipment_rate.TotalBaseCharge).Currency
-    duties_and_taxes = shipment_rate.TotalTaxes.Amount + shipment_rate.TotalDutiesAndTaxes.Amount
+    duties_and_taxes = (
+        shipment_rate.TotalTaxes.Amount + shipment_rate.TotalDutiesAndTaxes.Amount
+    )
     surcharges = [
         ChargeDetails(
             name=cast(Surcharge, s).Description,
             amount=decimal(cast(Surcharge, s).Amount.Amount),
-            currency=currency
+            currency=currency,
         )
         for s in shipment_rate.Surcharges + shipment_rate.Taxes
     ]
     estimated_delivery = to_date(rate.DeliveryTimestamp, "%Y-%m-%d %H:%M:%S")
     transit = (
-        (estimated_delivery - datetime.now()).days if estimated_delivery is not None else None
+        (estimated_delivery - datetime.now()).days
+        if estimated_delivery is not None
+        else None
     )
 
     return RateDetails(
@@ -91,7 +101,8 @@ def rate_request(
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     package_type = (
         PackagingType[packages[0].packaging_type or "your_packaging"].value
-        if len(packages) == 1 else None
+        if len(packages) == 1
+        else None
     )
     service = next(
         (
@@ -99,7 +110,7 @@ def rate_request(
             for s in payload.services
             if s in ServiceType.__members__
         ),
-        None
+        None,
     )
     options = Options(payload.options)
 
@@ -261,7 +272,13 @@ def rate_request(
                         Height=package.height.value,
                         Units=package.dimension_unit.value,
                     )
-                    if any([package.length.value, package.width.value, package.height.value])
+                    if any(
+                        [
+                            package.length.value,
+                            package.width.value,
+                            package.height.value,
+                        ]
+                    )
                     else None,
                     PhysicalPackaging=None,
                     ItemDescription=package.parcel.description,

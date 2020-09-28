@@ -3,7 +3,11 @@ from typing import List, Type, Optional, Iterator, Iterable
 from enum import Enum
 from purplship.core.utils import decimal
 from purplship.core.models import Insurance, COD, Notification, Parcel
-from purplship.core.errors import FieldError, FieldErrorCode, MultiParcelNotSupportedError
+from purplship.core.errors import (
+    FieldError,
+    FieldErrorCode,
+    MultiParcelNotSupportedError,
+)
 
 
 @dataclass
@@ -217,15 +221,11 @@ class Package:
 
     @property
     def height(self):
-        return Dimension(
-            self.preset.height or self.parcel.height, self.dimension_unit
-        )
+        return Dimension(self.preset.height or self.parcel.height, self.dimension_unit)
 
     @property
     def length(self):
-        return Dimension(
-            self.preset.length or self.parcel.length, self.dimension_unit
-        )
+        return Dimension(self.preset.length or self.parcel.length, self.dimension_unit)
 
     @property
     def girth(self):
@@ -241,9 +241,16 @@ class Package:
 
 
 class Packages(Iterable[Package]):
-    def __init__(self, parcels: List[Parcel], presets: Type[Enum] = None, required: List[str] = None):
+    def __init__(
+        self,
+        parcels: List[Parcel],
+        presets: Type[Enum] = None,
+        required: List[str] = None,
+    ):
         def compute_preset(parcel) -> Optional[PackagePreset]:
-            if (presets is None) | (presets is not None and parcel.package_preset not in presets.__members__):
+            if (presets is None) | (
+                presets is not None and parcel.package_preset not in presets.__members__
+            ):
                 return None
 
             return presets[parcel.package_preset].value
@@ -256,8 +263,10 @@ class Packages(Iterable[Package]):
                 for field in required:
                     prop = getattr(package, field)
 
-                    if prop is None or (hasattr(prop, 'value') and prop.value is None):
-                        errors.update({f"parcel[{index}].{field}": FieldErrorCode.required})
+                    if prop is None or (hasattr(prop, "value") and prop.value is None):
+                        errors.update(
+                            {f"parcel[{index}].{field}": FieldErrorCode.required}
+                        )
 
             if any(errors.items()):
                 raise FieldError(errors)
@@ -281,7 +290,10 @@ class Packages(Iterable[Package]):
     def weight(self) -> Weight:
         return Weight(
             unit=WeightUnit.LB,
-            value=sum(pkg.weight.LB for pkg in self._items if pkg.weight.value is not None) or None
+            value=sum(
+                pkg.weight.LB for pkg in self._items if pkg.weight.value is not None
+            )
+            or None,
         )
 
 
@@ -338,17 +350,11 @@ class Phone:
 
     @property
     def area_code(self):
-        return next(
-            (part[1] for part in [self.parts] if len(part) > 1),
-            None
-        )
+        return next((part[1] for part in [self.parts] if len(part) > 1), None)
 
     @property
     def phone(self):
-        return next(
-            (part[2] for part in [self.parts] if len(part) > 2),
-            None
-        )
+        return next((part[2] for part in [self.parts] if len(part) > 2), None)
 
 
 class PrinterType(Enum):
@@ -979,182 +985,200 @@ class CountryCurrency(Enum):
 
 
 class CountryState(Enum):
-    AE = Enum("State", {
-        "AB": "Abu Dhabi",
-        "AJ": "Ajman",
-        "DU": "Dubai",
-        "FU": "Fujairah",
-        "RA": "Ras al-Khaimah",
-        "SH": "Sharjah",
-        "UM": "Umm al-Qaiwain",
-    })
-    CA = Enum("State", {
-        "AB": "Alberta",
-        "BC": "British Columbia",
-        "MB": "Manitoba",
-        "NB": "New Brunswick",
-        "NL": "Newfoundland",
-        "NT": "Northwest Territories",
-        "NS": "Nova Scotia",
-        "NU": "Nunavut",
-        "ON": "Ontario",
-        "PE": "Prince Edward Island",
-        "QC": "Quebec",
-        "SK": "Saskatchewan",
-        "YT": "Yukon",
-    })
-    CN = Enum("State", {
-        "anhui": "Anhui",
-        "hainan": "Hainan",
-        "jiangxi": "Jiangxi",
-        "shanghai": "Shanghai",
-        "beijing": "Beijing",
-        "hebei": "Hebei",
-        "jilin": "Jilin",
-        "shanxi": "Shanxi",
-        "chongqing": "Chongqing",
-        "heilongjiang": "Heilongjiang",
-        "liaoning": "Liaoning",
-        "sichuan": "Sichuan",
-        "fujian": "Fujian",
-        "henan": "Henan",
-        "nei_mongol": "Nei Mongol",
-        "tianjin": "Tianjin",
-        "gansu": "Gansu",
-        "hubei": "Hubei",
-        "qinghai": "Qinghai",
-        "xinjiang": "Xinjiang",
-        "guangdong": "Guangdong",
-        "hunan": "Hunan",
-        "shaanxi": "Shaanxi",
-        "yunnan": "Yunnan",
-        "guizhou": "Guizhou",
-        "jiangsu": "Jiangsu",
-        "shandong": "Shandong",
-        "zhejiang": "Zhejiang",
-    })
-    IN = Enum("State", {
-        "AN": "Andaman & Nicobar (U.T)",
-        "AP": "Andhra Pradesh",
-        "AR": "Arunachal Pradesh",
-        "AS": "Assam",
-        "BR": "Bihar",
-        "CG": "Chattisgarh",
-        "CH": "Chandigarh (U.T.)",
-        "DD": "Daman & Diu (U.T.)",
-        "DL": "Delhi (U.T.)",
-        "DN": "Dadra and Nagar Haveli (U.T.)",
-        "GA": "Goa",
-        "GJ": "Gujarat",
-        "HP": "Himachal Pradesh",
-        "HR": "Haryana",
-        "JH": "Jharkhand",
-        "JK": "Jammu & Kashmir",
-        "KA": "Karnataka",
-        "KL": "Kerala",
-        "LD": "Lakshadweep (U.T)",
-        "MH": "Maharashtra",
-        "ML": "Meghalaya",
-        "MN": "Manipur",
-        "MP": "Madhya Pradesh",
-        "MZ": "Mizoram",
-        "NL": "Nagaland",
-        "OR": "Orissa",
-        "PB": "Punjab",
-        "PY": "Puducherry (U.T.)",
-        "RJ": "Rajasthan",
-        "SK": "Sikkim",
-        "TN": "Tamil Nadu",
-        "TR": "Tripura",
-        "UA": "Uttaranchal",
-        "UP": "Uttar Pradesh",
-        "WB": "West Bengal",
-    })
-    MX = Enum("State", {
-        "AG": "Aguascalientes",
-        "BC": "Baja California",
-        "BS": "Baja California Sur",
-        "CM": "Campeche",
-        "CS": "Chiapas",
-        "CH": "Chihuahua",
-        "CO": "Coahuila",
-        "CL": "Colima",
-        "DF": "Ciudad de México",
-        "DG": "Durango",
-        "GT": "Guanajuato",
-        "GR": "Guerrero",
-        "HG": "Hidalgo",
-        "JA": "Jalisco",
-        "EM": "Estado de México",
-        "MI": "Michoacán",
-        "MO": "Morelos",
-        "NA": "Nayarit",
-        "NL": "Nuevo León",
-        "OA": "Oaxaca",
-        "PU": "Puebla",
-        "QE": "Querétaro",
-        "QR": "Quintana Roo",
-        "SL": "San Luis Potosí",
-        "SI": "Sinaloa",
-        "SO": "Sonora",
-        "TB": "Tabasco",
-        "TM": "Tamaulipas",
-        "TL": "Tlaxcala",
-        "VE": "Veracruz",
-        "YU": "Yucatán",
-        "ZA": "Zacatecas",
-    })
-    US = Enum("State", {
-        "AL": "Alabama",
-        "AK": "Alaska",
-        "AZ": "Arizona",
-        "AR": "Arkansas",
-        "CA": "California",
-        "CO": "Colorado",
-        "CT": "Connecticut",
-        "DE": "Delaware",
-        "DC": "District of Columbia",
-        "FL": "Florida",
-        "GA": "Georgia",
-        "HI": "Hawaii",
-        "ID": "Idaho",
-        "IL": "Illinois",
-        "IN": "Indiana",
-        "IA": "Iowa",
-        "KS": "Kansas",
-        "KY": "Kentucky",
-        "LA": "Louisiana",
-        "ME": "Maine",
-        "MD": "Maryland",
-        "MA": "Massachusetts",
-        "MI": "Michigan",
-        "MN": "Minnesota",
-        "MS": "Mississippi",
-        "MO": "Missouri",
-        "MT": "Montana",
-        "NE": "Nebraska",
-        "NV": "Nevada",
-        "NH": "New Hampshire",
-        "NJ": "New Jersey",
-        "NM": "New Mexico",
-        "NY": "New York",
-        "NC": "North Carolina",
-        "ND": "North Dakota",
-        "OH": "Ohio",
-        "OK": "Oklahoma",
-        "OR": "Oregon",
-        "PA": "Pennsylvania",
-        "RI": "Rhode Island",
-        "SC": "South Carolina",
-        "SD": "South Dakota",
-        "TN": "Tennessee",
-        "TX": "Texas",
-        "UT": "Utah",
-        "VT": "Vermont",
-        "VA": "Virginia",
-        "WA": "Washington State",
-        "WV": "West Virginia",
-        "WI": "Wisconsin",
-        "WY": "Wyoming",
-        "PR": "Puerto Rico",
-    })
+    AE = Enum(
+        "State",
+        {
+            "AB": "Abu Dhabi",
+            "AJ": "Ajman",
+            "DU": "Dubai",
+            "FU": "Fujairah",
+            "RA": "Ras al-Khaimah",
+            "SH": "Sharjah",
+            "UM": "Umm al-Qaiwain",
+        },
+    )
+    CA = Enum(
+        "State",
+        {
+            "AB": "Alberta",
+            "BC": "British Columbia",
+            "MB": "Manitoba",
+            "NB": "New Brunswick",
+            "NL": "Newfoundland",
+            "NT": "Northwest Territories",
+            "NS": "Nova Scotia",
+            "NU": "Nunavut",
+            "ON": "Ontario",
+            "PE": "Prince Edward Island",
+            "QC": "Quebec",
+            "SK": "Saskatchewan",
+            "YT": "Yukon",
+        },
+    )
+    CN = Enum(
+        "State",
+        {
+            "anhui": "Anhui",
+            "hainan": "Hainan",
+            "jiangxi": "Jiangxi",
+            "shanghai": "Shanghai",
+            "beijing": "Beijing",
+            "hebei": "Hebei",
+            "jilin": "Jilin",
+            "shanxi": "Shanxi",
+            "chongqing": "Chongqing",
+            "heilongjiang": "Heilongjiang",
+            "liaoning": "Liaoning",
+            "sichuan": "Sichuan",
+            "fujian": "Fujian",
+            "henan": "Henan",
+            "nei_mongol": "Nei Mongol",
+            "tianjin": "Tianjin",
+            "gansu": "Gansu",
+            "hubei": "Hubei",
+            "qinghai": "Qinghai",
+            "xinjiang": "Xinjiang",
+            "guangdong": "Guangdong",
+            "hunan": "Hunan",
+            "shaanxi": "Shaanxi",
+            "yunnan": "Yunnan",
+            "guizhou": "Guizhou",
+            "jiangsu": "Jiangsu",
+            "shandong": "Shandong",
+            "zhejiang": "Zhejiang",
+        },
+    )
+    IN = Enum(
+        "State",
+        {
+            "AN": "Andaman & Nicobar (U.T)",
+            "AP": "Andhra Pradesh",
+            "AR": "Arunachal Pradesh",
+            "AS": "Assam",
+            "BR": "Bihar",
+            "CG": "Chattisgarh",
+            "CH": "Chandigarh (U.T.)",
+            "DD": "Daman & Diu (U.T.)",
+            "DL": "Delhi (U.T.)",
+            "DN": "Dadra and Nagar Haveli (U.T.)",
+            "GA": "Goa",
+            "GJ": "Gujarat",
+            "HP": "Himachal Pradesh",
+            "HR": "Haryana",
+            "JH": "Jharkhand",
+            "JK": "Jammu & Kashmir",
+            "KA": "Karnataka",
+            "KL": "Kerala",
+            "LD": "Lakshadweep (U.T)",
+            "MH": "Maharashtra",
+            "ML": "Meghalaya",
+            "MN": "Manipur",
+            "MP": "Madhya Pradesh",
+            "MZ": "Mizoram",
+            "NL": "Nagaland",
+            "OR": "Orissa",
+            "PB": "Punjab",
+            "PY": "Puducherry (U.T.)",
+            "RJ": "Rajasthan",
+            "SK": "Sikkim",
+            "TN": "Tamil Nadu",
+            "TR": "Tripura",
+            "UA": "Uttaranchal",
+            "UP": "Uttar Pradesh",
+            "WB": "West Bengal",
+        },
+    )
+    MX = Enum(
+        "State",
+        {
+            "AG": "Aguascalientes",
+            "BC": "Baja California",
+            "BS": "Baja California Sur",
+            "CM": "Campeche",
+            "CS": "Chiapas",
+            "CH": "Chihuahua",
+            "CO": "Coahuila",
+            "CL": "Colima",
+            "DF": "Ciudad de México",
+            "DG": "Durango",
+            "GT": "Guanajuato",
+            "GR": "Guerrero",
+            "HG": "Hidalgo",
+            "JA": "Jalisco",
+            "EM": "Estado de México",
+            "MI": "Michoacán",
+            "MO": "Morelos",
+            "NA": "Nayarit",
+            "NL": "Nuevo León",
+            "OA": "Oaxaca",
+            "PU": "Puebla",
+            "QE": "Querétaro",
+            "QR": "Quintana Roo",
+            "SL": "San Luis Potosí",
+            "SI": "Sinaloa",
+            "SO": "Sonora",
+            "TB": "Tabasco",
+            "TM": "Tamaulipas",
+            "TL": "Tlaxcala",
+            "VE": "Veracruz",
+            "YU": "Yucatán",
+            "ZA": "Zacatecas",
+        },
+    )
+    US = Enum(
+        "State",
+        {
+            "AL": "Alabama",
+            "AK": "Alaska",
+            "AZ": "Arizona",
+            "AR": "Arkansas",
+            "CA": "California",
+            "CO": "Colorado",
+            "CT": "Connecticut",
+            "DE": "Delaware",
+            "DC": "District of Columbia",
+            "FL": "Florida",
+            "GA": "Georgia",
+            "HI": "Hawaii",
+            "ID": "Idaho",
+            "IL": "Illinois",
+            "IN": "Indiana",
+            "IA": "Iowa",
+            "KS": "Kansas",
+            "KY": "Kentucky",
+            "LA": "Louisiana",
+            "ME": "Maine",
+            "MD": "Maryland",
+            "MA": "Massachusetts",
+            "MI": "Michigan",
+            "MN": "Minnesota",
+            "MS": "Mississippi",
+            "MO": "Missouri",
+            "MT": "Montana",
+            "NE": "Nebraska",
+            "NV": "Nevada",
+            "NH": "New Hampshire",
+            "NJ": "New Jersey",
+            "NM": "New Mexico",
+            "NY": "New York",
+            "NC": "North Carolina",
+            "ND": "North Dakota",
+            "OH": "Ohio",
+            "OK": "Oklahoma",
+            "OR": "Oregon",
+            "PA": "Pennsylvania",
+            "RI": "Rhode Island",
+            "SC": "South Carolina",
+            "SD": "South Dakota",
+            "TN": "Tennessee",
+            "TX": "Texas",
+            "UT": "Utah",
+            "VT": "Vermont",
+            "VA": "Virginia",
+            "WA": "Washington State",
+            "WV": "West Virginia",
+            "WI": "Wisconsin",
+            "WY": "Wyoming",
+            "PR": "Puerto Rico",
+        },
+    )

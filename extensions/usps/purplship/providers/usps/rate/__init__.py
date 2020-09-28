@@ -7,7 +7,10 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.models import RateRequest, RateDetails, Message
 from purplship.core.utils.xml import Element
 from purplship.providers.usps import Settings
-from purplship.providers.usps.rate.rate_v4 import rate_v4_request, parse_rate_v4_response
+from purplship.providers.usps.rate.rate_v4 import (
+    rate_v4_request,
+    parse_rate_v4_response,
+)
 from purplship.providers.usps.rate.intl_rate import (
     intl_rate_request,
     parse_intl_rate_response,

@@ -87,15 +87,17 @@ shipment_data = {
         "phone_number": "506-851-2271",
         "email": "c_orlander@gc.ca",
     },
-    "parcels": [{
-        "id": "1",
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-        "packaging_type": "dhl_express_envelope",
-        "is_document": False,
-    }],
+    "parcels": [
+        {
+            "id": "1",
+            "height": 3,
+            "length": 10,
+            "width": 3,
+            "weight": 4.0,
+            "packaging_type": "dhl_express_envelope",
+            "is_document": False,
+        }
+    ],
     "service": "dhl_express_worldwide_nondoc",
     "options": {"paperless_trade": True, "insurance": {"amount": 148.0}},
     "payment": {"paid_by": "sender", "account_number": "123456789"},

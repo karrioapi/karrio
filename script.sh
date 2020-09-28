@@ -51,9 +51,6 @@ alias env:reset=init
 
 # shellcheck disable=SC2120
 test() {
-    if [[ "$1" == "-i" ]]; then
-      install_submodules
-    fi
     cd "${ROOT:?}"
     r=$(coverage run -m unittest discover -f -v "${ROOT:?}/tests")
     cd -

@@ -167,7 +167,11 @@ class RateRequestExtensionV4:
 
     @property
     def size(self):
-        dimensions = [self.package.width.value, self.package.length.value, self.package.height.value]
+        dimensions = [
+            self.package.width.value,
+            self.package.length.value,
+            self.package.height.value,
+        ]
         dimension_above_12_in = any(dim for dim in dimensions if dim and dim > 12)
         return Size.large.value if dimension_above_12_in else Size.regular.value
 

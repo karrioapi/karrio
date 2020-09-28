@@ -160,14 +160,14 @@ class PickupRequest:
     """pickup request type."""
 
     date: str
-
+    ready_time: str
+    closing_time: str
     address: Address = JStruct[Address, REQUIRED]
-    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
-    ready_time: str = None
-    closing_time: str = None
+    parcels: List[Parcel] = JList[Parcel]
     instruction: str = None
     package_location: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -175,27 +175,32 @@ class PickupUpdateRequest:
     """pickup update request type."""
 
     date: str
+    ready_time: str
+    closing_time: str
+    confirmation_number: str
     address: Address = JStruct[Address, REQUIRED]
-    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
-    confirmation_number: str = None
-    ready_time: str = None
-    closing_time: str = None
+    parcels: List[Parcel] = JList[Parcel]
     instruction: str = None
     package_location: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
 class PickupCancellationRequest:
     """pickup cancellation request type."""
 
-    pickup_date: str
     confirmation_number: str
+    address: Address = JStruct[Address]  # TODO:: Make this field REQUIRED
+    pickup_date: str = None
+    reason: str = None
+
+    # Deprecated
     person_name: str = None
     country_code: str = None
 
 
-""" Unified option data types """
+# *** Unified option data types ***
 
 
 @attr.s(auto_attribs=True)
@@ -220,7 +225,7 @@ class Insurance:
     amount: float
 
 
-""" Unified response data types """
+# *** Unified response data types ***
 
 
 @attr.s(auto_attribs=True)
@@ -314,6 +319,6 @@ class PickupDetails:
 class ConfirmationDetails:
     """PurplShip binary operation confirmation type."""
 
-    carrier_id: str
     carrier_name: str
+    carrier_id: str
     success: bool

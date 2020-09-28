@@ -83,21 +83,27 @@ def clean_namespaces(
 def apply_namespaceprefix(item, prefix: str):
     if isinstance(item, list):
         [apply_namespaceprefix(child, prefix) for child in item]
-    elif hasattr(item, 'export'):
+    elif hasattr(item, "export"):
         item.ns_prefix_ = prefix
-        children = [(k, v) for k, v in item.__dict__.items() if '_' not in k and v is not None]
+        children = [
+            (k, v) for k, v in item.__dict__.items() if "_" not in k and v is not None
+        ]
         for name, child in children:
-            setattr(item, f'{name}_nsprefix_', prefix)
+            setattr(item, f"{name}_nsprefix_", prefix)
             apply_namespaceprefix(child, prefix)
 
 
 def extract_fault(response: Element, settings: Settings) -> List[Message]:
-    faults = [build(Fault, node) for node in response.xpath(".//*[local-name() = $name]", name="Fault")]
+    faults = [
+        build(Fault, node)
+        for node in response.xpath(".//*[local-name() = $name]", name="Fault")
+    ]
     return [
         Message(
             code=fault.faultcode,
             message=fault.faultstring,
             carrier_name=settings.carrier_name,
-            carrier_id=settings.carrier_id
-        ) for fault in faults
+            carrier_id=settings.carrier_id,
+        )
+        for fault in faults
     ]

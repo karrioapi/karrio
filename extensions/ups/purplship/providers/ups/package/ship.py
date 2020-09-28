@@ -78,7 +78,7 @@ def shipment_request(
 ) -> Serializable[UPSShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    package_description = (packages[0].parcel.description if len(packages) == 1 else None)
+    package_description = packages[0].parcel.description if len(packages) == 1 else None
     options = Options(payload.options)
     service = ShippingServiceCode[payload.service].value
 
@@ -91,7 +91,9 @@ def shipment_request(
         "01": payload.payment,
         "02": payload.customs.duty if payload.customs is not None else None,
     }
-    mps_packaging = ShippingPackagingType.your_packaging.value if len(packages) > 1 else None
+    mps_packaging = (
+        ShippingPackagingType.your_packaging.value if len(packages) > 1 else None
+    )
 
     request = UPSShipmentRequest(
         Request=common.RequestType(
@@ -239,7 +241,10 @@ def shipment_request(
                 PackageType(
                     Description=package.parcel.description,
                     Packaging=PackagingType(
-                        Code=mps_packaging or ShippingPackagingType[package.packaging_type or "your_packaging"].value
+                        Code=mps_packaging
+                        or ShippingPackagingType[
+                            package.packaging_type or "your_packaging"
+                        ].value
                     ),
                     Dimensions=DimensionsType(
                         UnitOfMeasurement=ShipUnitOfMeasurementType(
@@ -260,14 +265,11 @@ def shipment_request(
             ],
         ),
         LabelSpecification=LabelSpecificationType(
-            LabelImageFormat=LabelImageFormatType(
-                Code='GIF',
-                Description=None
-            ),
+            LabelImageFormat=LabelImageFormatType(Code="GIF", Description=None),
             HTTPUserAgent=None,
             LabelStockSize=None,
             Instruction=None,
-            CharacterSet=None
+            CharacterSet=None,
         ),
         ReceiptSpecification=None,
     )

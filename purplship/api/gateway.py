@@ -60,7 +60,9 @@ class _ProviderMapper:
 
 
 gateway = _ProviderMapper()
-logger.info(f'''
+logger.info(
+    f"""
 PurplShip default gateway mapper initialized.
 Registered providers: {','.join(gateway.providers)}
-''')
+"""
+)

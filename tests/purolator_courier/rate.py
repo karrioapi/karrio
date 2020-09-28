@@ -58,10 +58,12 @@ RATE_REQUEST_PAYLOAD = {
         "address_line1": "Douglas Road",
         "phone_number": "1 514 2982181",
     },
-    "parcels": [{
-        "weight": 10,
-        "weight_unit": "LB",
-    }],
+    "parcels": [
+        {
+            "weight": 10,
+            "weight_unit": "LB",
+        }
+    ],
     "services": ["purolator_express"],
     "reference": "Reference For Shipment",
 }
@@ -85,10 +87,12 @@ RATE_REQUEST_WITH_PRESET_PAYLOAD = {
         "address_line1": "Douglas Road",
         "phone_number": "2982181",
     },
-    "parcels": [{
-        "package_preset": "purolator_express_box",
-        "services": ["purolator_express"],
-    }],
+    "parcels": [
+        {
+            "package_preset": "purolator_express_box",
+            "services": ["purolator_express"],
+        }
+    ],
     "reference": "Reference For Shipment",
 }
 

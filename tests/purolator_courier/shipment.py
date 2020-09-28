@@ -17,13 +17,17 @@ class TestPurolatorShipment(unittest.TestCase):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         pipeline = request.serialize()
-        validate_request = pipeline["validate"]().data
-        create_request = pipeline["create"](VALIDATE_SHIPMENT_RESPONSE_XML).data
-        document_request = pipeline["document"](SHIPMENT_RESPONSE_XML).data
+        validate_request = pipeline["validate"]()
+        create_request = pipeline["create"](VALIDATE_SHIPMENT_RESPONSE_XML)
+        document_request = pipeline["document"](SHIPMENT_RESPONSE_XML)
 
-        self.assertEqual(validate_request, VALIDATE_SHIPMENT_REQUEST_XML)
-        self.assertEqual(create_request, SHIPMENT_REQUEST_XML)
-        self.assertEqual(document_request, SHIPMENT_DOCUMENT_REQUEST_XML)
+        self.assertEqual(
+            validate_request.data.serialize(), VALIDATE_SHIPMENT_REQUEST_XML
+        )
+        self.assertEqual(create_request.data.serialize(), SHIPMENT_REQUEST_XML)
+        self.assertEqual(
+            document_request.data.serialize(), SHIPMENT_DOCUMENT_REQUEST_XML
+        )
 
     def test_send_valid_shipment(self):
         with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
@@ -97,10 +101,12 @@ SHIPMENT_REQUEST_PAYLOAD = {
         "address_line1": "Douglas Road",
         "phone_number": "1 514 2982181",
     },
-    "parcels": [{
-        "weight": 10,
-        "weight_unit": "LB",
-    }],
+    "parcels": [
+        {
+            "weight": 10,
+            "weight_unit": "LB",
+        }
+    ],
     "reference": "Reference For Shipment",
     "service": "purolator_express",
     "options": {"printing": "thermal"},
@@ -116,7 +122,22 @@ PARSED_SHIPMENT_RESPONSE = [
     [],
 ]
 
-PARSED_INVALID_SHIPMENT_RESPONSE = [{"carrier_name": 'purolator_courier', "carrier_id": 'purolator_courier', 'label': 'No label returned'}, [{"carrier_name": "purolator_courier", "carrier_id": "purolator_courier", 'code': '3001116', 'details': {}, 'message': 'Service Failed'}]]
+PARSED_INVALID_SHIPMENT_RESPONSE = [
+    {
+        "carrier_name": "purolator_courier",
+        "carrier_id": "purolator_courier",
+        "label": "No label returned",
+    },
+    [
+        {
+            "carrier_name": "purolator_courier",
+            "carrier_id": "purolator_courier",
+            "code": "3001116",
+            "details": {},
+            "message": "Service Failed",
+        }
+    ],
+]
 
 SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <soap:Header>

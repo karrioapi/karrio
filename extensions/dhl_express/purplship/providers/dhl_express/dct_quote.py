@@ -39,7 +39,7 @@ def parse_dct_response(
     ]
     return (
         [quote for quote in quotes if quote is not None],
-        parse_error_response(response, settings)
+        parse_error_response(response, settings),
     )
 
 
@@ -66,7 +66,9 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     delivery_date = to_date(qtdshp.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
     pricing_date = to_date(qtdshp.PricingDate)
     transit = (
-        (delivery_date - pricing_date).days if all([delivery_date, pricing_date]) else None
+        (delivery_date - pricing_date).days
+        if all([delivery_date, pricing_date])
+        else None
     )
     service_name = next(
         (p.name for p in Product if p.value in qtdshp.LocalProductName),
@@ -87,7 +89,7 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
                 lambda s: ChargeDetails(
                     name=s.LocalServiceTypeName,
                     amount=decimal(s.ChargeValue),
-                    currency=qtdshp.CurrencyCode
+                    currency=qtdshp.CurrencyCode,
                 ),
                 qtdshp.QtdShpExChrg,
             )
@@ -116,11 +118,19 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
     if len(products) == 0:
         if is_international:
             products = [
-                (ProductCode.dhl_express_worldwide_doc if is_document else ProductCode.dhl_express_worldwide_nondoc).value
+                (
+                    ProductCode.dhl_express_worldwide_doc
+                    if is_document
+                    else ProductCode.dhl_express_worldwide_nondoc
+                ).value
             ]
         else:
             products = [
-                (ProductCode.dhl_express_easy_doc if is_document else ProductCode.dhl_express_easy_nondoc).value
+                (
+                    ProductCode.dhl_express_easy_doc
+                    if is_document
+                    else ProductCode.dhl_express_easy_nondoc
+                ).value
             ]
 
     request = DCTRequest(
@@ -160,15 +170,21 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                             Height=package.height.IN,
                             Weight=package.weight.LB,
                         )
-                        for index, package in enumerate(cast(Iterable[Package], packages), 1)
+                        for index, package in enumerate(
+                            cast(Iterable[Package], packages), 1
+                        )
                     ]
                 ),
                 NumberOfPieces=len(packages),
                 ShipmentWeight=packages.weight.LB,
                 Volume=None,
                 PaymentAccountNumber=settings.account_number,
-                InsuredCurrency=options.currency if options.insurance is not None else None,
-                InsuredValue=options.insurance.amount if options.insurance is not None else None,
+                InsuredCurrency=options.currency
+                if options.insurance is not None
+                else None,
+                InsuredValue=options.insurance.amount
+                if options.insurance is not None
+                else None,
                 PaymentType=None,
                 AcctPickupCloseTime=None,
                 QtdShp=[
@@ -184,18 +200,18 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 ],
             ),
             Dutiable=DCTDutiable(
-                DeclaredValue=payload.options.get('value', 1.0),
+                DeclaredValue=payload.options.get("value", 1.0),
                 DeclaredCurrency=options.currency,
-            ) if is_international and is_dutiable else None,
+            )
+            if is_international and is_dutiable
+            else None,
         ),
     )
     return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: DCTRequest) -> str:
-    namespacedef_ = (
-        'xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "'
-    )
+    namespacedef_ = 'xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "'
     return export(
         request,
         name_="p:DCTRequest",

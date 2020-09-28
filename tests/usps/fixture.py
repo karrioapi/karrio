@@ -1,3 +1,5 @@
 import purplship
 
-gateway = purplship.gateway["usps"].create({"username": "username", "password": "password"})
+gateway = purplship.gateway["usps"].create(
+    {"username": "username", "password": "password"}
+)

@@ -12,7 +12,10 @@ from purplship.providers.dhl_express.modify_pickup import (
     modify_pickup_request,
     parse_modify_pickup_response,
 )
-from purplship.providers.dhl_express.ship_val import shipment_request, parse_shipment_response
+from purplship.providers.dhl_express.ship_val import (
+    shipment_request,
+    parse_shipment_response,
+)
 from purplship.providers.dhl_express.tracking_known import (
     known_tracking_request,
     parse_known_tracking_response,

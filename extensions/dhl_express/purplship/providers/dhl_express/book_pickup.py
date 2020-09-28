@@ -23,7 +23,10 @@ from purplship.core.models import (
     ChargeDetails,
 )
 from purplship.core.units import WeightUnit, Weight
-from purplship.providers.dhl_express.units import CountryRegion, WeightUnit as DHLWeightUnit
+from purplship.providers.dhl_express.units import (
+    CountryRegion,
+    WeightUnit as DHLWeightUnit,
+)
 from purplship.providers.dhl_express.utils import Settings, reformat_time
 from purplship.providers.dhl_express.error import parse_error_response
 
@@ -106,8 +109,8 @@ def book_pickup_request(
         Pickup=Pickup(
             Pieces=len(payload.parcels),
             PickupDate=payload.date,
-            ReadyByTime=f'{payload.ready_time}:00',
-            CloseTime=f'{payload.closing_time}:00',
+            ReadyByTime=f"{payload.ready_time}:00",
+            CloseTime=f"{payload.closing_time}:00",
             SpecialInstructions=[payload.instruction],
             RemotePickupFlag="Y",
             weight=WeightSeg(Weight=weight, WeightUnit=weight_unit.value),
