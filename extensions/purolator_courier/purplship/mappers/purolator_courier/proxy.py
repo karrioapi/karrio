@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 class Proxy(BaseProxy):
     settings: Settings
 
-    def _send_request(self, path: str, soapaction: str, request: Serializable[Any]) -> str:
+    def _send_request(
+        self, path: str, soapaction: str, request: Serializable[Any]
+    ) -> str:
         return http(
             url=f"{self.settings.server_url}{path}",
             data=bytearray(request.serialize(), "utf-8"),
@@ -26,24 +28,23 @@ class Proxy(BaseProxy):
 
     def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
-            path='/EWS/V2/Estimating/EstimatingService.asmx',
-            soapaction='http://purolator.com/pws/service/v2/GetFullEstimate',
-            request=request
+            path="/EWS/V2/Estimating/EstimatingService.asmx",
+            soapaction="http://purolator.com/pws/service/v2/GetFullEstimate",
+            request=request,
         )
 
         return Deserializable(response, to_xml)
 
     def get_tracking(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
-            path='/PWS/V1/Tracking/TrackingService.asmx',
-            soapaction='http://purolator.com/pws/service/v1/TrackPackagesByPin',
-            request=request
+            path="/PWS/V1/Tracking/TrackingService.asmx",
+            soapaction="http://purolator.com/pws/service/v1/TrackPackagesByPin",
+            request=request,
         )
 
         return Deserializable(response, to_xml)
 
     def create_shipment(self, request: Serializable[Pipeline]) -> Deserializable[str]:
-
         def process(job: Job):
             if job.data is None:
                 return job.fallback
@@ -53,13 +54,13 @@ class Proxy(BaseProxy):
                 path=dict(
                     create="/EWS/V2/Shipping/ShippingService.asmx",
                     validate="/EWS/V2/Shipping/ShippingService.asmx",
-                    document="/EWS/V1/ShippingDocuments/ShippingDocumentsService.asmx"
+                    document="/EWS/V1/ShippingDocuments/ShippingDocumentsService.asmx",
                 )[job.id],
                 soapaction=dict(
                     create="http://purolator.com/pws/service/v2/CreateShipment",
                     validate="http://purolator.com/pws/service/v2/ValidateShipment",
-                    document="http://purolator.com/pws/service/v1/GetDocuments"
-                )[job.id]
+                    document="http://purolator.com/pws/service/v1/GetDocuments",
+                )[job.id],
             )
 
         pipeline: Pipeline = request.serialize()
@@ -67,18 +68,17 @@ class Proxy(BaseProxy):
         return Deserializable(bundle_xml(response), to_xml)
 
     def request_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
-
         def process(job: Job):
             if job.data is None:
                 return job.fallback
 
             return self._send_request(
-                path='/EWS/V1/PickUp/PickUpService.asmx',
+                path="/EWS/V1/PickUp/PickUpService.asmx",
                 request=job.data,
                 soapaction=dict(
                     validate="http://purolator.com/pws/service/v1/ValidatePickUp",
-                    schedule="http://purolator.com/pws/service/v1/SchedulePickUp"
-                )[job.id]
+                    schedule="http://purolator.com/pws/service/v1/SchedulePickUp",
+                )[job.id],
             )
 
         pipeline: Pipeline = request.serialize()
@@ -87,18 +87,17 @@ class Proxy(BaseProxy):
         return Deserializable(bundle_xml(response), to_xml)
 
     def modify_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
-
         def process(job: Job):
             if job.data is None:
                 return job.fallback
 
             return self._send_request(
-                path='/EWS/V1/PickUp/PickUpService.asmx',
+                path="/EWS/V1/PickUp/PickUpService.asmx",
                 request=job.data,
                 soapaction=dict(
                     validate="http://purolator.com/pws/service/v1/ValidatePickUp",
-                    modify="http://purolator.com/pws/service/v1/ModifyPickUp"
-                )[job.id]
+                    modify="http://purolator.com/pws/service/v1/ModifyPickUp",
+                )[job.id],
             )
 
         pipeline: Pipeline = request.serialize()
@@ -108,9 +107,9 @@ class Proxy(BaseProxy):
 
     def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
-            path='/EWS/V1/PickUp/PickUpService.asmx',
-            soapaction='http://purolator.com/pws/service/v1/VoidPickUp',
-            request=request
+            path="/EWS/V1/PickUp/PickUpService.asmx",
+            soapaction="http://purolator.com/pws/service/v1/VoidPickUp",
+            request=request,
         )
 
         return Deserializable(response, to_xml)

@@ -22,9 +22,13 @@ def parse_shipment_response(
     return parse_contract_shipment_response(response, settings)
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Pipeline]:
+def shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[Pipeline]:
     requests: Pipeline = Pipeline(
-        create_shipment=lambda *_: partial(_create_shipment, payload=payload, settings=settings)(),
+        create_shipment=lambda *_: partial(
+            _create_shipment, payload=payload, settings=settings
+        )(),
         retrieve_label=partial(_get_shipment_label),
     )
     return Serializable(requests)
@@ -32,10 +36,12 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
 
 def _create_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
     no_contract = settings.contract_id is None or settings.contract_id == ""
-    create_shipment = (non_contract_shipment_request if no_contract else contract_shipment_request)
+    create_shipment = (
+        non_contract_shipment_request if no_contract else contract_shipment_request
+    )
     return Job(
         id="non_contract_shipment" if no_contract else "contract_shipment",
-        data=create_shipment(payload, settings)
+        data=create_shipment(payload, settings),
     )
 
 

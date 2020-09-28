@@ -19,7 +19,7 @@ from purplship.core.models import (
     PickupUpdateRequest,
     PickupCancellationRequest,
     Message,
-    ConfirmationDetails
+    ConfirmationDetails,
 )
 from purplship.providers.dhl_express import (
     dct_request,

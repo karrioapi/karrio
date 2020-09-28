@@ -70,4 +70,4 @@ def track_package_by_pin_request(
             PINs=ArrayOfPIN(PIN=[PIN(Value=pin) for pin in payload.tracking_numbers])
         ),
     )
-    return Serializable(request, partial(standard_request_serializer, version='v1'))
+    return Serializable(request, partial(standard_request_serializer, version="v1"))

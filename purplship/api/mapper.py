@@ -16,7 +16,7 @@ from purplship.core.models import (
     PickupDetails,
     RateDetails,
     TrackingDetails,
-    ConfirmationDetails
+    ConfirmationDetails,
 )
 from purplship.core.errors import MethodNotSupportedError
 from purplship.core.utils.serializable import Deserializable, Serializable
@@ -24,8 +24,7 @@ from purplship.core.utils.serializable import Deserializable, Serializable
 
 @attr.s(auto_attribs=True)
 class Mapper(ABC):
-    """Unified Shipping API Mapper (Interface)
-    """
+    """Unified Shipping API Mapper (Interface)"""
 
     settings: Settings
 

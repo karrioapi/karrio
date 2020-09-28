@@ -16,7 +16,7 @@ from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
     PickupCancellationRequest,
-    ConfirmationDetails
+    ConfirmationDetails,
 )
 from purplship.providers.fedex import track_request, parse_track_response
 from purplship.providers.fedex.pickup import (

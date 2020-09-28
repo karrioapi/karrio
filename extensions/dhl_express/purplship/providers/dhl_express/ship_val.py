@@ -19,7 +19,7 @@ from pydhl.ship_val_global_req_6_2 import (
     Notification,
     SpecialService,
     WeightUnit,
-    DimensionUnit
+    DimensionUnit,
 )
 from pydhl.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
 from purplship.core.utils.helpers import export, concat_str
@@ -38,7 +38,7 @@ from purplship.providers.dhl_express.units import (
     CountryRegion,
     SpecialServiceCode,
     DeliveryType,
-    PackagePresets
+    PackagePresets,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
@@ -80,7 +80,8 @@ def shipment_request(
     product = ProductCode[payload.service].value
     package_type = (
         PackageType[packages[0].packaging_type or "your_packaging"].value
-        if len(packages) == 1 else None
+        if len(packages) == 1
+        else None
     )
     delivery_type = next(
         (d for d in DeliveryType if d.name in payload.options.keys()), None
@@ -146,7 +147,9 @@ def shipment_request(
         Commodity=[
             Commodity(CommodityCode=c.sku, CommodityName=c.description)
             for c in payload.customs.commodities
-        ] if payload.customs is not None else None,
+        ]
+        if payload.customs is not None
+        else None,
         NewShipper=None,
         Shipper=Shipper(
             ShipperID=settings.account_number or "  ",
@@ -176,7 +179,10 @@ def shipment_request(
                     Piece(
                         PieceID=payload.parcels[index].id,
                         PackageType=(
-                            package_type or PackageType[package.packaging_type or "your_packaging"].value
+                            package_type
+                            or PackageType[
+                                package.packaging_type or "your_packaging"
+                            ].value
                         ),
                         Depth=package.length.IN,
                         Width=package.width.IN,

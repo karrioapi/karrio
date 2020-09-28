@@ -33,7 +33,7 @@ from pyfedex.ship_service_v25 import (
     LabelFormatType,
     LabelStockType,
     ShippingDocumentImageType,
-    LabelPrintingOrientationType
+    LabelPrintingOrientationType,
 )
 from purplship.core.utils.helpers import export, concat_str
 from purplship.core.utils.serializable import Serializable
@@ -70,9 +70,9 @@ def parse_shipment_response(
         ),
         None,
     )
-    shipment: ShipmentDetails = _extract_shipment(
-        detail, settings
-    ) if detail is not None else None
+    shipment: ShipmentDetails = (
+        _extract_shipment(detail, settings) if detail is not None else None
+    )
     return shipment, parse_error_response(response, settings)
 
 
@@ -84,9 +84,9 @@ def _extract_shipment(
 
     tracking_number = cast(TrackingId, detail.MasterTrackingId).TrackingNumber
     package: CompletedPackageDetail = next(iter(detail.CompletedPackageDetails), None)
-    part: ShippingDocumentPart = next(
-        iter(package.Label.Parts)
-    ) if package is not None else None
+    part: ShippingDocumentPart = (
+        next(iter(package.Label.Parts)) if package is not None else None
+    )
     label = (
         encodebytes(cast(ShippingDocumentPart, part).Image).decode("utf-8")
         if part is not None
@@ -109,7 +109,8 @@ def process_shipment_request(
     master_package = packages[0]
     package_type = (
         PackagingType[master_package.packaging_type or "your_packaging"].value
-        if len(packages) == 1 else PackagingType.your_packaging.value
+        if len(packages) == 1
+        else PackagingType.your_packaging.value
     )
 
     service = ServiceType[payload.service].value
@@ -132,7 +133,9 @@ def process_shipment_request(
             ServiceType=service,
             PackagingType=package_type,
             ManifestDetail=None,
-            TotalWeight=FedexWeight(Units=WeightUnits.LB.value, Value=packages.weight.LB),
+            TotalWeight=FedexWeight(
+                Units=WeightUnits.LB.value, Value=packages.weight.LB
+            ),
             TotalInsuredValue=options.insurance.amount if options.insurance else None,
             PreferredCurrency=options.currency,
             ShipmentAuthorizationDetail=None,
@@ -238,7 +241,8 @@ def process_shipment_request(
                 PaymentType=payment_type,
                 Payor=Payor(
                     ResponsibleParty=Party(
-                        AccountNumber=payload.payment.account_number or settings.account_number,
+                        AccountNumber=payload.payment.account_number
+                        or settings.account_number,
                         Tins=None,
                         Contact=None,
                         Address=None,
@@ -342,7 +346,13 @@ def process_shipment_request(
                         Height=master_package.height.value,
                         Units=master_package.dimension_unit.value,
                     )
-                    if any([master_package.length, master_package.width, master_package.height])
+                    if any(
+                        [
+                            master_package.length,
+                            master_package.width,
+                            master_package.height,
+                        ]
+                    )
                     else None,
                     PhysicalPackaging=None,
                     ItemDescription=master_package.parcel.description,
@@ -351,7 +361,7 @@ def process_shipment_request(
                     SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
-            ]
+            ],
         ),
     )
     return Serializable(request, _request_serializer)

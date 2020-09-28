@@ -31,7 +31,7 @@ from pypurolator.shipping_service_2_1_3 import (
     CreditCardInformation,
     BusinessRelationship,
     ContentDetail,
-    ArrayOfContentDetail
+    ArrayOfContentDetail,
 )
 from purplship.core.models import ShipmentRequest
 from purplship.core.units import PrinterType, Options, Packages, Phone
@@ -53,11 +53,13 @@ ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]
 def create_shipping_request(
     payload: ShipmentRequest, settings: Settings, validate: bool = None
 ) -> Serializable[Envelope]:
-    RequestType: ShipmentRequestType = ValidateShipmentRequest if validate else CreateShipmentRequest
+    RequestType: ShipmentRequestType = (
+        ValidateShipmentRequest if validate else CreateShipmentRequest
+    )
 
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    package_description = (packages[0].parcel.description if len(packages) == 1 else None)
+    package_description = packages[0].parcel.description if len(packages) == 1 else None
     service = Product[payload.service].value
     is_international = payload.shipper.country_code != payload.recipient.country_code
     options = Options(payload.options)
@@ -104,7 +106,7 @@ def create_shipping_request(
                             CountryCode=shipper_phone_number.country_code,
                             AreaCode=shipper_phone_number.area_code,
                             Phone=shipper_phone_number.phone,
-                            Extension=None
+                            Extension=None,
                         ),
                         FaxNumber=None,
                     ),
@@ -137,7 +139,7 @@ def create_shipping_request(
                             CountryCode=recipient_phone_number.country_code,
                             AreaCode=recipient_phone_number.area_code,
                             Phone=recipient_phone_number.phone,
-                            Extension=None
+                            Extension=None,
                         ),
                         FaxNumber=None,
                     ),
@@ -223,11 +225,13 @@ def create_shipping_request(
                                 FCCDocumentIndicator=None,
                                 SenderIsProducerIndicator=None,
                                 TextileIndicator=None,
-                                TextileManufacturer=None
+                                TextileManufacturer=None,
                             )
                             for c in payload.customs.commodities
                         ]
-                    ) if not is_document else None,
+                    )
+                    if not is_document
+                    else None,
                     BuyerInformation=None,
                     PreferredCustomsBroker=None,
                     DutyInformation=DutyInformation(
@@ -247,8 +251,10 @@ def create_shipping_request(
                 ReturnShipmentInformation=None,
                 PaymentInformation=PaymentInformation(
                     PaymentType=PaymentType[payload.payment.paid_by].value,
-                    RegisteredAccountNumber=payload.payment.account_number or settings.account_number,
-                    BillingAccountNumber=payload.payment.account_number or settings.account_number,
+                    RegisteredAccountNumber=payload.payment.account_number
+                    or settings.account_number,
+                    BillingAccountNumber=payload.payment.account_number
+                    or settings.account_number,
                     CreditCardInformation=CreditCardInformation(
                         Type=payload.payment.credit_card.type,
                         Number=payload.payment.credit_card.number,

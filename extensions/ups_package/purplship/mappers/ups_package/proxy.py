@@ -22,7 +22,7 @@ class Proxy(BaseProxy):
         )
 
     def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
-        response = self._send_request('/Rate', request)
+        response = self._send_request("/Rate", request)
 
         return Deserializable(response, to_xml)
 
@@ -34,26 +34,23 @@ class Proxy(BaseProxy):
         """
 
         def get_tracking(track_request: str):
-            return self._send_request('/Track', Serializable(track_request))
+            return self._send_request("/Track", Serializable(track_request))
 
         response: List[str] = exec_parrallel(get_tracking, request.serialize())
 
         return Deserializable(bundle_xml(xml_strings=response), to_xml)
 
-    def create_shipment(
-        self, request: Serializable[Envelope]
-    ) -> Deserializable[str]:
-        response = self._send_request('/Ship', request)
+    def create_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
+        response = self._send_request("/Ship", request)
 
         return Deserializable(response, to_xml)
 
     def request_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
-
         def process(job: Job):
             if job.data is None:
                 return job.fallback
 
-            return self._send_request('/Pickup', job.data)
+            return self._send_request("/Pickup", job.data)
 
         pipeline: Pipeline = request.serialize()
         response = pipeline.apply(process)
@@ -61,12 +58,11 @@ class Proxy(BaseProxy):
         return Deserializable(bundle_xml(response), to_xml)
 
     def modify_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
-
         def process(job: Job):
             if job.data is None:
                 return job.fallback
 
-            return self._send_request('/Pickup', job.data)
+            return self._send_request("/Pickup", job.data)
 
         pipeline: Pipeline = request.serialize()
         response = pipeline.apply(process)
@@ -74,6 +70,6 @@ class Proxy(BaseProxy):
         return Deserializable(bundle_xml(response), to_xml)
 
     def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
-        response = self._send_request('/Pickup', request)
+        response = self._send_request("/Pickup", request)
 
         return Deserializable(response, to_xml)

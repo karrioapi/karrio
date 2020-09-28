@@ -18,7 +18,14 @@ from pyups.rate_web_service_schema import (
     TimeInTransitRequestType,
     EstimatedArrivalType,
 )
-from purplship.core.utils import export, concat_str, Serializable, decimal, integer, Element
+from purplship.core.utils import (
+    export,
+    concat_str,
+    Serializable,
+    decimal,
+    integer,
+    Element,
+)
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, build
 from purplship.core.units import Packages
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
@@ -62,13 +69,18 @@ def _extract_package_rate(
 
         extra_charges = itemized_charges + [rate.ServiceOptionsCharges]
         estimated_arrival = next(
-            (build(EstimatedArrivalType, n) for n in detail_node.xpath(".//*[local-name() = $name]", name="EstimatedArrival")),
-            EstimatedArrivalType()
+            (
+                build(EstimatedArrivalType, n)
+                for n in detail_node.xpath(
+                    ".//*[local-name() = $name]", name="EstimatedArrival"
+                )
+            ),
+            EstimatedArrivalType(),
         )
         transit_days = (
             rate.GuaranteedDelivery.BusinessDaysInTransit
-            if rate.GuaranteedDelivery is not None else
-            estimated_arrival.BusinessDaysInTransit
+            if rate.GuaranteedDelivery is not None
+            else estimated_arrival.BusinessDaysInTransit
         )
         currency_ = next(
             c.text
@@ -117,12 +129,18 @@ def rate_request(
     packages = Packages(payload.parcels, PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     service: str = next(
-        (RatingServiceCode[s].value for s in payload.services if s in RatingServiceCode.__members__),
-        None
+        (
+            RatingServiceCode[s].value
+            for s in payload.services
+            if s in RatingServiceCode.__members__
+        ),
+        None,
     )
 
-    if (service is not None) and (("freight" in service) or ("ground" in service)) and (
-        packages.weight.value is None
+    if (
+        (service is not None)
+        and (("freight" in service) or ("ground" in service))
+        and (packages.weight.value is None)
     ):
         raise FieldError({"parcel.weight": FieldErrorCode.required})
 
@@ -176,7 +194,9 @@ def rate_request(
             FreightShipmentInformation=None,
             GoodsNotInFreeCirculationIndicator=None,
             Service=(
-                UOMCodeDescriptionType(Code=service, Description=None) if service is not None else None
+                UOMCodeDescriptionType(Code=service, Description=None)
+                if service is not None
+                else None
             ),
             NumOfPieces=None,  # Only required for Freight
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
@@ -185,7 +205,10 @@ def rate_request(
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
                         Code=(
-                            mps_packaging or RatingPackagingType[package.packaging_type or "small_box"].value
+                            mps_packaging
+                            or RatingPackagingType[
+                                package.packaging_type or "small_box"
+                            ].value
                         ),
                         Description=None,
                     ),

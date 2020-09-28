@@ -9,8 +9,7 @@ from purplship.core.utils.serializable import Deserializable, Serializable
 
 @attr.s(auto_attribs=True)
 class Proxy(ABC):
-    """Unified Shipping API Proxy (Interface)
-    """
+    """Unified Shipping API Proxy (Interface)"""
 
     settings: Settings
 

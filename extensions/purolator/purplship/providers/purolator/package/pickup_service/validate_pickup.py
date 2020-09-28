@@ -12,14 +12,14 @@ from pypurolator.pickup_service_1_2_1 import (
 )
 from purplship.core.units import Phone, Packages
 from purplship.core.models import PickupUpdateRequest, PickupRequest
-from purplship.core.utils import (
-    Serializable, create_envelope, Envelope, concat_str
-)
+from purplship.core.utils import Serializable, create_envelope, Envelope, concat_str
 from purplship.providers.purolator.utils import Settings, standard_request_serializer
 from purplship.providers.purolator.units import PackagePresets
 
 
-def validate_pickup_request(payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings) -> Serializable[Envelope]:
+def validate_pickup_request(
+    payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
+) -> Serializable[Envelope]:
     """
     validate_pickup_request create a serializable typed Envelope containing a ValidatePickUpRequest
 
@@ -46,21 +46,20 @@ def validate_pickup_request(payload: Union[PickupRequest, PickupUpdateRequest], 
             PartnerID=None,
             PickupInstruction=PickupInstruction(
                 Date=payload.date,
-                AnyTimeAfter="".join(payload.ready_time.split(':')),
-                UntilTime="".join(payload.closing_time.split(':')),
+                AnyTimeAfter="".join(payload.ready_time.split(":")),
+                UntilTime="".join(payload.closing_time.split(":")),
                 TotalWeight=Weight(
-                    Value=packages.weight.LB,
-                    WeightUnit=WeightUnit.LB.value
+                    Value=packages.weight.LB, WeightUnit=WeightUnit.LB.value
                 ),
                 TotalPieces=len(packages) or 1,
                 BoxesIndicator=None,
                 PickUpLocation=payload.package_location,
                 AdditionalInstructions=payload.instruction,
                 SupplyRequestCodes=None,
-                TrailerAccessible=payload.options.get('TrailerAccessible'),
-                LoadingDockAvailable=payload.options.get('LoadingDockAvailable'),
+                TrailerAccessible=payload.options.get("TrailerAccessible"),
+                LoadingDockAvailable=payload.options.get("LoadingDockAvailable"),
                 ShipmentOnSkids=None,
-                NumberOfSkids=None
+                NumberOfSkids=None,
             ),
             Address=Address(
                 Name=payload.address.person_name or "",
@@ -83,15 +82,15 @@ def validate_pickup_request(payload: Union[PickupRequest, PickupUpdateRequest], 
                     CountryCode=phone.country_code or "0",
                     AreaCode=phone.area_code or "0",
                     Phone=phone.phone or "0",
-                    Extension=None
+                    Extension=None,
                 ),
                 FaxNumber=None,
             ),
             ShipmentSummary=None,
             NotificationEmails=NotificationEmails(
                 NotificationEmail=[payload.address.email]
-            )
-        )
+            ),
+        ),
     )
 
-    return Serializable(request, partial(standard_request_serializer, version='v1'))
+    return Serializable(request, partial(standard_request_serializer, version="v1"))

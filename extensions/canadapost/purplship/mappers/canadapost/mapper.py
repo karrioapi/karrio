@@ -1,6 +1,9 @@
 from typing import List, Tuple
 from pycanadapost.rating import mailing_scenario
-from pycanadapost.pickuprequest import PickupRequestDetailsType, PickupRequestResponseDetailsType
+from pycanadapost.pickuprequest import (
+    PickupRequestDetailsType,
+    PickupRequestResponseDetailsType,
+)
 from purplship.core.utils.pipeline import Pipeline
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.api.mapper import Mapper as BaseMapper
@@ -16,7 +19,7 @@ from purplship.core.models import (
     PickupDetails,
     PickupUpdateRequest,
     PickupCancellationRequest,
-    ConfirmationDetails
+    ConfirmationDetails,
 )
 from purplship.providers.canadapost import (
     mailing_scenario_request,
@@ -29,7 +32,7 @@ from purplship.providers.canadapost import (
     create_pickup_request,
     update_pickup_request,
     parse_pickup_response,
-    parse_cancel_pickup_response
+    parse_cancel_pickup_response,
 )
 from purplship.mappers.canadapost.settings import Settings
 

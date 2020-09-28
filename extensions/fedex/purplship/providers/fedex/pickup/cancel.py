@@ -7,29 +7,48 @@ from pyfedex.pickup_service_v20 import (
     CancelPickupReply,
     NotificationSeverityType,
 )
-from purplship.core.models import PickupCancellationRequest, ConfirmationDetails, Message
+from purplship.core.models import (
+    PickupCancellationRequest,
+    ConfirmationDetails,
+    Message,
+)
 from purplship.core.utils import (
-    Serializable, export, create_envelope, apply_namespaceprefix, Envelope, Element, build
+    Serializable,
+    export,
+    create_envelope,
+    apply_namespaceprefix,
+    Envelope,
+    Element,
+    build,
 )
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
 
 
-def parse_cancel_pickup_reply(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
+def parse_cancel_pickup_reply(
+    response: Element, settings: Settings
+) -> Tuple[ConfirmationDetails, List[Message]]:
     reply = build(
         CancelPickupReply,
-        next(iter(response.xpath(".//*[local-name() = $name]", name="CancelPickupReply")), None)
+        next(
+            iter(
+                response.xpath(".//*[local-name() = $name]", name="CancelPickupReply")
+            ),
+            None,
+        ),
     )
     cancellation = ConfirmationDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        success=reply.HighestSeverity == NotificationSeverityType.SUCCESS.value
+        success=reply.HighestSeverity == NotificationSeverityType.SUCCESS.value,
     )
 
     return cancellation, parse_error_response(response, settings)
 
 
-def cancel_pickup_request(payload: PickupCancellationRequest, settings: Settings) -> Serializable[CancelPickupRequest]:
+def cancel_pickup_request(
+    payload: PickupCancellationRequest, settings: Settings
+) -> Serializable[CancelPickupRequest]:
 
     request = CancelPickupRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -44,9 +63,13 @@ def cancel_pickup_request(payload: PickupCancellationRequest, settings: Settings
         Remarks=None,
         ShippingChargesPayment=None,
         Reason=payload.reason,
-        ContactName=(payload.address.person_name if payload.address is not None else None),
-        PhoneNumber=(payload.address.phone_number if payload.address is not None else None),
-        PhoneExtension=None
+        ContactName=(
+            payload.address.person_name if payload.address is not None else None
+        ),
+        PhoneNumber=(
+            payload.address.phone_number if payload.address is not None else None
+        ),
+        PhoneExtension=None,
     )
 
     return Serializable(request, _request_serializer)
@@ -59,5 +82,5 @@ def _request_serializer(request: CancelPickupRequest) -> str:
 
     return export(
         envelope,
-        namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17"'
+        namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17"',
     )

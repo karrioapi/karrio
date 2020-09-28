@@ -3,21 +3,31 @@ from typing import Tuple, List
 from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
-from purplship.core.models import PickupCancellationRequest, Message, ConfirmationDetails
+from purplship.core.models import (
+    PickupCancellationRequest,
+    Message,
+    ConfirmationDetails,
+)
 from purplship.providers.dhl_express.utils import Settings, reformat_time
 from purplship.providers.dhl_express.error import parse_error_response
 from purplship.providers.dhl_express.units import CountryRegion
 
 
-def parse_cancel_pickup_response(response, settings) -> Tuple[ConfirmationDetails, List[Message]]:
+def parse_cancel_pickup_response(
+    response, settings
+) -> Tuple[ConfirmationDetails, List[Message]]:
     successful = (
         len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
     )
-    cancellation = ConfirmationDetails(
-        carrier_name=settings.carrier_name,
-        carrier_id=settings.carrier_id,
-        success=successful
-    ) if successful else None
+    cancellation = (
+        ConfirmationDetails(
+            carrier_name=settings.carrier_name,
+            carrier_id=settings.carrier_id,
+            success=successful,
+        )
+        if successful
+        else None
+    )
 
     return cancellation, parse_error_response(response, settings)
 

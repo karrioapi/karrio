@@ -33,7 +33,9 @@ class Settings(BaseSettings):
         )
 
 
-def default_request_serializer(prefix: str, namespace: str) -> Callable[[Envelope], str]:
+def default_request_serializer(
+    prefix: str, namespace: str
+) -> Callable[[Envelope], str]:
     def serializer(envelope: Envelope):
         namespace_ = (
             ' xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'

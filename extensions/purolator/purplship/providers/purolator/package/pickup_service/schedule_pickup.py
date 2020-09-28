@@ -9,22 +9,36 @@ from pypurolator.pickup_service_1_2_1 import (
     PickupInstruction,
     Weight,
     WeightUnit,
-    NotificationEmails
+    NotificationEmails,
 )
 from purplship.core.units import Phone, Packages
 from purplship.core.models import PickupUpdateRequest, PickupDetails, Message
 from purplship.core.utils import (
-    Serializable, create_envelope, Envelope, Element, concat_str, build
+    Serializable,
+    create_envelope,
+    Envelope,
+    Element,
+    concat_str,
+    build,
 )
 from purplship.providers.purolator.error import parse_error_response
 from purplship.providers.purolator.utils import Settings, standard_request_serializer
 from purplship.providers.purolator.units import PackagePresets
 
 
-def parse_schedule_pickup_reply(response: Element, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
+def parse_schedule_pickup_reply(
+    response: Element, settings: Settings
+) -> Tuple[PickupDetails, List[Message]]:
     reply = build(
         SchedulePickUpResponse,
-        next(iter(response.xpath(".//*[local-name() = $name]", name="SchedulePickUpResponse")), None)
+        next(
+            iter(
+                response.xpath(
+                    ".//*[local-name() = $name]", name="SchedulePickUpResponse"
+                )
+            ),
+            None,
+        ),
     )
     pickup = (
         _extract_pickup_details(reply, settings)
@@ -35,7 +49,9 @@ def parse_schedule_pickup_reply(response: Element, settings: Settings) -> Tuple[
     return pickup, parse_error_response(response, settings)
 
 
-def _extract_pickup_details(reply: SchedulePickUpResponse, settings: Settings) -> PickupDetails:
+def _extract_pickup_details(
+    reply: SchedulePickUpResponse, settings: Settings
+) -> PickupDetails:
 
     return PickupDetails(
         carrier_id=settings.carrier_id,
@@ -44,7 +60,9 @@ def _extract_pickup_details(reply: SchedulePickUpResponse, settings: Settings) -
     )
 
 
-def schedule_pickup_request(payload: PickupUpdateRequest, settings: Settings) -> Serializable[Envelope]:
+def schedule_pickup_request(
+    payload: PickupUpdateRequest, settings: Settings
+) -> Serializable[Envelope]:
     """
     schedule_pickup_request create a serializable typed Envelope containing a SchedulePickUpRequest
 
@@ -71,21 +89,20 @@ def schedule_pickup_request(payload: PickupUpdateRequest, settings: Settings) ->
             PartnerID=None,
             PickupInstruction=PickupInstruction(
                 Date=payload.date,
-                AnyTimeAfter="".join(payload.ready_time.split(':')),
-                UntilTime="".join(payload.closing_time.split(':')),
+                AnyTimeAfter="".join(payload.ready_time.split(":")),
+                UntilTime="".join(payload.closing_time.split(":")),
                 TotalWeight=Weight(
-                    Value=packages.weight.LB,
-                    WeightUnit=WeightUnit.LB.value
+                    Value=packages.weight.LB, WeightUnit=WeightUnit.LB.value
                 ),
                 TotalPieces=len(packages) or 1,
                 BoxesIndicator=None,
                 PickUpLocation=payload.package_location,
                 AdditionalInstructions=payload.instruction,
                 SupplyRequestCodes=None,
-                TrailerAccessible=payload.options.get('TrailerAccessible'),
-                LoadingDockAvailable=payload.options.get('LoadingDockAvailable'),
+                TrailerAccessible=payload.options.get("TrailerAccessible"),
+                LoadingDockAvailable=payload.options.get("LoadingDockAvailable"),
                 ShipmentOnSkids=None,
-                NumberOfSkids=None
+                NumberOfSkids=None,
             ),
             Address=Address(
                 Name=payload.address.person_name or "",
@@ -108,15 +125,15 @@ def schedule_pickup_request(payload: PickupUpdateRequest, settings: Settings) ->
                     CountryCode=phone.country_code or "0",
                     AreaCode=phone.area_code or "0",
                     Phone=phone.phone or "0",
-                    Extension=None
+                    Extension=None,
                 ),
                 FaxNumber=None,
             ),
             ShipmentSummary=None,
             NotificationEmails=NotificationEmails(
                 NotificationEmail=[payload.address.email]
-            )
-        )
+            ),
+        ),
     )
 
-    return Serializable(request, partial(standard_request_serializer, version='v1'))
+    return Serializable(request, partial(standard_request_serializer, version="v1"))

@@ -7,16 +7,24 @@ from pyfedex.pickup_service_v20 import (
     CarrierCodeType,
     PickupRequestType,
     AssociatedAccount,
-    AssociatedAccountNumberType
+    AssociatedAccountNumberType,
 )
 from purplship.core.models import PickupRequest
 from purplship.core.utils import (
-    Serializable, export, create_envelope, apply_namespaceprefix, Envelope, concat_str, to_date
+    Serializable,
+    export,
+    create_envelope,
+    apply_namespaceprefix,
+    Envelope,
+    concat_str,
+    to_date,
 )
 from purplship.providers.fedex.utils import Settings
 
 
-def pickup_availability_request(payload: PickupRequest, settings: Settings) -> Serializable[PickupAvailabilityRequest]:
+def pickup_availability_request(
+    payload: PickupRequest, settings: Settings
+) -> Serializable[PickupAvailabilityRequest]:
     same_day = to_date(payload.date).date() == datetime.today().date()
 
     request = PickupAvailabilityRequest(
@@ -27,24 +35,30 @@ def pickup_availability_request(payload: PickupRequest, settings: Settings) -> S
         PickupType=None,
         AccountNumber=AssociatedAccount(
             Type=AssociatedAccountNumberType.FEDEX_EXPRESS.value,
-            AccountNumber=settings.account_number
+            AccountNumber=settings.account_number,
         ),
         PickupAddress=Address(
-            StreetLines=concat_str(payload.address.address_line1, payload.address.address_line2),
+            StreetLines=concat_str(
+                payload.address.address_line1, payload.address.address_line2
+            ),
             City=payload.address.city,
             StateOrProvinceCode=payload.address.state_code,
             PostalCode=payload.address.postal_code,
             CountryCode=payload.address.country_code,
             Residential=payload.address.residential,
         ),
-        PickupRequestType=[(PickupRequestType.SAME_DAY if same_day else PickupRequestType.FUTURE_DAY).value],
+        PickupRequestType=[
+            (
+                PickupRequestType.SAME_DAY if same_day else PickupRequestType.FUTURE_DAY
+            ).value
+        ],
         DispatchDate=payload.date,
         NumberOfBusinessDays=None,
-        PackageReadyTime=f'{payload.ready_time}:00',
-        CustomerCloseTime=f'{payload.closing_time}:00',
+        PackageReadyTime=f"{payload.ready_time}:00",
+        CustomerCloseTime=f"{payload.closing_time}:00",
         Carriers=[CarrierCodeType.FDXE.value],
         ShipmentAttributes=None,
-        PackageDetails=None
+        PackageDetails=None,
     )
 
     return Serializable(request, _request_serializer)
@@ -57,5 +71,5 @@ def _request_serializer(request: PickupAvailabilityRequest) -> str:
 
     return export(
         envelope,
-        namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17"'
+        namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17"',
     )

@@ -63,7 +63,9 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def non_contract_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[NonContractShipmentType]:
+def non_contract_shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[NonContractShipmentType]:
     package = Packages(payload.parcels, PackagePresets).single
 
     if package.weight.value is None:
@@ -153,7 +155,7 @@ def non_contract_shipment_request(payload: ShipmentRequest, settings: Settings) 
             preferences=PreferencesType(
                 show_packing_instructions=True,
                 show_postage_rate=True,
-                show_insured_value=("insurance" in payload.options)
+                show_insured_value=("insurance" in payload.options),
             ),
             references=ReferencesType(
                 cost_centre=None,

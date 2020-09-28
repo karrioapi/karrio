@@ -38,7 +38,9 @@ class PackagePresets(Flag):
     dhl_express_tube = PackagePreset(
         weight=5.0, width=96.0, height=15.0, length=15.0, packaging_type="tube"
     )
-    dhl_didgeridoo_box = PackagePreset(weight=10.0, width=13.0, height=13.0, length=162.0)
+    dhl_didgeridoo_box = PackagePreset(
+        weight=10.0, width=13.0, height=13.0, length=162.0
+    )
     dhl_jumbo_box = PackagePreset(weight=30.0, width=45.0, height=42.7, length=33.0)
     dhl_jumbo_box_junior = PackagePreset(
         weight=20.0, width=39.9, height=34.0, length=24.1

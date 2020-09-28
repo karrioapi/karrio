@@ -153,7 +153,9 @@ def rate_request(
                     Value=package.weight.value,
                 ),
                 Dimensions=DimensionsType(
-                    UnitOfMeasurement=UnitOfMeasurementType(Code=package.dimension_unit),
+                    UnitOfMeasurement=UnitOfMeasurementType(
+                        Code=package.dimension_unit
+                    ),
                     Width=package.width.value,
                     Height=package.height.value,
                     Length=package.length.value,

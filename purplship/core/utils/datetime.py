@@ -25,7 +25,9 @@ def format_datetime(date_str: str = None, current_format: str = "%Y-%m-%d %H:%M:
     return date.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def format_time(time_str: str, current_format: str = "%H:%M:%S", output_format: str = "%H:%M"):
+def format_time(
+    time_str: str, current_format: str = "%H:%M:%S", output_format: str = "%H:%M"
+):
     time = to_date(time_str, current_format)
     if time is None:
         return None

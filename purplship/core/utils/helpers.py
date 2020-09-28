@@ -45,7 +45,7 @@ def gif_to_pdf(gif_str: str) -> str:
     image = Image.open(buffer)
     new_buffer = io.BytesIO()
     image.save(new_buffer, format="PDF")
-    return base64.b64encode(new_buffer.getvalue()).decode('utf-8')
+    return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
 def request(decoder: Callable = decode_bytes, **args) -> str:
@@ -53,7 +53,7 @@ def request(decoder: Callable = decode_bytes, **args) -> str:
 
     make a http request (wrapper around Request method from built in urllib)
     """
-    logger.debug(f'sending request')
+    logger.debug(f"sending request")
     try:
         req = Request(**args)
         with urlopen(req) as f:
@@ -63,13 +63,13 @@ def request(decoder: Callable = decode_bytes, **args) -> str:
             except Exception as e:
                 logger.exception(e)
 
-            logger.debug(f'response content {res}')
+            logger.debug(f"response content {res}")
             return res
     except HTTPError as e:
         logger.exception(e)
         error = e.read().decode("utf-8")
 
-        logger.debug(f'error response content {error}')
+        logger.debug(f"error response content {error}")
         return error
 
 
@@ -105,9 +105,9 @@ def jsonify(entity: Union[dict, T]) -> str:
     """
     return json.dumps(
         attr.asdict(JWrapper(value=entity)).get("value"),
-        default=lambda o: o.__dict__ if hasattr(o, '__dict__') else o,
+        default=lambda o: o.__dict__ if hasattr(o, "__dict__") else o,
         sort_keys=True,
-        indent=4
+        indent=4,
     )
 
 

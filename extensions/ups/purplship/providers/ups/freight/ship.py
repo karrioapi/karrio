@@ -36,7 +36,7 @@ from purplship.providers.ups.units import (
     ShippingServiceCode,
     WeightUnit,
     FreightClass,
-    PackagePresets
+    PackagePresets,
 )
 from purplship.providers.ups.error import parse_error_response
 from purplship.providers.ups.utils import Settings

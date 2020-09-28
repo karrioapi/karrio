@@ -2,14 +2,26 @@ from typing import cast
 from functools import partial
 from pyups.pickup_web_service_schema import PickupCreationResponse, RateResultType
 from purplship.core.utils import Job, Pipeline, to_xml, Serializable, build
-from purplship.core.models import PickupRequest, PickupUpdateRequest, PickupCancellationRequest
+from purplship.core.models import (
+    PickupRequest,
+    PickupUpdateRequest,
+    PickupCancellationRequest,
+)
 from purplship.providers.ups.utils import Settings
-from purplship.providers.ups.package.pickup.create import create_pickup_request, parse_pickup_response
-from purplship.providers.ups.package.pickup.cancel import cancel_pickup_request, parse_cancel_pickup_response
+from purplship.providers.ups.package.pickup.create import (
+    create_pickup_request,
+    parse_pickup_response,
+)
+from purplship.providers.ups.package.pickup.cancel import (
+    cancel_pickup_request,
+    parse_cancel_pickup_response,
+)
 from purplship.providers.ups.package.pickup.rate import pickup_rate_request
 
 
-def create_pickup_pipeline(payload: PickupRequest, settings: Settings) -> Serializable[Pipeline]:
+def create_pickup_pipeline(
+    payload: PickupRequest, settings: Settings
+) -> Serializable[Pipeline]:
     """
     Create a pickup request
     Steps
@@ -21,12 +33,14 @@ def create_pickup_pipeline(payload: PickupRequest, settings: Settings) -> Serial
     """
     request: Pipeline = Pipeline(
         rate=lambda *_: _rate_pickup(payload=payload, settings=settings),
-        create=partial(_create_pickup, payload=payload, settings=settings)
+        create=partial(_create_pickup, payload=payload, settings=settings),
     )
     return Serializable(request)
 
 
-def update_pickup_pipeline(payload: PickupUpdateRequest, settings: Settings) -> Serializable[Pipeline]:
+def update_pickup_pipeline(
+    payload: PickupUpdateRequest, settings: Settings
+) -> Serializable[Pipeline]:
     """
     Create a pickup request
     Steps
@@ -38,9 +52,11 @@ def update_pickup_pipeline(payload: PickupUpdateRequest, settings: Settings) -> 
     :return: Serializable[Pipeline]
     """
     request: Pipeline = Pipeline(
-        rate=lambda *_: _rate_pickup(payload=cast(PickupRequest, payload), settings=settings),
+        rate=lambda *_: _rate_pickup(
+            payload=cast(PickupRequest, payload), settings=settings
+        ),
         create=partial(_create_pickup, payload=payload, settings=settings),
-        cancel=partial(_cancel_pickup_request, payload=payload, settings=settings)
+        cancel=partial(_cancel_pickup_request, payload=payload, settings=settings),
     )
     return Serializable(request)
 
@@ -58,11 +74,23 @@ def _create_pickup(rate_response: str, payload: PickupRequest, settings: Setting
     return Job(id="create_pickup", data=data, fallback="")
 
 
-def _cancel_pickup_request(response: str, payload: PickupUpdateRequest, settings: Settings):
-    reply = next(iter(to_xml(response).xpath(".//*[local-name() = $name]", name="PickupCreationResponse")), None)
+def _cancel_pickup_request(
+    response: str, payload: PickupUpdateRequest, settings: Settings
+):
+    reply = next(
+        iter(
+            to_xml(response).xpath(
+                ".//*[local-name() = $name]", name="PickupCreationResponse"
+            )
+        ),
+        None,
+    )
     new_pickup = build(PickupCreationResponse, reply)
     data = (
-        cancel_pickup_request(PickupCancellationRequest(confirmation_number=payload.confirmation_number), settings)
+        cancel_pickup_request(
+            PickupCancellationRequest(confirmation_number=payload.confirmation_number),
+            settings,
+        )
         if new_pickup is not None and new_pickup.PRN is not None
         else None
     )

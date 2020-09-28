@@ -4,14 +4,23 @@ from pyups.pickup_web_service_schema import (
     RequestType,
     PickupDateInfoType,
     PickupAddressType,
-    PhoneType
+    PhoneType,
 )
-from purplship.core.utils import Serializable, create_envelope, Envelope, to_date, concat_str, format_time
+from purplship.core.utils import (
+    Serializable,
+    create_envelope,
+    Envelope,
+    to_date,
+    concat_str,
+    format_time,
+)
 from purplship.core.models import PickupRequest
 from purplship.providers.ups.utils import Settings, default_request_serializer
 
 
-def pickup_rate_request(payload: PickupRequest, settings: Settings) -> Serializable[Envelope]:
+def pickup_rate_request(
+    payload: PickupRequest, settings: Settings
+) -> Serializable[Envelope]:
     pickup_date = to_date(payload.date)
     same_day = pickup_date.date() == datetime.today().date()
 
@@ -23,7 +32,9 @@ def pickup_rate_request(payload: PickupRequest, settings: Settings) -> Serializa
             PickupAddress=PickupAddressType(
                 CompanyName=payload.address.company_name,
                 ContactName=payload.address.person_name,
-                AddressLine=concat_str(payload.address.address_line1, payload.address.address_line2),
+                AddressLine=concat_str(
+                    payload.address.address_line1, payload.address.address_line2
+                ),
                 Room=None,
                 Floor=None,
                 City=payload.address.city,
@@ -31,26 +42,27 @@ def pickup_rate_request(payload: PickupRequest, settings: Settings) -> Serializa
                 Urbanization=None,
                 PostalCode=payload.address.postal_code,
                 CountryCode=payload.address.country_code,
-                ResidentialIndicator=('Y' if payload.address.residential else 'N'),
+                ResidentialIndicator=("Y" if payload.address.residential else "N"),
                 PickupPoint=payload.package_location,
-                Phone=PhoneType(
-                    Number=payload.address.phone_number,
-                    Extension=None
-                ) if payload.address.phone_number is not None else None
+                Phone=PhoneType(Number=payload.address.phone_number, Extension=None)
+                if payload.address.phone_number is not None
+                else None,
             ),
-            AlternateAddressIndicator='Y',
-            ServiceDateOption=('01' if same_day else '02'),
+            AlternateAddressIndicator="Y",
+            ServiceDateOption=("01" if same_day else "02"),
             PickupDateInfo=PickupDateInfoType(
                 CloseTime=format_time(payload.closing_time, "%H:%M", "%H%M"),
                 ReadyTime=format_time(payload.ready_time, "%H:%M", "%H%M"),
-                PickupDate=pickup_date.strftime("%Y%m%d")
+                PickupDate=pickup_date.strftime("%Y%m%d"),
             ),
             TaxInformationIndicator=None,
-            UserLevelDiscountIndicator=None
-        )
+            UserLevelDiscountIndicator=None,
+        ),
     )
 
     return Serializable(
         request,
-        default_request_serializer('v11', 'xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1"')
+        default_request_serializer(
+            "v11", 'xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1"'
+        ),
     )

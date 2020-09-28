@@ -1,4 +1,3 @@
-
 from base64 import b64encode
 from purplship.core import Settings as BaseSettings
 from purplship.core.utils.soap import Envelope, apply_namespaceprefix
@@ -33,14 +32,13 @@ class Settings(BaseSettings):
         return b64encode(pair.encode("utf-8")).decode("ascii")
 
 
-def standard_request_serializer(envelope: Envelope, version: str = 'v2') -> str:
+def standard_request_serializer(envelope: Envelope, version: str = "v2") -> str:
     namespacedef_ = f'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:{version}="http://purolator.com/pws/datatypes/{version}"'
     envelope.ns_prefix_ = "soap"
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     envelope.Header.ns_prefix_ = envelope.ns_prefix_
     [
         apply_namespaceprefix(node, version)
-        for node in
-        (envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_)
+        for node in (envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_)
     ]
     return export(envelope, namespacedef_=namespacedef_)
