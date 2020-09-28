@@ -21,9 +21,13 @@ class TestPurolatorShipment(unittest.TestCase):
         create_request = pipeline["create"](VALIDATE_SHIPMENT_RESPONSE_XML)
         document_request = pipeline["document"](SHIPMENT_RESPONSE_XML)
 
-        self.assertEqual(validate_request.data.serialize(), VALIDATE_SHIPMENT_REQUEST_XML)
+        self.assertEqual(
+            validate_request.data.serialize(), VALIDATE_SHIPMENT_REQUEST_XML
+        )
         self.assertEqual(create_request.data.serialize(), SHIPMENT_REQUEST_XML)
-        self.assertEqual(document_request.data.serialize(), SHIPMENT_DOCUMENT_REQUEST_XML)
+        self.assertEqual(
+            document_request.data.serialize(), SHIPMENT_DOCUMENT_REQUEST_XML
+        )
 
     def test_send_valid_shipment(self):
         with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
