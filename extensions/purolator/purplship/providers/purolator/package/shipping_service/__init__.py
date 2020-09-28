@@ -69,7 +69,7 @@ def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Ser
 def _validate_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
     return Job(
         id="validate",
-        data=create_shipping_request(payload=payload, settings=settings, validate=True).serialize(),
+        data=create_shipping_request(payload=payload, settings=settings, validate=True),
     )
 
 
@@ -78,7 +78,7 @@ def _create_shipment(validate_response: str, payload: ShipmentRequest, settings:
     valid = len(errors) == 0
     return Job(
         id="create",
-        data=create_shipping_request(payload, settings).serialize() if valid else None,
+        data=create_shipping_request(payload, settings) if valid else None,
         fallback=(validate_response if not valid else None),
     )
 
@@ -104,7 +104,7 @@ def _get_shipment_label(create_response: str, payload: ShipmentRequest, settings
     return Job(
         id="document",
         data=(
-            get_shipping_documents_request(shipment_pin, payload, settings).serialize() if valid else None
+            get_shipping_documents_request(shipment_pin, payload, settings) if valid else None
         ),
         fallback="",
     )
