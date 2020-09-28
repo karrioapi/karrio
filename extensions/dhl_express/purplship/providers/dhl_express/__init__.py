@@ -20,3 +20,7 @@ from purplship.providers.dhl_express.tracking_known import (
     known_tracking_request,
     parse_known_tracking_response,
 )
+from purplship.providers.dhl_express.route_request import (
+    route_request,
+    parse_route_response,
+)
