@@ -69,28 +69,38 @@ if __name__ == "__main__":
 RatePayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcels": [{
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-        "dimension_unit": "CM",
-        "weight_unit": "KG",
-    }],
+    "parcels": [
+        {
+            "height": 3,
+            "length": 10,
+            "width": 3,
+            "weight": 4.0,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
     "services": ["canadapost_expedited_parcel"],
 }
 
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcels": [{"package_preset": "canadapost_xexpresspost_certified_envelope",}],
+    "parcels": [
+        {
+            "package_preset": "canadapost_xexpresspost_certified_envelope",
+        }
+    ],
     "services": ["canadapost_xpresspost"],
 }
 
 RateWithPresetMissingWeightPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcels": [{"package_preset": "canadapost_corrugated_small_box",}],
+    "parcels": [
+        {
+            "package_preset": "canadapost_corrugated_small_box",
+        }
+    ],
     "services": ["canadapost_regular_parcel"],
 }
 
@@ -105,7 +115,7 @@ ProcessingError = [
             "details": {
                 "parcel[0].weight": {
                     "code": "required",
-                    "message": "This field is required"
+                    "message": "This field is required",
                 }
             },
         }

@@ -61,14 +61,16 @@ if __name__ == "__main__":
 RATE_PAYLOAD = {
     "shipper": {"postal_code": "44106"},
     "recipient": {"postal_code": "20770"},
-    "parcels": [{
-        "dimension_unit": "IN",
-        "id": "1ST",
-        "width": 15,
-        "height": 15,
-        "length": 30,
-        "weight": 1,
-    }],
+    "parcels": [
+        {
+            "dimension_unit": "IN",
+            "id": "1ST",
+            "width": 15,
+            "height": 15,
+            "length": 30,
+            "weight": 1,
+        }
+    ],
     "services": ["priority"],
     "options": {"signature_confirmation": True},
 }
@@ -76,15 +78,17 @@ RATE_PAYLOAD = {
 INTL_RATE_PAYLOAD = {
     "shipper": {"postal_code": "18701"},
     "recipient": {"postal_code": "2046", "country_code": "AU"},
-    "parcels": [{
-        "dimension_unit": "IN",
-        "id": "1ST",
-        "width": 10,
-        "height": 10,
-        "length": 10,
-        "weight": 3.123,
-        "packaging_type": "sm",
-    }],
+    "parcels": [
+        {
+            "dimension_unit": "IN",
+            "id": "1ST",
+            "width": 10,
+            "height": 10,
+            "length": 10,
+            "weight": 3.123,
+            "packaging_type": "sm",
+        }
+    ],
     "options": {"insurance_global_express_guaranteed": True},
 }
 

@@ -14,7 +14,7 @@ class TestCanadaPostShipment(unittest.TestCase):
     def test_create_shipment_request(self):
         requests = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         pipeline = requests.serialize()
-        request = pipeline['create_shipment']()
+        request = pipeline["create_shipment"]()
         self.assertEqual(request.data.serialize(), ShipmentRequestXML)
 
     def test_create_shipment_with_package_preset_request(self):
@@ -22,16 +22,18 @@ class TestCanadaPostShipment(unittest.TestCase):
             ShipmentRequest(**shipment_with_package_preset_data)
         )
         pipeline = requests.serialize()
-        request = pipeline['create_shipment']()
+        request = pipeline["create_shipment"]()
         self.assertEqual(request.data.serialize(), ShipmentRequestWithPackagePresetXML)
 
     def test_create_non_contract_shipment_request(self):
         non_contract_gateway = purplship.gateway["canadapost"].create(
             dict(username="username", password="password", customer_number="2004381")
         )
-        requests = non_contract_gateway.mapper.create_shipment_request(self.ShipmentRequest)
+        requests = non_contract_gateway.mapper.create_shipment_request(
+            self.ShipmentRequest
+        )
         pipeline = requests.serialize()
-        request = pipeline['create_shipment']()
+        request = pipeline["create_shipment"]()
         self.assertEqual(request.data.serialize(), NonContractShipmentRequestXML)
 
     def test_create_shipment(self):
@@ -78,14 +80,16 @@ shipment_data = {
         "person_name": "Jain",
         "state_code": "ON",
     },
-    "parcels": [{
-        "height": 9,
-        "length": 6,
-        "width": 12,
-        "weight": 20.0,
-        "dimension_unit": "CM",
-        "weight_unit": "KG",
-    }],
+    "parcels": [
+        {
+            "height": 9,
+            "length": 6,
+            "width": 12,
+            "weight": 20.0,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
     "service": "canadapost_expedited_parcel",
     "options": {
         "canadapost_signature": True,
@@ -115,11 +119,13 @@ shipment_with_package_preset_data = {
         "person_name": "Jain",
         "state_code": "ON",
     },
-    "parcels": [{
-        "weight": 20.0,
-        "weight_unit": "LB",
-        "package_preset": "canadapost_corrugated_large_box",
-    }],
+    "parcels": [
+        {
+            "weight": 20.0,
+            "weight_unit": "LB",
+            "package_preset": "canadapost_corrugated_large_box",
+        }
+    ],
     "service": "canadapost_expedited_parcel",
     "options": {"cash_on_delivery": {"amount": 25.5}},
 }

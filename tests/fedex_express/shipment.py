@@ -69,15 +69,17 @@ shipment_data = {
         "postal_code": "V7C4v7",
         "country_code": "CA",
     },
-    "parcels": [{
-        "packaging_type": "your_packaging",
-        "weight_unit": "LB",
-        "dimension_unit": "IN",
-        "weight": 20.0,
-        "length": 12,
-        "width": 12,
-        "height": 12,
-    }],
+    "parcels": [
+        {
+            "packaging_type": "your_packaging",
+            "weight_unit": "LB",
+            "dimension_unit": "IN",
+            "weight": 20.0,
+            "length": 12,
+            "width": 12,
+            "height": 12,
+        }
+    ],
     "service": "international_priority",
     "options": {"currency": "USD", "international_traffic_in_arms_regulations": True},
     "payment": {"paid_by": "third_party", "account_number": "2349857"},

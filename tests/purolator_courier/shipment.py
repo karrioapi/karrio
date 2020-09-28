@@ -97,10 +97,12 @@ SHIPMENT_REQUEST_PAYLOAD = {
         "address_line1": "Douglas Road",
         "phone_number": "1 514 2982181",
     },
-    "parcels": [{
-        "weight": 10,
-        "weight_unit": "LB",
-    }],
+    "parcels": [
+        {
+            "weight": 10,
+            "weight_unit": "LB",
+        }
+    ],
     "reference": "Reference For Shipment",
     "service": "purolator_express",
     "options": {"printing": "thermal"},
@@ -116,7 +118,22 @@ PARSED_SHIPMENT_RESPONSE = [
     [],
 ]
 
-PARSED_INVALID_SHIPMENT_RESPONSE = [{"carrier_name": 'purolator_courier', "carrier_id": 'purolator_courier', 'label': 'No label returned'}, [{"carrier_name": "purolator_courier", "carrier_id": "purolator_courier", 'code': '3001116', 'details': {}, 'message': 'Service Failed'}]]
+PARSED_INVALID_SHIPMENT_RESPONSE = [
+    {
+        "carrier_name": "purolator_courier",
+        "carrier_id": "purolator_courier",
+        "label": "No label returned",
+    },
+    [
+        {
+            "carrier_name": "purolator_courier",
+            "carrier_id": "purolator_courier",
+            "code": "3001116",
+            "details": {},
+            "message": "Service Failed",
+        }
+    ],
+]
 
 SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <soap:Header>

@@ -89,14 +89,16 @@ if __name__ == "__main__":
 RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcels": [{
-        "id": "1",
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-        "is_document": True,
-    }],
+    "parcels": [
+        {
+            "id": "1",
+            "height": 3,
+            "length": 10,
+            "width": 3,
+            "weight": 4.0,
+            "is_document": True,
+        }
+    ],
     "services": ["dhl_express_worldwide_doc"],
     "options": {"currency": "CAD", "insurance": {"amount": 75}},
 }
@@ -105,7 +107,11 @@ RatePayload = {
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcels": [{"package_preset": "dhl_express_tube",}],
+    "parcels": [
+        {
+            "package_preset": "dhl_express_tube",
+        }
+    ],
     "services": ["dhl_express_worldwide_nondoc"],
     "options": {"currency": "CAD"},
 }
@@ -151,7 +157,7 @@ ParsedRateResponse = [
             "duties_and_taxes": 0.0,
             "transit_days": 5,
             "extra_charges": [
-                {"amount": 12.7, 'currency': 'CAD', "name": "FUEL SURCHARGE"}
+                {"amount": 12.7, "currency": "CAD", "name": "FUEL SURCHARGE"}
             ],
             "service": "dhl_express_worldwide_doc",
             "total_charge": 208.02,

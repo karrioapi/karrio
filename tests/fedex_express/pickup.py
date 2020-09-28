@@ -26,7 +26,9 @@ class TestFedExPickup(unittest.TestCase):
         get_availability_request = pipeline["get_availability"]()
         create_pickup_request = pipeline["create_pickup"](PickupAvailabilityResponseXML)
 
-        self.assertEqual(get_availability_request.data.serialize(), PickupAvailabilityRequestXML)
+        self.assertEqual(
+            get_availability_request.data.serialize(), PickupAvailabilityRequestXML
+        )
         self.assertEqual(create_pickup_request.data.serialize(), PickupRequestXML)
 
     def test_update_pickup_request(self):
@@ -36,7 +38,10 @@ class TestFedExPickup(unittest.TestCase):
         create_pickup_request = pipeline["create_pickup"](PickupAvailabilityResponseXML)
         cancel_pickup_request = pipeline["cancel_pickup"](PickupResponseXML)
 
-        self.assertEqual(get_availability_request.data.serialize(), PickupUpdateAvailabilityRequestXML)
+        self.assertEqual(
+            get_availability_request.data.serialize(),
+            PickupUpdateAvailabilityRequestXML,
+        )
         self.assertEqual(create_pickup_request.data.serialize(), PickupUpdateRequestXML)
         self.assertEqual(cancel_pickup_request.data.serialize(), PickupCancelRequestXML)
 
@@ -57,7 +62,11 @@ class TestFedExPickup(unittest.TestCase):
 
     def test_update_pickup(self):
         with patch("purplship.mappers.fedex_express.proxy.http") as mocks:
-            mocks.side_effect = [PickupAvailabilityResponseXML, PickupResponseXML, PickupCancelResponseXML]
+            mocks.side_effect = [
+                PickupAvailabilityResponseXML,
+                PickupResponseXML,
+                PickupCancelResponseXML,
+            ]
             purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway)
 
             availability_call, create_call, cancel_call = mocks.call_args_list
@@ -131,11 +140,18 @@ pickup_update_data = {
 
 pickup_cancel_data = {"confirmation_number": "0074698052"}
 
-ParsedPickupResponse = [{'carrier_id': 'carrier_id', 'carrier_name': 'fedex_express', 'confirmation_number': '0074698052'}, []]
+ParsedPickupResponse = [
+    {
+        "carrier_id": "carrier_id",
+        "carrier_name": "fedex_express",
+        "confirmation_number": "0074698052",
+    },
+    [],
+]
 
 ParsedPickupCancelResponse = [
-    {'carrier_id': 'carrier_id', 'carrier_name': 'fedex_express', 'success': True},
-    []
+    {"carrier_id": "carrier_id", "carrier_name": "fedex_express", "success": True},
+    [],
 ]
 
 

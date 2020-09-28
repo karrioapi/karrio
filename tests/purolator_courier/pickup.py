@@ -35,7 +35,9 @@ class TestPurolatorPickup(unittest.TestCase):
         validate_request = pipeline["validate"]()
         modify_request = pipeline["modify"](PickupValidationResponseXML)
 
-        self.assertEqual(validate_request.data.serialize(), PickupUpdateValidationRequestXML)
+        self.assertEqual(
+            validate_request.data.serialize(), PickupUpdateValidationRequestXML
+        )
         self.assertEqual(modify_request.data.serialize(), PickupUpdateRequestXML)
 
     def test_create_pickup(self):
@@ -63,7 +65,11 @@ class TestPurolatorPickup(unittest.TestCase):
 
     def test_update_pickup(self):
         with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
-            mocks.side_effect = [PickupValidationResponseXML, PickupResponseXML, PickupCancelResponseXML]
+            mocks.side_effect = [
+                PickupValidationResponseXML,
+                PickupResponseXML,
+                PickupCancelResponseXML,
+            ]
             purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway)
 
             validate_call, modify_call = mocks.call_args_list
@@ -137,19 +143,27 @@ pickup_update_data = {
     "instruction": "Door at Back",
     "ready_time": "15:00",
     "closing_time": "17:00",
-    "options": {
-        "LoadingDockAvailable": False,
-        "TrailerAccessible": False
-    }
+    "options": {"LoadingDockAvailable": False, "TrailerAccessible": False},
 }
 
 pickup_cancel_data = {"confirmation_number": "0074698052"}
 
-ParsedPickupResponse = [{'carrier_id': 'purolator_courier', 'carrier_name': 'purolator_courier', 'confirmation_number': '01365863'}, []]
+ParsedPickupResponse = [
+    {
+        "carrier_id": "purolator_courier",
+        "carrier_name": "purolator_courier",
+        "confirmation_number": "01365863",
+    },
+    [],
+]
 
 ParsedPickupCancelResponse = [
-    {'carrier_id': 'purolator_courier', 'carrier_name': 'purolator_courier', 'success': True},
-    []
+    {
+        "carrier_id": "purolator_courier",
+        "carrier_name": "purolator_courier",
+        "success": True,
+    },
+    [],
 ]
 
 
