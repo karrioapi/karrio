@@ -1,4 +1,4 @@
-"""PurplShip Unified datatypes module."""
+"""Purplship Unified datatypes module."""
 import attr
 from typing import List, Dict
 from jstruct import JList, JStruct, REQUIRED
@@ -200,6 +200,13 @@ class PickupCancellationRequest:
     country_code: str = None
 
 
+@attr.s(auto_attribs=True)
+class AddressValidationRequest:
+    """address validation request type."""
+
+    address: Address = JStruct[Address, REQUIRED]
+
+
 # *** Unified option data types ***
 
 
@@ -230,7 +237,7 @@ class Insurance:
 
 @attr.s(auto_attribs=True)
 class Message:
-    """PurplShip Message type."""
+    """Purplship Message type."""
 
     carrier_name: str
     carrier_id: str
@@ -241,7 +248,7 @@ class Message:
 
 @attr.s(auto_attribs=True)
 class ChargeDetails:
-    """PurplShip charge type."""
+    """Purplship charge type."""
 
     name: str = None
     amount: float = None
@@ -249,8 +256,18 @@ class ChargeDetails:
 
 
 @attr.s(auto_attribs=True)
+class AddressValidationDetails:
+    """Purplship address validation details type."""
+
+    carrier_name: str
+    carrier_id: str
+    success: bool
+    complete_address: Address = None
+
+
+@attr.s(auto_attribs=True)
 class TrackingEvent:
-    """PurplShip tracking event type."""
+    """Purplship tracking event type."""
 
     date: str
     description: str
@@ -262,7 +279,7 @@ class TrackingEvent:
 
 @attr.s(auto_attribs=True)
 class RateDetails:
-    """PurplShip rate (quote) details type."""
+    """Purplship rate (quote) details type."""
 
     carrier_name: str
     carrier_id: str
@@ -280,7 +297,7 @@ class RateDetails:
 
 @attr.s(auto_attribs=True)
 class TrackingDetails:
-    """PurplShip tracking details type."""
+    """Purplship tracking details type."""
 
     carrier_name: str
     carrier_id: str
@@ -290,7 +307,7 @@ class TrackingDetails:
 
 @attr.s(auto_attribs=True)
 class ShipmentDetails:
-    """PurplShip shipment details type."""
+    """Purplship shipment details type."""
 
     carrier_name: str
     carrier_id: str
@@ -303,7 +320,7 @@ class ShipmentDetails:
 
 @attr.s(auto_attribs=True)
 class PickupDetails:
-    """PurplShip pickup details type."""
+    """Purplship pickup details type."""
 
     carrier_name: str
     carrier_id: str
@@ -317,7 +334,7 @@ class PickupDetails:
 
 @attr.s(auto_attribs=True)
 class ConfirmationDetails:
-    """PurplShip binary operation confirmation type."""
+    """Purplship binary operation confirmation type."""
 
     carrier_name: str
     carrier_id: str

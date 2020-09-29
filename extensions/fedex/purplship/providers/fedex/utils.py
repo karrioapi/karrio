@@ -1,4 +1,6 @@
+from typing import Callable
 from purplship.core import Settings as BaseSettings
+from purplship.core.utils import Envelope, apply_namespaceprefix, export
 from pyfedex.rate_service_v26 import (
     WebAuthenticationCredential,
     WebAuthenticationDetail,
@@ -36,3 +38,17 @@ class Settings(BaseSettings):
         return ClientDetail(
             AccountNumber=self.account_number, MeterNumber=self.meter_number
         )
+
+
+def default_request_serializer(
+    prefix: str, namespace: str
+) -> Callable[[Envelope], str]:
+    def serializer(envelope: Envelope):
+        namespacedef_ = f'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" {namespace}'
+
+        envelope.Body.ns_prefix_ = envelope.ns_prefix_
+        apply_namespaceprefix(envelope.Body.anytypeobjs_[0], prefix)
+
+        return export(envelope, namespacedef_=namespacedef_)
+
+    return serializer

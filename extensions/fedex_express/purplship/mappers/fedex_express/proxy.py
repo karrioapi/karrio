@@ -1,8 +1,4 @@
 from typing import Any
-from pyfedex.rate_service_v26 import RateRequest
-from pyfedex.ship_service_v25 import ProcessShipmentRequest
-from pyfedex.track_service_v18 import TrackRequest
-from pyfedex.pickup_service_v20 import CancelPickupRequest
 from purplship.core.utils import (
     to_xml,
     request as http,
@@ -11,6 +7,7 @@ from purplship.core.utils import (
     Deserializable,
     Job,
     bundle_xml,
+    Envelope
 )
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.mappers.fedex_express.settings import Settings
@@ -27,18 +24,23 @@ class Proxy(BaseProxy):
             method="POST",
         )
 
-    def get_rates(self, request: Serializable[RateRequest]) -> Deserializable[str]:
+    def validate_address(self, request: Serializable[Envelope]) -> Deserializable[str]:
+        response = self._send_request("/addressvalidation", request)
+
+        return Deserializable(response, to_xml)
+
+    def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request("/rate", request)
 
         return Deserializable(response, to_xml)
 
-    def get_tracking(self, request: Serializable[TrackRequest]) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request("/track", request)
 
         return Deserializable(response, to_xml)
 
     def create_shipment(
-        self, request: Serializable[ProcessShipmentRequest]
+        self, request: Serializable[Envelope]
     ) -> Deserializable[str]:
         response = self._send_request("/ship", request)
 
@@ -69,7 +71,7 @@ class Proxy(BaseProxy):
         return Deserializable(bundle_xml(response), to_xml)
 
     def cancel_pickup(
-        self, request: Serializable[CancelPickupRequest]
+        self, request: Serializable[Envelope]
     ) -> Deserializable[str]:
         response = self._send_request("/pickup", request)
 

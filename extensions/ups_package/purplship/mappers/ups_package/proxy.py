@@ -1,4 +1,5 @@
 from typing import List, Any
+from pyups.av_request import AddressValidationRequest
 from purplship.core.utils.helpers import (
     to_xml,
     request as http,
@@ -20,6 +21,11 @@ class Proxy(BaseProxy):
             headers={"Content-Type": "application/xml"},
             method="POST",
         )
+
+    def validate_address(self, request: Serializable[AddressValidationRequest]) -> Deserializable[str]:
+        response = self._send_request("/AV", request)
+
+        return Deserializable(response, to_xml)
 
     def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request("/Rate", request)

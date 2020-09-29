@@ -18,3 +18,7 @@ from purplship.providers.purolator.package.pickup_service import (
     modify_pickup_pipeline,
     parse_modify_pickup_reply,
 )
+from purplship.providers.purolator.package.availability_service import (
+    validate_address_request,
+    parse_validate_address_response,
+)

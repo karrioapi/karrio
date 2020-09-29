@@ -5,6 +5,7 @@ from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.book_pickup_global_req_3_0 import BookPURequest
 from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest
 from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest
+from pydhl.routing_global_req_2_0 import RouteRequest
 from purplship.api.mapper import Mapper as BaseMapper
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.models import (
@@ -20,6 +21,8 @@ from purplship.core.models import (
     PickupCancellationRequest,
     Message,
     ConfirmationDetails,
+    AddressValidationRequest,
+    AddressValidationDetails,
 )
 from purplship.providers.dhl_express import (
     dct_request,
@@ -34,6 +37,8 @@ from purplship.providers.dhl_express import (
     parse_cancel_pickup_response,
     modify_pickup_request,
     parse_modify_pickup_response,
+    route_request,
+    parse_route_response,
 )
 from purplship.mappers.dhl_express.settings import Settings
 
@@ -42,6 +47,9 @@ class Mapper(BaseMapper):
     settings: Settings
 
     # Request Mappers
+
+    def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable[RouteRequest]:
+        return route_request(payload, self.settings)
 
     def create_rate_request(self, payload: RateRequest) -> Serializable[DCTRequest]:
         return dct_request(payload, self.settings)
@@ -72,6 +80,11 @@ class Mapper(BaseMapper):
         return cancel_pickup_request(payload, self.settings)
 
     # Response Parsers
+
+    def parse_address_validation_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[AddressValidationDetails, List[Message]]:
+        return parse_route_response(response.deserialize(), self.settings)
 
     def parse_rate_response(
         self, response: Deserializable[str]

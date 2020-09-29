@@ -154,7 +154,10 @@ ParsedModifyPUResponse = [
     [],
 ]
 
-ParsedCancelPUResponse = [{'carrier_id': 'carrier_id', 'carrier_name': 'dhl_express', 'success': True}, []]
+ParsedCancelPUResponse = [
+    {"carrier_id": "carrier_id", "carrier_name": "dhl_express", "success": True},
+    [],
+]
 
 ParsedPickupErrorResponse = [
     None,
