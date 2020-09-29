@@ -10,10 +10,14 @@ from tests.fedex_express.fixture import gateway
 class TestDHLAddressValidation(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.AddressValidationRequest = AddressValidationRequest(**address_validation_data)
+        self.AddressValidationRequest = AddressValidationRequest(
+            **address_validation_data
+        )
 
     def test_create_AddressValidation_request(self):
-        request = gateway.mapper.create_address_validation_request(self.AddressValidationRequest)
+        request = gateway.mapper.create_address_validation_request(
+            self.AddressValidationRequest
+        )
 
         self.assertEqual(request.serialize(), AddressValidationRequestXML)
 
@@ -22,16 +26,23 @@ class TestDHLAddressValidation(unittest.TestCase):
             mock.return_value = "<a></a>"
             purplship.Address.validate(self.AddressValidationRequest).from_(gateway)
 
-            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.server_url}/addressvalidation")
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/addressvalidation",
+            )
 
     def test_parse_address_validation_response(self):
         with patch("purplship.mappers.fedex_express.proxy.http") as mock:
             mock.return_value = AddressValidationResponseXML
             parsed_response = (
-                purplship.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
+                purplship.Address.validate(self.AddressValidationRequest)
+                .from_(gateway)
+                .parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAddressValidationResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedAddressValidationResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -44,11 +55,24 @@ address_validation_data = {
         "postal_code": "94089",
         "city": "North Dakhota",
         "country_code": "US",
-        "state_code": "CA"
+        "state_code": "CA",
     }
 }
 
-ParsedAddressValidationResponse = [{'carrier_id': 'carrier_id', 'carrier_name': 'fedex_express', 'complete_address': {'address_line1': 'Input Your Information', 'city': 'Input Your Information', 'country_code': 'Input Your Information', 'state_code': 'Input Your Information'}, 'success': True}, []]
+ParsedAddressValidationResponse = [
+    {
+        "carrier_id": "carrier_id",
+        "carrier_name": "fedex_express",
+        "complete_address": {
+            "address_line1": "Input Your Information",
+            "city": "Input Your Information",
+            "country_code": "Input Your Information",
+            "state_code": "Input Your Information",
+        },
+        "success": True,
+    },
+    [],
+]
 
 
 AddressValidationRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v4="http://fedex.com/ws/addressvalidation/v4">

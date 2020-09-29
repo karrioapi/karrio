@@ -11,10 +11,14 @@ from tests.dhl_express.fixture import gateway
 class TestDHLAddressValidation(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.AddressValidationRequest = AddressValidationRequest(**address_validation_data)
+        self.AddressValidationRequest = AddressValidationRequest(
+            **address_validation_data
+        )
 
     def test_create_AddressValidation_request(self):
-        request = gateway.mapper.create_address_validation_request(self.AddressValidationRequest)
+        request = gateway.mapper.create_address_validation_request(
+            self.AddressValidationRequest
+        )
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         self.assertEqual(
@@ -33,10 +37,14 @@ class TestDHLAddressValidation(unittest.TestCase):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = AddressValidationResponseXML
             parsed_response = (
-                purplship.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
+                purplship.Address.validate(self.AddressValidationRequest)
+                .from_(gateway)
+                .parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAddressValidationResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedAddressValidationResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -49,11 +57,14 @@ address_validation_data = {
         "postal_code": "94089",
         "city": "North Dakhota",
         "country_code": "US",
-        "state_code": "CA"
+        "state_code": "CA",
     }
 }
 
-ParsedAddressValidationResponse = [{'carrier_id': 'carrier_id', 'carrier_name': 'dhl_express', 'success': True}, []]
+ParsedAddressValidationResponse = [
+    {"carrier_id": "carrier_id", "carrier_name": "dhl_express", "success": True},
+    [],
+]
 
 
 AddressValidationRequestXML = """<RouteRequest xmlns:ns1="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com routing-global-req.xsd" schemaVersion="2.0">

@@ -10,13 +10,22 @@ from tests.dhl.package.fixture import gateway
 class TestDHLAddressValidation(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.AddressValidationRequest = AddressValidationRequest(**AddressValidationPayload)
+        self.AddressValidationRequest = AddressValidationRequest(
+            **AddressValidationPayload
+        )
 
     def test_create_address_validation_request(self):
-        request = gateway.mapper.create_address_validation_request(self.AddressValidationRequest)
+        request = gateway.mapper.create_address_validation_request(
+            self.AddressValidationRequest
+        )
         # remove MessageTime, Date and ReadyTime for testing purpose
-        serialized_request = re.sub("<MessageTime>[^>]+</MessageTime>", "", request.serialize())
-        self.assertEqual(serialized_request, AddressValidationRequestXML,)
+        serialized_request = re.sub(
+            "<MessageTime>[^>]+</MessageTime>", "", request.serialize()
+        )
+        self.assertEqual(
+            serialized_request,
+            AddressValidationRequestXML,
+        )
 
     @patch("purplship.package.mappers.dhl.proxy.http", return_value="<a></a>")
     def test_validated_address(self, http_mock):
@@ -32,7 +41,9 @@ class TestDHLAddressValidation(unittest.TestCase):
                 Address.validate(self.AddressValidationRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAddressValidationResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedAddressValidationResponse)
+            )
 
 
 if __name__ == "__main__":
