@@ -2,34 +2,39 @@ from typing import Tuple, List
 from pyups.av_request import (
     AddressValidationRequest as UPSAddressValidationRequest,
     AddressType,
-    RequestType
+    RequestType,
 )
-from purplship.core.utils import Serializable, export, Element
+from pyups.av_response import Response
+from purplship.core.utils import Serializable, Element, build, export
 from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails
-from purplship.core.utils.soap import create_envelope
 from purplship.providers.ups.utils import Settings
 from purplship.providers.ups.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
-    validation_details = _extract_address_validation(response, settings)
+    status = build(
+        Response,
+        next(
+            iter(response.xpath(".//*[local-name() = $name]", name="Response")),
+            None,
+        ),
+    )
+    success = status is not None and status.ResponseStatusCode == "1"
+    validation_details = AddressValidationDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        success=success
+    ) if success else None
+
     return validation_details, parse_error_response(response, settings)
 
 
-def _extract_address_validation(node: Element, settings: Settings) -> AddressValidationDetails:
-
-    return AddressValidationDetails(
-        carrier=settings.carrier,
-        carrier_name=settings.carrier_name,
-    )
-
-
-def address_validation_request(payload: AddressValidationRequest, settings: Settings) -> Serializable[UPSAddressValidationRequest]:
+def address_validation_request(payload: AddressValidationRequest, _) -> Serializable[UPSAddressValidationRequest]:
 
     request = UPSAddressValidationRequest(
         Request=RequestType(
             TransactionReference=None,
-            RequestAction=None,
+            RequestAction="AV",
         ),
         Address=AddressType(
             City=payload.address.city,
@@ -38,16 +43,10 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
             PostalCode=payload.address.postal_code
         ),
     )
-    return Serializable(
-        create_envelope(header_content=settings.Security, body_content=request),
-        _request_serializer,
-    )
+
+    return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: UPSAddressValidationRequest) -> str:
-    namespacedef_ = ''
 
-    return export(
-        request,
-        namespacedef_=namespacedef_
-    )
+    return export(request, namespacedef_='xml:lang="en-US"')
