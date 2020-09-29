@@ -33,6 +33,16 @@ SHIPMENT_OPTIONS_TEMPLATE = Template('''
 {% endfor %}
 ''')
 
+PACKAGING_TYPES_TEMPLATE = Template('''
+{% for key, value in option_mappers.items() %}
+- <a name="options-{{ key }}"></a> {{ mappers[key]["label"] }}
+    Code | Identifier
+    --- | ---
+{% for code, name in value.items() %}    | `{{ code }}` | {{ name }}
+{% endfor %}
+{% endfor %}
+''')
+
 SHIPMENT_PRESETS_TEMPLATE = Template('''
 {% for key, value in preset_mappers.items() %}
 - <a name="presets-{{ key }}"></a> {{ mappers[key]["label"] }}
@@ -54,6 +64,11 @@ def import_pkg(pkg: str):
 
 
 PACKAGE_MAPPERS = {
+    'purplship': {
+        'label': "Multi-carrier (Purplship)",
+        'package': import_pkg('purplship.core.units'),
+        'packagingTypes': "PackagingUnit"
+    },
     'canadapost': {
         'label': "Canada Post",
         'package': import_pkg('purplship.providers.canadapost.units'),
@@ -61,33 +76,37 @@ PACKAGE_MAPPERS = {
         'options': "OptionCode",
         'packagePresets': "PackagePresets"
     },
-    'dhl': {
-        'label': "DHL",
-        'package': import_pkg('purplship.providers.dhl.units'),
+    'dhl_express': {
+        'label': "DHL Express",
+        'package': import_pkg('purplship.providers.dhl_express.units'),
         'services': "Product",
         'options': "SpecialServiceCode",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
+        'packagingTypes': "DCTPackageType"
     },
     'fedex': {
         'label': "FedEx",
         'package': import_pkg('purplship.providers.fedex.units'),
         'services': "ServiceType",
         'options': "SpecialServiceType",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
+        'packagingTypes': "PackagingType"
     },
     'purolator': {
         'label': "Purolator",
         'package': import_pkg('purplship.providers.purolator.units'),
         'services': "Product",
         'options': "Service",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
+        'packagingTypes': "PackagingType"
     },
     'ups': {
         'label': "UPS",
         'package': import_pkg('purplship.providers.ups.units'),
         'services': "ShippingServiceCode",
         'options': "ServiceOption",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
+        'packagingTypes': "RatingPackagingType"
     }
 }
 
@@ -123,6 +142,16 @@ def generate_services():
         key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['services']))}
         for key, mapper in PACKAGE_MAPPERS.items()
         if mapper.get('services') is not None
+    }
+    click.echo(SERVICES_TEMPLATE.render(service_mappers=service_mappers, mappers=PACKAGE_MAPPERS))
+
+
+@cli.command()
+def generate_packaging_types():
+    service_mappers = {
+        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['packagingTypes']))}
+        for key, mapper in PACKAGE_MAPPERS.items()
+        if mapper.get('packagingTypes') is not None
     }
     click.echo(SERVICES_TEMPLATE.render(service_mappers=service_mappers, mappers=PACKAGE_MAPPERS))
 

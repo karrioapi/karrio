@@ -36,8 +36,12 @@ class PackagePresets(Flag):
     fedex_large_box = PackagePreset(
         weight=20.0, width=17.88, height=12.38, length=3.0, packaging_type="large_box"
     )
-    fedex_10_kg_box = PackagePreset(weight=10.0, width=15.81, height=12.94, length=10.19)
-    fedex_25_kg_box = PackagePreset(weight=25.0, width=21.56, height=16.56, length=13.19)
+    fedex_10_kg_box = PackagePreset(
+        weight=10.0, width=15.81, height=12.94, length=10.19
+    )
+    fedex_25_kg_box = PackagePreset(
+        weight=25.0, width=21.56, height=16.56, length=13.19
+    )
     fedex_tube = PackagePreset(
         weight=20.0, width=38.0, height=6.0, length=6.0, packaging_type="tube"
     )

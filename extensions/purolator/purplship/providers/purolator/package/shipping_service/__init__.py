@@ -38,7 +38,9 @@ def parse_shipment_creation_response(
 def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     shipment = CreateShipmentResponse()
     document = DocumentDetail()
-    shipment_nodes = response.xpath(".//*[local-name() = $name]", name="CreateShipmentResponse")
+    shipment_nodes = response.xpath(
+        ".//*[local-name() = $name]", name="CreateShipmentResponse"
+    )
     document_nodes = response.xpath(".//*[local-name() = $name]", name="DocumentDetail")
 
     next((shipment.build(node) for node in shipment_nodes), None)
@@ -46,7 +48,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
 
     label = next(
         (content for content in [document.Data, document.URL] if content is not None),
-        "No label returned"
+        "No label returned",
     )
 
     return ShipmentDetails(
@@ -57,9 +59,13 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[Pipeline]:
+def create_shipment_request(
+    payload: ShipmentRequest, settings: Settings
+) -> Serializable[Pipeline]:
     requests: Pipeline = Pipeline(
-        validate=lambda *_: partial(_validate_shipment, payload=payload, settings=settings)(),
+        validate=lambda *_: partial(
+            _validate_shipment, payload=payload, settings=settings
+        )(),
         create=partial(_create_shipment, payload=payload, settings=settings),
         document=partial(_get_shipment_label, payload=payload, settings=settings),
     )
@@ -69,21 +75,25 @@ def create_shipment_request(payload: ShipmentRequest, settings: Settings) -> Ser
 def _validate_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
     return Job(
         id="validate",
-        data=create_shipping_request(payload=payload, settings=settings, validate=True).serialize(),
+        data=create_shipping_request(payload=payload, settings=settings, validate=True),
     )
 
 
-def _create_shipment(validate_response: str, payload: ShipmentRequest, settings: Settings) -> Job:
+def _create_shipment(
+    validate_response: str, payload: ShipmentRequest, settings: Settings
+) -> Job:
     errors = parse_error_response(to_xml(validate_response), settings)
     valid = len(errors) == 0
     return Job(
         id="create",
-        data=create_shipping_request(payload, settings).serialize() if valid else None,
+        data=create_shipping_request(payload, settings) if valid else None,
         fallback=(validate_response if not valid else None),
     )
 
 
-def _get_shipment_label(create_response: str, payload: ShipmentRequest, settings: Settings) -> Job:
+def _get_shipment_label(
+    create_response: str, payload: ShipmentRequest, settings: Settings
+) -> Job:
     errors = parse_error_response(to_xml(create_response), settings)
     valid = len(errors) == 0
     shipment_pin = None
@@ -104,7 +114,9 @@ def _get_shipment_label(create_response: str, payload: ShipmentRequest, settings
     return Job(
         id="document",
         data=(
-            get_shipping_documents_request(shipment_pin, payload, settings).serialize() if valid else None
+            get_shipping_documents_request(shipment_pin, payload, settings)
+            if valid
+            else None
         ),
         fallback="",
     )

@@ -1,4 +1,4 @@
-"""PurplShip Unified datatypes module."""
+"""Purplship Unified datatypes module."""
 import attr
 from typing import List, Dict
 from jstruct import JList, JStruct, REQUIRED
@@ -160,14 +160,14 @@ class PickupRequest:
     """pickup request type."""
 
     date: str
-
+    ready_time: str
+    closing_time: str
     address: Address = JStruct[Address, REQUIRED]
-    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
-    ready_time: str = None
-    closing_time: str = None
+    parcels: List[Parcel] = JList[Parcel]
     instruction: str = None
     package_location: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -175,27 +175,39 @@ class PickupUpdateRequest:
     """pickup update request type."""
 
     date: str
+    ready_time: str
+    closing_time: str
+    confirmation_number: str
     address: Address = JStruct[Address, REQUIRED]
-    parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
-    confirmation_number: str = None
-    ready_time: str = None
-    closing_time: str = None
+    parcels: List[Parcel] = JList[Parcel]
     instruction: str = None
     package_location: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
 class PickupCancellationRequest:
     """pickup cancellation request type."""
 
-    pickup_date: str
     confirmation_number: str
+    address: Address = JStruct[Address]  # TODO:: Make this field REQUIRED
+    pickup_date: str = None
+    reason: str = None
+
+    # Deprecated
     person_name: str = None
     country_code: str = None
 
 
-""" Unified option data types """
+@attr.s(auto_attribs=True)
+class AddressValidationRequest:
+    """address validation request type."""
+
+    address: Address = JStruct[Address, REQUIRED]
+
+
+# *** Unified option data types ***
 
 
 @attr.s(auto_attribs=True)
@@ -220,12 +232,12 @@ class Insurance:
     amount: float
 
 
-""" Unified response data types """
+# *** Unified response data types ***
 
 
 @attr.s(auto_attribs=True)
 class Message:
-    """PurplShip Message type."""
+    """Purplship Message type."""
 
     carrier_name: str
     carrier_id: str
@@ -236,7 +248,7 @@ class Message:
 
 @attr.s(auto_attribs=True)
 class ChargeDetails:
-    """PurplShip charge type."""
+    """Purplship charge type."""
 
     name: str = None
     amount: float = None
@@ -244,8 +256,18 @@ class ChargeDetails:
 
 
 @attr.s(auto_attribs=True)
+class AddressValidationDetails:
+    """Purplship address validation details type."""
+
+    carrier_name: str
+    carrier_id: str
+    success: bool
+    complete_address: Address = None
+
+
+@attr.s(auto_attribs=True)
 class TrackingEvent:
-    """PurplShip tracking event type."""
+    """Purplship tracking event type."""
 
     date: str
     description: str
@@ -257,7 +279,7 @@ class TrackingEvent:
 
 @attr.s(auto_attribs=True)
 class RateDetails:
-    """PurplShip rate (quote) details type."""
+    """Purplship rate (quote) details type."""
 
     carrier_name: str
     carrier_id: str
@@ -275,7 +297,7 @@ class RateDetails:
 
 @attr.s(auto_attribs=True)
 class TrackingDetails:
-    """PurplShip tracking details type."""
+    """Purplship tracking details type."""
 
     carrier_name: str
     carrier_id: str
@@ -285,7 +307,7 @@ class TrackingDetails:
 
 @attr.s(auto_attribs=True)
 class ShipmentDetails:
-    """PurplShip shipment details type."""
+    """Purplship shipment details type."""
 
     carrier_name: str
     carrier_id: str
@@ -298,7 +320,7 @@ class ShipmentDetails:
 
 @attr.s(auto_attribs=True)
 class PickupDetails:
-    """PurplShip pickup details type."""
+    """Purplship pickup details type."""
 
     carrier_name: str
     carrier_id: str
@@ -308,3 +330,12 @@ class PickupDetails:
     ready_time: str = None
     closing_time: str = None
     id: str = None
+
+
+@attr.s(auto_attribs=True)
+class ConfirmationDetails:
+    """Purplship binary operation confirmation type."""
+
+    carrier_name: str
+    carrier_id: str
+    success: bool

@@ -1,21 +1,21 @@
-# PurplShip (Multi-carrier Shipping API SDK)
+# Purplship (Multi-carrier Shipping API SDK)
 
-[![CI](https://github.com/PurplShip/purplship/workflows/PuprlShip/badge.svg)](https://github.com/PurplShip/purplship/actions)
+[![CI](https://github.com/Purplship/Purplship/workflows/PuprlShip/badge.svg)](https://github.com/Purplship/Purplship/actions)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
-[![codecov](https://codecov.io/gh/PurplShip/purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/PurplShip/purplship)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709)](https://app.codacy.com/manual/DanH91/purplship?utm_source=github.com&utm_medium=referral&utm_content=PurplShip/purplship&utm_campaign=Badge_Grade_Dashboard)
-[![Join the chat at https://gitter.im/PurplShip/purplship](https://badges.gitter.im/PurplShip/purplship.svg)](https://gitter.im/PurplShip/purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![codecov](https://codecov.io/gh/Purplship/Purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/Purplship/Purplship)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709)](https://app.codacy.com/manual/DanH91/Purplship?utm_source=github.com&utm_medium=referral&utm_content=Purplship/Purplship&utm_campaign=Badge_Grade_Dashboard)
+[![Join the chat at https://gitter.im/Purplship/Purplship](https://badges.gitter.im/Purplship/purplship.svg)](https://gitter.im/Purplship/Purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Introduction
 
-PurplShip is a system for connecting multiple logistics carriers API.
+Purplship is a system for connecting multiple logistics carriers API.
 
 In addition to providing a unified and simplified interface across logistics carriers APIs, 
-PurplShip offers a framework to facilitate the full access of advanced and specific carriers capabilities 
+Purplship offers a framework to facilitate the full access of advanced and specific carriers capabilities 
 while simplifying the addition of new carrier APIs.
 
-With PurplShip you can:
+With Purplship you can:
 
 - Integrate multiple carriers web services: DHL, FedEx, UPS, USPS, Canada Post and more with ease
 - Use a modern and intuitive, unified API across carriers
@@ -23,19 +23,19 @@ With PurplShip you can:
 
 ## Integration
 
-PurplShip has two layers
+Purplship has two layers
 
-- **PurplShip SDK** for an integration as a Python library. *[documentation](#Documentation) bellow*
-- **PurplShip Server** for a self-hosted private cloud REST API. *documentation and usage can be found at [docs.purplship.com](https://docs.purplship.com)*
+- **Purplship SDK** for an integration as a Python library. *[documentation](#Documentation) bellow*
+- **Purplship Server** for an On-prem or private cloud REST API. *documentation and usage can be found at [docs.purplship.com](https://docs.purplship.com)*
 
 ## License
 
-Please see [LICENSE.md](https://github.com/PurplShip/purplship/blob/master/LICENSE) for licensing details.
+Please see [LICENSE.md](https://github.com/Purplship/Purplship/blob/master/LICENSE) for licensing details.
 
 
 ## Authors
 
-- **Daniel K.** - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [PurplShip](https://purplship.com)
+- **Daniel K.** - [@DanHK91](https://twitter.com/DanHK91) | [https://danielk.xyz](https://danielk.xyz/) | [Purplship](https://purplship.com)
 
 
 ___
@@ -51,19 +51,12 @@ ___
 This SDK is the foundation of a framework that intend to streamline the integration for any shipping carrier service.
 
 
-| PurplShip packages | |
-| --- | --- |
-| `purplship.package` | Dedicated to carriers Courier and Package services integration. |
-| `purplship.freight` *(in development)* | Dedicated to carriers Freight (LTL, FTL...) services integration. |
-| `purplship.document` *(on roadmap)* | Dedicated to carriers document services (BOL, Procurements...) integration. |
-
-
-Table of content
+**Table of content**
 
 - [Installation](#Installation)
     - [Create a dependencies file requirements.txt with the content below](#create-a-dependencies-file-requirementstxt-with-the-content-below)
-    - [Install PurplShip using pip](#install-purplship-using-pip)
-- [PurplShip Package Usage](#purplship-package-usage)
+    - [Install Purplship using pip](#install-Purplship-using-pip)
+- [Purplship Package Usage](#Purplship-package-usage)
     - [Initialize a carrier gateway](#initialize-a-carrier-gateway)
     - [Fetching a Shipment rates (or quotes)](#fetching-a-shipment-rates-or-quotes)
 - [API Reference](#api-reference)
@@ -84,14 +77,14 @@ This instruction will get you started with `purplship.package` and the support f
 
 ```text
 # package repository index
--f https://git.io/purplship
+-f https://git.io/Purplship
 
 # core packages
-purplship==2020.7.0
-purplship.package==2020.7.0
+Purplship
+purplship.package
 
 # carriers
-purplship.canadapost==2020.7.0
+purplship.canadapost
 ```
 
 <details>
@@ -100,15 +93,15 @@ purplship.canadapost==2020.7.0
 You can add additional carriers you desire to work with
 
 ```text
-purplship.dhl==2020.7.0
-purplship.fedex==2020.7.0
-purplship.purolator==2020.7.0
-purplship.ups==2020.7.0
+purplship.dhl_express
+purplship.fedex_express
+purplship.purolator_courier
+purplship.ups_package
 ```
 
 </details>
 
-#### Install PurplShip using `pip`
+#### Install Purplship using `pip`
 
 <details>
 <summary>Create a Python virtual environment</summary>
@@ -130,13 +123,13 @@ pip install -r requirements.txt
 
 ___
 
-### PurplShip Package Usage
+### Purplship Package Usage
 
 #### Initialize a carrier gateway
 
 ```python
-import purplship.package as purplship
-from purplship.package.mappers.canadapost import Settings
+import purplship
+from purplship.mappers.canadapost import Settings
 
 canadapost = purplship.gateway["canadapost"].create(
     Settings(
@@ -156,7 +149,7 @@ canadapost = purplship.gateway["canadapost"].create(
 Using the fluent API with the gateway previously initialized, you can fetch the price for a shipment.
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import Address, Parcel, RateRequest
 
 shipper = Address(
@@ -187,7 +180,7 @@ request = purplship.Rating.fetch(
     RateRequest(
         shipper=shipper,
         recipient=recipient,
-        parcel=parcel,
+        parcels=[parcel],
         services=["canadapost_priority"]
     )
 )
@@ -219,7 +212,7 @@ print(to_dict(rates))
         "currency": "CAD",
         "discount": -3.63,
         "duties_and_taxes": 14.73,
-        "estimated_delivery": "2020-05-06",
+        "transit": 3,
         "extra_charges": [
           {
             "amount": 8.11,
@@ -232,7 +225,6 @@ print(to_dict(rates))
             "name": "SMB Savings"
           }
         ],
-        "id": "da75bd1d-caf6-4e1a-8362-7e6e3e7e75d8",
         "service": "canadapost_priority",
         "total_charge": 112.93
       }
@@ -254,7 +246,7 @@ ___
 - Booking
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import PickupRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -269,7 +261,7 @@ rates = request.with_(carrier).parse()
 - Update
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import PickupUpdateRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -284,7 +276,7 @@ rates = request.from_(carrier).parse()
 - Cancel
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import PickupCancellationRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -301,7 +293,7 @@ rates = request.from_(carrier).parse()
 - Fetch
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import RateRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -318,7 +310,7 @@ rates = request.from_(carrier).parse()
 - Create
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import ShipmentRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -335,7 +327,7 @@ rates = request.with_(carrier).parse()
 - Fetch
 
 ```python
-import purplship.package as purplship
+import purplship
 from purplship.core.models import TrackingRequest
 
 carrier = purplship.gateway['carrier'].create(...)
@@ -362,7 +354,7 @@ rates = request.from_(carrier).parse()
     | `custumer_number` | `str` |
 
 
-- DHL
+- DHL Express
 
     | Name | Type | Description
     | --- | --- | --- |
@@ -370,7 +362,7 @@ rates = request.from_(carrier).parse()
     | `password` | `str` | **required**
     | `account_number` | `str` |
 
-- FedEx
+- FedEx Express
 
     | Name | Type | Description
     | --- | --- | --- |
@@ -379,7 +371,7 @@ rates = request.from_(carrier).parse()
     | `meter_number` | `str` | **required**
     | `account_number` | `str` | **required**
 
-- Purolator
+- Purolator Courier
 
     | Name | Type | Description
     | --- | --- | --- |
@@ -389,7 +381,7 @@ rates = request.from_(carrier).parse()
     | `user_token` | `str` |
     | `language` | `str` | default: `en`
 
-- UPS
+- UPS Package
 
     | Name | Type | Description
     | --- | --- | --- |
@@ -416,275 +408,367 @@ rates = request.from_(carrier).parse()
 <summary>Carrier models</summary>
 
 - <a name="Address"></a> Address
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `id` | `str` |
-    | `postal_code` | `str` |
-    | `city` | `str` |
-    | `federal_tax_id` | `str` |
-    | `state_tax_id` | `str` |
-    | `person_name` | `str` |
-    | `company_name` | `str` |
-    | `country_code` | `str` |
-    | `email` | `str` |
-    | `phone_number` | `str` |
-    | `state_code` | `str` |
-    | `suburb` | `str` |
-    | `residential` | `bool` |
-    | `address_line1` | `str` |
-    | `address_line2` | `str` |
+    | `id` | `str` | 
+    | `postal_code` | `str` | 
+    | `city` | `str` | 
+    | `federal_tax_id` | `str` | 
+    | `state_tax_id` | `str` | 
+    | `person_name` | `str` | 
+    | `company_name` | `str` | 
+    | `country_code` | `str` | 
+    | `email` | `str` | 
+    | `phone_number` | `str` | 
+    | `state_code` | `str` | 
+    | `suburb` | `str` | 
+    | `residential` | `bool` | 
+    | `address_line1` | `str` | 
+    | `address_line2` | `str` | 
+
+
+- <a name="AddressValidationDetails"></a> AddressValidationDetails
+    | Name | Type | Description 
+    | --- | --- | --- |
+    | `carrier_name` | `str` | 
+    | `carrier_id` | `str` | 
+    | `success` | `bool` | 
+    | `complete_address` | [Address](#Address) | 
+
+
+- <a name="AddressValidationRequest"></a> AddressValidationRequest
+    | Name | Type | Description 
+    | --- | --- | --- |
+    | `address` | [Address](#Address) | 
 
 
 - <a name="COD"></a> COD
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `amount` | `float` |
+    | `amount` | `float` | 
 
 
 - <a name="Card"></a> Card
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `type` | `str` |
-    | `number` | `str` |
-    | `expiry_month` | `str` |
-    | `expiry_year` | `str` |
-    | `security_code` | `str` |
-    | `name` | `str` |
-    | `postal_code` | `str` |
+    | `type` | `str` | 
+    | `number` | `str` | 
+    | `expiry_month` | `str` | 
+    | `expiry_year` | `str` | 
+    | `security_code` | `str` | 
+    | `name` | `str` | 
+    | `postal_code` | `str` | 
 
 
 - <a name="ChargeDetails"></a> ChargeDetails
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `name` | `str` |
-    | `amount` | `float` |
-    | `currency` | `str` |
+    | `name` | `str` | 
+    | `amount` | `float` | 
+    | `currency` | `str` | 
 
 
 - <a name="Commodity"></a> Commodity
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `id` | `str` |
-    | `weight` | `float` |
-    | `width` | `float` |
-    | `height` | `float` |
-    | `length` | `float` |
-    | `description` | `str` |
-    | `quantity` | `int` |
-    | `sku` | `str` |
-    | `value_amount` | `float` |
-    | `value_currency` | `str` |
-    | `origin_country` | `str` |
+    | `id` | `str` | 
+    | `weight` | `float` | 
+    | `description` | `str` | 
+    | `quantity` | `int` | 
+    | `sku` | `str` | 
+    | `value_amount` | `float` | 
+    | `value_currency` | `str` | 
+    | `origin_country` | `str` | 
+
+
+- <a name="ConfirmationDetails"></a> ConfirmationDetails
+    | Name | Type | Description 
+    | --- | --- | --- |
+    | `carrier_name` | `str` | 
+    | `carrier_id` | `str` | 
+    | `success` | `bool` | 
 
 
 - <a name="Customs"></a> Customs
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `no_eei` | `str` |
-    | `aes` | `str` |
-    | `description` | `str` |
-    | `terms_of_trade` | `str` |
-    | `commodities` | List[[Commodity](#Commodity)] |
-    | `duty` | [Payment](#Payment) |
-    | `invoice` | [Invoice](#Invoice) |
-    | `commercial_invoice` | `bool` |
+    | `no_eei` | `str` | 
+    | `aes` | `str` | 
+    | `description` | `str` | 
+    | `terms_of_trade` | `str` | 
+    | `commodities` | List[[Commodity](#Commodity)] | 
+    | `duty` | [Payment](#Payment) | 
+    | `invoice` | [Invoice](#Invoice) | 
+    | `commercial_invoice` | `bool` | 
 
 
 - <a name="Doc"></a> Doc
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `type` | `str` |
-    | `format` | `str` |
-    | `image` | `str` |
+    | `type` | `str` | 
+    | `format` | `str` | 
+    | `image` | `str` | 
 
 
 - <a name="Insurance"></a> Insurance
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `amount` | `float` |
+    | `amount` | `float` | 
 
 
 - <a name="Invoice"></a> Invoice
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `date` | `str` |
-    | `identifier` | `str` |
-    | `type` | `str` |
-    | `copies` | `int` |
+    | `date` | `str` | 
+    | `identifier` | `str` | 
+    | `type` | `str` | 
+    | `copies` | `int` | 
 
 
 - <a name="Message"></a> Message
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `carrier_name` | `str` |
-    | `carrier_id` | `str` |
-    | `message` | `str` |
-    | `code` | `str` |
-    | `details` | `dict` |
+    | `carrier_name` | `str` | 
+    | `carrier_id` | `str` | 
+    | `message` | `str` | 
+    | `code` | `str` | 
+    | `details` | `dict` | 
 
 
 - <a name="Notification"></a> Notification
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `email` | `str` |
-    | `locale` | `str` |
+    | `email` | `str` | 
+    | `locale` | `str` | 
 
 
 - <a name="Parcel"></a> Parcel
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `id` | `str` |
-    | `weight` | `float` |
-    | `width` | `float` |
-    | `height` | `float` |
-    | `length` | `float` |
-    | `packaging_type` | `str` |
-    | `package_preset` | `str` |
-    | `description` | `str` |
-    | `content` | `str` |
-    | `is_document` | `bool` |
-    | `weight_unit` | `str` |
-    | `dimension_unit` | `str` |
+    | `id` | `str` | 
+    | `weight` | `float` | 
+    | `width` | `float` | 
+    | `height` | `float` | 
+    | `length` | `float` | 
+    | `packaging_type` | `str` | 
+    | `package_preset` | `str` | 
+    | `description` | `str` | 
+    | `content` | `str` | 
+    | `is_document` | `bool` | 
+    | `weight_unit` | `str` | 
+    | `dimension_unit` | `str` | 
 
 
 - <a name="Payment"></a> Payment
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `paid_by` | `str` |
-    | `amount` | `float` |
-    | `currency` | `str` |
-    | `account_number` | `str` |
-    | `credit_card` | [Card](#Card) |
-    | `contact` | [Address](#Address) |
+    | `paid_by` | `str` | 
+    | `amount` | `float` | 
+    | `currency` | `str` | 
+    | `account_number` | `str` | 
+    | `credit_card` | [Card](#Card) | 
+    | `contact` | [Address](#Address) | 
 
 
 - <a name="PickupCancellationRequest"></a> PickupCancellationRequest
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `pickup_date` | `str` |
-    | `confirmation_number` | `str` |
-    | `person_name` | `str` |
-    | `country_code` | `str` |
+    | `confirmation_number` | `str` | 
+    | `address` | [Address](#Address) | 
+    | `pickup_date` | `str` | 
+    | `reason` | `str` | 
+    | `person_name` | `str` | 
+    | `country_code` | `str` | 
 
 
 - <a name="PickupDetails"></a> PickupDetails
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `carrier_name` | `str` |
-    | `carrier_id` | `str` |
-    | `confirmation_number` | `str` |
-    | `pickup_date` | `str` |
-    | `pickup_charge` | [ChargeDetails](#ChargeDetails) |
-    | `ready_time` | `str` |
-    | `closing_time` | `str` |
-    | `id` | `str` |
+    | `carrier_name` | `str` | 
+    | `carrier_id` | `str` | 
+    | `confirmation_number` | `str` | 
+    | `pickup_date` | `str` | 
+    | `pickup_charge` | [ChargeDetails](#ChargeDetails) | 
+    | `ready_time` | `str` | 
+    | `closing_time` | `str` | 
+    | `id` | `str` | 
 
 
 - <a name="PickupRequest"></a> PickupRequest
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `date` | `str` |
-    | `address` | [Address](#Address) |
-    | `parcels` | List[[Parcel](#Parcel)] |
-    | `ready_time` | `str` |
-    | `closing_time` | `str` |
-    | `instruction` | `str` |
-    | `package_location` | `str` |
+    | `date` | `str` | 
+    | `ready_time` | `str` | 
+    | `closing_time` | `str` | 
+    | `address` | [Address](#Address) | 
+    | `parcels` | List[[Parcel](#Parcel)] | 
+    | `instruction` | `str` | 
+    | `package_location` | `str` | 
+    | `options` | `dict` | 
 
 
 - <a name="PickupUpdateRequest"></a> PickupUpdateRequest
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `date` | `str` |
-    | `address` | [Address](#Address) |
-    | `parcels` | List[[Parcel](#Parcel)] |
-    | `confirmation_number` | `str` |
-    | `ready_time` | `str` |
-    | `closing_time` | `str` |
-    | `instruction` | `str` |
-    | `package_location` | `str` |
+    | `date` | `str` | 
+    | `ready_time` | `str` | 
+    | `closing_time` | `str` | 
+    | `confirmation_number` | `str` | 
+    | `address` | [Address](#Address) | 
+    | `parcels` | List[[Parcel](#Parcel)] | 
+    | `instruction` | `str` | 
+    | `package_location` | `str` | 
+    | `options` | `dict` | 
 
 
 - <a name="RateDetails"></a> RateDetails
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `carrier_name` | `str` |
-    | `carrier_id` | `str` |
-    | `currency` | `str` |
-    | `transit_days` | `int` |
-    | `service` | `str` |
-    | `discount` | `float` |
-    | `base_charge` | `float` |
-    | `total_charge` | `float` |
-    | `duties_and_taxes` | `float` |
-    | `extra_charges` | List[[ChargeDetails](#ChargeDetails)] |
-    | `meta` | `dict` |
-    | `id` | `str` |
+    | `carrier_name` | `str` | 
+    | `carrier_id` | `str` | 
+    | `currency` | `str` | 
+    | `transit_days` | `int` | 
+    | `service` | `str` | 
+    | `discount` | `float` | 
+    | `base_charge` | `float` | 
+    | `total_charge` | `float` | 
+    | `duties_and_taxes` | `float` | 
+    | `extra_charges` | List[[ChargeDetails](#ChargeDetails)] | 
+    | `meta` | `dict` | 
+    | `id` | `str` | 
 
 
 - <a name="RateRequest"></a> RateRequest
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `shipper` | [Address](#Address) |
-    | `recipient` | [Address](#Address) |
-    | `parcels` | List[[Parcel](#Parcel)] |
-    | `services` | List[str] |
-    | `options` | `dict` |
-    | `reference` | `str` |
+    | `shipper` | [Address](#Address) | 
+    | `recipient` | [Address](#Address) | 
+    | `parcels` | List[[Parcel](#Parcel)] | 
+    | `services` | List[str] | 
+    | `options` | `dict` | 
+    | `reference` | `str` | 
 
 
 - <a name="ShipmentDetails"></a> ShipmentDetails
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `carrier_name` | `str` |
-    | `carrier_id` | `str` |
-    | `label` | `str` |
-    | `tracking_number` | `str` |
-    | `selected_rate` | [RateDetails](#RateDetails) |
-    | `meta` | `dict` |
-    | `id` | `str` |
+    | `carrier_name` | `str` | 
+    | `carrier_id` | `str` | 
+    | `label` | `str` | 
+    | `tracking_number` | `str` | 
+    | `selected_rate` | [RateDetails](#RateDetails) | 
+    | `meta` | `dict` | 
+    | `id` | `str` | 
 
 
 - <a name="ShipmentRequest"></a> ShipmentRequest
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `service` | `str` |
-    | `shipper` | [Address](#Address) |
-    | `recipient` | [Address](#Address) |
-    | `parcels` | List[[Parcel](#Parcel)] |
-    | `payment` | [Payment](#Payment) |
-    | `customs` | [Customs](#Customs) |
-    | `doc_images` | List[[Doc](#Doc)] |
-    | `options` | `dict` |
-    | `reference` | `str` |
+    | `service` | `str` | 
+    | `shipper` | [Address](#Address) | 
+    | `recipient` | [Address](#Address) | 
+    | `parcels` | List[[Parcel](#Parcel)] | 
+    | `payment` | [Payment](#Payment) | 
+    | `customs` | [Customs](#Customs) | 
+    | `doc_images` | List[[Doc](#Doc)] | 
+    | `options` | `dict` | 
+    | `reference` | `str` | 
 
 
 - <a name="TrackingDetails"></a> TrackingDetails
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `carrier_name` | `str` |
-    | `carrier_id` | `str` |
-    | `tracking_number` | `str` |
-    | `events` | List[[TrackingEvent](#TrackingEvent)] |
+    | `carrier_name` | `str` | 
+    | `carrier_id` | `str` | 
+    | `tracking_number` | `str` | 
+    | `events` | List[[TrackingEvent](#TrackingEvent)] | 
 
 
 - <a name="TrackingEvent"></a> TrackingEvent
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `date` | `str` |
-    | `description` | `str` |
-    | `location` | `str` |
-    | `code` | `str` |
-    | `time` | `str` |
-    | `signatory` | `str` |
+    | `date` | `str` | 
+    | `description` | `str` | 
+    | `location` | `str` | 
+    | `code` | `str` | 
+    | `time` | `str` | 
+    | `signatory` | `str` | 
 
 
 - <a name="TrackingRequest"></a> TrackingRequest
-    | Name | Type | Description
+    | Name | Type | Description 
     | --- | --- | --- |
-    | `tracking_numbers` | List[str] |
-    | `language_code` | `str` |
+    | `tracking_numbers` | List[str] | 
+    | `language_code` | `str` | 
     | `level_of_details` | `str` |
+
+</details>
+
+
+#### Packaging Types
+
+<details>
+<summary>Packaging types for each carriers</summary>
+
+- <a name="services-purplship"></a> Multi-carrier (Purplship)
+    Code | Identifier
+    --- | ---
+    | `envelope` | Small Envelope
+    | `pak` | Pak
+    | `tube` | Tube
+    | `pallet` | Pallet
+    | `small_box` | Small Box
+    | `medium_box` | Medium Box
+    | `your_packaging` | Your Packaging
+
+
+- <a name="services-dhl_express"></a> DHL Express
+    Code | Identifier
+    --- | ---
+    | `dhl_flyer_smalls` | FLY
+    | `dhl_parcels_conveyables` | COY
+    | `dhl_non_conveyables` | NCY
+    | `dhl_pallets` | PAL
+    | `dhl_double_pallets` | DBL
+    | `dhl_box` | BOX
+
+
+- <a name="services-fedex"></a> FedEx
+    Code | Identifier
+    --- | ---
+    | `fedex_envelope` | FEDEX_ENVELOPE
+    | `fedex_pak` | FEDEX_PAK
+    | `fedex_box` | FEDEX_BOX
+    | `fedex_10_kg_box` | FEDEX_10KG_BOX
+    | `fedex_25_kg_box` | FEDEX_25KG_BOX
+    | `fedex_tube` | FEDEX_TUBE
+    | `your_packaging` | YOUR_PACKAGING
+
+
+- <a name="services-purolator"></a> Purolator
+    Code | Identifier
+    --- | ---
+    | `purolator_express_envelope` | Envelop
+    | `purolator_express_pack` | Pack
+    | `purolator_express_box` | Box
+    | `purolator_customer_packaging` | Customer Packaging
+
+
+- <a name="services-ups"></a> UPS
+    Code | Identifier
+    --- | ---
+    | `ups_unknown` | 00
+    | `ups_letter` | 01
+    | `ups_package` | 02
+    | `ups_tube` | 03
+    | `ups_pak` | 04
+    | `ups_express_box` | 21
+    | `ups_box_25_kg` | 24
+    | `ups_box_10_kg` | 25
+    | `ups_pallet` | 30
+    | `ups_small_express_box` | 2a
+    | `ups_medium_express_box` | 2b
+    | `ups_large_express_box` | 2c
 
 </details>
 
@@ -695,7 +779,6 @@ rates = request.from_(carrier).parse()
 <summary>Package presets for each carriers</summary>
 
 - <a name="presets-canadapost"></a> Canada Post
-
     Code | Dimensions | Note
     --- | --- | ---
     | `canadapost_mailing_box` | 15.2 x 10.2 | height x width
@@ -711,9 +794,7 @@ rates = request.from_(carrier).parse()
     | `canadapost_xexpresspost_national_large_envelope` | 29.2 x 1.5 x 1.36 x 40.0 | height x length x weight x width
 
 
-
-- <a name="presets-dhl"></a> DHL
-
+- <a name="presets-dhl_express"></a> DHL Express
     Code | Dimensions | Note
     --- | --- | ---
     | `dhl_express_envelope` | 27.5 x 1.0 x 0.5 x 35.0 | height x length x weight x width
@@ -732,9 +813,7 @@ rates = request.from_(carrier).parse()
     | `dhl_jumbo_box_junior` | 34.0 x 24.1 x 20.0 x 39.9 | height x length x weight x width
 
 
-
 - <a name="presets-fedex"></a> FedEx
-
     Code | Dimensions | Note
     --- | --- | ---
     | `fedex_envelope_legal_size` | 15.5 x 1.0 x 9.5 | height x weight x width
@@ -749,9 +828,7 @@ rates = request.from_(carrier).parse()
     | `fedex_tube` | 6.0 x 6.0 x 20.0 x 38.0 | height x length x weight x width
 
 
-
 - <a name="presets-purolator"></a> Purolator
-
     Code | Dimensions | Note
     --- | --- | ---
     | `purolator_express_envelope` | 1.0 | weight
@@ -759,9 +836,7 @@ rates = request.from_(carrier).parse()
     | `purolator_express_box` | 7.0 | weight
 
 
-
 - <a name="presets-ups"></a> UPS
-
     Code | Dimensions | Note
     --- | --- | ---
     | `ups_small_express_box` | 11.0 x 2.0 x 30.0 x 13.0 | height x length x weight x width
@@ -780,7 +855,6 @@ rates = request.from_(carrier).parse()
 <summary>Shipping services for each carriers</summary>
 
 - <a name="services-canadapost"></a> Canada Post
-
     Code | Identifier
     --- | ---
     | `canadapost_regular_parcel` | DOM.RP
@@ -807,9 +881,7 @@ rates = request.from_(carrier).parse()
     | `canadapost_tracked_packet_international` | INT.TP
 
 
-
-- <a name="services-dhl"></a> DHL
-
+- <a name="services-dhl_express"></a> DHL Express
     Code | Identifier
     --- | ---
     | `dhl_logistics_services` | LOGISTICS SERVICES
@@ -848,9 +920,7 @@ rates = request.from_(carrier).parse()
     | `dhl_destination_charges` | Destination Charges
 
 
-
 - <a name="services-fedex"></a> FedEx
-
     Code | Identifier
     --- | ---
     | `europe_first_international_priority` | EUROPE_FIRST_INTERNATIONAL_PRIORITY
@@ -911,9 +981,7 @@ rates = request.from_(carrier).parse()
     | `transborder_distribution_consolidation` | TRANSBORDER_DISTRIBUTION_CONSOLIDATION
 
 
-
 - <a name="services-purolator"></a> Purolator
-
     Code | Identifier
     --- | ---
     | `purolator_express_9_am` | PurolatorExpress9AM
@@ -979,9 +1047,7 @@ rates = request.from_(carrier).parse()
     | `purolator_express_international_box_12_00` | PurolatorExpressInternationalBox12:00
 
 
-
 - <a name="services-ups"></a> UPS
-
     Code | Identifier
     --- | ---
     | `ups_standard` | 11
@@ -1017,7 +1083,6 @@ rates = request.from_(carrier).parse()
 <summary>Shipping options available for each carriers</summary>
 
 - <a name="options-canadapost"></a> Canada Post
-
     Code | Identifier
     --- | ---
     | `canadapost_signature` | SO
@@ -1034,9 +1099,7 @@ rates = request.from_(carrier).parse()
     | `canadapost_abandon` | ABAN
 
 
-
-- <a name="options-dhl"></a> DHL
-
+- <a name="options-dhl_express"></a> DHL Express
     Code | Identifier
     --- | ---
     | `dhl_logistics_services` | 0A
@@ -1266,9 +1329,7 @@ rates = request.from_(carrier).parse()
     | `dhl_e_com_discount` | ZE
 
 
-
 - <a name="options-fedex"></a> FedEx
-
     Code | Identifier
     --- | ---
     | `blind_shipment` | BLIND_SHIPMENT
@@ -1352,9 +1413,7 @@ rates = request.from_(carrier).parse()
     | `weighing` | WEIGHING
 
 
-
 - <a name="options-purolator"></a> Purolator
-
     Code | Identifier
     --- | ---
     | `dangerous_goods` | Dangerous Goods
@@ -1368,9 +1427,7 @@ rates = request.from_(carrier).parse()
     | `special_handling` | Special Handling
 
 
-
 - <a name="options-ups"></a> UPS
-
     Code | Identifier
     --- | ---
     | `saturday_delivery_indicator` | SaturdayDeliveryIndicator

@@ -4,7 +4,7 @@ from collections import OrderedDict
 from typing import Callable, TypeVar, Any, Generic, List, Tuple, Dict
 
 logger = logging.getLogger(__name__)
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Job:

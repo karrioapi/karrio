@@ -13,12 +13,12 @@ dev_requirements = [
 ]
 
 setup(name='purplship',
-      version='2020.8.0',
+      version='2020.9.0',
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/PurplShip/purplship',
-      author='PurplShip',
+      author='Purplship Team',
       author_email='danielk.developer@gmail.com',
       license='LGPLv3',
       packages=find_packages(".", exclude=["tests*"]),

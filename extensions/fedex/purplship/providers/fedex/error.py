@@ -1,5 +1,4 @@
-from typing import List, Callable
-from functools import reduce
+from typing import List, Optional
 from pyfedex.rate_service_v26 import Notification
 from purplship.core.models import Message
 from purplship.core.utils.xml import Element
@@ -8,30 +7,22 @@ from .utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:
-    notifications = (
-            response.xpath(".//*[local-name() = $name]", name="Notifications") +
-            response.xpath(".//*[local-name() = $name]", name="Notification")
+    notifications = response.xpath(
+        ".//*[local-name() = $name]", name="Notifications"
+    ) + response.xpath(".//*[local-name() = $name]", name="Notification")
+    errors = [_extract_error(node, settings) for node in notifications] + extract_fault(
+        response, settings
     )
-    return reduce(
-        _extract_error(settings), notifications,
-        extract_fault(response, settings)
-    )
+    return [error for error in errors if error is not None]
 
 
-def _extract_error(
-    settings: Settings,
-) -> Callable[[List[Message], Element], List[Message]]:
-    def extract(messages: List[Message], notification_node: Element) -> List[Message]:
-        notification = build(Notification, notification_node)
-        if notification.Severity not in ("SUCCESS", "NOTE"):
-            messages.append(
-                Message(
-                    code=notification.Code,
-                    message=notification.Message,
-                    carrier_name=settings.carrier_name,
-                    carrier_id=settings.carrier_id,
-                )
-            )
-        return messages
-
-    return extract
+def _extract_error(node: Element, settings: Settings) -> Optional[Message]:
+    notification = build(Notification, node)
+    if notification.Severity not in ("SUCCESS", "NOTE"):
+        return Message(
+            code=notification.Code,
+            message=notification.Message,
+            carrier_name=settings.carrier_name,
+            carrier_id=settings.carrier_id,
+        )
+    return None

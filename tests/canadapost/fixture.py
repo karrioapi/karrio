@@ -1,6 +1,6 @@
-import purplship.package as api
+import purplship
 
-gateway = api.gateway["canadapost"].create(
+gateway = purplship.gateway["canadapost"].create(
     dict(
         username="username",
         password="password",

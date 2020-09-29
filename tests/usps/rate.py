@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import RateRequest
-from purplship.package import Rating
+from purplship import Rating
 from tests.usps.fixture import gateway
 
 
@@ -33,14 +33,14 @@ class TestUSPSRating(unittest.TestCase):
         self.assertEqual(xml_str, INTL_RATE_REQUEST.get("XML"))
 
     def test_parse_rate_response(self):
-        with patch("purplship.package.mappers.usps.proxy.http") as mock:
+        with patch("purplship.mappers.usps.proxy.http") as mock:
             mock.return_value = RATE_RESPONSE
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
 
     def test_parse_intl_quote_response(self):
-        with patch("purplship.package.mappers.usps.proxy.http") as mock:
+        with patch("purplship.mappers.usps.proxy.http") as mock:
             mock.return_value = INTL_RATE_RESPONSE
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -48,7 +48,7 @@ class TestUSPSRating(unittest.TestCase):
             )
 
     def test_parse_rate_response_errors(self):
-        with patch("purplship.package.mappers.usps.proxy.http") as mock:
+        with patch("purplship.mappers.usps.proxy.http") as mock:
             mock.return_value = ERRORS
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(PARSED_ERRORS))
@@ -61,14 +61,16 @@ if __name__ == "__main__":
 RATE_PAYLOAD = {
     "shipper": {"postal_code": "44106"},
     "recipient": {"postal_code": "20770"},
-    "parcels": [{
-        "dimension_unit": "IN",
-        "id": "1ST",
-        "width": 15,
-        "height": 15,
-        "length": 30,
-        "weight": 1,
-    }],
+    "parcels": [
+        {
+            "dimension_unit": "IN",
+            "id": "1ST",
+            "width": 15,
+            "height": 15,
+            "length": 30,
+            "weight": 1,
+        }
+    ],
     "services": ["priority"],
     "options": {"signature_confirmation": True},
 }
@@ -76,15 +78,17 @@ RATE_PAYLOAD = {
 INTL_RATE_PAYLOAD = {
     "shipper": {"postal_code": "18701"},
     "recipient": {"postal_code": "2046", "country_code": "AU"},
-    "parcels": [{
-        "dimension_unit": "IN",
-        "id": "1ST",
-        "width": 10,
-        "height": 10,
-        "length": 10,
-        "weight": 3.123,
-        "packaging_type": "sm",
-    }],
+    "parcels": [
+        {
+            "dimension_unit": "IN",
+            "id": "1ST",
+            "width": 10,
+            "height": 10,
+            "length": 10,
+            "weight": 3.123,
+            "packaging_type": "sm",
+        }
+    ],
     "options": {"insurance_global_express_guaranteed": True},
 }
 

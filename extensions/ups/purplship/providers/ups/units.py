@@ -10,9 +10,15 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    ups_small_express_box = PackagePreset(weight=30.0, width=13.0, height=11.0, length=2.0)
-    ups_medium_express_box = PackagePreset(weight=30.0, width=16.0, height=11.0, length=3.0)
-    ups_large_express_box = PackagePreset(weight=30.0, width=18.0, height=13.0, length=3.0)
+    ups_small_express_box = PackagePreset(
+        weight=30.0, width=13.0, height=11.0, length=2.0
+    )
+    ups_medium_express_box = PackagePreset(
+        weight=30.0, width=16.0, height=11.0, length=3.0
+    )
+    ups_large_express_box = PackagePreset(
+        weight=30.0, width=18.0, height=13.0, length=3.0
+    )
     ups_express_tube = PackagePreset(width=38.0, height=6.0, length=6.0)
     ups_express_pak = PackagePreset(width=16.0, height=11.75)
     ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3.0)

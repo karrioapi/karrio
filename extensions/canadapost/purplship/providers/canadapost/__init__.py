@@ -11,3 +11,10 @@ from purplship.providers.canadapost.track import (
     tracking_pins_request,
     parse_tracking_summary,
 )
+from purplship.providers.canadapost.pickup import (
+    parse_pickup_response,
+    cancel_pickup_request,
+    create_pickup_request,
+    update_pickup_request,
+    parse_cancel_pickup_response,
+)

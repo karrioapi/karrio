@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
-from purplship.package import Rating
+from purplship import Rating
 from purplship.core.models import RateRequest
 from tests.canadapost.fixture import gateway
 from datetime import datetime
@@ -24,7 +24,7 @@ class TestCanadaPostRating(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RateRequestUsingPackagePresetXML)
 
-    @patch("purplship.package.mappers.canadapost.proxy.http", return_value="<a></a>")
+    @patch("purplship.mappers.canadapost.proxy.http", return_value="<a></a>")
     def test_create_rate_request_with_package_preset_missing_weight(self, _):
         processing_error = (
             Rating.fetch(RateRequest(**RateWithPresetMissingWeightPayload))
@@ -34,7 +34,7 @@ class TestCanadaPostRating(unittest.TestCase):
 
         self.assertEqual(to_dict(processing_error), to_dict(ProcessingError))
 
-    @patch("purplship.package.mappers.canadapost.proxy.http", return_value="<a></a>")
+    @patch("purplship.mappers.canadapost.proxy.http", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -42,20 +42,20 @@ class TestCanadaPostRating(unittest.TestCase):
         self.assertEqual(url, f"{gateway.proxy.settings.server_url}/rs/ship/price")
 
     def test_parse_rate_response(self):
-        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
+        with patch("purplship.mappers.canadapost.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
     def test_parse_rate_parsing_error(self):
-        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
+        with patch("purplship.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteParsingError))
 
     def test_parse_rate_missing_args_error(self):
-        with patch("purplship.package.mappers.canadapost.proxy.http") as mock:
+        with patch("purplship.mappers.canadapost.proxy.http") as mock:
             mock.return_value = QuoteMissingArgsError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -69,28 +69,38 @@ if __name__ == "__main__":
 RatePayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcels": [{
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-        "dimension_unit": "CM",
-        "weight_unit": "KG",
-    }],
+    "parcels": [
+        {
+            "height": 3,
+            "length": 10,
+            "width": 3,
+            "weight": 4.0,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
     "services": ["canadapost_expedited_parcel"],
 }
 
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcels": [{"package_preset": "canadapost_xexpresspost_certified_envelope",}],
+    "parcels": [
+        {
+            "package_preset": "canadapost_xexpresspost_certified_envelope",
+        }
+    ],
     "services": ["canadapost_xpresspost"],
 }
 
 RateWithPresetMissingWeightPayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcels": [{"package_preset": "canadapost_corrugated_small_box",}],
+    "parcels": [
+        {
+            "package_preset": "canadapost_corrugated_small_box",
+        }
+    ],
     "services": ["canadapost_regular_parcel"],
 }
 
@@ -105,7 +115,7 @@ ProcessingError = [
             "details": {
                 "parcel[0].weight": {
                     "code": "required",
-                    "message": "This field is required"
+                    "message": "This field is required",
                 }
             },
         }

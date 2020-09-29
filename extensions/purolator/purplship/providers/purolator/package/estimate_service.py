@@ -28,7 +28,7 @@ from pypurolator.estimate_service_2_1_2 import (
     PaymentType,
     InternationalInformation,
     DutyInformation,
-    BusinessRelationship
+    BusinessRelationship,
 )
 from purplship.core.units import Currency, Packages, Options, Phone
 from purplship.core.utils import Serializable, Element, concat_str, decimal
@@ -97,15 +97,19 @@ def get_full_estimate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    package_description = (packages[0].parcel.description if len(packages) == 1 else None)
+    package_description = packages[0].parcel.description if len(packages) == 1 else None
     is_document = all([parcel.is_document for parcel in payload.parcels])
     options = Options(payload.options)
     shipper_phone_number = Phone(payload.shipper.phone_number)
     recipient_phone_number = Phone(payload.recipient.phone_number)
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    service = next((Product[s].value for s in payload.services if s in Product.__members__), None)
+    service = next(
+        (Product[s].value for s in payload.services if s in Product.__members__), None
+    )
     default_service = (
-        Product.purolator_express_international if is_international else Product.purolator_express
+        Product.purolator_express_international
+        if is_international
+        else Product.purolator_express
     ).value
 
     request = create_envelope(
@@ -142,7 +146,7 @@ def get_full_estimate_request(
                             CountryCode=shipper_phone_number.country_code or "0",
                             AreaCode=shipper_phone_number.area_code or "0",
                             Phone=shipper_phone_number.phone or "0",
-                            Extension=None
+                            Extension=None,
                         ),
                         FaxNumber=None,
                     ),
@@ -175,7 +179,7 @@ def get_full_estimate_request(
                             CountryCode=recipient_phone_number.country_code or "0",
                             AreaCode=recipient_phone_number.area_code or "0",
                             Phone=recipient_phone_number.phone or "0",
-                            Extension=None
+                            Extension=None,
                         ),
                         FaxNumber=None,
                     ),
@@ -249,8 +253,10 @@ def get_full_estimate_request(
                         Currency=options.currency,
                     ),
                     ImportExportType=None,
-                    CustomsInvoiceDocumentIndicator=None
-                ) if is_international else None,
+                    CustomsInvoiceDocumentIndicator=None,
+                )
+                if is_international
+                else None,
                 ReturnShipmentInformation=None,
                 PaymentInformation=PaymentInformation(
                     PaymentType=PaymentType.SENDER.value,
@@ -262,7 +268,9 @@ def get_full_estimate_request(
                 NotificationInformation=None,
                 TrackingReferenceInformation=TrackingReferenceInformation(
                     Reference1=payload.reference,
-                ) if payload.reference != "" else None,
+                )
+                if payload.reference != ""
+                else None,
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),
