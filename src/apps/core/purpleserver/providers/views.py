@@ -4,8 +4,8 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.views import APIView
 from rest_framework.serializers import NullBooleanField, ChoiceField, Serializer
+from rest_framework import generics
 
 from django.urls import path
 from django.db.models import Q
@@ -25,7 +25,7 @@ class CarrierFilters(Serializer):
     test = NullBooleanField(required=False, help_text="The test flag filter carrier configured in test mode")
 
 
-class CarrierAPIView(APIView):
+class CarrierAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
@@ -48,8 +48,8 @@ class CarrierList(CarrierAPIView):
         query.is_valid(raise_exception=True)
 
         carriers = [carrier.data for carrier in Carriers.list(**query.validated_data)]
-        serializer = CarrierSettings(carriers, many=True)
-        return Response(serializer.data)
+        response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
+        return Response(response)
 
 
 class CarrierDetails(CarrierAPIView):

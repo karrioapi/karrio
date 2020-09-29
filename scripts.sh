@@ -11,6 +11,9 @@ export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
 [[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
 
+export EMAIL_HOST="localhost"
+export EMAIL_PORT=1025
+
 deactivate_env() {
   if command -v deactivate &> /dev/null
   then
@@ -124,15 +127,19 @@ runserver() {
     export MULTI_TENANT_ENABLE=False
   fi
 
-  if [[ "$*" == *--rdata* ]]; then
-    migrate "$@"
-  fi
-
   if [[ "$*" == *--rdb* ]]; then
     rundb
   fi
 
+  if [[ "$*" == *--rdata* ]]; then
+    migrate "$@"
+  fi
+
   purplship runserver
+}
+
+run_mail_server() {
+  python -m smtpd -n -c DebuggingServer localhost:1025
 }
 
 test() {
@@ -193,8 +200,9 @@ build_image() {
 }
 
 
-alias run:server=runserver
 alias run:db=rundb
+alias run:server=runserver
 alias run:micro=runservices
+alias run:mail=run_mail_server
 
 activate_env
