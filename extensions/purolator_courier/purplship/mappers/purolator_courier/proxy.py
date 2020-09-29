@@ -26,6 +26,15 @@ class Proxy(BaseProxy):
             method="POST",
         )
 
+    def validate_address(self, request: Serializable[Envelope]) -> Deserializable[str]:
+        response = self._send_request(
+            path="/EWS/V2/ServiceAvailability/ServiceAvailabilityService.asmx",
+            soapaction="http://purolator.com/pws/service/v2/ValidateCityPostalCodeZip",
+            request=request,
+        )
+
+        return Deserializable(response, to_xml)
+
     def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
             path="/EWS/V2/Estimating/EstimatingService.asmx",
