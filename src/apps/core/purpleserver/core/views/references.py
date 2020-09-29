@@ -25,7 +25,7 @@ TYPE_MAPPING = {
 
 def import_pkg(pkg: str):
     *_, carrier, name = pkg.split(".")
-    if carrier in MODELS.keys():
+    if any(model_name for model_name in MODELS.keys() if carrier in model_name):
         return __import__(pkg, fromlist=[name])
     return None
 
@@ -43,33 +43,37 @@ PACKAGE_MAPPERS = {
         'options': "OptionCode",
         'packagePresets': "PackagePresets"
     },
-    'dhl': {
-        'label': "DHL",
-        'package': import_pkg('purplship.providers.dhl.units'),
+    'dhl_express': {
+        'label': "DHL Express",
+        'package': import_pkg('purplship.providers.dhl_express.units'),
         'services': "Product",
         'options': "SpecialServiceCode",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
+        'packagingTypes': "DCTPackageType"
     },
     'fedex': {
         'label': "FedEx",
         'package': import_pkg('purplship.providers.fedex.units'),
         'services': "ServiceType",
         'options': "SpecialServiceType",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
+        'packagingTypes': "PackagingType"
     },
     'purolator': {
         'label': "Purolator",
         'package': import_pkg('purplship.providers.purolator.units'),
         'services': "Product",
         'options': "Service",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
+        'packagingTypes': "PackagingType"
     },
     'ups': {
         'label': "UPS",
         'package': import_pkg('purplship.providers.ups.units'),
         'services': "ShippingServiceCode",
         'options': "ServiceOption",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
+        'packagingTypes': "RatingPackagingType"
     },
     'freightcom': {
         'label': "Freightcom",
@@ -154,7 +158,7 @@ Code | Name
 </details><br/>
 
 
-## Packaging Type
+## Packaging Types
 
 <details>
 

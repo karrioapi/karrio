@@ -16,7 +16,6 @@ setup(
       packages=find_namespace_packages(),
       install_requires=[
             'purplship',
-            'purplship.package',
             'psycopg2-binary',
       ],
       dependency_links=[
