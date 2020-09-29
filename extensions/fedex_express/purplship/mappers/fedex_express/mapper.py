@@ -17,8 +17,15 @@ from purplship.core.models import (
     PickupUpdateRequest,
     PickupCancellationRequest,
     ConfirmationDetails,
+    AddressValidationRequest,
+    AddressValidationDetails
 )
-from purplship.providers.fedex import track_request, parse_track_response
+from purplship.providers.fedex import (
+    track_request,
+    parse_track_response,
+    address_validation_request,
+    parse_address_validation_response
+)
 from purplship.providers.fedex.pickup import (
     create_pickup_request,
     update_pickup_request,
@@ -40,6 +47,9 @@ class Mapper(BaseMapper):
     settings: Settings
 
     """Request Mappers"""
+
+    def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable:
+        return address_validation_request(payload, self.settings)
 
     def create_rate_request(
         self, payload: RateRequest
@@ -70,6 +80,11 @@ class Mapper(BaseMapper):
         return cancel_pickup_request(payload, self.settings)
 
     """Response Parsers"""
+
+    def parse_address_validation_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[AddressValidationDetails, List[Message]]:
+        return parse_address_validation_response(response.deserialize(), self.settings)
 
     def parse_rate_response(
         self, response: Deserializable[str]

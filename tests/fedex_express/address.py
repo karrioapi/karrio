@@ -1,32 +1,34 @@
 import unittest
+import logging
 from unittest.mock import patch
+import purplship
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import AddressValidationRequest
-from purplship.package import Address
-from tests.fedex.package.fixture import gateway
+from tests.fedex_express.fixture import gateway
 
 
-class TestFedexAddressValidation(unittest.TestCase):
+class TestDHLAddressValidation(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.AddressValidationRequest = AddressValidationRequest(**AddressValidationPayload)
+        self.AddressValidationRequest = AddressValidationRequest(**address_validation_data)
 
-    def test_create_address_validation_request(self):
+    def test_create_AddressValidation_request(self):
         request = gateway.mapper.create_address_validation_request(self.AddressValidationRequest)
-        self.assertEqual(request.serialize(), AddressValidationRequestXML,)
 
-    @patch("purplship.package.mappers.fedex.proxy.http", return_value="<a></a>")
-    def test_validated_address(self, http_mock):
-        Address.validate(self.AddressValidationRequest).from_(gateway)
+        self.assertEqual(request.serialize(), AddressValidationRequestXML)
 
-        url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, gateway.settings.server_url)
+    def test_validate_address(self):
+        with patch("purplship.mappers.fedex_express.proxy.http") as mock:
+            mock.return_value = "<a></a>"
+            purplship.Address.validate(self.AddressValidationRequest).from_(gateway)
+
+            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.server_url}/addressvalidation")
 
     def test_parse_address_validation_response(self):
-        with patch("purplship.package.mappers.fedex.proxy.http") as mock:
+        with patch("purplship.mappers.fedex_express.proxy.http") as mock:
             mock.return_value = AddressValidationResponseXML
             parsed_response = (
-                Address.validate(self.AddressValidationRequest).from_(gateway).parse()
+                purplship.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
             )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedAddressValidationResponse))
@@ -35,71 +37,55 @@ class TestFedexAddressValidation(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+address_validation_data = {
+    "address": {
+        "address_line1": "Suit 333",
+        "address_line2": "333 Twin",
+        "postal_code": "94089",
+        "city": "North Dakhota",
+        "country_code": "US",
+        "state_code": "CA"
+    }
+}
 
-AddressValidationPayload = {}
-
-ParsedAddressValidationResponse = {}
+ParsedAddressValidationResponse = [{'carrier_id': 'carrier_id', 'carrier_name': 'fedex_express', 'complete_address': {'address_line1': 'Input Your Information', 'city': 'Input Your Information', 'country_code': 'Input Your Information', 'state_code': 'Input Your Information'}, 'success': True}, []]
 
 
-AddressValidationRequestXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v4="http://fedex.com/ws/addressvalidation/v4">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <v4:AddressValidationRequest>
-         <v4:WebAuthenticationDetail>
-            <v4:ParentCredential>
-               <v4:Key>Input Your Information</v4:Key>
-               <v4:Password>Input Your Information</v4:Password>
-            </v4:ParentCredential>
-            <v4:UserCredential>
-               <v4:Key>Input Your Information</v4:Key>
-               <v4:Password>Input Your Information</v4:Password>
-            </v4:UserCredential>
-         </v4:WebAuthenticationDetail>
-         <v4:ClientDetail>
-            <v4:AccountNumber>Input Your Information</v4:AccountNumber>
-            <v4:MeterNumber>Input Your Information</v4:MeterNumber>
-            <v4:Localization>
-               <v4:LanguageCode>EN</v4:LanguageCode>
-               <v4:LocaleCode>CA</v4:LocaleCode>
-            </v4:Localization>
-         </v4:ClientDetail>
-         <v4:TransactionDetail>
-            <v4:CustomerTransactionId>AddressValidationRequest_v4</v4:CustomerTransactionId>
-            <v4:Localization>
-               <v4:LanguageCode>EN</v4:LanguageCode>
-               <v4:LocaleCode>CA</v4:LocaleCode>
-            </v4:Localization>
-         </v4:TransactionDetail>
-         <v4:Version>
-            <v4:ServiceId>aval</v4:ServiceId>
-            <v4:Major>4</v4:Major>
-            <v4:Intermediate>0</v4:Intermediate>
-            <v4:Minor>0</v4:Minor>
-         </v4:Version>
-         <v4:InEffectAsOfTimestamp>2015-03-09T01:21:14+05:30</v4:InEffectAsOfTimestamp>
-         <v4:AddressesToValidate>
-            <v4:ClientReferenceId>ac vinclis et</v4:ClientReferenceId>
-            <v4:Contact>
-               <v4:ContactId>Input Your Information</v4:ContactId>
-               <v4:PersonName>Input Your Information</v4:PersonName>
-               <v4:CompanyName>Input Your Information</v4:CompanyName>
-               <v4:PhoneNumber>Input Your Information</v4:PhoneNumber>
-               <v4:EMailAddress>Input Your Information</v4:EMailAddress>
-            </v4:Contact>
-            <v4:Address>
-               <v4:StreetLines>Input Your Information</v4:StreetLines>
-               <v4:City>Input Your Information</v4:City>
-               <v4:StateOrProvinceCode>Input Your Information</v4:StateOrProvinceCode>
-               <v4:PostalCode>Input Your Information</v4:PostalCode>
-               <v4:UrbanizationCode>Input Your Information</v4:UrbanizationCode>
-               <v4:CountryCode>Input Your Information</v4:CountryCode>
-               <v4:Residential>0</v4:Residential>
-            </v4:Address>
-         </v4:AddressesToValidate>
-      </v4:AddressValidationRequest>
-   </soapenv:Body>
-</soapenv:Envelope>
-
+AddressValidationRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v4="http://fedex.com/ws/addressvalidation/v4">
+    <tns:Body>
+        <v4:AddressValidationRequest>
+            <v4:WebAuthenticationDetail>
+                <v4:UserCredential>
+                    <v4:Key>user_key</v4:Key>
+                    <v4:Password>password</v4:Password>
+                </v4:UserCredential>
+            </v4:WebAuthenticationDetail>
+            <v4:ClientDetail>
+                <v4:AccountNumber>2349857</v4:AccountNumber>
+                <v4:MeterNumber>1293587</v4:MeterNumber>
+            </v4:ClientDetail>
+            <v4:TransactionDetail>
+                <v4:CustomerTransactionId>AddressValidationRequest_v2</v4:CustomerTransactionId>
+            </v4:TransactionDetail>
+            <v4:Version>
+                <v4:ServiceId>aval</v4:ServiceId>
+                <v4:Major>4</v4:Major>
+                <v4:Intermediate>0</v4:Intermediate>
+                <v4:Minor>0</v4:Minor>
+            </v4:Version>
+            <v4:AddressesToValidate>
+                <v4:Address>
+                    <v4:StreetLines>Suit 333</v4:StreetLines>
+                    <v4:StreetLines>333 Twin</v4:StreetLines>
+                    <v4:City>North Dakhota</v4:City>
+                    <v4:StateOrProvinceCode>North Dakhota</v4:StateOrProvinceCode>
+                    <v4:PostalCode>94089</v4:PostalCode>
+                    <v4:CountryCode>US</v4:CountryCode>
+                </v4:Address>
+            </v4:AddressesToValidate>
+        </v4:AddressValidationRequest>
+    </tns:Body>
+</tns:Envelope>
 """
 
 AddressValidationResponseXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
