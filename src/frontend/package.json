@@ -1,7 +1,7 @@
 {
   "name": "dashboard",
   "version": "1.0.0",
-  "description": "PurplShip Server client dashboard",
+  "description": "Purplship Server client dashboard",
   "author": "PurplShip Team",
   "license": "MIT",
   "dependencies": {
@@ -19,12 +19,17 @@
     "@types/webpack": "^4.41.21",
     "css-loader": "^4.2.2",
     "mini-css-extract-plugin": "^0.11.0",
+    "postcss": "^8.1.1",
+    "postcss-loader": "^4.0.2",
+    "sass": "^1.26.11",
+    "sass-loader": "^10.0.2",
     "style-loader": "^1.2.1",
     "ts-loader": "^8.0.3",
     "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
     "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-shell-plugin": "^0.5.0"
   },
   "scripts": {
     "build": "webpack"

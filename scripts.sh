@@ -129,6 +129,7 @@ runserver() {
 
   if [[ "$*" == *--rdb* ]]; then
     rundb
+    sleep 5
   fi
 
   if [[ "$*" == *--rdata* ]]; then
