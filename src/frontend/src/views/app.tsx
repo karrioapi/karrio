@@ -1,9 +1,11 @@
 import React, { Fragment } from 'react';
 import { Router } from "@reach/router";
-import Home from '@/views/home';
+import Shipments from '@/views/shipments';
+import Providers from '@/views/providers';
+import Settings from '@/views/settings';
+import Profile from '@/views/profile';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import Navbar from '@/components/navbar/navbar';
-import '@/assets/css/App.scss';
 import '@/assets/scss/main.scss';
 
 const App: React.FC = () => {
@@ -17,7 +19,10 @@ const App: React.FC = () => {
 
                     <div className="dashboard-content">
                         <Router>
-                            <Home path="/" />
+                            <Shipments path="/" />
+                            <Providers path="providers" />
+                            <Settings path="settings" />
+                            <Profile path="profile" />
                         </Router>
                     </div>
 

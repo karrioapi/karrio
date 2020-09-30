@@ -1,27 +1,27 @@
 import React from 'react';
+import NavLink from '@/components/navlink';
 
-interface ExpandedSidebarComponent {
-}
 
-const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
+const ExpandedSidebar: React.FC = () => {
     return (
         <div className="plex-sidebar">
             <div className="sidebar-header">
-                <img src="/static/purpleserver/img/logo.svg" alt="Purplship" width="90"/>
+                <img src="/static/purpleserver/img/logo.svg" alt="Purplship" width="80" />
                 <button className="menu-icon v-5 is-open mobile-item is-block mobile-sidebar-trigger">
                     <span></span>
                 </button>
             </div>
             <div className="sidebar-menu has-slimscroll">
-                <a className="menu-item is-active">
-                    <span>Home</span>
-                </a>
-                <a className="menu-item">
+                <NavLink to="/">
                     <span>Shipments</span>
-                </a>
-                <a className="menu-item">
+                </NavLink>
+                <NavLink to="providers">
+                    <span>Carrier Accounts</span>
+                </NavLink>
+                <NavLink to="settings">
                     <span>Settings</span>
-                </a>
+                </NavLink>
+
                 <div className="naver"></div>
             </div>
         </div>
