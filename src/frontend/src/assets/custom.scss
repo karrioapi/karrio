@@ -1,0 +1,47 @@
+.card {
+    border-radius: 6px;
+    box-shadow: none;
+    border: 1px solid #e5e5e5;
+}
+
+.options-item, .form-icon {
+    color: #A9ABAC;
+}
+
+.shipments-table {
+    .carrier {
+        width: 14%;
+    }
+    .mode {
+        width: 6%;
+    }
+    .recipient {
+
+    }
+    .creation {
+        width: 15%;
+    }
+    .status {
+        width: 15%
+    }
+}
+
+.providers-table {
+    .carrier {
+        width: 24%;
+        text-align: center !important;
+    }
+    .mode {
+        width: 6%;
+    }
+    .details {
+
+    }
+    .action {
+        width: 15%;
+    }
+}
+
+hr {
+    background-color: #dddddd;
+}

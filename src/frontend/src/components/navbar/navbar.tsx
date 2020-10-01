@@ -19,7 +19,7 @@ const Navbar: React.FC<NavbarComponent> = () => {
                     <div className="control has-icon">
                         <input type="text" className="input search-field" placeholder="Search for transactions, accounts..." />
                         <div className="form-icon">
-                            <i data-feather="search"></i>
+                            <i className="fas fa-search"></i>
                         </div>
                         <div className="search-results has-slimscroll"></div>
                     </div>
@@ -28,7 +28,7 @@ const Navbar: React.FC<NavbarComponent> = () => {
             <div className="nav-end">
 
                 <div className="nav-item mobile-item is-flex mobile-search-trigger">
-                    <i data-feather="search"></i>
+                    <i className="fas fa-search"></i>
                 </div>
 
                 <AccountDropdown />
@@ -40,10 +40,10 @@ const Navbar: React.FC<NavbarComponent> = () => {
                     <div className="control has-icon has-icon-right">
                         <input type="text" className="input search-field" placeholder="Search for transactions, accounts..." />
                         <div className="form-icon">
-                            <i data-feather="search"></i>
+                            <i className="fas fa-search"></i>
                         </div>
                         <div className="form-icon right-icon mobile-search-trigger">
-                            <i data-feather="x"></i>
+                            <i className="fas fa-clear"></i>
                         </div>
                         <div className="search-results has-slimscroll"></div>
                     </div>

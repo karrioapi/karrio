@@ -3,10 +3,10 @@ import { Router } from "@reach/router";
 import Shipments from '@/views/shipments';
 import Providers from '@/views/providers';
 import Settings from '@/views/settings';
-import Profile from '@/views/profile';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import Navbar from '@/components/navbar/navbar';
 import '@/assets/scss/main.scss';
+import '@/assets/custom.scss';
 
 const App: React.FC = () => {
     return (
@@ -22,7 +22,6 @@ const App: React.FC = () => {
                             <Shipments path="/" />
                             <Providers path="providers" />
                             <Settings path="settings" />
-                            <Profile path="profile" />
                         </Router>
                     </div>
 

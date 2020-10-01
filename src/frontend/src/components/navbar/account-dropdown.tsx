@@ -27,11 +27,11 @@ const AccountDropdown: React.FC = () => {
                         <h3>Menu</h3>
                     </div>
                     <div className="options-items">
-                        <Link to="profile" className="options-item">
+                        <Link to="settings" className="options-item">
                             <i className="fas fa-user"></i>
                             <div className="option-content">
-                                <span>My Profile</span>
-                                <span>View your profile</span>
+                                <span>My Account</span>
+                                <span>Manage your account</span>
                             </div>
                         </Link>
                         <a href="/logout" className="options-item">

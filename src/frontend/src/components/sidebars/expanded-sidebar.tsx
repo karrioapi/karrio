@@ -11,6 +11,7 @@ const ExpandedSidebar: React.FC = () => {
                     <span></span>
                 </button>
             </div>
+            <div className="py-4"></div>
             <div className="sidebar-menu has-slimscroll">
                 <NavLink to="/">
                     <span>Shipments</span>
