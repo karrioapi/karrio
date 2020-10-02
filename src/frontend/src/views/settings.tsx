@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { View } from '@/library/Types';
+import { View } from '@/library/types';
 
 const Settings: React.FC<View> = () => {
   return (

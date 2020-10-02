@@ -1,7 +1,24 @@
 import React, { Fragment } from 'react';
-import { View } from '@/library/Types';
+import { View } from '@/library/types';
+import { state } from '@/library/api';
+import { Address, Shipment } from '@purplship/purplship/dist';
 
-const Shipments: React.FC<View> = () => {
+
+function formatAddress(address: Address): string {
+  return [
+    address.personName,
+    address.city,
+    address.stateCode,
+    address.countryCode
+  ].filter(a => a !== null && a !== "").join(', ');
+}
+
+interface ShipmentsView extends View {
+  shipments: Shipment[];
+}
+
+const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
+
   return (
     <Fragment>
 
@@ -21,20 +38,17 @@ const Shipments: React.FC<View> = () => {
           </thead>
 
           <tbody>
-            <tr>
-              <td>UPS</td>
-              <td><span className="tag is-primary">Test</span></td>
-              <td>Jane Doe, Vancouver, BC, Canada</td>
-              <td>2020/09/20</td>
-              <td><span className="tag is-info is-light">In-Transit</span></td>
-            </tr>
-            <tr>
-              <td>FedEx</td>
-              <td></td>
-              <td>John Doe, Moncton, NB, Canada</td>
-              <td>2020/09/20</td>
-              <td><span className="tag is-success is-light">Delivered</span></td>
-            </tr>
+            
+            {shipments.map(shipment => (
+              <tr id={shipment.id}>
+                <td>{shipment.carrierName}</td>
+                <td><span className="tag is-primary">Test</span></td>
+                <td>{formatAddress(shipment.recipient)}</td>
+                <td>2020/09/20</td>
+                <td><span className="tag is-info is-light">{shipment.status}</span></td>
+              </tr>
+            ))}
+            
           </tbody>
 
         </table>

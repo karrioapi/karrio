@@ -7,8 +7,13 @@ import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import Navbar from '@/components/navbar/navbar';
 import '@/assets/scss/main.scss';
 import '@/assets/custom.scss';
+import { CarrierSettings, Shipment } from '@purplship/purplship/dist';
+import { state } from '@/library/api';
 
 const App: React.FC = () => {
+    const shipments: Shipment[] = state.shipments;
+    const carriers: CarrierSettings[] = state.carriers;
+    
     return (
         <Fragment>
             <ExpandedSidebar />
@@ -19,8 +24,8 @@ const App: React.FC = () => {
 
                     <div className="dashboard-content">
                         <Router>
-                            <Shipments path="/" />
-                            <Providers path="providers" />
+                            <Shipments shipments={shipments} path="/" />
+                            <Providers carriers={carriers} path="providers" />
                             <Settings path="settings" />
                         </Router>
                     </div>

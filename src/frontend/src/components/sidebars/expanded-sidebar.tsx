@@ -22,6 +22,9 @@ const ExpandedSidebar: React.FC = () => {
                 <NavLink to="settings">
                     <span>Settings</span>
                 </NavLink>
+                <a className="menu-item" target="_blank" href="/api">
+                    <span>API Reference</span>
+                </a>
 
                 <div className="naver"></div>
             </div>

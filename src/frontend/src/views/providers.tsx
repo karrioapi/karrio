@@ -1,7 +1,13 @@
 import React, { Fragment } from 'react';
-import { View } from '@/library/Types';
+import { View } from '@/library/types';
+import { CarrierSettings } from '@purplship/purplship/dist';
+import { state } from '@/library/api';
 
-const Providers: React.FC<View> = () => {
+interface ProvidersView extends View {
+  carriers: CarrierSettings[];
+}
+
+const Providers: React.FC<ProvidersView> = ({ carriers }) => {
   return (
     <Fragment>
 
@@ -14,46 +20,33 @@ const Providers: React.FC<View> = () => {
         <table className="table is-fullwidth">
 
           <tbody className="providers-table">
-            <tr>
-              <td className="carrier">
-                <div className="box">UPS</div>
-              </td>
-              <td className="mode is-vcentered"><span className="tag is-primary is-centered">Test</span></td>
-              <td className="details"></td>
-              <td className="action is-vcentered">
-                <p className="buttons is-centered">
-                  <button className="button">
-                    <span className="icon is-small">
-                      <i className="fas fa-pen"></i>
-                    </span>
-                  </button>
-                  <button className="button">
-                    <span className="icon is-small">
-                      <i className="fas fa-trash"></i>
-                    </span>
-                  </button>
-                </p>
-              </td>
-            </tr>
-            <tr>
-              <td className="carrier"><div className="box">FedEx</div></td>
-              <td></td>
-              <td className="details"></td>
-              <td className="action is-vcentered">
-                <p className="buttons is-centered">
-                  <button className="button">
-                    <span className="icon is-small">
-                      <i className="fas fa-pen"></i>
-                    </span>
-                  </button>
-                  <button className="button">
-                    <span className="icon is-small">
-                      <i className="fas fa-trash"></i>
-                    </span>
-                  </button>
-                </p>
-              </td>
-            </tr>
+
+            {carriers.map((settings) => (
+
+              <tr id={settings.id}>
+                <td className="carrier"><div className="box">{settings.carrierName}</div></td>
+                <td className="mode is-vcentered">
+                  {settings.test ? <span className="tag is-primary is-centered">Test</span> : <></>}
+                </td>
+                <td className="details"></td>
+                <td className="action is-vcentered">
+                  <p className="buttons is-centered">
+                    <button className="button">
+                      <span className="icon is-small">
+                        <i className="fas fa-pen"></i>
+                      </span>
+                    </button>
+                    <button className="button">
+                      <span className="icon is-small">
+                        <i className="fas fa-trash"></i>
+                      </span>
+                    </button>
+                  </p>
+                </td>
+              </tr>
+
+            ))}
+
           </tbody>
 
         </table>
