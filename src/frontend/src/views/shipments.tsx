@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import { View } from '@/library/types';
-import { state } from '@/library/api';
 import { Address, Shipment } from '@purplship/purplship/dist';
 
 

@@ -1,7 +1,14 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { View } from '@/library/types';
+import GenerateAPIDropUp from '@/components/generate-api-dropup';
 
-const Settings: React.FC<View> = () => {
+interface SettingsView extends View {
+  token: string;
+}
+
+const Settings: React.FC<SettingsView> = ({ token }) => {
+  const [isRevealed, setIsRevealed] = useState<boolean>(false);
+
   return (
     <Fragment>
 
@@ -50,16 +57,22 @@ const Settings: React.FC<View> = () => {
       <div className="columns py-6">
         <div className="column is-5">
           <p className="subtitle is-6 py-1">API Key</p>
+          <p className="is-size-7 pr-6">Use this key to authenticate your API calls.</p>
+          <p className="is-size-7 pr-6"><strong>Warning:</strong> must be kept securely. Click regenerate to revoke old keys.</p>
         </div>
 
         <div className="column is-5">
           <div className="field">
             <div className="control">
-              <input className="input is-small" type="text" value="............................." style={{maxWidth: "80%"}}/>
-              <button className="button is-small">reveal</button>
+              <input className="input is-small" type="text" value={ isRevealed ? token : "..........."} style={{maxWidth: "80%"}} readOnly/>
+              <button className="button is-small" onClick={() => setIsRevealed(!isRevealed) }>
+                { isRevealed ? "hide" : "reveal" }
+              </button>
             </div>
           </div>
-          <button className="button is-primary is-small">Regenerate API key...</button>
+          <GenerateAPIDropUp>
+            <span>Regenerate API key...</span>
+          </GenerateAPIDropUp>
         </div>
       </div>
 

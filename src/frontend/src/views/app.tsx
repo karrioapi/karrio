@@ -11,6 +11,7 @@ import { CarrierSettings, Shipment } from '@purplship/purplship/dist';
 import { state } from '@/library/api';
 
 const App: React.FC = () => {
+    const token: string = state.token;
     const shipments: Shipment[] = state.shipments;
     const carriers: CarrierSettings[] = state.carriers;
     
@@ -26,7 +27,7 @@ const App: React.FC = () => {
                         <Router>
                             <Shipments shipments={shipments} path="/" />
                             <Providers carriers={carriers} path="providers" />
-                            <Settings path="settings" />
+                            <Settings token={token} path="settings" />
                         </Router>
                     </div>
 

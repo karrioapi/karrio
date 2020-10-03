@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import { View } from '@/library/types';
 import { CarrierSettings } from '@purplship/purplship/dist';
-import { state } from '@/library/api';
 
 interface ProvidersView extends View {
   carriers: CarrierSettings[];

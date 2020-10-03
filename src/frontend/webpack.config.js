@@ -6,7 +6,8 @@ const build_path = '../apps/client/purpleserver/client/static/purpleserver/clien
 
 module.exports = {
   entry: './src/dashboard.tsx',
-  mode: 'production',
+  mode: 'development',
+  devtool: "source-map",
   module: {
     rules: [
       {
