@@ -55,7 +55,7 @@ const GenerateAPIModal: React.FC<GenerateAPIModalComponent> = ({ children }) => 
                                     disabled={isDisabled}
                                     required />
                             </div>
-                            <p className="is-size-7 has-text-danger my-1" hidden={!hasError}>{error}</p>
+                            <p className="is-size-7 has-text-danger my-1" style={{ visibility: (hasError ? "visible" : "hidden")}}>{error}</p>
                             <input className="button is-small is-fullwidth mt-2" type="submit" value="Submit" disabled={isDisabled} />
                         </div>
                     </section>

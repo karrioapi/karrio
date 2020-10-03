@@ -1,12 +1,16 @@
 import React, { Fragment, useState } from 'react';
 import { View } from '@/library/types';
 import GenerateAPIDropUp from '@/components/generate-api-dropup';
+import CloseAccountAction from '@/components/close-account-action';
+import { UserInfo } from '@/library/api';
+import ProfileUpdateInput from '@/components/profile-update-input';
 
 interface SettingsView extends View {
   token: string;
+  user: UserInfo;
 }
 
-const Settings: React.FC<SettingsView> = ({ token }) => {
+const Settings: React.FC<SettingsView> = ({ token, user }) => {
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
 
   return (
@@ -24,19 +28,9 @@ const Settings: React.FC<SettingsView> = ({ token }) => {
           <p className="is-size-7 pr-6">Your email address is your identity on Purplship and is used to log in.</p>
         </div>
 
-        <div className="column is-5">
-          <div className="field">
-            <label className="label">Email Address</label>
-            <div className="control">
-              <input className="input is-small" type="email" placeholder="address email" />
-            </div>
-          </div>
-          <div className="field">
-            <label className="label">Name (Optional)</label>
-            <div className="control">
-              <input className="input is-small" type="text" placeholder="Full name" />
-            </div>
-          </div>
+        <div className="column is-7">
+          <ProfileUpdateInput label="Email Address" propertyKey="email" inputType="email" user={user} />
+          <ProfileUpdateInput label="Name (Optional)" propertyKey="firstName" inputType="text" user={user} />
         </div>
       </div>
 
@@ -87,7 +81,9 @@ const Settings: React.FC<SettingsView> = ({ token }) => {
         </div>
 
         <div className="column is-5">
-          <button className="button is-danger is-light">Close this account...</button>
+          <CloseAccountAction>
+            <span>Close this account...</span>
+          </CloseAccountAction>
         </div>
       </div>
 

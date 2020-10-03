@@ -1,8 +1,12 @@
 import React from 'react';
 import NavLink from '@/components/navlink';
+import { UserInfo } from '@/library/api';
 
+interface ExpandedSidebarComponent {
+    user: UserInfo;
+}
 
-const ExpandedSidebar: React.FC = () => {
+const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
     return (
         <div className="plex-sidebar">
             <div className="sidebar-header">
@@ -11,7 +15,20 @@ const ExpandedSidebar: React.FC = () => {
                     <span></span>
                 </button>
             </div>
-            <div className="py-4"></div>
+            <div className="sidebar-profile">
+                <div className="avatar-container">
+                    <div className="avatar-wrapper">
+                        <div className="avatar">
+                            <img src="/static/purpleserver/client/profile.svg" alt="" />
+                            <span className="badge">
+                                <i className="fas fa-check"></i>
+                            </span>
+                        </div>
+                        <h3>{user.firstName}</h3>
+                        <p>{user.username}</p>
+                    </div>
+                </div>
+            </div>
             <div className="sidebar-menu has-slimscroll">
                 <NavLink to="/">
                     <span>Shipments</span>
