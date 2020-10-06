@@ -40,7 +40,7 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
                         <i className="fas fa-pen"></i>
                       </span>
                     </ConnectProviderModal>
-                    <DisconnectProviderButton className="button" providerId={(settings.id as string)}>
+                    <DisconnectProviderButton provider={settings}>
                       <span className="icon is-small">
                         <i className="fas fa-trash"></i>
                       </span>

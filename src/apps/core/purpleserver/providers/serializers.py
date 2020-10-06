@@ -32,8 +32,9 @@ class CarrierSerializer(Serializer):
     carrier_name = ChoiceField(required=True, choices=CARRIERS, help_text="Indicates a carrier (type)")
     carrier_config = PlainDictField(required=True, help_text="the logistics service provider connection configuration")
 
-    def __init__(self, instance, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         carrier_name: str = kwargs.get('data', {}).get('carrier_name')
+        instance, *_ = args + (None, )
 
         if carrier_name in SERIALIZERS:
             carrier_config_data: dict = kwargs.get('data', {}).get('carrier_config', {})
@@ -45,9 +46,9 @@ class CarrierSerializer(Serializer):
             kwargs.update(data=dict(carrier_name=carrier_name, carrier_config=carrier_config))
 
             if "id" in carrier_config_data:
-                instance = _args[0]
+                args = _args
 
-        super().__init__(instance, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def create(self, validated_data: dict) -> Carrier:
         carrier_name = validated_data['carrier_name']
@@ -60,7 +61,7 @@ class CarrierSerializer(Serializer):
 
     def update(self, instance: Carrier, validated_data: dict) -> Carrier:
         carrier_config = validated_data['carrier_config']
-        
+
         for key, val in carrier_config.items():
             setattr(instance, key, val)
 
