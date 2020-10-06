@@ -3,6 +3,7 @@ import { View } from '@/library/types';
 import { Provider } from '@/library/api';
 import ConnectProviderModal from '@/components/connect-provider-modal';
 import { Reference } from '@/library/context';
+import DisconnectProviderButton from '@/components/disconnect-provider-button';
 
 interface ProvidersView extends View {
   providers: Provider[];
@@ -39,11 +40,11 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
                         <i className="fas fa-pen"></i>
                       </span>
                     </ConnectProviderModal>
-                    <button className="button">
+                    <DisconnectProviderButton className="button" providerId={(settings.id as string)}>
                       <span className="icon is-small">
                         <i className="fas fa-trash"></i>
                       </span>
-                    </button>
+                    </DisconnectProviderButton>
                   </div>
                 </td>
               </tr>
