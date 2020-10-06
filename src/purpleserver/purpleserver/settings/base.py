@@ -15,8 +15,6 @@ import importlib
 from pathlib import Path
 from decouple import config
 from django.urls import reverse_lazy
-from django.templatetags.static import static
-from django.utils.functional import lazy
 from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -84,7 +82,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 
-    'oauth2_provider',
     'drf_yasg',
 ]
 
@@ -200,7 +197,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ),
 
     'DEFAULT_THROTTLE_CLASSES': (
@@ -236,18 +232,6 @@ REST_FRAMEWORK = {
 }
 
 
-# OAUTH2 config
-static_lazy = lazy(static, str)
-
-OAUTH2_CLIENT_ID = config('OAUTH2_CLIENT_ID', default=get_random_secret_key())
-OAUTH2_CLIENT_SECRET = config('OAUTH2_CLIENT_SECRET', default=get_random_secret_key())
-OAUTH2_APP_NAME = 'PurplShip OAuth2 provider'
-
-OAUTH2_REDIRECT_URL = static_lazy('drf-yasg/swagger-ui-dist/oauth2-redirect.html')
-OAUTH2_AUTHORIZE_URL = reverse_lazy('oauth2_provider:authorize')
-OAUTH2_TOKEN_URL = reverse_lazy('oauth2_provider:token')
-
-
 # OpenAPI config
 
 SWAGGER_SETTINGS = {
@@ -262,22 +246,7 @@ SWAGGER_SETTINGS = {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-        },
-        'OAuth2 password': {
-            'flow': 'password',
-            'scopes': {
-                'read': 'Read everything.',
-                'write': 'Write everything,',
-            },
-            'tokenUrl': OAUTH2_TOKEN_URL,
-            'type': 'oauth2',
-        },
-    },
-    'OAUTH2_REDIRECT_URL': OAUTH2_REDIRECT_URL,
-    'OAUTH2_CONFIG': {
-        'clientId': OAUTH2_CLIENT_ID,
-        'clientSecret': OAUTH2_CLIENT_SECRET,
-        'appName': OAUTH2_APP_NAME,
+        }
     },
 }
 

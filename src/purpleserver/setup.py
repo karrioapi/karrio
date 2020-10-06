@@ -38,7 +38,6 @@ setup(
             'djangorestframework==3.11.1',
             'djangorestframework-camel-case',
             'drf-yasg',
-            'django-oauth-toolkit',
             'gunicorn',
             'jsonfield',
             'python-decouple',
