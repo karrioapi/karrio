@@ -9,7 +9,7 @@ from purpleserver.client.views.user import UserAPI
 urlpatterns = [
     path('', index, name='index'),
     path('settings', index, name='settings'),
-    path('providers', index, name='providers'),
+    path('carrier_connections', index, name='carrier_connections'),
 
     path('', include(urls)),
     path('signup', SignUp.as_view(), name='signup'),

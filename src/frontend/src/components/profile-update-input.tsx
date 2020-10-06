@@ -23,7 +23,7 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
         try {
             await state.updateUserInfo({ [propertyKey]: propertyValue } as Partial<UserInfo>);
             setHasChanged(false);
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
     };
@@ -36,23 +36,23 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
         <form className="field" onSubmit={handleSubmit} key={key}>
             <label className="label">{label}</label>
             <div className="control">
-                <input 
+                <input
                     className="input is-small mr-1"
                     onChange={handleOnChange}
                     defaultValue={(user as any)[propertyKey] || ""}
                     type={inputType}
-                    style={{ maxWidth: "60%" }}/>
+                    style={{ maxWidth: "60%" }} />
 
-                <input className="button is-success is-small mr-1" type="submit" value="Save" 
-                    style={{ visibility: (hasChanged ? "visible" : "hidden")}}/>
-
-                <button className="button is-small"
-                    onClick={cancel}
-                    hidden={!hasChanged}
-                    style={{ visibility: (hasChanged ? "visible" : "hidden")}}>
-                    Cancel
-                </button>
+                <input className="button is-success is-small mr-1" type="submit" value="Save"
+                    style={{ visibility: (hasChanged ? "visible" : "hidden") }} />
             </div>
+
+            <button className="button is-small"
+                onClick={cancel}
+                hidden={!hasChanged}
+                style={{ visibility: (hasChanged ? "visible" : "hidden") }}>
+                    <span>Cancel</span>
+            </button>
         </form>
     )
 };

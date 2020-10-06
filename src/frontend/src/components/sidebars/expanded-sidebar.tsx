@@ -33,14 +33,15 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
                 <NavLink to="/">
                     <span>Shipments</span>
                 </NavLink>
-                <NavLink to="providers">
-                    <span>Carrier Accounts</span>
+                <NavLink to="carrier_connections">
+                    <span>Carrier Connections</span>
                 </NavLink>
                 <NavLink to="settings">
                     <span>Settings</span>
                 </NavLink>
                 <a className="menu-item" target="_blank" href="/api">
                     <span>API Reference</span>
+                    <i className="fas fa-external-link-alt px-1"></i>
                 </a>
 
                 <div className="naver"></div>

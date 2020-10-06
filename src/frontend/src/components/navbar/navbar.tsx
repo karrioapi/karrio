@@ -17,7 +17,7 @@ const Navbar: React.FC<NavbarComponent> = () => {
 
                 <div className="field">
                     <div className="control has-icon">
-                        <input type="text" className="input search-field" placeholder="Search for transactions, accounts..." />
+                        <input type="text" className="input search-field" placeholder="Search for shipments..." />
                         <div className="form-icon">
                             <i className="fas fa-search"></i>
                         </div>
@@ -38,7 +38,7 @@ const Navbar: React.FC<NavbarComponent> = () => {
             <div className="mobile-search">
                 <div className="field">
                     <div className="control has-icon has-icon-right">
-                        <input type="text" className="input search-field" placeholder="Search for transactions, accounts..." />
+                        <input type="text" className="input search-field" placeholder="Search for shipments..." />
                         <div className="form-icon">
                             <i className="fas fa-search"></i>
                         </div>

@@ -29,17 +29,19 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
         <table className="table is-fullwidth is-hoverable">
 
           <thead className="shipments-table">
-            <th className="carrier">Carriers</th>
-            <th className="mode">Mode</th>
-            <th className="recipient">Recipient</th>
-            <th className="creation">Created</th>
-            <th className="status">Status</th>
+            <tr>
+              <th className="carrier">Carriers</th>
+              <th className="mode">Mode</th>
+              <th className="recipient">Recipient</th>
+              <th className="creation">Created</th>
+              <th className="status">Status</th>
+            </tr>
           </thead>
 
           <tbody>
-            
+
             {shipments.map(shipment => (
-              <tr id={shipment.id}>
+              <tr key={shipment.id}>
                 <td>{shipment.carrierName}</td>
                 <td><span className="tag is-primary">Test</span></td>
                 <td>{formatAddress(shipment.recipient)}</td>
@@ -47,7 +49,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
                 <td><span className="tag is-info is-light">{shipment.status}</span></td>
               </tr>
             ))}
-            
+
           </tbody>
 
         </table>

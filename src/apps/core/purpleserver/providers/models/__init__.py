@@ -24,6 +24,10 @@ class CanadaPostSettings(Carrier):
     customer_number = models.CharField(max_length=200)
     contract_id = models.CharField(max_length=200, blank=True, default='')
 
+    @property
+    def carrier_name(self) -> str:
+        return self.CARRIER_NAME
+
 
 class DHLSettings(Carrier):
     CARRIER_NAME = 'dhl_express'
@@ -36,6 +40,10 @@ class DHLSettings(Carrier):
     site_id = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200, blank=True, default='')
+
+    @property
+    def carrier_name(self) -> str:
+        return self.CARRIER_NAME
 
 
 class FedexSettings(Carrier):
@@ -51,6 +59,10 @@ class FedexSettings(Carrier):
     meter_number = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
 
+    @property
+    def carrier_name(self) -> str:
+        return self.CARRIER_NAME
+
 
 class PurolatorSettings(Carrier):
     CARRIER_NAME = 'purolator_courier'
@@ -65,6 +77,10 @@ class PurolatorSettings(Carrier):
     account_number = models.CharField(max_length=200)
     user_token = models.CharField(max_length=200, blank=True, default='')
 
+    @property
+    def carrier_name(self) -> str:
+        return self.CARRIER_NAME
+
 
 class UPSSettings(Carrier):
     CARRIER_NAME = 'ups_package'
@@ -78,6 +94,10 @@ class UPSSettings(Carrier):
     password = models.CharField(max_length=200)
     access_license_number = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
+
+    @property
+    def carrier_name(self) -> str:
+        return self.CARRIER_NAME
 
 
 # Register purplship settings defined above
