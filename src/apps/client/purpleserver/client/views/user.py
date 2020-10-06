@@ -2,7 +2,7 @@ from purpleserver.core.utils import SerializerDecorator
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.serializers import Serializer, CharField
 from django.conf import settings
@@ -12,6 +12,7 @@ class UserSerializer(Serializer):
     first_name = CharField(required=False)
     email = CharField(required=False)
     username = CharField(required=False)
+    swagger_schema = None
 
     def update(self, instance: settings.AUTH_USER_MODEL, validated_data: dict) -> settings.AUTH_USER_MODEL:
         for key, val in validated_data.items():
@@ -23,7 +24,8 @@ class UserSerializer(Serializer):
 
 class UserAPI(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    swagger_schema = None
 
     def get(self, request: Request):
         return Response(UserSerializer(request.user).data)

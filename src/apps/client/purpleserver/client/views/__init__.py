@@ -19,6 +19,7 @@ class SignUp(generic.CreateView):
 
 
 class TokenAPI(ObtainAuthToken):
+    swagger_schema = None
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
