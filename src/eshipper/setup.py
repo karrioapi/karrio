@@ -25,7 +25,7 @@ dev_requirements = [
 
 setup(
     name="eshipper.extension",
-    version="2020.9.0",
+    version="2020.9.1",
     description="eShipper purplship extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -34,9 +34,8 @@ setup(
     packages=find_namespace_packages(exclude=["tests*"]),
     install_requires=[
         "six",
-        "purplship~=2020.8.0",
-        "purplship.package~=2020.8.0",
-        "purplship-server.core~=2020.8.0",
+        "purplship>=2020.9.0",
+        "purplship-server.core>=2020.8.0",
     ],
     extras_require={"dev": dev_requirements},
     dependency_links=[],

@@ -1,7 +1,6 @@
 -f https://git.io/purplship
-Django==3.0.9
 
--e git+https://github.com/PurplShip/purplship-server.git@release-2020.8.0#egg=purplship_server.core&subdirectory=src/apps/core
--e git+https://github.com/PurplShip/purplship-server.git@release-2020.8.0#egg=purplship_server&subdirectory=src/purpleserver
+-e git+https://github.com/PurplShip/purplship-server.git@purplship-server-2020.9#egg=purplship_server.core&subdirectory=src/apps/core
+-e git+https://github.com/PurplShip/purplship-server.git@purplship-server-2020.9#egg=purplship_server&subdirectory=src/purpleserver
 
 -e .[dev]
