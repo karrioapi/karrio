@@ -7,7 +7,7 @@ from django.template import loader
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
@@ -21,7 +21,7 @@ class SignUp(generic.CreateView):
 class TokenAPI(ObtainAuthToken):
     swagger_schema = None
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def put(self, request: Request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
