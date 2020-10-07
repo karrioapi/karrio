@@ -35,7 +35,7 @@ setup(
     install_requires=[
         "six",
         "purplship>=2020.9.0",
-        "purplship-server.core>=2020.8.0",
+        "purplship-server.core>=2020.9.0",
     ],
     extras_require={"dev": dev_requirements},
     dependency_links=[],

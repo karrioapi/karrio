@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from purplship.package.mapper import Mapper as BaseMapper
-from purplship.package.mappers.freightcom.settings import Settings
+from purplship.api.mapper import Mapper as BaseMapper
+from purplship.mappers.freightcom.settings import Settings
 from purplship.core.utils.serializable import Deserializable, Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
