@@ -132,6 +132,8 @@ function hasProperty(carrierName: CarrierSettings.CarrierNameEnum, property: str
     return ({
         [CarrierSettings.CarrierNameEnum.Canadapost]: ["username", "password", "customerNumber", "contractId"],
         [CarrierSettings.CarrierNameEnum.DhlExpress]: ["siteId", "password", "accountNumber"],
+        [CarrierSettings.CarrierNameEnum.Eshipper]: ["username", "password"],
+        [CarrierSettings.CarrierNameEnum.Freightcom]: ["username", "password"],
         [CarrierSettings.CarrierNameEnum.FedexExpress]: ["userKey", "password", "meterNumber", "accountNumber"],
         [CarrierSettings.CarrierNameEnum.PurolatorCourier]: ["username", "password", "accountNumber", "userToken"],
         [CarrierSettings.CarrierNameEnum.UpsPackage]: ["username", "password", "accessLicenseNumber", "accountNumber"]

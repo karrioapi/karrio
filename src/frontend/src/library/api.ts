@@ -1,6 +1,5 @@
 import Purplship from '@purplship/purplship';
 import { CarrierSettings, References, Shipment } from '@purplship/purplship/dist';
-import React from 'react';
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinct } from 'rxjs/operators';

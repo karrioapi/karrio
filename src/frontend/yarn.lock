@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@purplship/purplship@^2020.9.0-beta3":
-  version "2020.9.0-beta3"
-  resolved "https://registry.yarnpkg.com/@purplship/purplship/-/purplship-2020.9.0-beta3.tgz#79020f6aa5184f222fe35f3c751e46a733c2c69f"
-  integrity sha512-3kubYmtS0CjrbKMm0wR0bo5FnJnKUyzImYJ7Rzcq4H4Ehu6dPoQO1r7VTKzBz7HRkUmw4HUXIcNinnMh9WjW0g==
+"@purplship/purplship@^2020.9.0":
+  version "2020.9.0"
+  resolved "https://registry.yarnpkg.com/@purplship/purplship/-/purplship-2020.9.0.tgz#120125beda5d3e0de63e32991c77d73cb2db0644"
+  integrity sha512-xEmavr9wbWZY4GpAUPuVHA9Ua8Sfyf1/cc2e3mwfff4EyIse6IkL7qbyjBJtIKLUnSLrQ/407MlOjCi3LTgniA==
   dependencies:
     portable-fetch "^3.0.0"
     url "^0.11.0"

@@ -45,14 +45,13 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
 
                 <input className="button is-success is-small mr-1" type="submit" value="Save"
                     style={{ visibility: (hasChanged ? "visible" : "hidden") }} />
+                <button className="button is-small"
+                    onClick={cancel}
+                    hidden={!hasChanged}
+                    style={{ visibility: (hasChanged ? "visible" : "hidden") }}>
+                        <span>Cancel</span>
+                </button>
             </div>
-
-            <button className="button is-small"
-                onClick={cancel}
-                hidden={!hasChanged}
-                style={{ visibility: (hasChanged ? "visible" : "hidden") }}>
-                    <span>Cancel</span>
-            </button>
         </form>
     )
 };
