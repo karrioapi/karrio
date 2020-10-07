@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import ShipmentRequest
-from purplship.package import Shipment
+from purplship import Shipment
 from tests.eshipper.fixture import gateway
 
 
@@ -17,7 +17,7 @@ class TestEShipperShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
     def test_create_shipment(self):
-        with patch("purplship.package.mappers.eshipper.proxy.http") as mock:
+        with patch("purplship.mappers.eshipper.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Shipment.create(self.ShipmentRequest).with_(gateway)
 
@@ -25,7 +25,7 @@ class TestEShipperShipment(unittest.TestCase):
             self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_shipment_response(self):
-        with patch("purplship.package.mappers.eshipper.proxy.http") as mock:
+        with patch("purplship.mappers.eshipper.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()

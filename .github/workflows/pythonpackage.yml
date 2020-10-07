@@ -24,12 +24,10 @@ jobs:
         cd src/freightcom
         source ./script.sh
         init &&
-        check &&
-        coverage report -m
+        check
     - name: Test eShipper dependencies
       run: |
         cd src/eshipper
         source ./script.sh
         init &&
-        check &&
-        coverage report -m
+        check

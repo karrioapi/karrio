@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from purplship.package.mapper import Mapper as BaseMapper
-from purplship.package.mappers.eshipper.settings import Settings
+from purplship.api.mapper import Mapper as BaseMapper
+from purplship.mappers.freightcom.settings import Settings
 from purplship.core.utils.serializable import Deserializable, Serializable
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
@@ -10,7 +10,7 @@ from purplship.core.models import (
     RateDetails,
     Message,
 )
-from purplship.providers.eshipper import (
+from purplship.providers.freightcom import (
     parse_quote_reply,
     quote_request,
     parse_shipping_reply,
@@ -21,7 +21,7 @@ from purplship.providers.eshipper import (
 class Mapper(BaseMapper):
     settings: Settings
 
-    # Request Mappers
+    """Request Mappers"""
 
     def create_rate_request(self, payload: RateRequest) -> Serializable[Element]:
         return quote_request(payload, self.settings)
@@ -31,7 +31,7 @@ class Mapper(BaseMapper):
     ) -> Serializable[Element]:
         return shipping_request(payload, self.settings)
 
-    # Response Parsers
+    """Response Parsers"""
 
     def parse_rate_response(
         self, response: Deserializable[str]

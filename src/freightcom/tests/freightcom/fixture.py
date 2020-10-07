@@ -1,5 +1,5 @@
-import purplship.package as api
+import purplship
 
-gateway = api.gateway["freightcom"].create(
+gateway = purplship.gateway["freightcom"].create(
     dict(username="username", password="password",)
 )
