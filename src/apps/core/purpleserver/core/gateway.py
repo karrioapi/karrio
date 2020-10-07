@@ -5,7 +5,7 @@ from typing import List, Callable, Dict, Any
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 
-from purplship import package as api
+import purplship
 from purplship.core.utils import exec_async, to_dict
 
 from purpleserver.providers import models
@@ -69,10 +69,10 @@ class Shipments:
 
         carrier = Carriers.retrieve(carrier_id=selected_rate.carrier_id).data
         request = ShipmentRequest(**{**to_dict(payload), 'service': selected_rate.service})
-        gateway = api.gateway[carrier.carrier_name].create(carrier.dict())
+        gateway = purplship.gateway[carrier.carrier_name].create(carrier.dict())
 
         # The request is wrapped in identity to simplify mocking in tests
-        shipment, messages = identity(lambda: api.Shipment.create(request).with_(gateway).parse())
+        shipment, messages = identity(lambda: purplship.Shipment.create(request).with_(gateway).parse())
 
         if shipment is None:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
@@ -114,8 +114,8 @@ class Shipments:
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = api.Tracking.fetch(TrackingRequest(**payload))
-        gateway = api.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+        request = purplship.Tracking.fetch(TrackingRequest(**payload))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
         results, messages = identity(lambda: request.from_(gateway).parse())
@@ -135,7 +135,7 @@ class Rates:
 
     @staticmethod
     def fetch(payload: dict) -> RateResponse:
-        request = api.Rating.fetch(RateRequest(**to_dict(payload)))
+        request = purplship.Rating.fetch(RateRequest(**to_dict(payload)))
 
         carrier_settings_list = [
             carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []))
@@ -146,7 +146,7 @@ class Rates:
 
         def process(carrier_settings: CarrierSettings):
             try:
-                gateway = api.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
+                gateway = purplship.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
                 return request.from_(gateway).parse()
             except Exception as e:
                 logger.exception(e)

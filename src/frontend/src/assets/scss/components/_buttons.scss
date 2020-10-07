@@ -1,0 +1,65 @@
+/* ==========================================================================
+Basic buttons
+========================================================================== */
+
+.button {
+    font-size: .9rem;
+    transition: all .3s;
+
+    &.is-solid {
+        height: 44px;
+        min-width: 130px;
+        line-height: 1;
+        font-size: .9rem;
+        font-weight: 500;
+
+        &.is-big {
+            height: 48px;
+            min-width: 200px;
+        }
+
+        &.raised:hover, &.is-raised {
+            box-shadow: $light-box-shadow;
+        }
+    }
+
+    &.is-primary {
+        height: 44px;
+        min-width: 130px;
+        background: $primary;
+        border: 1px solid $primary;
+        color: $white;
+        line-height: 1;
+        font-size: .9rem;
+        font-weight: 500;
+
+        &.is-big {
+            height: 48px;
+            min-width: 200px;
+        }
+
+        &.raised:hover, &.is-raised {
+            box-shadow: $primary-box-shadow;
+        }
+    }
+
+    &.is-secondary {
+        height: 44px;
+        min-width: 130px;
+        background: $secondary;
+        border: 1px solid $secondary;
+        color: $white;
+        line-height: 1;
+        font-size: .9rem;
+        font-weight: 500;
+
+        &.is-big {
+            height: 48px;
+            min-width: 200px;
+        }
+
+        &.raised:hover, &.is-raised {
+            box-shadow: $secondary-box-shadow;
+        }
+    }
+}

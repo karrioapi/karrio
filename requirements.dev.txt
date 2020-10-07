@@ -1,5 +1,4 @@
 -f https://git.io/purplship
-Django==3.0.9
 
 -e ./src/apps/core
 -e ./src/purpleserver[dev]

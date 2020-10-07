@@ -11,6 +11,9 @@ export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
 [[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
 
+export EMAIL_HOST="localhost"
+export EMAIL_PORT=1025
+
 deactivate_env() {
   if command -v deactivate &> /dev/null
   then
@@ -87,7 +90,8 @@ with tenant_context(Client.objects.get(schema_name='purpleserver')):
   else
     (echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'demo')" | purplship shell) > /dev/null 2>&1;
     (echo "from django.contrib.auth.models import User; from rest_framework.authtoken.models import Token; Token.objects.create(user=User.objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
-    (echo "from purpleserver.providers.models import CanadaPostSettings; CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
+    (echo "from django.contrib.auth.models import User; from purpleserver.providers.models import CanadaPostSettings;
+CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a', user=User.objects.first())" | purplship shell) > /dev/null 2>&1;
   fi
 
 }
@@ -124,15 +128,20 @@ runserver() {
     export MULTI_TENANT_ENABLE=False
   fi
 
+  if [[ "$*" == *--rdb* ]]; then
+    rundb
+    sleep 5
+  fi
+
   if [[ "$*" == *--rdata* ]]; then
     migrate "$@"
   fi
 
-  if [[ "$*" == *--rdb* ]]; then
-    rundb
-  fi
-
   purplship runserver
+}
+
+run_mail_server() {
+  python -m smtpd -n -c DebuggingServer localhost:1025
 }
 
 test() {
@@ -193,8 +202,9 @@ build_image() {
 }
 
 
-alias run:server=runserver
 alias run:db=rundb
+alias run:server=runserver
 alias run:micro=runservices
+alias run:mail=run_mail_server
 
 activate_env

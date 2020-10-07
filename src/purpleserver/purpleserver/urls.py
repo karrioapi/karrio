@@ -53,7 +53,6 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='app_admin'),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
     *[path('', include(urls)) for urls in settings.PURPLSHIP_URLS],
 ]

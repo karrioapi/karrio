@@ -12,7 +12,7 @@ class TestShipmentTracking(APITestCase):
     def test_shipment_tracking(self):
         url = reverse(
             'purpleserver.manager:shipment-tracking',
-            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_id="ups")
+            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_id="ups_package")
         )
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -26,7 +26,7 @@ class TestShipmentTracking(APITestCase):
     def test_shipment_tracking_retry(self):
         url = reverse(
             'purpleserver.manager:shipment-tracking',
-            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_id="ups")
+            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_id="ups_package")
         )
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -45,8 +45,8 @@ class TestShipmentTracking(APITestCase):
 RETURNED_VALUE = (
     [
         TrackingDetails(
-            carrier_id="ups",
-            carrier_name="ups",
+            carrier_id="ups_package",
+            carrier_name="ups_package",
             tracking_number="1Z12345E6205277936",
             events=[
                 TrackingEvent(
@@ -64,8 +64,8 @@ RETURNED_VALUE = (
 
 TRACKING_RESPONSE = {
     "id": ANY,
-    "carrierId": "ups",
-    "carrierName": "ups",
+    "carrierId": "ups_package",
+    "carrierName": "ups_package",
     "trackingNumber": "1Z12345E6205277936",
     "shipmentId": None,
     "events": [
