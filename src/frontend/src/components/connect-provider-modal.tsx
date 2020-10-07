@@ -82,29 +82,29 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
                             <>
                                 <hr />
 
-                                <FormInput label="Carrier Id" defaultValue={payload.carrierId} onChange={handleOnChange("carrierId")} />
+                                <FormInput label="Carrier Id" defaultValue={payload.carrierId} onChange={handleOnChange("carrierId")} required/>
 
                                 {/* Carrier specific fields BEGING */}
 
-                                {has("siteId") && <FormInput label="Site Id" defaultValue={payload.siteId} onChange={handleOnChange("siteId")} />}
+                                {has("siteId") && <FormInput label="Site Id" defaultValue={payload.siteId} onChange={handleOnChange("siteId")} required/>}
 
-                                {has("username") && <FormInput label="Username" defaultValue={payload.username} onChange={handleOnChange("username")} />}
+                                {has("username") && <FormInput label="Username" defaultValue={payload.username} onChange={handleOnChange("username")} required/>}
 
-                                {has("password") && <FormInput label="Password" defaultValue={payload.password} onChange={handleOnChange("password")} />}
+                                {has("password") && <FormInput label="Password" defaultValue={payload.password} onChange={handleOnChange("password")} required/>}
 
-                                {has("customerNumber") && <FormInput label="Customer Number" defaultValue={payload.customerNumber} onChange={handleOnChange("customerNumber")} />}
+                                {has("customerNumber") && <FormInput label="Customer Number" defaultValue={payload.customerNumber} onChange={handleOnChange("customerNumber")} required/>}
 
                                 {has("contractId") && <FormInput label="Contract Id" defaultValue={payload.contractId} onChange={handleOnChange("contractId")} />}
 
-                                {has("accountNumber") && <FormInput label="Account Number" defaultValue={payload.accountNumber} onChange={handleOnChange("accountNumber")} />}
+                                {has("accountNumber") && <FormInput label="Account Number" defaultValue={payload.accountNumber} onChange={handleOnChange("accountNumber")} required/>}
 
                                 {has("userKey") && <FormInput label="User Key" defaultValue={payload.userKey} onChange={handleOnChange("userKey")} />}
 
-                                {has("meterNumber") && <FormInput label="Meter Number" defaultValue={payload.meterNumber} onChange={handleOnChange("meterNumber")} />}
+                                {has("meterNumber") && <FormInput label="Meter Number" defaultValue={payload.meterNumber} onChange={handleOnChange("meterNumber")} required/>}
 
                                 {has("userToken") && <FormInput label="User Token" defaultValue={payload.userToken} onChange={handleOnChange("userToken")} />}
 
-                                {has("accessLicenseNumber") && <FormInput label="Access License Number" defaultValue={payload.accessLicenseNumber} onChange={handleOnChange("accessLicenseNumber")} />}
+                                {has("accessLicenseNumber") && <FormInput label="Access License Number" defaultValue={payload.accessLicenseNumber} onChange={handleOnChange("accessLicenseNumber")} required/>}
 
                                 {/* Carrier specific fields END */}
 
