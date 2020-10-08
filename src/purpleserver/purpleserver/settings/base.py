@@ -18,7 +18,7 @@ from django.urls import reverse_lazy
 from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__ + '/../..'))
+BASE_DIR = os.path.dirname(str(Path(__file__).parent.parent))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -36,7 +36,7 @@ USE_HTTPS = config('USE_HTTPS', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 CORS_ORIGIN_ALLOW_ALL = True
 
-with open(f"{BASE_DIR}/VERSION", "r") as v:
+with open(f"{BASE_DIR}/purpleserver/VERSION", "r") as v:
     VERSION = v.read()
 
 # HTTPS configuration
