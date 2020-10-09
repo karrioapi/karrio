@@ -28,6 +28,11 @@ class Proxy(ABC):
             self.__class__.create_shipment.__name__, self.settings.carrier_name
         )
 
+    def void_shipment(self, request: Serializable) -> Deserializable:
+        raise MethodNotSupportedError(
+            self.__class__.void_shipment.__name__, self.settings.carrier_name
+        )
+
     def request_pickup(self, request: Serializable) -> Deserializable:
         raise MethodNotSupportedError(
             self.__class__.request_pickup.__name__, self.settings.carrier_name
@@ -45,5 +50,5 @@ class Proxy(ABC):
 
     def validate_address(self, request: Serializable) -> Deserializable:
         raise MethodNotSupportedError(
-            self.__class__.validate_address.__name__, self.__class__.__name__
+            self.__class__.validate_address.__name__, self.settings.carrier_name
         )

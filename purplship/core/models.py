@@ -136,6 +136,13 @@ class ShipmentRequest:
 
 
 @attr.s(auto_attribs=True)
+class VoidShipmentRequest:
+    """void shipment request type."""
+
+    tracking_number: str
+
+
+@attr.s(auto_attribs=True)
 class RateRequest:
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
