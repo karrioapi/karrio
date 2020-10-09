@@ -34,7 +34,7 @@ class Service(Enum):
     canpar_international = 'I'
 
 
-class Option(Enum):
+class Option(Flag):
     canpar_cash_on_delivery = 'N'
     canpar_dangerous_goods = True
     canpar_extra_care = True
