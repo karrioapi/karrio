@@ -43,9 +43,19 @@ with open(f"{BASE_DIR}/purpleserver/VERSION", "r") as v:
 if USE_HTTPS is True:
     global SECURE_SSL_REDIRECT
     global SECURE_PROXY_SSL_HEADER
+    global SESSION_COOKIE_SECURE
+    global SECURE_HSTS_SECONDS
+    global SECURE_HSTS_INCLUDE_SUBDOMAINS
+    global CSRF_COOKIE_SECURE
+    global SECURE_HSTS_PRELOAD
 
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 1
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_PRELOAD = True
 
 
 # Application definition
@@ -133,10 +143,10 @@ DATABASES = {
     'default': {
         'NAME': config('DATABASE_NAME', default='db'),
         'ENGINE': 'django.db.backends.{}'.format(DB_ENGINE),
-        'PASSWORD': config('DATABASE_PASSWORD'),
-        'USER': config('DATABASE_USERNAME'),
-        'HOST': config('DATABASE_HOST'),
-        'PORT': config('DATABASE_PORT'),
+        'PASSWORD': config('DATABASE_PASSWORD', default=''),
+        'USER': config('DATABASE_USERNAME', default=''),
+        'HOST': config('DATABASE_HOST', default=''),
+        'PORT': config('DATABASE_PORT', default=''),
     }
 }
 
