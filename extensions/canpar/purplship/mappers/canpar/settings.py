@@ -8,6 +8,8 @@ from purplship.providers.canpar import Settings as BaseSettings
 class Settings(BaseSettings):
     """Canpar connection settings."""
 
+    user_id: str
+    password: str
     id: str = None
     test: bool = False
     carrier_id: str = "canpar"
