@@ -11,6 +11,7 @@ export interface UserInfo {
     firstName: string | null;
     email: string | null;
     username: string | null;
+    readonly isStaff: boolean;
 }
 
 export interface Provider extends Omit<CarrierSettings, 'id'> {

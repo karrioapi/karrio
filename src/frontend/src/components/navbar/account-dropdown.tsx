@@ -1,8 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { Link } from "@reach/router";
+import { UserInfo } from '@/library/api';
 
 
-const AccountDropdown: React.FC = () => {
+interface AccountDropdownComponent {
+    user: UserInfo;
+}
+
+
+const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
     const [isActive, setIsActive] = useState(false);
     const menu = useRef<HTMLDivElement>(null);
     const handleBlur = (e: React.FocusEvent) => {
@@ -34,6 +40,14 @@ const AccountDropdown: React.FC = () => {
                                 <span>Manage your account</span>
                             </div>
                         </Link>
+                        { user.isStaff && <a href="/admin" className="options-item">
+                                <i className="fas fa-cog"></i>
+                                <div className="option-content">
+                                    <span>Console</span>
+                                    <span>Access the Administration panel</span>
+                                </div>
+                            </a>
+                        }
                         <a href="/logout" className="options-item">
                             <i className="fas fa-power-off"></i>
                             <div className="option-content">

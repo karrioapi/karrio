@@ -4,17 +4,17 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.serializers import Serializer, CharField
-from django.conf import settings
+from rest_framework.serializers import ModelSerializer
+from django.contrib.auth.models import User
 
 
-class UserSerializer(Serializer):
-    first_name = CharField(required=False)
-    email = CharField(required=False)
-    username = CharField(required=False)
-    swagger_schema = None
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'email', 'username', 'is_staff']
+        read_only_fields = ['is_staff']
 
-    def update(self, instance: settings.AUTH_USER_MODEL, validated_data: dict) -> settings.AUTH_USER_MODEL:
+    def update(self, instance: User, validated_data: dict) -> User:
         for key, val in validated_data.items():
             setattr(instance, key, val)
 

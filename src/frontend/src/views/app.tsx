@@ -25,11 +25,11 @@ const App: React.FC = () => {
 
                 <div className="plex-wrapper">
                     <div className="wrapper-inner">
-                        <Navbar />
+                        <Navbar user={user} />
 
                         <div className="dashboard-content">
                             <Router>
-                                <Shipments shipments={shipments} path="/" />
+                                <Shipments shipments={shipments} providers={providers} path="/" />
                                 <Providers providers={providers} path="carrier_connections" />
                                 <Settings token={token} user={user} path="settings" />
                             </Router>

@@ -27,6 +27,15 @@ Purplship has usage and reference documentation at [docs.purplship.com](https://
 
 ## Try out Purplship
 
+### Live Demo
+
+Check out our [live demo](https://purplship-demo.herokuapp.com/) on Heroku
+
+Demo Credentials | |
+--- | --- |
+username | `admin`  |
+password | `demo` |
+
 ### Docker
 
 #### Docker Image
@@ -42,7 +51,7 @@ docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres 
 </details>
 
 ```shell script
-docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.8.3
+docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.9.0
 ```
 
 #### Docker Compose
@@ -66,7 +75,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
   web:
-    image: purplship/purplship-server:2020.8.3
+    image: purplship/purplship-server:2020.9.0
     restart: always
     environment:
       - DEBUG_MODE=True
@@ -144,6 +153,7 @@ purplship runserver 0.0.0.0:5002
 
 - [Python](https://github.com/PurplShip/purplship-python-client)
 - [PHP](https://github.com/PurplShip/purplship-php-client)
+- [Typescript](https://github.com/PurplShip/purplship-typescript-client)
 
 Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with our [OpenAPI References](https://github.com/PurplShip/purplship-server/tree/main/openapi)
 
