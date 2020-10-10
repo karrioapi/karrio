@@ -24,8 +24,8 @@ packaging==20.4
 Pillow==7.2.0
 psycopg2-binary==2.8.6
 purplship==2020.9.0
-purplship-server==2020.9.0
-purplship-server.core==2020.9.0
+purplship-server==2020.9.1
+purplship-server.core==2020.9.1
 purplship-server.proxy==2020.9.0
 purplship.canadapost==2020.9.0
 purplship.dhl_express==2020.9.0

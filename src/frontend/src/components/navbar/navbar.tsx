@@ -1,10 +1,12 @@
 import React from 'react';
 import AccountDropdown from '@/components/navbar/account-dropdown';
+import { UserInfo } from '@/library/api';
 
 interface NavbarComponent {
+    user: UserInfo;
 }
 
-const Navbar: React.FC<NavbarComponent> = () => {
+const Navbar: React.FC<NavbarComponent> = ({ user }) => {
     return (
         <div className="static-nav">
             <div className="nav-start">
@@ -31,7 +33,7 @@ const Navbar: React.FC<NavbarComponent> = () => {
                     <i className="fas fa-search"></i>
                 </div>
 
-                <AccountDropdown />
+                <AccountDropdown user={user} />
 
             </div>
 

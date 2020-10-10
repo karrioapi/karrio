@@ -9,7 +9,7 @@
     "license": {
       "name": "AGPLv3+ License"
     },
-    "version": "v1-2020.9.0"
+    "version": "v1-2020.9.1"
   },
   "servers": [
     {
@@ -22,193 +22,6 @@
     }
   ],
   "paths": {
-    "/addresses": {
-      "get": {
-        "tags": [
-          "Addresses"
-        ],
-        "summary": "List all Addresses",
-        "description": "Retrieve all addresses.",
-        "operationId": "$list",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "The initial index from which to return the results.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Address"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Addresses"
-        ],
-        "summary": "Create an Address",
-        "description": "Create a new address.",
-        "operationId": "$create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddressData"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Address"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
-    "/addresses/{id}": {
-      "get": {
-        "tags": [
-          "Addresses"
-        ],
-        "summary": "Retrieve an Address",
-        "description": "Retrieve an address.",
-        "operationId": "$retrieve",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Address"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Addresses"
-        ],
-        "summary": "Update an Address",
-        "description": "update an address.",
-        "operationId": "$update",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddressData"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Address"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
     "/carriers": {
       "get": {
         "tags": [
@@ -288,193 +101,6 @@
         }
       }
     },
-    "/customs_info": {
-      "get": {
-        "tags": [
-          "Customs"
-        ],
-        "summary": "List all Customs Info",
-        "description": "Retrieve all stored customs info.",
-        "operationId": "$$list",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "The initial index from which to return the results.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Customs"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Customs"
-        ],
-        "summary": "Create a Customs Info",
-        "description": "Create a new customs info",
-        "operationId": "$$create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomsData"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Customs"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
-    "/customs_info/{id}": {
-      "get": {
-        "tags": [
-          "Customs"
-        ],
-        "summary": "Retrieve a Customs Info",
-        "description": "Retrieve a customs.",
-        "operationId": "$$retrieve",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Customs"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Customs"
-        ],
-        "summary": "Update a Customs Info",
-        "description": "modify an existing customs's details.",
-        "operationId": "$$update",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomsData"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Customs"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
     "/labels": {
       "post": {
         "tags": [
@@ -503,193 +129,6 @@
                 }
               },
               "application/vnd.oai.openapi+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
-    "/parcels": {
-      "get": {
-        "tags": [
-          "Parcels"
-        ],
-        "summary": "List all Parcels",
-        "description": "Retrieve all stored parcels.",
-        "operationId": "$$$list",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "The initial index from which to return the results.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Parcel"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Parcels"
-        ],
-        "summary": "Create a Parcel",
-        "description": "Create a new parcel.",
-        "operationId": "$$$create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelData"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Parcel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
-    "/parcels/{id}": {
-      "get": {
-        "tags": [
-          "Parcels"
-        ],
-        "summary": "Retrieve a Parcel",
-        "description": "Retrieve a parcel.",
-        "operationId": "$$$retrieve",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Parcel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Parcels"
-        ],
-        "summary": "Update a Parcel",
-        "description": "modify an existing parcel's details.",
-        "operationId": "$$$update",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelData"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Parcel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 }
@@ -867,350 +306,128 @@
           }
         }
       }
-    },
-    "/shipments": {
-      "get": {
-        "tags": [
-          "Shipments"
-        ],
-        "summary": "List all Shipments",
-        "description": "\nRetrieve all shipments.\n",
-        "operationId": "$$$$list",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "The initial index from which to return the results.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Shipment"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Shipments"
-        ],
-        "summary": "Create a Shipment",
-        "description": "\nCreate a new shipment instance.\n",
-        "operationId": "$$$$create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ShipmentData"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Shipment"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
-    "/shipments/{id}": {
-      "get": {
-        "tags": [
-          "Shipments"
-        ],
-        "summary": "Retrieve a Shipment",
-        "description": "\nRetrieve a shipment.\n",
-        "operationId": "$$$$retrieve",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Shipment"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/shipments/{id}/options": {
-      "post": {
-        "tags": [
-          "Shipments"
-        ],
-        "summary": "Add Shipment Options",
-        "description": "\nAdd one or many options to your shipment.<br/>\n**eg:**<br/>\n- add shipment **insurance**\n- specify the preferred transaction **currency**\n- setup a **cash collected on delivery** option\n\n```json\n{\n    \"insurane\": {\n        \"amount\": 120,\n    },\n    \"currency\": \"USD\"\n}\n```\n\nAnd many more, check additional options available in the [reference](#operation/all_references).\n",
-        "operationId": "$$$$options",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Shipment"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/shipments/{id}/purchase": {
-      "post": {
-        "tags": [
-          "Shipments"
-        ],
-        "summary": "Buy a Shipment",
-        "description": "\nSelect your preferred rates to buy a shipment label.\n",
-        "operationId": "$$$$purchase",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ShipmentPurchaseData"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ShipmentResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
-    "/shipments/{id}/rates": {
-      "get": {
-        "tags": [
-          "Shipments"
-        ],
-        "summary": "Fetch new Shipment Rates",
-        "description": "\nRefresh the list of the shipment rates\n",
-        "operationId": "$$$$rates",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "description": "The initial index from which to return the results.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ShipmentResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tracking/{carrier_id}/{tracking_number}": {
-      "get": {
-        "tags": [
-          "Shipments"
-        ],
-        "summary": "Track a shipment",
-        "description": "Track a shipment.",
-        "operationId": "$$$$track",
-        "parameters": [
-          {
-            "name": "carrier_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "tracking_number",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrackingStatus"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
     "schemas": {
+      "CarrierSettings": {
+        "required": [
+          "carrierId",
+          "carrierName",
+          "id",
+          "test"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "minLength": 1,
+            "type": "string",
+            "description": "A unique address identifier"
+          },
+          "carrierName": {
+            "title": "Carrier name",
+            "type": "string",
+            "description": "Indicates a carrier (type)",
+            "enum": [
+              "canadapost",
+              "dhl_express",
+              "fedex_express",
+              "purolator_courier",
+              "ups_package",
+              "eshipper",
+              "freightcom"
+            ]
+          },
+          "carrierId": {
+            "title": "Carrier id",
+            "minLength": 1,
+            "type": "string",
+            "description": "Indicates a specific carrier configuration name."
+          },
+          "test": {
+            "title": "Test",
+            "type": "boolean",
+            "description": "\nThe test flag indicates whether to use a carrier configured for test. \n"
+          }
+        }
+      },
+      "Message": {
+        "required": [
+          "carrierId",
+          "carrierName"
+        ],
+        "type": "object",
+        "properties": {
+          "carrierName": {
+            "title": "Carrier name",
+            "minLength": 1,
+            "type": "string",
+            "description": "The targeted carrier"
+          },
+          "carrierId": {
+            "title": "Carrier id",
+            "minLength": 1,
+            "type": "string",
+            "description": "The targeted carrier name (unique identifier)"
+          },
+          "message": {
+            "title": "Message",
+            "minLength": 1,
+            "type": "string",
+            "description": "The error or warning message"
+          },
+          "code": {
+            "title": "Code",
+            "minLength": 1,
+            "type": "string",
+            "description": "The message code"
+          },
+          "details": {
+            "title": "Details",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "any additional details"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "description": "The list of error messages",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          }
+        }
+      },
+      "LabelPrintingRequest": {
+        "required": [
+          "label",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "minLength": 1,
+            "type": "string",
+            "description": "\nPDF file name.\n\neg: shipment-[trackingNumber]\n"
+          },
+          "label": {
+            "title": "Label",
+            "minLength": 1,
+            "type": "string",
+            "description": "Shipment base64 label"
+          }
+        }
+      },
       "Address": {
+        "title": "Shipper",
         "required": [
           "countryCode"
         ],
@@ -1540,62 +757,285 @@
             "description": "The address line with suite number",
             "nullable": true
           }
+        },
+        "description": "\nThe address of the party\n\nOrigin address (ship from) for the **shipper**<br/>\nDestination address (ship to) for the **recipient**\n"
+      },
+      "Parcel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "minLength": 1,
+            "type": "string",
+            "description": "A unique identifier"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number",
+            "description": "The parcel's weight",
+            "nullable": true
+          },
+          "width": {
+            "title": "Width",
+            "type": "number",
+            "description": "The parcel's width",
+            "nullable": true
+          },
+          "height": {
+            "title": "Height",
+            "type": "number",
+            "description": "The parcel's height",
+            "nullable": true
+          },
+          "length": {
+            "title": "Length",
+            "type": "number",
+            "description": "The parcel's length",
+            "nullable": true
+          },
+          "packagingType": {
+            "title": "Packaging type",
+            "type": "string",
+            "description": "\nThe parcel's packaging type.\n\n**Note that the packaging is optional when using a package preset**\n\nvalues: <br/>- **envelope**<br/>- **pak**<br/>- **tube**<br/>- **pallet**<br/>- **small_box**<br/>- **medium_box**<br/>- **your_packaging**\n\nFor specific carriers packaging type, please consult [the reference](#operation/all_references).\n",
+            "nullable": true
+          },
+          "packagePreset": {
+            "title": "Package preset",
+            "type": "string",
+            "description": "\nThe parcel's package preset.\n\nFor specific carriers package preset, please consult [the reference](#operation/all_references).\n",
+            "nullable": true
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "The parcel's description",
+            "nullable": true
+          },
+          "content": {
+            "title": "Content",
+            "type": "string",
+            "description": "The parcel's content description",
+            "nullable": true
+          },
+          "isDocument": {
+            "title": "Is document",
+            "type": "boolean",
+            "description": "Indicates if the parcel is composed of documents only",
+            "nullable": true,
+            "default": false
+          },
+          "weightUnit": {
+            "title": "Weight unit",
+            "type": "string",
+            "description": "The parcel's weight unit",
+            "nullable": true,
+            "enum": [
+              "KG",
+              "LB"
+            ]
+          },
+          "dimensionUnit": {
+            "title": "Dimension unit",
+            "type": "string",
+            "description": "The parcel's dimension unit",
+            "nullable": true,
+            "enum": [
+              "CM",
+              "IN"
+            ]
+          }
         }
       },
-      "Message": {
+      "RateRequest": {
         "required": [
-          "carrierId",
-          "carrierName"
+          "parcels",
+          "recipient",
+          "shipper"
         ],
         "type": "object",
         "properties": {
+          "shipper": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "parcels": {
+            "type": "array",
+            "description": "The shipment's parcels",
+            "items": {
+              "$ref": "#/components/schemas/Parcel"
+            }
+          },
+          "services": {
+            "type": "array",
+            "description": "\nThe requested carrier service for the shipment.<br/>\nPlease consult [the reference](#operation/all_references) for specific carriers services.\n\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
+            "nullable": true,
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "options": {
+            "title": "Options",
+            "type": "object",
+            "properties": {},
+            "description": "\nThe options available for the shipment.\n\nPlease consult [the reference](#operation/all_references) for additional specific carriers options.\n",
+            "nullable": true
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "description": "The shipment reference",
+            "nullable": true
+          },
+          "carrierIds": {
+            "type": "array",
+            "description": "\nThe list of configured carriers you wish to get rates from.\n",
+            "nullable": true,
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Charge": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "The charge description",
+            "nullable": true
+          },
+          "amount": {
+            "title": "Amount",
+            "type": "number",
+            "description": "The charge monetary value",
+            "nullable": true
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string",
+            "description": "The charge amount currency",
+            "nullable": true
+          }
+        }
+      },
+      "Rate": {
+        "required": [
+          "carrierId",
+          "carrierName",
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "minLength": 1,
+            "type": "string",
+            "description": "A unique identifier"
+          },
           "carrierName": {
             "title": "Carrier name",
             "minLength": 1,
             "type": "string",
-            "description": "The targeted carrier"
+            "description": "The rate's carrier"
           },
           "carrierId": {
             "title": "Carrier id",
             "minLength": 1,
             "type": "string",
-            "description": "The targeted carrier name (unique identifier)"
+            "description": "The targeted carrier's name (unique identifier)"
           },
-          "message": {
-            "title": "Message",
+          "currency": {
+            "title": "Currency",
             "minLength": 1,
             "type": "string",
-            "description": "The error or warning message"
+            "description": "The rate monetary values currency code"
           },
-          "code": {
-            "title": "Code",
-            "minLength": 1,
+          "service": {
+            "title": "Service",
             "type": "string",
-            "description": "The message code"
+            "description": "The carrier's rate (quote) service",
+            "nullable": true
           },
-          "details": {
-            "title": "Details",
+          "discount": {
+            "title": "Discount",
+            "type": "number",
+            "description": "The monetary amount of the discount on the rate",
+            "nullable": true
+          },
+          "baseCharge": {
+            "title": "Base charge",
+            "type": "number",
+            "description": "\nThe rate's monetary amount of the base charge.<br/>\nThis is the net amount of the rate before additional charges\n"
+          },
+          "totalCharge": {
+            "title": "Total charge",
+            "type": "number",
+            "description": "\nThe rate's monetary amount of the total charge.<br/>\nThis is the gross amount of the rate after adding the additional charges\n"
+          },
+          "dutiesAndTaxes": {
+            "title": "Duties and taxes",
+            "type": "number",
+            "description": "The monetary amount of the duties and taxes if applied",
+            "nullable": true
+          },
+          "transitDays": {
+            "title": "Transit days",
+            "type": "integer",
+            "description": "The estimated delivery transit days",
+            "nullable": true
+          },
+          "extraCharges": {
+            "type": "array",
+            "description": "list of the rate's additional charges",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Charge"
+            }
+          },
+          "meta": {
+            "title": "Meta",
             "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "any additional details"
+            "properties": {},
+            "description": "provider specific metadata",
+            "nullable": true
+          },
+          "carrierRef": {
+            "title": "Carrier ref",
+            "type": "string",
+            "description": "The system carrier configuration id",
+            "nullable": true
           }
         }
       },
-      "ErrorResponse": {
+      "RateResponse": {
+        "required": [
+          "rates"
+        ],
         "type": "object",
         "properties": {
           "messages": {
             "type": "array",
-            "description": "The list of error messages",
+            "description": "The list of note, error or warning messages",
             "items": {
               "$ref": "#/components/schemas/Message"
+            }
+          },
+          "rates": {
+            "type": "array",
+            "description": "The list of returned rates",
+            "items": {
+              "$ref": "#/components/schemas/Rate"
             }
           }
         }
       },
       "AddressData": {
+        "title": "Shipper",
         "required": [
           "countryCode"
         ],
@@ -1919,14 +1359,150 @@
             "description": "The address line with suite number",
             "nullable": true
           }
+        },
+        "description": "\nThe address of the party\n\nOrigin address (ship from) for the **shipper**<br/>\nDestination address (ship to) for the **recipient**\n"
+      },
+      "ParcelData": {
+        "type": "object",
+        "properties": {
+          "weight": {
+            "title": "Weight",
+            "type": "number",
+            "description": "The parcel's weight",
+            "nullable": true
+          },
+          "width": {
+            "title": "Width",
+            "type": "number",
+            "description": "The parcel's width",
+            "nullable": true
+          },
+          "height": {
+            "title": "Height",
+            "type": "number",
+            "description": "The parcel's height",
+            "nullable": true
+          },
+          "length": {
+            "title": "Length",
+            "type": "number",
+            "description": "The parcel's length",
+            "nullable": true
+          },
+          "packagingType": {
+            "title": "Packaging type",
+            "type": "string",
+            "description": "\nThe parcel's packaging type.\n\n**Note that the packaging is optional when using a package preset**\n\nvalues: <br/>- **envelope**<br/>- **pak**<br/>- **tube**<br/>- **pallet**<br/>- **small_box**<br/>- **medium_box**<br/>- **your_packaging**\n\nFor specific carriers packaging type, please consult [the reference](#operation/all_references).\n",
+            "nullable": true
+          },
+          "packagePreset": {
+            "title": "Package preset",
+            "type": "string",
+            "description": "\nThe parcel's package preset.\n\nFor specific carriers package preset, please consult [the reference](#operation/all_references).\n",
+            "nullable": true
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "The parcel's description",
+            "nullable": true
+          },
+          "content": {
+            "title": "Content",
+            "type": "string",
+            "description": "The parcel's content description",
+            "nullable": true
+          },
+          "isDocument": {
+            "title": "Is document",
+            "type": "boolean",
+            "description": "Indicates if the parcel is composed of documents only",
+            "nullable": true,
+            "default": false
+          },
+          "weightUnit": {
+            "title": "Weight unit",
+            "type": "string",
+            "description": "The parcel's weight unit",
+            "nullable": true,
+            "enum": [
+              "KG",
+              "LB"
+            ]
+          },
+          "dimensionUnit": {
+            "title": "Dimension unit",
+            "type": "string",
+            "description": "The parcel's dimension unit",
+            "nullable": true,
+            "enum": [
+              "CM",
+              "IN"
+            ]
+          }
         }
       },
-      "CarrierSettings": {
+      "Card": {
+        "title": "Credit card",
         "required": [
-          "carrierId",
-          "carrierName",
-          "id",
-          "test"
+          "expiryMonth",
+          "expiryYear",
+          "number",
+          "securityCode",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "title": "Type",
+            "minLength": 1,
+            "type": "string",
+            "description": "The credit card type"
+          },
+          "number": {
+            "title": "Number",
+            "minLength": 1,
+            "type": "string",
+            "description": "The credit card number"
+          },
+          "expiryMonth": {
+            "title": "Expiry month",
+            "minLength": 1,
+            "type": "string",
+            "description": "The credit card expiry month (MM)"
+          },
+          "expiryYear": {
+            "title": "Expiry year",
+            "minLength": 1,
+            "type": "string",
+            "description": "The credit card expiry year (YYYY)"
+          },
+          "securityCode": {
+            "title": "Security code",
+            "minLength": 1,
+            "type": "string",
+            "description": "The credit card security code often at the back (000)"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "The name inscribed on the credit card",
+            "nullable": true
+          },
+          "postalCode": {
+            "title": "Postal code",
+            "type": "string",
+            "description": "The credit card registration address postal code",
+            "nullable": true
+          }
+        },
+        "description": "The payment credit card for payment by card"
+      },
+      "Payment": {
+        "title": "Payment",
+        "required": [
+          "currency",
+          "paidBy"
         ],
         "type": "object",
         "properties": {
@@ -1934,34 +1510,189 @@
             "title": "Id",
             "minLength": 1,
             "type": "string",
-            "description": "A unique address identifier"
+            "description": "A unique identifier"
           },
-          "carrierName": {
-            "title": "Carrier name",
+          "paidBy": {
+            "title": "Paid by",
             "type": "string",
-            "description": "Indicates a carrier (type)",
+            "description": "The payment payer",
             "enum": [
-              "canadapost",
-              "dhl_express",
-              "fedex_express",
-              "purolator_courier",
-              "ups_package",
-              "eshipper",
-              "freightcom"
+              "sender",
+              "recipient",
+              "third_party",
+              "credit_card"
             ]
           },
-          "carrierId": {
-            "title": "Carrier id",
-            "minLength": 1,
-            "type": "string",
-            "description": "Indicates a specific carrier configuration name."
+          "amount": {
+            "title": "Amount",
+            "type": "number",
+            "description": "The payment amount if known",
+            "nullable": true
           },
-          "test": {
-            "title": "Test",
-            "type": "boolean",
-            "description": "\nThe test flag indicates whether to use a carrier configured for test. \n"
+          "currency": {
+            "title": "Currency",
+            "type": "string",
+            "description": "The payment amount currency",
+            "enum": [
+              "EUR",
+              "AED",
+              "USD",
+              "XCD",
+              "AMD",
+              "ANG",
+              "AOA",
+              "ARS",
+              "AUD",
+              "AWG",
+              "AZN",
+              "BAM",
+              "BBD",
+              "BDT",
+              "XOF",
+              "BGN",
+              "BHD",
+              "BIF",
+              "BMD",
+              "BND",
+              "BOB",
+              "BRL",
+              "BSD",
+              "BTN",
+              "BWP",
+              "BYN",
+              "BZD",
+              "CAD",
+              "CDF",
+              "XAF",
+              "CHF",
+              "NZD",
+              "CLP",
+              "CNY",
+              "COP",
+              "CRC",
+              "CUC",
+              "CVE",
+              "CZK",
+              "DJF",
+              "DKK",
+              "DOP",
+              "DZD",
+              "EGP",
+              "ERN",
+              "ETB",
+              "FJD",
+              "GBP",
+              "GEL",
+              "GHS",
+              "GMD",
+              "GNF",
+              "GTQ",
+              "GYD",
+              "HKD",
+              "HNL",
+              "HRK",
+              "HTG",
+              "HUF",
+              "IDR",
+              "ILS",
+              "INR",
+              "IRR",
+              "ISK",
+              "JMD",
+              "JOD",
+              "JPY",
+              "KES",
+              "KGS",
+              "KHR",
+              "KMF",
+              "KPW",
+              "KRW",
+              "KWD",
+              "KYD",
+              "KZT",
+              "LAK",
+              "LKR",
+              "LRD",
+              "LSL",
+              "LYD",
+              "MAD",
+              "MDL",
+              "MGA",
+              "MKD",
+              "MMK",
+              "MNT",
+              "MOP",
+              "MRO",
+              "MUR",
+              "MVR",
+              "MWK",
+              "MXN",
+              "MYR",
+              "MZN",
+              "NAD",
+              "XPF",
+              "NGN",
+              "NIO",
+              "NOK",
+              "NPR",
+              "OMR",
+              "PEN",
+              "PGK",
+              "PHP",
+              "PKR",
+              "PLN",
+              "PYG",
+              "QAR",
+              "RSD",
+              "RUB",
+              "RWF",
+              "SAR",
+              "SBD",
+              "SCR",
+              "SDG",
+              "SEK",
+              "SGD",
+              "SHP",
+              "SLL",
+              "SOS",
+              "SRD",
+              "SSP",
+              "STD",
+              "SYP",
+              "SZL",
+              "THB",
+              "TJS",
+              "TND",
+              "TOP",
+              "TRY",
+              "TTD",
+              "TWD",
+              "TZS",
+              "UAH",
+              "UYU",
+              "UZS",
+              "VEF",
+              "VND",
+              "VUV",
+              "WST",
+              "YER",
+              "ZAR"
+            ]
+          },
+          "accountNumber": {
+            "title": "Account number",
+            "type": "string",
+            "description": "The selected rate carrier payer account number",
+            "nullable": true
+          },
+          "creditCard": {
+            "$ref": "#/components/schemas/Card"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Address"
           }
-        }
+        },
+        "description": "The payment details"
       },
       "Commodity": {
         "required": [
@@ -2295,258 +2026,6 @@
           }
         }
       },
-      "Card": {
-        "title": "Credit card",
-        "required": [
-          "expiryMonth",
-          "expiryYear",
-          "number",
-          "securityCode",
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "title": "Type",
-            "minLength": 1,
-            "type": "string",
-            "description": "The credit card type"
-          },
-          "number": {
-            "title": "Number",
-            "minLength": 1,
-            "type": "string",
-            "description": "The credit card number"
-          },
-          "expiryMonth": {
-            "title": "Expiry month",
-            "minLength": 1,
-            "type": "string",
-            "description": "The credit card expiry month (MM)"
-          },
-          "expiryYear": {
-            "title": "Expiry year",
-            "minLength": 1,
-            "type": "string",
-            "description": "The credit card expiry year (YYYY)"
-          },
-          "securityCode": {
-            "title": "Security code",
-            "minLength": 1,
-            "type": "string",
-            "description": "The credit card security code often at the back (000)"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string",
-            "description": "The name inscribed on the credit card",
-            "nullable": true
-          },
-          "postalCode": {
-            "title": "Postal code",
-            "type": "string",
-            "description": "The credit card registration address postal code",
-            "nullable": true
-          }
-        },
-        "description": "The payment credit card for payment by card"
-      },
-      "Payment": {
-        "title": "Duty",
-        "required": [
-          "currency",
-          "paidBy"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "title": "Id",
-            "minLength": 1,
-            "type": "string",
-            "description": "A unique identifier"
-          },
-          "paidBy": {
-            "title": "Paid by",
-            "type": "string",
-            "description": "The payment payer",
-            "enum": [
-              "sender",
-              "recipient",
-              "third_party",
-              "credit_card"
-            ]
-          },
-          "amount": {
-            "title": "Amount",
-            "type": "number",
-            "description": "The payment amount if known",
-            "nullable": true
-          },
-          "currency": {
-            "title": "Currency",
-            "type": "string",
-            "description": "The payment amount currency",
-            "enum": [
-              "EUR",
-              "AED",
-              "USD",
-              "XCD",
-              "AMD",
-              "ANG",
-              "AOA",
-              "ARS",
-              "AUD",
-              "AWG",
-              "AZN",
-              "BAM",
-              "BBD",
-              "BDT",
-              "XOF",
-              "BGN",
-              "BHD",
-              "BIF",
-              "BMD",
-              "BND",
-              "BOB",
-              "BRL",
-              "BSD",
-              "BTN",
-              "BWP",
-              "BYN",
-              "BZD",
-              "CAD",
-              "CDF",
-              "XAF",
-              "CHF",
-              "NZD",
-              "CLP",
-              "CNY",
-              "COP",
-              "CRC",
-              "CUC",
-              "CVE",
-              "CZK",
-              "DJF",
-              "DKK",
-              "DOP",
-              "DZD",
-              "EGP",
-              "ERN",
-              "ETB",
-              "FJD",
-              "GBP",
-              "GEL",
-              "GHS",
-              "GMD",
-              "GNF",
-              "GTQ",
-              "GYD",
-              "HKD",
-              "HNL",
-              "HRK",
-              "HTG",
-              "HUF",
-              "IDR",
-              "ILS",
-              "INR",
-              "IRR",
-              "ISK",
-              "JMD",
-              "JOD",
-              "JPY",
-              "KES",
-              "KGS",
-              "KHR",
-              "KMF",
-              "KPW",
-              "KRW",
-              "KWD",
-              "KYD",
-              "KZT",
-              "LAK",
-              "LKR",
-              "LRD",
-              "LSL",
-              "LYD",
-              "MAD",
-              "MDL",
-              "MGA",
-              "MKD",
-              "MMK",
-              "MNT",
-              "MOP",
-              "MRO",
-              "MUR",
-              "MVR",
-              "MWK",
-              "MXN",
-              "MYR",
-              "MZN",
-              "NAD",
-              "XPF",
-              "NGN",
-              "NIO",
-              "NOK",
-              "NPR",
-              "OMR",
-              "PEN",
-              "PGK",
-              "PHP",
-              "PKR",
-              "PLN",
-              "PYG",
-              "QAR",
-              "RSD",
-              "RUB",
-              "RWF",
-              "SAR",
-              "SBD",
-              "SCR",
-              "SDG",
-              "SEK",
-              "SGD",
-              "SHP",
-              "SLL",
-              "SOS",
-              "SRD",
-              "SSP",
-              "STD",
-              "SYP",
-              "SZL",
-              "THB",
-              "TJS",
-              "TND",
-              "TOP",
-              "TRY",
-              "TTD",
-              "TWD",
-              "TZS",
-              "UAH",
-              "UYU",
-              "UZS",
-              "VEF",
-              "VND",
-              "VUV",
-              "WST",
-              "YER",
-              "ZAR"
-            ]
-          },
-          "accountNumber": {
-            "title": "Account number",
-            "type": "string",
-            "description": "The selected rate carrier payer account number",
-            "nullable": true
-          },
-          "creditCard": {
-            "$ref": "#/components/schemas/Card"
-          },
-          "contact": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        "description": "\nThe payment details.<br/>\nNote that this is required for a Dutiable parcel shipped internationally.\n"
-      },
       "Invoice": {
         "title": "Invoice",
         "required": [
@@ -2581,60 +2060,8 @@
         },
         "description": "The shipment invoice required for commercial shipment."
       },
-      "Customs": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "title": "Id",
-            "minLength": 1,
-            "type": "string",
-            "description": "A unique identifier"
-          },
-          "noEei": {
-            "title": "No eei",
-            "type": "string",
-            "nullable": true
-          },
-          "aes": {
-            "title": "Aes",
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "title": "Description",
-            "type": "string",
-            "nullable": true
-          },
-          "termsOfTrade": {
-            "title": "Terms of trade",
-            "minLength": 1,
-            "type": "string",
-            "description": "The customs 'term of trade' also known as 'incoterm'",
-            "nullable": true
-          },
-          "commodities": {
-            "type": "array",
-            "description": "The parcel content items",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Commodity"
-            }
-          },
-          "duty": {
-            "$ref": "#/components/schemas/Payment"
-          },
-          "invoice": {
-            "$ref": "#/components/schemas/Invoice"
-          },
-          "commercialInvoice": {
-            "title": "Commercial invoice",
-            "type": "boolean",
-            "description": "Indicates if the shipment is commercial",
-            "nullable": true
-          }
-        }
-      },
       "CustomsData": {
+        "title": "Customs",
         "type": "object",
         "properties": {
           "noEei": {
@@ -2679,382 +2106,10 @@
             "description": "Indicates if the shipment is commercial",
             "nullable": true
           }
-        }
-      },
-      "LabelPrintingRequest": {
-        "required": [
-          "label",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "title": "Name",
-            "minLength": 1,
-            "type": "string",
-            "description": "\nPDF file name.\n\neg: shipment-[trackingNumber]\n"
-          },
-          "label": {
-            "title": "Label",
-            "minLength": 1,
-            "type": "string",
-            "description": "Shipment base64 label"
-          }
-        }
-      },
-      "Parcel": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "title": "Id",
-            "minLength": 1,
-            "type": "string",
-            "description": "A unique identifier"
-          },
-          "weight": {
-            "title": "Weight",
-            "type": "number",
-            "description": "The parcel's weight",
-            "nullable": true
-          },
-          "width": {
-            "title": "Width",
-            "type": "number",
-            "description": "The parcel's width",
-            "nullable": true
-          },
-          "height": {
-            "title": "Height",
-            "type": "number",
-            "description": "The parcel's height",
-            "nullable": true
-          },
-          "length": {
-            "title": "Length",
-            "type": "number",
-            "description": "The parcel's length",
-            "nullable": true
-          },
-          "packagingType": {
-            "title": "Packaging type",
-            "type": "string",
-            "description": "\nThe parcel's packaging type.\n\n**Note that the packaging is optional when using a package preset**\n\nvalues: <br/>- **envelope**<br/>- **pak**<br/>- **tube**<br/>- **pallet**<br/>- **small_box**<br/>- **medium_box**<br/>- **your_packaging**\n\nFor specific carriers packaging type, please consult [the reference](#operation/all_references).\n",
-            "nullable": true
-          },
-          "packagePreset": {
-            "title": "Package preset",
-            "type": "string",
-            "description": "\nThe parcel's package preset.\n\nFor specific carriers package preset, please consult [the reference](#operation/all_references).\n",
-            "nullable": true
-          },
-          "description": {
-            "title": "Description",
-            "type": "string",
-            "description": "The parcel's description",
-            "nullable": true
-          },
-          "content": {
-            "title": "Content",
-            "type": "string",
-            "description": "The parcel's content description",
-            "nullable": true
-          },
-          "isDocument": {
-            "title": "Is document",
-            "type": "boolean",
-            "description": "Indicates if the parcel is composed of documents only",
-            "nullable": true,
-            "default": false
-          },
-          "weightUnit": {
-            "title": "Weight unit",
-            "type": "string",
-            "description": "The parcel's weight unit",
-            "nullable": true,
-            "enum": [
-              "KG",
-              "LB"
-            ]
-          },
-          "dimensionUnit": {
-            "title": "Dimension unit",
-            "type": "string",
-            "description": "The parcel's dimension unit",
-            "nullable": true,
-            "enum": [
-              "CM",
-              "IN"
-            ]
-          }
-        }
-      },
-      "ParcelData": {
-        "type": "object",
-        "properties": {
-          "weight": {
-            "title": "Weight",
-            "type": "number",
-            "description": "The parcel's weight",
-            "nullable": true
-          },
-          "width": {
-            "title": "Width",
-            "type": "number",
-            "description": "The parcel's width",
-            "nullable": true
-          },
-          "height": {
-            "title": "Height",
-            "type": "number",
-            "description": "The parcel's height",
-            "nullable": true
-          },
-          "length": {
-            "title": "Length",
-            "type": "number",
-            "description": "The parcel's length",
-            "nullable": true
-          },
-          "packagingType": {
-            "title": "Packaging type",
-            "type": "string",
-            "description": "\nThe parcel's packaging type.\n\n**Note that the packaging is optional when using a package preset**\n\nvalues: <br/>- **envelope**<br/>- **pak**<br/>- **tube**<br/>- **pallet**<br/>- **small_box**<br/>- **medium_box**<br/>- **your_packaging**\n\nFor specific carriers packaging type, please consult [the reference](#operation/all_references).\n",
-            "nullable": true
-          },
-          "packagePreset": {
-            "title": "Package preset",
-            "type": "string",
-            "description": "\nThe parcel's package preset.\n\nFor specific carriers package preset, please consult [the reference](#operation/all_references).\n",
-            "nullable": true
-          },
-          "description": {
-            "title": "Description",
-            "type": "string",
-            "description": "The parcel's description",
-            "nullable": true
-          },
-          "content": {
-            "title": "Content",
-            "type": "string",
-            "description": "The parcel's content description",
-            "nullable": true
-          },
-          "isDocument": {
-            "title": "Is document",
-            "type": "boolean",
-            "description": "Indicates if the parcel is composed of documents only",
-            "nullable": true,
-            "default": false
-          },
-          "weightUnit": {
-            "title": "Weight unit",
-            "type": "string",
-            "description": "The parcel's weight unit",
-            "nullable": true,
-            "enum": [
-              "KG",
-              "LB"
-            ]
-          },
-          "dimensionUnit": {
-            "title": "Dimension unit",
-            "type": "string",
-            "description": "The parcel's dimension unit",
-            "nullable": true,
-            "enum": [
-              "CM",
-              "IN"
-            ]
-          }
-        }
-      },
-      "RateRequest": {
-        "required": [
-          "parcels",
-          "recipient",
-          "shipper"
-        ],
-        "type": "object",
-        "properties": {
-          "shipper": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "recipient": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "parcels": {
-            "type": "array",
-            "description": "The shipment's parcels",
-            "items": {
-              "$ref": "#/components/schemas/Parcel"
-            }
-          },
-          "services": {
-            "type": "array",
-            "description": "\nThe requested carrier service for the shipment.<br/>\nPlease consult [the reference](#operation/all_references) for specific carriers services.\n\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
-            "nullable": true,
-            "items": {
-              "minLength": 1,
-              "type": "string"
-            }
-          },
-          "options": {
-            "title": "Options",
-            "type": "object",
-            "properties": {},
-            "description": "\nThe options available for the shipment.\n\nPlease consult [the reference](#operation/all_references) for additional specific carriers options.\n",
-            "nullable": true
-          },
-          "reference": {
-            "title": "Reference",
-            "type": "string",
-            "description": "The shipment reference",
-            "nullable": true
-          },
-          "carrierIds": {
-            "type": "array",
-            "description": "\nThe list of configured carriers you wish to get rates from.\n",
-            "nullable": true,
-            "items": {
-              "minLength": 1,
-              "type": "string"
-            }
-          }
-        }
-      },
-      "Charge": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "title": "Name",
-            "type": "string",
-            "description": "The charge description",
-            "nullable": true
-          },
-          "amount": {
-            "title": "Amount",
-            "type": "number",
-            "description": "The charge monetary value",
-            "nullable": true
-          },
-          "currency": {
-            "title": "Currency",
-            "type": "string",
-            "description": "The charge amount currency",
-            "nullable": true
-          }
-        }
-      },
-      "Rate": {
-        "required": [
-          "carrierId",
-          "carrierName",
-          "currency"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "title": "Id",
-            "minLength": 1,
-            "type": "string",
-            "description": "A unique identifier"
-          },
-          "carrierName": {
-            "title": "Carrier name",
-            "minLength": 1,
-            "type": "string",
-            "description": "The rate's carrier"
-          },
-          "carrierId": {
-            "title": "Carrier id",
-            "minLength": 1,
-            "type": "string",
-            "description": "The targeted carrier's name (unique identifier)"
-          },
-          "currency": {
-            "title": "Currency",
-            "minLength": 1,
-            "type": "string",
-            "description": "The rate monetary values currency code"
-          },
-          "service": {
-            "title": "Service",
-            "type": "string",
-            "description": "The carrier's rate (quote) service",
-            "nullable": true
-          },
-          "discount": {
-            "title": "Discount",
-            "type": "number",
-            "description": "The monetary amount of the discount on the rate",
-            "nullable": true
-          },
-          "baseCharge": {
-            "title": "Base charge",
-            "type": "number",
-            "description": "\nThe rate's monetary amount of the base charge.<br/>\nThis is the net amount of the rate before additional charges\n"
-          },
-          "totalCharge": {
-            "title": "Total charge",
-            "type": "number",
-            "description": "\nThe rate's monetary amount of the total charge.<br/>\nThis is the gross amount of the rate after adding the additional charges\n"
-          },
-          "dutiesAndTaxes": {
-            "title": "Duties and taxes",
-            "type": "number",
-            "description": "The monetary amount of the duties and taxes if applied",
-            "nullable": true
-          },
-          "transitDays": {
-            "title": "Transit days",
-            "type": "integer",
-            "description": "The estimated delivery transit days",
-            "nullable": true
-          },
-          "extraCharges": {
-            "type": "array",
-            "description": "list of the rate's additional charges",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Charge"
-            }
-          },
-          "meta": {
-            "title": "Meta",
-            "type": "object",
-            "properties": {},
-            "description": "provider specific metadata",
-            "nullable": true
-          },
-          "carrierRef": {
-            "title": "Carrier ref",
-            "type": "string",
-            "description": "The system carrier configuration id",
-            "nullable": true
-          }
-        }
-      },
-      "RateResponse": {
-        "required": [
-          "rates"
-        ],
-        "type": "object",
-        "properties": {
-          "messages": {
-            "type": "array",
-            "description": "The list of note, error or warning messages",
-            "items": {
-              "$ref": "#/components/schemas/Message"
-            }
-          },
-          "rates": {
-            "type": "array",
-            "description": "The list of returned rates",
-            "items": {
-              "$ref": "#/components/schemas/Rate"
-            }
-          }
-        }
+        },
+        "description": "\nThe customs details.<br/>\nNote that this is required for the shipment of an international Dutiable parcel.\n",
+        "nullable": true,
+        "x-nullable": true
       },
       "Doc": {
         "required": [
@@ -3148,6 +2203,63 @@
             }
           }
         }
+      },
+      "Customs": {
+        "title": "Customs",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "minLength": 1,
+            "type": "string",
+            "description": "A unique identifier"
+          },
+          "noEei": {
+            "title": "No eei",
+            "type": "string",
+            "nullable": true
+          },
+          "aes": {
+            "title": "Aes",
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "nullable": true
+          },
+          "termsOfTrade": {
+            "title": "Terms of trade",
+            "minLength": 1,
+            "type": "string",
+            "description": "The customs 'term of trade' also known as 'incoterm'",
+            "nullable": true
+          },
+          "commodities": {
+            "type": "array",
+            "description": "The parcel content items",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Commodity"
+            }
+          },
+          "duty": {
+            "$ref": "#/components/schemas/Payment"
+          },
+          "invoice": {
+            "$ref": "#/components/schemas/Invoice"
+          },
+          "commercialInvoice": {
+            "title": "Commercial invoice",
+            "type": "boolean",
+            "description": "Indicates if the shipment is commercial",
+            "nullable": true
+          }
+        },
+        "description": "\nThe customs details.<br/>\nNote that this is required for the shipment of an international Dutiable parcel.\n",
+        "nullable": true,
+        "x-nullable": true
       },
       "Shipment": {
         "title": "Shipment",
@@ -3461,329 +2573,6 @@
             "title": "Packagingtypes",
             "type": "object",
             "properties": {}
-          }
-        }
-      },
-      "PaymentData": {
-        "title": "Payment",
-        "required": [
-          "currency",
-          "paidBy"
-        ],
-        "type": "object",
-        "properties": {
-          "paidBy": {
-            "title": "Paid by",
-            "type": "string",
-            "description": "The payment payer",
-            "enum": [
-              "sender",
-              "recipient",
-              "third_party",
-              "credit_card"
-            ]
-          },
-          "amount": {
-            "title": "Amount",
-            "type": "number",
-            "description": "The payment amount if known",
-            "nullable": true
-          },
-          "currency": {
-            "title": "Currency",
-            "type": "string",
-            "description": "The payment amount currency",
-            "enum": [
-              "EUR",
-              "AED",
-              "USD",
-              "XCD",
-              "AMD",
-              "ANG",
-              "AOA",
-              "ARS",
-              "AUD",
-              "AWG",
-              "AZN",
-              "BAM",
-              "BBD",
-              "BDT",
-              "XOF",
-              "BGN",
-              "BHD",
-              "BIF",
-              "BMD",
-              "BND",
-              "BOB",
-              "BRL",
-              "BSD",
-              "BTN",
-              "BWP",
-              "BYN",
-              "BZD",
-              "CAD",
-              "CDF",
-              "XAF",
-              "CHF",
-              "NZD",
-              "CLP",
-              "CNY",
-              "COP",
-              "CRC",
-              "CUC",
-              "CVE",
-              "CZK",
-              "DJF",
-              "DKK",
-              "DOP",
-              "DZD",
-              "EGP",
-              "ERN",
-              "ETB",
-              "FJD",
-              "GBP",
-              "GEL",
-              "GHS",
-              "GMD",
-              "GNF",
-              "GTQ",
-              "GYD",
-              "HKD",
-              "HNL",
-              "HRK",
-              "HTG",
-              "HUF",
-              "IDR",
-              "ILS",
-              "INR",
-              "IRR",
-              "ISK",
-              "JMD",
-              "JOD",
-              "JPY",
-              "KES",
-              "KGS",
-              "KHR",
-              "KMF",
-              "KPW",
-              "KRW",
-              "KWD",
-              "KYD",
-              "KZT",
-              "LAK",
-              "LKR",
-              "LRD",
-              "LSL",
-              "LYD",
-              "MAD",
-              "MDL",
-              "MGA",
-              "MKD",
-              "MMK",
-              "MNT",
-              "MOP",
-              "MRO",
-              "MUR",
-              "MVR",
-              "MWK",
-              "MXN",
-              "MYR",
-              "MZN",
-              "NAD",
-              "XPF",
-              "NGN",
-              "NIO",
-              "NOK",
-              "NPR",
-              "OMR",
-              "PEN",
-              "PGK",
-              "PHP",
-              "PKR",
-              "PLN",
-              "PYG",
-              "QAR",
-              "RSD",
-              "RUB",
-              "RWF",
-              "SAR",
-              "SBD",
-              "SCR",
-              "SDG",
-              "SEK",
-              "SGD",
-              "SHP",
-              "SLL",
-              "SOS",
-              "SRD",
-              "SSP",
-              "STD",
-              "SYP",
-              "SZL",
-              "THB",
-              "TJS",
-              "TND",
-              "TOP",
-              "TRY",
-              "TTD",
-              "TWD",
-              "TZS",
-              "UAH",
-              "UYU",
-              "UZS",
-              "VEF",
-              "VND",
-              "VUV",
-              "WST",
-              "YER",
-              "ZAR"
-            ]
-          },
-          "accountNumber": {
-            "title": "Account number",
-            "type": "string",
-            "description": "The selected rate carrier payer account number",
-            "nullable": true
-          },
-          "creditCard": {
-            "$ref": "#/components/schemas/Card"
-          },
-          "contact": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        "description": "The payment details"
-      },
-      "ShipmentData": {
-        "required": [
-          "parcels",
-          "recipient",
-          "shipper"
-        ],
-        "type": "object",
-        "properties": {
-          "shipper": {
-            "$ref": "#/components/schemas/AddressData"
-          },
-          "recipient": {
-            "$ref": "#/components/schemas/AddressData"
-          },
-          "parcels": {
-            "type": "array",
-            "description": "The shipment's parcels",
-            "items": {
-              "$ref": "#/components/schemas/ParcelData"
-            }
-          },
-          "options": {
-            "title": "Options",
-            "type": "object",
-            "properties": {},
-            "description": "\nThe options available for the shipment.<br/>\nPlease consult [the reference](#operation/all_references) for additional specific carriers options.\n",
-            "nullable": true
-          },
-          "payment": {
-            "$ref": "#/components/schemas/PaymentData"
-          },
-          "customs": {
-            "$ref": "#/components/schemas/CustomsData"
-          },
-          "docImages": {
-            "type": "array",
-            "description": "\nThe list of documents to attach for a paperless interantional trade.\n\neg: Invoices...\n",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Doc"
-            }
-          },
-          "reference": {
-            "title": "Reference",
-            "type": "string",
-            "description": "The shipment reference",
-            "nullable": true
-          },
-          "services": {
-            "type": "array",
-            "description": "\nThe requested carrier service for the shipment.\n\nPlease consult [the reference](#operation/all_references) for specific carriers services.<br/>\nNote that this is a list because on a Multi-carrier rate request you could specify a service per carrier.\n",
-            "nullable": true,
-            "items": {
-              "minLength": 1,
-              "type": "string"
-            }
-          },
-          "carrierIds": {
-            "type": "array",
-            "description": "\nThe list of configured carriers you wish to get rates from.\n\n*Note that the request will be sent to all carriers in nothing is specified*\n",
-            "nullable": true,
-            "items": {
-              "minLength": 1,
-              "type": "string"
-            }
-          }
-        }
-      },
-      "ShipmentPurchaseData": {
-        "required": [
-          "selectedRateId"
-        ],
-        "type": "object",
-        "properties": {
-          "selectedRateId": {
-            "title": "Selected rate id",
-            "minLength": 1,
-            "type": "string",
-            "description": "The shipment selected rate."
-          },
-          "payment": {
-            "$ref": "#/components/schemas/Payment"
-          }
-        }
-      },
-      "TrackingStatus": {
-        "required": [
-          "carrierId",
-          "carrierName",
-          "trackingNumber"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "title": "Id",
-            "minLength": 1,
-            "type": "string",
-            "description": "A unique identifier"
-          },
-          "carrierName": {
-            "title": "Carrier name",
-            "minLength": 1,
-            "type": "string",
-            "description": "The tracking carrier"
-          },
-          "carrierId": {
-            "title": "Carrier id",
-            "minLength": 1,
-            "type": "string",
-            "description": "The tracking carrier configured identifier"
-          },
-          "trackingNumber": {
-            "title": "Tracking number",
-            "minLength": 1,
-            "type": "string",
-            "description": "The shipment tracking number"
-          },
-          "events": {
-            "type": "array",
-            "description": "The tracking details events",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/TrackingEvent"
-            }
-          },
-          "shipmentId": {
-            "title": "Shipment id",
-            "type": "string",
-            "description": "The system shipment associated.",
-            "nullable": true
           }
         }
       }

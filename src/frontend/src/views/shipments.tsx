@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { View } from '@/library/types';
 import { Address, Shipment } from '@purplship/purplship/dist';
+import { Provider } from '@/library/api';
 
 
 function formatAddress(address: Address): string {
@@ -14,9 +15,15 @@ function formatAddress(address: Address): string {
 
 interface ShipmentsView extends View {
   shipments: Shipment[];
+  providers: Provider[];
 }
 
-const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
+const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
+  const isTest = (carrierId?: string) => {
+    return providers.reduce((carrier: Provider, shipmentCarrier: Provider) => {
+      return carrier.carrierId === carrierId ? carrier : shipmentCarrier;
+    }, {} as Provider).test;
+  };
 
   return (
     <Fragment>
@@ -43,9 +50,11 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
             {shipments.map(shipment => (
               <tr key={shipment.id}>
                 <td>{shipment.carrierName}</td>
-                <td><span className="tag is-primary">Test</span></td>
+                <td className="mode is-vcentered">
+                  {isTest(shipment.carrierId) ? <span className="tag is-primary is-centered">Test</span> : <></>}
+                </td>
                 <td>{formatAddress(shipment.recipient)}</td>
-                <td>2020/09/20</td>
+                <td></td>
                 <td><span className="tag is-info is-light">{shipment.status}</span></td>
               </tr>
             ))}
@@ -54,6 +63,15 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
 
         </table>
       </div>
+
+      {(shipments.length == 0) && <div className="card my-6">
+
+        <div className="card-content has-text-centered">
+          <p>No Shipment have been created yet.</p>
+          <p>Use the use the <strong>API</strong> to create your first shipment.</p>
+        </div>
+
+      </div>}
 
       <footer className="px-2 py-2 is-vcentered">
         <div className="buttons has-addons is-centered">

@@ -20,36 +20,45 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
         </ConnectProviderModal>
       </header>
 
+      {(providers.length == 0) && <div className="card my-6">
+
+        <div className="card-content has-text-centered">
+          <p>No Carriers have been connected yet.</p>
+          <p>Use the <strong>Connect a Carrier</strong> button above to add a new connection</p>
+        </div>
+
+      </div>}
+
       <div className="table-container">
         <table className="table is-fullwidth">
 
           <tbody className="providers-table">
             <Reference.Consumer>
-            {ref => (Object.values(ref).length > 0) && providers.map((settings) => (
+              {ref => (Object.values(ref).length > 0) && providers.map((settings) => (
 
-              <tr key={settings.id}>
-                <td className="carrier"><div className="box">{ref.carriers[settings.carrierName]}</div></td>
-                <td className="mode is-vcentered">
-                  {settings.test ? <span className="tag is-primary is-centered">Test</span> : <></>}
-                </td>
-                <td className="details"></td>
-                <td className="action is-vcentered">
-                  <div className="buttons is-centered">
-                    <ConnectProviderModal className="button" provider={settings}>
-                      <span className="icon is-small">
-                        <i className="fas fa-pen"></i>
-                      </span>
-                    </ConnectProviderModal>
-                    <DisconnectProviderButton provider={settings}>
-                      <span className="icon is-small">
-                        <i className="fas fa-trash"></i>
-                      </span>
-                    </DisconnectProviderButton>
-                  </div>
-                </td>
-              </tr>
+                <tr key={settings.id}>
+                  <td className="carrier"><div className="box">{ref.carriers[settings.carrierName]}</div></td>
+                  <td className="mode is-vcentered">
+                    {settings.test ? <span className="tag is-primary is-centered">Test</span> : <></>}
+                  </td>
+                  <td className="details"></td>
+                  <td className="action is-vcentered">
+                    <div className="buttons is-centered">
+                      <ConnectProviderModal className="button" provider={settings}>
+                        <span className="icon is-small">
+                          <i className="fas fa-pen"></i>
+                        </span>
+                      </ConnectProviderModal>
+                      <DisconnectProviderButton provider={settings}>
+                        <span className="icon is-small">
+                          <i className="fas fa-trash"></i>
+                        </span>
+                      </DisconnectProviderButton>
+                    </div>
+                  </td>
+                </tr>
 
-            ))}
+              ))}
             </Reference.Consumer>
           </tbody>
 
