@@ -310,6 +310,7 @@ class TrackingDetails:
     carrier_id: str
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+    delivered: bool = None
 
 
 @attr.s(auto_attribs=True)

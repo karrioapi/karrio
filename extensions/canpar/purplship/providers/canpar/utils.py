@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     user_id: str
     password: str
+    language: str = "en"
     id: str = None
 
     @property
