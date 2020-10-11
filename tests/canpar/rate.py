@@ -1,10 +1,11 @@
+import re
 import unittest
+import logging
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship import Rating
 from purplship.core.models import RateRequest
 from tests.canpar.fixture import gateway
-from datetime import datetime
 
 
 class TestCanparRating(unittest.TestCase):
@@ -12,147 +13,124 @@ class TestCanparRating(unittest.TestCase):
         self.maxDiff = None
         self.RateRequest = RateRequest(**RatePayload)
 
-    # def test_create_rate_request(self):
-    #     request = gateway.mapper.create_rate_request(self.RateRequest)
-    #
-    #     self.assertEqual(request.serialize(), RateRequestXML)
+    def test_create_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
+        serialized_request = re.sub(
+            "<shipping_date>[^>]+</shipping_date>",
+            "",
+            request.serialize(),
+        )
+
+        self.assertEqual(serialized_request, RateRequestXML)
+
+    def test_get_rates(self):
+        with patch("purplship.mappers.canpar.proxy.http") as mock:
+            mock.return_value = "<a></a>"
+            Rating.fetch(self.RateRequest).from_(gateway)
+
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/CanparRatingService.CanparRatingServiceHttpSoap12Endpoint/",
+            )
+            self.assertEqual(
+                mock.call_args[1]["headers"]["soapaction"], "urn:rateShipment"
+            )
+
+    def test_parse_rate_response(self):
+        with patch("purplship.mappers.canpar.proxy.http") as mock:
+            mock.return_value = RateResponseXml
+            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
+
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
 
 
 if __name__ == "__main__":
     unittest.main()
 
 RatePayload = {
-    "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
-    "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
+    "shipper": {
+        "company_name": "CGI",
+        "address_line1": "502 MAIN ST N",
+        "city": "MONTREAL",
+        "postal_code": "H2B1A0",
+        "country_code": "CA",
+        "person_name": "Bob",
+        "phone_number": "1 (450) 823-8432",
+        "state_code": "QC",
+        "residential": False,
+    },
+    "recipient": {
+        "address_line1": "1 TEST ST",
+        "city": "TORONTO",
+        "company_name": "TEST ADDRESS",
+        "phone_number": "4161234567",
+        "postal_code": "M4X1W7",
+        "state_code": "ON",
+        "residential": False,
+    },
     "parcels": [
         {
             "height": 3,
             "length": 10,
             "width": 3,
-            "weight": 4.0,
-            "dimension_unit": "CM",
-            "weight_unit": "KG",
+            "weight": 1.0,
         }
     ],
-    "services": ["canadapost_expedited_parcel"],
+    "services": ["canpar_ground"],
+    "options": {
+        "canpar_extra_care": True,
+    },
 }
 
-ParsedQuoteResponse = []
+ParsedQuoteResponse = [[{'base_charge': 7.57, 'carrier_id': 'canpar', 'carrier_name': 'canpar', 'currency': 'CAD', 'duties_and_taxes': 1.34, 'extra_charges': [{'amount': 7.57, 'currency': 'CAD', 'name': 'Freight Charge'}, {'amount': 2.75, 'currency': 'CAD', 'name': 'Residential Address Surcharge'}, {'amount': 1.34, 'currency': 'CAD', 'name': 'ONHST Tax Charge'}], 'service': 'canpar_ground', 'total_charge': 11.66, 'transit_days': 1}], []]
 
 
-RateRequestXML = """<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+RateRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
     <soapenv:Body>
-        <ns3:rateShipment xmlns:ns3="http://ws.onlinerating.canshipws.canpar.com">
-            <ns3:request>
-                <ns1:apply_association_discount xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">false</ns1:apply_association_discount>
-                <ns1:apply_individual_discount xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">false</ns1:apply_individual_discount>
-                <ns1:apply_invoice_discount xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">false</ns1:apply_invoice_discount>
-                <ns1:password xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">password</ns1:password>
-                <shipment xmlns="http://ws.dto.canshipws.canpar.com/xsd">
-                    <ns2:billed_weight xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:billed_weight>
-                    <ns2:billed_weight_unit xmlns:ns2="http://dto.canshipws.canpar.com/xsd">L</ns2:billed_weight_unit>
-                    <ns2:cod_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:cod_charge>
-                    <ns2:cod_type xmlns:ns2="http://dto.canshipws.canpar.com/xsd">N</ns2:cod_type>
-                    <ns2:collect_shipper_num xmlns:ns2="http://dto.canshipws.canpar.com/xsd" />
-                    <ns2:consolidation_type xmlns:ns2="http://dto.canshipws.canpar.com/xsd" />
-                    <ns2:cos xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:cos>
-                    <ns2:cos_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:cos_charge>
-                    <delivery_address xmlns="http://dto.canshipws.canpar.com/xsd">
-                        <address_id>A1</address_id>
+        <ws:rateShipment>
+            <ws:request>
+                <apply_association_discount>false</apply_association_discount>
+                <apply_individual_discount>false</apply_individual_discount>
+                <apply_invoice_discount>false</apply_invoice_discount>
+                <password>password</password>
+                <shipment>
+                    <delivery_address>
                         <address_line_1>1 TEST ST</address_line_1>
-                        <address_line_2 />
-                        <address_line_3 />
-                        <attention />
+                        <address_line_2></address_line_2>
                         <city>TORONTO</city>
-                        <country>CA</country>
-                        <email>1@1.COM,2@2.COM</email>
-                        <extension>23</extension>
-                        <id>-1</id>
                         <name>TEST ADDRESS</name>
                         <phone>4161234567</phone>
                         <postal_code>M4X1W7</postal_code>
                         <province>ON</province>
                         <residential>false</residential>
                     </delivery_address>
-                    <ns2:description xmlns:ns2="http://dto.canshipws.canpar.com/xsd" />
-                    <ns2:dg xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:dg>
-                    <ns2:dg_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:dg_charge>
-                    <ns2:dimention_unit xmlns:ns2="http://dto.canshipws.canpar.com/xsd">I</ns2:dimention_unit>
-                    <ns2:dv_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:dv_charge>
-                    <ns2:ea_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:ea_charge>
-                    <ns2:ea_zone xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0</ns2:ea_zone>
-                    <ns2:freight_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:freight_charge>
-                    <ns2:fuel_surcharge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:fuel_surcharge>
-                    <ns2:handling xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:handling>
-                    <ns2:handling_type xmlns:ns2="http://dto.canshipws.canpar.com/xsd">$</ns2:handling_type>
-                    <ns2:id xmlns:ns2="http://dto.canshipws.canpar.com/xsd">-1</ns2:id>
-                    <ns2:instruction xmlns:ns2="http://dto.canshipws.canpar.com/xsd" />
-                    <ns2:manifest_num xmlns:ns2="http://dto.canshipws.canpar.com/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="1" />
-                    <ns2:nsr xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:nsr>
-                    <packages xmlns="http://dto.canshipws.canpar.com/xsd">
-                        <alternative_reference />
-                        <barcode />
-                        <billed_weight>0.0</billed_weight>
-                        <cod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="1" />
-                        <cost_centre />
-                        <declared_value>0.0</declared_value>
-                        <dim_weight>0.0</dim_weight>
-                        <dim_weight_flag>false</dim_weight_flag>
-                        <height>0.0</height>
-                        <id>-1</id>
-                        <length>0.0</length>
-                        <min_weight_flag>false</min_weight_flag>
-                        <package_num>0</package_num>
-                        <package_reference>0</package_reference>
-                        <reference />
-                        <reported_weight>1.0</reported_weight>
-                        <store_num />
-                        <width>0.0</width>
-                        <xc>false</xc>
+                    <dimention_unit>I</dimention_unit>
+                    <packages>
+                        <height>1.18</height>
+                        <length>3.94</length>
+                        <reported_weight>1.</reported_weight>
+                        <width>1.18</width>
+                        <xc>true</xc>
                     </packages>
-                    <pickup_address xmlns="http://dto.canshipws.canpar.com/xsd">
-                        <address_id>A1</address_id>
-                        <address_line_1>1 TEST ST</address_line_1>
-                        <address_line_2 />
-                        <address_line_3 />
-                        <attention />
-                        <city>TORONTO</city>
+                    <pickup_address>
+                        <address_line_1>502 MAIN ST N</address_line_1>
+                        <address_line_2></address_line_2>
+                        <attention>Bob</attention>
+                        <city>MONTREAL</city>
                         <country>CA</country>
-                        <email>1@1.COM,2@2.COM</email>
-                        <extension>23</extension>
-                        <id>-1</id>
-                        <name>TEST ADDRESS</name>
-                        <phone>4161234567</phone>
-                        <postal_code>M4X1W7</postal_code>
-                        <province>ON</province>
+                        <name>CGI</name>
+                        <phone>1 (450) 823-8432</phone>
+                        <postal_code>H2B1A0</postal_code>
+                        <province>QC</province>
                         <residential>false</residential>
                     </pickup_address>
-                    <ns2:premium xmlns:ns2="http://dto.canshipws.canpar.com/xsd">N</ns2:premium>
-                    <ns2:premium_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:premium_charge>
-                    <ns2:proforma xmlns:ns2="http://dto.canshipws.canpar.com/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="1" />
-                    <ns2:ra_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:ra_charge>
-                    <ns2:reported_weight_unit xmlns:ns2="http://dto.canshipws.canpar.com/xsd">L</ns2:reported_weight_unit>
-                    <ns2:rural_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:rural_charge>
-                    <ns2:send_email_to_delivery xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:send_email_to_delivery>
-                    <ns2:send_email_to_pickup xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:send_email_to_pickup>
-                    <ns2:service_type xmlns:ns2="http://dto.canshipws.canpar.com/xsd">1</ns2:service_type>
-                    <ns2:shipment_status xmlns:ns2="http://dto.canshipws.canpar.com/xsd">R</ns2:shipment_status>
-                    <ns2:shipper_num xmlns:ns2="http://dto.canshipws.canpar.com/xsd">99999999</ns2:shipper_num>
-                    <ns2:shipping_date xmlns:ns2="http://dto.canshipws.canpar.com/xsd">2012-06-15T00:00:00.000-04:00</ns2:shipping_date>
-                    <ns2:tax_charge_1 xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:tax_charge_1>
-                    <ns2:tax_charge_2 xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:tax_charge_2>
-                    <ns2:tax_code_1 xmlns:ns2="http://dto.canshipws.canpar.com/xsd" />
-                    <ns2:tax_code_2 xmlns:ns2="http://dto.canshipws.canpar.com/xsd" />
-                    <ns2:transit_time xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0</ns2:transit_time>
-                    <ns2:transit_time_guaranteed xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:transit_time_guaranteed>
-                    <ns2:user_id xmlns:ns2="http://dto.canshipws.canpar.com/xsd" />
-                    <ns2:voided xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:voided>
-                    <ns2:xc_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:xc_charge>
-                    <ns2:zone xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0</ns2:zone>
+                    <reported_weight_unit>L</reported_weight_unit>
+                    <service_type>1</service_type>
+                    
                 </shipment>
-                <ns1:user_id xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">user_id</ns1:user_id>
-            </ns3:request>
-        </ns3:rateShipment>
+                <user_id>user_id</user_id>
+            </ws:request>
+        </ws:rateShipment>
     </soapenv:Body>
 </soapenv:Envelope>
 """

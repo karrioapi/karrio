@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Tuple, Optional
 from pycanpar.CanparRatingService import (
     rateShipment,
@@ -9,34 +10,55 @@ from pycanpar.CanparRatingService import (
 from purplship.core.models import (
     RateRequest,
     RateDetails,
-    Message
+    Message,
+    ChargeDetails
 )
 from purplship.core.units import Packages
-from purplship.core.utils import Serializable, Envelope, create_envelope, Element
+from purplship.core.utils import Serializable, Envelope, create_envelope, Element, build, decimal
 from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
-from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service
+from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service, Charges
 
 
 def parse_rate_shipment_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
-    rates = []
+    shipment_nodes = response.xpath(".//*[local-name() = $name]", name="shipment")
+    rates: List[RateDetails] = [
+        _extract_rate_details(node, settings) for node in shipment_nodes
+    ]
     return rates, parse_error_response(response, settings)
 
 
-def _extract_rate(node: Element, settings: Settings) -> RateDetails:
-    extra_charges = []
+def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
+    shipment = build(Shipment, node)
+    surcharges = [
+        ChargeDetails(
+            name=charge.value,
+            amount=decimal(getattr(shipment, charge.name)),
+            currency='CAD'
+        )
+        for charge in list(Charges)
+        if decimal(getattr(shipment, charge.name)) > 0.0
+    ]
+    taxes = [
+        ChargeDetails(
+            name=f'{getattr(shipment, code)} Tax Charge',
+            amount=decimal(decimal(charge)),
+            currency='CAD'
+        )
+        for code, charge in [('tax_code_1', shipment.tax_charge_1), ('tax_code_2', shipment.tax_charge_2)]
+        if decimal(charge) > 0.0
+    ]
 
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        currency=None,
-        transit_days=None,
-        service=None,
-        discount=None,
-        base_charge=None,
-        total_charge=None,
-        duties_and_taxes=None,
-        extra_charges=extra_charges,
+        currency="CAD",
+        transit_days=shipment.transit_time,
+        service=Service(shipment.service_type).name,
+        base_charge=decimal(shipment.freight_charge),
+        total_charge=sum([c.amount for c in (surcharges + taxes)], 0.0),
+        duties_and_taxes=sum([t.amount for t in taxes], 0.0),
+        extra_charges=(surcharges + taxes),
     )
 
 
@@ -81,7 +103,7 @@ def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializa
                         residential=payload.recipient.residential,
                     ),
                     description=None,
-                    dg=options.get('canpar_dangerous_goods'),
+                    dg=('canpar_dangerous_goods' in options) or None,
                     dimention_unit=DimensionUnit.IN.value,
                     handling=None,
                     handling_type=None,
@@ -102,7 +124,7 @@ def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializa
                             reported_weight=pkg.weight.LB,
                             store_num=None,
                             width=pkg.width.CM,
-                            xc=None
+                            xc=('canpar_extra_care' in options) or None
                         ) for pkg in packages
                     ],
                     pickup_address=Address(
@@ -127,7 +149,7 @@ def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializa
                     send_email_to_pickup=payload.shipper.email,
                     service_type=service_type,
                     shipper_num=None,
-                    shipping_date=None,
+                    shipping_date=datetime.today().strftime('%Y-%m-%dT%H:%M:%S'),
                     subtotal=None,
                     subtotal_with_handling=None,
                     total=None,

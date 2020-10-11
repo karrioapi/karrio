@@ -19,6 +19,21 @@ class DimensionUnit(Enum):
     CM = 'C'
 
 
+class Charges(Flag):
+    cod_charge = 'Cash On Delivery'
+    cos_charge = 'Chain of Signature'
+    dg_charge = 'Dangerous Goods'
+    dv_charge = 'Declared Value'
+    ea_charge = 'Extended Area'
+    freight_charge = 'Freight Charge'
+    fuel_surcharge = 'Fuel Surcharge'
+    handling = 'Handling Charge'
+    premium_charge = 'Premium Service Charge'
+    ra_charge = 'Residential Address Surcharge'
+    rural_charge = 'Rural Address Surcharge'
+    xc_charge = 'Extra Care Charge'
+
+
 class Service(Enum):
     canpar_ground = '1'
     canpar_usa = '2'
@@ -36,8 +51,8 @@ class Service(Enum):
 
 class Option(Flag):
     canpar_cash_on_delivery = 'N'
-    canpar_dangerous_goods = True
-    canpar_extra_care = True
+    canpar_dangerous_goods = 'dg'
+    canpar_extra_care = 'xc'
     canpar_ten_am = 'A'
     canpar_noon = 'B'
     canpar_no_signature_required = '2'

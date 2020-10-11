@@ -228,7 +228,7 @@ class COD:
 class Notification:
     """notification option type."""
 
-    email: str = None  # Only defined if other email than shipper
+    email: str = None  # Only defined if other email than recipient
     locale: str = "en"
 
 
