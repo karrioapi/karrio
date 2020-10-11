@@ -15,5 +15,6 @@ def parse_error_response(response: Element, settings: Settings) -> List[Message]
                 message=error.text,
             )
             for error in errors
+            if error.text is not None
         ]
     )

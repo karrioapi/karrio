@@ -28,12 +28,13 @@ def default_request_serializer(envelope: Envelope) -> str:
     namespace_ = (
         ' xmlns:soap="http://www.w3.org/2003/05/soap-envelope"'
         ' xmlns:ws="http://ws.onlinerating.canshipws.canpar.com"'
-        ' xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd"'
+        ' xmlns="http://ws.dto.canshipws.canpar.com/xsd"'
         ' xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"'
     )
-    envelope.ns_prefix_ = 'soap'
+    envelope.ns_prefix_ = 'soapenv'
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    envelope.Header.ns_prefix_ = envelope.ns_prefix_
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "ws")
+    envelope.Body.anytypeobjs_[0].ns_prefix_ = "ws"
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0].request, "")
+    envelope.Body.anytypeobjs_[0].request.ns_prefix_ = "ws"
 
     return export(envelope, namespacedef_=namespace_)

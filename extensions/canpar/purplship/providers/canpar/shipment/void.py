@@ -14,7 +14,7 @@ from purplship.core.utils import (
     Element,
     Serializable,
 )
-from purplship.providers.error import parse_error_response
+from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
 
 
