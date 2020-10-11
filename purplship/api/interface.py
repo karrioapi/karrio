@@ -16,6 +16,7 @@ from purplship.core.models import (
     PickupCancellationRequest,
     PickupUpdateRequest,
     Message,
+    VoidShipmentRequest,
 )
 
 logger = logging.getLogger(__name__)
@@ -200,6 +201,23 @@ class Shipment:
             @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_shipment_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestWith(action)
+
+    @staticmethod
+    def void(args: Union[VoidShipmentRequest, dict]):
+        logger.debug(f"void a shipment. payload: {jsonify(args)}")
+        payload = args if isinstance(args, VoidShipmentRequest) else VoidShipmentRequest(**args)
+
+        def action(gateway: Gateway):
+            request: Serializable = gateway.mapper.create_void_shipment_request(payload)
+            response: Deserializable = gateway.proxy.void_shipment(request)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_void_shipment_response(response)
 
             return IDeserialize(deserialize)
 
