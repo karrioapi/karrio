@@ -24,7 +24,7 @@ from purplship.providers.canpar import (
     parse_rate_shipment_response,
     track_by_barcode,
     parse_track_response,
-    process_shipment,
+    create_shipment_pipeline,
     parse_shipment_response,
     void_shipment_request,
     parse_void_shipment_response,
@@ -59,8 +59,8 @@ class Mapper(BaseMapper):
 
     def create_shipment_request(
         self, payload: ShipmentRequest
-    ) -> Serializable[Envelope]:
-        return process_shipment(payload, self.settings)
+    ) -> Serializable[Pipeline]:
+        return create_shipment_pipeline(payload, self.settings)
 
     def create_void_shipment_request(self, payload: VoidShipmentRequest) -> Serializable:
         return void_shipment_request(payload, self.settings)

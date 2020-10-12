@@ -3,7 +3,7 @@ from purplship.providers.canpar.rate import rate_shipment_request, parse_rate_sh
 from purplship.providers.canpar.track import track_by_barcode, parse_track_response
 from purplship.providers.canpar.address import search_canada_post, parse_search_response
 from purplship.providers.canpar.shipment import (
-    process_shipment,
+    create_shipment_pipeline,
     parse_shipment_response,
     void_shipment_request,
     parse_void_shipment_response

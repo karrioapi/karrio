@@ -65,13 +65,23 @@ class Proxy(BaseProxy):
         return Deserializable(bundle_xml(xml_strings=response), to_xml)
 
     def create_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
-        response = self._send_request(
-            path="/CanshipBusinessService.CanshipBusinessServiceHttpSoap12Endpoint/",
-            soapaction="urn:processShipment",
-            request=request,
-        )
+        def process(job: Job):
+            if job.data is None:
+                return job.fallback
 
-        return Deserializable(response, to_xml)
+            return self._send_request(
+                path="/CanshipBusinessService.CanshipBusinessServiceHttpSoap12Endpoint/",
+                request=job.data,
+                soapaction=dict(
+                    process="urn:processShipment",
+                    get_label="urn:getLabels",
+                )[job.id],
+            )
+
+        pipeline: Pipeline = request.serialize()
+        response = pipeline.apply(process)
+
+        return Deserializable(bundle_xml(response), to_xml)
 
     def void_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(

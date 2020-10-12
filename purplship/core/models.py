@@ -139,7 +139,7 @@ class ShipmentRequest:
 class VoidShipmentRequest:
     """void shipment request type."""
 
-    tracking_number: str
+    shipment_identifier: str
 
 
 @attr.s(auto_attribs=True)

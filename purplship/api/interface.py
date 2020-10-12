@@ -221,7 +221,7 @@ class Shipment:
 
             return IDeserialize(deserialize)
 
-        return IRequestWith(action)
+        return IRequestFrom(action)
 
 
 class Tracking:

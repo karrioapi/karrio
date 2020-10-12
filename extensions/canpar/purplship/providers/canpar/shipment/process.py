@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Tuple, Optional
 from pycanpar.CanshipBusinessService import (
     processShipment,
@@ -15,26 +16,43 @@ from purplship.core.utils import (
     Serializable,
     Element,
     create_envelope,
-    Envelope
+    Envelope,
+    build,
 )
 from purplship.core.units import Packages
 from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
 from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service
+from purplship.providers.canpar.rate import _extract_rate_details
 
 
 def parse_shipment_response(response: Element, settings: Settings) -> Tuple[ShipmentDetails, List[Message]]:
-    detail: ShipmentDetails = None
+    shipment = build(
+        Shipment, next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None)
+    )
+    success = (shipment is not None and shipment.id is not None)
+    shipment_details = _extract_shipment_details(response, settings) if success else None
 
-    return detail, parse_error_response(response, settings)
+    return shipment_details, parse_error_response(response, settings)
 
 
-def _extract_tracking_details(node: Element, settings: Settings) -> ShipmentDetails:
+def _extract_shipment_details(response: Element, settings: Settings) -> ShipmentDetails:
+    shipment_node = next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None)
+    label = next(iter(response.xpath(".//*[local-name() = $name]", name="labels")), None)
+    shipment = build(Shipment, shipment_node)
+    tracking_number = next(iter(shipment.packages), Package()).barcode
 
-    return ShipmentDetails()
+    return ShipmentDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        label=label.text,
+        tracking_number=tracking_number,
+        selected_rate=_extract_rate_details(shipment_node, settings),
+        meta=dict(shipment_id=shipment.id)
+    )
 
 
-def process_shipment(payload: ShipmentRequest, settings: Settings) -> Serializable[List[Envelope]]:
+def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[List[Envelope]]:
     packages = Packages(payload.parcels)
     service_type: Optional[str] = (
         Service[payload.service] if payload.service in Service.__members__ else None
@@ -71,7 +89,7 @@ def process_shipment(payload: ShipmentRequest, settings: Settings) -> Serializab
                         residential=payload.recipient.residential,
                     ),
                     description=None,
-                    dg=options.get('canpar_dangerous_goods'),
+                    dg=('canpar_dangerous_goods' in options) or None,
                     dimention_unit=DimensionUnit.IN.value,
                     handling=None,
                     handling_type=None,
@@ -92,7 +110,7 @@ def process_shipment(payload: ShipmentRequest, settings: Settings) -> Serializab
                             reported_weight=pkg.weight.LB,
                             store_num=None,
                             width=pkg.width.CM,
-                            xc=None
+                            xc=('canpar_extra_care' in options) or None
                         ) for pkg in packages
                     ],
                     pickup_address=Address(
@@ -117,7 +135,7 @@ def process_shipment(payload: ShipmentRequest, settings: Settings) -> Serializab
                     send_email_to_pickup=payload.shipper.email,
                     service_type=service_type,
                     shipper_num=None,
-                    shipping_date=None,
+                    shipping_date=datetime.today().strftime('%Y-%m-%dT%H:%M:%S'),
                     subtotal=None,
                     subtotal_with_handling=None,
                     total=None,

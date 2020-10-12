@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from pycanpar.CanshipBusinessService import (
     voidShipment,
-    VoidShipmentRq
+    VoidShipmentRq,
 )
 from purplship.core.models import (
     VoidShipmentRequest,
@@ -19,9 +19,15 @@ from purplship.providers.canpar.utils import Settings, default_request_serialize
 
 
 def parse_void_shipment_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
-    confirmation: ConfirmationDetails = None
+    errors = parse_error_response(response, settings)
+    success = len(errors) == 0
+    confirmation: ConfirmationDetails = ConfirmationDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        success=success
+    ) if success else None
 
-    return confirmation, parse_error_response(response, settings)
+    return confirmation, errors
 
 
 def void_shipment_request(payload: VoidShipmentRequest, settings: Settings) -> Serializable[Envelope]:
@@ -29,7 +35,7 @@ def void_shipment_request(payload: VoidShipmentRequest, settings: Settings) -> S
     request = create_envelope(
         body_content=voidShipment(
             request=VoidShipmentRq(
-                id=payload.tracking_number,
+                id=int(payload.shipment_identifier),
                 password=settings.password,
                 user_id=settings.user_id
             )
