@@ -93,6 +93,15 @@ class Proxy(BaseProxy):
         return Deserializable(response, to_xml)
 
     def request_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
+        response = self._send_request(
+            path="/CanparAddonsService.CanparAddonsServiceHttpSoap12Endpoint/",
+            soapaction="urn:schedulePickupV2",
+            request=request,
+        )
+
+        return Deserializable(response, to_xml)
+
+    def modify_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
         def process(job: Job):
             if job.data is None:
                 return job.fallback
@@ -111,19 +120,10 @@ class Proxy(BaseProxy):
 
         return Deserializable(bundle_xml(response), to_xml)
 
-    def modify_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
-        response = self._send_request(
-            path="",
-            soapaction="",
-            request=request,
-        )
-
-        return Deserializable(response, to_xml)
-
     def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
-            path="",
-            soapaction="",
+            path="/CanparAddonsService.CanparAddonsServiceHttpSoap12Endpoint/",
+            soapaction="urn:cancelPickup",
             request=request,
         )
 

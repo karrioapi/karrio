@@ -1,12 +1,12 @@
 from typing import List, Tuple
 from pycanpar.CanparAddonsService import (
     cancelPickup,
-    CancelPickupRq
+    CancelPickupRq,
 )
 from purplship.core.models import (
     PickupCancellationRequest,
     ConfirmationDetails,
-    Message
+    Message,
 )
 from purplship.core.utils import (
     create_envelope,
@@ -19,9 +19,15 @@ from purplship.providers.canpar.utils import Settings, default_request_serialize
 
 
 def parse_cancel_pickup_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
-    confirmation: ConfirmationDetails = None
+    errors = parse_error_response(response, settings)
+    success = len(errors) == 0
+    confirmation: ConfirmationDetails = ConfirmationDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        success=success
+    ) if success else None
 
-    return confirmation, parse_error_response(response, settings)
+    return confirmation, errors
 
 
 def cancel_pickup_request(payload: PickupCancellationRequest, settings: Settings) -> Serializable[Envelope]:
@@ -29,7 +35,7 @@ def cancel_pickup_request(payload: PickupCancellationRequest, settings: Settings
     request = create_envelope(
         body_content=cancelPickup(
             request=CancelPickupRq(
-                id=payload.confirmation_number,
+                id=int(payload.confirmation_number),
                 password=settings.password,
                 user_id=settings.user_id
             )

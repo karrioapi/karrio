@@ -18,11 +18,13 @@ def format_date(date_str: str = None, current_format: str = "%Y-%m-%d"):
     return date.strftime("%Y-%m-%d")
 
 
-def format_datetime(date_str: str = None, current_format: str = "%Y-%m-%d %H:%M:%S"):
+def format_datetime(
+    date_str: str = None, current_format: str = "%Y-%m-%d %H:%M:%S", output_format: str = "%Y-%m-%d %H:%M:%S"
+):
     date = to_date(date_str, current_format)
     if date is None:
         return None
-    return date.strftime("%Y-%m-%d %H:%M:%S")
+    return date.strftime(output_format)
 
 
 def format_time(
