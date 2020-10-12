@@ -136,6 +136,13 @@ class ShipmentRequest:
 
 
 @attr.s(auto_attribs=True)
+class VoidShipmentRequest:
+    """void shipment request type."""
+
+    shipment_identifier: str
+
+
+@attr.s(auto_attribs=True)
 class RateRequest:
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
@@ -221,7 +228,7 @@ class COD:
 class Notification:
     """notification option type."""
 
-    email: str = None  # Only defined if other email than shipper
+    email: str = None  # Only defined if other email than recipient
     locale: str = "en"
 
 
@@ -303,6 +310,7 @@ class TrackingDetails:
     carrier_id: str
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+    delivered: bool = None
 
 
 @attr.s(auto_attribs=True)

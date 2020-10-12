@@ -10,6 +10,7 @@ from purplship.core.models import (
     TrackingRequest,
     ShipmentDetails,
     ShipmentRequest,
+    VoidShipmentRequest,
     PickupRequest,
     PickupCancellationRequest,
     PickupUpdateRequest,
@@ -33,15 +34,7 @@ class Mapper(ABC):
     def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable:
         """ Create a carrier specific address validation request data from the payload """
         raise MethodNotSupportedError(
-            self.__class__.create_address_validation_request.__name__, self.__class__.__name__
-        )
-
-    def parse_address_validation_response(
-        self, response: Deserializable
-    ) -> Tuple[AddressValidationDetails, List[Message]]:
-        """ Create a unified API address validation details from the carrier response  """
-        raise MethodNotSupportedError(
-            self.__class__.parse_address_validation_response.__name__, self.__class__.__name__
+            self.__class__.create_address_validation_request.__name__, self.settings.carrier_name
         )
 
     def create_rate_request(self, payload: RateRequest) -> Serializable:
@@ -78,12 +71,36 @@ class Mapper(ABC):
             self.__class__.create_shipment_request.__name__, self.settings.carrier_name
         )
 
+    def create_void_shipment_request(self, payload: VoidShipmentRequest) -> Serializable:
+        """ Create a carrier specific void shipment request data from payload """
+        raise MethodNotSupportedError(
+            self.__class__.create_void_shipment_request.__name__, self.settings.carrier_name
+        )
+
+    """Response Parsers"""
+
+    def parse_address_validation_response(
+        self, response: Deserializable
+    ) -> Tuple[AddressValidationDetails, List[Message]]:
+        """ Create a unified API address validation details from the carrier response  """
+        raise MethodNotSupportedError(
+            self.__class__.parse_address_validation_response.__name__, self.settings.carrier_name
+        )
+
     def parse_shipment_response(
         self, response: Deserializable
     ) -> Tuple[ShipmentDetails, List[Message]]:
         """ Create a unified API shipment creation result from carrier response  """
         raise MethodNotSupportedError(
             self.__class__.parse_shipment_response.__name__, self.settings.carrier_name
+        )
+
+    def parse_void_shipment_response(
+        self, response: Deserializable
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        """ Create a unified API operation confirmation detail from the carrier response  """
+        raise MethodNotSupportedError(
+            self.__class__.parse_void_shipment_response.__name__, self.settings.carrier_name
         )
 
     def create_pickup_request(self, payload: PickupRequest) -> Serializable:
