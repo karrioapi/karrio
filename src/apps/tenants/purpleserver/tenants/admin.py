@@ -4,8 +4,8 @@ from django.contrib.auth.models import User, Group
 
 
 class TenantsAdmin(AdminSite):
-    site_header = "PurplShip"
-    site_title = "PurplShip"
+    site_header = "Purplship"
+    site_title = "Purplship"
     index_title = "System Configuration"
 
 

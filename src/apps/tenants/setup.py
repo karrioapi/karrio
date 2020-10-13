@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.tenants',
-      version='2020.8.0-alpha',
+      version='2020.10.0',
       description='Multi-carrier shipping API muti-tenant module',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/PurplShip/purplship-server',
-      author='PurplShip',
+      author='Purplship Team',
       author_email='danielk.developer@gmail.com',
       license='AGPLv3',
       packages=find_namespace_packages("."),

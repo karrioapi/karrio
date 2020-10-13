@@ -2,4 +2,4 @@ from tenant_schemas.management.commands.migrate_schemas import Command as Migrat
 
 
 class Command(MigrateSchemasCommand):
-    requires_system_checks = True
+    requires_system_checks = []

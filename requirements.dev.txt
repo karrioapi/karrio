@@ -1,5 +1,13 @@
 -f https://git.io/purplship
 
+-e git+https://github.com/PurplShip/purplship.git@purplship-2020.10.0#egg=purplship
+-e git+https://github.com/PurplShip/purplship.git@purplship-2020.10.0#egg=purplship-canadapost&subdirectory=extensions/canadapost
+-e git+https://github.com/PurplShip/purplship.git@purplship-2020.10.0#egg=purplship-canpar&subdirectory=extensions/canpar
+-e git+https://github.com/PurplShip/purplship.git@purplship-2020.10.0#egg=purplship-dhl_express&subdirectory=extensions/dhl_express
+-e git+https://github.com/PurplShip/purplship.git@purplship-2020.10.0#egg=purplship-fedex&subdirectory=extensions/fedex
+-e git+https://github.com/PurplShip/purplship.git@purplship-2020.10.0#egg=purplship-purolator&subdirectory=extensions/purolator
+-e git+https://github.com/PurplShip/purplship.git@purplship-2020.10.0#egg=purplship-ups&subdirectory=extensions/ups
+
 -e ./src/apps/core
 -e ./src/purpleserver[dev]
 -e ./src/apps/client
