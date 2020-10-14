@@ -22,35 +22,44 @@
             {% endif %}
 
             <div class="field mt-6">
-                {{ form.username.errors }}
-                <label class="label" for="{{ form.username.id_for_label }}">{% trans 'Username' %}</label>
+                <label class="label" for="{{ form.email.id_for_label }}">{% trans 'Email' %}</label>
                 <div class="control">
-                    <input class="input" id="{{ form.username.id_for_label }}"
-                       name="{{ form.username.html_name }}" type="text"
-                       placeholder="{% trans 'Username' %}">
+                    <input class="input" id="{{ form.email.id_for_label }}"
+                       name="{{ form.email.html_name }}" type="email"
+                       placeholder="{% trans 'Email' %}" required>
                 </div>
+                <div class="has-text-danger">{{ form.email.errors }}</div>
             </div>
             <div class="field mt-5">
-                {{ form.password1.errors }}
+                <label class="label" for="{{ form.full_name.id_for_label }}">{% trans 'Full name' %}</label>
+                <div class="control">
+                    <input class="input" id="{{ form.full_name.id_for_label }}"
+                       name="{{ form.full_name.html_name }}" type="text"
+                       placeholder="{% trans 'Full name' %}">
+                </div>
+                <div class="has-text-danger">{{ form.full_name.errors }}</div>
+            </div>
+            <div class="field mt-5">
                 <label class="label" for="{{ form.password1.id_for_label }}">
                    {% trans 'Password' %}
                 </label>
                 <div class="control">
                     <input class="input" id="{{ form.password1.id_for_label }}"
                        name="{{ form.password1.html_name }}" type="password"
-                       placeholder="{% trans 'Password' %}">
+                       placeholder="{% trans 'Password' %}" required>
                 </div>
+                <div class="has-text-danger">{{ form.password1.errors }}</div>
             </div>
             <div class="field mt-5">
-                {{ form.password2.errors }}
                 <label class="label level" for="{{ form.password2.id_for_label }}">
                     {% trans 'Password Confirmation' %}
                 </label>
                 <div class="control">
                     <input class="input" id="{{ form.password2.id_for_label }}"
                        name="{{ form.password2.html_name }}" type="password"
-                       placeholder="{% trans 'Password Confirmation' %}">
+                       placeholder="{% trans 'Password Confirmation' %}" required>
                 </div>
+                <div class="has-text-danger">{{ form.password2.errors }}</div>
             </div>
 
             <div class="field mt-6">

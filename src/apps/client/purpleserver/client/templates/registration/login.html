@@ -34,16 +34,15 @@
             {% endif %}
 
             <div class="field mt-6">
-                {{ form.username.errors }}
-                <label class="label" for="{{ form.username.id_for_label }}">{% trans 'Username' %}</label>
+                <label class="label" for="{{ form.username.id_for_label }}">{% trans 'Email' %}</label>
                 <div class="control">
                     <input class="input" id="{{ form.username.id_for_label }}"
-                       name="{{ form.username.html_name }}" type="text"
-                       placeholder="{% trans 'Username' %}">
+                       name="{{ form.username.html_name }}" type="email"
+                       placeholder="{% trans 'Email' %}" required>
                 </div>
+                <div class="has-text-danger">{{ form.username.errors }}</div>
             </div>
             <div class="field mt-5">
-                {{ form.password.errors }}
                 <label class="label level" for="{{ form.password.id_for_label }}">
                     <span>{% trans 'Password' %}</span>
                     <a class="is-size-7" href="{% url 'password_reset' %}" tabindex="-1">Forgot your password?</a>
@@ -52,9 +51,10 @@
                 <div class="control">
                     <input class="input" id="{{ form.password.id_for_label }}"
                        name="{{ form.password.html_name }}" type="password"
-                       placeholder="{% trans 'Password' %}">
+                       placeholder="{% trans 'Password' %}" required>
                     <input type="hidden" name="next" value="{{ next }}">
                 </div>
+                <div class="has-text-danger">{{ form.password.errors }}</div>
             </div>
 
             <div class="field mt-6">

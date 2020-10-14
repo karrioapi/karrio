@@ -76,7 +76,8 @@ PURPLSHIP_APPS = [cfg['app'] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF if 'urls' in cfg]
 
 
-DJANGO_APPS = [
+BASE_APPS = [
+    'purpleserver.user',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -87,7 +88,7 @@ DJANGO_APPS = [
 
 INSTALLED_APPS = [
     *PURPLSHIP_APPS,
-    *DJANGO_APPS,
+    *BASE_APPS,
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -112,6 +113,8 @@ LOGOUT_REDIRECT_URL = '/login/' if HAS_CLIENT_APP else '/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 OPEN_API_PATH = 'api/' if HAS_CLIENT_APP else ''
+
+CLIENT_REGISTRATION_VIEWS = 'purpleserver.client.views.registration'
 
 
 TEMPLATES = [
@@ -168,6 +171,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_USER_MODEL = 'user.User'
 
 
 # Internationalization
