@@ -8,7 +8,7 @@ class APITestCase(BaseAPITestCase):
 
     def setUp(self) -> None:
         self.maxDiff = None
-        self.user = User.objects.create_superuser('test', 'admin@example.com', 'test')
+        self.user = User.objects.create_superuser('admin@example.com', 'test')
         self.token = Token.objects.create(user=self.user)
         CanadaPostSettings.objects.create(
             carrier_id='canadapost',
