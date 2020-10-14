@@ -128,6 +128,8 @@ rundb() {
   export DATABASE_ENGINE=postgresql_psycopg2
   export DATABASE_USERNAME=postgres
   export DATABASE_PASSWORD=postgres
+
+  sleep 5
 }
 
 runserver() {
@@ -140,7 +142,6 @@ runserver() {
 
   if [[ "$*" == *--rdb* ]]; then
     rundb
-    sleep 5
   fi
 
   if [[ "$*" == *--rdata* ]]; then
