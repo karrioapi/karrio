@@ -14,7 +14,7 @@ User = get_user_model()
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'email', 'username', 'is_staff']
+        fields = ['email', 'full_name', 'is_staff']
         read_only_fields = ['is_staff']
 
     def update(self, instance: User, validated_data: dict) -> User:

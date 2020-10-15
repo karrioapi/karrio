@@ -24,8 +24,8 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
                                 <i className="fas fa-check"></i>
                             </span>
                         </div>
-                        <h3>{user.firstName}</h3>
-                        <p>{user.username}</p>
+                        <h3>{user.fullName}</h3>
+                        <p>{user.email}</p>
                     </div>
                 </div>
             </div>

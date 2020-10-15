@@ -67,7 +67,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
       {(shipments.length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
-          <p>No Shipment have been created yet.</p>
+          <p>No shipment has been created yet.</p>
           <p>Use the use the <strong>API</strong> to create your first shipment.</p>
         </div>
 

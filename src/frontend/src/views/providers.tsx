@@ -23,7 +23,7 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
       {(providers.length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
-          <p>No Carriers have been connected yet.</p>
+          <p>No carriers have been connected yet.</p>
           <p>Use the <strong>Connect a Carrier</strong> button above to add a new connection</p>
         </div>
 

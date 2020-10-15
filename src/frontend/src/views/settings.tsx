@@ -30,7 +30,7 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
 
         <div className="column is-7">
           <ProfileUpdateInput label="Email Address" propertyKey="email" inputType="email" user={user} />
-          <ProfileUpdateInput label="Name (Optional)" propertyKey="firstName" inputType="text" user={user} />
+          <ProfileUpdateInput label="Name (Optional)" propertyKey="fullName" inputType="text" user={user} />
         </div>
       </div>
 

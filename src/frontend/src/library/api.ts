@@ -8,9 +8,8 @@ import { distinct } from 'rxjs/operators';
 const INITIAL_TOKEN = collectToken();
 
 export interface UserInfo {
-    firstName: string | null;
+    fullName: string | null;
     email: string | null;
-    username: string | null;
     readonly isStaff: boolean;
 }
 
@@ -141,7 +140,7 @@ class AppState {
         const response = await fetch("/token", {
             method: "PUT",
             headers: this.headers,
-            body: (JSON.stringify({ username: this.user$.value.username, password }) as any)
+            body: (JSON.stringify({ username: this.user$.value.email, password }) as any)
         });
         if (response.ok) {
             const data = await response.json();
