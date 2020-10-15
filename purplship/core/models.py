@@ -136,8 +136,8 @@ class ShipmentRequest:
 
 
 @attr.s(auto_attribs=True)
-class VoidShipmentRequest:
-    """void shipment request type."""
+class ShipmentCancelRequest:
+    """shipment cancellation request type."""
 
     shipment_identifier: str
 
@@ -194,7 +194,7 @@ class PickupUpdateRequest:
 
 
 @attr.s(auto_attribs=True)
-class PickupCancellationRequest:
+class PickupCancelRequest:
     """pickup cancellation request type."""
 
     confirmation_number: str

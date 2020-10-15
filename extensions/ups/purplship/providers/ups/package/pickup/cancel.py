@@ -6,7 +6,7 @@ from pyups.pickup_web_service_schema import (
 )
 from purplship.core.utils import Envelope, Element, create_envelope, Serializable, build
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     ConfirmationDetails,
     Message,
 )
@@ -39,7 +39,7 @@ def parse_cancel_pickup_response(
 
 
 def cancel_pickup_request(
-    payload: PickupCancellationRequest, settings: Settings
+    payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[Envelope]:
 
     request = create_envelope(

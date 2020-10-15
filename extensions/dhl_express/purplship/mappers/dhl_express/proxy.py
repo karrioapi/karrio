@@ -47,7 +47,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, to_xml)
 
-    def request_pickup(
+    def schedule_pickup(
         self, request: Serializable[BookPURequest]
     ) -> Deserializable[str]:
         response = self._send_request(request)

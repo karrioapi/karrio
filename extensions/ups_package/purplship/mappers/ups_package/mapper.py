@@ -13,7 +13,7 @@ from purplship.core.models import (
     Message,
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancellationRequest,
+    PickupCancelRequest,
     PickupDetails,
     ConfirmationDetails,
     AddressValidationRequest,
@@ -64,13 +64,13 @@ class Mapper(BaseMapper):
     def create_pickup_request(self, payload: PickupRequest) -> Serializable[Pipeline]:
         return create_pickup_pipeline(payload, self.settings)
 
-    def create_modify_pickup_request(
+    def create_pickup_update_request(
         self, payload: PickupUpdateRequest
     ) -> Serializable[Pipeline]:
         return update_pickup_pipeline(payload, self.settings)
 
     def create_cancel_pickup_request(
-        self, payload: PickupCancellationRequest
+        self, payload: PickupCancelRequest
     ) -> Serializable[Envelope]:
         return cancel_pickup_request(payload, self.settings)
 
@@ -101,7 +101,7 @@ class Mapper(BaseMapper):
     ) -> Tuple[PickupDetails, List[Message]]:
         return parse_pickup_response(response.deserialize(), self.settings)
 
-    def parse_modify_pickup_response(
+    def parse_pickup_update_response(
         self, response: Deserializable
     ) -> Tuple[PickupDetails, List[Message]]:
         return parse_pickup_response(response.deserialize(), self.settings)

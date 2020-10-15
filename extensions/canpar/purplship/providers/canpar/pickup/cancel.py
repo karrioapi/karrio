@@ -4,7 +4,7 @@ from pycanpar.CanparAddonsService import (
     CancelPickupRq,
 )
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     ConfirmationDetails,
     Message,
 )
@@ -30,7 +30,7 @@ def parse_cancel_pickup_response(response: Element, settings: Settings) -> Tuple
     return confirmation, errors
 
 
-def cancel_pickup_request(payload: PickupCancellationRequest, settings: Settings) -> Serializable[Envelope]:
+def cancel_pickup_request(payload: PickupCancelRequest, settings: Settings) -> Serializable[Envelope]:
 
     request = create_envelope(
         body_content=cancelPickup(

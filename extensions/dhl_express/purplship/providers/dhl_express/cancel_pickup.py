@@ -4,7 +4,7 @@ from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     Message,
     ConfirmationDetails,
 )
@@ -33,7 +33,7 @@ def parse_cancel_pickup_response(
 
 
 def cancel_pickup_request(
-    payload: PickupCancellationRequest, settings: Settings
+    payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[CancelPURequest]:
     request = CancelPURequest(
         Request=settings.Request(

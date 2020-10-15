@@ -109,7 +109,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(bundle_xml(response), to_xml)
 
-    def request_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+    def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
         def _availability(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}/ad/pickup/pickupavailability/{job.data}",

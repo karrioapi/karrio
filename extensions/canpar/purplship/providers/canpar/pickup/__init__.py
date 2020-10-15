@@ -3,7 +3,7 @@ from functools import partial
 from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancellationRequest
+    PickupCancelRequest
 )
 from purplship.core.utils import (
     Pipeline,
@@ -36,7 +36,7 @@ def update_pickup_request(payload: PickupUpdateRequest, settings: Settings) -> S
 
 
 def _cancel_pickup(payload: PickupUpdateRequest, settings: Settings) -> Job:
-    data = PickupCancellationRequest(
+    data = PickupCancelRequest(
         confirmation_number=payload.confirmation_number,
         address=payload.address,
         pickup_date=payload.date,

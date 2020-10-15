@@ -5,7 +5,7 @@ from pypurolator.pickup_service_1_2_1 import (
     RequestContext,
 )
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     ConfirmationDetails,
     Message,
 )
@@ -32,7 +32,7 @@ def parse_void_pickup_reply(
 
 
 def void_pickup_request(
-    payload: PickupCancellationRequest, settings: Settings
+    payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[Envelope]:
 
     request = create_envelope(

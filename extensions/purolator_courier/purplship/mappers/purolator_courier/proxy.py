@@ -76,7 +76,7 @@ class Proxy(BaseProxy):
         _, *response = pipeline.apply(process)
         return Deserializable(bundle_xml(response), to_xml)
 
-    def request_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+    def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
         def process(job: Job):
             if job.data is None:
                 return job.fallback

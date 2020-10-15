@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     PickupRequest,
     PickupUpdateRequest,
 )
@@ -16,7 +16,7 @@ class TestDHLPickup(unittest.TestCase):
         self.maxDiff = None
         self.BookPURequest = PickupRequest(**book_pickup_payload)
         self.ModifyPURequest = PickupUpdateRequest(**modification_data)
-        self.CancelPURequest = PickupCancellationRequest(**cancellation_data)
+        self.CancelPURequest = PickupCancelRequest(**cancellation_data)
 
     def test_create_pickup_request(self):
         request = gateway.mapper.create_pickup_request(self.BookPURequest)
@@ -28,7 +28,7 @@ class TestDHLPickup(unittest.TestCase):
         self.assertEqual(serialized_request, PickupRequestXML)
 
     def test_create_modify_pickup_request(self):
-        request = gateway.mapper.create_modify_pickup_request(self.ModifyPURequest)
+        request = gateway.mapper.create_pickup_update_request(self.ModifyPURequest)
         # remove MessageTime for testing purpose
         serialized_request = re.sub(
             "<MessageTime>[^>]+</MessageTime>", "", request.serialize()
@@ -50,7 +50,7 @@ class TestDHLPickup(unittest.TestCase):
     def test_parse_request_pickup_response(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = PickupResponseXML
-            parsed_response = Pickup.book(self.BookPURequest).with_(gateway).parse()
+            parsed_response = Pickup.schedule(self.BookPURequest).with_(gateway).parse()
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupResponse))
 
@@ -71,7 +71,7 @@ class TestDHLPickup(unittest.TestCase):
     def test_parse_request_pickup_error(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = PickupErrorResponseXML
-            parsed_response = Pickup.book(self.BookPURequest).with_(gateway).parse()
+            parsed_response = Pickup.schedule(self.BookPURequest).with_(gateway).parse()
 
             self.assertEqual(
                 to_dict(parsed_response), to_dict(ParsedPickupErrorResponse)
