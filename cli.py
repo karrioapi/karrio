@@ -76,6 +76,12 @@ PACKAGE_MAPPERS = {
         'options': "OptionCode",
         'packagePresets': "PackagePresets"
     },
+    'canpar': {
+        'label': "Canpar",
+        'package': import_pkg('purplship.providers.canpar.units'),
+        'services': "Service",
+        'options': "Option"
+    },
     'dhl_express': {
         'label': "DHL Express",
         'package': import_pkg('purplship.providers.dhl_express.units'),

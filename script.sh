@@ -71,7 +71,7 @@ check() {
 
 backup_wheels() {
     # shellcheck disable=SC2154
-    [ -d "$wheels" ] &&
+    [[ -d "$wheels" ]] &&
     find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
     clean_builds
 }
