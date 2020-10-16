@@ -67,6 +67,7 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.AirwayBillNumber,
+        shipment_identifier=shipment.AirwayBillNumber,
         label=label,
     )
 

@@ -321,6 +321,7 @@ class ShipmentDetails:
     carrier_id: str
     label: str
     tracking_number: str
+    shipment_identifier: str
     selected_rate: RateDetails = JStruct[RateDetails]
     meta: dict = None
     id: str = None

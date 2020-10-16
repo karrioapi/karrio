@@ -69,6 +69,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
+        shipment_identifier=shipment.ShipmentIdentificationNumber,
         label=gif_to_pdf(graphic),
     )
 

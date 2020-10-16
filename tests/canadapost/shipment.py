@@ -163,6 +163,7 @@ ParsedShipmentResponse = [
         "carrier_id": "canadapost",
         "label": LabelResponse,
         "tracking_number": "123456789012",
+        "shipment_identifier": "123456789012",
     },
     [],
 ]

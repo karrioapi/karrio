@@ -147,7 +147,6 @@ ParsedShipmentResponse = [
         "carrier_id": "canpar",
         "carrier_name": "canpar",
         "label": "...ENCODED INFORMATION...",
-        "meta": {"shipment_id": 10000696},
         "selected_rate": {
             "base_charge": 7.57,
             "carrier_id": "canpar",
@@ -168,6 +167,7 @@ ParsedShipmentResponse = [
             "transit_days": 1,
         },
         "tracking_number": "D999999990000000461001",
+        "shipment_identifier": "10000696",
     },
     [],
 ]
