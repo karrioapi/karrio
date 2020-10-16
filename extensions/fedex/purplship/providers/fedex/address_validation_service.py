@@ -55,7 +55,7 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
         body_content=FedexAddressValidationRequest(
             WebAuthenticationDetail=settings.webAuthenticationDetail,
             ClientDetail=settings.clientDetail,
-            TransactionDetail=TransactionDetail(CustomerTransactionId="AddressValidationRequest_v2"),
+            TransactionDetail=TransactionDetail(CustomerTransactionId="AddressValidationRequest_v4"),
             Version=VersionId(ServiceId="aval", Major=4, Intermediate=0, Minor=0),
             InEffectAsOfTimestamp=None,
             AddressesToValidate=[

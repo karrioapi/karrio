@@ -127,7 +127,7 @@ def bundle_xml(xml_strings: List[str]) -> str:
 
     <wrapper>{all the XML trees concatenated}</wrapper>
     """
-    bundle = "".join([xml_tostring(to_xml(x)) for x in xml_strings if x != ""])
+    bundle = "".join([xml_tostring(to_xml(x)) for x in xml_strings if x is not None and x != ""])
     return f"<wrapper>{bundle}</wrapper>"
 
 

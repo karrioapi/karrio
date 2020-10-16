@@ -4,7 +4,7 @@ import logging
 from unittest.mock import patch
 import purplship
 from purplship.core.utils import to_dict
-from purplship.core.models import ShipmentRequest, VoidShipmentRequest
+from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from tests.canpar.fixture import gateway
 
 
@@ -12,7 +12,7 @@ class TestCanparShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
-        self.VoidShipmentRequest = VoidShipmentRequest(**void_shipment_data)
+        self.VoidShipmentRequest = ShipmentCancelRequest(**void_shipment_data)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -31,7 +31,9 @@ class TestCanparShipment(unittest.TestCase):
         self.assertEqual(get_label_request.data.serialize(), ShipmentLabelRequestXML)
 
     def test_create_void_shipment_request(self):
-        request = gateway.mapper.create_void_shipment_request(self.VoidShipmentRequest)
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.VoidShipmentRequest
+        )
 
         self.assertEqual(request.serialize(), VoidShipmentRequestXML)
 
@@ -63,7 +65,7 @@ class TestCanparShipment(unittest.TestCase):
     def test_void_shipment(self):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            purplship.Shipment.void(self.VoidShipmentRequest).from_(gateway)
+            purplship.Shipment.cancel(self.VoidShipmentRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -89,10 +91,14 @@ class TestCanparShipment(unittest.TestCase):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
             mock.return_value = VoidShipmentResponseXML
             parsed_response = (
-                purplship.Shipment.void(self.VoidShipmentRequest).from_(gateway).parse()
+                purplship.Shipment.cancel(self.VoidShipmentRequest)
+                .from_(gateway)
+                .parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedVoidShipmentResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedVoidShipmentResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -166,7 +172,10 @@ ParsedShipmentResponse = [
     [],
 ]
 
-ParsedVoidShipmentResponse = [{'carrier_id': 'canpar', 'carrier_name': 'canpar', 'success': True}, []]
+ParsedVoidShipmentResponse = [
+    {"carrier_id": "canpar", "carrier_name": "canpar", "success": True},
+    [],
+]
 
 
 ShipmentRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">

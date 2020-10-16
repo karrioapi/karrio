@@ -136,10 +136,13 @@ class ShipmentRequest:
 
 
 @attr.s(auto_attribs=True)
-class VoidShipmentRequest:
-    """void shipment request type."""
+class ShipmentCancelRequest:
+    """shipment cancellation request type."""
 
     shipment_identifier: str
+
+    service: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -194,17 +197,14 @@ class PickupUpdateRequest:
 
 
 @attr.s(auto_attribs=True)
-class PickupCancellationRequest:
+class PickupCancelRequest:
     """pickup cancellation request type."""
 
     confirmation_number: str
-    address: Address = JStruct[Address]  # TODO:: Make this field REQUIRED
+
+    address: Address = JStruct[Address]
     pickup_date: str = None
     reason: str = None
-
-    # Deprecated
-    person_name: str = None
-    country_code: str = None
 
 
 @attr.s(auto_attribs=True)

@@ -14,9 +14,9 @@ from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
     PickupDetails,
-    PickupCancellationRequest,
+    PickupCancelRequest,
     ConfirmationDetails,
-    VoidShipmentRequest
+    ShipmentCancelRequest
 )
 from purplship.core.utils import Envelope, Pipeline
 from purplship.providers.canpar import (
@@ -62,19 +62,19 @@ class Mapper(BaseMapper):
     ) -> Serializable[Pipeline]:
         return create_shipment_pipeline(payload, self.settings)
 
-    def create_void_shipment_request(self, payload: VoidShipmentRequest) -> Serializable:
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable:
         return void_shipment_request(payload, self.settings)
 
     def create_pickup_request(self, payload: PickupRequest) -> Serializable[Envelope]:
         return schedule_pickup_request(payload, self.settings)
 
-    def create_modify_pickup_request(
+    def create_pickup_update_request(
         self, payload: PickupUpdateRequest
     ) -> Serializable[Pipeline]:
         return update_pickup_request(payload, self.settings)
 
     def create_cancel_pickup_request(
-        self, payload: PickupCancellationRequest
+        self, payload: PickupCancelRequest
     ) -> Serializable[Envelope]:
         return cancel_pickup_request(payload, self.settings)
 
@@ -100,7 +100,7 @@ class Mapper(BaseMapper):
     ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_response(response.deserialize(), self.settings)
 
-    def parse_void_shipment_response(
+    def parse_cancel_shipment_response(
         self, response: Deserializable[str]
     ) -> Tuple[ConfirmationDetails, List[Message]]:
         return parse_void_shipment_response(response.deserialize(), self.settings)
@@ -110,7 +110,7 @@ class Mapper(BaseMapper):
     ) -> Tuple[PickupDetails, List[Message]]:
         return parse_schedule_pickup_response(response.deserialize(), self.settings)
 
-    def parse_modify_pickup_response(
+    def parse_pickup_update_response(
         self, response: Deserializable[str]
     ) -> Tuple[PickupDetails, List[Message]]:
         return parse_schedule_pickup_response(response.deserialize(), self.settings)

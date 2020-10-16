@@ -268,7 +268,7 @@ from purplship.core.models import PickupRequest
 
 carrier = purplship.gateway['carrier'].create(...)
 
-request = purplship.Pickup.book(
+request = purplship.Pickup.schedule(
     PickupRequest(...)
 )
 
@@ -294,12 +294,12 @@ rates = request.from_(carrier).parse()
 
 ```python
 import purplship
-from purplship.core.models import PickupCancellationRequest
+from purplship.core.models import PickupCancelRequest
 
 carrier = purplship.gateway['carrier'].create(...)
 
 request = purplship.Pickup.cancel(
-    PickupCancellationRequest(...)
+    PickupCancelRequest(...)
 )
 
 rates = request.from_(carrier).parse()
@@ -343,12 +343,12 @@ rates = request.with_(carrier).parse()
 
 ```python
 import purplship
-from purplship.core.models import VoidShipmentRequest
+from purplship.core.models import ShipmentCancelRequest
 
 carrier = purplship.gateway['carrier'].create(...)
 
-request = purplship.Shipment.void(
-    VoidShipmentRequest(...)
+request = purplship.Shipment.cancel(
+    ShipmentCancelRequest(...)
 )
 
 rates = request.from_(carrier).parse()
@@ -609,7 +609,7 @@ rates = request.from_(carrier).parse()
     | `contact` | [Address](#Address) | 
 
 
-- <a name="PickupCancellationRequest"></a> PickupCancellationRequest
+- <a name="PickupCancelRequest"></a> PickupCancelRequest
     | Name | Type | Description 
     | --- | --- | --- |
     | `confirmation_number` | `str` | 
@@ -688,6 +688,12 @@ rates = request.from_(carrier).parse()
     | `reference` | `str` | 
 
 
+- <a name="ShipmentCancelRequest"></a> ShipmentCancelRequest
+    | Name | Type | Description 
+    | --- | --- | --- |
+    | `shipment_identifier` | `str` | 
+
+
 - <a name="ShipmentDetails"></a> ShipmentDetails
     | Name | Type | Description 
     | --- | --- | --- |
@@ -741,12 +747,6 @@ rates = request.from_(carrier).parse()
     | `tracking_numbers` | List[str] | 
     | `language_code` | `str` | 
     | `level_of_details` | `str` | 
-
-
-- <a name="VoidShipmentRequest"></a> VoidShipmentRequest
-    | Name | Type | Description 
-    | --- | --- | --- |
-    | `shipment_identifier` | `str` |
 
 </details>
 

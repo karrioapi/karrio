@@ -83,7 +83,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(bundle_xml(response), to_xml)
 
-    def void_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def cancel_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
             path="/CanshipBusinessService.CanshipBusinessServiceHttpSoap12Endpoint/",
             soapaction="urn:voidShipment",
@@ -92,7 +92,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, to_xml)
 
-    def request_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def schedule_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
             path="/CanparAddonsService.CanparAddonsServiceHttpSoap12Endpoint/",
             soapaction="urn:schedulePickupV2",

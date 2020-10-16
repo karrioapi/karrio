@@ -13,11 +13,12 @@ from purplship.core.models import (
     Message,
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancellationRequest,
+    PickupCancelRequest,
     PickupDetails,
     ConfirmationDetails,
     AddressValidationRequest,
     AddressValidationDetails,
+    ShipmentCancelRequest,
 )
 from purplship.providers.ups import (
     parse_track_response,
@@ -35,6 +36,8 @@ from purplship.providers.ups.package import (
     update_pickup_pipeline,
     cancel_pickup_request,
     parse_cancel_pickup_response,
+    void_shipment_request,
+    parse_void_shipment_response,
 )
 from pyups.track_web_service_schema import TrackRequest
 from pyups.ship_web_service_schema import ShipmentRequest as UPSShipmentRequest
@@ -61,16 +64,19 @@ class Mapper(BaseMapper):
     ) -> Serializable[UPSShipmentRequest]:
         return shipment_request(payload, self.settings)
 
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable:
+        return void_shipment_request(payload, self.settings)
+
     def create_pickup_request(self, payload: PickupRequest) -> Serializable[Pipeline]:
         return create_pickup_pipeline(payload, self.settings)
 
-    def create_modify_pickup_request(
+    def create_pickup_update_request(
         self, payload: PickupUpdateRequest
     ) -> Serializable[Pipeline]:
         return update_pickup_pipeline(payload, self.settings)
 
     def create_cancel_pickup_request(
-        self, payload: PickupCancellationRequest
+        self, payload: PickupCancelRequest
     ) -> Serializable[Envelope]:
         return cancel_pickup_request(payload, self.settings)
 
@@ -96,12 +102,17 @@ class Mapper(BaseMapper):
     ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_response(response.deserialize(), self.settings)
 
+    def parse_cancel_shipment_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_void_shipment_response(response.deserialize(), self.settings)
+
     def parse_pickup_response(
         self, response: Deserializable
     ) -> Tuple[PickupDetails, List[Message]]:
         return parse_pickup_response(response.deserialize(), self.settings)
 
-    def parse_modify_pickup_response(
+    def parse_pickup_update_response(
         self, response: Deserializable
     ) -> Tuple[PickupDetails, List[Message]]:
         return parse_pickup_response(response.deserialize(), self.settings)

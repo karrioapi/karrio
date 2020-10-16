@@ -9,7 +9,7 @@ from purplship.core.utils import Job, Pipeline, to_xml, Serializable, build
 from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancellationRequest,
+    PickupCancelRequest,
 )
 from purplship.providers.fedex.utils import Settings
 from purplship.providers.fedex.pickup.request import (
@@ -98,7 +98,7 @@ def _cancel_pickup_request(
     new_pickup = build(CreatePickupReply, reply)
     data = (
         cancel_pickup_request(
-            PickupCancellationRequest(confirmation_number=payload.confirmation_number),
+            PickupCancelRequest(confirmation_number=payload.confirmation_number),
             settings,
         )
         if new_pickup is not None

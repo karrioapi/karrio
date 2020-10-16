@@ -89,7 +89,7 @@ AddressValidationRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap
                 <v4:MeterNumber>1293587</v4:MeterNumber>
             </v4:ClientDetail>
             <v4:TransactionDetail>
-                <v4:CustomerTransactionId>AddressValidationRequest_v2</v4:CustomerTransactionId>
+                <v4:CustomerTransactionId>AddressValidationRequest_v4</v4:CustomerTransactionId>
             </v4:TransactionDetail>
             <v4:Version>
                 <v4:ServiceId>aval</v4:ServiceId>

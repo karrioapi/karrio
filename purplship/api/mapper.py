@@ -10,9 +10,9 @@ from purplship.core.models import (
     TrackingRequest,
     ShipmentDetails,
     ShipmentRequest,
-    VoidShipmentRequest,
+    ShipmentCancelRequest,
     PickupRequest,
-    PickupCancellationRequest,
+    PickupCancelRequest,
     PickupUpdateRequest,
     PickupDetails,
     RateDetails,
@@ -57,24 +57,40 @@ class Mapper(ABC):
             self.__class__.create_tracking_request.__name__, self.settings.carrier_name
         )
 
-    def parse_tracking_response(
-        self, response: Deserializable
-    ) -> Tuple[List[TrackingDetails], List[Message]]:
-        """ Create a unified API tracking result list from carrier response  """
-        raise MethodNotSupportedError(
-            self.__class__.parse_tracking_response.__name__, self.settings.carrier_name
-        )
-
     def create_shipment_request(self, payload: ShipmentRequest) -> Serializable:
         """ Create a carrier specific shipment creation request data from payload """
         raise MethodNotSupportedError(
             self.__class__.create_shipment_request.__name__, self.settings.carrier_name
         )
 
-    def create_void_shipment_request(self, payload: VoidShipmentRequest) -> Serializable:
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable:
         """ Create a carrier specific void shipment request data from payload """
         raise MethodNotSupportedError(
-            self.__class__.create_void_shipment_request.__name__, self.settings.carrier_name
+            self.__class__.create_cancel_shipment_request.__name__, self.settings.carrier_name
+        )
+
+    def create_pickup_request(self, payload: PickupRequest) -> Serializable:
+        """ Create a carrier specific pickup request xml data from payload """
+        raise MethodNotSupportedError(
+            self.__class__.create_pickup_request.__name__, self.settings.carrier_name
+        )
+
+    def create_pickup_update_request(
+        self, payload: PickupUpdateRequest
+    ) -> Serializable:
+        """ Create a carrier specific pickup modification request data from payload """
+        raise MethodNotSupportedError(
+            self.__class__.create_pickup_update_request.__name__,
+            self.settings.carrier_name,
+        )
+
+    def create_cancel_pickup_request(
+        self, payload: PickupCancelRequest
+    ) -> Serializable:
+        """ Create a carrier specific pickup cancellation request data from payload """
+        raise MethodNotSupportedError(
+            self.__class__.create_cancel_pickup_request.__name__,
+            self.settings.carrier_name,
         )
 
     """Response Parsers"""
@@ -95,18 +111,12 @@ class Mapper(ABC):
             self.__class__.parse_shipment_response.__name__, self.settings.carrier_name
         )
 
-    def parse_void_shipment_response(
+    def parse_cancel_shipment_response(
         self, response: Deserializable
     ) -> Tuple[ConfirmationDetails, List[Message]]:
         """ Create a unified API operation confirmation detail from the carrier response  """
         raise MethodNotSupportedError(
-            self.__class__.parse_void_shipment_response.__name__, self.settings.carrier_name
-        )
-
-    def create_pickup_request(self, payload: PickupRequest) -> Serializable:
-        """ Create a carrier specific pickup request xml data from payload """
-        raise MethodNotSupportedError(
-            self.__class__.create_pickup_request.__name__, self.settings.carrier_name
+            self.__class__.parse_cancel_shipment_response.__name__, self.settings.carrier_name
         )
 
     def parse_pickup_response(
@@ -117,30 +127,12 @@ class Mapper(ABC):
             self.__class__.parse_pickup_response.__name__, self.settings.carrier_name
         )
 
-    def create_modify_pickup_request(
-        self, payload: PickupUpdateRequest
-    ) -> Serializable:
-        """ Create a carrier specific pickup modification request data from payload """
-        raise MethodNotSupportedError(
-            self.__class__.create_modify_pickup_request.__name__,
-            self.settings.carrier_name,
-        )
-
-    def parse_modify_pickup_response(
+    def parse_pickup_update_response(
         self, response: Deserializable
     ) -> Tuple[PickupDetails, List[Message]]:
         """ Create a unified API pickup result from carrier response  """
         raise MethodNotSupportedError(
-            self.__class__.parse_modify_pickup_response.__name__,
-            self.settings.carrier_name,
-        )
-
-    def create_cancel_pickup_request(
-        self, payload: PickupCancellationRequest
-    ) -> Serializable:
-        """ Create a carrier specific pickup cancellation request data from payload """
-        raise MethodNotSupportedError(
-            self.__class__.create_cancel_pickup_request.__name__,
+            self.__class__.parse_pickup_update_response.__name__,
             self.settings.carrier_name,
         )
 
@@ -151,4 +143,12 @@ class Mapper(ABC):
         raise MethodNotSupportedError(
             self.__class__.parse_cancel_pickup_response.__name__,
             self.settings.carrier_name,
+        )
+
+    def parse_tracking_response(
+        self, response: Deserializable
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
+        """ Create a unified API tracking result list from carrier response  """
+        raise MethodNotSupportedError(
+            self.__class__.parse_tracking_response.__name__, self.settings.carrier_name
         )

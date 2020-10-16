@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     password: str
     customer_number: str
     contract_id: str = None
+    language: str = "en"
     id: str = None
     test: bool = False
     carrier_id: str = "canadapost"

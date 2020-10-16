@@ -3,7 +3,7 @@ import unittest
 import logging
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
-from purplship.core.models import ShipmentRequest
+from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.fedex_express.fixture import gateway
 
@@ -14,6 +14,7 @@ class TestFedExShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
+        self.ShipmentCancelRequest = ShipmentCancelRequest(**shipment_cancel_data)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -24,9 +25,23 @@ class TestFedExShipment(unittest.TestCase):
 
         self.assertEqual(serialized_request, ShipmentRequestXml)
 
+    def test_create_cancel_shipment_request(self):
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
+
+        self.assertEqual(request.serialize(), ShipmentCancelRequestXML)
+
     @patch("purplship.mappers.fedex_express.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         Shipment.create(self.ShipmentRequest).with_(gateway)
+
+        url = http_mock.call_args[1]["url"]
+        self.assertEqual(url, f"{gateway.settings.server_url}/ship")
+
+    @patch("purplship.mappers.fedex_express.proxy.http", return_value="<a></a>")
+    def test_cancel_shipment(self, http_mock):
+        Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, f"{gateway.settings.server_url}/ship")
@@ -39,6 +54,17 @@ class TestFedExShipment(unittest.TestCase):
             )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
+
+    def test_parse_shipment_cancel_response(self):
+        with patch("purplship.mappers.fedex_express.proxy.http") as mock:
+            mock.return_value = ShipmentResponseXML
+            parsed_response = (
+                Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedShipmentCancelResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -86,6 +112,11 @@ shipment_data = {
     "customs": {"duty": {"paid_by": "sender", "amount": "100."}},
 }
 
+shipment_cancel_data = {
+    "shipment_identifier": "794947717776",
+    "service": "fedex_express",
+}
+
 ParsedShipmentResponse = [
     {
         "carrier_name": "fedex_express",
@@ -95,6 +126,12 @@ ParsedShipmentResponse = [
     },
     [],
 ]
+
+ParsedShipmentCancelResponse = [
+    {"carrier_id": "carrier_id", "carrier_name": "fedex_express", "success": True},
+    [],
+]
+
 
 ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v25="http://fedex.com/ws/ship/v25">
     <tns:Body>
@@ -695,6 +732,64 @@ ShipmentResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlso
             </CompletedPackageDetails>
          </CompletedShipmentDetail>
       </ProcessShipmentReply>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+"""
+
+ShipmentCancelRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v23="http://fedex.com/ws/ship/v23">
+    <tns:Body>
+        <v23:DeleteShipmentRequest>
+            <v23:WebAuthenticationDetail>
+                <v23:UserCredential>
+                    <v23:Key>user_key</v23:Key>
+                    <v23:Password>password</v23:Password>
+                </v23:UserCredential>
+            </v23:WebAuthenticationDetail>
+            <v23:ClientDetail>
+                <v23:AccountNumber>2349857</v23:AccountNumber>
+                <v23:MeterNumber>1293587</v23:MeterNumber>
+            </v23:ClientDetail>
+            <v23:TransactionDetail>
+                <v23:CustomerTransactionId>Delete Shipment</v23:CustomerTransactionId>
+            </v23:TransactionDetail>
+            <v23:Version>
+                <v23:ServiceId>ship</v23:ServiceId>
+                <v23:Major>23</v23:Major>
+                <v23:Intermediate>0</v23:Intermediate>
+                <v23:Minor>0</v23:Minor>
+            </v23:Version>
+            <v23:TrackingId>
+                <v23:TrackingIdType>EXPRESS</v23:TrackingIdType>
+                <v23:TrackingNumber>794947717776</v23:TrackingNumber>
+            </v23:TrackingId>
+            <v23:DeletionControl>DELETE_ALL_PACKAGES</v23:DeletionControl>
+        </v23:DeleteShipmentRequest>
+    </tns:Body>
+</tns:Envelope>
+"""
+
+ShipmentCancelResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
+   <SOAP-ENV:Body>
+      <ShipmentReply xmlns="http://fedex.com/ws/ship/v25">
+         <HighestSeverity>SUCCESS</HighestSeverity>
+         <Notifications>
+            <Severity>SUCCESS</Severity>
+            <Source>ship</Source>
+            <Code>0000</Code>
+            <Message>Success</Message>
+            <LocalizedMessage>Success</LocalizedMessage>
+         </Notifications>
+         <TransactionDetail>
+            <CustomerTransactionId>DeleteShipmentRequest_v25</CustomerTransactionId>
+         </TransactionDetail>
+         <Version>
+            <ServiceId>ship</ServiceId>
+            <Major>25</Major>
+            <Intermediate>0</Intermediate>
+            <Minor>0</Minor>
+         </Version>
+      </ShipmentReply>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 """

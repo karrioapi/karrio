@@ -6,7 +6,7 @@ from purplship.core.utils import to_dict
 from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancellationRequest,
+    PickupCancelRequest,
 )
 from tests.canpar.fixture import gateway
 
@@ -18,7 +18,7 @@ class TestCanparPickup(unittest.TestCase):
         self.maxDiff = None
         self.PickupRequest = PickupRequest(**pickup_data)
         self.PickupUpdateRequest = PickupUpdateRequest(**pickup_update_data)
-        self.PickupCancelRequest = PickupCancellationRequest(**pickup_cancel_data)
+        self.PickupCancelRequest = PickupCancelRequest(**pickup_cancel_data)
 
     def test_create_pickup_request(self):
         request = gateway.mapper.create_pickup_request(self.PickupRequest)
@@ -26,7 +26,7 @@ class TestCanparPickup(unittest.TestCase):
         self.assertEqual(request.serialize(), PickupRequestXML)
 
     def test_create_modify_pickup_request(self):
-        request = gateway.mapper.create_modify_pickup_request(self.PickupUpdateRequest)
+        request = gateway.mapper.create_pickup_update_request(self.PickupUpdateRequest)
 
         pipeline = request.serialize()
         cancel_request = pipeline["cancel"]()
@@ -43,7 +43,7 @@ class TestCanparPickup(unittest.TestCase):
     def test_request_pickup(self):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            purplship.Pickup.book(self.PickupRequest).with_(gateway)
+            purplship.Pickup.schedule(self.PickupRequest).with_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -95,7 +95,7 @@ class TestCanparPickup(unittest.TestCase):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
             mock.return_value = PickupResponseXML
             parsed_response = (
-                purplship.Pickup.book(self.PickupRequest).with_(gateway).parse()
+                purplship.Pickup.schedule(self.PickupRequest).with_(gateway).parse()
             )
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupResponse))
@@ -119,7 +119,9 @@ class TestCanparPickup(unittest.TestCase):
                 purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupCancelResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedPickupCancelResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -166,7 +168,7 @@ ParsedPickupResponse = [
         "carrier_id": "canpar",
         "carrier_name": "canpar",
         "confirmation_number": "10000696",
-        'pickup_date': '2015-01-28 15:00:00',
+        "pickup_date": "2015-01-28 15:00:00",
     },
     [],
 ]

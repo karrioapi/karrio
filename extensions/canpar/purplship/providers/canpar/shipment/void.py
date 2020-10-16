@@ -4,7 +4,7 @@ from pycanpar.CanshipBusinessService import (
     VoidShipmentRq,
 )
 from purplship.core.models import (
-    VoidShipmentRequest,
+    ShipmentCancelRequest,
     ConfirmationDetails,
     Message
 )
@@ -30,7 +30,7 @@ def parse_void_shipment_response(response: Element, settings: Settings) -> Tuple
     return confirmation, errors
 
 
-def void_shipment_request(payload: VoidShipmentRequest, settings: Settings) -> Serializable[Envelope]:
+def void_shipment_request(payload: ShipmentCancelRequest, settings: Settings) -> Serializable[Envelope]:
 
     request = create_envelope(
         body_content=voidShipment(

@@ -15,10 +15,11 @@ from purplship.core.models import (
     PickupDetails,
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancellationRequest,
+    PickupCancelRequest,
     ConfirmationDetails,
     AddressValidationRequest,
-    AddressValidationDetails
+    AddressValidationDetails,
+    ShipmentCancelRequest,
 )
 from purplship.providers.fedex import (
     track_request,
@@ -38,6 +39,8 @@ from purplship.providers.fedex.package import (
     parse_rate_response,
     process_shipment_request,
     parse_shipment_response,
+    void_shipment_request,
+    parse_void_shipment_response,
 )
 from purplship.mappers.fedex_express.settings import Settings
 from purplship.api.mapper import Mapper as BaseMapper
@@ -66,16 +69,19 @@ class Mapper(BaseMapper):
     ) -> Serializable[ProcessShipmentRequest]:
         return process_shipment_request(payload, self.settings)
 
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable:
+        return void_shipment_request(payload, self.settings)
+
     def create_pickup_request(self, payload: PickupRequest) -> Serializable[Pipeline]:
         return create_pickup_request(payload, self.settings)
 
-    def create_modify_pickup_request(
+    def create_pickup_update_request(
         self, payload: PickupUpdateRequest
     ) -> Serializable[Pipeline]:
         return update_pickup_request(payload, self.settings)
 
     def create_cancel_pickup_request(
-        self, payload: PickupCancellationRequest
+        self, payload: PickupCancelRequest
     ) -> Serializable[CancelPickupRequest]:
         return cancel_pickup_request(payload, self.settings)
 
@@ -101,12 +107,17 @@ class Mapper(BaseMapper):
     ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_response(response.deserialize(), self.settings)
 
+    def parse_cancel_shipment_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_void_shipment_response(response.deserialize(), self.settings)
+
     def parse_pickup_response(
         self, response: Deserializable[str]
     ) -> Tuple[PickupDetails, List[Message]]:
         return parse_pickup_response(response.deserialize(), self.settings)
 
-    def parse_modify_pickup_response(
+    def parse_pickup_update_response(
         self, response: Deserializable[str]
     ) -> Tuple[PickupDetails, List[Message]]:
         return parse_pickup_response(response.deserialize(), self.settings)

@@ -8,7 +8,7 @@ from pyfedex.pickup_service_v20 import (
     NotificationSeverityType,
 )
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     ConfirmationDetails,
     Message,
 )
@@ -47,7 +47,7 @@ def parse_cancel_pickup_reply(
 
 
 def cancel_pickup_request(
-    payload: PickupCancellationRequest, settings: Settings
+    payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[CancelPickupRequest]:
 
     request = CancelPickupRequest(
