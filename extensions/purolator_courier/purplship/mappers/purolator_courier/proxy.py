@@ -76,6 +76,15 @@ class Proxy(BaseProxy):
         _, *response = pipeline.apply(process)
         return Deserializable(bundle_xml(response), to_xml)
 
+    def cancel_shipment(self, request: Serializable) -> Deserializable:
+        response = self._send_request(
+            path="/EWS/V2/Shipping/ShippingService.asmx",
+            soapaction="http://purolator.com/pws/service/v2/VoidShipment",
+            request=request,
+        )
+
+        return Deserializable(response, to_xml)
+
     def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
         def process(job: Job):
             if job.data is None:

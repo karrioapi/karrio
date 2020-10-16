@@ -119,7 +119,9 @@ class TestCanparPickup(unittest.TestCase):
                 purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupCancelResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedPickupCancelResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -166,7 +168,7 @@ ParsedPickupResponse = [
         "carrier_id": "canpar",
         "carrier_name": "canpar",
         "confirmation_number": "10000696",
-        'pickup_date': '2015-01-28 15:00:00',
+        "pickup_date": "2015-01-28 15:00:00",
     },
     [],
 ]

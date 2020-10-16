@@ -35,17 +35,19 @@ def parse_cancel_pickup_response(
 def cancel_pickup_request(
     payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[CancelPURequest]:
+
     request = CancelPURequest(
         Request=settings.Request(
             MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
         ),
         schemaVersion=3.0,
-        RegionCode=CountryRegion[payload.country_code].value
-        if payload.country_code
-        else "AM",
+        RegionCode=(
+            CountryRegion[payload.address.country_code].value
+            if payload.address is not None and payload.address.country_code is not None else "AM"
+        ),
         ConfirmationNumber=payload.confirmation_number,
-        RequestorName=payload.person_name,
-        CountryCode=payload.country_code,
+        RequestorName=payload.address.person_name,
+        CountryCode=payload.address.country_code,
         Reason="006",
         PickupDate=payload.pickup_date,
         CancelTime=time.strftime("%H:%M:%S"),

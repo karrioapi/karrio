@@ -25,7 +25,7 @@ class Proxy(BaseProxy):
                 "Content-Type": "application/vnd.cpc.ship.rate-v4+xml",
                 "Accept": "application/vnd.cpc.ship.rate-v4+xml",
                 "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": "en-CA",
+                "Accept-language": f"{self.settings.language}-CA",
             },
             method="POST",
         )
@@ -42,7 +42,7 @@ class Proxy(BaseProxy):
                 headers={
                     "Accept": "application/vnd.cpc.track+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="GET",
             )
@@ -60,7 +60,7 @@ class Proxy(BaseProxy):
                     "Content-Type": "application/vnd.cpc.shipment-v8+xml",
                     "Accept": "application/vnd.cpc.shipment-v8+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="POST",
             )
@@ -73,7 +73,7 @@ class Proxy(BaseProxy):
                     "Accept": "application/vnd.cpc.ncshipment-v4+xml",
                     "Content-Type": "application/vnd.cpc.ncshipment-v4+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="POST",
             )
@@ -109,6 +109,21 @@ class Proxy(BaseProxy):
 
         return Deserializable(bundle_xml(response), to_xml)
 
+    def cancel_shipment(self, request: Serializable) -> Deserializable:
+        shipment_id = request.serialize()
+        response = http(
+            url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}",
+            headers={
+                "Content-Type": "application/vnd.cpc.shipment-v8+xml",
+                "Accept": "application/vnd.cpc.shipment-v8+xml",
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Accept-language": f"{self.settings.language}-CA",
+            },
+            method="DELETE",
+        )
+
+        return Deserializable(bundle_xml([response]), to_xml)
+
     def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
         def _availability(job: Job) -> str:
             return http(
@@ -116,7 +131,7 @@ class Proxy(BaseProxy):
                 headers={
                     "Accept": "application/vnd.cpc.pickup+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="GET",
             )
@@ -129,7 +144,7 @@ class Proxy(BaseProxy):
                     "Accept": "application/vnd.cpc.pickuprequest+xml",
                     "Content-Type": "application/vnd.cpc.pickuprequest+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="POST",
             )
@@ -160,7 +175,7 @@ class Proxy(BaseProxy):
             headers={
                 "Accept": "application/vnd.cpc.pickuprequest+xml",
                 "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": "en-CA",
+                "Accept-language": f"{self.settings.language}-CA",
             },
             method="PUT",
         )
@@ -173,7 +188,7 @@ class Proxy(BaseProxy):
             headers={
                 "Accept": "application/vnd.cpc.pickuprequest+xml",
                 "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": "en-CA",
+                "Accept-language": f"{self.settings.language}-CA",
             },
             method="DELETE",
         )

@@ -18,6 +18,7 @@ from purplship.core.models import (
     ConfirmationDetails,
     AddressValidationRequest,
     AddressValidationDetails,
+    ShipmentCancelRequest,
 )
 from purplship.providers.ups import (
     parse_track_response,
@@ -35,6 +36,8 @@ from purplship.providers.ups.package import (
     update_pickup_pipeline,
     cancel_pickup_request,
     parse_cancel_pickup_response,
+    void_shipment_request,
+    parse_void_shipment_response,
 )
 from pyups.track_web_service_schema import TrackRequest
 from pyups.ship_web_service_schema import ShipmentRequest as UPSShipmentRequest
@@ -60,6 +63,9 @@ class Mapper(BaseMapper):
         self, payload: ShipmentRequest
     ) -> Serializable[UPSShipmentRequest]:
         return shipment_request(payload, self.settings)
+
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable:
+        return void_shipment_request(payload, self.settings)
 
     def create_pickup_request(self, payload: PickupRequest) -> Serializable[Pipeline]:
         return create_pickup_pipeline(payload, self.settings)
@@ -95,6 +101,11 @@ class Mapper(BaseMapper):
         self, response: Deserializable[str]
     ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_response(response.deserialize(), self.settings)
+
+    def parse_cancel_shipment_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_void_shipment_response(response.deserialize(), self.settings)
 
     def parse_pickup_response(
         self, response: Deserializable

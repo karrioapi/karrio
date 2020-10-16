@@ -41,8 +41,6 @@ def _cancel_pickup(payload: PickupUpdateRequest, settings: Settings) -> Job:
         address=payload.address,
         pickup_date=payload.date,
         reason='change pickup',
-        person_name=payload.address.person_name,
-        country_code=payload.address.country_code
     )
 
     return Job(id='cancel', data=cancel_pickup_request(data, settings))

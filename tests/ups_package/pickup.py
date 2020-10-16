@@ -13,7 +13,7 @@ from tests.ups_package.fixture import gateway
 logger = logging.getLogger(__name__)
 
 
-class TestPurolatorPickup(unittest.TestCase):
+class TestUPSPickup(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.PickupRequest = PickupRequest(**pickup_data)

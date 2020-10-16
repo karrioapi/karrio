@@ -1,9 +1,10 @@
 import re
 import unittest
+import logging
 from datetime import datetime
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
-from purplship.core.models import ShipmentRequest
+from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.purolator_courier.fixture import gateway
 
@@ -12,6 +13,9 @@ class TestPurolatorShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**SHIPMENT_REQUEST_PAYLOAD)
+        self.ShipmentCancelRequest = ShipmentCancelRequest(
+            **SHIPMENT_CANCEL_REQUEST_PAYLOAD
+        )
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -29,7 +33,14 @@ class TestPurolatorShipment(unittest.TestCase):
             document_request.data.serialize(), SHIPMENT_DOCUMENT_REQUEST_XML
         )
 
-    def test_send_valid_shipment(self):
+    def test_cancel_shipment_request(self):
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
+
+        self.assertEqual(request.serialize(), SHIPMENT_CANCEL_REQUEST_XML)
+
+    def test_request_shipment(self):
         with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
             mocks.side_effect = [
                 VALIDATE_SHIPMENT_RESPONSE_XML,
@@ -51,6 +62,17 @@ class TestPurolatorShipment(unittest.TestCase):
             self.assertEqual(
                 document_call[1]["url"],
                 f"{gateway.settings.server_url}/EWS/V1/ShippingDocuments/ShippingDocumentsService.asmx",
+            )
+
+    def test_cancel_shipment(self):
+        with patch("purplship.mappers.purolator_courier.proxy.http") as mock:
+            mock.return_value = ""
+            Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+            url = mock.call_args[1]["url"]
+
+            self.assertEqual(
+                url,
+                f"{gateway.settings.server_url}/EWS/V2/Shipping/ShippingService.asmx",
             )
 
     def test_parse_shipment_response(self):
@@ -78,9 +100,22 @@ class TestPurolatorShipment(unittest.TestCase):
                 to_dict(parsed_response), to_dict(PARSED_INVALID_SHIPMENT_RESPONSE)
             )
 
+    def test_parse_cancel_shipment_response(self):
+        with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
+            mocks.return_value = SHIPMENT_CANCEL_RESPONSE_XML
+            parsed_response = (
+                Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(PARSED_CANCEL_SHIPMENT_RESPONSE)
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
+
+SHIPMENT_CANCEL_REQUEST_PAYLOAD = {"shipment_identifier": "329014521622"}
 
 SHIPMENT_REQUEST_PAYLOAD = {
     "shipper": {
@@ -138,6 +173,16 @@ PARSED_INVALID_SHIPMENT_RESPONSE = [
         }
     ],
 ]
+
+PARSED_CANCEL_SHIPMENT_RESPONSE = [
+    {
+        "carrier_id": "purolator_courier",
+        "carrier_name": "purolator_courier",
+        "success": True,
+    },
+    [],
+]
+
 
 SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <soap:Header>
@@ -351,5 +396,46 @@ SHIPMENT_DOCUMENT_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.
          </Documents>
       </GetDocumentsResponse>
    </s:Body>
+</s:Envelope>
+"""
+
+SHIPMENT_CANCEL_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1">
+    <soap:Header>
+        <v1:RequestContext>
+            <v1:Version>1.0</v1:Version>
+            <v1:Language>en</v1:Language>
+            <v1:GroupID></v1:GroupID>
+            <v1:RequestReference></v1:RequestReference>
+            <v1:UserToken>token</v1:UserToken>
+        </v1:RequestContext>
+    </soap:Header>
+    <soap:Body>
+        <v1:VoidShipmentRequest>
+            <v1:PIN>
+                <v1:Value>329014521622</v1:Value>
+            </v1:PIN>
+        </v1:VoidShipmentRequest>
+    </soap:Body>
+</soap:Envelope>
+"""
+
+SHIPMENT_CANCEL_RESPONSE_XML = """
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Header>
+        <h:ResponseContext xmlns:h="http://purolator.com/pws/datatypes/v1"
+            xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+            <h:ResponseReference>Rating Example</h:ResponseReference>
+        </h:ResponseContext>
+    </s:Header>
+    <s:Body>
+        <VoidShipmentResponse xmlns="http://purolator.com/pws/datatypes/v1"
+            xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+            <ResponseInformation>
+                <Errors/>
+                <InformationalMessages i:nil="true"/>
+            </ResponseInformation>
+            <ShipmentVoided>true</ShipmentVoided>
+        </VoidShipmentResponse>
+    </s:Body>
 </s:Envelope>
 """

@@ -82,7 +82,30 @@ RatePayload = {
     },
 }
 
-ParsedQuoteResponse = [[{'base_charge': 7.57, 'carrier_id': 'canpar', 'carrier_name': 'canpar', 'currency': 'CAD', 'duties_and_taxes': 1.34, 'extra_charges': [{'amount': 7.57, 'currency': 'CAD', 'name': 'Freight Charge'}, {'amount': 2.75, 'currency': 'CAD', 'name': 'Residential Address Surcharge'}, {'amount': 1.34, 'currency': 'CAD', 'name': 'ONHST Tax Charge'}], 'service': 'canpar_ground', 'total_charge': 11.66, 'transit_days': 1}], []]
+ParsedQuoteResponse = [
+    [
+        {
+            "base_charge": 7.57,
+            "carrier_id": "canpar",
+            "carrier_name": "canpar",
+            "currency": "CAD",
+            "duties_and_taxes": 1.34,
+            "extra_charges": [
+                {"amount": 7.57, "currency": "CAD", "name": "Freight Charge"},
+                {
+                    "amount": 2.75,
+                    "currency": "CAD",
+                    "name": "Residential Address Surcharge",
+                },
+                {"amount": 1.34, "currency": "CAD", "name": "ONHST Tax Charge"},
+            ],
+            "service": "canpar_ground",
+            "total_charge": 11.66,
+            "transit_days": 1,
+        }
+    ],
+    [],
+]
 
 
 RateRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">

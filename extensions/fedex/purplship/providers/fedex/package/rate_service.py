@@ -17,7 +17,6 @@ from pyfedex.rate_service_v26 import (
     RequestedPackageLineItem,
     Dimensions,
     WeightUnits,
-    DistanceUnits,
 )
 from purplship.core.utils import export, concat_str, Serializable, decimal, to_date
 from purplship.core.utils.soap import create_envelope, apply_namespaceprefix

@@ -18,6 +18,7 @@ from purplship.core.models import (
     PickupCancelRequest,
     AddressValidationDetails,
     AddressValidationRequest,
+    ShipmentCancelRequest,
 )
 from purplship.providers.purolator.package import (
     parse_track_package_response,
@@ -34,6 +35,8 @@ from purplship.providers.purolator.package import (
     parse_modify_pickup_reply,
     validate_address_request,
     parse_validate_address_response,
+    parse_void_shipment_response,
+    void_shipment_request,
 )
 
 
@@ -57,6 +60,9 @@ class Mapper(BaseMapper):
         self, payload: ShipmentRequest
     ) -> Serializable[Pipeline]:
         return create_shipment_request(payload, self.settings)
+
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable:
+        return void_shipment_request(payload, self.settings)
 
     def create_pickup_request(self, payload: PickupRequest) -> Serializable[Pipeline]:
         return schedule_pickup_pipeline(payload, self.settings)
@@ -92,6 +98,11 @@ class Mapper(BaseMapper):
         self, response: Deserializable[str]
     ) -> Tuple[ShipmentDetails, List[Message]]:
         return parse_shipment_creation_response(response.deserialize(), self.settings)
+
+    def parse_cancel_shipment_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_void_shipment_response(response.deserialize(), self.settings)
 
     def parse_pickup_response(
         self, response: Deserializable[str]

@@ -20,6 +20,7 @@ from purplship.core.models import (
     PickupUpdateRequest,
     PickupCancelRequest,
     ConfirmationDetails,
+    ShipmentCancelRequest,
 )
 from purplship.providers.canadapost import (
     mailing_scenario_request,
@@ -33,6 +34,8 @@ from purplship.providers.canadapost import (
     update_pickup_request,
     parse_pickup_response,
     parse_cancel_pickup_response,
+    parse_void_shipment_response,
+    void_shipment_request,
 )
 from purplship.mappers.canadapost.settings import Settings
 
@@ -72,6 +75,9 @@ class Mapper(BaseMapper):
     ) -> Serializable[str]:
         return cancel_pickup_request(payload, self.settings)
 
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable[str]:
+        return void_shipment_request(payload, self.settings)
+
     """Response Parsers"""
 
     def parse_rate_response(
@@ -103,3 +109,8 @@ class Mapper(BaseMapper):
         self, response: Deserializable[str]
     ) -> Tuple[ConfirmationDetails, List[Message]]:
         return parse_cancel_pickup_response(response.deserialize(), self.settings)
+
+    def parse_cancel_shipment_response(
+        self, response: Deserializable
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_void_shipment_response(response.deserialize(), self.settings)

@@ -117,9 +117,11 @@ modification_data = {
 
 cancellation_data = {
     "confirmation_number": "743511",
-    "person_name": "Rikhil",
     "pickup_date": "2013-10-10",
-    "country_code": "BR",
+    "address": {
+        "person_name": "Rikhil",
+        "country_code": "BR",
+    },
 }
 
 ParsedPickupResponse = [

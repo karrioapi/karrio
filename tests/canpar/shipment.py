@@ -31,7 +31,9 @@ class TestCanparShipment(unittest.TestCase):
         self.assertEqual(get_label_request.data.serialize(), ShipmentLabelRequestXML)
 
     def test_create_void_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(self.VoidShipmentRequest)
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.VoidShipmentRequest
+        )
 
         self.assertEqual(request.serialize(), VoidShipmentRequestXML)
 
@@ -89,10 +91,14 @@ class TestCanparShipment(unittest.TestCase):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
             mock.return_value = VoidShipmentResponseXML
             parsed_response = (
-                purplship.Shipment.cancel(self.VoidShipmentRequest).from_(gateway).parse()
+                purplship.Shipment.cancel(self.VoidShipmentRequest)
+                .from_(gateway)
+                .parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedVoidShipmentResponse))
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedVoidShipmentResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -166,7 +172,10 @@ ParsedShipmentResponse = [
     [],
 ]
 
-ParsedVoidShipmentResponse = [{'carrier_id': 'canpar', 'carrier_name': 'canpar', 'success': True}, []]
+ParsedVoidShipmentResponse = [
+    {"carrier_id": "canpar", "carrier_name": "canpar", "success": True},
+    [],
+]
 
 
 ShipmentRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">

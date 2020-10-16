@@ -18,6 +18,10 @@ from purplship.providers.purolator.package.shipping_service.get_documents import
 from purplship.providers.purolator.package.shipping_service.create_shipping import (
     create_shipping_request,
 )
+from purplship.providers.purolator.package.shipping_service.void_shipment import (
+    parse_void_shipment_response,
+    void_shipment_request,
+)
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
 
