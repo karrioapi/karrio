@@ -106,7 +106,7 @@ if __name__ == "__main__":
     unittest.main()
 
 pickup_data = {
-    "date": "2015-01-28",
+    "pickup_date": "2015-01-28",
     "address": {
         "company_name": "Jim Duggan",
         "address_line1": "2271 Herring Cove",
@@ -126,7 +126,7 @@ pickup_data = {
 
 pickup_update_data = {
     "confirmation_number": "0074698052",
-    "date": "2015-01-28",
+    "pickup_date": "2015-01-28",
     "address": {
         "person_name": "Jane Doe",
         "email": "john.doe@canadapost.ca",

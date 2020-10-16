@@ -45,7 +45,7 @@ def validate_pickup_request(
             BillingAccountNumber=settings.account_number,
             PartnerID=None,
             PickupInstruction=PickupInstruction(
-                Date=payload.date,
+                Date=payload.pickup_date,
                 AnyTimeAfter="".join(payload.ready_time.split(":")),
                 UntilTime="".join(payload.closing_time.split(":")),
                 TotalWeight=Weight(

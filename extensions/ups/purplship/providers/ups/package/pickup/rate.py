@@ -21,7 +21,7 @@ from purplship.providers.ups.utils import Settings, default_request_serializer
 def pickup_rate_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[Envelope]:
-    pickup_date = to_date(payload.date)
+    pickup_date = to_date(payload.pickup_date)
     same_day = pickup_date.date() == datetime.today().date()
 
     request = create_envelope(

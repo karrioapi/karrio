@@ -64,7 +64,7 @@ def schedule_pickup_request(payload: PickupRequest, settings: Settings) -> Seria
                         residential=payload.address.residential,
                     ),
                     pickup_date=format_datetime(
-                        f"{payload.date} {payload.ready_time}", '%Y-%m-%d %H:%M', '%Y-%m-%dT%H:%M:%S'
+                        f"{payload.pickup_date} {payload.ready_time}", '%Y-%m-%d %H:%M', '%Y-%m-%dT%H:%M:%S'
                     ),
                     pickup_location=payload.package_location,
                     pickup_phone=payload.address.phone_number,

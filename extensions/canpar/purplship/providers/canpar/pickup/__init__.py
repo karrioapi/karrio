@@ -39,7 +39,7 @@ def _cancel_pickup(payload: PickupUpdateRequest, settings: Settings) -> Job:
     data = PickupCancelRequest(
         confirmation_number=payload.confirmation_number,
         address=payload.address,
-        pickup_date=payload.date,
+        pickup_date=payload.pickup_date,
         reason='change pickup',
     )
 

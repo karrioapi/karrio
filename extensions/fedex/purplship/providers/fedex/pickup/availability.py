@@ -25,7 +25,7 @@ from purplship.providers.fedex.utils import Settings
 def pickup_availability_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[PickupAvailabilityRequest]:
-    same_day = to_date(payload.date).date() == datetime.today().date()
+    same_day = to_date(payload.pickup_date).date() == datetime.today().date()
 
     request = PickupAvailabilityRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -52,7 +52,7 @@ def pickup_availability_request(
                 PickupRequestType.SAME_DAY if same_day else PickupRequestType.FUTURE_DAY
             ).value
         ],
-        DispatchDate=payload.date,
+        DispatchDate=payload.pickup_date,
         NumberOfBusinessDays=None,
         PackageReadyTime=f"{payload.ready_time}:00",
         CustomerCloseTime=f"{payload.closing_time}:00",

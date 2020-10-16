@@ -169,7 +169,7 @@ class TrackingRequest:
 class PickupRequest:
     """pickup request type."""
 
-    date: str
+    pickup_date: str
     ready_time: str
     closing_time: str
     address: Address = JStruct[Address, REQUIRED]
@@ -184,7 +184,7 @@ class PickupRequest:
 class PickupUpdateRequest:
     """pickup update request type."""
 
-    date: str
+    pickup_date: str
     ready_time: str
     closing_time: str
     confirmation_number: str

@@ -82,7 +82,7 @@ if __name__ == "__main__":
     unittest.main()
 
 book_pickup_payload = {
-    "date": "2013-10-19",
+    "pickup_date": "2013-10-19",
     "ready_time": "10:20",
     "closing_time": "09:20",
     "instruction": "behind the front desk",
@@ -100,7 +100,7 @@ book_pickup_payload = {
 }
 
 modification_data = {
-    "date": "2013-10-19",
+    "pickup_date": "2013-10-19",
     "confirmation_number": "100094",
     "ready_time": "10:20",
     "closing_time": "09:20",

@@ -115,7 +115,7 @@ def create_pickup_request(
             PickupDateInfo=PickupDateInfoType(
                 CloseTime=format_time(payload.closing_time, "%H:%M", "%H%M"),
                 ReadyTime=format_time(payload.ready_time, "%H:%M", "%H%M"),
-                PickupDate=to_date(payload.date).strftime("%Y%m%d"),
+                PickupDate=to_date(payload.pickup_date).strftime("%Y%m%d"),
             ),
             PickupAddress=PickupAddressType(
                 CompanyName=payload.address.company_name,

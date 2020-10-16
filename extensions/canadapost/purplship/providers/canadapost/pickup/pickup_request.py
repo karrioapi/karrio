@@ -151,7 +151,7 @@ def pickup_request(
         pickup_volume=f"{len(packages) or 1}",
         pickup_times=PickupTimesType(
             on_demand_pickup_time=OnDemandPickupTimeType(
-                date=payload.date,
+                date=payload.pickup_date,
                 preferred_time=payload.ready_time,
                 closing_time=payload.closing_time,
             ),

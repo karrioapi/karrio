@@ -115,7 +115,7 @@ def modify_pickup_request(
         ),
         Pickup=Pickup(
             Pieces=len(payload.parcels),
-            PickupDate=payload.date,
+            PickupDate=payload.pickup_date,
             ReadyByTime=f"{payload.ready_time}:00",
             CloseTime=f"{payload.closing_time}:00",
             SpecialInstructions=[payload.instruction],
