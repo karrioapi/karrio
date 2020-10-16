@@ -169,7 +169,12 @@ ParsedShipmentResponse = [
 ]
 
 ParsedShipmentCancelResponse = [
-    {"carrier_id": "canadapost", "carrier_name": "canadapost", "success": True},
+    {
+        "carrier_id": "canadapost",
+        "carrier_name": "canadapost",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
     [],
 ]
 

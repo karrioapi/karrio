@@ -150,7 +150,12 @@ ParsedPickupResponse = [
 ]
 
 ParsedPickupCancelResponse = [
-    {"carrier_id": "carrier_id", "carrier_name": "fedex_express", "success": True},
+    {
+        "carrier_id": "carrier_id",
+        "carrier_name": "fedex_express",
+        "operation": "Cancel Pickup",
+        "success": True,
+    },
     [],
 ]
 

@@ -348,3 +348,4 @@ class ConfirmationDetails:
     carrier_name: str
     carrier_id: str
     success: bool
+    operation: str

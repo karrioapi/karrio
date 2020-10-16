@@ -161,6 +161,7 @@ ParsedPickupCancelResponse = [
     {
         "carrier_id": "purolator_courier",
         "carrier_name": "purolator_courier",
+        "operation": "Cancel Pickup",
         "success": True,
     },
     [],

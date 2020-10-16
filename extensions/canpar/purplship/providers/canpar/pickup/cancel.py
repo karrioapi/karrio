@@ -24,7 +24,8 @@ def parse_cancel_pickup_response(response: Element, settings: Settings) -> Tuple
     confirmation: ConfirmationDetails = ConfirmationDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        success=success
+        success=success,
+        operation="Cancel Pickup",
     ) if success else None
 
     return confirmation, errors

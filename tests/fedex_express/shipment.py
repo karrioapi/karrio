@@ -129,7 +129,12 @@ ParsedShipmentResponse = [
 ]
 
 ParsedShipmentCancelResponse = [
-    {"carrier_id": "carrier_id", "carrier_name": "fedex_express", "success": True},
+    {
+        "carrier_id": "carrier_id",
+        "carrier_name": "fedex_express",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
     [],
 ]
 

@@ -24,6 +24,7 @@ def parse_cancel_pickup_response(
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
             success=successful,
+            operation="Cancel Pickup",
         )
         if successful
         else None

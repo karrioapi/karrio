@@ -31,6 +31,7 @@ def parse_void_shipment_response(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             success=success,
+            operation="Cancel Shipment",
         )
         if success
         else None

@@ -179,6 +179,7 @@ PARSED_CANCEL_SHIPMENT_RESPONSE = [
     {
         "carrier_id": "purolator_courier",
         "carrier_name": "purolator_courier",
+        "operation": "Cancel Shipment",
         "success": True,
     },
     [],

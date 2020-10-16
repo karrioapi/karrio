@@ -23,6 +23,7 @@ def parse_void_pickup_reply(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             success=True,
+            operation="Cancel Pickup",
         )
         if not any(errors)
         else None

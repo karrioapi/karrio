@@ -41,6 +41,7 @@ def parse_cancel_pickup_reply(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         success=reply.HighestSeverity == NotificationSeverityType.SUCCESS.value,
+        operation="Cancel Pickup",
     )
 
     return cancellation, parse_error_response(response, settings)

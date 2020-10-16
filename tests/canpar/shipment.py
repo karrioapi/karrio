@@ -173,7 +173,12 @@ ParsedShipmentResponse = [
 ]
 
 ParsedVoidShipmentResponse = [
-    {"carrier_id": "canpar", "carrier_name": "canpar", "success": True},
+    {
+        "carrier_id": "canpar",
+        "carrier_name": "canpar",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
     [],
 ]
 

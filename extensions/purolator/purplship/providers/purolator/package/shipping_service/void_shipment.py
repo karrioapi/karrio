@@ -28,6 +28,7 @@ def parse_void_shipment_response(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         success=True,
+        operation="Cancel Shipment",
     ) if voided else None
 
     return cancellation, parse_error_response(response, settings)

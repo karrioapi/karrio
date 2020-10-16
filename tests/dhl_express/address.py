@@ -62,7 +62,11 @@ address_validation_data = {
 }
 
 ParsedAddressValidationResponse = [
-    {"carrier_id": "carrier_id", "carrier_name": "dhl_express", "success": True},
+    {
+        "carrier_id": "carrier_id",
+        "carrier_name": "dhl_express",
+        "success": True,
+    },
     [],
 ]
 

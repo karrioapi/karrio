@@ -149,6 +149,7 @@ ParsedPickupCancelResponse = [
     {
         "carrier_id": "ups_package",
         "carrier_name": "ups_package",
+        "operation": "Cancel Pickup",
         "success": True,
     },
     [],

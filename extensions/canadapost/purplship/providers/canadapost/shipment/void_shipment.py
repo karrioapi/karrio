@@ -18,7 +18,8 @@ def parse_void_shipment_response(response: Element, settings: Settings) -> Tuple
     confirmation: ConfirmationDetails = ConfirmationDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        success=success
+        success=success,
+        operation="Cancel Shipment",
     ) if success else None
 
     return confirmation, errors
