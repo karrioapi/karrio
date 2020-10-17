@@ -168,18 +168,47 @@ class Proxy(BaseProxy):
         return Deserializable(bundle_xml(response), to_xml)
 
     def modify_pickup(self, request: Serializable[dict]) -> Deserializable[str]:
-        payload = request.serialize()
-        response = http(
-            url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
-            data=bytearray(payload["data"], "utf-8"),
-            headers={
-                "Accept": "application/vnd.cpc.pickuprequest+xml",
-                "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": f"{self.settings.language}-CA",
-            },
-            method="PUT",
-        )
-        return Deserializable(response, to_xml)
+        def _get_pickup(job: Job) -> str:
+            return http(
+                url=f"{self.settings.server_url}{job.data.serialize()}",
+                headers={
+                    "Accept": "application/vnd.cpc.pickup+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": f"{self.settings.language}-CA",
+                },
+                method="GET",
+            )
+
+        def _update_pickup(job: Job) -> str:
+            payload = job.data.serialize()
+            return http(
+                url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
+                data=bytearray(payload["data"], "utf-8"),
+                headers={
+                    "Accept": "application/vnd.cpc.pickuprequest+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": f"{self.settings.language}-CA",
+                },
+                method="PUT",
+            )
+
+        def process(job: Job):
+            if job.data is None:
+                return job.fallback
+
+            subprocess = {
+                "update_pickup": _update_pickup,
+                "get_pickup": _get_pickup,
+            }
+            if job.id not in subprocess:
+                raise PurplShipError(f"Unknown pickup request job id: {job.id}")
+
+            return subprocess[job.id](job)
+
+        pipeline: Pipeline = request.serialize()
+        response = pipeline.apply(process)
+
+        return Deserializable(bundle_xml(response), to_xml)
 
     def cancel_pickup(self, request: Serializable[str]) -> Deserializable[str]:
         pickuprequest = request.serialize()

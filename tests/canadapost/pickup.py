@@ -21,14 +21,22 @@ class TestCanadaPostPickup(unittest.TestCase):
         requests = gateway.mapper.create_pickup_request(self.PickupRequest)
         pipeline = requests.serialize()
         request = pipeline["create_pickup"](PickupAvailabilityResponseXML)
+
         self.assertEqual(request.data.serialize(), PickupRequestXML)
 
     def test_update_pickup_request(self):
-        request = gateway.mapper.create_pickup_update_request(self.PickupUpdateRequest)
-        content = request.serialize()
-        self.assertEqual(content["data"], PickupUpdateRequestXML)
+        requests = gateway.mapper.create_pickup_update_request(self.PickupUpdateRequest)
+        pipeline = requests.serialize()
+        update = pipeline["update_pickup"]()
+        details = pipeline["get_pickup"]("")
+
+        self.assertEqual(update.data.serialize()["data"], PickupUpdateRequestXML)
         self.assertEqual(
-            content["pickuprequest"], pickup_update_data["confirmation_number"]
+            update.data.serialize()["pickuprequest"],
+            pickup_update_data["confirmation_number"],
+        )
+        self.assertEqual(
+            details.data.serialize(), "/enab/2004381/pickuprequest/0074698052/details"
         )
 
     def test_cancel_pickup_request(self):
@@ -43,24 +51,30 @@ class TestCanadaPostPickup(unittest.TestCase):
             purplship.Pickup.schedule(self.PickupRequest).with_(gateway)
 
             availability_call, create_call = mocks.call_args_list
+
             self.assertEqual(
                 availability_call[1]["url"],
-                f"{gateway.settings.server_url}/ad/pickup/pickupavailability/{self.PickupRequest.address.postal_code}",
+                f"{gateway.settings.server_url}/ad/pickup/pickupavailability/B3L2C2",
             )
             self.assertEqual(
                 create_call[1]["url"],
-                f"{gateway.settings.server_url}/enab/{gateway.settings.customer_number}/pickuprequest",
+                f"{gateway.settings.server_url}/enab/2004381/pickuprequest",
             )
 
     def test_update_pickup(self):
-        with patch("purplship.mappers.canadapost.proxy.http") as mock:
-            mock.return_value = "<a></a>"
+        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+            mocks.side_effect = ["", PickupDetailseResponseXML]
             purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway)
 
-            url = mock.call_args[1]["url"]
+            update_call, get_call = mocks.call_args_list
+
             self.assertEqual(
-                url,
-                f"{gateway.settings.server_url}/enab/{gateway.settings.customer_number}/pickuprequest/{self.PickupUpdateRequest.confirmation_number}",
+                update_call[1]["url"],
+                f"{gateway.settings.server_url}/enab/2004381/pickuprequest/0074698052",
+            )
+            self.assertEqual(
+                get_call[1]["url"],
+                f"{gateway.settings.server_url}/enab/2004381/pickuprequest/0074698052/details",
             )
 
     def test_cancel_pickup(self):
@@ -71,7 +85,7 @@ class TestCanadaPostPickup(unittest.TestCase):
             url = mock.call_args[1]["url"]
             self.assertEqual(
                 url,
-                f"{gateway.settings.server_url}/enab/{gateway.settings.customer_number}/pickuprequest/{self.PickupCancelRequest.confirmation_number}",
+                f"{gateway.settings.server_url}/enab/2004381/pickuprequest/0074698052",
             )
 
     def test_parse_pickup_response(self):
@@ -82,6 +96,15 @@ class TestCanadaPostPickup(unittest.TestCase):
             )
 
             self.assertListEqual(to_dict(parsed_response), ParsedPickupResponse)
+
+    def test_parse_pickup_update_response(self):
+        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+            mocks.side_effect = [None, PickupDetailseResponseXML]
+            parsed_response = (
+                purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(to_dict(parsed_response), ParsedPickupUpdateResponse)
 
 
 if __name__ == "__main__":
@@ -134,6 +157,15 @@ ParsedPickupResponse = [
     [],
 ]
 
+ParsedPickupUpdateResponse = [
+    {
+        "carrier_id": "canadapost",
+        "carrier_name": "canadapost",
+        "confirmation_number": "0074698052",
+    },
+    [],
+]
+
 PickupRequestXML = """<pickup-request-details xmlns="http://www.canadapost.ca/ws/pickuprequest">
     <customer-request-id>2004381</customer-request-id>
     <pickup-type>OnDemand</pickup-type>
@@ -169,11 +201,6 @@ PickupRequestXML = """<pickup-request-details xmlns="http://www.canadapost.ca/ws
 """
 
 PickupUpdateRequestXML = """<pickup-request-update xmlns="http://www.canadapost.ca/ws/pickuprequest">
-    <customer-request-id>2004381</customer-request-id>
-    <pickup-type>OnDemand</pickup-type>
-    <pickup-location>
-        <business-address-flag>true</business-address-flag>
-    </pickup-location>
     <contact-info>
         <contact-name>Jane Doe</contact-name>
         <email>john.doe@canadapost.ca</email>
@@ -227,4 +254,51 @@ PickupResponseXML = f"""<wrapper>
         </links>
     </pickup-request-info>
 </wrapper>
+"""
+
+PickupDetailseResponseXML = f"""<pickup-request-detailed-info>
+    <pickup-request-header>
+        <request-id>0074698052</request-id>
+        <request-status>Active</request-status>
+        <pickup-type>OnDemand</pickup-type>
+        <request-date>2015-01-01</request-date>
+    </pickup-request-header>
+    <pickup-request-details>
+        <pickup-location>
+            <business-address-flag>false</business-address-flag>
+            <alternate-address>
+                <company>Jim Duggan</company>
+                <address-line-1>2271 Herring Cove</address-line-1>
+                <city>Halifax</city>
+                <province>NS</province>
+                <postal-code>B3L2C2</postal-code>
+            </alternate-address>
+        </pickup-location>
+        <contact-info>
+            <contact-name>John Doe</contact-name>
+            <email>john.doe@canadapost.ca</email>
+            <contact-phone>800-555-1212</contact-phone>
+            <receive-email-updates-flag>true</receive-email-updates-flag>
+        </contact-info>
+        <location-details>
+            <five-ton-flag>false</five-ton-flag>
+            <loading-dock-flag>true</loading-dock-flag>
+            <pickup-instructions>Door at Back</pickup-instructions>
+        </location-details>
+        <items-characteristics>
+            <pww-flag>true</pww-flag>
+            <priority-flag>false</priority-flag>
+            <returns-flag>true</returns-flag>
+            <heavy-item-flag>true</heavy-item-flag>
+        </items-characteristics>
+        <pickup-volume>50</pickup-volume>
+        <pickup-times>
+            <on-demand-pickup-time>
+                <date>2015-01-28</date>
+                <preferred-time>15:00</preferred-time>
+                <closing-time>17:00</closing-time>
+            </on-demand-pickup-time>
+        </pickup-times>
+    </pickup-request-details>
+</pickup-request-detailed-info>
 """
