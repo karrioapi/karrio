@@ -31,6 +31,7 @@ class ShipmentSerializer(ShipmentData):
     rates = ListField(child=Rate(), required=False)
     label = CharField(required=False, allow_blank=True, allow_null=True)
     tracking_number = CharField(required=False, allow_blank=True, allow_null=True)
+    shipment_identifier = CharField(required=False, allow_blank=True, allow_null=True)
     selected_rate = Rate(required=False, allow_null=True)
     tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
 

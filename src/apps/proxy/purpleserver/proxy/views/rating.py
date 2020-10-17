@@ -33,7 +33,7 @@ Use this service to fetch a shipping rates available.
     methods=['post'],
     tags=['Rates'],
     operation_id=f"{ENDPOINT_ID}fetch",
-    operation_summary="Fetch Shipment Rates",
+    operation_summary="Fetch shipment rates",
     operation_description=DESCRIPTIONS,
     responses={200: RateResponse(), 400: ErrorResponse()},
     request_body=RateRequest(),

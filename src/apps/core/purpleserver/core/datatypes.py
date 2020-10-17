@@ -12,11 +12,19 @@ from purplship.core.models import (
     TrackingDetails,
     TrackingRequest,
     ShipmentDetails,
+    AddressValidationRequest,
+    AddressValidationDetails,
     Payment as BasePayment,
     Customs as BaseCustoms,
     RateRequest as BaseRateRequest,
     ShipmentRequest as BaseShipmentRequest,
-    ChargeDetails
+    ShipmentCancelRequest,
+    ChargeDetails,
+    PickupRequest,
+    PickupDetails,
+    PickupUpdateRequest,
+    PickupCancelRequest,
+    ConfirmationDetails as Confirmation,
 )
 
 
@@ -113,6 +121,7 @@ class Shipment:
     carrier_id: str
     carrier_name: str
     tracking_number: str
+    shipment_identifier: str
     label: str
     service: str
     selected_rate_id: str
@@ -131,13 +140,50 @@ class Shipment:
     reference: str = ""
     tracking_url: str = None
     status: str = ""
-    id: str = None
     meta: dict = None
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class Pickup:
+    carrier_id: str
+    carrier_name: str
+
+    pickup_date: str
+    ready_time: str
+    closing_time: str
+    confirmation_number: str
+    address: Address = JStruct[Address, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
+
+    pickup_charge: ChargeDetails = JStruct[ChargeDetails]
+    instruction: str = None
+    package_location: str = None
+    options: Dict = {}
+    id: str = None
 
 
 @attr.s(auto_attribs=True)
 class ErrorResponse:
     messages: List[Message] = JList[Message]
+
+
+@attr.s(auto_attribs=True)
+class AddressValidation:
+    messages: List[Message] = JList[Message]
+    validation: AddressValidationDetails = JStruct[AddressValidationDetails]
+
+
+@attr.s(auto_attribs=True)
+class ConfirmationResponse:
+    messages: List[Message] = JList[Message]
+    confirmation: Confirmation = JStruct[Confirmation]
+
+
+@attr.s(auto_attribs=True)
+class PickupResponse:
+    messages: List[Message] = JList[Message]
+    pickup: Pickup = JStruct[Pickup]
 
 
 @attr.s(auto_attribs=True)

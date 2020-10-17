@@ -46,7 +46,7 @@ class ShipmentList(ShipmentAPIView):
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all Shipments",
+        operation_summary="List all shipments",
         operation_description="""
         Retrieve all shipments.
         """,
@@ -61,7 +61,7 @@ class ShipmentList(ShipmentAPIView):
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a Shipment",
+        operation_summary="Create a shipment",
         operation_description="""
         Create a new shipment instance.
         """,
@@ -80,7 +80,7 @@ class ShipmentDetail(ShipmentAPIView):
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a Shipment",
+        operation_summary="Retrieve a shipment",
         operation_description="""
         Retrieve a shipment.
         """,
@@ -97,7 +97,7 @@ class ShipmentRates(ShipmentAPIView):
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}rates",
-        operation_summary="Fetch new Shipment Rates",
+        operation_summary="Fetch new shipment rates",
         operation_description="""
         Refresh the list of the shipment rates
         """,
@@ -124,7 +124,7 @@ class ShipmentOptions(ShipmentAPIView):
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}options",
-        operation_summary="Add Shipment Options",
+        operation_summary="Add shipment options",
         operation_description="""
         Add one or many options to your shipment.<br/>
         **eg:**<br/>
@@ -167,7 +167,7 @@ class ShipmentPurchase(ShipmentAPIView):
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}purchase",
-        operation_summary="Buy a Shipment",
+        operation_summary="Buy a shipment label",
         operation_description="""
         Select your preferred rates to buy a shipment label.
         """,

@@ -30,7 +30,7 @@ class ParcelList(ParcelAPIView):
     @swagger_auto_schema(
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all Parcels",
+        operation_summary="List all parcels",
         responses={200: Parcel(many=True), 400: ErrorResponse()}
     )
     def get(self, request: Request):
@@ -45,7 +45,7 @@ class ParcelList(ParcelAPIView):
     @swagger_auto_schema(
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a Parcel",
+        operation_summary="Create a parcel",
         request_body=ParcelData(),
         responses={200: Parcel(), 400: ErrorResponse()}
     )
@@ -62,7 +62,7 @@ class ParcelDetail(ParcelAPIView):
     @swagger_auto_schema(
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a Parcel",
+        operation_summary="Retrieve a parcel",
         responses={200: Parcel(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
@@ -75,7 +75,7 @@ class ParcelDetail(ParcelAPIView):
     @swagger_auto_schema(
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a Parcel",
+        operation_summary="Update a parcel",
         request_body=ParcelData(),
         responses={200: Parcel(), 400: ErrorResponse()}
     )

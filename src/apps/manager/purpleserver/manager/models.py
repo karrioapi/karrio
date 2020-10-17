@@ -16,7 +16,7 @@ class Address(OwnedEntity):
         verbose_name = 'Address'
         verbose_name_plural = 'Addresses'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='addr_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='adr_'), editable=False)
 
     postal_code = models.CharField(max_length=10, null=True, blank=True)
     city = models.CharField(max_length=50, null=True, blank=True)
@@ -42,7 +42,7 @@ class Parcel(OwnedEntity):
         verbose_name = 'Parcel'
         verbose_name_plural = 'Parcels'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='parcl_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pcl_'), editable=False)
 
     weight = models.FloatField(blank=True, null=True)
     width = models.FloatField(blank=True, null=True)
@@ -63,7 +63,7 @@ class Commodity(OwnedEntity):
         verbose_name = 'Commodity'
         verbose_name_plural = 'Commodities'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='comdty_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cdt_'), editable=False)
 
     weight = models.FloatField(blank=True, null=True)
     description = models.CharField(max_length=250, null=True, blank=True)
@@ -83,7 +83,7 @@ class Payment(OwnedEntity):
         verbose_name = 'Payment'
         verbose_name_plural = 'Payments'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pymt_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pyt_'), editable=False)
 
     amount = models.FloatField(blank=True, null=True)
     paid_by = models.CharField(max_length=20, choices=PAYMENT_TYPES, null=True, blank=True)
@@ -101,7 +101,7 @@ class Customs(OwnedEntity):
         verbose_name = 'Customs Info'
         verbose_name_plural = 'Customs Info'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cust_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cst_'), editable=False)
 
     no_eei = models.CharField(max_length=20, null=True, blank=True)
     aes = models.CharField(max_length=20, null=True, blank=True)
@@ -153,7 +153,8 @@ class Tracking(OwnedEntity):
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
         'label', 'options', 'services', 'status', 'service', 'meta',
-        'shipment_rates', 'tracking_number', 'doc_images', 'tracking_url'
+        'shipment_rates', 'tracking_number', 'doc_images', 'tracking_url',
+        'shipment_identifier'
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
 
@@ -162,13 +163,14 @@ class Shipment(OwnedEntity):
         verbose_name = 'Shipment'
         verbose_name_plural = 'Shipments'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='shpmt_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='shp_'), editable=False)
     status = models.CharField(max_length=50, choices=SHIPMENT_STATUS, default=SHIPMENT_STATUS[0][0])
 
     recipient = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='recipient')
     shipper = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='shipper')
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
+    shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
     label = models.TextField(max_length=None, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
 

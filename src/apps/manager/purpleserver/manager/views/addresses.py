@@ -29,7 +29,7 @@ class AddressList(AddressAPIView):
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all Addresses",
+        operation_summary="List all addresses",
         responses={200: Address(many=True), 400: ErrorResponse()}
     )
     def get(self, request: Request):
@@ -43,7 +43,7 @@ class AddressList(AddressAPIView):
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create an Address",
+        operation_summary="Create an address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()}
     )
@@ -60,7 +60,7 @@ class AddressDetail(AddressAPIView):
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve an Address",
+        operation_summary="Retrieve an address",
         responses={200: Address(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
@@ -73,7 +73,7 @@ class AddressDetail(AddressAPIView):
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update an Address",
+        operation_summary="Update an address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()}
     )

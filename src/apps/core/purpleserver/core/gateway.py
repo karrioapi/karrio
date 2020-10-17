@@ -12,7 +12,9 @@ from purpleserver.providers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, RateRequest, Shipment,
-    RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse
+    RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse,
+    PickupRequest, Pickup, PickupUpdateRequest, PickupResponse, AddressValidation,
+    ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest, AddressValidationRequest
 )
 from purpleserver.core.serializers import ShipmentStatus
 from purpleserver.core.utils import identity, post_processing
@@ -53,6 +55,29 @@ class Carriers:
         return carriers
 
 
+class Address:
+    @staticmethod
+    def validate(payload: dict, carrier_filter: dict) -> AddressValidation:
+        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Address.validate(AddressValidationRequest(**payload))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        validation, messages = identity(lambda: request.from_(gateway).parse())
+
+        if validation is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return AddressValidation(
+            validation=validation,
+            messages=messages
+        )
+
+
 class Shipments:
     @staticmethod
     def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None) -> ShipmentResponse:
@@ -81,7 +106,7 @@ class Shipments:
         shipment_rate_id = (
             selected_rate.id
             if(to_dict(selected_rate) == to_dict({**to_dict(shipment_rate), 'id': selected_rate.id})) else
-            f'prx_{uuid.uuid4().hex}'
+            f'rat_{uuid.uuid4().hex}'
         )
         tracking_url = None
 
@@ -108,6 +133,27 @@ class Shipments:
         )
 
     @staticmethod
+    def cancel(payload: dict, carrier_filter: dict) -> ConfirmationResponse:
+        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Shipment.cancel(ShipmentCancelRequest(**payload))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        confirmation, messages = identity(lambda: request.from_(gateway).parse())
+
+        if confirmation is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return ConfirmationResponse(
+            confirmation=confirmation,
+            messages=messages
+        )
+
+    @staticmethod
     def track(payload: dict, carrier_filter: dict) -> TrackingResponse:
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
 
@@ -125,6 +171,78 @@ class Shipments:
 
         return TrackingResponse(
             tracking_details=results[0],
+            messages=messages
+        )
+
+
+class Pickups:
+    @staticmethod
+    def schedule(payload: dict, carrier_filter: dict) -> PickupResponse:
+        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Pickup.schedule(PickupRequest(**payload))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        pickup, messages = identity(lambda: request.with_(gateway).parse())
+
+        if pickup is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return PickupResponse(
+            pickup=Pickup(**{
+                'id': f'pck_{uuid.uuid4().hex}',
+                **payload,
+                **to_dict(pickup)
+            }),
+            messages=messages
+        )
+
+    @staticmethod
+    def update(payload: dict, carrier_filter: dict) -> PickupResponse:
+        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Pickup.update(PickupUpdateRequest(**payload))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        pickup, messages = identity(lambda: request.from_(gateway).parse())
+
+        if pickup is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return PickupResponse(
+            pickup=Pickup(**{
+                **payload,
+                **to_dict(pickup)
+            }),
+            messages=messages
+        )
+
+    @staticmethod
+    def cancel(payload: dict, carrier_filter: dict) -> ConfirmationResponse:
+        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Pickup.cancel(PickupCancelRequest(**payload))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        confirmation, messages = identity(lambda: request.from_(gateway).parse())
+
+        if confirmation is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return ConfirmationResponse(
+            confirmation=confirmation,
             messages=messages
         )
 

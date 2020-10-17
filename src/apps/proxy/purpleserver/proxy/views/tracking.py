@@ -33,7 +33,7 @@ You can track a shipment by specifying the carrier and the shipment tracking num
     methods=['get'],
     tags=['Tracking'],
     operation_id=f"{ENDPOINT_ID}fetch",
-    operation_summary="Track a Shipment",
+    operation_summary="Track a shipment",
     operation_description=DESCRIPTIONS,
     responses={200: TrackingResponse(), 400: ErrorResponse()},
     query_serializer=TestFilters

@@ -130,12 +130,12 @@ class ParcelData(Serializer):
     
     values: <br/>- {'<br/>- '.join([f'**{pkg}**' for pkg, _ in PACKAGING_UNIT])}
     
-    For specific carriers packaging type, please consult [the reference](#operation/all_references).
+    For specific carriers packaging type, please consult [the reference](#operation/references).
     """)
     package_preset = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
     The parcel's package preset.
     
-    For specific carriers package preset, please consult [the reference](#operation/all_references).
+    For specific carriers package preset, please consult [the reference](#operation/references).
     """)
     description = CharField(required=False, allow_blank=True, allow_null=True, help_text="The parcel's description")
     content = CharField(required=False, allow_blank=True, allow_null=True, help_text="The parcel's content description")
@@ -150,7 +150,11 @@ class Parcel(EntitySerializer, ParcelData):
 
 class Invoice(Serializer):
 
-    date = CharField(required=True, help_text="The invoice date")
+    date = CharField(required=True, help_text="""
+    The invoide date
+    
+    Date Format: YYYY-MM-DD
+    """)
     identifier = CharField(required=False, allow_blank=True, allow_null=True, help_text="The internal invoice document identifier")
     type = CharField(required=False, allow_blank=True, allow_null=True, help_text="The invoice type")
     copies = IntegerField(required=False, allow_null=True, help_text="The number of invoice copies")
@@ -227,6 +231,13 @@ class Insurance(Serializer):
     amount = FloatField(required=True, allow_null=True, help_text="The insurance coverage amount.")
 
 
+class Charge(Serializer):
+
+    name = CharField(required=False, allow_blank=True, allow_null=True, help_text="The charge description")
+    amount = FloatField(required=False, allow_null=True, help_text="The charge monetary value")
+    currency = CharField(required=False, allow_blank=True, allow_null=True, help_text="The charge amount currency")
+
+
 class RateRequest(Serializer):
     shipper = Address(required=True, help_text="""
     The address of the party
@@ -244,14 +255,14 @@ class RateRequest(Serializer):
 
     services = StringListField(required=False, allow_null=True, help_text="""
     The requested carrier service for the shipment.<br/>
-    Please consult [the reference](#operation/all_references) for specific carriers services.
+    Please consult [the reference](#operation/references) for specific carriers services.
     
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """)
     options = PlainDictField(required=False, allow_null=True, help_text=f"""
     The options available for the shipment.
 
-    Please consult [the reference](#operation/all_references) for additional specific carriers options.
+    Please consult [the reference](#operation/references) for additional specific carriers options.
     """)
     reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
     carrier_ids = StringListField(required=False, allow_null=True, help_text="""
@@ -268,9 +279,13 @@ class TrackingRequest(Serializer):
 
 class PickupRequest(Serializer):
 
-    date = CharField(required=True, help_text="The expected pickup date")
-    address = Address(required=True, help_text="The pickup address")
-    parcels = ListField(child=Parcel(), required=False, allow_null=True, help_text="The shipment parcels to pickup.")
+    pickup_date = CharField(required=True, help_text="""
+    The expected pickup date
+    
+    Date Format: YYYY-MM-DD
+    """)
+    address = AddressData(required=True, help_text="The pickup address")
+    parcels = ParcelData(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
 
     ready_time = CharField(required=True, help_text="The ready time for pickup.")
     closing_time = CharField(required=True, help_text="The closing or late time of the pickup")
@@ -284,13 +299,18 @@ class PickupRequest(Serializer):
     
     eg: Behind the entrance door.
     """)
+    options = PlainDictField(required=False, allow_null=True, help_text="Advanced carrier specific pickup options")
 
 
 class PickupUpdateRequest(Serializer):
 
-    date = CharField(required=True, help_text="The expected pickup date")
+    pickup_date = CharField(required=True, help_text="""
+    The expected pickup date
+    
+    Date Format: YYYY-MM-DD
+    """)
     address = Address(required=True, help_text="The pickup address")
-    parcels = ListField(child=Parcel(), required=False, allow_null=True, help_text="The shipment parcels to pickup.")
+    parcels = Parcel(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
 
     confirmation_number = CharField(required=True, help_text="pickup identification number")
 
@@ -308,28 +328,16 @@ class PickupUpdateRequest(Serializer):
     """)
 
 
-class PickupCancellationRequest(Serializer):
+class PickupDetails(Serializer):
 
-    pickup_date = CharField(required=True, help_text="The expected pickup date")
-    confirmation_number = CharField(required=True, help_text="pickup identification number")
-    person_name = CharField(required=False, allow_blank=True, allow_null=True, help_text="responsible party name")
-    country_code = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=COUNTRIES, help_text="pickup address country code")
-
-
-class Message(Serializer):
-
-    carrier_name = CharField(required=True, help_text="The targeted carrier")
-    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
-    message = CharField(required=False, help_text="The error or warning message")
-    code = CharField(required=False, help_text="The message code")
-    details = DictField(required=False, help_text="any additional details")
-
-
-class Charge(Serializer):
-
-    name = CharField(required=False, allow_blank=True, allow_null=True, help_text="The charge description")
-    amount = FloatField(required=False, allow_null=True, help_text="The charge monetary value")
-    currency = CharField(required=False, allow_blank=True, allow_null=True, help_text="The charge amount currency")
+    id = CharField(required=False, help_text="A unique pickup identifier")
+    carrier_name = CharField(required=True, help_text="The pickup carrier")
+    carrier_id = CharField(required=True, help_text="The pickup carrier configured name")
+    confirmation_number = CharField(required=True, help_text="The pickup confirmation identifier")
+    pickup_date = CharField(required=False, allow_null=True, help_text="The pickup date")
+    pickup_charge = Charge(required=False, allow_null=True, help_text="The pickup cost details")
+    ready_time = CharField(required=False, allow_null=True, help_text="The pickup expected ready time")
+    closing_time = CharField(required=False, allow_null=True, help_text="The pickup expected closing or late time")
 
 
 class TrackingEvent(Serializer):
@@ -377,16 +385,20 @@ class TrackingStatus(EntitySerializer, TrackingDetails):
     shipment_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system shipment associated.")
 
 
-class PickupDetails(Serializer):
+class Pickup(PickupDetails, PickupRequest):
+    address = Address(required=True, help_text="The pickup address")
+    parcels = Parcel(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
 
-    id = CharField(required=False, help_text="A unique pickup identifier")
-    carrier_name = CharField(required=True, help_text="The pickup carrier")
-    carrier_id = CharField(required=True, help_text="The pickup carrier configured name")
+
+class PickupCancelRequest(Serializer):
     confirmation_number = CharField(required=True, help_text="The pickup confirmation identifier")
-    pickup_date = CharField(required=False, allow_null=True, help_text="The pickup date")
-    pickup_charge = Charge(required=False, allow_null=True, help_text="The pickup cost details")
-    ready_time = CharField(required=False, allow_null=True, help_text="The pickup expected ready time")
-    closing_time = CharField(required=False, allow_null=True, help_text="The pickup expected closing or late time")
+    address = AddressData(required=False, help_text="The pickup address")
+    pickup_date = CharField(required=False, allow_null=True, help_text="""
+    The pickup date
+    
+    Date Format: YYYY-MM-DD
+    """)
+    reason = CharField(required=False, help_text="The reason of the pickup cancellation")
 
 
 class ShippingData(Serializer):
@@ -405,7 +417,7 @@ class ShippingData(Serializer):
     parcels = ListField(child=ParcelData(), required=True, help_text="The shipment's parcels")
     options = PlainDictField(required=False, allow_null=True, help_text="""
     The options available for the shipment.<br/>
-    Please consult [the reference](#operation/all_references) for additional specific carriers options.
+    Please consult [the reference](#operation/references) for additional specific carriers options.
     """)
     payment = PaymentData(required=False, allow_null=True, help_text="The payment details")
     customs = CustomsData(required=False, allow_null=True, help_text="""
@@ -430,7 +442,7 @@ class ShipmentData(ShippingData):
     services = StringListField(required=False, allow_null=True, default=[], help_text="""
     The requested carrier service for the shipment.
 
-    Please consult [the reference](#operation/all_references) for specific carriers services.<br/>
+    Please consult [the reference](#operation/references) for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """)
     carrier_ids = StringListField(required=False, allow_null=True, default=[], help_text="""
@@ -451,11 +463,13 @@ class ShipmentContent(Serializer):
     carrier_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment carrier configured identifier")
     label = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment label in base64 string")
     tracking_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment tracking number")
+    shipment_identifier = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment carrier system identifier")
     selected_rate = Rate(required=False, allow_null=True, help_text="The shipment selected rate")
 
     selected_rate_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment selected rate.")
     rates = ListField(required=False, allow_null=True, child=Rate(), help_text="The list for shipment rates fetched previously")
     tracking_url = URLField(required=False, allow_blank=True, allow_null=True, help_text="The shipment tracking url")
+    service = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected service")
 
     # Request properties
 
@@ -474,14 +488,14 @@ class ShipmentContent(Serializer):
     parcels = ListField(child=Parcel(), required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, default=[], help_text="""
-    The requested carrier service for the shipment.
+    The carriers services requested for the shipment.
 
-    Please consult [the reference](#operation/all_references) for specific carriers services.<br/>
+    Please consult [the reference](#operation/references) for specific carriers services.<br/>
     Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
     """)
     options = PlainDictField(required=False, allow_null=True, help_text="""
     The options available for the shipment.<br/>
-    Please consult [the reference](#operation/all_references) for additional specific carriers options.
+    Please consult [the reference](#operation/references) for additional specific carriers options.
     """)
 
     payment = Payment(required=False, allow_null=True, help_text="The payment details")
@@ -501,24 +515,61 @@ class ShipmentContent(Serializer):
     *Note that the request will be sent to all carriers in nothing is specified*
     """)
     meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
+    created_at = CharField(required=True, help_text="""
+    The shipment creation date
+    
+    Date Format: YYYY-MM-DD
+    """)
 
 
 class Shipment(EntitySerializer, ShipmentContent):
     pass
 
 
+class ShipmentCancelRequest(Serializer):
+    shipment_identifier = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment identifier returned during creation")
+    service = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected shipment service")
+    options = PlainDictField(required=False, allow_null=True, help_text="Advanced carrier specific cancellation options")
+
+
+class Message(Serializer):
+
+    carrier_name = CharField(required=True, help_text="The targeted carrier")
+    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
+    message = CharField(required=False, help_text="The error or warning message")
+    code = CharField(required=False, help_text="The message code")
+    details = DictField(required=False, help_text="any additional details")
+
+
+class OperationConfirmation(Serializer):
+    carrier_name = CharField(required=True, help_text="The operation carrier")
+    carrier_id = CharField(required=True, help_text="The targeted carrier's name (unique identifier)")
+    operation = CharField(required=True, help_text="Operation performed")
+    success = BooleanField(required=True, help_text="Specify whether the operation was successful")
+
+
+class OperationResponse(Serializer):
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
+    confirmation = OperationConfirmation(required=False, help_text="The operation details")
+
+
+class PickupResponse(Serializer):
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
+    pickup = Pickup(required=False, help_text="The scheduled pickup's summary")
+
+
 class RateResponse(Serializer):
-    messages = ListField(child=Message(), required=False, help_text="The list of note, error or warning messages")
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
     rates = ListField(child=Rate(), help_text="The list of returned rates")
 
 
 class ShipmentResponse(Serializer):
-    messages = ListField(child=Message(), required=False, help_text="The list of note or warning messages")
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
     shipment = Shipment(required=False, help_text="The submitted shipment's summary")
 
 
 class TrackingResponse(Serializer):
-    messages = ListField(child=Message(), required=False, help_text="The list of note or warning messages")
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
     tracking_details = TrackingDetails(required=False, help_text="The tracking details retrieved")
 
 

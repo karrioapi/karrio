@@ -30,7 +30,7 @@ class CustomsList(CustomsAPIView):
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all Customs Info",
+        operation_summary="List all customs info",
         responses={200: Customs(many=True), 400: ErrorResponse()}
     )
     def get(self, request: Request):
@@ -45,7 +45,7 @@ class CustomsList(CustomsAPIView):
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a Customs Info",
+        operation_summary="Create a customs info",
         request_body=CustomsData(),
         responses={200: Customs(), 400: ErrorResponse()}
     )
@@ -62,7 +62,7 @@ class CustomsDetail(CustomsAPIView):
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a Customs Info",
+        operation_summary="Retrieve a customs info",
         responses={200: Customs(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
@@ -75,7 +75,7 @@ class CustomsDetail(CustomsAPIView):
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a Customs Info",
+        operation_summary="Update a customs info",
         request_body=CustomsData(),
         responses={200: Customs(), 400: ErrorResponse()}
     )
