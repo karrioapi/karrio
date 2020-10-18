@@ -118,9 +118,6 @@ class Customs(OwnedEntity):
 
 
 class Tracking(OwnedEntity):
-    DIRECT_PROPS = []
-    RELATIONAL_PROPS = []
-
     class Meta:
         db_table = "tracking"
         verbose_name = 'Tracking'
@@ -129,6 +126,7 @@ class Tracking(OwnedEntity):
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
     tracking_number = models.CharField(max_length=50, unique=True)
     events = JSONField(blank=True, null=True, default=[])
+    test_mode = models.BooleanField(null=False)
 
     # System Reference fields
 
@@ -152,9 +150,8 @@ class Tracking(OwnedEntity):
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        'label', 'options', 'services', 'status', 'service', 'meta',
-        'shipment_rates', 'tracking_number', 'doc_images', 'tracking_url',
-        'shipment_identifier'
+        'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates',
+        'tracking_number', 'doc_images', 'tracking_url', 'shipment_identifier', 'test_mode',
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
 
@@ -173,6 +170,7 @@ class Shipment(OwnedEntity):
     shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
     label = models.TextField(max_length=None, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
+    test_mode = models.BooleanField(null=False)
 
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
     customs = models.ForeignKey('Customs', on_delete=models.CASCADE, blank=True, null=True)

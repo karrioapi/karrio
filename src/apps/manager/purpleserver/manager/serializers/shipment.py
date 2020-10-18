@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework.reverse import reverse
-from rest_framework.serializers import Serializer, CharField, ChoiceField
+from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
 from purplship.core.utils import to_dict
 from purpleserver.core.gateway import Shipments
@@ -34,6 +34,7 @@ class ShipmentSerializer(ShipmentData):
     shipment_identifier = CharField(required=False, allow_blank=True, allow_null=True)
     selected_rate = Rate(required=False, allow_null=True)
     tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
+    test_mode = BooleanField(required=False)
 
     def __init__(self, instance: models.Shipment = None, **kwargs):
         if kwargs.get('data') is not None:
@@ -90,6 +91,7 @@ class ShipmentSerializer(ShipmentData):
     def create(self, validated_data: dict) -> models.Shipment:
         carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
         rate_response: RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save().instance
+        test_mode = all([r.test_mode for r in rate_response.rates])
         user = validated_data['user']
 
         shipment_data = {
@@ -115,6 +117,7 @@ class ShipmentSerializer(ShipmentData):
             **shipment_data,
             **{k: v for k, v in related_data.items() if v is not None},
             'user': user,
+            'test_mode': test_mode,
             'shipment_rates': to_dict(rate_response.rates),
         })
         shipment.carriers.set(carriers)

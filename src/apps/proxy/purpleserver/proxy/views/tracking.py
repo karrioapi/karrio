@@ -56,7 +56,7 @@ def track_shipment(request: Request, carrier_name: str, tracking_number: str):
 
     return Response(
         to_dict(response),
-        status=status.HTTP_200_OK if response.tracking_details is not None else status.HTTP_404_NOT_FOUND
+        status=status.HTTP_200_OK if response.tracking is not None else status.HTTP_404_NOT_FOUND
     )
 
 

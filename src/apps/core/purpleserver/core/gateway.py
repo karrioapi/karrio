@@ -14,7 +14,8 @@ from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, RateRequest, Shipment,
     RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse,
     PickupRequest, Pickup, PickupUpdateRequest, PickupResponse, AddressValidation,
-    ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest, AddressValidationRequest
+    ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest, AddressValidationRequest,
+    Tracking,
 )
 from purpleserver.core.serializers import ShipmentStatus
 from purpleserver.core.utils import identity, post_processing
@@ -102,33 +103,29 @@ class Shipments:
         if shipment is None:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        shipment_rate = shipment.selected_rate or selected_rate
-        shipment_rate_id = (
-            selected_rate.id
-            if(to_dict(selected_rate) == to_dict({**to_dict(shipment_rate), 'id': selected_rate.id})) else
-            f'rat_{uuid.uuid4().hex}'
+        shipment_rate = (
+            {**to_dict(shipment.selected_rate), 'id': f'rat_{uuid.uuid4().hex}'}
+            if shipment.selected_rate is not None else
+            to_dict(selected_rate)
         )
-        tracking_url = None
 
-        try:
-            is_test = "?test" if carrier.test else ""
-            tracking_url = (
-                resolve_tracking_url(shipment) + is_test
-                if resolve_tracking_url is not None else None
-            )
-        except Exception as e:
-            logger.warning(f"Failed to generate tracking url: {e}")
+        def generate_tracking_url():
+            if resolve_tracking_url is None:
+                return ''
+
+            return f"{resolve_tracking_url(shipment)}{'?test' if carrier.test else ''}"
 
         return ShipmentResponse(
             shipment=Shipment(**{
                 **payload,
                 **to_dict(shipment),
-                "service": shipment_rate.service,
-                "selected_rate_id": shipment_rate_id,
-                "selected_rate": {**to_dict(shipment_rate), 'id': shipment_rate_id},
-                "tracking_url": tracking_url,
-                "status": ShipmentStatus.purchased.value
-            }) if shipment is not None else None,
+                'test_mode': carrier.test,
+                "selected_rate": shipment_rate,
+                "service": shipment_rate['service'],
+                "selected_rate_id": shipment_rate['id'],
+                "tracking_url": generate_tracking_url(),
+                "status": ShipmentStatus.purchased.value,
+            }),
             messages=messages
         )
 
@@ -170,7 +167,11 @@ class Shipments:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
         return TrackingResponse(
-            tracking_details=results[0],
+            tracking=Tracking(**{
+                **to_dict(results[0]),
+                'id': f'trk_{uuid.uuid4().hex}',
+                'test_mode': carrier.test,
+            }),
             messages=messages
         )
 
@@ -194,9 +195,10 @@ class Pickups:
 
         return PickupResponse(
             pickup=Pickup(**{
-                'id': f'pck_{uuid.uuid4().hex}',
                 **payload,
-                **to_dict(pickup)
+                **to_dict(pickup),
+                'id': f'pck_{uuid.uuid4().hex}',
+                'test_mode': carrier.test,
             }),
             messages=messages
         )
@@ -220,7 +222,8 @@ class Pickups:
         return PickupResponse(
             pickup=Pickup(**{
                 **payload,
-                **to_dict(pickup)
+                **to_dict(pickup),
+                'test_mode': carrier.test,
             }),
             messages=messages
         )
@@ -283,13 +286,16 @@ class Rates:
         if not any(flattened_rates) and any(messages):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        rates: List[Rate] = [
-            Rate(**{
+        def consolidate_rate(rate: Rate) -> Rate:
+            carrier = next((c for c in carrier_settings_list if c.carrier_id == rate.carrier_id))
+            return Rate(**{
                 'id': f'rat_{uuid.uuid4().hex}',
-                'carrier_ref': next((c.id for c in carrier_settings_list if c.carrier_id == r.carrier_id)),
-                **{**to_dict(r)}
-            }) for r in flattened_rates
-        ]
+                'carrier_ref': carrier.id,
+                'test_mode': carrier.test,
+                **to_dict(rate)
+            })
+
+        rates: List[Rate] = sorted(map(consolidate_rate, flattened_rates), key=lambda rate: rate.total_charge)
 
         return RateResponse(
             rates=sorted(rates, key=lambda rate: rate.total_charge),

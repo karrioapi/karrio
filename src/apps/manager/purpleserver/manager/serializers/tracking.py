@@ -24,7 +24,8 @@ class TrackingSerializer(TrackingDetails):
         return models.Tracking.objects.create(
             user=user,
             tracking_number=tracking_number,
-            events=to_dict(response.tracking_details.events),
+            events=to_dict(response.tracking.events),
+            test_mode=response.tracking.test_mode,
             tracking_carrier=models.Carrier.objects.get(carrier_id=carrier_id),
             tracking_shipment=models.Shipment.objects.filter(id=shipment_id).first(),
         )
@@ -37,7 +38,7 @@ class TrackingSerializer(TrackingDetails):
                 carrier_filter=dict(carrier_id=instance.carrier_id),
                 payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data
             )
-            instance.events = to_dict(response.tracking_details.events)
+            instance.events = to_dict(response.tracking.events)
             instance.save()
 
         return instance

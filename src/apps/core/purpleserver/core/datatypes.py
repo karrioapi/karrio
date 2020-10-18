@@ -9,7 +9,6 @@ from purplship.core.models import (
     Message,
     Address,
     Insurance,
-    TrackingDetails,
     TrackingRequest,
     ShipmentDetails,
     AddressValidationRequest,
@@ -25,6 +24,7 @@ from purplship.core.models import (
     PickupUpdateRequest,
     PickupCancelRequest,
     ConfirmationDetails as Confirmation,
+    TrackingEvent
 )
 
 
@@ -62,6 +62,7 @@ class Rate:
     carrier_name: str
     carrier_id: str
     currency: str
+
     transit_days: int = None
     service: str = None
     discount: float = None
@@ -72,6 +73,7 @@ class Rate:
     id: str = None
     meta: dict = None
     carrier_ref: str = None
+    test_mode: bool = None
 
 
 @attr.s(auto_attribs=True)
@@ -142,6 +144,7 @@ class Shipment:
     status: str = ""
     meta: dict = None
     id: str = None
+    test_mode: bool = None
 
 
 @attr.s(auto_attribs=True)
@@ -161,6 +164,18 @@ class Pickup:
     package_location: str = None
     options: Dict = {}
     id: str = None
+    test_mode: bool = None
+
+
+@attr.s(auto_attribs=True)
+class Tracking:
+    carrier_name: str
+    carrier_id: str
+    tracking_number: str
+
+    events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+    delivered: bool = None
+    test_mode: bool = None
 
 
 @attr.s(auto_attribs=True)
@@ -201,7 +216,7 @@ class ShipmentResponse:
 @attr.s(auto_attribs=True)
 class TrackingResponse:
     messages: List[Message] = JList[Message]
-    tracking_details: TrackingDetails = JStruct[TrackingDetails]
+    tracking: Tracking = JStruct[Tracking]
 
 
 @attr.s(auto_attribs=True)

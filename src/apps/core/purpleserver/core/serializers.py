@@ -338,6 +338,7 @@ class PickupDetails(Serializer):
     pickup_charge = Charge(required=False, allow_null=True, help_text="The pickup cost details")
     ready_time = CharField(required=False, allow_null=True, help_text="The pickup expected ready time")
     closing_time = CharField(required=False, allow_null=True, help_text="The pickup expected closing or late time")
+    test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
 
 
 class TrackingEvent(Serializer):
@@ -371,6 +372,7 @@ class Rate(EntitySerializer):
     meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
 
     carrier_ref = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system carrier configuration id")
+    test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
 
 
 class TrackingDetails(Serializer):
@@ -379,6 +381,7 @@ class TrackingDetails(Serializer):
     carrier_id = CharField(required=True, help_text="The tracking carrier configured identifier")
     tracking_number = CharField(required=True, help_text="The shipment tracking number")
     events = ListField(child=TrackingEvent(), required=False, allow_null=True, help_text="The tracking details events")
+    test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):
@@ -520,6 +523,7 @@ class ShipmentContent(Serializer):
     
     Date Format: YYYY-MM-DD
     """)
+    test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
 
 
 class Shipment(EntitySerializer, ShipmentContent):
