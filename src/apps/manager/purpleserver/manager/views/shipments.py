@@ -189,7 +189,7 @@ class ShipmentPurchase(ShipmentAPIView):
 
         # Submit shipment to carriers
         shipment_response: ShipmentResponse = SerializerDecorator[ShipmentValidationData](
-            data=payload).save(request=request).instance
+            data=payload).save().instance
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](

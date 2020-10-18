@@ -180,7 +180,6 @@ class ShipmentValidationData(Shipment):
             resolve_tracking_url=(
                 lambda shipment: reverse(
                     "purpleserver.manager:shipment-tracking",
-                    request=validated_data.get('request'),
                     kwargs=dict(tracking_number=shipment.tracking_number, carrier_id=shipment.carrier_id)
                 )
             )

@@ -75,7 +75,6 @@ class ShippingList(ShippingAPIView):
             resolve_tracking_url=(
                 lambda shipment: reverse(
                     "purpleserver.proxy:shipment-tracking",
-                    request=request,
                     kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
                 )
             )
