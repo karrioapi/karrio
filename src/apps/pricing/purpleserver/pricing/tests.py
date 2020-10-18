@@ -158,7 +158,8 @@ RATING_RESPONSE = {
       "id": ANY,
       "service": "canadapost_expedited_parcel",
       "totalCharge": 32.99,
-      "transitDays": 7
+      "transitDays": 7,
+      "testMode": True
     },
     {
       "baseCharge": 75.82,
@@ -183,7 +184,8 @@ RATING_RESPONSE = {
       "id": ANY,
       "service": "canadapost_xpresspost",
       "totalCharge": 85.65,
-      "transitDays": 2
+      "transitDays": 2,
+      "testMode": True
     },
     {
       "baseCharge": 101.83,
@@ -213,7 +215,8 @@ RATING_RESPONSE = {
       "id": ANY,
       "service": "canadapost_priority",
       "totalCharge": 114.93,
-      "transitDays": 2
+      "transitDays": 2,
+      "testMode": True
     }
   ]
 }

@@ -1,5 +1,5 @@
 from django.utils import timezone
-from rest_framework.serializers import CharField
+from rest_framework.serializers import CharField, BooleanField
 from purplship.core.utils import to_dict
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.serializers import TrackingDetails, TrackingRequest
@@ -9,6 +9,7 @@ import purpleserver.manager.models as models
 
 class TrackingSerializer(TrackingDetails):
     carrier_name = CharField(required=False)
+    test_mode = BooleanField(required=False)
 
     def create(self, validated_data: dict) -> models.Tracking:
         user = validated_data['user']

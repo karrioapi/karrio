@@ -172,9 +172,10 @@ class Tracking:
     carrier_name: str
     carrier_id: str
     tracking_number: str
-
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+
     delivered: bool = None
+    id: str = None
     test_mode: bool = None
 
 

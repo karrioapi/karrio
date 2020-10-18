@@ -67,6 +67,7 @@ TRACKING_RESPONSE = {
     "carrierId": "ups_package",
     "carrierName": "ups_package",
     "trackingNumber": "1Z12345E6205277936",
+    "testMode": True,
     "shipmentId": None,
     "events": [
         {

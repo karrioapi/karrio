@@ -98,6 +98,7 @@ RATING_RESPONSE = {
                     "name": "SMB Savings"
                 }
             ],
+            "testMode": True,
             "service": "canadapost_priority",
             "totalCharge": 106.71,
             "transitDays": 2

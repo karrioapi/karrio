@@ -1,5 +1,5 @@
 import json
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
 from purplship.core.models import TrackingDetails, TrackingEvent
@@ -44,7 +44,8 @@ RETURNED_VALUE = (
 )
 
 TRACKING_RESPONSE = {
-  "trackingDetails": {
+  "tracking": {
+    "id": ANY,
     "carrierId": "ups_package",
     "carrierName": "ups_package",
     "events": [
@@ -56,6 +57,7 @@ TRACKING_RESPONSE = {
         "time": "10:39"
       }
     ],
+    "testMode": True,
     "trackingNumber": "1Z12345E6205277936"
   }
 }
