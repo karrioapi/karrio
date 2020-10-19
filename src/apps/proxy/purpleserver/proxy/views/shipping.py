@@ -1,18 +1,13 @@
 import logging
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from django.urls import path
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.reverse import reverse
-from rest_framework.views import APIView
-from django.urls import path
-
 from drf_yasg.utils import swagger_auto_schema
 
 from purplship.core.utils.helpers import to_dict
-
+from purpleserver.core.views.api import GenericAPIView
 from purpleserver.proxy.router import router
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.gateway import Shipments
@@ -51,13 +46,7 @@ class ShippingRequestValidation(ShippingRequest):
     recipient = Address(required=True, help_text="The shipment destination address (address to)")
 
 
-class ShippingAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-
-
-class ShippingList(ShippingAPIView):
+class ShippingList(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Shipping'],
@@ -83,7 +72,7 @@ class ShippingList(ShippingAPIView):
         return Response(to_dict(response), status=status.HTTP_201_CREATED)
 
 
-class ShippingDetails(ShippingAPIView):
+class ShippingDetails(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Shipping'],

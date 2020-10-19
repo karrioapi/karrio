@@ -1,13 +1,11 @@
 import logging
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.views import APIView
 
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
+
+from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.serializers import (
     TrackingStatus, ErrorResponse,
 )
@@ -19,13 +17,7 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class TrackingAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-
-
-class ShipmentTracking(TrackingAPIView):
+class ShipmentTracking(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],

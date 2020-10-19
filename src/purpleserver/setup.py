@@ -37,6 +37,7 @@ setup(
             'django',
             'djangorestframework==3.11.1',
             'djangorestframework-camel-case',
+            'drf-api-tracking',
             'drf-yasg',
             'gunicorn',
             'jsonfield',

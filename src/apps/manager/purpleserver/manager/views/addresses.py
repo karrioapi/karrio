@@ -1,13 +1,11 @@
 import logging
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status, generics
+from rest_framework import status
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
+from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import ErrorResponse, AddressData, Address
 from purpleserver.manager.serializers import AddressSerializer
@@ -18,13 +16,7 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class AddressAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
-
-
-class AddressList(AddressAPIView):
+class AddressList(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
@@ -55,7 +47,7 @@ class AddressList(AddressAPIView):
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
-class AddressDetail(AddressAPIView):
+class AddressDetail(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],

@@ -1,19 +1,15 @@
 import logging
 
-from purpleserver.core.utils import SerializerDecorator
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
-from rest_framework.permissions import IsAuthenticated
+from django.urls import path
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.serializers import NullBooleanField, ChoiceField, Serializer
-from rest_framework import generics, status
+from rest_framework import status
 
-from django.urls import path
-from django.forms.models import model_to_dict
-
-from drf_yasg.utils import swagger_auto_schema
-
+from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.gateway import Carriers
 from purpleserver.core.serializers import CarrierSettings, ErrorResponse, CARRIERS
 from purpleserver.providers.router import router
@@ -28,13 +24,7 @@ class CarrierFilters(Serializer):
     test = NullBooleanField(required=False, help_text="The test flag filter carrier configured in test mode")
 
 
-class CarrierAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
-
-
-class CarrierList(CarrierAPIView):
+class CarrierList(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Carriers'],
@@ -55,7 +45,7 @@ class CarrierList(CarrierAPIView):
         return Response(response)
 
 
-class ProviderList(CarrierAPIView):
+class ProviderList(GenericAPIView):
     swagger_schema = None
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
@@ -75,7 +65,7 @@ class ProviderList(CarrierAPIView):
         return Response(CarrierSettings(connection).data, status=status.HTTP_201_CREATED)
 
 
-class ProviderDetails(CarrierAPIView):
+class ProviderDetails(GenericAPIView):
     swagger_schema = None
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 

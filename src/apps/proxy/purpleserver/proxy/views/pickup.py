@@ -1,17 +1,14 @@
 import logging
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.views import APIView
 from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
 from purplship.core.utils.helpers import to_dict
 
+from purpleserver.core.views.api import GenericAPIView
 from purpleserver.proxy.router import router
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.gateway import Pickups
@@ -29,13 +26,7 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class PickupAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-
-
-class PickupDetails(PickupAPIView):
+class PickupDetails(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Pickups'],
@@ -78,7 +69,7 @@ class PickupDetails(PickupAPIView):
         return Response(to_dict(response), status=status.HTTP_200_OK)
 
 
-class PickupCancel(PickupAPIView):
+class PickupCancel(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Pickups'],

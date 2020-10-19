@@ -84,6 +84,7 @@ BASE_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_tracking',
 ]
 
 INSTALLED_APPS = [
