@@ -6,8 +6,6 @@ from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.core.utils.helpers import to_dict
-
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.serializers import (
     RateRequest, RateResponse, ErrorResponse
@@ -43,7 +41,7 @@ class RateViewAPI(GenericAPIView):
         response = Rates.fetch(rate_request.validated_data)
 
         return Response(
-            to_dict(response),
+            RateResponse(response).data,
             status=status.HTTP_207_MULTI_STATUS if len(response.messages) > 0 else status.HTTP_201_CREATED
         )
 

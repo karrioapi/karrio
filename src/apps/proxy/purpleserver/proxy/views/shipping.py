@@ -6,7 +6,6 @@ from rest_framework.request import Request
 from rest_framework.reverse import reverse
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.core.utils.helpers import to_dict
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.proxy.router import router
 from purpleserver.core.utils import SerializerDecorator
@@ -69,7 +68,7 @@ class ShippingList(GenericAPIView):
             )
         )
 
-        return Response(to_dict(response), status=status.HTTP_201_CREATED)
+        return Response(ShipmentResponse(response).data, status=status.HTTP_201_CREATED)
 
 
 class ShippingDetails(GenericAPIView):
@@ -88,7 +87,7 @@ class ShippingDetails(GenericAPIView):
 
         response = Shipments.track(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
 
-        return Response(to_dict(response), status=status.HTTP_202_ACCEPTED)
+        return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 
 
 router.urls.append(path('proxy/shipping', ShippingList.as_view(), name="shipping-request"))

@@ -144,6 +144,7 @@ class Shipment:
     status: str = ""
     meta: dict = None
     id: str = None
+    created_at: str = None
     test_mode: bool = None
 
 

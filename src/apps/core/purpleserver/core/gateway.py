@@ -1,5 +1,6 @@
 import uuid
 import logging
+from datetime import datetime
 from typing import List, Callable, Dict, Any
 
 from rest_framework import status
@@ -119,12 +120,14 @@ class Shipments:
             shipment=Shipment(**{
                 **payload,
                 **to_dict(shipment),
-                'test_mode': carrier.test,
+                "id": f"shp_{uuid.uuid4().hex}",
+                "test_mode": carrier.test,
                 "selected_rate": shipment_rate,
-                "service": shipment_rate['service'],
-                "selected_rate_id": shipment_rate['id'],
+                "service": shipment_rate["service"],
+                "selected_rate_id": shipment_rate["id"],
                 "tracking_url": generate_tracking_url(),
                 "status": ShipmentStatus.purchased.value,
+                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z")
             }),
             messages=messages
         )

@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.core.utils import to_dict
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.serializers import (
     TrackingRequest, TrackingResponse, TestFilters, ErrorResponse
@@ -46,7 +45,7 @@ class TrackingAPIView(GenericAPIView):
         )
 
         return Response(
-            to_dict(response),
+            TrackingResponse(response).data,
             status=status.HTTP_200_OK if response.tracking is not None else status.HTTP_404_NOT_FOUND
         )
 

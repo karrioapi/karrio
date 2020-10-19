@@ -1,12 +1,9 @@
 import logging
+from django.urls import path
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-from django.urls import path
-
-from drf_yasg.utils import swagger_auto_schema
-
-from purplship.core.utils.helpers import to_dict
 
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.proxy.router import router
@@ -46,7 +43,7 @@ class PickupDetails(GenericAPIView):
 
         response = Pickups.schedule(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
 
-        return Response(to_dict(response), status=status.HTTP_201_CREATED)
+        return Response(PickupResponse(response).data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
         tags=['Pickups'],
@@ -66,7 +63,7 @@ class PickupDetails(GenericAPIView):
 
         response = Pickups.update(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
 
-        return Response(to_dict(response), status=status.HTTP_200_OK)
+        return Response(PickupResponse(response).data, status=status.HTTP_200_OK)
 
 
 class PickupCancel(GenericAPIView):
@@ -89,7 +86,7 @@ class PickupCancel(GenericAPIView):
 
         response = Pickups.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
 
-        return Response(to_dict(response), status=status.HTTP_202_ACCEPTED)
+        return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 
 
 router.urls.append(path('proxy/pickups/<carrier_name>', PickupDetails.as_view(), name="pickup-details"))
