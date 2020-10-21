@@ -60,12 +60,12 @@ class Carriers:
 class Address:
     @staticmethod
     def validate(payload: dict, carrier_filter: dict) -> AddressValidation:
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), None)
 
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Address.validate(AddressValidationRequest(**payload))
+        request = purplship.Address.validate(AddressValidationRequest(**to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -82,7 +82,7 @@ class Address:
 
 class Shipments:
     @staticmethod
-    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None) -> ShipmentResponse:
+    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None, carrier: models.Carrier = None) -> ShipmentResponse:
         selected_rate = next(
             (Rate(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
             None
@@ -94,7 +94,7 @@ class Shipments:
                 f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
             )
 
-        carrier = Carriers.retrieve(carrier_id=selected_rate.carrier_id).data
+        carrier = carrier or Carriers.retrieve(carrier_id=selected_rate.carrier_id).data
         request = ShipmentRequest(**{**to_dict(payload), 'service': selected_rate.service})
         gateway = purplship.gateway[carrier.carrier_name].create(carrier.dict())
 
@@ -133,8 +133,8 @@ class Shipments:
         )
 
     @staticmethod
-    def cancel(payload: dict, carrier_filter: dict) -> ConfirmationResponse:
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+    def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
 
         if carrier is None:
             raise NotFound('No configured carrier found')
@@ -154,13 +154,13 @@ class Shipments:
         )
 
     @staticmethod
-    def track(payload: dict, carrier_filter: dict) -> TrackingResponse:
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+    def track(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> TrackingResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
 
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Tracking.fetch(TrackingRequest(**payload))
+        request = purplship.Tracking.fetch(TrackingRequest(**to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -181,13 +181,13 @@ class Shipments:
 
 class Pickups:
     @staticmethod
-    def schedule(payload: dict, carrier_filter: dict) -> PickupResponse:
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+    def schedule(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> PickupResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
 
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Pickup.schedule(PickupRequest(**payload))
+        request = purplship.Pickup.schedule(PickupRequest(**to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -207,13 +207,13 @@ class Pickups:
         )
 
     @staticmethod
-    def update(payload: dict, carrier_filter: dict) -> PickupResponse:
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+    def update(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> PickupResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
 
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Pickup.update(PickupUpdateRequest(**payload))
+        request = purplship.Pickup.update(PickupUpdateRequest(**to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -232,13 +232,13 @@ class Pickups:
         )
 
     @staticmethod
-    def cancel(payload: dict, carrier_filter: dict) -> ConfirmationResponse:
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+    def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
 
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Pickup.cancel(PickupCancelRequest(**payload))
+        request = purplship.Pickup.cancel(PickupCancelRequest(**to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
