@@ -134,6 +134,7 @@ RETURNED_VALUE = [(
 )]
 
 RATING_RESPONSE = {
+  "messages": [],
   "rates": [
     {
       "baseCharge": 29.64,
@@ -156,6 +157,7 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
+      "meta": None,
       "service": "canadapost_expedited_parcel",
       "totalCharge": 32.99,
       "transitDays": 7,
@@ -182,6 +184,7 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
+      "meta": None,
       "service": "canadapost_xpresspost",
       "totalCharge": 85.65,
       "transitDays": 2,
@@ -213,6 +216,7 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
+      "meta": None,
       "service": "canadapost_priority",
       "totalCharge": 114.93,
       "transitDays": 2,

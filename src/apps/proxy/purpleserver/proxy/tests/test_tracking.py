@@ -44,6 +44,7 @@ RETURNED_VALUE = (
 )
 
 TRACKING_RESPONSE = {
+  "messages": [],
   "tracking": {
     "id": ANY,
     "carrierId": "ups_package",
@@ -54,6 +55,7 @@ TRACKING_RESPONSE = {
         "date": "2010-08-30",
         "description": "UPS INTERNAL ACTIVITY CODE",
         "location": "BONN",
+        "signatory": None,
         "time": "10:39"
       }
     ],

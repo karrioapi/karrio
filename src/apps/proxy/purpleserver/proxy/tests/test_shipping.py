@@ -120,122 +120,168 @@ RETURNED_VALUE = (
 )
 
 SHIPPING_RESPONSE = {
-  "shipment": {
-    "carrierId": "canadapost",
-    "carrierName": "canadapost",
-    "label": ANY,
-    "options": {},
-    "parcels": [{
-      "isDocument": False,
-      "packagePreset": "canadapost_corrugated_small_box",
-      "weight": 1.0
-    }],
-    "payment": {
-      "currency": "CAD",
-      "paidBy": "sender"
-    },
-    "rates": [
-      {
-        "baseCharge": 101.83,
-        "carrierId": "canadapost",
-        "carrierName": "canadapost",
-        "currency": "CAD",
-        "discount": -9.04,
-        "dutiesAndTaxes": 13.92,
-        "extraCharges": [
-          {
-            "amount": 2.7,
-            "currency": "CAD",
-            "name": "Fuel surcharge"
-          },
-          {
-            "amount": -11.74,
-            "currency": "CAD",
-            "name": "SMB Savings"
-          }
-        ],
-        "id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
-        "service": "canadapost_priority",
-        "totalCharge": 106.71,
-        "testMode": True
-      },
-      {
-        "baseCharge": 27.36,
-        "carrierId": "canadapost",
-        "carrierName": "canadapost",
-        "currency": "CAD",
-        "discount": -3.06,
-        "dutiesAndTaxes": 3.65,
-        "extraCharges": [
-          {
-            "amount": 0.71,
-            "currency": "CAD",
-            "name": "Fuel surcharge"
-          },
-          {
-            "amount": -3.77,
-            "currency": "CAD",
-            "name": "SMB Savings"
-          }
-        ],
-        "id": "prx_9290e4a2c8e34c8d8c73ab990b029f3d",
-        "service": "canadapost_regular_parcel",
-        "totalCharge": 27.95,
-        "testMode": True
-      }
-    ],
-    "recipient": {
-      "addressLine1": "125 Church St",
-      "city": "Moncton",
-      "companyName": "A corp.",
-      "countryCode": "CA",
-      "personName": "John Doe",
-      "phoneNumber": "514 000 0000",
-      "postalCode": "E1C4Z8",
-      "residential": False,
-      "stateCode": "NB"
-    },
-    "selectedRate": {
-      "baseCharge": 101.83,
-      "carrierId": "canadapost",
-      "carrierName": "canadapost",
-      "currency": "CAD",
-      "discount": -9.04,
-      "dutiesAndTaxes": 13.92,
-      "extraCharges": [
-        {
-          "amount": 2.7,
-          "currency": "CAD",
-          "name": "Fuel surcharge"
+    'messages': [],
+    'shipment': {
+        'id': ANY,
+        'status': 'purchased',
+        'carrierName': 'canadapost',
+        'carrierId': 'canadapost',
+        'label': '==apodifjoefr',
+        'trackingNumber': '123456789012',
+        'shipmentIdentifier': '123456789012',
+        'selectedRate': {
+            'id': 'prx_a9b96e5a82f644b0921bfed3190b4d6c',
+            'carrierName': 'canadapost',
+            'carrierId': 'canadapost',
+            'currency': 'CAD',
+            'service': 'canadapost_priority',
+            'discount': -9.04,
+            'baseCharge': 101.83,
+            'totalCharge': 106.71,
+            'dutiesAndTaxes': 13.92,
+            'transitDays': None,
+            'extraCharges': [
+                {
+                    'name': 'Fuel surcharge',
+                    'amount': 2.7,
+                    'currency': 'CAD'
+                },
+                {
+                    'name': 'SMB Savings',
+                    'amount': -11.74,
+                    'currency': 'CAD'
+                }
+            ],
+            'meta': None,
+            'carrierRef': None,
+            'testMode': True
         },
-        {
-          "amount": -11.74,
-          "currency": "CAD",
-          "name": "SMB Savings"
-        }
-      ],
-      "id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
-      "service": "canadapost_priority",
-      "totalCharge": 106.71,
-      "testMode": True
-    },
-    "selectedRateId": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
-    "service": "canadapost_priority",
-    "shipmentIdentifier": "123456789012",
-    "shipper": {
-      "addressLine1": "5840 Oak St",
-      "city": "Vancouver",
-      "companyName": "B corp.",
-      "countryCode": "CA",
-      "personName": "Jane Doe",
-      "phoneNumber": "514 000 0000",
-      "postalCode": "V6M2V9",
-      "residential": False,
-      "stateCode": "BC"
-    },
-    "testMode": True,
-    "status": "purchased",
-    "trackingNumber": "123456789012",
-    "trackingUrl": "/v1/proxy/tracking/canadapost/123456789012?test"
-  }
+        'selectedRateId': 'prx_a9b96e5a82f644b0921bfed3190b4d6c',
+        'rates': [
+            {
+                'id': 'prx_a9b96e5a82f644b0921bfed3190b4d6c',
+                'carrierName': 'canadapost',
+                'carrierId': 'canadapost',
+                'currency': 'CAD',
+                'service': 'canadapost_priority',
+                'discount': -9.04,
+                'baseCharge': 101.83,
+                'totalCharge': 106.71,
+                'dutiesAndTaxes': 13.92,
+                'transitDays': None,
+                'extraCharges': [
+                    {
+                        'name': 'Fuel surcharge',
+                        'amount': 2.7,
+                        'currency': 'CAD'
+                    },
+                    {
+                        'name': 'SMB Savings',
+                        'amount': -11.74,
+                        'currency': 'CAD'
+                    }
+                ],
+                'meta': None,
+                'carrierRef': None,
+                'testMode': True
+            },
+            {
+                'id': 'prx_9290e4a2c8e34c8d8c73ab990b029f3d',
+                'carrierName': 'canadapost',
+                'carrierId': 'canadapost',
+                'currency': 'CAD',
+                'service': 'canadapost_regular_parcel',
+                'discount': -3.06,
+                'baseCharge': 27.36,
+                'totalCharge': 27.95,
+                'dutiesAndTaxes': 3.65,
+                'transitDays': None,
+                'extraCharges': [
+                    {
+                        'name': 'Fuel surcharge',
+                        'amount': 0.71,
+                        'currency': 'CAD'
+                    },
+                    {
+                        'name': 'SMB Savings',
+                        'amount': -3.77,
+                        'currency': 'CAD'
+                    }
+                ],
+                'meta': None,
+                'carrierRef': None,
+                'testMode': True
+            }
+        ],
+        'trackingUrl': '/v1/proxy/tracking/canadapost/123456789012?test',
+        'service': 'canadapost_priority',
+        'shipper': {
+            'id': None,
+            'postalCode': 'V6M2V9',
+            'city': 'Vancouver',
+            'federalTaxId': None,
+            'stateTaxId': None,
+            'personName': 'Jane Doe',
+            'companyName': 'B corp.',
+            'countryCode': 'CA',
+            'email': None,
+            'phoneNumber': '514 000 0000',
+            'stateCode': 'BC',
+            'suburb': None,
+            'residential': False,
+            'addressLine1': '5840 Oak St',
+            'addressLine2': ''
+        },
+        'recipient': {
+            'id': None,
+            'postalCode': 'E1C4Z8',
+            'city': 'Moncton',
+            'federalTaxId': None,
+            'stateTaxId': None,
+            'personName': 'John Doe',
+            'companyName': 'A corp.',
+            'countryCode': 'CA',
+            'email': None,
+            'phoneNumber': '514 000 0000',
+            'stateCode': 'NB',
+            'suburb': None,
+            'residential': False,
+            'addressLine1': '125 Church St',
+            'addressLine2': ''
+        },
+        'parcels': [
+            {
+                'id': None,
+                'weight': 1.0,
+                'width': None,
+                'height': None,
+                'length': None,
+                'packagingType': None,
+                'packagePreset': 'canadapost_corrugated_small_box',
+                'description': None,
+                'content': None,
+                'isDocument': False,
+                'weightUnit': None,
+                'dimensionUnit': None
+            }
+        ],
+        'services': [],
+        'options': {},
+        'payment': {
+            'id': None,
+            'paidBy': 'sender',
+            'amount': None,
+            'currency': 'CAD',
+            'accountNumber': None,
+            'creditCard': None,
+            'contact': None
+        },
+        'customs': None,
+        'docImages': [],
+        'reference': '',
+        'carrierIds': [],
+        'meta': None,
+        'createdAt': ANY,
+        'testMode': True
+    }
 }

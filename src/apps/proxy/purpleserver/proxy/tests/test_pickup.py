@@ -47,7 +47,7 @@ class TesPickup(APITestCase):
             response = self.client.post(f"{url}?test", PICKUP_CANCEL_DATA)
             response_data = json.loads(response.content)
 
-            self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_CANCEL_RESPONSE)
 
 
@@ -57,7 +57,7 @@ PICKUP_DATA = {
     "addressLine1": "125 Church St",
     "personName": "John Doe",
     "companyName": "A corp.",
-    "phoneNumber": "514-000-0000",
+    "phoneNumber": "514 000 0000",
     "city": "Moncton",
     "countryCode": "CA",
     "postalCode": "E1C4Z8",
@@ -90,7 +90,7 @@ PICKUP_UPDATE_DATA = {
         "addressLine1": "125 Church St",
         "personName": "John Doe",
         "companyName": "A corp.",
-        "phoneNumber": "514-000-0000",
+        "phoneNumber": "514 000 0000",
         "city": "Moncton",
         "countryCode": "CA",
         "postalCode": "E1C4Z8",
@@ -162,90 +162,113 @@ CANCEL_RETURNED_VALUE = (
 
 
 PICKUP_RESPONSE = {
+  "messages": [],
   "pickup": {
+    "id": ANY,
+    "carrierName": "canadapost",
+    "carrierId": "canadapost",
+    "confirmationNumber": "27241",
+    "pickupDate": "2020-10-25",
+    "pickupCharge": {
+      "name": "Pickup fees",
+      "amount": 0.0,
+      "currency": "CAD"
+    },
+    "readyTime": "13:00",
+    "closingTime": "17:00",
+    "testMode": True,
     "address": {
-      "addressLine1": "125 Church St",
+      "id": None,
+      "postalCode": "E1C4Z8",
       "city": "Moncton",
+      "federalTaxId": None,
+      "stateTaxId": None,
+      "personName": "John Doe",
       "companyName": "A corp.",
       "countryCode": "CA",
       "email": "john@a.com",
-      "personName": "John Doe",
-      "phoneNumber": "514-000-0000",
-      "postalCode": "E1C4Z8",
+      "phoneNumber": "514 000 0000",
+      "stateCode": "NB",
+      "suburb": None,
       "residential": False,
-      "stateCode": "NB"
+      "addressLine1": "125 Church St",
+      "addressLine2": ""
     },
-    "carrierId": "canadapost",
-    "carrierName": "canadapost",
-    "closingTime": "17:00",
-    "confirmationNumber": "27241",
-    "id": ANY,
-    "instruction": "Should not be folded",
-    "options": {},
-    "packageLocation": "At the main entrance hall",
     "parcels": [
       {
-        "dimensionUnit": "CM",
+        "id": None,
+        "weight": 0.2,
+        "width": 10.0,
         "height": 10.0,
-        "isDocument": True,
         "length": 1.0,
         "packagingType": "envelope",
-        "weight": 0.2,
+        "packagePreset": None,
+        "description": None,
+        "content": None,
+        "isDocument": True,
         "weightUnit": "KG",
-        "width": 10.0
+        "dimensionUnit": "CM"
       }
     ],
-    "pickupCharge": {
-      "amount": 0.0,
-      "currency": "CAD",
-      "name": "Pickup fees"
-    },
-    "pickupDate": "2020-10-25",
-    "readyTime": "13:00",
-    "testMode": True
+    "instruction": "Should not be folded",
+    "packageLocation": "At the main entrance hall",
+    "options": {}
   }
 }
 
 PICKUP_UPDATE_RESPONSE = {
+  "messages": [],
   "pickup": {
+    "id": None,
+    "carrierName": "canadapost",
+    "carrierId": "canadapost",
+    "confirmationNumber": "27241",
+    "pickupDate": "2020-10-23",
+    "pickupCharge": None,
+    "readyTime": "14:30",
+    "closingTime": "17:00",
+    "testMode": True,
     "address": {
-      "addressLine1": "125 Church St",
+      "id": None,
+      "postalCode": "E1C4Z8",
       "city": "Moncton",
+      "federalTaxId": None,
+      "stateTaxId": None,
+      "personName": "John Doe",
       "companyName": "A corp.",
       "countryCode": "CA",
       "email": "john@a.com",
-      "personName": "John Doe",
-      "phoneNumber": "514-000-0000",
-      "postalCode": "E1C4Z8",
+      "phoneNumber": "514 000 0000",
+      "stateCode": "NB",
+      "suburb": None,
       "residential": False,
-      "stateCode": "NB"
+      "addressLine1": "125 Church St",
+      "addressLine2": ""
     },
-    "carrierId": "canadapost",
-    "carrierName": "canadapost",
-    "closingTime": "17:00",
-    "confirmationNumber": "27241",
-    "instruction": "Should not be folded",
-    "options": {},
-    "packageLocation": "At the main entrance hall",
     "parcels": [
       {
-        "dimensionUnit": "CM",
+        "id": None,
+        "weight": 0.2,
+        "width": 10.0,
         "height": 10.0,
-        "isDocument": True,
         "length": 1.0,
         "packagingType": "envelope",
-        "weight": 0.2,
+        "packagePreset": None,
+        "description": None,
+        "content": None,
+        "isDocument": True,
         "weightUnit": "KG",
-        "width": 10.0
+        "dimensionUnit": "CM"
       }
     ],
-    "pickupDate": "2020-10-23",
-    "readyTime": "14:30",
-    "testMode": True
+    "instruction": "Should not be folded",
+    "packageLocation": "At the main entrance hall",
+    "options": {}
   }
 }
 
 PICKUP_CANCEL_RESPONSE = {
+  "messages": [],
   "confirmation": {
     "carrierId": "canadapost",
     "carrierName": "canadapost",

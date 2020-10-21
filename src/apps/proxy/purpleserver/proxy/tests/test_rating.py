@@ -76,9 +76,11 @@ RETURNED_VALUE = [(
 )]
 
 RATING_RESPONSE = {
+    "messages": [],
     "rates": [
         {
             "id": ANY,
+            "meta": None,
             "carrierRef": ANY,
             "baseCharge": 101.83,
             "carrierId": "canadapost",
