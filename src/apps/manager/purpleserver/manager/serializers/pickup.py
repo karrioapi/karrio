@@ -17,7 +17,21 @@ import purpleserver.manager.models as models
 
 def shipment_exists(value):
     validation = {
-        key: models.Shipment.objects.filter(tracking_number=key).exists() for key in value
+        key: models.Shipment.objects.filter(tracking_number=key) for key in value
+    }
+    if not all(val.exists() for val in validation.values()):
+        invalids = [key for key, val in validation.items() if val.exists() is False]
+        raise serializers.ValidationError(f"Shipment with the tracking numbers: {invalids} not found", code="invalid")
+
+    if any(val.first().pickup_shipments.exists() for val in validation.values()):
+        scheduled = [key for key, val in validation.items() if val.first().pickup_shipments.exists() is True]
+        raise serializers.ValidationError(
+            f"The following shipments {scheduled} are already scheduled pickups", code="invalid")
+
+
+def pickup_exists(value):
+    validation = {
+        key: models.Pickup.objects.filter(tracking_number=key).exists() for key in value
     }
     if not all(validation.values()):
         invalids = [key for key, val in validation.items() if val is False]

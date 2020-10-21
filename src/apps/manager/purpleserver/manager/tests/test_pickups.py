@@ -7,7 +7,7 @@ from purpleserver.manager.tests.test_shipments import TestShipmentDetails
 import purpleserver.manager.models as models
 
 
-class TesPickups(TestShipmentDetails):
+class TestFixture(TestShipmentDetails):
     def setUp(self) -> None:
         super().setUp()
 
@@ -31,6 +31,28 @@ class TesPickups(TestShipmentDetails):
         self.shipment.tracking_number = "123456789012"
         self.shipment.selected_rate_carrier = self.carrier
         self.shipment.save()
+
+
+class TestPickupSchedule(TestFixture):
+
+    def test_schedule_pickup(self):
+        url = reverse(
+            'purpleserver.manager:shipment-pickup-request',
+            kwargs=dict(carrier_name="canadapost")
+        )
+
+        with patch("purpleserver.core.gateway.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}?test", PICKUP_DATA)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertDictEqual(response_data, PICKUP_RESPONSE)
+
+
+class TestPickupDetails(TestFixture):
+    def setUp(self) -> None:
+        super().setUp()
         self.pickup: models.Pickup = models.Pickup.objects.create(
             address=self.address,
             pickup_carrier=self.carrier,
@@ -49,20 +71,6 @@ class TesPickups(TestShipmentDetails):
             },
         )
         self.pickup.shipments.set([self.shipment])
-
-    def test_schedule_pickup(self):
-        url = reverse(
-            'purpleserver.manager:shipment-pickup-request',
-            kwargs=dict(carrier_name="canadapost")
-        )
-
-        with patch("purpleserver.core.gateway.identity") as mock:
-            mock.return_value = SCHEDULE_RETURNED_VALUE
-            response = self.client.post(f"{url}?test", PICKUP_DATA)
-            response_data = json.loads(response.content)
-
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-            self.assertDictEqual(response_data, PICKUP_RESPONSE)
 
     def test_udpate_pickup(self):
         url = reverse(
