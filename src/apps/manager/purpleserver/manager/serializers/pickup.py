@@ -4,6 +4,7 @@ from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.gateway import Pickups, Carriers
 from purpleserver.core.datatypes import Confirmation
 from purpleserver.core.serializers import (
+    Pickup,
     AddressData,
     PickupRequest,
     PickupUpdateRequest,
@@ -83,7 +84,7 @@ class PickupSerializer(PickupRequest):
 
         response = Pickups.schedule(payload=request_data, carrier=carrier)
         payload = {
-            key: value for key, value in validated_data.items()
+            key: value for key, value in Pickup(response.pickup).data.items()
             if key in models.Pickup.DIRECT_PROPS
         }
         address = self._address.save(user=validated_data["user"]).instance

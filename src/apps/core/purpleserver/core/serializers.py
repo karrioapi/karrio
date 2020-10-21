@@ -286,7 +286,6 @@ class PickupRequest(Serializer):
     """)
     address = AddressData(required=True, help_text="The pickup address")
     parcels = ParcelData(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
-
     ready_time = CharField(required=True, help_text="The ready time for pickup.")
     closing_time = CharField(required=True, help_text="The closing or late time of the pickup")
     instruction = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
@@ -311,9 +310,7 @@ class PickupUpdateRequest(Serializer):
     """)
     address = Address(required=True, help_text="The pickup address")
     parcels = Parcel(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
-
     confirmation_number = CharField(required=True, help_text="pickup identification number")
-
     ready_time = CharField(required=True, help_text="The ready time for pickup.")
     closing_time = CharField(required=True, help_text="The closing or late time of the pickup")
     instruction = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
@@ -339,7 +336,23 @@ class PickupDetails(Serializer):
     pickup_charge = Charge(required=False, allow_null=True, help_text="The pickup cost details")
     ready_time = CharField(required=False, allow_null=True, help_text="The pickup expected ready time")
     closing_time = CharField(required=False, allow_null=True, help_text="The pickup expected closing or late time")
+
+
+class Pickup(PickupDetails, PickupRequest):
+    address = Address(required=True, help_text="The pickup address")
+    parcels = Parcel(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
+
+
+class PickupCancelRequest(Serializer):
+    confirmation_number = CharField(required=True, help_text="The pickup confirmation identifier")
+    address = AddressData(required=False, help_text="The pickup address")
+    pickup_date = CharField(required=False, allow_null=True, help_text="""
+    The pickup date
+    
+    Date Format: YYYY-MM-DD
+    """)
+    reason = CharField(required=False, help_text="The reason of the pickup cancellation")
 
 
 class TrackingEvent(Serializer):
@@ -387,22 +400,6 @@ class TrackingDetails(Serializer):
 
 class TrackingStatus(EntitySerializer, TrackingDetails):
     pass
-
-
-class Pickup(PickupDetails, PickupRequest):
-    address = Address(required=True, help_text="The pickup address")
-    parcels = Parcel(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
-
-
-class PickupCancelRequest(Serializer):
-    confirmation_number = CharField(required=True, help_text="The pickup confirmation identifier")
-    address = AddressData(required=False, help_text="The pickup address")
-    pickup_date = CharField(required=False, allow_null=True, help_text="""
-    The pickup date
-    
-    Date Format: YYYY-MM-DD
-    """)
-    reason = CharField(required=False, help_text="The reason of the pickup cancellation")
 
 
 class ShippingData(Serializer):

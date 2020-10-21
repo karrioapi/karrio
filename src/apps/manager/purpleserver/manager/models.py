@@ -120,7 +120,7 @@ class Customs(OwnedEntity):
 class Pickup(OwnedEntity):
     DIRECT_PROPS = [
         "confirmation_number", "pickup_date", "instruction", "package_location", "ready_time",
-        "closing_time", "test_mode"
+        "closing_time", "test_mode", "pickup_charge"
     ]
 
     class Meta:
@@ -138,6 +138,7 @@ class Pickup(OwnedEntity):
     package_location = models.CharField(max_length=200, null=True, blank=True)
 
     options = JSONField(blank=True, null=True, default={})
+    pickup_charge = JSONField(blank=True, null=True)
     address = models.ForeignKey('Address', on_delete=models.CASCADE, blank=True, null=True)
 
     # System Reference fields
