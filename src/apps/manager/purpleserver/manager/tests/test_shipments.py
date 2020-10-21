@@ -2,24 +2,9 @@ import json
 from unittest.mock import ANY, patch
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import RateDetails, ChargeDetails, ShipmentDetails
+from purplship.core.models import RateDetails, ChargeDetails, ShipmentDetails, ConfirmationDetails
 from purpleserver.core.tests import APITestCase
 import purpleserver.manager.models as models
-
-
-class TestShipments(APITestCase):
-
-    def test_create_shipment(self):
-        url = reverse('purpleserver.manager:shipment-list')
-        data = SHIPMENT_DATA
-
-        with patch("purpleserver.core.gateway.identity") as mock:
-            mock.return_value = RETURNED_RATES_VALUE
-            response = self.client.post(url, data)
-            response_data = json.loads(response.content)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertDictEqual(response_data, SHIPMENT_RESPONSE)
 
 
 class TestShipmentFixture(APITestCase):
@@ -80,6 +65,21 @@ class TestShipmentFixture(APITestCase):
         self.shipment.shipment_parcels.set([self.parcel])
 
 
+class TestShipments(APITestCase):
+
+    def test_create_shipment(self):
+        url = reverse('purpleserver.manager:shipment-list')
+        data = SHIPMENT_DATA
+
+        with patch("purpleserver.core.gateway.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertDictEqual(response_data, SHIPMENT_RESPONSE)
+
+
 class TestShipmentDetails(TestShipmentFixture):
     def test_add_shipment_option(self):
         url = reverse('purpleserver.manager:shipment-options', kwargs=dict(pk=self.shipment.pk))
@@ -102,9 +102,10 @@ class TestShipmentDetails(TestShipmentFixture):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(dict(rates=response_data['shipment']['rates']), SHIPMENT_RATES)
 
-    def test_purchase_shipment(self):
-        url = reverse('purpleserver.manager:shipment-purchase', kwargs=dict(pk=self.shipment.pk))
-        data = SHIPMENT_PURCHASE_DATA
+
+class TestShipmentPurchase(TestShipmentFixture):
+    def setUp(self) -> None:
+        super().setUp()
         self.shipment.shipment_rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
@@ -135,13 +136,42 @@ class TestShipmentDetails(TestShipmentFixture):
         ]
         self.shipment.save()
 
+    def test_purchase_shipment(self):
+        url = reverse('purpleserver.manager:shipment-purchase', kwargs=dict(pk=self.shipment.pk))
+        data = SHIPMENT_PURCHASE_DATA
+
         with patch("purpleserver.core.gateway.identity") as mock:
             mock.return_value = CREATED_SHIPMENT_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(response_data, PURCHASED_SHIPMENT)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertDictEqual(response_data, PURCHASED_SHIPMENT)
+
+    def test_cancel_shipment(self):
+        url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
+
+        with patch("purpleserver.core.gateway.identity") as mock:
+            response = self.client.delete(url)
+            response_data = json.loads(response.content)
+
+            mock.assert_not_called()
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertDictEqual(response_data, CANCEL_RESPONSE)
+
+    def test_cancel_purchased_shipment(self):
+        url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
+        self.shipment.status = "purchased"
+        self.shipment.shipment_identifier = "123456789012"
+        self.shipment.save()
+
+        with patch("purpleserver.core.gateway.identity") as mock:
+            mock.return_value = RETURNED_CANCEL_VALUE
+            response = self.client.delete(url)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertDictEqual(response_data, CANCEL_PURCHASED_RESPONSE)
 
 
 SHIPMENT_DATA = {
@@ -375,6 +405,16 @@ CREATED_SHIPMENT_RESPONSE = (
     []
 )
 
+RETURNED_CANCEL_VALUE = (
+    ConfirmationDetails(
+        carrier_name="canadapost",
+        carrier_id="canadapost",
+        success=True,
+        operation="Cancel Shipment"
+    ),
+    [],
+)
+
 PURCHASED_SHIPMENT = {
     "messages": [],
     "shipment": {
@@ -457,4 +497,24 @@ PURCHASED_SHIPMENT = {
         "createdAt": ANY,
         "testMode": True
     }
+}
+
+CANCEL_RESPONSE = {
+  "messages": [],
+  "confirmation": {
+    "carrierName": "None Selected",
+    "carrierId": "None Selected",
+    "operation": "Cancel Shipment",
+    "success": True
+  }
+}
+
+CANCEL_PURCHASED_RESPONSE = {
+  "messages": [],
+  "confirmation": {
+    "carrierName": "canadapost",
+    "carrierId": "canadapost",
+    "operation": "Cancel Shipment",
+    "success": True
+  }
 }

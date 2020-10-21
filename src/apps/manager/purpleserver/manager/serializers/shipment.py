@@ -5,16 +5,17 @@ from rest_framework.serializers import Serializer, CharField, ChoiceField, Boole
 from purplship.core.utils import to_dict
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.utils import SerializerDecorator
-from purpleserver.core.datatypes import RateResponse
+from purpleserver.core.datatypes import RateResponse, ShipmentResponse, Confirmation, ConfirmationResponse
 from purpleserver.providers.models import Carrier
 from purpleserver.core.serializers import (
     SHIPMENT_STATUS,
+    ShipmentStatus,
     ShipmentData,
-    ShipmentResponse,
     Shipment,
     Payment,
     Rate,
     ShippingRequest,
+    ShipmentCancelRequest,
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.payment import PaymentSerializer
@@ -186,3 +187,26 @@ class ShipmentValidationData(Shipment):
                 )
             )
         )
+
+
+class ShipmentCancelSerializer(Shipment):
+
+    def update(self, instance: models.Shipment, validated_data: dict) -> ConfirmationResponse:
+        if instance.status == ShipmentStatus.purchased.value:
+            response = Shipments.cancel(
+                payload=ShipmentCancelRequest(instance).data,
+                carrier=instance.selected_rate_carrier
+            )
+        else:
+            response = ConfirmationResponse(
+                messages=[],
+                confirmation=Confirmation(
+                    carrier_name="None Selected",
+                    carrier_id="None Selected",
+                    success=True,
+                    operation="Cancel Shipment",
+                )
+            )
+
+        instance.delete()
+        return response

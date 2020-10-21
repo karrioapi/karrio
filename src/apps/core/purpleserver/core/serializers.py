@@ -22,8 +22,9 @@ PRINTER_TYPES = [(c.name, c.name) for c in list(PrinterType)]
 
 class ShipmentStatus(Enum):
     created = 'created'
-    cancelled = 'cancelled'
     purchased = 'purchased'
+    transit = 'in-transit'
+    delivered = 'delivered'
 
 
 SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]

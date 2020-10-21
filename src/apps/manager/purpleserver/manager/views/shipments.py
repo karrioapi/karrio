@@ -18,13 +18,15 @@ from purpleserver.core.serializers import (
     ShipmentResponse,
     RateResponse,
     Message,
-    Rate
+    Rate,
+    OperationResponse,
 )
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import (
     ShipmentSerializer,
     ShipmentPurchaseData,
     ShipmentValidationData,
+    ShipmentCancelSerializer,
     RateSerializer,
 )
 
@@ -81,6 +83,36 @@ class ShipmentDetail(GenericAPIView):
         shipment = request.user.shipment_set.get(pk=pk)
 
         return Response(Shipment(shipment).data)
+
+    @swagger_auto_schema(
+        tags=['Shipments'],
+        operation_id=f"{ENDPOINT_ID}cancel",
+        operation_summary="Cancel a shipment",
+        responses={200: OperationResponse(), 400: ErrorResponse()}
+    )
+    def delete(self, request: Request, pk: str):
+        """
+        Void a shipment with the associated label.
+        """
+        shipment = request.user.shipment_set.get(pk=pk)
+
+        if shipment.status not in [ShipmentStatus.purchased.value, ShipmentStatus.created.value]:
+            raise PurplShipApiException(
+                f"The shipment has is '{shipment.status}' and can therefore not be cancelled anymore...",
+                code='state_error', status_code=status.HTTP_409_CONFLICT
+            )
+
+        if shipment.pickup_shipments.exists():
+            raise PurplShipApiException(
+                (
+                    f"This shipment is scheduled for pickup '{shipment.pickup_shipments.first().pk}' "
+                    "Please cancel this shipment from the pickup before."
+                ),
+                code='state_error', status_code=status.HTTP_409_CONFLICT
+            )
+
+        confirmation = SerializerDecorator[ShipmentCancelSerializer](shipment, data={}).save()
+        return Response(OperationResponse(confirmation.instance).data)
 
 
 class ShipmentRates(GenericAPIView):
@@ -170,7 +202,8 @@ class ShipmentPurchase(GenericAPIView):
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
-                "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
+                f"The shipment is '{shipment.status}' and therefore already {ShipmentStatus.purchased.value}",
+                code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
         payload = {

@@ -7,7 +7,8 @@ from purpleserver.manager.serializers.tracking import TrackingSerializer
 from purpleserver.manager.serializers.shipment import (
     ShipmentSerializer,
     ShipmentPurchaseData,
-    ShipmentValidationData
+    ShipmentValidationData,
+    ShipmentCancelSerializer,
 )
 from purpleserver.manager.serializers.pickup import (
     PickupData,
