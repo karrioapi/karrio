@@ -69,7 +69,7 @@ class ShippingList(GenericAPIView):
         return Response(ShipmentResponse(response).data, status=status.HTTP_201_CREATED)
 
 
-class ShippingDetails(GenericAPIView):
+class ShippingCancel(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Shipping'],
@@ -88,10 +88,10 @@ class ShippingDetails(GenericAPIView):
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 
-        response = Shipments.track(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
+        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
 
         return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 
 
 router.urls.append(path('proxy/shipping', ShippingList.as_view(), name="shipping-request"))
-router.urls.append(path('proxy/shipping/<carrier_name>/cancel', ShippingDetails.as_view(), name="shipping-cancel"))
+router.urls.append(path('proxy/shipping/<carrier_name>/cancel', ShippingCancel.as_view(), name="shipping-cancel"))

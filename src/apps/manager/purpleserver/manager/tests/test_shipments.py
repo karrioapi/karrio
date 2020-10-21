@@ -22,7 +22,7 @@ class TestShipments(APITestCase):
         self.assertDictEqual(response_data, SHIPMENT_RESPONSE)
 
 
-class TestShipmentDetails(APITestCase):
+class TestShipmentFixture(APITestCase):
     def setUp(self) -> None:
         super().setUp()
 
@@ -79,6 +79,8 @@ class TestShipmentDetails(APITestCase):
         )
         self.shipment.shipment_parcels.set([self.parcel])
 
+
+class TestShipmentDetails(TestShipmentFixture):
     def test_add_shipment_option(self):
         url = reverse('purpleserver.manager:shipment-options', kwargs=dict(pk=self.shipment.pk))
         data = SHIPMENT_OPTIONS

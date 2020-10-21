@@ -529,7 +529,7 @@ class Shipment(EntitySerializer, ShipmentContent):
 
 
 class ShipmentCancelRequest(Serializer):
-    shipment_identifier = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment identifier returned during creation")
+    shipment_identifier = CharField(required=True, help_text="The shipment identifier returned during creation")
     service = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected shipment service")
     options = PlainDictField(required=False, allow_null=True, help_text="Advanced carrier specific cancellation options")
 

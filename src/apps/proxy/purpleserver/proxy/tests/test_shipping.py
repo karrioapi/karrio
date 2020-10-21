@@ -2,7 +2,7 @@ import json
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
-from purplship.core.models import ShipmentDetails
+from purplship.core.models import ShipmentDetails, ConfirmationDetails, Message
 from purpleserver.core.tests import APITestCase
 
 
@@ -19,6 +19,30 @@ class TestShipping(APITestCase):
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertDictEqual(response_data, SHIPPING_RESPONSE)
+
+    def test_shipping_cancel(self):
+        url = reverse('purpleserver.proxy:shipping-cancel', kwargs=dict(carrier_name='canadapost'))
+        data = SHIPPING_CANCEL_DATA
+
+        with patch("purpleserver.core.gateway.identity") as mock:
+            mock.return_value = RETURNED_SUCCESS_CANCEL_VALUE
+            response = self.client.post(f"{url}?test", data)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+            self.assertDictEqual(response_data, SHIPPING_CANCEL_SUCCESS_RESPONSE)
+
+    def test_shipping_failed_cancel(self):
+        url = reverse('purpleserver.proxy:shipping-cancel', kwargs=dict(carrier_name='canadapost'))
+        data = SHIPPING_CANCEL_DATA
+
+        with patch("purpleserver.core.gateway.identity") as mock:
+            mock.return_value = RETURNED_FAILED_CANCEL_VALUE
+            response = self.client.post(f"{url}?test", data)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertDictEqual(response_data, SHIPPING_CANCEL_FAILED_RESPONSE)
 
 
 SHIPPING_DATA = {
@@ -108,6 +132,11 @@ SHIPPING_DATA = {
     }
 }
 
+SHIPPING_CANCEL_DATA = {
+  "shipmentIdentifier": "123456789012"
+}
+
+
 RETURNED_VALUE = (
     ShipmentDetails(
         carrier_name="canadapost",
@@ -118,6 +147,29 @@ RETURNED_VALUE = (
     ),
     [],
 )
+
+RETURNED_SUCCESS_CANCEL_VALUE = (
+    ConfirmationDetails(
+        carrier_name="canadapost",
+        carrier_id="canadapost",
+        success=True,
+        operation="Cancel Shipment"
+    ),
+    [],
+)
+
+RETURNED_FAILED_CANCEL_VALUE = (
+    None,
+    [
+        Message(
+            carrier_name='canadapost',
+            carrier_id='canadapost',
+            message='Not Found',
+            code='404',
+        )
+    ],
+)
+
 
 SHIPPING_RESPONSE = {
     'messages': [],
@@ -284,4 +336,30 @@ SHIPPING_RESPONSE = {
         'createdAt': ANY,
         'testMode': True
     }
+}
+
+SHIPPING_CANCEL_SUCCESS_RESPONSE = {
+  "messages": [],
+  "confirmation": {
+    "carrierName": "canadapost",
+    "carrierId": "canadapost",
+    "operation": "Cancel Shipment",
+    "success": True
+  }
+}
+
+SHIPPING_CANCEL_FAILED_RESPONSE = {
+  "error": {
+    "code": "failure",
+    "details": {
+      "messages": [
+        {
+          "carrierId": "canadapost",
+          "carrierName": "canadapost",
+          "code": "404",
+          "message": "Not Found"
+        }
+      ]
+    }
+  }
 }

@@ -3,11 +3,11 @@ from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
 from purplship.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
-from purpleserver.manager.tests.test_shipments import TestShipmentDetails
+from purpleserver.manager.tests.test_shipments import TestShipmentFixture
 import purpleserver.manager.models as models
 
 
-class TestFixture(TestShipmentDetails):
+class TestFixture(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
 
