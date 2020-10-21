@@ -1,5 +1,7 @@
 import base64
 from typing import List
+from pycanadapost.rating import mailing_scenario
+from purplship.api.proxy import Proxy as BaseProxy
 from purplship.core.errors import PurplShipError
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.utils.pipeline import Pipeline, Job
@@ -9,9 +11,8 @@ from purplship.core.utils import (
     exec_parrallel,
     bundle_xml,
 )
+from purplship.providers.canadapost import process_error
 from purplship.mappers.canadapost.settings import Settings
-from purplship.api.proxy import Proxy as BaseProxy
-from pycanadapost.rating import mailing_scenario
 
 
 class Proxy(BaseProxy):
@@ -120,9 +121,10 @@ class Proxy(BaseProxy):
                 "Accept-language": f"{self.settings.language}-CA",
             },
             method="DELETE",
+            on_error=process_error,
         )
 
-        return Deserializable(bundle_xml([response]), to_xml)
+        return Deserializable(response or "<wrapper></wrapper>", to_xml)
 
     def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
         def _availability(job: Job) -> str:

@@ -48,7 +48,7 @@ def gif_to_pdf(gif_str: str) -> str:
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
-def request(decoder: Callable = decode_bytes, **args) -> str:
+def request(decoder: Callable = decode_bytes, on_error: Callable[[HTTPError], str] = None, **args) -> str:
     """Return an HTTP response body.
 
     make a http request (wrapper around Request method from built in urllib)
@@ -67,8 +67,11 @@ def request(decoder: Callable = decode_bytes, **args) -> str:
             return res
     except HTTPError as e:
         logger.exception(e)
-        error = e.read().decode("utf-8")
 
+        if on_error is not None:
+            return on_error(e)
+
+        error = e.read().decode("utf-8")
         logger.debug(f"error response content {error}")
         return error
 

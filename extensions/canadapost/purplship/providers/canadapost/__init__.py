@@ -1,4 +1,5 @@
 from purplship.providers.canadapost.utils import Settings
+from purplship.providers.canadapost.error import process_error
 from purplship.providers.canadapost.shipment import (
     shipment_request,
     parse_shipment_response,
