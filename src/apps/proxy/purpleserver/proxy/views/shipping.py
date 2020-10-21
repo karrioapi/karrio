@@ -25,13 +25,6 @@ from purpleserver.core.serializers import (
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
-DESCRIPTIONS = """
-**[proxy]**
-
-Once the shipping rates are retrieved, provide the required info to
-submit the shipment by specifying your preferred rate.
-"""
-
 
 class Address(BaseAddress):
     city = CharField(required=True, help_text="The address city")
@@ -51,11 +44,16 @@ class ShippingList(GenericAPIView):
         tags=['Shipping'],
         operation_id=f"{ENDPOINT_ID}buy_label",
         operation_summary="Buy a shipment label",
-        operation_description=DESCRIPTIONS,
         request_body=ShippingRequest(),
         responses={200: ShipmentResponse(), 400: ErrorResponse()},
     )
     def post(self, request: Request):
+        """
+        **[proxy]**
+
+        Once the shipping rates are retrieved, provide the required info to
+        submit the shipment by specifying your preferred rate.
+        """
         payload = SerializerDecorator[ShippingRequestValidation](data=request.data).data
 
         response = Shipments.create(
@@ -77,11 +75,16 @@ class ShippingDetails(GenericAPIView):
         tags=['Shipping'],
         operation_id=f"{ENDPOINT_ID}void_label",
         operation_summary="Void a shipment label",
-        operation_description="**[proxy]**\n\nCancel a shipment and the label previously created",
+        query_serializer=TestFilters(),
         request_body=ShipmentCancelRequest(),
         responses={200: OperationResponse(), 400: ErrorResponse()},
     )
     def post(self, request: Request, carrier_name: str):
+        """
+        **[proxy]**
+
+        Cancel a shipment and the label previously created
+        """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 

@@ -1,5 +1,5 @@
 from functools import partial
-from typing import List, cast, Optional
+from typing import List, cast
 from django.db import models
 from jsonfield import JSONField
 
@@ -117,11 +117,58 @@ class Customs(OwnedEntity):
         return self.shipment_commodities.all()
 
 
+class Pickup(OwnedEntity):
+    DIRECT_PROPS = [
+        "confirmation_number", "pickup_date", "instruction", "package_location", "ready_time",
+        "closing_time", "test_mode"
+    ]
+
+    class Meta:
+        db_table = "pickup"
+        verbose_name = 'Pickup'
+        verbose_name_plural = 'Pickups'
+
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pck_'), editable=False)
+    confirmation_number = models.CharField(max_length=50, unique=True, blank=False)
+    test_mode = models.BooleanField(null=False)
+    pickup_date = models.DateField(blank=False)
+    ready_time = models.CharField(max_length=5, blank=False)
+    closing_time = models.CharField(max_length=5, blank=False)
+    instruction = models.CharField(max_length=200, null=True, blank=True)
+    package_location = models.CharField(max_length=200, null=True, blank=True)
+
+    options = JSONField(blank=True, null=True, default={})
+    address = models.ForeignKey('Address', on_delete=models.CASCADE, blank=True, null=True)
+
+    # System Reference fields
+
+    pickup_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
+    shipments = models.ManyToManyField('Shipment', related_name='pickup_shipments')
+
+    # Computed properties
+
+    @property
+    def carrier_id(self) -> str:
+        return cast(Carrier, self.pickup_carrier).carrier_id
+
+    @property
+    def carrier_name(self) -> str:
+        return cast(Carrier, self.pickup_carrier).data.carrier_name
+
+    @property
+    def parcels(self) -> List[Parcel]:
+        return sum([list(shipment.parcels) for shipment in self.shipments.all()], [])
+
+    @property
+    def tracking_numbers(self) -> List[str]:
+        return [shipment.tracking_number for shipment in self.shipments.all()]
+
+
 class Tracking(OwnedEntity):
     class Meta:
-        db_table = "tracking"
-        verbose_name = 'Tracking'
-        verbose_name_plural = 'Tracking Info'
+        db_table = "tracking-status"
+        verbose_name = 'Tracking Satus'
+        verbose_name_plural = 'Tracking Statuses'
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
     tracking_number = models.CharField(max_length=50, unique=True)
@@ -131,7 +178,6 @@ class Tracking(OwnedEntity):
     # System Reference fields
 
     tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
-    tracking_shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE, blank=True, null=True)
 
     # Computed properties
 
@@ -142,10 +188,6 @@ class Tracking(OwnedEntity):
     @property
     def carrier_name(self) -> str:
         return cast(Carrier, self.tracking_carrier).data.carrier_name
-
-    @property
-    def shipment_id(self) -> Optional[str]:
-        return self.tracking_shipment.primary_key if self.tracking_shipment is not None else None
 
 
 class Shipment(OwnedEntity):

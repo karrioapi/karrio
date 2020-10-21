@@ -9,3 +9,8 @@ from purpleserver.manager.serializers.shipment import (
     ShipmentPurchaseData,
     ShipmentValidationData
 )
+from purpleserver.manager.serializers.pickup import (
+    PickupData,
+    PickupUpdateData,
+    PickupCancelData
+)

@@ -38,12 +38,12 @@ class ShipmentList(GenericAPIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipments",
-        operation_description="""
-        Retrieve all shipments.
-        """,
         responses={200: Shipment(many=True), 400: ErrorResponse()}
     )
     def get(self, request: Request):
+        """
+        Retrieve all shipments.
+        """
         shipments = request.user.shipment_set.all()
 
         response = self.paginate_queryset(Shipment(shipments, many=True).data)
@@ -53,13 +53,13 @@ class ShipmentList(GenericAPIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment",
-        operation_description="""
-        Create a new shipment instance.
-        """,
         responses={200: Shipment(), 400: ErrorResponse()},
         request_body=ShipmentData()
     )
     def post(self, request: Request):
+        """
+        Create a new shipment instance.
+        """
         shipment = SerializerDecorator[ShipmentSerializer](
             data=request.data).save(user=request.user).instance
 
@@ -72,12 +72,12 @@ class ShipmentDetail(GenericAPIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a shipment",
-        operation_description="""
-        Retrieve a shipment.
-        """,
         responses={200: Shipment(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
+        """
+        Retrieve a shipment.
+        """
         shipment = request.user.shipment_set.get(pk=pk)
 
         return Response(Shipment(shipment).data)
@@ -89,12 +89,12 @@ class ShipmentRates(GenericAPIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}rates",
         operation_summary="Fetch new shipment rates",
-        operation_description="""
-        Refresh the list of the shipment rates
-        """,
         responses={200: ShipmentResponse(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
+        """
+        Refresh the list of the shipment rates
+        """
         shipment = request.user.shipment_set.get(pk=pk)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
@@ -116,13 +116,16 @@ class ShipmentOptions(GenericAPIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}options",
         operation_summary="Add shipment options",
-        operation_description="""
+        responses={200: Shipment(), 400: ErrorResponse()},
+    )
+    def post(self, request: Request, pk: str):
+        """
         Add one or many options to your shipment.<br/>
         **eg:**<br/>
         - add shipment **insurance**
         - specify the preferred transaction **currency**
         - setup a **cash collected on delivery** option
-        
+
         ```json
         {
             "insurane": {
@@ -131,12 +134,9 @@ class ShipmentOptions(GenericAPIView):
             "currency": "USD"
         }
         ```
-        
+
         And many more, check additional options available in the [reference](#operation/all_references).
-        """,
-        responses={200: Shipment(), 400: ErrorResponse()},
-    )
-    def post(self, request: Request, pk: str):
+        """
         shipment = request.user.shipment_set.get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
@@ -159,13 +159,13 @@ class ShipmentPurchase(GenericAPIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}purchase",
         operation_summary="Buy a shipment label",
-        operation_description="""
-        Select your preferred rates to buy a shipment label.
-        """,
         responses={200: ShipmentResponse(), 400: ErrorResponse()},
         request_body=ShipmentPurchaseData()
     )
     def post(self, request: Request, pk: str):
+        """
+        Select your preferred rates to buy a shipment label.
+        """
         shipment = request.user.shipment_set.get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:

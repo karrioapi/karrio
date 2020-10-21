@@ -191,7 +191,7 @@ class CustomsData(Serializer):
     aes = CharField(required=False, allow_blank=True, allow_null=True)
     description = CharField(required=False, allow_blank=True, allow_null=True)
     terms_of_trade = CharField(required=False, allow_null=True, help_text="The customs 'term of trade' also known as 'incoterm'")
-    commodities = ListField(child=Commodity(), required=False, allow_null=True, help_text="The parcel content items")
+    commodities = Commodity(many=True, required=False, allow_null=True, help_text="The parcel content items")
     duty = Payment(required=False, allow_null=True, help_text="""
     The payment details.<br/>
     Note that this is required for a Dutiable parcel shipped internationally.
@@ -251,7 +251,7 @@ class RateRequest(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcels = ListField(child=Parcel(), required=True, help_text="The shipment's parcels")
+    parcels = Parcel(many=True, required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, help_text="""
     The requested carrier service for the shipment.<br/>
@@ -326,6 +326,7 @@ class PickupUpdateRequest(Serializer):
     
     eg: Behind the entrance door.
     """)
+    options = PlainDictField(required=False, allow_null=True, help_text="Advanced carrier specific pickup options")
 
 
 class PickupDetails(Serializer):
@@ -368,7 +369,7 @@ class Rate(EntitySerializer):
     """)
     duties_and_taxes = FloatField(required=False, allow_null=True, help_text="The monetary amount of the duties and taxes if applied")
     transit_days = IntegerField(required=False, allow_null=True, help_text="The estimated delivery transit days")
-    extra_charges = ListField(child=Charge(), required=False, allow_null=True, help_text="list of the rate's additional charges")
+    extra_charges = Charge(many=True, required=False, allow_null=True, help_text="list of the rate's additional charges")
     meta = PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
 
     carrier_ref = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system carrier configuration id")
@@ -380,12 +381,12 @@ class TrackingDetails(Serializer):
     carrier_name = CharField(required=True, help_text="The tracking carrier")
     carrier_id = CharField(required=True, help_text="The tracking carrier configured identifier")
     tracking_number = CharField(required=True, help_text="The shipment tracking number")
-    events = ListField(child=TrackingEvent(), required=False, allow_null=True, help_text="The tracking details events")
+    events = TrackingEvent(many=True, required=False, allow_null=True, help_text="The tracking details events")
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):
-    shipment_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The system shipment associated.")
+    pass
 
 
 class Pickup(PickupDetails, PickupRequest):
@@ -417,7 +418,7 @@ class ShippingData(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcels = ListField(child=ParcelData(), required=True, help_text="The shipment's parcels")
+    parcels = ParcelData(many=True, required=True, help_text="The shipment's parcels")
     options = PlainDictField(required=False, allow_null=True, help_text="""
     The options available for the shipment.<br/>
     Please consult [the reference](#operation/references) for additional specific carriers options.
@@ -427,7 +428,7 @@ class ShippingData(Serializer):
     The customs details.<br/>
     Note that this is required for the shipment of an international Dutiable parcel.
     """)
-    doc_images = ListField(child=Doc(), required=False, allow_null=True, help_text="""
+    doc_images = Doc(many=True, required=False, allow_null=True, help_text="""
     The list of documents to attach for a paperless interantional trade.
     
     eg: Invoices...
@@ -437,7 +438,7 @@ class ShippingData(Serializer):
 
 class ShippingRequest(ShippingData):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
-    rates = ListField(child=Rate(), help_text="The list for shipment rates fetched previously")
+    rates = Rate(many=True, help_text="The list for shipment rates fetched previously")
     payment = Payment(required=True, help_text="The payment details")
 
 
@@ -470,7 +471,7 @@ class ShipmentContent(Serializer):
     selected_rate = Rate(required=False, allow_null=True, help_text="The shipment selected rate")
 
     selected_rate_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment selected rate.")
-    rates = ListField(required=False, allow_null=True, child=Rate(), help_text="The list for shipment rates fetched previously")
+    rates = Rate(many=True, required=False, allow_null=True, help_text="The list for shipment rates fetched previously")
     tracking_url = URLField(required=False, allow_blank=True, allow_null=True, help_text="The shipment tracking url")
     service = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected service")
 
@@ -488,7 +489,7 @@ class ShipmentContent(Serializer):
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcels = ListField(child=Parcel(), required=True, help_text="The shipment's parcels")
+    parcels = Parcel(many=True, required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, default=[], help_text="""
     The carriers services requested for the shipment.
@@ -506,7 +507,7 @@ class ShipmentContent(Serializer):
     The customs details.<br/>
     Note that this is required for the shipment of an international Dutiable parcel.
     """)
-    doc_images = ListField(child=Doc(), required=False, allow_null=True, default=[], help_text="""
+    doc_images = Doc(many=True, required=False, allow_null=True, default=[], help_text="""
     The list of documents to attach for a paperless interantional trade.
 
     eg: Invoices...
@@ -564,7 +565,7 @@ class PickupResponse(Serializer):
 
 class RateResponse(Serializer):
     messages = Message(required=False, many=True, help_text="The list of note or warning messages")
-    rates = ListField(child=Rate(), help_text="The list of returned rates")
+    rates = Rate(many=True, help_text="The list of returned rates")
 
 
 class ShipmentResponse(Serializer):
@@ -574,8 +575,8 @@ class ShipmentResponse(Serializer):
 
 class TrackingResponse(Serializer):
     messages = Message(required=False, many=True, help_text="The list of note or warning messages")
-    tracking_details = TrackingDetails(required=False, help_text="The tracking details retrieved")
+    tracking = TrackingStatus(required=False, help_text="The tracking details retrieved")
 
 
 class ErrorResponse(Serializer):
-    messages = ListField(child=Message(), required=False, help_text="The list of error messages")
+    messages = Message(many=True, required=False, help_text="The list of error messages")

@@ -15,12 +15,6 @@ from purpleserver.proxy.router import router
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
-DESCRIPTIONS = """
-**[proxy]**
-
-You can track a shipment by specifying the carrier and the shipment tracking number.
-"""
-
 
 class TrackingAPIView(GenericAPIView):
 
@@ -28,11 +22,15 @@ class TrackingAPIView(GenericAPIView):
         tags=['Tracking'],
         operation_id=f"{ENDPOINT_ID}fetch",
         operation_summary="Track a shipment",
-        operation_description=DESCRIPTIONS,
-        responses={200: TrackingResponse(), 400: ErrorResponse()},
-        query_serializer=TestFilters
+        query_serializer=TestFilters(),
+        responses={200: TrackingResponse(), 400: ErrorResponse()}
     )
     def get(self, request: Request, carrier_name: str, tracking_number: str):
+        """
+        **[proxy]**
+
+        You can track a shipment by specifying the carrier and the shipment tracking number.
+        """
         params = TestFilters(data=request.query_params)
         params.is_valid(raise_exception=True)
 

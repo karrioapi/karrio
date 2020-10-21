@@ -29,15 +29,16 @@ class PickupDetails(GenericAPIView):
         tags=['Pickups'],
         operation_id=f"{ENDPOINT_ID}schedule",
         operation_summary="Schedule a pickup",
-        operation_description=(
-            "**[proxy]**"
-            "\n\n"
-            "Schedule one or many parcels pickup"
-        ),
+        query_serializer=TestFilters(),
         request_body=PickupRequest(),
         responses={200: PickupResponse(), 400: ErrorResponse()},
     )
     def post(self, request: Request, carrier_name: str):
+        """
+        **[proxy]**
+
+        Schedule one or many parcels pickup
+        """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupRequest](data=request.data).data
 
@@ -49,15 +50,16 @@ class PickupDetails(GenericAPIView):
         tags=['Pickups'],
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a pickup",
-        operation_description=(
-            "**[proxy]**"
-            "\n\n"
-            "Modify a scheduled pickup"
-        ),
+        query_serializer=TestFilters(),
         request_body=PickupUpdateRequest(),
         responses={200: PickupResponse(), 400: ErrorResponse()},
     )
     def put(self, request: Request, carrier_name: str):
+        """
+        **[proxy]**
+
+        Modify a scheduled pickup
+        """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupUpdateRequest](data=request.data).data
 
@@ -72,21 +74,22 @@ class PickupCancel(GenericAPIView):
         tags=['Pickups'],
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a pickup",
-        operation_description=(
-            "**[proxy]**"
-            "\n\n"
-            "Cancel a pickup previously scheduled"
-        ),
+        query_serializer=TestFilters(),
         request_body=PickupCancelRequest(),
         responses={200: OperationResponse(), 400: ErrorResponse()},
     )
     def post(self, request: Request, carrier_name: str):
+        """
+        **[proxy]**
+
+        Cancel a pickup previously scheduled
+        """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupCancelRequest](data=request.data).data
 
         response = Pickups.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
 
-        return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
+        return Response(OperationResponse(response).data, status=status.HTTP_200_OK)
 
 
 router.urls.append(path('proxy/pickups/<carrier_name>', PickupDetails.as_view(), name="pickup-details"))

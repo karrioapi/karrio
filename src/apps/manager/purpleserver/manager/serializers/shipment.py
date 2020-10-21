@@ -13,7 +13,6 @@ from purpleserver.core.serializers import (
     ShipmentResponse,
     Shipment,
     Payment,
-    ListField,
     Rate,
     ShippingRequest,
 )
@@ -28,7 +27,7 @@ import purpleserver.manager.models as models
 class ShipmentSerializer(ShipmentData):
     status = ChoiceField(required=False, choices=SHIPMENT_STATUS)
     selected_rate_id = CharField(required=False)
-    rates = ListField(child=Rate(), required=False)
+    rates = Rate(many=True, required=False)
     label = CharField(required=False, allow_blank=True, allow_null=True)
     tracking_number = CharField(required=False, allow_blank=True, allow_null=True)
     shipment_identifier = CharField(required=False, allow_blank=True, allow_null=True)
@@ -174,7 +173,7 @@ class ShipmentPurchaseData(Serializer):
 
 
 class ShipmentValidationData(Shipment):
-    rates = ListField(required=True, child=Rate())
+    rates = Rate(many=True, required=True)
     payment = Payment(required=True)
 
     def create(self, validated_data: dict) -> ShipmentResponse:
@@ -183,7 +182,7 @@ class ShipmentValidationData(Shipment):
             resolve_tracking_url=(
                 lambda shipment: reverse(
                     "purpleserver.manager:shipment-tracking",
-                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_id=shipment.carrier_id)
+                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
                 )
             )
         )
