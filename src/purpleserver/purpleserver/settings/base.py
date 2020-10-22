@@ -84,6 +84,7 @@ BASE_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_tracking',
 ]
 
 INSTALLED_APPS = [
@@ -259,14 +260,15 @@ SWAGGER_SETTINGS = {
         'Token': {
             'type': 'apiKey',
             'name': 'Authorization',
-            'in': 'header'
+            'in': 'header',
         }
     },
 }
 
 REDOC_SETTINGS = {
     'LAZY_RENDERING': False,
-    'HIDE_HOSTNAME': True
+    'HIDE_HOSTNAME': True,
+    'REQUIRED_PROPS_FIRST': True,
 }
 
 # Logging configuration

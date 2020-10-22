@@ -156,7 +156,6 @@ run_mail_server() {
 }
 
 test() {
-  purplship makemigrations &&
   purplship test --failfast purpleserver.proxy.tests &&
   purplship test --failfast purpleserver.pricing.tests &&
   purplship test --failfast purpleserver.manager.tests

@@ -1,5 +1,5 @@
 from functools import partial
-from typing import List, cast, Optional
+from typing import List, cast
 from django.db import models
 from jsonfield import JSONField
 
@@ -16,7 +16,7 @@ class Address(OwnedEntity):
         verbose_name = 'Address'
         verbose_name_plural = 'Addresses'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='addr_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='adr_'), editable=False)
 
     postal_code = models.CharField(max_length=10, null=True, blank=True)
     city = models.CharField(max_length=50, null=True, blank=True)
@@ -42,7 +42,7 @@ class Parcel(OwnedEntity):
         verbose_name = 'Parcel'
         verbose_name_plural = 'Parcels'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='parcl_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pcl_'), editable=False)
 
     weight = models.FloatField(blank=True, null=True)
     width = models.FloatField(blank=True, null=True)
@@ -63,7 +63,7 @@ class Commodity(OwnedEntity):
         verbose_name = 'Commodity'
         verbose_name_plural = 'Commodities'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='comdty_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cdt_'), editable=False)
 
     weight = models.FloatField(blank=True, null=True)
     description = models.CharField(max_length=250, null=True, blank=True)
@@ -83,7 +83,7 @@ class Payment(OwnedEntity):
         verbose_name = 'Payment'
         verbose_name_plural = 'Payments'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pymt_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pyt_'), editable=False)
 
     amount = models.FloatField(blank=True, null=True)
     paid_by = models.CharField(max_length=20, choices=PAYMENT_TYPES, null=True, blank=True)
@@ -101,7 +101,7 @@ class Customs(OwnedEntity):
         verbose_name = 'Customs Info'
         verbose_name_plural = 'Customs Info'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cust_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cst_'), editable=False)
 
     no_eei = models.CharField(max_length=20, null=True, blank=True)
     aes = models.CharField(max_length=20, null=True, blank=True)
@@ -117,23 +117,68 @@ class Customs(OwnedEntity):
         return self.shipment_commodities.all()
 
 
-class Tracking(OwnedEntity):
-    DIRECT_PROPS = []
-    RELATIONAL_PROPS = []
+class Pickup(OwnedEntity):
+    DIRECT_PROPS = [
+        "confirmation_number", "pickup_date", "instruction", "package_location", "ready_time",
+        "closing_time", "test_mode", "pickup_charge"
+    ]
 
     class Meta:
-        db_table = "tracking"
-        verbose_name = 'Tracking'
-        verbose_name_plural = 'Tracking Info'
+        db_table = "pickup"
+        verbose_name = 'Pickup'
+        verbose_name_plural = 'Pickups'
+
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pck_'), editable=False)
+    confirmation_number = models.CharField(max_length=50, unique=True, blank=False)
+    test_mode = models.BooleanField(null=False)
+    pickup_date = models.DateField(blank=False)
+    ready_time = models.CharField(max_length=5, blank=False)
+    closing_time = models.CharField(max_length=5, blank=False)
+    instruction = models.CharField(max_length=200, null=True, blank=True)
+    package_location = models.CharField(max_length=200, null=True, blank=True)
+
+    options = JSONField(blank=True, null=True, default={})
+    pickup_charge = JSONField(blank=True, null=True)
+    address = models.ForeignKey('Address', on_delete=models.CASCADE, blank=True, null=True)
+
+    # System Reference fields
+
+    pickup_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
+    shipments = models.ManyToManyField('Shipment', related_name='pickup_shipments')
+
+    # Computed properties
+
+    @property
+    def carrier_id(self) -> str:
+        return cast(Carrier, self.pickup_carrier).carrier_id
+
+    @property
+    def carrier_name(self) -> str:
+        return cast(Carrier, self.pickup_carrier).data.carrier_name
+
+    @property
+    def parcels(self) -> List[Parcel]:
+        return sum([list(shipment.parcels) for shipment in self.shipments.all()], [])
+
+    @property
+    def tracking_numbers(self) -> List[str]:
+        return [shipment.tracking_number for shipment in self.shipments.all()]
+
+
+class Tracking(OwnedEntity):
+    class Meta:
+        db_table = "tracking-status"
+        verbose_name = 'Tracking Satus'
+        verbose_name_plural = 'Tracking Statuses'
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
     tracking_number = models.CharField(max_length=50, unique=True)
     events = JSONField(blank=True, null=True, default=[])
+    test_mode = models.BooleanField(null=False)
 
     # System Reference fields
 
     tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
-    tracking_shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE, blank=True, null=True)
 
     # Computed properties
 
@@ -145,15 +190,11 @@ class Tracking(OwnedEntity):
     def carrier_name(self) -> str:
         return cast(Carrier, self.tracking_carrier).data.carrier_name
 
-    @property
-    def shipment_id(self) -> Optional[str]:
-        return self.tracking_shipment.primary_key if self.tracking_shipment is not None else None
-
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        'label', 'options', 'services', 'status', 'service', 'meta',
-        'shipment_rates', 'tracking_number', 'doc_images', 'tracking_url'
+        'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates',
+        'tracking_number', 'doc_images', 'tracking_url', 'shipment_identifier', 'test_mode',
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
 
@@ -162,15 +203,17 @@ class Shipment(OwnedEntity):
         verbose_name = 'Shipment'
         verbose_name_plural = 'Shipments'
 
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='shpmt_'), editable=False)
+    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='shp_'), editable=False)
     status = models.CharField(max_length=50, choices=SHIPMENT_STATUS, default=SHIPMENT_STATUS[0][0])
 
     recipient = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='recipient')
     shipper = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='shipper')
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
+    shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
     label = models.TextField(max_length=None, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
+    test_mode = models.BooleanField(null=False)
 
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
     customs = models.ForeignKey('Customs', on_delete=models.CASCADE, blank=True, null=True)

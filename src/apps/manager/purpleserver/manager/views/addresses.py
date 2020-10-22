@@ -1,13 +1,11 @@
 import logging
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status, generics
+from rest_framework import status
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
+from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import ErrorResponse, AddressData, Address
 from purpleserver.manager.serializers import AddressSerializer
@@ -18,18 +16,12 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class AddressAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
-
-
-class AddressList(AddressAPIView):
+class AddressList(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all Addresses",
+        operation_summary="List all addresses",
         responses={200: Address(many=True), 400: ErrorResponse()}
     )
     def get(self, request: Request):
@@ -43,7 +35,7 @@ class AddressList(AddressAPIView):
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create an Address",
+        operation_summary="Create an address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()}
     )
@@ -55,12 +47,12 @@ class AddressList(AddressAPIView):
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
-class AddressDetail(AddressAPIView):
+class AddressDetail(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve an Address",
+        operation_summary="Retrieve an address",
         responses={200: Address(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
@@ -73,7 +65,7 @@ class AddressDetail(AddressAPIView):
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update an Address",
+        operation_summary="Update an address",
         request_body=AddressData(),
         responses={200: Address(), 400: ErrorResponse()}
     )

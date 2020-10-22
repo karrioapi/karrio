@@ -1,5 +1,6 @@
 import uuid
 import logging
+from datetime import datetime
 from typing import List, Callable, Dict, Any
 
 from rest_framework import status
@@ -12,7 +13,10 @@ from purpleserver.providers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, RateRequest, Shipment,
-    RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse
+    RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse,
+    PickupRequest, Pickup, PickupUpdateRequest, PickupResponse, AddressValidation,
+    ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest, AddressValidationRequest,
+    Tracking,
 )
 from purpleserver.core.serializers import ShipmentStatus
 from purpleserver.core.utils import identity, post_processing
@@ -53,9 +57,32 @@ class Carriers:
         return carriers
 
 
+class Address:
+    @staticmethod
+    def validate(payload: dict, carrier_filter: dict) -> AddressValidation:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), None)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Address.validate(AddressValidationRequest(**to_dict(payload)))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        validation, messages = identity(lambda: request.from_(gateway).parse())
+
+        if validation is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return AddressValidation(
+            validation=validation,
+            messages=messages
+        )
+
+
 class Shipments:
     @staticmethod
-    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None) -> ShipmentResponse:
+    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None, carrier: models.Carrier = None) -> ShipmentResponse:
         selected_rate = next(
             (Rate(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
             None
@@ -67,7 +94,7 @@ class Shipments:
                 f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
             )
 
-        carrier = Carriers.retrieve(carrier_id=selected_rate.carrier_id).data
+        carrier = carrier or Carriers.retrieve(carrier_id=selected_rate.carrier_id).data
         request = ShipmentRequest(**{**to_dict(payload), 'service': selected_rate.service})
         gateway = purplship.gateway[carrier.carrier_name].create(carrier.dict())
 
@@ -77,44 +104,63 @@ class Shipments:
         if shipment is None:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        shipment_rate = shipment.selected_rate or selected_rate
-        shipment_rate_id = (
-            selected_rate.id
-            if(to_dict(selected_rate) == to_dict({**to_dict(shipment_rate), 'id': selected_rate.id})) else
-            f'prx_{uuid.uuid4().hex}'
+        shipment_rate = (
+            {**to_dict(shipment.selected_rate), 'id': f'rat_{uuid.uuid4().hex}'}
+            if shipment.selected_rate is not None else
+            to_dict(selected_rate)
         )
-        tracking_url = None
 
-        try:
-            is_test = "?test" if carrier.test else ""
-            tracking_url = (
-                resolve_tracking_url(shipment) + is_test
-                if resolve_tracking_url is not None else None
-            )
-        except Exception as e:
-            logger.warning(f"Failed to generate tracking url: {e}")
+        def generate_tracking_url():
+            if resolve_tracking_url is None:
+                return ''
+
+            return f"{resolve_tracking_url(shipment)}{'?test' if carrier.test else ''}"
 
         return ShipmentResponse(
             shipment=Shipment(**{
                 **payload,
                 **to_dict(shipment),
-                "service": shipment_rate.service,
-                "selected_rate_id": shipment_rate_id,
-                "selected_rate": {**to_dict(shipment_rate), 'id': shipment_rate_id},
-                "tracking_url": tracking_url,
-                "status": ShipmentStatus.purchased.value
-            }) if shipment is not None else None,
+                "id": f"shp_{uuid.uuid4().hex}",
+                "test_mode": carrier.test,
+                "selected_rate": shipment_rate,
+                "service": shipment_rate["service"],
+                "selected_rate_id": shipment_rate["id"],
+                "tracking_url": generate_tracking_url(),
+                "status": ShipmentStatus.purchased.value,
+                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z")
+            }),
             messages=messages
         )
 
     @staticmethod
-    def track(payload: dict, carrier_filter: dict) -> TrackingResponse:
-        carrier = next(iter(Carriers.list(**carrier_filter)), None)
+    def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
 
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Tracking.fetch(TrackingRequest(**payload))
+        request = purplship.Shipment.cancel(ShipmentCancelRequest(**payload))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        confirmation, messages = identity(lambda: request.from_(gateway).parse())
+
+        if confirmation is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return ConfirmationResponse(
+            confirmation=confirmation,
+            messages=messages
+        )
+
+    @staticmethod
+    def track(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> TrackingResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Tracking.fetch(TrackingRequest(**to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -124,7 +170,85 @@ class Shipments:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
         return TrackingResponse(
-            tracking_details=results[0],
+            tracking=Tracking(**{
+                **to_dict(results[0]),
+                'id': f'trk_{uuid.uuid4().hex}',
+                'test_mode': carrier.test,
+            }),
+            messages=messages
+        )
+
+
+class Pickups:
+    @staticmethod
+    def schedule(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> PickupResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Pickup.schedule(PickupRequest(**to_dict(payload)))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        pickup, messages = identity(lambda: request.with_(gateway).parse())
+
+        if pickup is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return PickupResponse(
+            pickup=Pickup(**{
+                **payload,
+                **to_dict(pickup),
+                'id': f'pck_{uuid.uuid4().hex}',
+                'test_mode': carrier.test,
+            }),
+            messages=messages
+        )
+
+    @staticmethod
+    def update(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> PickupResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Pickup.update(PickupUpdateRequest(**to_dict(payload)))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        pickup, messages = identity(lambda: request.from_(gateway).parse())
+
+        if pickup is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return PickupResponse(
+            pickup=Pickup(**{
+                **payload,
+                **to_dict(pickup),
+                'test_mode': carrier.test,
+            }),
+            messages=messages
+        )
+
+    @staticmethod
+    def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
+        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
+
+        if carrier is None:
+            raise NotFound('No configured carrier found')
+
+        request = purplship.Pickup.cancel(PickupCancelRequest(**to_dict(payload)))
+        gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
+
+        # The request call is wrapped in identity to simplify mocking in tests
+        confirmation, messages = identity(lambda: request.from_(gateway).parse())
+
+        if confirmation is None:
+            raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+
+        return ConfirmationResponse(
+            confirmation=confirmation,
             messages=messages
         )
 
@@ -165,13 +289,16 @@ class Rates:
         if not any(flattened_rates) and any(messages):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        rates: List[Rate] = [
-            Rate(**{
+        def consolidate_rate(rate: Rate) -> Rate:
+            carrier = next((c for c in carrier_settings_list if c.carrier_id == rate.carrier_id))
+            return Rate(**{
                 'id': f'rat_{uuid.uuid4().hex}',
-                'carrier_ref': next((c.id for c in carrier_settings_list if c.carrier_id == r.carrier_id)),
-                **{**to_dict(r)}
-            }) for r in flattened_rates
-        ]
+                'carrier_ref': carrier.id,
+                'test_mode': carrier.test,
+                **to_dict(rate)
+            })
+
+        rates: List[Rate] = sorted(map(consolidate_rate, flattened_rates), key=lambda rate: rate.total_charge)
 
         return RateResponse(
             rates=sorted(rates, key=lambda rate: rate.total_charge),

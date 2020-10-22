@@ -33,7 +33,7 @@ Check out our [live demo](https://purplship-demo.herokuapp.com/) on Heroku
 
 Demo Credentials | |
 --- | --- |
-username | `admin`  |
+username | `admin@test.com`  |
 password | `demo` |
 
 ### Docker
@@ -51,7 +51,7 @@ docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres 
 </details>
 
 ```shell script
-docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.9.0
+docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.10.0
 ```
 
 #### Docker Compose
@@ -75,7 +75,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
   web:
-    image: purplship/purplship-server:2020.9.0
+    image: purplship/purplship-server:2020.10.0
     restart: always
     environment:
       - DEBUG_MODE=True
