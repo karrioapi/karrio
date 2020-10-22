@@ -93,8 +93,12 @@ class Payment(OwnedEntity):
 
 
 class Customs(OwnedEntity):
-    DIRECT_PROPS = ['no_eei', 'aes', 'description', 'terms_of_trade', 'commercial_invoice']
-    RELATIONAL_PROPS = ['duty', 'commodities']
+    DIRECT_PROPS = [
+        'eel_pfc', 'aes', 'content_description', 'content_type',
+        'incoterm', 'commercial_invoice', 'certify',
+        'certificate_number', 'signer', 'invoice', 'options'
+    ]
+    RELATIONAL_PROPS = ['duty', 'commodities', 'duty']
 
     class Meta:
         db_table = "customs"
@@ -103,12 +107,21 @@ class Customs(OwnedEntity):
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cst_'), editable=False)
 
-    no_eei = models.CharField(max_length=20, null=True, blank=True)
     aes = models.CharField(max_length=20, null=True, blank=True)
-    description = models.CharField(max_length=20, null=True, blank=True)
-    terms_of_trade = models.CharField(max_length=20)
+    eel_pfc = models.CharField(max_length=20, null=True, blank=True)
+    certify = models.BooleanField(null=True)
     commercial_invoice = models.BooleanField(null=True)
+    certificate_number = models.CharField(max_length=50, null=True, blank=True)
+    content_type = models.CharField(max_length=50, null=True, blank=True)
+    content_description = models.CharField(max_length=20, null=True, blank=True)
     duty = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
+    incoterm = models.CharField(max_length=20)
+    invoice = models.CharField(max_length=50, null=True, blank=True)
+    signer = models.CharField(max_length=50, null=True, blank=True)
+
+    options = JSONField(blank=True, null=True, default={})
+
+    # System Reference fields
 
     shipment_commodities = models.ManyToManyField('Commodity', blank=True)
 

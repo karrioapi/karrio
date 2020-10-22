@@ -13,8 +13,8 @@ from purplship.core.models import (
     ShipmentDetails,
     AddressValidationRequest,
     AddressValidationDetails,
-    Payment as BasePayment,
-    Customs as BaseCustoms,
+    Payment,
+    Customs,
     RateRequest as BaseRateRequest,
     ShipmentRequest as BaseShipmentRequest,
     ShipmentCancelRequest,
@@ -74,16 +74,6 @@ class Rate:
     meta: dict = None
     carrier_ref: str = None
     test_mode: bool = None
-
-
-@attr.s(auto_attribs=True)
-class Payment(BasePayment):
-    id: str = None
-
-
-@attr.s(auto_attribs=True)
-class Customs(BaseCustoms):
-    id: str = None
 
 
 @attr.s(auto_attribs=True)

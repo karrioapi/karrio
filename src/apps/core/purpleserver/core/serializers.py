@@ -115,7 +115,7 @@ class CommodityData(Serializer):
     origin_country = CharField(required=False, allow_blank=True, allow_null=True, help_text="The origin or manufacture country")
 
 
-class Commodity(EntitySerializer, AddressData):
+class Commodity(EntitySerializer, CommodityData):
     pass
 
 
@@ -149,18 +149,6 @@ class Parcel(EntitySerializer, ParcelData):
     pass
 
 
-class Invoice(Serializer):
-
-    date = CharField(required=True, help_text="""
-    The invoide date
-    
-    Date Format: YYYY-MM-DD
-    """)
-    identifier = CharField(required=False, allow_blank=True, allow_null=True, help_text="The internal invoice document identifier")
-    type = CharField(required=False, allow_blank=True, allow_null=True, help_text="The invoice type")
-    copies = IntegerField(required=False, allow_null=True, help_text="The number of invoice copies")
-
-
 class Card(Serializer):
 
     type = CharField(required=True, help_text="The credit card type")
@@ -188,17 +176,22 @@ class Payment(EntitySerializer, PaymentData):
 
 class CustomsData(Serializer):
 
-    no_eei = CharField(required=False, allow_blank=True, allow_null=True)
     aes = CharField(required=False, allow_blank=True, allow_null=True)
-    description = CharField(required=False, allow_blank=True, allow_null=True)
-    terms_of_trade = CharField(required=False, allow_null=True, help_text="The customs 'term of trade' also known as 'incoterm'")
+    eel_pfc = CharField(required=False, allow_blank=True, allow_null=True)
+    content_type = CharField(required=False, allow_blank=True, allow_null=True)
+    content_description = CharField(required=False, allow_blank=True, allow_null=True)
+    incoterm = CharField(required=False, allow_null=True, help_text="The customs 'term of trade' also known as 'incoterm'")
     commodities = Commodity(many=True, required=False, allow_null=True, help_text="The parcel content items")
     duty = Payment(required=False, allow_null=True, help_text="""
     The payment details.<br/>
     Note that this is required for a Dutiable parcel shipped internationally.
     """)
-    invoice = Invoice(required=False, allow_null=True, help_text="The shipment invoice required for commercial shipment.")
+    invoice = CharField(required=False, allow_null=True, allow_blank=True, help_text="The invoice reference number")
     commercial_invoice = BooleanField(required=False, allow_null=True, help_text="Indicates if the shipment is commercial")
+    certify = BooleanField(required=False, allow_null=True, help_text="Indicate that signer certified confirmed all")
+    signer = CharField(required=False, allow_blank=True, allow_null=True)
+    certificate_number = CharField(required=False, allow_blank=True, allow_null=True)
+    options = PlainDictField(required=False, allow_null=True)
 
 
 class Customs(EntitySerializer, CustomsData):
