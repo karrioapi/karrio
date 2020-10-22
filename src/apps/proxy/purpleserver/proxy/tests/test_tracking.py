@@ -47,8 +47,8 @@ TRACKING_RESPONSE = {
   "messages": [],
   "tracking": {
     "id": ANY,
-    "carrierId": "ups_package",
-    "carrierName": "ups_package",
+    "carrier_id": "ups_package",
+    "carrier_name": "ups_package",
     "events": [
       {
         "code": "KB",
@@ -59,7 +59,7 @@ TRACKING_RESPONSE = {
         "time": "10:39"
       }
     ],
-    "testMode": True,
-    "trackingNumber": "1Z12345E6205277936"
+    "test_mode": True,
+    "tracking_number": "1Z12345E6205277936"
   }
 }

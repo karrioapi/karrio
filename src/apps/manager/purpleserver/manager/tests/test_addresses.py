@@ -47,55 +47,55 @@ class TestAddressDetails(APITestCase):
 
 
 ADDRESS_DATA = {
-    "addressLine1": "5205 rue riviera",
-    "personName": "Old town Daniel",
-    "phoneNumber": "438 222 2222",
+    "address_line1": "5205 rue riviera",
+    "person_name": "Old town Daniel",
+    "phone_number": "438 222 2222",
     "city": "Montreal",
-    "countryCode": "CA",
-    "postalCode": "H8Z2Z3",
+    "country_code": "CA",
+    "postal_code": "H8Z2Z3",
     "residential": True,
-    "stateCode": "QC"
+    "state_code": "QC"
 }
 
 ADDRESS_RESPONSE = {
     "id": ANY,
-    "postalCode": "H8Z2Z3",
+    "postal_code": "H8Z2Z3",
     "city": "Montreal",
-    "federalTaxId": None,
-    "stateTaxId": None,
-    "personName": "Old town Daniel",
-    "companyName": None,
-    "countryCode": "CA",
+    "federal_tax_id": None,
+    "state_tax_id": None,
+    "person_name": "Old town Daniel",
+    "company_name": None,
+    "country_code": "CA",
     "email": None,
-    "phoneNumber": "438 222 2222",
-    "stateCode": "QC",
+    "phone_number": "438 222 2222",
+    "state_code": "QC",
     "suburb": None,
     "residential": True,
-    "addressLine1": "5205 rue riviera",
-    "addressLine2": None
+    "address_line1": "5205 rue riviera",
+    "address_line2": None
 }
 
 ADDRESS_UPDATE_DATA = {
-    "personName": "John Doe",
-    "companyName": "Doe corp",
+    "person_name": "John Doe",
+    "company_name": "Doe corp",
     "residential": False,
     "suburb": None
 }
 
 ADDRESS_UPDATE_RESPONSE = {
     "id": ANY,
-    "postalCode": "H8Z2Z3",
+    "postal_code": "H8Z2Z3",
     "city": "Montreal",
-    "federalTaxId": None,
-    "stateTaxId": None,
-    "personName": "John Doe",
-    "companyName": "Doe corp",
-    "countryCode": "CA",
+    "federal_tax_id": None,
+    "state_tax_id": None,
+    "person_name": "John Doe",
+    "company_name": "Doe corp",
+    "country_code": "CA",
     "email": None,
-    "phoneNumber": "438 222 2222",
-    "stateCode": "QC",
+    "phone_number": "438 222 2222",
+    "state_code": "QC",
     "suburb": None,
     "residential": False,
-    "addressLine1": "5205 rue riviera",
-    "addressLine2": None
+    "address_line1": "5205 rue riviera",
+    "address_line2": None
 }

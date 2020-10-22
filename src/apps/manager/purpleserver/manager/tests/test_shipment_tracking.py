@@ -64,10 +64,10 @@ RETURNED_VALUE = (
 
 TRACKING_RESPONSE = {
     "id": ANY,
-    "carrierId": "ups_package",
-    "carrierName": "ups_package",
-    "trackingNumber": "1Z12345E6205277936",
-    "testMode": True,
+    "carrier_id": "ups_package",
+    "carrier_name": "ups_package",
+    "tracking_number": "1Z12345E6205277936",
+    "test_mode": True,
     "events": [
         {
             "code": "KB",

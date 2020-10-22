@@ -176,50 +176,50 @@ class TestShipmentPurchase(TestShipmentFixture):
 
 SHIPMENT_DATA = {
     "recipient": {
-        "addressLine1": "125 Church St",
-        "personName": "John Poop",
-        "companyName": "A corp.",
-        "phoneNumber": "514 000 0000",
+        "address_line1": "125 Church St",
+        "person_name": "John Poop",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
         "city": "Moncton",
-        "countryCode": "CA",
-        "postalCode": "E1C4Z8",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
         "residential": False,
-        "stateCode": "NB"
+        "state_code": "NB"
     },
     "shipper": {
-        "addressLine1": "5840 Oak St",
-        "personName": "Jane Doe",
-        "companyName": "B corp.",
-        "phoneNumber": "514 000 9999",
+        "address_line1": "5840 Oak St",
+        "person_name": "Jane Doe",
+        "company_name": "B corp.",
+        "phone_number": "514 000 9999",
         "city": "Vancouver",
-        "countryCode": "CA",
-        "postalCode": "V6M2V9",
+        "country_code": "CA",
+        "postal_code": "V6M2V9",
         "residential": False,
-        "stateCode": "BC"
+        "state_code": "BC"
     },
     "parcels": [{
         "weight": 1,
-        "packagePreset": "canadapost_corrugated_small_box"
+        "package_preset": "canadapost_corrugated_small_box"
     }],
     "payment": {
         "currency": "CAD",
-        "paidBy": "sender"
+        "paid_by": "sender"
     },
-    "carrierIds": ["canadapost"]
+    "carrier_ids": ["canadapost"]
 }
 
 SHIPMENT_RATES = {
     "rates": [
         {
             "id": ANY,
-            "carrierRef": ANY,
-            "baseCharge": 101.83,
-            "carrierId": "canadapost",
-            "carrierName": "canadapost",
+            "carrier_ref": ANY,
+            "base_charge": 101.83,
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
             "currency": "CAD",
             "discount": -9.04,
-            "dutiesAndTaxes": 13.92,
-            "extraCharges": [
+            "duties_and_taxes": 13.92,
+            "extra_charges": [
                 {
                     "amount": 2.7,
                     "currency": "CAD",
@@ -232,10 +232,10 @@ SHIPMENT_RATES = {
                 }
             ],
             "service": "canadapost_priority",
-            "totalCharge": 106.71,
-            "transitDays": 2,
+            "total_charge": 106.71,
+            "transit_days": 2,
             "meta": None,
-            "testMode": True
+            "test_mode": True
         }
     ]
 }
@@ -243,48 +243,49 @@ SHIPMENT_RATES = {
 SHIPMENT_RESPONSE = {
     "id": ANY,
     "status": "created",
-    "carrierName": None,
-    "carrierId": None,
+    "carrier_name": None,
+    "carrier_id": None,
     "label": None,
     "meta": {},
-    "trackingNumber": None,
-    "selectedRate": None,
-    "selectedRateId": None,
+    "tracking_number": None,
+    "shipment_identifier": None,
+    "selected_rate": None,
+    "selected_rate_id": None,
     **SHIPMENT_RATES,
-    "trackingUrl": None,
+    "tracking_url": None,
     "shipper": {
         "id": ANY,
-        "postalCode": "V6M2V9",
+        "postal_code": "V6M2V9",
         "city": "Vancouver",
-        "federalTaxId": None,
-        "stateTaxId": None,
-        "personName": "Jane Doe",
-        "companyName": "B corp.",
-        "countryCode": "CA",
+        "federal_tax_id": None,
+        "state_tax_id": None,
+        "person_name": "Jane Doe",
+        "company_name": "B corp.",
+        "country_code": "CA",
         "email": None,
-        "phoneNumber": "514 000 9999",
-        "stateCode": "BC",
+        "phone_number": "514 000 9999",
+        "state_code": "BC",
         "suburb": None,
         "residential": False,
-        "addressLine1": "5840 Oak St",
-        "addressLine2": None
+        "address_line1": "5840 Oak St",
+        "address_line2": None
     },
     "recipient": {
         "id": ANY,
-        "postalCode": "E1C4Z8",
+        "postal_code": "E1C4Z8",
         "city": "Moncton",
-        "federalTaxId": None,
-        "stateTaxId": None,
-        "personName": "John Poop",
-        "companyName": "A corp.",
-        "countryCode": "CA",
+        "federal_tax_id": None,
+        "state_tax_id": None,
+        "person_name": "John Poop",
+        "company_name": "A corp.",
+        "country_code": "CA",
         "email": None,
-        "phoneNumber": "514 000 0000",
-        "stateCode": "NB",
+        "phone_number": "514 000 0000",
+        "state_code": "NB",
         "suburb": None,
         "residential": False,
-        "addressLine1": "125 Church St",
-        "addressLine2": None
+        "address_line1": "125 Church St",
+        "address_line2": None
     },
     "parcels": [{
         "id": ANY,
@@ -292,35 +293,34 @@ SHIPMENT_RESPONSE = {
         "width": None,
         "height": None,
         "length": None,
-        "packagingType": None,
-        "packagePreset": "canadapost_corrugated_small_box",
+        "packaging_type": None,
+        "package_preset": "canadapost_corrugated_small_box",
         "description": None,
         "content": None,
-        "isDocument": False,
-        "weightUnit": None,
-        "dimensionUnit": None
+        "is_document": False,
+        "weight_unit": None,
+        "dimension_unit": None
     }],
     "services": [],
     "options": {},
     "payment": {
         "id": ANY,
-        "paidBy": "sender",
+        "paid_by": "sender",
         "amount": None,
         "currency": "CAD",
-        "accountNumber": None,
-        "creditCard": None,
+        "account_number": None,
+        "credit_card": None,
         "contact": None
     },
     "customs": None,
-    "docImages": [],
+    "doc_images": [],
     "reference": None,
-    "carrierIds": [
+    "carrier_ids": [
         "canadapost"
     ],
     "service": None,
-    "createdAt": ANY,
-    "shipmentIdentifier": ANY,
-    "testMode": True
+    "created_at": ANY,
+    "test_mode": True
 }
 
 
@@ -363,19 +363,19 @@ RETURNED_RATES_VALUE = [(
 
 
 SHIPMENT_PURCHASE_DATA = {
-    "selectedRateId": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4"
+    "selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4"
 }
 
 SELECTED_RATE = {
     "id": ANY,
-    "carrierRef": ANY,
-    "baseCharge": 101.83,
-    "carrierId": "canadapost",
-    "carrierName": "canadapost",
+    "carrier_ref": ANY,
+    "base_charge": 101.83,
+    "carrier_id": "canadapost",
+    "carrier_name": "canadapost",
     "currency": "CAD",
     "discount": -9.04,
-    "dutiesAndTaxes": 13.92,
-    "extraCharges": [
+    "duties_and_taxes": 13.92,
+    "extra_charges": [
         {
             "amount": 2.7,
             "currency": "CAD",
@@ -388,10 +388,10 @@ SELECTED_RATE = {
         }
     ],
     "service": "canadapost_priority",
-    "totalCharge": 106.71,
-    "transitDays": 2,
+    "total_charge": 106.71,
+    "transit_days": 2,
     "meta": None,
-    "testMode": True
+    "test_mode": True
 }
 
 CREATED_SHIPMENT_RESPONSE = (
@@ -420,50 +420,50 @@ PURCHASED_SHIPMENT = {
     "shipment": {
         "id": ANY,
         "status": "purchased",
-        "carrierName": "canadapost",
-        "carrierId": "canadapost",
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
         "label": ANY,
         "meta": {},
-        "trackingNumber": "123456789012",
-        "shipmentIdentifier": "123456789012",
-        "selectedRate": SELECTED_RATE,
-        "selectedRateId": ANY,
+        "tracking_number": "123456789012",
+        "shipment_identifier": "123456789012",
+        "selected_rate": SELECTED_RATE,
+        "selected_rate_id": ANY,
         "service": "canadapost_priority",
         "rates": [SELECTED_RATE],
-        "trackingUrl": "/v1/tracking_status/canadapost/123456789012?test",
+        "tracking_url": "/v1/tracking_status/canadapost/123456789012?test",
         "shipper": {
             "id": ANY,
-            "postalCode": "E1C4Z8",
+            "postal_code": "E1C4Z8",
             "city": "Moncton",
-            "federalTaxId": None,
-            "stateTaxId": None,
-            "personName": "John Poop",
-            "companyName": "A corp.",
-            "countryCode": "CA",
+            "federal_tax_id": None,
+            "state_tax_id": None,
+            "person_name": "John Poop",
+            "company_name": "A corp.",
+            "country_code": "CA",
             "email": None,
-            "phoneNumber": "514 000 0000",
-            "stateCode": "NB",
+            "phone_number": "514 000 0000",
+            "state_code": "NB",
             "suburb": None,
             "residential": False,
-            "addressLine1": "125 Church St",
-            "addressLine2": None
+            "address_line1": "125 Church St",
+            "address_line2": None
         },
         "recipient": {
             "id": ANY,
-            "postalCode": "V6M2V9",
+            "postal_code": "V6M2V9",
             "city": "Vancouver",
-            "federalTaxId": None,
-            "stateTaxId": None,
-            "personName": "Jane Doe",
-            "companyName": "B corp.",
-            "countryCode": "CA",
+            "federal_tax_id": None,
+            "state_tax_id": None,
+            "person_name": "Jane Doe",
+            "company_name": "B corp.",
+            "country_code": "CA",
             "email": None,
-            "phoneNumber": "514 000 9999",
-            "stateCode": "BC",
+            "phone_number": "514 000 9999",
+            "state_code": "BC",
             "suburb": None,
             "residential": False,
-            "addressLine1": "5840 Oak St",
-            "addressLine2": None
+            "address_line1": "5840 Oak St",
+            "address_line2": None
         },
         "parcels": [{
             "id": ANY,
@@ -471,39 +471,39 @@ PURCHASED_SHIPMENT = {
             "width": None,
             "height": None,
             "length": None,
-            "packagingType": None,
-            "packagePreset": "canadapost_corrugated_small_box",
+            "packaging_type": None,
+            "package_preset": "canadapost_corrugated_small_box",
             "description": None,
             "content": None,
-            "isDocument": False,
-            "weightUnit": None,
-            "dimensionUnit": None
+            "is_document": False,
+            "weight_unit": None,
+            "dimension_unit": None
         }],
         "services": [],
         "options": {},
         "payment": {
             "id": ANY,
-            "paidBy": "sender",
+            "paid_by": "sender",
             "amount": None,
             "currency": "CAD",
-            "accountNumber": None,
-            "creditCard": None,
+            "account_number": None,
+            "credit_card": None,
             "contact": None
         },
         "customs": None,
-        "docImages": [],
+        "doc_images": [],
         "reference": None,
-        "carrierIds": [],
-        "createdAt": ANY,
-        "testMode": True
+        "carrier_ids": [],
+        "created_at": ANY,
+        "test_mode": True
     }
 }
 
 CANCEL_RESPONSE = {
   "messages": [],
   "confirmation": {
-    "carrierName": "None Selected",
-    "carrierId": "None Selected",
+    "carrier_name": "None Selected",
+    "carrier_id": "None Selected",
     "operation": "Cancel Shipment",
     "success": True
   }
@@ -512,8 +512,8 @@ CANCEL_RESPONSE = {
 CANCEL_PURCHASED_RESPONSE = {
   "messages": [],
   "confirmation": {
-    "carrierName": "canadapost",
-    "carrierId": "canadapost",
+    "carrier_name": "canadapost",
+    "carrier_id": "canadapost",
     "operation": "Cancel Shipment",
     "success": True
   }

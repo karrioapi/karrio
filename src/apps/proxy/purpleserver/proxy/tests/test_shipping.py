@@ -46,44 +46,44 @@ class TestShipping(APITestCase):
 
 
 SHIPPING_DATA = {
-    "selectedRateId": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
+    "selected_rate_id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
     "options": {},
     "recipient": {
-        "addressLine1": "125 Church St",
-        "personName": "John Doe",
-        "companyName": "A corp.",
-        "phoneNumber": "514 000 0000",
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
         "city": "Moncton",
-        "countryCode": "CA",
-        "postalCode": "E1C4Z8",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
         "residential": False,
-        "stateCode": "NB"
+        "state_code": "NB"
     },
     "shipper": {
-        "addressLine1": "5840 Oak St",
-        "personName": "Jane Doe",
-        "companyName": "B corp.",
-        "phoneNumber": "514 000 0000",
+        "address_line1": "5840 Oak St",
+        "person_name": "Jane Doe",
+        "company_name": "B corp.",
+        "phone_number": "514 000 0000",
         "city": "Vancouver",
-        "countryCode": "CA",
-        "postalCode": "V6M2V9",
+        "country_code": "CA",
+        "postal_code": "V6M2V9",
         "residential": False,
-        "stateCode": "BC"
+        "state_code": "BC"
     },
     "parcels": [{
         "weight": 1,
-        "packagePreset": "canadapost_corrugated_small_box"
+        "package_preset": "canadapost_corrugated_small_box"
     }],
     "rates": [
         {
-            "baseCharge": 101.83,
-            "carrierId": "canadapost",
-            "carrierName": "canadapost",
+            "base_charge": 101.83,
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
             "currency": "CAD",
             "discount": -9.04,
-            "dutiesAndTaxes": 13.92,
-            "estimatedDelivery": "2020-06-22",
-            "extraCharges": [
+            "duties_and_taxes": 13.92,
+            "estimated_delivery": "2020-06-22",
+            "extra_charges": [
                 {
                     "amount": 2.7,
                     "currency": "CAD",
@@ -97,18 +97,18 @@ SHIPPING_DATA = {
             ],
             "id": "prx_a9b96e5a82f644b0921bfed3190b4d6c",
             "service": "canadapost_priority",
-            "totalCharge": 106.71,
-            "testMode": True
+            "total_charge": 106.71,
+            "test_mode": True
         },
         {
-            "baseCharge": 27.36,
-            "carrierId": "canadapost",
-            "carrierName": "canadapost",
+            "base_charge": 27.36,
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
             "currency": "CAD",
             "discount": -3.06,
-            "dutiesAndTaxes": 3.65,
-            "estimatedDelivery": "2020-07-02",
-            "extraCharges": [
+            "duties_and_taxes": 3.65,
+            "estimated_delivery": "2020-07-02",
+            "extra_charges": [
                 {
                     "amount": 0.71,
                     "currency": "CAD",
@@ -122,18 +122,18 @@ SHIPPING_DATA = {
             ],
             "id": "prx_9290e4a2c8e34c8d8c73ab990b029f3d",
             "service": "canadapost_regular_parcel",
-            "totalCharge": 27.95,
-            "testMode": True
+            "total_charge": 27.95,
+            "test_mode": True
         }
     ],
     "payment": {
         "currency": "CAD",
-        "paidBy": "sender"
+        "paid_by": "sender"
     }
 }
 
 SHIPPING_CANCEL_DATA = {
-  "shipmentIdentifier": "123456789012"
+  "shipment_identifier": "123456789012"
 }
 
 
@@ -176,23 +176,23 @@ SHIPPING_RESPONSE = {
     'shipment': {
         'id': ANY,
         'status': 'purchased',
-        'carrierName': 'canadapost',
-        'carrierId': 'canadapost',
+        'carrier_name': 'canadapost',
+        'carrier_id': 'canadapost',
         'label': '==apodifjoefr',
-        'trackingNumber': '123456789012',
-        'shipmentIdentifier': '123456789012',
-        'selectedRate': {
+        'tracking_number': '123456789012',
+        'shipment_identifier': '123456789012',
+        'selected_rate': {
             'id': 'prx_a9b96e5a82f644b0921bfed3190b4d6c',
-            'carrierName': 'canadapost',
-            'carrierId': 'canadapost',
+            'carrier_name': 'canadapost',
+            'carrier_id': 'canadapost',
             'currency': 'CAD',
             'service': 'canadapost_priority',
             'discount': -9.04,
-            'baseCharge': 101.83,
-            'totalCharge': 106.71,
-            'dutiesAndTaxes': 13.92,
-            'transitDays': None,
-            'extraCharges': [
+            'base_charge': 101.83,
+            'total_charge': 106.71,
+            'duties_and_taxes': 13.92,
+            'transit_days': None,
+            'extra_charges': [
                 {
                     'name': 'Fuel surcharge',
                     'amount': 2.7,
@@ -205,23 +205,23 @@ SHIPPING_RESPONSE = {
                 }
             ],
             'meta': None,
-            'carrierRef': None,
-            'testMode': True
+            'carrier_ref': None,
+            'test_mode': True
         },
-        'selectedRateId': 'prx_a9b96e5a82f644b0921bfed3190b4d6c',
+        'selected_rate_id': 'prx_a9b96e5a82f644b0921bfed3190b4d6c',
         'rates': [
             {
                 'id': 'prx_a9b96e5a82f644b0921bfed3190b4d6c',
-                'carrierName': 'canadapost',
-                'carrierId': 'canadapost',
+                'carrier_name': 'canadapost',
+                'carrier_id': 'canadapost',
                 'currency': 'CAD',
                 'service': 'canadapost_priority',
                 'discount': -9.04,
-                'baseCharge': 101.83,
-                'totalCharge': 106.71,
-                'dutiesAndTaxes': 13.92,
-                'transitDays': None,
-                'extraCharges': [
+                'base_charge': 101.83,
+                'total_charge': 106.71,
+                'duties_and_taxes': 13.92,
+                'transit_days': None,
+                'extra_charges': [
                     {
                         'name': 'Fuel surcharge',
                         'amount': 2.7,
@@ -234,21 +234,21 @@ SHIPPING_RESPONSE = {
                     }
                 ],
                 'meta': None,
-                'carrierRef': None,
-                'testMode': True
+                'carrier_ref': None,
+                'test_mode': True
             },
             {
                 'id': 'prx_9290e4a2c8e34c8d8c73ab990b029f3d',
-                'carrierName': 'canadapost',
-                'carrierId': 'canadapost',
+                'carrier_name': 'canadapost',
+                'carrier_id': 'canadapost',
                 'currency': 'CAD',
                 'service': 'canadapost_regular_parcel',
                 'discount': -3.06,
-                'baseCharge': 27.36,
-                'totalCharge': 27.95,
-                'dutiesAndTaxes': 3.65,
-                'transitDays': None,
-                'extraCharges': [
+                'base_charge': 27.36,
+                'total_charge': 27.95,
+                'duties_and_taxes': 3.65,
+                'transit_days': None,
+                'extra_charges': [
                     {
                         'name': 'Fuel surcharge',
                         'amount': 0.71,
@@ -261,45 +261,45 @@ SHIPPING_RESPONSE = {
                     }
                 ],
                 'meta': None,
-                'carrierRef': None,
-                'testMode': True
+                'carrier_ref': None,
+                'test_mode': True
             }
         ],
-        'trackingUrl': '/v1/proxy/tracking/canadapost/123456789012?test',
+        'tracking_url': '/v1/proxy/tracking/canadapost/123456789012?test',
         'service': 'canadapost_priority',
         'shipper': {
             'id': None,
-            'postalCode': 'V6M2V9',
+            'postal_code': 'V6M2V9',
             'city': 'Vancouver',
-            'federalTaxId': None,
-            'stateTaxId': None,
-            'personName': 'Jane Doe',
-            'companyName': 'B corp.',
-            'countryCode': 'CA',
+            'federal_tax_id': None,
+            'state_tax_id': None,
+            'person_name': 'Jane Doe',
+            'company_name': 'B corp.',
+            'country_code': 'CA',
             'email': None,
-            'phoneNumber': '514 000 0000',
-            'stateCode': 'BC',
+            'phone_number': '514 000 0000',
+            'state_code': 'BC',
             'suburb': None,
             'residential': False,
-            'addressLine1': '5840 Oak St',
-            'addressLine2': ''
+            'address_line1': '5840 Oak St',
+            'address_line2': ''
         },
         'recipient': {
             'id': None,
-            'postalCode': 'E1C4Z8',
+            'postal_code': 'E1C4Z8',
             'city': 'Moncton',
-            'federalTaxId': None,
-            'stateTaxId': None,
-            'personName': 'John Doe',
-            'companyName': 'A corp.',
-            'countryCode': 'CA',
+            'federal_tax_id': None,
+            'state_tax_id': None,
+            'person_name': 'John Doe',
+            'company_name': 'A corp.',
+            'country_code': 'CA',
             'email': None,
-            'phoneNumber': '514 000 0000',
-            'stateCode': 'NB',
+            'phone_number': '514 000 0000',
+            'state_code': 'NB',
             'suburb': None,
             'residential': False,
-            'addressLine1': '125 Church St',
-            'addressLine2': ''
+            'address_line1': '125 Church St',
+            'address_line2': ''
         },
         'parcels': [
             {
@@ -308,41 +308,41 @@ SHIPPING_RESPONSE = {
                 'width': None,
                 'height': None,
                 'length': None,
-                'packagingType': None,
-                'packagePreset': 'canadapost_corrugated_small_box',
+                'packaging_type': None,
+                'package_preset': 'canadapost_corrugated_small_box',
                 'description': None,
                 'content': None,
-                'isDocument': False,
-                'weightUnit': None,
-                'dimensionUnit': None
+                'is_document': False,
+                'weight_unit': None,
+                'dimension_unit': None
             }
         ],
         'services': [],
         'options': {},
         'payment': {
             'id': None,
-            'paidBy': 'sender',
+            'paid_by': 'sender',
             'amount': None,
             'currency': 'CAD',
-            'accountNumber': None,
-            'creditCard': None,
+            'account_number': None,
+            'credit_card': None,
             'contact': None
         },
         'customs': None,
-        'docImages': [],
+        'doc_images': [],
         'reference': '',
-        'carrierIds': [],
+        'carrier_ids': [],
         'meta': None,
-        'createdAt': ANY,
-        'testMode': True
+        'created_at': ANY,
+        'test_mode': True
     }
 }
 
 SHIPPING_CANCEL_SUCCESS_RESPONSE = {
   "messages": [],
   "confirmation": {
-    "carrierName": "canadapost",
-    "carrierId": "canadapost",
+    "carrier_name": "canadapost",
+    "carrier_id": "canadapost",
     "operation": "Cancel Shipment",
     "success": True
   }
@@ -354,8 +354,8 @@ SHIPPING_CANCEL_FAILED_RESPONSE = {
     "details": {
       "messages": [
         {
-          "carrierId": "canadapost",
-          "carrierName": "canadapost",
+          "carrier_id": "canadapost",
+          "carrier_name": "canadapost",
           "code": "404",
           "message": "Not Found"
         }

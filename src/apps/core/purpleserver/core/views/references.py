@@ -255,8 +255,8 @@ class References(Serializer):
     states = PlainDictField()
     services = PlainDictField()
     options = PlainDictField()
-    packagePresets = PlainDictField()
-    packagingTypes = PlainDictField()
+    package_presets = PlainDictField()
+    packaging_types = PlainDictField()
 
 
 @swagger_auto_schema(

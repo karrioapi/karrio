@@ -7,7 +7,6 @@ coreapi==2.3.3
 coreschema==0.0.4
 Django==3.1.2
 djangorestframework==3.11.1
-djangorestframework-camel-case==1.2.0
 drf-api-tracking==1.7.7
 drf-yasg==1.17.1
 eshipper.extension==2020.9.1

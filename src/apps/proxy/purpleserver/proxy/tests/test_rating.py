@@ -23,27 +23,27 @@ class TestRating(APITestCase):
 
 RATING_DATA = {
     "shipper": {
-        "postalCode": "V6M2V9",
+        "postal_code": "V6M2V9",
         "city": "Vancouver",
-        "countryCode": "CA",
-        "stateCode": "BC",
+        "country_code": "CA",
+        "state_code": "BC",
         "residential": True,
-        "addressLine1": "5840 Oak St"
+        "address_line1": "5840 Oak St"
     },
     "recipient": {
-        "postalCode": "E1C4Z8",
+        "postal_code": "E1C4Z8",
         "city": "Moncton",
-        "countryCode": "CA",
-        "stateCode": "NB",
+        "country_code": "CA",
+        "state_code": "NB",
         "residential": False,
-        "addressLine1": "125 Church St"
+        "address_line1": "125 Church St"
     },
     "parcels": [{
         "weight": 1,
-        "packagePreset": "canadapost_corrugated_small_box"
+        "package_preset": "canadapost_corrugated_small_box"
     }],
     "services": ["canadapost_priority"],
-    "carrierIds": ["canadapost"]
+    "carrier_ids": ["canadapost"]
 }
 
 RETURNED_VALUE = [(
@@ -81,14 +81,14 @@ RATING_RESPONSE = {
         {
             "id": ANY,
             "meta": None,
-            "carrierRef": ANY,
-            "baseCharge": 101.83,
-            "carrierId": "canadapost",
-            "carrierName": "canadapost",
+            "carrier_ref": ANY,
+            "base_charge": 101.83,
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
             "currency": "CAD",
             "discount": -9.04,
-            "dutiesAndTaxes": 13.92,
-            "extraCharges": [
+            "duties_and_taxes": 13.92,
+            "extra_charges": [
                 {
                     "amount": 2.7,
                     "currency": "CAD",
@@ -100,10 +100,10 @@ RATING_RESPONSE = {
                     "name": "SMB Savings"
                 }
             ],
-            "testMode": True,
+            "test_mode": True,
             "service": "canadapost_priority",
-            "totalCharge": 106.71,
-            "transitDays": 2
+            "total_charge": 106.71,
+            "transit_days": 2
         }
     ]
 }

@@ -226,16 +226,6 @@ REST_FRAMEWORK = {
 
     'EXCEPTION_HANDLER': 'purpleserver.core.exceptions.custom_exception_handler',
 
-    'DEFAULT_RENDERER_CLASSES': (
-        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
-    ),
-
-    'DEFAULT_PARSER_CLASSES': (
-        'djangorestframework_camel_case.parser.CamelCaseFormParser',
-        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
-        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
-    ),
-
     'JSON_UNDERSCOREIZE': {
         'no_underscore_before_number': True,
     },
