@@ -166,8 +166,8 @@ def non_contract_shipment_request(
             customs=CustomsType(
                 currency=Currency.AUD.value,
                 conversion_from_cad=None,
-                reason_for_export=payload.customs.terms_of_trade,
-                other_reason=payload.customs.description,
+                reason_for_export=payload.customs.incoterm,
+                other_reason=payload.customs.content_description,
                 duties_and_taxes_prepaid=payload.customs.duty.account_number,
                 certificate_number=None,
                 licence_number=None,

@@ -98,14 +98,19 @@ class Payment:
 class Customs:
     """customs type."""
 
-    no_eei: str = None
     aes: str = None
-    description: str = None
-    terms_of_trade: str = None
+    eel_pfc: str = None
+    certify: bool = None
+    signer: str = None
+    content_type: str = None
+    content_description: str = None
+    incoterm: str = None
+    certificate_number: str = None
     commodities: List[Commodity] = JList[Commodity]
     duty: Payment = JStruct[Payment]
     invoice: Invoice = JStruct[Invoice]
     commercial_invoice: bool = False
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)

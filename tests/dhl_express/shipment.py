@@ -103,7 +103,7 @@ shipment_data = {
     "payment": {"paid_by": "sender", "account_number": "123456789"},
     "customs": {
         "commodities": [{"description": "cn", "sku": "cc"}],
-        "terms_of_trade": "DAP",
+        "incoterm": "DAP",
         "duty": {"account_number": "123456789", "paid_by": "sender", "amount": 200.00},
     },
     "doc_images": [
