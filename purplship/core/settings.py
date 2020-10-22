@@ -1,4 +1,4 @@
-"""PurplShip Settings base class definition"""
+"""Purplship Settings base class definition"""
 
 import attr
 from typing import Optional

@@ -60,16 +60,6 @@ class Parcel:
 
 
 @attr.s(auto_attribs=True)
-class Invoice:
-    """invoice type."""
-
-    date: str
-    identifier: str = None
-    type: str = None
-    copies: int = None
-
-
-@attr.s(auto_attribs=True)
 class Card:
     """Credit Card type."""
 
@@ -92,6 +82,7 @@ class Payment:
     account_number: str = None
     credit_card: Card = JStruct[Card]
     contact: Address = JStruct[Address]
+    id: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -105,12 +96,13 @@ class Customs:
     content_type: str = None
     content_description: str = None
     incoterm: str = None
+    invoice: str = None
     certificate_number: str = None
     commodities: List[Commodity] = JList[Commodity]
     duty: Payment = JStruct[Payment]
-    invoice: Invoice = JStruct[Invoice]
     commercial_invoice: bool = False
     options: Dict = {}
+    id: str = None
 
 
 @attr.s(auto_attribs=True)

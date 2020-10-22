@@ -1,4 +1,4 @@
-"""PurplShip Mapper base class definition module."""
+"""Purplship Mapper base class definition module."""
 
 import attr
 from abc import ABC
