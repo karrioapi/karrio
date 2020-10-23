@@ -1,5 +1,4 @@
-import Purplship from '@purplship/purplship';
-import { CarrierSettings, References, Shipment } from '@purplship/purplship/dist';
+import { CarrierSettings, References, Shipment, Purplship } from '@purplship/purplship';
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinct } from 'rxjs/operators';
@@ -8,13 +7,14 @@ import { distinct } from 'rxjs/operators';
 const INITIAL_TOKEN = collectToken();
 
 export interface UserInfo {
-    fullName: string | null;
+    full_name: string | null;
     email: string | null;
-    readonly isStaff: boolean;
+    readonly is_staff: boolean;
 }
 
-export interface Provider extends Omit<CarrierSettings, 'id'> {
+export interface Provider extends Omit<CarrierSettings, 'id' | 'carrier_name'> {
     id: string | null | undefined;
+    carrier_name: CarrierSettings.CarrierNameEnum | 'none';
     [property: string]: any;
 }
 

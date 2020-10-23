@@ -1,4 +1,4 @@
-import { References } from '@purplship/purplship/dist';
+import { References } from '@purplship/purplship';
 import React from 'react';
 
 export const Reference = React.createContext<References>({} as References);

@@ -37,7 +37,7 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
               {ref => (Object.values(ref).length > 0) && providers.map((settings) => (
 
                 <tr key={settings.id}>
-                  <td className="carrier"><div className="box">{ref.carriers[settings.carrierName]}</div></td>
+                  <td className="carrier"><div className="box">{ref.carriers[settings.carrier_name]}</div></td>
                   <td className="mode is-vcentered">
                     {settings.test ? <span className="tag is-primary is-centered">Test</span> : <></>}
                   </td>

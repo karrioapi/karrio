@@ -5,7 +5,7 @@ import Providers from '@/views/providers';
 import Settings from '@/views/settings';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import Navbar from '@/components/navbar/navbar';
-import { References, Shipment } from '@purplship/purplship/dist';
+import { References, Shipment } from '@purplship/purplship';
 import { state, UserInfo, Provider } from '@/library/api';
 import { Reference } from '@/library/context';
 import '@/assets/scss/main.scss';

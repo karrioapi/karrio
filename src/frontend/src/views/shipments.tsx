@@ -1,17 +1,8 @@
 import React, { Fragment } from 'react';
 import { View } from '@/library/types';
-import { Address, Shipment } from '@purplship/purplship/dist';
+import { Address, Shipment } from '@purplship/purplship';
 import { Provider } from '@/library/api';
 
-
-function formatAddress(address: Address): string {
-  return [
-    address.personName,
-    address.city,
-    address.stateCode,
-    address.countryCode
-  ].filter(a => a !== null && a !== "").join(', ');
-}
 
 interface ShipmentsView extends View {
   shipments: Shipment[];
@@ -49,12 +40,12 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
 
             {shipments.map(shipment => (
               <tr key={shipment.id}>
-                <td>{shipment.carrierName}</td>
+                <td>{shipment.carrier_name}</td>
                 <td className="mode is-vcentered">
-                  {isTest(shipment.carrierId) ? <span className="tag is-primary is-centered">Test</span> : <></>}
+                  {isTest(shipment.carrier_id) ? <span className="tag is-primary is-centered">Test</span> : <></>}
                 </td>
                 <td>{formatAddress(shipment.recipient)}</td>
-                <td></td>
+                <td>{formatDate(shipment.created_at)}</td>
                 <td><span className="tag is-info is-light">{shipment.status}</span></td>
               </tr>
             ))}
@@ -88,5 +79,19 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
     </Fragment>
   );
 };
+
+function formatAddress(address: Address): string {
+  return [
+    address.person_name,
+    address.city,
+    address.postal_code,
+    address.country_code
+  ].filter(a => a !== null && a !== "").join(', ');
+}
+
+function formatDate(date: string): string {
+  let [month, day, year]    = ( new Date(date) ).toLocaleDateString().split("/")
+  return `${day}/${month}/${year}`;
+}
 
 export default Shipments;

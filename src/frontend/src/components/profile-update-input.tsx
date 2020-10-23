@@ -10,12 +10,13 @@ interface ProfileUpdateInputComponent {
 
 const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label, inputType, propertyKey }) => {
     const [key, setKey] = useState<string>(`${propertyKey}-${Date.now()}`);
+    const [originalValue, _] = useState<string>((user as any)[propertyKey] || "");
     const [propertyValue, setPropertyValue] = useState<string>("");
     const [hasChanged, setHasChanged] = useState<boolean>(false);
     const cancel = (e: React.MouseEvent) => {
         e.preventDefault();
-        const originalValue = (user as any)[propertyKey] || "";
         setPropertyValue(originalValue);
+        setHasChanged(false);
         setKey(`${propertyKey}-${Date.now()}`);
     };
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {

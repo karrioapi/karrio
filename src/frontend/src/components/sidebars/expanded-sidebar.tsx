@@ -24,7 +24,7 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
                                 <i className="fas fa-check"></i>
                             </span>
                         </div>
-                        <h3>{user.fullName}</h3>
+                        <h3>{user.full_name}</h3>
                         <p>{user.email}</p>
                     </div>
                 </div>
@@ -36,13 +36,13 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
                 <NavLink to="carrier_connections">
                     <span>Carrier Connections</span>
                 </NavLink>
-                <NavLink to="settings">
-                    <span>Settings</span>
-                </NavLink>
                 <a className="menu-item" target="_blank" href="/api">
                     <span>API Reference</span>
                     <i className="fas fa-external-link-alt px-1"></i>
                 </a>
+                <NavLink to="settings">
+                    <span>Settings</span>
+                </NavLink>
 
                 <div className="naver"></div>
             </div>
