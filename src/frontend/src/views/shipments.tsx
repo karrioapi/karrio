@@ -40,13 +40,13 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
 
             {shipments.map(shipment => (
               <tr key={shipment.id}>
-                <td>{shipment.carrier_name}</td>
+                <td><span className="tag is-primary is-light">{shipment.carrier_name || "Not Selected"}</span></td>
                 <td className="mode is-vcentered">
-                  {isTest(shipment.carrier_id) ? <span className="tag is-primary is-centered">Test</span> : <></>}
+                  {isTest(shipment.carrier_id) ? <span className="tag is-warning is-centered">Test</span> : <></>}
                 </td>
                 <td>{formatAddress(shipment.recipient)}</td>
                 <td>{formatDate(shipment.created_at)}</td>
-                <td><span className="tag is-info is-light">{shipment.status}</span></td>
+                <td><span className="tag is-info is-light">{shipment.status?.toString().toUpperCase()}</span></td>
               </tr>
             ))}
 

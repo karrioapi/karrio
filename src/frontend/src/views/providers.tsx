@@ -39,7 +39,7 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
                 <tr key={settings.id}>
                   <td className="carrier"><div className="box">{ref.carriers[settings.carrier_name]}</div></td>
                   <td className="mode is-vcentered">
-                    {settings.test ? <span className="tag is-primary is-centered">Test</span> : <></>}
+                    {settings.test ? <span className="tag is-warning is-centered">Test</span> : <></>}
                   </td>
                   <td className="details"></td>
                   <td className="action is-vcentered">

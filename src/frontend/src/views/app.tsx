@@ -4,6 +4,7 @@ import Shipments from '@/views/shipments';
 import Providers from '@/views/providers';
 import Settings from '@/views/settings';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
+import BoardFooter from '@/components/footer/board-footer';
 import Navbar from '@/components/navbar/navbar';
 import { References, Shipment } from '@purplship/purplship';
 import { state, UserInfo, Provider } from '@/library/api';
@@ -37,6 +38,8 @@ const App: React.FC = () => {
 
                     </div>
                 </div>
+
+                <BoardFooter />
             </Reference.Provider>
         </Fragment>
     );
