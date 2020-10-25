@@ -1,0 +1,5 @@
+<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="test" password="test" version="3.0.0">
+    <ShipmentCancelRequest>
+        <Order orderId="383363"/>
+    </ShipmentCancelRequest>
+</EShipper>
