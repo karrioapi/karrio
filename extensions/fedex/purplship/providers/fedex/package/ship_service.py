@@ -97,6 +97,7 @@ def _extract_shipment(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
+        shipment_identifier=tracking_number,
         label=label,
     )
 

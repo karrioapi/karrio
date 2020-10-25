@@ -1,5 +1,7 @@
 import base64
 from typing import List
+from pycanadapost.rating import mailing_scenario
+from purplship.api.proxy import Proxy as BaseProxy
 from purplship.core.errors import PurplShipError
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.utils.pipeline import Pipeline, Job
@@ -9,9 +11,8 @@ from purplship.core.utils import (
     exec_parrallel,
     bundle_xml,
 )
+from purplship.providers.canadapost import process_error
 from purplship.mappers.canadapost.settings import Settings
-from purplship.api.proxy import Proxy as BaseProxy
-from pycanadapost.rating import mailing_scenario
 
 
 class Proxy(BaseProxy):
@@ -25,7 +26,7 @@ class Proxy(BaseProxy):
                 "Content-Type": "application/vnd.cpc.ship.rate-v4+xml",
                 "Accept": "application/vnd.cpc.ship.rate-v4+xml",
                 "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": "en-CA",
+                "Accept-language": f"{self.settings.language}-CA",
             },
             method="POST",
         )
@@ -42,7 +43,7 @@ class Proxy(BaseProxy):
                 headers={
                     "Accept": "application/vnd.cpc.track+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="GET",
             )
@@ -60,7 +61,7 @@ class Proxy(BaseProxy):
                     "Content-Type": "application/vnd.cpc.shipment-v8+xml",
                     "Accept": "application/vnd.cpc.shipment-v8+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="POST",
             )
@@ -73,7 +74,7 @@ class Proxy(BaseProxy):
                     "Accept": "application/vnd.cpc.ncshipment-v4+xml",
                     "Content-Type": "application/vnd.cpc.ncshipment-v4+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="POST",
             )
@@ -109,14 +110,30 @@ class Proxy(BaseProxy):
 
         return Deserializable(bundle_xml(response), to_xml)
 
-    def request_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+    def cancel_shipment(self, request: Serializable) -> Deserializable:
+        shipment_id = request.serialize()
+        response = http(
+            url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}",
+            headers={
+                "Content-Type": "application/vnd.cpc.shipment-v8+xml",
+                "Accept": "application/vnd.cpc.shipment-v8+xml",
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Accept-language": f"{self.settings.language}-CA",
+            },
+            method="DELETE",
+            on_error=process_error,
+        )
+
+        return Deserializable(response or "<wrapper></wrapper>", to_xml)
+
+    def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
         def _availability(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}/ad/pickup/pickupavailability/{job.data}",
                 headers={
                     "Accept": "application/vnd.cpc.pickup+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="GET",
             )
@@ -129,7 +146,7 @@ class Proxy(BaseProxy):
                     "Accept": "application/vnd.cpc.pickuprequest+xml",
                     "Content-Type": "application/vnd.cpc.pickuprequest+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": "en-CA",
+                    "Accept-language": f"{self.settings.language}-CA",
                 },
                 method="POST",
             )
@@ -153,18 +170,47 @@ class Proxy(BaseProxy):
         return Deserializable(bundle_xml(response), to_xml)
 
     def modify_pickup(self, request: Serializable[dict]) -> Deserializable[str]:
-        payload = request.serialize()
-        response = http(
-            url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
-            data=bytearray(payload["data"], "utf-8"),
-            headers={
-                "Accept": "application/vnd.cpc.pickuprequest+xml",
-                "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": "en-CA",
-            },
-            method="PUT",
-        )
-        return Deserializable(response, to_xml)
+        def _get_pickup(job: Job) -> str:
+            return http(
+                url=f"{self.settings.server_url}{job.data.serialize()}",
+                headers={
+                    "Accept": "application/vnd.cpc.pickup+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": f"{self.settings.language}-CA",
+                },
+                method="GET",
+            )
+
+        def _update_pickup(job: Job) -> str:
+            payload = job.data.serialize()
+            return http(
+                url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
+                data=bytearray(payload["data"], "utf-8"),
+                headers={
+                    "Accept": "application/vnd.cpc.pickuprequest+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": f"{self.settings.language}-CA",
+                },
+                method="PUT",
+            )
+
+        def process(job: Job):
+            if job.data is None:
+                return job.fallback
+
+            subprocess = {
+                "update_pickup": _update_pickup,
+                "get_pickup": _get_pickup,
+            }
+            if job.id not in subprocess:
+                raise PurplShipError(f"Unknown pickup request job id: {job.id}")
+
+            return subprocess[job.id](job)
+
+        pipeline: Pipeline = request.serialize()
+        response = pipeline.apply(process)
+
+        return Deserializable(bundle_xml(response), to_xml)
 
     def cancel_pickup(self, request: Serializable[str]) -> Deserializable[str]:
         pickuprequest = request.serialize()
@@ -173,7 +219,7 @@ class Proxy(BaseProxy):
             headers={
                 "Accept": "application/vnd.cpc.pickuprequest+xml",
                 "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": "en-CA",
+                "Accept-language": f"{self.settings.language}-CA",
             },
             method="DELETE",
         )

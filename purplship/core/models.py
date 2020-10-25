@@ -60,16 +60,6 @@ class Parcel:
 
 
 @attr.s(auto_attribs=True)
-class Invoice:
-    """invoice type."""
-
-    date: str
-    identifier: str = None
-    type: str = None
-    copies: int = None
-
-
-@attr.s(auto_attribs=True)
 class Card:
     """Credit Card type."""
 
@@ -92,20 +82,27 @@ class Payment:
     account_number: str = None
     credit_card: Card = JStruct[Card]
     contact: Address = JStruct[Address]
+    id: str = None
 
 
 @attr.s(auto_attribs=True)
 class Customs:
     """customs type."""
 
-    no_eei: str = None
     aes: str = None
-    description: str = None
-    terms_of_trade: str = None
+    eel_pfc: str = None
+    certify: bool = None
+    signer: str = None
+    content_type: str = None
+    content_description: str = None
+    incoterm: str = None
+    invoice: str = None
+    certificate_number: str = None
     commodities: List[Commodity] = JList[Commodity]
     duty: Payment = JStruct[Payment]
-    invoice: Invoice = JStruct[Invoice]
     commercial_invoice: bool = False
+    options: Dict = {}
+    id: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -136,6 +133,16 @@ class ShipmentRequest:
 
 
 @attr.s(auto_attribs=True)
+class ShipmentCancelRequest:
+    """shipment cancellation request type."""
+
+    shipment_identifier: str
+
+    service: str = None
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
 class RateRequest:
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
@@ -159,7 +166,7 @@ class TrackingRequest:
 class PickupRequest:
     """pickup request type."""
 
-    date: str
+    pickup_date: str
     ready_time: str
     closing_time: str
     address: Address = JStruct[Address, REQUIRED]
@@ -174,7 +181,7 @@ class PickupRequest:
 class PickupUpdateRequest:
     """pickup update request type."""
 
-    date: str
+    pickup_date: str
     ready_time: str
     closing_time: str
     confirmation_number: str
@@ -187,17 +194,14 @@ class PickupUpdateRequest:
 
 
 @attr.s(auto_attribs=True)
-class PickupCancellationRequest:
+class PickupCancelRequest:
     """pickup cancellation request type."""
 
     confirmation_number: str
-    address: Address = JStruct[Address]  # TODO:: Make this field REQUIRED
+
+    address: Address = JStruct[Address]
     pickup_date: str = None
     reason: str = None
-
-    # Deprecated
-    person_name: str = None
-    country_code: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -221,7 +225,7 @@ class COD:
 class Notification:
     """notification option type."""
 
-    email: str = None  # Only defined if other email than shipper
+    email: str = None  # Only defined if other email than recipient
     locale: str = "en"
 
 
@@ -303,6 +307,7 @@ class TrackingDetails:
     carrier_id: str
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+    delivered: bool = None
 
 
 @attr.s(auto_attribs=True)
@@ -313,6 +318,7 @@ class ShipmentDetails:
     carrier_id: str
     label: str
     tracking_number: str
+    shipment_identifier: str
     selected_rate: RateDetails = JStruct[RateDetails]
     meta: dict = None
     id: str = None
@@ -339,3 +345,4 @@ class ConfirmationDetails:
     carrier_name: str
     carrier_id: str
     success: bool
+    operation: str

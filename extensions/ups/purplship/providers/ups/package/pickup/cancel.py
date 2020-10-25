@@ -1,12 +1,12 @@
 from typing import List, Tuple
 from pyups.pickup_web_service_schema import (
-    PickupCancelRequest,
+    PickupCancelRequest as UPSPickupCancelRequest,
     CodeDescriptionType,
     RequestType,
 )
 from purplship.core.utils import Envelope, Element, create_envelope, Serializable, build
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     ConfirmationDetails,
     Message,
 )
@@ -30,6 +30,7 @@ def parse_cancel_pickup_response(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             success=success,
+            operation="Cancel Pickup",
         )
         if success
         else None
@@ -39,13 +40,15 @@ def parse_cancel_pickup_response(
 
 
 def cancel_pickup_request(
-    payload: PickupCancellationRequest, settings: Settings
+    payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[Envelope]:
 
     request = create_envelope(
         header_content=settings.Security,
-        body_content=PickupCancelRequest(
-            Request=RequestType(), CancelBy="02", PRN=payload.confirmation_number
+        body_content=UPSPickupCancelRequest(
+            Request=RequestType(),
+            CancelBy="02",
+            PRN=payload.confirmation_number
         ),
     )
 

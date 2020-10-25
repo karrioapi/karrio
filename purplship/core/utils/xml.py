@@ -1,4 +1,4 @@
-"""PurplShip lxml typing and utilities wrappers"""
+"""Purplship lxml typing and utilities wrappers"""
 
 from lxml import etree
 

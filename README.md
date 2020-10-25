@@ -241,6 +241,23 @@ ___
 
 #### Fluent API
 
+##### Address
+
+- Validation
+
+```python
+import purplship
+from purplship.core.models import AddressValidationRequest
+
+carrier = purplship.gateway['carrier'].create(...)
+
+request = purplship.Address.validate(
+    AddressValidationRequest(...)
+)
+
+rates = request.from_(carrier).parse()
+```
+
 ##### Pickup
 
 - Booking
@@ -251,7 +268,7 @@ from purplship.core.models import PickupRequest
 
 carrier = purplship.gateway['carrier'].create(...)
 
-request = purplship.Pickup.book(
+request = purplship.Pickup.schedule(
     PickupRequest(...)
 )
 
@@ -277,12 +294,12 @@ rates = request.from_(carrier).parse()
 
 ```python
 import purplship
-from purplship.core.models import PickupCancellationRequest
+from purplship.core.models import PickupCancelRequest
 
 carrier = purplship.gateway['carrier'].create(...)
 
 request = purplship.Pickup.cancel(
-    PickupCancellationRequest(...)
+    PickupCancelRequest(...)
 )
 
 rates = request.from_(carrier).parse()
@@ -322,6 +339,21 @@ request = purplship.Shipment.create(
 rates = request.with_(carrier).parse()
 ```
 
+- Void
+
+```python
+import purplship
+from purplship.core.models import ShipmentCancelRequest
+
+carrier = purplship.gateway['carrier'].create(...)
+
+request = purplship.Shipment.cancel(
+    ShipmentCancelRequest(...)
+)
+
+rates = request.from_(carrier).parse()
+```
+
 ##### Tracking
 
 - Fetch
@@ -352,6 +384,13 @@ rates = request.from_(carrier).parse()
     | `username` | `str` | **required**
     | `password` | `str` | **required**
     | `custumer_number` | `str` |
+
+- Canpar
+
+    | Name | Type | Description 
+    | --- | --- | --- | 
+    | `user_id` | `str` | **required**
+    | `password` | `str` | **required**
 
 
 - DHL Express
@@ -570,7 +609,7 @@ rates = request.from_(carrier).parse()
     | `contact` | [Address](#Address) | 
 
 
-- <a name="PickupCancellationRequest"></a> PickupCancellationRequest
+- <a name="PickupCancelRequest"></a> PickupCancelRequest
     | Name | Type | Description 
     | --- | --- | --- |
     | `confirmation_number` | `str` | 
@@ -649,6 +688,12 @@ rates = request.from_(carrier).parse()
     | `reference` | `str` | 
 
 
+- <a name="ShipmentCancelRequest"></a> ShipmentCancelRequest
+    | Name | Type | Description 
+    | --- | --- | --- |
+    | `shipment_identifier` | `str` | 
+
+
 - <a name="ShipmentDetails"></a> ShipmentDetails
     | Name | Type | Description 
     | --- | --- | --- |
@@ -682,6 +727,7 @@ rates = request.from_(carrier).parse()
     | `carrier_id` | `str` | 
     | `tracking_number` | `str` | 
     | `events` | List[[TrackingEvent](#TrackingEvent)] | 
+    | `delivered` | `bool` | 
 
 
 - <a name="TrackingEvent"></a> TrackingEvent
@@ -700,7 +746,7 @@ rates = request.from_(carrier).parse()
     | --- | --- | --- |
     | `tracking_numbers` | List[str] | 
     | `language_code` | `str` | 
-    | `level_of_details` | `str` |
+    | `level_of_details` | `str` | 
 
 </details>
 
@@ -879,6 +925,23 @@ rates = request.from_(carrier).parse()
     | `canadapost_small_packet_international_air` | INT.SP.AIR
     | `canadapost_small_packet_international_surface` | INT.SP.SURF
     | `canadapost_tracked_packet_international` | INT.TP
+
+
+- <a name="services-canpar"></a> Canpar
+    Code | Identifier
+    --- | ---
+    | `canpar_ground` | 1
+    | `canpar_usa` | 2
+    | `canpar_select_letter` | 3
+    | `canpar_select_pak` | 4
+    | `canpar_select` | 5
+    | `canpar_overnight_letter` | C
+    | `canpar_overnight_pak` | D
+    | `canpar_overnight` | E
+    | `canpar_usa_letter` | F
+    | `canpar_usa_pak` | G
+    | `canpar_select_usa` | H
+    | `canpar_international` | I
 
 
 - <a name="services-dhl_express"></a> DHL Express
@@ -1097,6 +1160,19 @@ rates = request.from_(carrier).parse()
     | `canadapost_return_at_senders_expense` | RASE
     | `canadapost_return_to_sender` | RTS
     | `canadapost_abandon` | ABAN
+
+
+- <a name="options-canpar"></a> Canpar
+    Code | Identifier
+    --- | ---
+    | `canpar_cash_on_delivery` | N
+    | `canpar_dangerous_goods` | dg
+    | `canpar_extra_care` | xc
+    | `canpar_ten_am` | A
+    | `canpar_noon` | B
+    | `canpar_no_signature_required` | 2
+    | `canpar_not_no_signature_required` | 0
+    | `canpar_saturday` | S
 
 
 - <a name="options-dhl_express"></a> DHL Express
@@ -1448,5 +1524,6 @@ rates = request.from_(carrier).parse()
     | `return_service` | ReturnService
     | `sdl_shipment_indicator` | SDLShipmentIndicator
     | `epra_indicator` | EPRAIndicator
+
 
 </details>

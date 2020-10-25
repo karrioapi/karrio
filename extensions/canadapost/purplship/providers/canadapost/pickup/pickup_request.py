@@ -38,7 +38,7 @@ def parse_pickup_response(
 ) -> Tuple[PickupDetails, List[Message]]:
     pickup = (
         _extract_pickup_details(response, settings)
-        if len(response.xpath(".//*[local-name() = $name]", name="pickup-request-info"))
+        if len(response.xpath(".//*[local-name() = $name]", name="pickup-request-header"))
         > 0
         else None
     )
@@ -46,14 +46,13 @@ def parse_pickup_response(
 
 
 def _extract_pickup_details(response: Element, settings: Settings) -> PickupDetails:
-    pickup_info = next(
-        build(PickupRequestInfoType, elt)
-        for elt in response.xpath(
-            ".//*[local-name() = $name]", name="pickup-request-info"
-        )
+    header = next(
+        (build(PickupRequestHeaderType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-header"))
     )
-    header: PickupRequestHeaderType = pickup_info.pickup_request_header
-    price: PickupRequestPriceType = pickup_info.pickup_request_price
+    price = next(
+        (build(PickupRequestPriceType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-price")),
+        None
+    )
 
     price_amount = sum(
         [
@@ -62,7 +61,7 @@ def _extract_pickup_details(response: Element, settings: Settings) -> PickupDeta
             decimal(price.due_amount or 0.0),
         ],
         0.0,
-    )
+    ) if price is not None else None
 
     return PickupDetails(
         carrier_id=settings.carrier_id,
@@ -71,7 +70,7 @@ def _extract_pickup_details(response: Element, settings: Settings) -> PickupDeta
         pickup_date=format_date(header.next_pickup_date),
         pickup_charge=ChargeDetails(
             name="Pickup fees", amount=decimal(price_amount), currency="CAD"
-        ),
+        ) if price is not None else None,
     )
 
 
@@ -90,6 +89,7 @@ def pickup_request(
     :param settings: Settings
     :return: Serializable[PickupRequest]
     """
+    RequestType = PickupRequestUpdateDetailsType if update else PickupRequestDetailsType
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     heavy = any([p for p in packages if p.weight.KG > 23])
     location_details = dict(
@@ -98,7 +98,7 @@ def pickup_request(
         loading_dock_flag=payload.options.get("loading_dock_flag"),
     )
     address = dict(
-        company=payload.address.company_name,
+        company=payload.address.company_name or "",
         address_line_1=concat_str(
             payload.address.address_line1, payload.address.address_line2, join=True
         ),
@@ -106,13 +106,8 @@ def pickup_request(
         province=payload.address.state_code,
         postal_code=payload.address.postal_code,
     )
-    contact = dict(
-        contact_name=payload.address.person_name,
-        email=payload.address.email,
-        contact_phone=payload.address.phone_number,
-    )
 
-    request = PickupRequestDetailsType(
+    request = RequestType(
         customer_request_id=settings.customer_number,
         pickup_type=PickupType.ON_DEMAND.value,
         pickup_location=PickupLocationType(
@@ -128,14 +123,12 @@ def pickup_request(
             else None,
         ),
         contact_info=ContactInfoType(
-            contact_name=contact["contact_name"],
-            email=contact["email"],
-            contact_phone=contact["contact_phone"],
+            contact_name=payload.address.person_name,
+            email=payload.address.email or "",
+            contact_phone=payload.address.phone_number,
             telephone_ext=None,
-            receive_email_updates_flag=(contact["email"] is not None),
-        )
-        if any(contact.values())
-        else None,
+            receive_email_updates_flag=(payload.address.email is not None),
+        ),
         location_details=LocationDetailsType(
             five_ton_flag=location_details["five_ton_flag"],
             loading_dock_flag=location_details["loading_dock_flag"],
@@ -151,7 +144,7 @@ def pickup_request(
         pickup_volume=f"{len(packages) or 1}",
         pickup_times=PickupTimesType(
             on_demand_pickup_time=OnDemandPickupTimeType(
-                date=payload.date,
+                date=payload.pickup_date,
                 preferred_time=payload.ready_time,
                 closing_time=payload.closing_time,
             ),

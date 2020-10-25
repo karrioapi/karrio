@@ -1,5 +1,6 @@
-from typing import List, Callable
+from typing import List, Callable, cast, Any
 from functools import reduce
+from urllib.error import HTTPError
 from purplship.core.utils.xml import Element
 from purplship.providers.canadapost import Settings
 from purplship.core.models import Message
@@ -27,3 +28,13 @@ def _extract_error(
         ]
 
     return extract
+
+
+def process_error(error: HTTPError) -> str:
+    return f"""<messages xmlns="http://www.canadapost.ca/ws/messages">
+        <message>
+            <code>{error.code}</code>
+            <description>{cast(Any, error).msg}</description>
+        </message>
+    </messages>
+    """

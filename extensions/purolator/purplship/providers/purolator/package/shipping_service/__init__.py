@@ -18,6 +18,10 @@ from purplship.providers.purolator.package.shipping_service.get_documents import
 from purplship.providers.purolator.package.shipping_service.create_shipping import (
     create_shipping_request,
 )
+from purplship.providers.purolator.package.shipping_service.void_shipment import (
+    parse_void_shipment_response,
+    void_shipment_request,
+)
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
 
@@ -50,11 +54,13 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
         (content for content in [document.Data, document.URL] if content is not None),
         "No label returned",
     )
+    pin = cast(PIN, shipment.ShipmentPIN).Value
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        tracking_number=cast(PIN, shipment.ShipmentPIN).Value,
+        tracking_number=pin,
+        shipment_identifier=pin,
         label=label,
     )
 

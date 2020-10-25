@@ -1,4 +1,4 @@
-"""PurplShip Proxy base class definition module."""
+"""Purplship Proxy base class definition module."""
 
 import attr
 from abc import ABC
@@ -28,9 +28,14 @@ class Proxy(ABC):
             self.__class__.create_shipment.__name__, self.settings.carrier_name
         )
 
-    def request_pickup(self, request: Serializable) -> Deserializable:
+    def cancel_shipment(self, request: Serializable) -> Deserializable:
         raise MethodNotSupportedError(
-            self.__class__.request_pickup.__name__, self.settings.carrier_name
+            self.__class__.cancel_shipment.__name__, self.settings.carrier_name
+        )
+
+    def schedule_pickup(self, request: Serializable) -> Deserializable:
+        raise MethodNotSupportedError(
+            self.__class__.schedule_pickup.__name__, self.settings.carrier_name
         )
 
     def modify_pickup(self, request: Serializable) -> Deserializable:
@@ -45,5 +50,5 @@ class Proxy(ABC):
 
     def validate_address(self, request: Serializable) -> Deserializable:
         raise MethodNotSupportedError(
-            self.__class__.validate_address.__name__, self.__class__.__name__
+            self.__class__.validate_address.__name__, self.settings.carrier_name
         )

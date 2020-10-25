@@ -6,19 +6,19 @@ from purplship.core.utils import to_dict
 from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancellationRequest,
+    PickupCancelRequest,
 )
 from tests.ups_package.fixture import gateway
 
 logger = logging.getLogger(__name__)
 
 
-class TestPurolatorPickup(unittest.TestCase):
+class TestUPSPickup(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.PickupRequest = PickupRequest(**pickup_data)
         self.PickupUpdateRequest = PickupUpdateRequest(**pickup_update_data)
-        self.PickupCancelRequest = PickupCancellationRequest(**pickup_cancel_data)
+        self.PickupCancelRequest = PickupCancelRequest(**pickup_cancel_data)
 
     def test_create_pickup_request(self):
         request = gateway.mapper.create_pickup_request(self.PickupRequest)
@@ -30,7 +30,7 @@ class TestPurolatorPickup(unittest.TestCase):
         self.assertEqual(create_request.data.serialize(), PickupRequestXML)
 
     def test_update_pickup_request(self):
-        request = gateway.mapper.create_modify_pickup_request(self.PickupUpdateRequest)
+        request = gateway.mapper.create_pickup_update_request(self.PickupUpdateRequest)
         pipeline = request.serialize()
         rate_request = pipeline["rate"]()
         create_request = pipeline["create"](PickupRateResponseXML)
@@ -43,7 +43,7 @@ class TestPurolatorPickup(unittest.TestCase):
     def test_create_pickup(self):
         with patch("purplship.mappers.ups_package.proxy.http") as mocks:
             mocks.side_effect = [PickupRateResponseXML, PickupResponseXML]
-            purplship.Pickup.book(self.PickupRequest).with_(gateway)
+            purplship.Pickup.schedule(self.PickupRequest).with_(gateway)
 
             rate_call, create_call = mocks.call_args_list
             self.assertEqual(
@@ -82,7 +82,7 @@ class TestPurolatorPickup(unittest.TestCase):
         with patch("purplship.mappers.ups_package.proxy.http") as mocks:
             mocks.side_effect = [PickupRateResponseXML, PickupResponseXML]
             parsed_response = (
-                purplship.Pickup.book(self.PickupRequest).with_(gateway).parse()
+                purplship.Pickup.schedule(self.PickupRequest).with_(gateway).parse()
             )
 
             self.assertListEqual(to_dict(parsed_response), ParsedPickupResponse)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     unittest.main()
 
 pickup_data = {
-    "date": "2015-01-28",
+    "pickup_date": "2015-01-28",
     "address": {
         "company_name": "Jim Duggan",
         "address_line1": "2271 Herring Cove",
@@ -121,7 +121,7 @@ pickup_data = {
 
 pickup_update_data = {
     "confirmation_number": "0074698052",
-    "date": "2015-01-28",
+    "pickup_date": "2015-01-28",
     "address": {
         "person_name": "Jane Doe",
         "email": "john.doe@canadapost.ca",
@@ -149,6 +149,7 @@ ParsedPickupCancelResponse = [
     {
         "carrier_id": "ups_package",
         "carrier_name": "ups_package",
+        "operation": "Cancel Pickup",
         "success": True,
     },
     [],

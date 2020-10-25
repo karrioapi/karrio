@@ -1,7 +1,10 @@
 from purplship.providers.canadapost.utils import Settings
+from purplship.providers.canadapost.error import process_error
 from purplship.providers.canadapost.shipment import (
     shipment_request,
     parse_shipment_response,
+    void_shipment_request,
+    parse_void_shipment_response,
 )
 from purplship.providers.canadapost.rating import (
     mailing_scenario_request,

@@ -13,9 +13,10 @@ from purplship.core.models import (
     ShipmentRequest,
     TrackingRequest,
     PickupRequest,
-    PickupCancellationRequest,
+    PickupCancelRequest,
     PickupUpdateRequest,
     Message,
+    ShipmentCancelRequest,
 )
 
 logger = logging.getLogger(__name__)
@@ -109,13 +110,13 @@ class Address:
 
 class Pickup:
     @staticmethod
-    def book(args: Union[PickupRequest, dict]):
+    def schedule(args: Union[PickupRequest, dict]):
         logger.debug(f"book a pickup. payload: {jsonify(args)}")
         payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
 
         def action(gateway: Gateway):
             request: Serializable = gateway.mapper.create_pickup_request(payload)
-            response: Deserializable = gateway.proxy.request_pickup(request)
+            response: Deserializable = gateway.proxy.schedule_pickup(request)
 
             @fail_safe(gateway)
             def deserialize():
@@ -126,12 +127,12 @@ class Pickup:
         return IRequestWith(action)
 
     @staticmethod
-    def cancel(args: Union[PickupCancellationRequest, dict]):
+    def cancel(args: Union[PickupCancelRequest, dict]):
         logger.debug(f"cancel a pickup. payload: {jsonify(args)}")
         payload = (
             args
-            if isinstance(args, PickupCancellationRequest)
-            else PickupCancellationRequest(**args)
+            if isinstance(args, PickupCancelRequest)
+            else PickupCancelRequest(**args)
         )
 
         def action(gateway: Gateway):
@@ -156,12 +157,12 @@ class Pickup:
         )
 
         def action(gateway: Gateway):
-            request: Serializable = gateway.mapper.create_modify_pickup_request(payload)
+            request: Serializable = gateway.mapper.create_pickup_update_request(payload)
             response: Deserializable = gateway.proxy.modify_pickup(request)
 
             @fail_safe(gateway)
             def deserialize():
-                return gateway.mapper.parse_modify_pickup_response(response)
+                return gateway.mapper.parse_pickup_update_response(response)
 
             return IDeserialize(deserialize)
 
@@ -204,6 +205,23 @@ class Shipment:
             return IDeserialize(deserialize)
 
         return IRequestWith(action)
+
+    @staticmethod
+    def cancel(args: Union[ShipmentCancelRequest, dict]):
+        logger.debug(f"void a shipment. payload: {jsonify(args)}")
+        payload = args if isinstance(args, ShipmentCancelRequest) else ShipmentCancelRequest(**args)
+
+        def action(gateway: Gateway):
+            request: Serializable = gateway.mapper.create_cancel_shipment_request(payload)
+            response: Deserializable = gateway.proxy.cancel_shipment(request)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_cancel_shipment_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
 
 
 class Tracking:

@@ -67,6 +67,7 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.AirwayBillNumber,
+        shipment_identifier=shipment.AirwayBillNumber,
         label=label,
     )
 
@@ -214,7 +215,7 @@ def shipment_request(
         Dutiable=Dutiable(
             DeclaredCurrency=payload.customs.duty.currency or "USD",
             DeclaredValue=payload.customs.duty.amount,
-            TermsOfTrade=payload.customs.terms_of_trade,
+            TermsOfTrade=payload.customs.incoterm,
         )
         if payload.customs is not None and payload.customs.duty is not None
         else None,

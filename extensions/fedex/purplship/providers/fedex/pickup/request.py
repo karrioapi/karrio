@@ -68,7 +68,7 @@ def _extract_pickup_details(
 def pickup_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[CreatePickupRequest]:
-    same_day = to_date(payload.date).date() == datetime.today().date()
+    same_day = to_date(payload.pickup_date).date() == datetime.today().date()
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
 
     request = CreatePickupRequest(
@@ -103,7 +103,7 @@ def pickup_request(
                 ),
             ),
             PackageLocation=payload.package_location,
-            ReadyTimestamp=f"{payload.date}T{payload.ready_time}:00",
+            ReadyTimestamp=f"{payload.pickup_date}T{payload.ready_time}:00",
             CompanyCloseTime=f"{payload.closing_time}:00",
             PickupDateType=(
                 PickupRequestType.SAME_DAY if same_day else PickupRequestType.FUTURE_DAY

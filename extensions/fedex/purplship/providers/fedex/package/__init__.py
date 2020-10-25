@@ -1,2 +1,3 @@
-from .rate_service import rate_request, parse_rate_response
-from .ship_service import process_shipment_request, parse_shipment_response
+from purplship.providers.fedex.package.rate_service import rate_request, parse_rate_response
+from purplship.providers.fedex.package.ship_service import process_shipment_request, parse_shipment_response
+from purplship.providers.fedex.package.void_service import void_shipment_request, parse_void_shipment_response

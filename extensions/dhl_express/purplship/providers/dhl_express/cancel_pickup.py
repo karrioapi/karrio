@@ -4,7 +4,7 @@ from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
 from purplship.core.utils.helpers import export
 from purplship.core.utils.serializable import Serializable
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     Message,
     ConfirmationDetails,
 )
@@ -24,6 +24,7 @@ def parse_cancel_pickup_response(
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
             success=successful,
+            operation="Cancel Pickup",
         )
         if successful
         else None
@@ -33,19 +34,21 @@ def parse_cancel_pickup_response(
 
 
 def cancel_pickup_request(
-    payload: PickupCancellationRequest, settings: Settings
+    payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[CancelPURequest]:
+
     request = CancelPURequest(
         Request=settings.Request(
             MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
         ),
         schemaVersion=3.0,
-        RegionCode=CountryRegion[payload.country_code].value
-        if payload.country_code
-        else "AM",
+        RegionCode=(
+            CountryRegion[payload.address.country_code].value
+            if payload.address is not None and payload.address.country_code is not None else "AM"
+        ),
         ConfirmationNumber=payload.confirmation_number,
-        RequestorName=payload.person_name,
-        CountryCode=payload.country_code,
+        RequestorName=payload.address.person_name,
+        CountryCode=payload.address.country_code,
         Reason="006",
         PickupDate=payload.pickup_date,
         CancelTime=time.strftime("%H:%M:%S"),

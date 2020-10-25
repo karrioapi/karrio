@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 import purplship
 from purplship.core.utils.helpers import to_dict
-from purplship.core.models import ShipmentRequest
+from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from tests.canadapost.fixture import gateway, LabelResponse
 
 
@@ -10,6 +10,7 @@ class TestCanadaPostShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
+        self.ShipmentCancelRequest = ShipmentCancelRequest(**shipment_cancel_data)
 
     def test_create_shipment_request(self):
         requests = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -47,6 +48,18 @@ class TestCanadaPostShipment(unittest.TestCase):
                 f"{gateway.settings.server_url}/rs/{gateway.settings.customer_number}/{gateway.settings.customer_number}/shipment",
             )
 
+    def test_cancel_shipment(self):
+        with patch("purplship.mappers.canadapost.proxy.http") as mock:
+            mock.return_value = ""
+
+            purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+
+            url = mock.call_args[1]["url"]
+            self.assertEqual(
+                url,
+                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012",
+            )
+
     def test_parse_shipment_response(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = [ShipmentResponseXML, LabelResponse]
@@ -56,9 +69,24 @@ class TestCanadaPostShipment(unittest.TestCase):
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
+    def test_parse_shipment_cancel_response(self):
+        with patch("purplship.mappers.canadapost.proxy.http") as mock:
+            mock.return_value = ""
+            parsed_response = (
+                purplship.Shipment.cancel(self.ShipmentCancelRequest)
+                .from_(gateway)
+                .parse()
+            )
+
+            self.assertEqual(
+                to_dict(parsed_response), to_dict(ParsedShipmentCancelResponse)
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
+
+shipment_cancel_data = {"shipment_identifier": "123456789012"}
 
 shipment_data = {
     "shipper": {
@@ -98,7 +126,6 @@ shipment_data = {
     },
 }
 
-
 shipment_with_package_preset_data = {
     "shipper": {
         "company_name": "CGI",
@@ -130,13 +157,23 @@ shipment_with_package_preset_data = {
     "options": {"cash_on_delivery": {"amount": 25.5}},
 }
 
-
 ParsedShipmentResponse = [
     {
         "carrier_name": "canadapost",
         "carrier_id": "canadapost",
         "label": LabelResponse,
         "tracking_number": "123456789012",
+        "shipment_identifier": "123456789012",
+    },
+    [],
+]
+
+ParsedShipmentCancelResponse = [
+    {
+        "carrier_id": "canadapost",
+        "carrier_name": "canadapost",
+        "operation": "Cancel Shipment",
+        "success": True,
     },
     [],
 ]
@@ -151,7 +188,6 @@ GetInfoRequestArgs = {
     },
     "method": "GET",
 }
-
 
 ShipmentPriceLinkXML = """
 <link rel="price" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/price" media-type="application/vnd.cpc.shipment-v8+xml" />

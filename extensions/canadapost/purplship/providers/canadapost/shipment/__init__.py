@@ -12,6 +12,10 @@ from purplship.providers.canadapost.shipment.non_contract_shipment import (
     parse_non_contract_shipment_response,
     non_contract_shipment_request,
 )
+from purplship.providers.canadapost.shipment.void_shipment import (
+    parse_void_shipment_response,
+    void_shipment_request,
+)
 
 
 def parse_shipment_response(

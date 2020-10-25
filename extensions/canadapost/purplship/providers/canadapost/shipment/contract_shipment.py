@@ -64,7 +64,8 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
-        label=label.text if len(errors) == 0 else None,
+        shipment_identifier=info.tracking_pin,
+        label=label.text if len(errors) == 0 else None
     )
 
 
@@ -184,8 +185,8 @@ def contract_shipment_request(
             customs=CustomsType(
                 currency=Currency.AUD.value,
                 conversion_from_cad=None,
-                reason_for_export=payload.customs.terms_of_trade,
-                other_reason=payload.customs.description,
+                reason_for_export=payload.customs.incoterm,
+                other_reason=payload.customs.content_description,
                 duties_and_taxes_prepaid=payload.customs.duty.account_number,
                 certificate_number=None,
                 licence_number=None,

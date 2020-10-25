@@ -1,7 +1,8 @@
 import unittest
+import logging
 from unittest.mock import patch, ANY
 from purplship.core.utils.helpers import to_dict
-from purplship.core.models import ShipmentRequest
+from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.ups_package.fixture import gateway
 
@@ -10,10 +11,21 @@ class TestUPSShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**package_shipment_data)
+        self.ShipmentCancelRequest = ShipmentCancelRequest(
+            **shipment_cancel_request_data
+        )
 
     def test_create_package_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
+
         self.assertEqual(request.serialize(), ShipmentRequestXML)
+
+    def test_create_cancel_shipment_request(self):
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
+
+        self.assertEqual(request.serialize(), ShipmentCancelRequestXML)
 
     def test_create_package_shipment_with_package_preset_request(self):
         request = gateway.mapper.create_shipment_request(
@@ -46,10 +58,20 @@ class TestUPSShipment(unittest.TestCase):
             )
             self.assertListEqual(to_dict(parsed_response), ParsedShipmentResponse)
 
+    def test_parse_cancel_shipment_response(self):
+        with patch("purplship.mappers.ups_package.proxy.http") as mock:
+            mock.return_value = ShipmentCancelResponseXML
+            parsed_response = (
+                Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(to_dict(parsed_response), ParsedShipmentCancelResponse)
+
 
 if __name__ == "__main__":
     unittest.main()
 
+
+shipment_cancel_request_data = {"shipment_identifier": "1ZWA82900191640782"}
 
 package_shipment_data = {
     "shipper": {
@@ -90,7 +112,6 @@ package_shipment_data = {
     "payment": {"paid_by": "sender"},
     "reference": "Your Customer Context",
 }
-
 
 package_shipment_with_package_preset_data = {
     "shipper": {
@@ -137,6 +158,7 @@ NegotiatedParsedShipmentResponse = [
         "carrier_id": "ups_package",
         "label": ANY,
         "tracking_number": "1ZWA82900191640782",
+        "shipment_identifier": "1ZWA82900191640782",
     },
     [],
 ]
@@ -147,9 +169,21 @@ ParsedShipmentResponse = [
         "carrier_id": "ups_package",
         "label": ANY,
         "tracking_number": "1ZWA82900191640782",
+        "shipment_identifier": "1ZWA82900191640782",
     },
     [],
 ]
+
+ParsedShipmentCancelResponse = [
+    {
+        "carrier_id": "ups_package",
+        "carrier_name": "ups_package",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
+
 
 NegotiatedShipmentResponseXML = f"""<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -475,4 +509,51 @@ ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/
         </ship:ShipmentRequest>
     </tns:Body>
 </tns:Envelope>
+"""
+
+ShipmentCancelRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0">
+    <tns:Header>
+        <upss:UPSSecurity>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
+        </upss:UPSSecurity>
+    </tns:Header>
+    <tns:Body>
+        <void:VoidShipmentRequest>
+            <common:Request/>
+            <void:VoidShipment>
+                <void:ShipmentIdentificationNumber>1ZWA82900191640782</void:ShipmentIdentificationNumber>
+            </void:VoidShipment>
+        </void:VoidShipmentRequest>
+    </tns:Body>
+</tns:Envelope>
+"""
+
+ShipmentCancelResponseXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <void:VoidShipmentResponse xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1">
+            <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
+                <common:ResponseStatus>
+                    <common:Code>1</common:Code>
+                    <common:Description>Success</common:Description>
+                </common:ResponseStatus>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
+            </common:Response>
+            <void:SummaryResult>
+                <void:Status>
+                    <void:Code>1</void:Code>
+                    <void:Description>Voided</void:Description>
+                </void:Status>
+            </void:SummaryResult>
+        </void:VoidShipmentResponse>
+    </soapenv:Body>
+</soapenv:Envelope>
 """

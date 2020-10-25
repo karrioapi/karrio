@@ -67,6 +67,7 @@ def _extract_shipment(shipment_node: Element, settings: Settings) -> ShipmentDet
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentNumber,
+        shipment_identifier=shipment.ShipmentNumber,
         label=label,
     )
 

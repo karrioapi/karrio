@@ -60,7 +60,11 @@ AddressValidationPayload = {
 }
 
 ParsedAddressValidationResponse = [
-    {"carrier_id": "ups_package", "carrier_name": "ups_package", "success": True},
+    {
+        "carrier_id": "ups_package",
+        "carrier_name": "ups_package",
+        "success": True,
+    },
     [],
 ]
 

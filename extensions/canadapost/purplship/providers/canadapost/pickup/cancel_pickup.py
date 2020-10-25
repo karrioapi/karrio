@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from purplship.core.models import (
-    PickupCancellationRequest,
+    PickupCancelRequest,
     Message,
     ConfirmationDetails,
 )
@@ -18,6 +18,7 @@ def parse_cancel_pickup_response(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             success=True,
+            operation="Cancel Pickup",
         )
         if len(errors) == 0
         else None
@@ -26,5 +27,5 @@ def parse_cancel_pickup_response(
     return cancellation, errors
 
 
-def cancel_pickup_request(payload: PickupCancellationRequest, _) -> Serializable[str]:
+def cancel_pickup_request(payload: PickupCancelRequest, _) -> Serializable[str]:
     return Serializable(payload.confirmation_number)
