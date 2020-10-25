@@ -1,6 +1,6 @@
 -f https://git.io/purplship
 
--e git+https://github.com/PurplShip/purplship-server.git@purplship-server-2020.9#egg=purplship_server.core&subdirectory=src/apps/core
--e git+https://github.com/PurplShip/purplship-server.git@purplship-server-2020.9#egg=purplship_server&subdirectory=src/purpleserver
+-e git+https://github.com/PurplShip/purplship-server.git@purplship-server-2020.10.0#egg=purplship_server.core&subdirectory=src/apps/core
+-e git+https://github.com/PurplShip/purplship-server.git@purplship-server-2020.10.0#egg=purplship_server&subdirectory=src/purpleserver
 
 -e .[dev]
