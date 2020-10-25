@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 
 
 @login_required(login_url='/login')
-def index(request: Request):
+def index(request: Request, *args, **kwargs):
     token, created = Token.objects.get_or_create(user=request.user)
     context = dict(token=token)
     template = loader.get_template('client/index.html')

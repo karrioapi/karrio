@@ -26,7 +26,7 @@
     }
 }
 
-.providers-table {
+.connections-table {
     .carrier {
         width: 24%;
         text-align: center !important;
@@ -42,10 +42,25 @@
     }
 }
 
+.logs-table {
+    .status {
+        width: 8%;
+    }
+    .description {
+    }
+    .date {
+        width: 20%;
+    }
+}
+
 hr {
     background-color: #dddddd;
 }
 
 .plex-sidebar {
     z-index: 30;
+}
+
+.log-card-header {
+    border-bottom: 1px solid #ddd;
 }

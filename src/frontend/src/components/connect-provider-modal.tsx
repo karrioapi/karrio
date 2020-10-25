@@ -1,17 +1,17 @@
-import { Provider, state } from '@/library/api';
+import { Connection, state } from '@/library/api';
 import { CarrierSettings } from '@purplship/purplship';
 import React, { useState } from 'react';
 import { Reference } from '@/library/context';
 
 interface ConnectProviderModalComponent {
-    provider?: Provider;
+    connection?: Connection;
     className?: string;
 }
 
-const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ children, provider, className }) => {
+const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ children, connection, className }) => {
     const [key, setKey] = useState<string>(`connection-${Date.now()}`);
-    const [isNew, _] = useState<boolean>(provider === null || provider === undefined);
-    const [payload, setPayload] = useState<Partial<Provider>>(provider || { carrier_name: 'none' });
+    const [isNew, _] = useState<boolean>(connection === null || connection === undefined);
+    const [payload, setPayload] = useState<Partial<Connection>>(connection || { carrier_name: 'none' });
     const [error, setError] = useState<string>("");
     const [isActive, setIsActive] = useState<boolean>(false);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -28,7 +28,7 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
             if (isNew) {
                 await state.connectProvider(data);
             } else {
-                await state.updateProvider(payload.id as string, data);
+                await state.updateConnection(payload.id as string, data);
             }
             close();
         } catch (err) {

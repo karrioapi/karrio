@@ -40,6 +40,7 @@ setup(
             'drf-yasg',
             'gunicorn',
             'jsonfield',
+            'more-itertools',
             'python-decouple',
             'purplship-server.core',
       ],

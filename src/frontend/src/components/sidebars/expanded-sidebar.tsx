@@ -40,9 +40,15 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
                     <span>API Reference</span>
                     <i className="fas fa-external-link-alt px-1"></i>
                 </a>
+
                 <NavLink to="settings">
                     <span>Settings</span>
                 </NavLink>
+
+                <div className="menu-item menu-label"><span>Developers</span></div>
+                <div className="ml-6">
+                    <NavLink to="api_logs"><span>Logs</span></NavLink>
+                </div>
 
                 <div className="naver"></div>
             </div>

@@ -1,11 +1,11 @@
-import { Provider, state } from '@/library/api';
+import { Connection, state } from '@/library/api';
 import React, { useState } from 'react';
 
 interface DisconnectProviderButtonComponent {
-    provider: Provider;
+    connection: Connection;
 }
 
-const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({ children, provider }) => {
+const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({ children, connection }) => {
     const [isActive, setIsActive] = useState<boolean>(false);
     const close = (evt?: React.MouseEvent) => {
         evt?.preventDefault();
@@ -13,7 +13,7 @@ const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({
     }
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
-        await state.disconnectProvider(provider.id as string);
+        await state.disconnectProvider(connection.id as string);
         close();
     };
 
@@ -27,7 +27,7 @@ const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({
                 <div className="modal-background" onClick={close}></div>
                 <form className="modal-card" onSubmit={handleSubmit}>
                     <section className="modal-card-body">
-                        <h3 className="subtitle is-3">Disconnect Carrier ({provider.carrierId})</h3>
+                        <h3 className="subtitle is-3">Disconnect Carrier ({connection.carrierId})</h3>
 
                         <div className="buttons my=2">
                             <button className="button is-info is-light" onClick={close}>Cancel</button>

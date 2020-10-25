@@ -1,19 +1,17 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { View } from '@/library/types';
-import { Address, Shipment } from '@purplship/purplship';
-import { Provider } from '@/library/api';
+import { Address } from '@purplship/purplship';
+import { PaginatedShipments, state } from '@/library/api';
 
 
 interface ShipmentsView extends View {
-  shipments: Shipment[];
-  providers: Provider[];
+  shipments?: PaginatedShipments;
 }
 
-const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
-  const isTest = (carrierId?: string) => {
-    return providers.reduce((carrier: Provider, shipmentCarrier: Provider) => {
-      return carrier.carrierId === carrierId ? carrier : shipmentCarrier;
-    }, {} as Provider).test;
+const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
+  useEffect(() => { if(shipments === undefined ) state.fetchShipments(); }, []);
+  const update = (url?: string | null) => async (_: React.MouseEvent) => {
+      await state.fetchShipments(url as string);
   };
 
   return (
@@ -24,7 +22,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
       </header>
 
       <div className="table-container">
-        <table className="table is-fullwidth is-hoverable">
+        <table className="table is-fullwidth">
 
           <thead className="shipments-table">
             <tr>
@@ -38,11 +36,11 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
 
           <tbody>
 
-            {shipments.map(shipment => (
+            {shipments?.results.map(shipment => (
               <tr key={shipment.id}>
                 <td><span className="tag is-primary is-light">{shipment.carrier_name || "Not Selected"}</span></td>
                 <td className="mode is-vcentered">
-                  {isTest(shipment.carrier_id) ? <span className="tag is-warning is-centered">Test</span> : <></>}
+                  {shipment.test_mode ? <span className="tag is-warning is-centered">Test</span> : <></>}
                 </td>
                 <td>{formatAddress(shipment.recipient)}</td>
                 <td>{formatDate(shipment.created_at)}</td>
@@ -55,7 +53,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
         </table>
       </div>
 
-      {(shipments.length == 0) && <div className="card my-6">
+      {(shipments?.count == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
           <p>No shipment has been created yet.</p>
@@ -66,12 +64,11 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments, providers }) => {
 
       <footer className="px-2 py-2 is-vcentered">
         <div className="buttons has-addons is-centered">
-          <button className="button">
-            <i className="fas fa-chevron-left"></i>
+          <button className="button is-small" onClick={update(shipments?.previous)} disabled={shipments?.previous === null}>
+            <span>Previous</span>
           </button>
-          <button className="button">1</button>
-          <button className="button">
-            <i className="fas fa-chevron-right"></i>
+          <button className="button is-small" onClick={update(shipments?.next)} disabled={shipments?.next === null}>
+            <span>Next</span>
           </button>
         </div>
       </footer>
@@ -90,7 +87,7 @@ function formatAddress(address: Address): string {
 }
 
 function formatDate(date: string): string {
-  let [month, day, year]    = ( new Date(date) ).toLocaleDateString().split("/")
+  let [month, day, year] = (new Date(date)).toLocaleDateString().split("/");
   return `${day}/${month}/${year}`;
 }
 
