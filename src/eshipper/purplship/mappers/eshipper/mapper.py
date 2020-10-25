@@ -17,7 +17,7 @@ from purplship.providers.eshipper import (
     parse_shipping_reply,
     shipping_request,
     shipment_cancel_request,
-    parse_shipment_cancel_response,
+    parse_shipment_cancel_reply,
 )
 
 
@@ -52,4 +52,4 @@ class Mapper(BaseMapper):
     def parse_cancel_shipment_response(
         self, response: Deserializable[str]
     ) -> Tuple[ConfirmationDetails, List[Message]]:
-        return parse_shipment_cancel_response(response.deserialize(), self.settings)
+        return parse_shipment_cancel_reply(response.deserialize(), self.settings)

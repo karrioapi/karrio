@@ -13,7 +13,7 @@ from purplship.providers.eshipper.error import parse_error_response
 from purplship.providers.eshipper.utils import Settings, standard_request_serializer
 
 
-def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
+def parse_shipment_cancel_reply(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     success = len(errors) == 0
     confirmation: ConfirmationDetails = ConfirmationDetails(
