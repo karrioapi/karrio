@@ -41,7 +41,7 @@ PACKAGE_MAPPERS = {
         'package': import_pkg('purplship.providers.canadapost.units'),
         'services': "ServiceType",
         'options': "OptionCode",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
     },
     'dhl_express': {
         'label': "DHL Express",

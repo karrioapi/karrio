@@ -30,7 +30,7 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
 
         <div className="column is-7">
           <ProfileUpdateInput label="Email Address" propertyKey="email" inputType="email" user={user} />
-          <ProfileUpdateInput label="Name (Optional)" propertyKey="fullName" inputType="text" user={user} />
+          <ProfileUpdateInput label="Name (Optional)" propertyKey="full_name" inputType="text" user={user} />
         </div>
       </div>
 
@@ -76,7 +76,7 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
         <div className="column is-5">
           <p className="subtitle is-6 py-1">Close Account</p>
           <p className="is-size-7">
-            <strong>Warning:</strong> You will lose access to your Purplship's services
+            <strong>Warning:</strong> You will lose access to your Purplship services
           </p>
         </div>
 

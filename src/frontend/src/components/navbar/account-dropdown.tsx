@@ -40,7 +40,7 @@ const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
                                 <span>Manage your account</span>
                             </div>
                         </Link>
-                        { user.isStaff && <a href="/admin" className="options-item">
+                        { user.is_staff && <a href="/admin" className="options-item">
                                 <i className="fas fa-cog"></i>
                                 <div className="option-content">
                                     <span>Console</span>

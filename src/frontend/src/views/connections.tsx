@@ -1,15 +1,16 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { View } from '@/library/types';
-import { Provider } from '@/library/api';
+import { PaginatedConnections, state } from '@/library/api';
 import ConnectProviderModal from '@/components/connect-provider-modal';
 import { Reference } from '@/library/context';
 import DisconnectProviderButton from '@/components/disconnect-provider-button';
 
-interface ProvidersView extends View {
-  providers: Provider[];
+interface ConnectionsView extends View {
+  connections?: PaginatedConnections;
 }
 
-const Providers: React.FC<ProvidersView> = ({ providers }) => {
+const Connections: React.FC<ConnectionsView> = ({ connections }) => {
+  useEffect(() => { if(connections === undefined) state.fetchConnections(); }, []);
   return (
     <Fragment>
 
@@ -20,7 +21,7 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
         </ConnectProviderModal>
       </header>
 
-      {(providers.length == 0) && <div className="card my-6">
+      {(connections?.count == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
           <p>No carriers have been connected yet.</p>
@@ -32,24 +33,24 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
       <div className="table-container">
         <table className="table is-fullwidth">
 
-          <tbody className="providers-table">
+          <tbody className="connections-table">
             <Reference.Consumer>
-              {ref => (Object.values(ref).length > 0) && providers.map((settings) => (
+              {ref => (Object.values(ref || {}).length > 0) && connections?.results.map((settings) => (
 
                 <tr key={settings.id}>
-                  <td className="carrier"><div className="box">{ref.carriers[settings.carrierName]}</div></td>
+                  <td className="carrier"><div className="box">{ref.carriers[settings.carrier_name]}</div></td>
                   <td className="mode is-vcentered">
-                    {settings.test ? <span className="tag is-primary is-centered">Test</span> : <></>}
+                    {settings.test ? <span className="tag is-warning is-centered">Test</span> : <></>}
                   </td>
                   <td className="details"></td>
                   <td className="action is-vcentered">
                     <div className="buttons is-centered">
-                      <ConnectProviderModal className="button" provider={settings}>
+                      <ConnectProviderModal className="button" connection={settings}>
                         <span className="icon is-small">
                           <i className="fas fa-pen"></i>
                         </span>
                       </ConnectProviderModal>
-                      <DisconnectProviderButton provider={settings}>
+                      <DisconnectProviderButton connection={settings}>
                         <span className="icon is-small">
                           <i className="fas fa-trash"></i>
                         </span>
@@ -69,4 +70,4 @@ const Providers: React.FC<ProvidersView> = ({ providers }) => {
   );
 }
 
-export default Providers;
+export default Connections;

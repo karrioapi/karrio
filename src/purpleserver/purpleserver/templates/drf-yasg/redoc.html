@@ -11,10 +11,10 @@
         body {
             background: #eeeeee;
         }
-        .dtUibw {
+        .eIeJha {
             background-color: #9504af !important;
         }
-        .fLUKgj {
+        .brEFsR {
             background-color: #9504af !important;
         }
 
@@ -38,8 +38,13 @@
 {% endblock %}
 
 {% block extra_body %}
-<a class="admin-link" href="/admin">
+<a class="admin-link" href="/admin" title="Admin Console">
     <img src="{% static 'purpleserver/img/settings.svg' %}" width="40" style="margin: 10px;">
 </a>
 {% endblock %}
-
+{% block main_scripts %}
+    <script src="{% static 'drf-yasg/insQ.min.js' %}"></script>
+    <script src="{% static 'drf-yasg/url-polyfill.min.js' %}"></script>
+    <script src="{% static 'drf-yasg/redoc-init.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
+{% endblock %}
