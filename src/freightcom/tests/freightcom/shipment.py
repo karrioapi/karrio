@@ -89,6 +89,7 @@ ParsedShipmentResponse = [
             "total_charge": 31.82,
         },
         "tracking_number": 52800410000484,
+        "shipment_identifier": 181004
     },
     [],
 ]
