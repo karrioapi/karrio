@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
-from purplship.core.models import ShipmentRequest
+from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.freightcom.fixture import gateway
 
@@ -10,16 +10,30 @@ class TestFreightcomShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
+        self.ShipmentCancelRequest = ShipmentCancelRequest(**shipment_cancel_data)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
+    def test_create_cancel_shipment_request(self):
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+
+        self.assertEqual(request.serialize(), ShipmentCancelRequestXML)
+
     def test_create_shipment(self):
         with patch("purplship.mappers.freightcom.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Shipment.create(self.ShipmentRequest).with_(gateway)
+
+            url = mock.call_args[1]["url"]
+            self.assertEqual(url, gateway.settings.server_url)
+
+    def test_cancel_shipment(self):
+        with patch("purplship.mappers.freightcom.proxy.http") as mock:
+            mock.return_value = "<a></a>"
+            Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             self.assertEqual(url, gateway.settings.server_url)
@@ -33,9 +47,20 @@ class TestFreightcomShipment(unittest.TestCase):
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
+    def test_parse_cancel_shipment_response(self):
+        with patch("purplship.mappers.freightcom.proxy.http") as mock:
+            mock.return_value = ShipmentCancelResponseXML
+            parsed_response = (
+                Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedCancelShipmentResponse))
+
 
 if __name__ == "__main__":
     unittest.main()
+
+shipment_cancel_data = {"shipment_identifier": "383363"}
 
 shipment_data = {
     "shipper": {
@@ -94,6 +119,9 @@ ParsedShipmentResponse = [
     [],
 ]
 
+ParsedCancelShipmentResponse = [{'carrier_id': 'freightcom', 'carrier_name': 'freightcom', 'operation': 'Cancel Shipment', 'success': True}, []]
+
+
 ShipmentRequestXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema" username="username" password="password" version="3.1.0">
     <ShippingRequest insuranceType="True" serviceId="2029">
         <From company="CGI" attention="Bob" phone="1 (450) 823-8432" residential="False" address1="502 MAIN ST N" city="MONTREAL" state="QC" country="CA" zip="H2B1A0"/>
@@ -134,5 +162,20 @@ ShipmentResponseXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema"
         <BillingAddress CompanyName="Freightcom Inc. FCPC (10)" Address1="7699 Bath Road" Address2="" City="Mississauga" ProvinceCode="ON" CountryCode="CA" zip="L4T3T1" PhoneNo="">
         </BillingAddress>
     </ShippingReply>
+</Freightcom>
+"""
+
+ShipmentCancelRequestXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema" username="username" password="password" version="3.1.0">
+    <ShipmentCancelRequest>
+        <Order orderId="383363"/>
+    </ShipmentCancelRequest>
+</Freightcom>
+"""
+
+ShipmentCancelResponseXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema" version="3.1.0">
+    <ShipmentCancelReply>
+        <Order orderId="383363" message="Order has been cancelled!" />
+        <Status statusId="4" />
+    </ShipmentCancelReply>
 </Freightcom>
 """
