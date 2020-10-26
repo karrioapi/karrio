@@ -13,6 +13,10 @@ class FreightcomSettings(Carrier):
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
 
+    @property
+    def carrier_name(self) -> str:
+        return self.CARRIER_NAME
+
 
 def settings():
     return FreightcomSettings

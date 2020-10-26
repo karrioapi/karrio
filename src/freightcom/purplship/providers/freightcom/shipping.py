@@ -90,6 +90,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
+        shipment_identifier=shipping.Order.id,
         label=shipping.Labels,
         selected_rate=RateDetails(
             carrier_name=settings.carrier_name,

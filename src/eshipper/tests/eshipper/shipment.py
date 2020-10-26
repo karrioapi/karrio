@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from purplship.core.utils.helpers import to_dict
-from purplship.core.models import ShipmentRequest
+from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.eshipper.fixture import gateway
 
@@ -10,16 +10,30 @@ class TestEShipperShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
+        self.ShipmentCancelRequest = ShipmentCancelRequest(**shipment_cancel_data)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
+    def test_create_cancel_shipment_request(self):
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+
+        self.assertEqual(request.serialize(), ShipmentCancelRequestXML)
+
     def test_create_shipment(self):
         with patch("purplship.mappers.eshipper.proxy.http") as mock:
             mock.return_value = "<a></a>"
             Shipment.create(self.ShipmentRequest).with_(gateway)
+
+            url = mock.call_args[1]["url"]
+            self.assertEqual(url, gateway.settings.server_url)
+
+    def test_cancel_shipment(self):
+        with patch("purplship.mappers.eshipper.proxy.http") as mock:
+            mock.return_value = "<a></a>"
+            Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             self.assertEqual(url, gateway.settings.server_url)
@@ -33,9 +47,20 @@ class TestEShipperShipment(unittest.TestCase):
 
             self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
 
+    def test_parse_cancel_shipment_response(self):
+        with patch("purplship.mappers.eshipper.proxy.http") as mock:
+            mock.return_value = ShipmentCancelResponseXML
+            parsed_response = (
+                Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(to_dict(parsed_response), to_dict(ParsedCancelShipmentResponse))
+
 
 if __name__ == "__main__":
     unittest.main()
+
+shipment_cancel_data = {"shipment_identifier": "383363"}
 
 shipment_data = {
     "shipper": {
@@ -124,9 +149,13 @@ ParsedShipmentResponse = [
             "total_charge": 31.82,
         },
         "tracking_number": 52800410000484,
+        "shipment_identifier": 181004,
     },
     [],
 ]
+
+ParsedCancelShipmentResponse = [{'carrier_id': 'eshipper', 'carrier_name': 'eshipper', 'operation': 'Cancel Shipment', 'success': True}, []]
+
 
 ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
     <ShippingRequest serviceId="3" insuranceType="True">
@@ -174,5 +203,20 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
             <Surcharge id="null" name="Other" amount="1.0800000429153442"/>
         </Quote>
     </ShippingReply>
+</EShipper>
+"""
+
+ShipmentCancelRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
+    <ShipmentCancelRequest>
+        <Order orderId="383363"/>
+    </ShipmentCancelRequest>
+</EShipper>
+"""
+
+ShipmentCancelResponseXML = """<EShipper xmlns="http://www.eshipper.net/xml/XMLSchema" version="3.0.0">
+    <ShipmentCancelReply>
+        <Order orderId="383363" message="Order has been cancelled!" />
+        <Status statusId="4" />
+    </ShipmentCancelReply>
 </EShipper>
 """
