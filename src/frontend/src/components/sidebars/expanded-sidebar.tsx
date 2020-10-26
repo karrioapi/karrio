@@ -20,16 +20,13 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
                     <div className="avatar-wrapper">
                         <div className="avatar">
                             <img src="/static/purpleserver/client/profile.svg" alt="" />
-                            <span className="badge">
-                                <i className="fas fa-check"></i>
-                            </span>
                         </div>
                         <h3>{user.full_name}</h3>
                         <p>{user.email}</p>
                     </div>
                 </div>
             </div>
-            <div className="sidebar-menu has-slimscroll">
+            <div className="sidebar-menu has-slimscroll pb-6">
                 <NavLink to="/">
                     <span>Shipments</span>
                 </NavLink>
@@ -38,19 +35,21 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
                 </NavLink>
                 <a className="menu-item" target="_blank" href="/api">
                     <span>API Reference</span>
-                    <i className="fas fa-external-link-alt px-1"></i>
+                    <i className="fas fa-external-link-alt has-text-primary px-1 mx-1"></i>
                 </a>
 
-                <NavLink to="settings">
-                    <span>Settings</span>
-                </NavLink>
-
-                <div className="menu-item menu-label"><span>Developers</span></div>
-                <div className="ml-6">
-                    <NavLink to="api_logs"><span>Logs</span></NavLink>
+                <div className="menu-item menu-label my-0">
+                    <span>Developers</span>
                 </div>
 
-                <div className="naver"></div>
+                <NavLink className="menu-item ml-6" to="api_logs">
+                    <span>Logs</span>
+                </NavLink>
+
+                <NavLink className="menu-item bottom-menu-item" to="settings">
+                    <i className="fas fa-cog"></i>
+                    <span>Settings</span>
+                </NavLink>
             </div>
         </div>
     );

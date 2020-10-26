@@ -120,7 +120,6 @@ Collapsed sidebar
 /* ==========================================================================
 Expanded sidebar
 ========================================================================== */
-
 .plex-sidebar {
     position: fixed;
     top: 0;
@@ -220,52 +219,27 @@ Expanded sidebar
         .menu-item {
             display: flex;
             align-items: center;
-            height: 50px;
+            height: 35px;
             padding: 0 16px 0 60px;
 
             &.is-active {
-                &:first-child {
-                    ~ .naver {
-                        margin-top: 0;
-                    }
-                }
-
-                &:nth-child(2) {
-                    ~ .naver {
-                        margin-top: 50px;
-                    }
-                }
-
-                &:nth-child(3) {
-                    ~ .naver {
-                        margin-top: 100px;
-                    }
-                }
-
-                &:nth-child(4) {
-                    ~ .naver {
-                        margin-top: 150px;
-                    }
-                }
-
-                &:nth-child(5) {
-                    ~ .naver {
-                        margin-top: 200px;
-                    }
-                }
-
-                &:nth-child(6) {
-                    ~ .naver {
-                        margin-top: 250px;
+                @for $i from 1 through 10 {
+                    &.menu-item:nth-child(n + #{$i}) {
+                        ~ .naver {
+                            margin-top: ($i - 1) * 35px;
+                            display: block;
+                        }
                     }
                 }
 
                 span {
-                    color: $dark-text;
+                    color: $primary;
+                    font-weight: 600;
                 }
 
                 svg {
-                    stroke: $dark-text;
+                    stroke: $primary;
+                    color: $primary;
                 }
             }
 
@@ -282,6 +256,7 @@ Expanded sidebar
                 width: 20px;
                 stroke-width: 1.6px;
                 stroke: lighten($dark-text, 18%);
+                color: lighten($dark-text, 18%);
             }
         }
 
@@ -289,11 +264,12 @@ Expanded sidebar
             position: absolute;
             top: 0;
             right: 0;
-            height: 50px;
+            height: 35px;
             width: 2px;
             border-radius: 4px;
             background: $primary;
             transition: all .3s;
+            display: none;
         }
     }
 }

@@ -10,7 +10,7 @@ interface ConnectionsView extends View {
 }
 
 const Connections: React.FC<ConnectionsView> = ({ connections }) => {
-  useEffect(() => { if(connections === undefined) state.fetchConnections(); }, []);
+  useEffect(() => { if (connections === undefined) state.fetchConnections(); }, []);
   return (
     <Fragment>
 
@@ -35,22 +35,28 @@ const Connections: React.FC<ConnectionsView> = ({ connections }) => {
 
           <tbody className="connections-table">
             <Reference.Consumer>
-              {ref => (Object.values(ref || {}).length > 0) && connections?.results.map((settings) => (
+              {ref => (Object.values(ref || {}).length > 0) && connections?.results.map((connection) => (
 
-                <tr key={settings.id}>
-                  <td className="carrier"><div className="box">{ref.carriers[settings.carrier_name]}</div></td>
+                <tr key={connection.id}>
+                  <td className="carrier"><div className="box">{ref.carriers[connection.carrier_name]}</div></td>
                   <td className="mode is-vcentered">
-                    {settings.test ? <span className="tag is-warning is-centered">Test</span> : <></>}
+                    {connection.test ? <span className="tag is-warning is-centered">Test</span> : <></>}
                   </td>
-                  <td className="details"></td>
+                  <td className="details">
+                    <div className="content is-small">
+                      <ul>
+                        <li>carrier id: <span className="tag is-info is-light" title="carrier nickname">{connection.carrier_id}</span></li>
+                      </ul>
+                    </div>
+                  </td>
                   <td className="action is-vcentered">
                     <div className="buttons is-centered">
-                      <ConnectProviderModal className="button" connection={settings}>
+                      <ConnectProviderModal className="button" connection={connection}>
                         <span className="icon is-small">
                           <i className="fas fa-pen"></i>
                         </span>
                       </ConnectProviderModal>
-                      <DisconnectProviderButton connection={settings}>
+                      <DisconnectProviderButton connection={connection}>
                         <span className="icon is-small">
                           <i className="fas fa-trash"></i>
                         </span>

@@ -14,7 +14,7 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
     const [payload, setPayload] = useState<Partial<Connection>>(connection || { carrier_name: 'none' });
     const [error, setError] = useState<string>("");
     const [isActive, setIsActive] = useState<boolean>(false);
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [isDisabled, setIsDisabled] = useState<boolean>(true);
     const [hasError, setHasError] = useState<boolean>(false);
 
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
@@ -28,7 +28,8 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
             if (isNew) {
                 await state.connectProvider(data);
             } else {
-                await state.updateConnection(payload.id as string, data);
+                const response = await state.updateConnection(payload.id as string, data);
+                setPayload(response);
             }
             close();
         } catch (err) {
@@ -38,19 +39,22 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
         }
     };
     const close = (_?: React.MouseEvent) => {
-        setPayload({ carrier_name: 'none' });
+        if(isNew) setPayload({ carrier_name: 'none' });
         setKey(`connection-${Date.now()}`);
         setHasError(false);
         setIsDisabled(false);
         setIsActive(false);
     }
     const handleOnChange = (property: string) => (e: React.ChangeEvent<any>) => {
+        let new_state = { ...payload, [property]: e.target.value || undefined };
         if (property === 'carrier_name') {
             setKey(`connection-${Date.now()}`);
-            setPayload({ carrier_name: e.target.value });
-        } else {
-            setPayload({ ...payload, [property]: e.target.value || undefined });
+            new_state = { carrier_name: e.target.value };
+        } else if(property == 'test') {
+            new_state = { ...payload, test: e.target.checked };
         }
+        setPayload(new_state);
+        setIsDisabled((connection || { carrier_name: 'none' }) == new_state);
     };
     const has = (property: string) => {
         return hasProperty(payload.carrier_name as CarrierSettings.CarrierNameEnum, property);

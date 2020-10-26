@@ -50,6 +50,16 @@ const LogList: React.FC<LogListView> = ({ handleLogSelection, logs }) => {
                 </table>
             </div>
 
+
+            {(logs?.count == 0) && <div className="card my-6">
+
+                <div className="card-content has-text-centered">
+                    <p>No API logs has been captured yet.</p>
+                    <p>Use the <strong>API</strong> to communicate with your logistic providers.</p>
+                </div>
+
+            </div>}
+
             <footer className="px-2 py-2 is-vcentered">
                 <div className="buttons is-centered">
                     <button className="button is-small" onClick={getLogs(logs?.previous)} disabled={logs?.previous === null}>
