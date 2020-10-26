@@ -48,8 +48,8 @@ PARCEL_DATA = {
     "width": 20,
     "height": 10,
     "length": 29,
-    "weightUnit": "KG",
-    "dimensionUnit": "CM"
+    "weight_unit": "KG",
+    "dimension_unit": "CM"
 }
 
 PARCEL_RESPONSE = {
@@ -58,19 +58,19 @@ PARCEL_RESPONSE = {
     "width": 20.0,
     "height": 10.0,
     "length": 29.0,
-    "packagingType": None,
-    "packagePreset": None,
+    "packaging_type": None,
+    "package_preset": None,
     "description": None,
     "content": None,
-    "isDocument": False,
-    "weightUnit": "KG",
-    "dimensionUnit": "CM"
+    "is_document": False,
+    "weight_unit": "KG",
+    "dimension_unit": "CM"
 }
 
 PARCEL_UPDATE_DATA = {
     "length": 25.0,
     "weightUnit": None,
-    "dimensionUnit": "IN"
+    "dimension_unit": "IN"
 }
 
 PARCEL_UPDATE_RESPONSE = {
@@ -79,11 +79,11 @@ PARCEL_UPDATE_RESPONSE = {
     "width": 20.0,
     "height": 10.0,
     "length": 25.0,
-    "packagingType": None,
-    "packagePreset": None,
+    "packaging_type": None,
+    "package_preset": None,
     "description": None,
     "content": None,
-    "isDocument": False,
-    "weightUnit": None,
-    "dimensionUnit": "IN"
+    "is_document": False,
+    "weight_unit": "KG",
+    "dimension_unit": "IN"
 }

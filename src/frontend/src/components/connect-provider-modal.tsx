@@ -1,19 +1,20 @@
-import { Provider, state } from '@/library/api';
-import { CarrierSettings } from '@purplship/purplship/dist';
+import { Connection, state } from '@/library/api';
+import { CarrierSettings } from '@purplship/purplship';
 import React, { useState } from 'react';
 import { Reference } from '@/library/context';
 
 interface ConnectProviderModalComponent {
-    provider?: Provider;
+    connection?: Connection;
     className?: string;
 }
 
-const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ children, provider, className }) => {
-    const [isNew, _] = useState<boolean>(provider === null || provider === undefined);
-    const [payload, setPayload] = useState<Partial<Provider>>(provider || { carrierName: undefined });
+const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ children, connection, className }) => {
+    const [key, setKey] = useState<string>(`connection-${Date.now()}`);
+    const [isNew, _] = useState<boolean>(connection === null || connection === undefined);
+    const [payload, setPayload] = useState<Partial<Connection>>(connection || { carrier_name: 'none' });
     const [error, setError] = useState<string>("");
     const [isActive, setIsActive] = useState<boolean>(false);
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [isDisabled, setIsDisabled] = useState<boolean>(true);
     const [hasError, setHasError] = useState<boolean>(false);
 
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
@@ -21,13 +22,14 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
         try {
             setIsDisabled(true);
             const data = {
-                carrier_name: payload.carrierName as CarrierSettings.CarrierNameEnum,
+                carrier_name: payload.carrier_name as CarrierSettings.CarrierNameEnum,
                 carrier_config: payload
             };
             if (isNew) {
                 await state.connectProvider(data);
             } else {
-                await state.updateProvider(payload.id as string, data);
+                const response = await state.updateConnection(payload.id as string, data);
+                setPayload(response);
             }
             close();
         } catch (err) {
@@ -36,18 +38,26 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
             setIsDisabled(false);
         }
     };
-    const close = (evt?: React.MouseEvent) => {
-        evt?.preventDefault();
+    const close = (_?: React.MouseEvent) => {
+        if(isNew) setPayload({ carrier_name: 'none' });
+        setKey(`connection-${Date.now()}`);
         setHasError(false);
         setIsDisabled(false);
         setIsActive(false);
     }
     const handleOnChange = (property: string) => (e: React.ChangeEvent<any>) => {
-        e.preventDefault();
-        setPayload({ ...payload, [property]: e.target.value || undefined });
+        let new_state = { ...payload, [property]: e.target.value || undefined };
+        if (property === 'carrier_name') {
+            setKey(`connection-${Date.now()}`);
+            new_state = { carrier_name: e.target.value };
+        } else if(property == 'test') {
+            new_state = { ...payload, test: e.target.checked };
+        }
+        setPayload(new_state);
+        setIsDisabled((connection || { carrier_name: 'none' }) == new_state);
     };
     const has = (property: string) => {
-        return hasProperty(payload.carrierName as CarrierSettings.CarrierNameEnum, property);
+        return hasProperty(payload.carrier_name as CarrierSettings.CarrierNameEnum, property);
     };
 
     return (
@@ -56,7 +66,7 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
                 {children}
             </button>
 
-            <div className={`modal ${isActive ? "is-active" : ""}`}>
+            <div className={`modal ${isActive ? "is-active" : ""}`} key={key}>
                 <div className="modal-background" onClick={close}></div>
                 <form className="modal-card" onSubmit={handleSubmit}>
                     <section className="modal-card-body">
@@ -65,8 +75,8 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
 
                         <div className="field">
                             <div className="select is-fullwidth">
-                                <select defaultValue={payload.carrierName} onChange={handleOnChange("carrierName")} disabled={!isNew} required>
-                                    <option value=''>Select Carrier</option>
+                                <select defaultValue={payload.carrier_name} onChange={handleOnChange("carrier_name")} disabled={!isNew} key={`select-${key}`} required>
+                                    <option value='none'>Select Carrier</option>
 
                                     <Reference.Consumer>
                                         {(ref) => (Object.values(ref || {}).length > 0) && Object.keys(ref.carriers).map(carrier => (
@@ -78,40 +88,41 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
                             </div>
                         </div>
 
-                        {(payload.carrierName !== undefined) &&
+                        {(payload.carrier_name !== 'none' && has("carrier_id")) &&
                             <>
                                 <hr />
 
-                                <FormInput label="Carrier Id" defaultValue={payload.carrierId} onChange={handleOnChange("carrierId")} required/>
+                                <FormInput label="Carrier Id" defaultValue={payload.carrier_id} onChange={handleOnChange("carrier_id")} required />
 
                                 {/* Carrier specific fields BEGING */}
 
-                                {has("siteId") && <FormInput label="Site Id" defaultValue={payload.siteId} onChange={handleOnChange("siteId")} required/>}
+                                {has("site_id") && <FormInput label="Site Id" defaultValue={payload.site_id} onChange={handleOnChange("site_id")} required />}
 
-                                {has("username") && <FormInput label="Username" defaultValue={payload.username} onChange={handleOnChange("username")} required/>}
+                                {has("username") && <FormInput label="Username" defaultValue={payload.username} onChange={handleOnChange("username")} required />}
 
-                                {has("password") && <FormInput label="Password" defaultValue={payload.password} onChange={handleOnChange("password")} required/>}
+                                {has("password") && <FormInput label="Password" defaultValue={payload.password} onChange={handleOnChange("password")} required />}
 
-                                {has("customerNumber") && <FormInput label="Customer Number" defaultValue={payload.customerNumber} onChange={handleOnChange("customerNumber")} required/>}
+                                {has("customer_number") && <FormInput label="Customer Number" defaultValue={payload.customer_number} onChange={handleOnChange("customer_number")} required />}
 
-                                {has("contractId") && <FormInput label="Contract Id" defaultValue={payload.contractId} onChange={handleOnChange("contractId")} />}
+                                {has("contract_id") && <FormInput label="Contract Id" defaultValue={payload.contract_id} onChange={handleOnChange("contract_id")} />}
 
-                                {has("accountNumber") && <FormInput label="Account Number" defaultValue={payload.accountNumber} onChange={handleOnChange("accountNumber")} required/>}
+                                {has("account_number") && <FormInput label="Account Number" defaultValue={payload.account_number} onChange={handleOnChange("account_number")} required />}
 
-                                {has("userKey") && <FormInput label="User Key" defaultValue={payload.userKey} onChange={handleOnChange("userKey")} />}
+                                {has("user_key") && <FormInput label="User Key" defaultValue={payload.user_key} onChange={handleOnChange("user_key")} />}
 
-                                {has("meterNumber") && <FormInput label="Meter Number" defaultValue={payload.meterNumber} onChange={handleOnChange("meterNumber")} required/>}
+                                {has("meter_number") && <FormInput label="Meter Number" defaultValue={payload.meter_number} onChange={handleOnChange("meter_number")} required />}
 
-                                {has("userToken") && <FormInput label="User Token" defaultValue={payload.userToken} onChange={handleOnChange("userToken")} />}
+                                {has("user_token") && <FormInput label="User Token" defaultValue={payload.user_token} onChange={handleOnChange("user_token")} />}
 
-                                {has("accessLicenseNumber") && <FormInput label="Access License Number" defaultValue={payload.accessLicenseNumber} onChange={handleOnChange("accessLicenseNumber")} required/>}
+                                {has("access_license_number") && <FormInput label="Access License Number" defaultValue={payload.access_license_number} onChange={handleOnChange("access_license_number")} required />}
 
                                 {/* Carrier specific fields END */}
 
                                 <div className="field">
                                     <div className="control">
                                         <label className="checkbox">
-                                            <input type="checkbox" defaultChecked={payload.test} onChange={handleOnChange("test")}/> Test Mode
+                                            <input type="checkbox" defaultChecked={payload.test} onChange={handleOnChange("test")} />
+                                            <span>Test Mode</span>
                                         </label>
                                     </div>
                                 </div>
@@ -127,17 +138,17 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
     )
 };
 
-function hasProperty(carrierName: CarrierSettings.CarrierNameEnum, property: string): boolean {
+function hasProperty(carrier_name: CarrierSettings.CarrierNameEnum, property: string): boolean {
     // TODO: Use carriers settings types when available for automatic validation
     return ({
-        [CarrierSettings.CarrierNameEnum.Canadapost]: ["username", "password", "customerNumber", "contractId"],
-        [CarrierSettings.CarrierNameEnum.DhlExpress]: ["siteId", "password", "accountNumber"],
-        [CarrierSettings.CarrierNameEnum.Eshipper]: ["username", "password"],
-        [CarrierSettings.CarrierNameEnum.Freightcom]: ["username", "password"],
-        [CarrierSettings.CarrierNameEnum.FedexExpress]: ["userKey", "password", "meterNumber", "accountNumber"],
-        [CarrierSettings.CarrierNameEnum.PurolatorCourier]: ["username", "password", "accountNumber", "userToken"],
-        [CarrierSettings.CarrierNameEnum.UpsPackage]: ["username", "password", "accessLicenseNumber", "accountNumber"]
-    }[carrierName] || []).includes(property)
+        [CarrierSettings.CarrierNameEnum.Canadapost]: ["carrier_id", "test", "username", "password", "customer_number", "contract_id"],
+        [CarrierSettings.CarrierNameEnum.DhlExpress]: ["carrier_id", "test", "site_id", "password", "account_number"],
+        [CarrierSettings.CarrierNameEnum.Eshipper]: ["carrier_id", "test", "username", "password"],
+        [CarrierSettings.CarrierNameEnum.Freightcom]: ["carrier_id", "test", "username", "password"],
+        [CarrierSettings.CarrierNameEnum.FedexExpress]: ["carrier_id", "test", "userKey", "password", "meter_number", "account_number"],
+        [CarrierSettings.CarrierNameEnum.PurolatorCourier]: ["carrier_id", "test", "username", "password", "account_number", "user_token"],
+        [CarrierSettings.CarrierNameEnum.UpsPackage]: ["carrier_id", "test", "username", "password", "access_license_number", "account_number"]
+    }[carrier_name] || []).includes(property)
 }
 
 const FormInput: React.FC<any> = ({ label, ...props }) => {

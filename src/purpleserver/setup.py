@@ -36,10 +36,11 @@ setup(
       install_requires=[
             'django',
             'djangorestframework==3.11.1',
-            'djangorestframework-camel-case',
+            'drf-api-tracking',
             'drf-yasg',
             'gunicorn',
             'jsonfield',
+            'more-itertools',
             'python-decouple',
             'purplship-server.core',
       ],

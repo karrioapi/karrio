@@ -1,15 +1,13 @@
 import logging
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status, generics
+from rest_framework import status
 
 from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
+from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import ErrorResponse, CustomsData, Customs
 from purpleserver.manager.serializers import CustomsSerializer
@@ -19,18 +17,12 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class CustomsAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
-
-
-class CustomsList(CustomsAPIView):
+class CustomsList(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}list",
-        operation_summary="List all Customs Info",
+        operation_summary="List all customs info",
         responses={200: Customs(many=True), 400: ErrorResponse()}
     )
     def get(self, request: Request):
@@ -45,7 +37,7 @@ class CustomsList(CustomsAPIView):
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}create",
-        operation_summary="Create a Customs Info",
+        operation_summary="Create a customs info",
         request_body=CustomsData(),
         responses={200: Customs(), 400: ErrorResponse()}
     )
@@ -57,12 +49,12 @@ class CustomsList(CustomsAPIView):
         return Response(Customs(customs).data, status=status.HTTP_201_CREATED)
 
 
-class CustomsDetail(CustomsAPIView):
+class CustomsDetail(GenericAPIView):
 
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a Customs Info",
+        operation_summary="Retrieve a customs info",
         responses={200: Customs(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
@@ -75,7 +67,7 @@ class CustomsDetail(CustomsAPIView):
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}update",
-        operation_summary="Update a Customs Info",
+        operation_summary="Update a customs info",
         request_body=CustomsData(),
         responses={200: Customs(), 400: ErrorResponse()}
     )

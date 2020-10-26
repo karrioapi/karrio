@@ -1,38 +1,29 @@
 import logging
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from django.urls import path
 from rest_framework import status
-from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.reverse import reverse
-from django.urls import path
-
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.core.utils.helpers import to_dict
-
+from purpleserver.core.views.api import GenericAPIView
 from purpleserver.proxy.router import router
+from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.serializers import (
     CharField, ChoiceField, COUNTRIES,
 
     ShippingRequest,
+    ShipmentCancelRequest,
+    OperationResponse,
     Address as BaseAddress,
     ShipmentResponse,
     ErrorResponse,
+    TestFilters,
 )
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-
-DESCRIPTIONS = """
-**[proxy]**
-
-Once the shipping rates are retrieved, provide the required info to
-submit the shipment by specifying your preferred rate.
-"""
 
 
 class Address(BaseAddress):
@@ -47,35 +38,60 @@ class ShippingRequestValidation(ShippingRequest):
     recipient = Address(required=True, help_text="The shipment destination address (address to)")
 
 
-@swagger_auto_schema(
-    methods=['post'],
-    tags=['Shipping'],
-    operation_id=f"{ENDPOINT_ID}buy_label",
-    operation_summary="Buy a shipment label",
-    operation_description=DESCRIPTIONS,
-    request_body=ShippingRequest(),
-    responses={200: ShipmentResponse(), 400: ErrorResponse()},
-)
-@api_view(['POST'])
-@authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
-@permission_classes((IsAuthenticated, ))
-@throttle_classes([UserRateThrottle, AnonRateThrottle])
-def submit_shipment(request: Request):
-    shipping_request = ShippingRequestValidation(data=request.data)
-    shipping_request.is_valid(raise_exception=True)
+class ShippingList(GenericAPIView):
 
-    response = Shipments.create(
-        shipping_request.data,
-        resolve_tracking_url=(
-            lambda shipment: reverse(
-                "purpleserver.proxy:shipment-tracking",
-                request=request,
-                kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
+    @swagger_auto_schema(
+        tags=['Shipping'],
+        operation_id=f"{ENDPOINT_ID}buy_label",
+        operation_summary="Buy a shipment label",
+        request_body=ShippingRequest(),
+        responses={200: ShipmentResponse(), 400: ErrorResponse()},
+    )
+    def post(self, request: Request):
+        """
+        **[proxy]**
+
+        Once the shipping rates are retrieved, provide the required info to
+        submit the shipment by specifying your preferred rate.
+        """
+        payload = SerializerDecorator[ShippingRequestValidation](data=request.data).data
+
+        response = Shipments.create(
+            payload,
+            resolve_tracking_url=(
+                lambda shipment: reverse(
+                    "purpleserver.proxy:shipment-tracking",
+                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
+                )
             )
         )
+
+        return Response(ShipmentResponse(response).data, status=status.HTTP_201_CREATED)
+
+
+class ShippingCancel(GenericAPIView):
+
+    @swagger_auto_schema(
+        tags=['Shipping'],
+        operation_id=f"{ENDPOINT_ID}void_label",
+        operation_summary="Void a shipment label",
+        query_serializer=TestFilters(),
+        request_body=ShipmentCancelRequest(),
+        responses={200: OperationResponse(), 400: ErrorResponse()},
     )
+    def post(self, request: Request, carrier_name: str):
+        """
+        **[proxy]**
 
-    return Response(to_dict(response), status=status.HTTP_201_CREATED)
+        Cancel a shipment and the label previously created
+        """
+        filters = SerializerDecorator[TestFilters](data=request.query_params).data
+        payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
+
+        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
+
+        return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 
 
-router.urls.append(path('proxy/shipping', submit_shipment, name="shipping-request"))
+router.urls.append(path('proxy/shipping', ShippingList.as_view(), name="shipping-request"))
+router.urls.append(path('proxy/shipping/<carrier_name>/cancel', ShippingCancel.as_view(), name="shipping-cancel"))

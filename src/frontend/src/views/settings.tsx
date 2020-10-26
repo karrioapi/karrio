@@ -12,6 +12,10 @@ interface SettingsView extends View {
 
 const Settings: React.FC<SettingsView> = ({ token, user }) => {
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
+  const copy = (e: React.MouseEvent) => {
+    (e.target as HTMLInputElement).select();
+    document.execCommand("copy");
+  }
 
   return (
     <Fragment>
@@ -30,7 +34,7 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
 
         <div className="column is-7">
           <ProfileUpdateInput label="Email Address" propertyKey="email" inputType="email" user={user} />
-          <ProfileUpdateInput label="Name (Optional)" propertyKey="firstName" inputType="text" user={user} />
+          <ProfileUpdateInput label="Name (Optional)" propertyKey="full_name" inputType="text" user={user} />
         </div>
       </div>
 
@@ -58,8 +62,15 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
         <div className="column is-5">
           <div className="field">
             <div className="control">
-              <input className="input is-small" type="text" value={ isRevealed ? token : "..........."} style={{maxWidth: "80%"}} readOnly/>
-              <button className="button is-small" onClick={() => setIsRevealed(!isRevealed) }>
+              <input className="input is-small" 
+                type="text" 
+                title={ isRevealed ? "Click to Copy" : "" }
+                onClick={isRevealed ? copy : () =>{}}
+                value={ isRevealed ? token : "..........."}
+                style={{maxWidth: "80%"}} 
+                readOnly
+                />
+              <button className="button is-small mr-1" onClick={() => setIsRevealed(!isRevealed) }>
                 { isRevealed ? "hide" : "reveal" }
               </button>
             </div>
@@ -76,7 +87,7 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
         <div className="column is-5">
           <p className="subtitle is-6 py-1">Close Account</p>
           <p className="is-size-7">
-            <strong>Warning:</strong> You will lose access to your Purplship's services
+            <strong>Warning:</strong> You will lose access to your Purplship services
           </p>
         </div>
 

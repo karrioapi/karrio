@@ -2,7 +2,7 @@ from django.conf.global_settings import CACHES
 from purpleserver.settings.base import (
     DATABASES,
     MIDDLEWARE,
-    DJANGO_APPS,
+    BASE_APPS,
     INSTALLED_APPS
 )
 
@@ -21,7 +21,7 @@ SHARED_APPS = [
     "purpleserver.tenants",
     "tenant_schemas",
 
-    *DJANGO_APPS
+    *BASE_APPS
 ]
 
 TENANT_APPS = [*INSTALLED_APPS]

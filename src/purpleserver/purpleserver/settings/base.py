@@ -18,7 +18,7 @@ from django.urls import reverse_lazy
 from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(str(Path(__file__).parent.parent))
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -36,7 +36,7 @@ USE_HTTPS = config('USE_HTTPS', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 CORS_ORIGIN_ALLOW_ALL = True
 
-with open(f"{BASE_DIR}/purpleserver/VERSION", "r") as v:
+with open(BASE_DIR / 'purpleserver' / 'VERSION', "r") as v:
     VERSION = v.read()
 
 # HTTPS configuration
@@ -76,18 +76,20 @@ PURPLSHIP_APPS = [cfg['app'] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF if 'urls' in cfg]
 
 
-DJANGO_APPS = [
+BASE_APPS = [
+    'purpleserver.user',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_tracking',
 ]
 
 INSTALLED_APPS = [
     *PURPLSHIP_APPS,
-    *DJANGO_APPS,
+    *BASE_APPS,
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -113,12 +115,14 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 OPEN_API_PATH = 'api/' if HAS_CLIENT_APP else ''
 
+CLIENT_REGISTRATION_VIEWS = 'purpleserver.client.views.registration'
+
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'purpleserver', 'templates')
+            BASE_DIR / 'purpleserver' / 'templates'
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -168,6 +172,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_USER_MODEL = 'user.User'
 
 
 # Internationalization
@@ -187,12 +192,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'purpleserver', 'static')
+    BASE_DIR / 'purpleserver' / 'static'
 ]
 
 
@@ -221,16 +226,6 @@ REST_FRAMEWORK = {
 
     'EXCEPTION_HANDLER': 'purpleserver.core.exceptions.custom_exception_handler',
 
-    'DEFAULT_RENDERER_CLASSES': (
-        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
-    ),
-
-    'DEFAULT_PARSER_CLASSES': (
-        'djangorestframework_camel_case.parser.CamelCaseFormParser',
-        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
-        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
-    ),
-
     'JSON_UNDERSCOREIZE': {
         'no_underscore_before_number': True,
     },
@@ -255,14 +250,15 @@ SWAGGER_SETTINGS = {
         'Token': {
             'type': 'apiKey',
             'name': 'Authorization',
-            'in': 'header'
+            'in': 'header',
         }
     },
 }
 
 REDOC_SETTINGS = {
     'LAZY_RENDERING': False,
-    'HIDE_HOSTNAME': True
+    'HIDE_HOSTNAME': True,
+    'REQUIRED_PROPS_FIRST': True,
 }
 
 # Logging configuration
@@ -271,6 +267,7 @@ LOG_LEVEL = ('DEBUG' if DEBUG else config('LOG_LEVEL', default='INFO'))
 DJANGO_LOG_LEVEL = ('INFO' if DEBUG else config('DJANGO_LOG_LEVEL', default='WARNING'))
 LOG_FILE_DIR = config('LOG_PATH', default=WORK_DIR)
 LOG_FILE_NAME = os.path.join(LOG_FILE_DIR, 'debug.log')
+DRF_TRACKING_ADMIN_LOG_READONLY = True
 
 LOGGING = {
     'version': 1,

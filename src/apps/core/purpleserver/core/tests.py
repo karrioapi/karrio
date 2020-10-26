@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 from rest_framework.authtoken.models import Token
 from purpleserver.providers.models import CanadaPostSettings, UPSSettings
@@ -8,9 +8,9 @@ class APITestCase(BaseAPITestCase):
 
     def setUp(self) -> None:
         self.maxDiff = None
-        self.user = User.objects.create_superuser('test', 'admin@example.com', 'test')
+        self.user = get_user_model().objects.create_superuser('admin@example.com', 'test')
         self.token = Token.objects.create(user=self.user)
-        CanadaPostSettings.objects.create(
+        self.carrier = CanadaPostSettings.objects.create(
             carrier_id='canadapost',
             test=True,
             username='6e93d53968881714',

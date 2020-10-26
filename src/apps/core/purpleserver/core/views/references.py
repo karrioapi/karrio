@@ -41,7 +41,7 @@ PACKAGE_MAPPERS = {
         'package': import_pkg('purplship.providers.canadapost.units'),
         'services': "ServiceType",
         'options': "OptionCode",
-        'packagePresets': "PackagePresets"
+        'packagePresets': "PackagePresets",
     },
     'dhl_express': {
         'label': "DHL Express",
@@ -255,8 +255,8 @@ class References(Serializer):
     states = PlainDictField()
     services = PlainDictField()
     options = PlainDictField()
-    packagePresets = PlainDictField()
-    packagingTypes = PlainDictField()
+    package_presets = PlainDictField()
+    packaging_types = PlainDictField()
 
 
 @swagger_auto_schema(

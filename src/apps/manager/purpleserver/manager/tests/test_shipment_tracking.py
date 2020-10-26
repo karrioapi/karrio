@@ -12,12 +12,12 @@ class TestShipmentTracking(APITestCase):
     def test_shipment_tracking(self):
         url = reverse(
             'purpleserver.manager:shipment-tracking',
-            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_id="ups_package")
+            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups_package")
         )
 
         with patch("purpleserver.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            response = self.client.get(url)
+            response = self.client.get(f"{url}?test")
             response_data = json.loads(response.content)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -26,15 +26,15 @@ class TestShipmentTracking(APITestCase):
     def test_shipment_tracking_retry(self):
         url = reverse(
             'purpleserver.manager:shipment-tracking',
-            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_id="ups_package")
+            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups_package")
         )
 
         with patch("purpleserver.core.gateway.identity") as mock:
             mock.return_value = RETURNED_VALUE
-            self.client.get(url)
+            self.client.get(f"{url}?test")
             sleep(2)
 
-        response = self.client.get(url)
+        response = self.client.get(f"{url}?test")
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -64,10 +64,10 @@ RETURNED_VALUE = (
 
 TRACKING_RESPONSE = {
     "id": ANY,
-    "carrierId": "ups_package",
-    "carrierName": "ups_package",
-    "trackingNumber": "1Z12345E6205277936",
-    "shipmentId": None,
+    "carrier_id": "ups_package",
+    "carrier_name": "ups_package",
+    "tracking_number": "1Z12345E6205277936",
+    "test_mode": True,
     "events": [
         {
             "code": "KB",

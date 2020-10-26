@@ -1,21 +1,21 @@
 from django.db import transaction
 from rest_framework.reverse import reverse
-from rest_framework.serializers import Serializer, CharField, ChoiceField
+from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
 from purplship.core.utils import to_dict
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.utils import SerializerDecorator
-from purpleserver.core.datatypes import RateResponse
+from purpleserver.core.datatypes import RateResponse, ShipmentResponse, Confirmation, ConfirmationResponse
 from purpleserver.providers.models import Carrier
 from purpleserver.core.serializers import (
     SHIPMENT_STATUS,
+    ShipmentStatus,
     ShipmentData,
-    ShipmentResponse,
     Shipment,
     Payment,
-    ListField,
     Rate,
     ShippingRequest,
+    ShipmentCancelRequest,
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.payment import PaymentSerializer
@@ -28,11 +28,13 @@ import purpleserver.manager.models as models
 class ShipmentSerializer(ShipmentData):
     status = ChoiceField(required=False, choices=SHIPMENT_STATUS)
     selected_rate_id = CharField(required=False)
-    rates = ListField(child=Rate(), required=False)
+    rates = Rate(many=True, required=False)
     label = CharField(required=False, allow_blank=True, allow_null=True)
     tracking_number = CharField(required=False, allow_blank=True, allow_null=True)
+    shipment_identifier = CharField(required=False, allow_blank=True, allow_null=True)
     selected_rate = Rate(required=False, allow_null=True)
     tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
+    test_mode = BooleanField(required=False)
 
     def __init__(self, instance: models.Shipment = None, **kwargs):
         if kwargs.get('data') is not None:
@@ -89,6 +91,7 @@ class ShipmentSerializer(ShipmentData):
     def create(self, validated_data: dict) -> models.Shipment:
         carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
         rate_response: RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save().instance
+        test_mode = all([r.test_mode for r in rate_response.rates])
         user = validated_data['user']
 
         shipment_data = {
@@ -114,6 +117,7 @@ class ShipmentSerializer(ShipmentData):
             **shipment_data,
             **{k: v for k, v in related_data.items() if v is not None},
             'user': user,
+            'test_mode': test_mode,
             'shipment_rates': to_dict(rate_response.rates),
         })
         shipment.carriers.set(carriers)
@@ -170,7 +174,7 @@ class ShipmentPurchaseData(Serializer):
 
 
 class ShipmentValidationData(Shipment):
-    rates = ListField(required=True, child=Rate())
+    rates = Rate(many=True, required=True)
     payment = Payment(required=True)
 
     def create(self, validated_data: dict) -> ShipmentResponse:
@@ -179,8 +183,30 @@ class ShipmentValidationData(Shipment):
             resolve_tracking_url=(
                 lambda shipment: reverse(
                     "purpleserver.manager:shipment-tracking",
-                    request=validated_data.get('request'),
-                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_id=shipment.carrier_id)
+                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
                 )
             )
         )
+
+
+class ShipmentCancelSerializer(Shipment):
+
+    def update(self, instance: models.Shipment, validated_data: dict) -> ConfirmationResponse:
+        if instance.status == ShipmentStatus.purchased.value:
+            response = Shipments.cancel(
+                payload=ShipmentCancelRequest(instance).data,
+                carrier=instance.selected_rate_carrier
+            )
+        else:
+            response = ConfirmationResponse(
+                messages=[],
+                confirmation=Confirmation(
+                    carrier_name="None Selected",
+                    carrier_id="None Selected",
+                    success=True,
+                    operation="Cancel Shipment",
+                )
+            )
+
+        instance.delete()
+        return response

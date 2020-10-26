@@ -10,12 +10,13 @@ interface ProfileUpdateInputComponent {
 
 const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label, inputType, propertyKey }) => {
     const [key, setKey] = useState<string>(`${propertyKey}-${Date.now()}`);
+    const [originalValue, _] = useState<string>((user as any)[propertyKey] || "");
     const [propertyValue, setPropertyValue] = useState<string>("");
     const [hasChanged, setHasChanged] = useState<boolean>(false);
     const cancel = (e: React.MouseEvent) => {
         e.preventDefault();
-        const originalValue = (user as any)[propertyKey] || "";
         setPropertyValue(originalValue);
+        setHasChanged(false);
         setKey(`${propertyKey}-${Date.now()}`);
     };
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
@@ -41,7 +42,7 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
                     onChange={handleOnChange}
                     defaultValue={(user as any)[propertyKey] || ""}
                     type={inputType}
-                    style={{ maxWidth: "60%" }} />
+                    style={{ maxWidth: "60%" }} required/>
 
                 <input className="button is-success is-small mr-1" type="submit" value="Save"
                     style={{ visibility: (hasChanged ? "visible" : "hidden") }} />

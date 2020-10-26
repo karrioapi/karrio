@@ -35,27 +35,27 @@ class TestPricing(APITestCase):
 
 RATING_DATA = {
     "shipper": {
-        "postalCode": "V6M2V9",
+        "postal_code": "V6M2V9",
         "city": "Vancouver",
-        "countryCode": "CA",
-        "stateCode": "BC",
+        "country_code": "CA",
+        "state_code": "BC",
         "residential": True,
-        "addressLine1": "5840 Oak St"
+        "address_line1": "5840 Oak St"
     },
     "recipient": {
-        "postalCode": "E1C4Z8",
+        "postal_code": "E1C4Z8",
         "city": "Moncton",
-        "countryCode": "CA",
-        "stateCode": "NB",
+        "country_code": "CA",
+        "state_code": "NB",
         "residential": False,
-        "addressLine1": "125 Church St"
+        "address_line1": "125 Church St"
     },
     "parcels": [{
         "weight": 1,
         "packagePreset": "canadapost_corrugated_small_box"
     }],
     "services": [],
-    "carrierIds": ["canadapost"]
+    "carrier_ids": ["canadapost"]
 }
 
 RETURNED_VALUE = [(
@@ -134,16 +134,17 @@ RETURNED_VALUE = [(
 )]
 
 RATING_RESPONSE = {
+  "messages": [],
   "rates": [
     {
-      "baseCharge": 29.64,
-      "carrierId": "canadapost",
-      "carrierName": "canadapost",
-      "carrierRef": ANY,
+      "base_charge": 29.64,
+      "carrier_id": "canadapost",
+      "carrier_name": "canadapost",
+      "carrier_ref": ANY,
       "currency": "CAD",
       "discount": -0.95,
-      "dutiesAndTaxes": 4.3,
-      "extraCharges": [
+      "duties_and_taxes": 4.3,
+      "extra_charges": [
         {
           "amount": 1.24,
           "currency": "CAD",
@@ -156,19 +157,21 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
+      "meta": None,
       "service": "canadapost_expedited_parcel",
-      "totalCharge": 32.99,
-      "transitDays": 7
+      "total_charge": 32.99,
+      "transit_days": 7,
+      "test_mode": True
     },
     {
-      "baseCharge": 75.82,
-      "carrierId": "canadapost",
-      "carrierName": "canadapost",
-      "carrierRef": ANY,
+      "base_charge": 75.82,
+      "carrier_id": "canadapost",
+      "carrier_name": "canadapost",
+      "carrier_ref": ANY,
       "currency": "CAD",
       "discount": -1.34,
-      "dutiesAndTaxes": 11.17,
-      "extraCharges": [
+      "duties_and_taxes": 11.17,
+      "extra_charges": [
         {
           "amount": 3.21,
           "currency": "CAD",
@@ -181,19 +184,21 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
+      "meta": None,
       "service": "canadapost_xpresspost",
-      "totalCharge": 85.65,
-      "transitDays": 2
+      "total_charge": 85.65,
+      "transit_days": 2,
+      "test_mode": True
     },
     {
-      "baseCharge": 101.83,
-      "carrierId": "canadapost",
-      "carrierName": "canadapost",
-      "carrierRef": ANY,
+      "base_charge": 101.83,
+      "carrier_id": "canadapost",
+      "carrier_name": "canadapost",
+      "carrier_ref": ANY,
       "currency": "CAD",
       "discount": -2.76,
-      "dutiesAndTaxes": 14.86,
-      "extraCharges": [
+      "duties_and_taxes": 14.86,
+      "extra_charges": [
         {
           "amount": 4.27,
           "currency": "CAD",
@@ -211,9 +216,11 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
+      "meta": None,
       "service": "canadapost_priority",
-      "totalCharge": 114.93,
-      "transitDays": 2
+      "total_charge": 114.93,
+      "transit_days": 2,
+      "test_mode": True
     }
   ]
 }

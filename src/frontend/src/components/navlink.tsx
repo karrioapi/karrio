@@ -6,7 +6,7 @@ const NavLink = (props: React.PropsWithoutRef<LinkProps<any>> & React.RefAttribu
         {...props}
         getProps={({ isCurrent }) => {
             return {
-                className: isCurrent ? "menu-item is-active" : "menu-item"
+                className: isCurrent ? `${props.className || 'menu-item'} is-active` : `${props.className || 'menu-item'}`
             };
         }}
     />

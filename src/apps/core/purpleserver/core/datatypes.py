@@ -9,14 +9,22 @@ from purplship.core.models import (
     Message,
     Address,
     Insurance,
-    TrackingDetails,
     TrackingRequest,
     ShipmentDetails,
-    Payment as BasePayment,
-    Customs as BaseCustoms,
+    AddressValidationRequest,
+    AddressValidationDetails,
+    Payment,
+    Customs,
     RateRequest as BaseRateRequest,
     ShipmentRequest as BaseShipmentRequest,
-    ChargeDetails
+    ShipmentCancelRequest,
+    ChargeDetails,
+    PickupRequest,
+    PickupDetails,
+    PickupUpdateRequest,
+    PickupCancelRequest,
+    ConfirmationDetails as Confirmation,
+    TrackingEvent
 )
 
 
@@ -54,6 +62,7 @@ class Rate:
     carrier_name: str
     carrier_id: str
     currency: str
+
     transit_days: int = None
     service: str = None
     discount: float = None
@@ -64,16 +73,7 @@ class Rate:
     id: str = None
     meta: dict = None
     carrier_ref: str = None
-
-
-@attr.s(auto_attribs=True)
-class Payment(BasePayment):
-    id: str = None
-
-
-@attr.s(auto_attribs=True)
-class Customs(BaseCustoms):
-    id: str = None
+    test_mode: bool = None
 
 
 @attr.s(auto_attribs=True)
@@ -113,6 +113,7 @@ class Shipment:
     carrier_id: str
     carrier_name: str
     tracking_number: str
+    shipment_identifier: str
     label: str
     service: str
     selected_rate_id: str
@@ -131,13 +132,65 @@ class Shipment:
     reference: str = ""
     tracking_url: str = None
     status: str = ""
-    id: str = None
     meta: dict = None
+    id: str = None
+    created_at: str = None
+    test_mode: bool = None
+
+
+@attr.s(auto_attribs=True)
+class Pickup:
+    carrier_id: str
+    carrier_name: str
+
+    pickup_date: str
+    ready_time: str
+    closing_time: str
+    confirmation_number: str
+    address: Address = JStruct[Address, REQUIRED]
+    parcels: List[Parcel] = JList[Parcel, REQUIRED]
+
+    pickup_charge: ChargeDetails = JStruct[ChargeDetails]
+    instruction: str = None
+    package_location: str = None
+    options: Dict = {}
+    id: str = None
+    test_mode: bool = None
+
+
+@attr.s(auto_attribs=True)
+class Tracking:
+    carrier_name: str
+    carrier_id: str
+    tracking_number: str
+    events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+
+    delivered: bool = None
+    id: str = None
+    test_mode: bool = None
 
 
 @attr.s(auto_attribs=True)
 class ErrorResponse:
     messages: List[Message] = JList[Message]
+
+
+@attr.s(auto_attribs=True)
+class AddressValidation:
+    messages: List[Message] = JList[Message]
+    validation: AddressValidationDetails = JStruct[AddressValidationDetails]
+
+
+@attr.s(auto_attribs=True)
+class ConfirmationResponse:
+    messages: List[Message] = JList[Message]
+    confirmation: Confirmation = JStruct[Confirmation]
+
+
+@attr.s(auto_attribs=True)
+class PickupResponse:
+    messages: List[Message] = JList[Message]
+    pickup: Pickup = JStruct[Pickup]
 
 
 @attr.s(auto_attribs=True)
@@ -155,7 +208,7 @@ class ShipmentResponse:
 @attr.s(auto_attribs=True)
 class TrackingResponse:
     messages: List[Message] = JList[Message]
-    tracking_details: TrackingDetails = JStruct[TrackingDetails]
+    tracking: Tracking = JStruct[Tracking]
 
 
 @attr.s(auto_attribs=True)

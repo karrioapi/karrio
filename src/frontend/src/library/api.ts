@@ -1,5 +1,4 @@
-import Purplship from '@purplship/purplship';
-import { CarrierSettings, References, Shipment } from '@purplship/purplship/dist';
+import { CarrierSettings, References, Shipment, Purplship } from '@purplship/purplship';
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinct } from 'rxjs/operators';
@@ -8,33 +7,59 @@ import { distinct } from 'rxjs/operators';
 const INITIAL_TOKEN = collectToken();
 
 export interface UserInfo {
-    firstName: string | null;
+    full_name: string | null;
     email: string | null;
-    username: string | null;
-    readonly isStaff: boolean;
+    readonly is_staff: boolean;
 }
 
-export interface Provider extends Omit<CarrierSettings, 'id'> {
+export interface Connection extends Omit<CarrierSettings, 'id' | 'carrier_name'> {
     id: string | null | undefined;
+    carrier_name: CarrierSettings.CarrierNameEnum | 'none';
     [property: string]: any;
 }
 
-export interface ProviderData {
+export interface ConnectionData {
     carrier_name: CarrierSettings.CarrierNameEnum;
-    carrier_config: Partial<Provider>;
+    carrier_config: Partial<Connection>;
 }
+
+export interface Log {
+    id: string;
+    requested_at: string;
+    response_ms: string;
+    path: string;
+    view: string;
+    view_method: string;
+    remote_addr: string;
+    host: string;
+    method: string;
+    query_params: string;
+    data: string;
+    response: string;
+    status_code: string;
+}
+
+interface PaginatedContent<T> {
+    count: Number;
+    next?: string | null;
+    previous?: string | null;
+    results: T[];
+}
+
+export interface PaginatedLogs extends PaginatedContent<Log>{}
+export interface PaginatedShipments extends PaginatedContent<Shipment>{}
+export interface PaginatedConnections extends PaginatedContent<Connection>{}
 
 class AppState {
     private token$: BehaviorSubject<string> = new BehaviorSubject<string>(INITIAL_TOKEN);
     private user$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>({} as UserInfo);
-    private providers$: Subject<CarrierSettings[]> = new Subject<CarrierSettings[]>();
-    private shipments$: Subject<Shipment[]> = new Subject<Shipment[]>();
-    private references$: BehaviorSubject<References> = new BehaviorSubject<References>({} as References);
+    private connections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
+    private shipments$: Subject<PaginatedShipments> = new Subject<PaginatedShipments>();
+    private references$: Subject<References> = new Subject<References>();
+    private logs$: Subject<PaginatedLogs> = new Subject<PaginatedLogs>();
 
     constructor() {
         this.getUserInfo();
-        this.fetchProviders();
-        this.fetchShipments();
         this.fetchReferences();
     }
 
@@ -50,18 +75,6 @@ class AppState {
         return new Purplship(this.token$.value, '/v1');
     }
 
-    public get shipments() {
-        const [shipments, setValue] = useState<Shipment[]>([]);
-        useEffect(() => { this.shipments$.asObservable().pipe(distinct()).subscribe(setValue); });
-        return shipments;
-    }
-
-    public get providers() {
-        const [providers, setValue] = useState<Provider[]>([]);
-        useEffect(() => { this.providers$.asObservable().pipe(distinct()).subscribe(setValue); });
-        return providers;
-    }
-
     public get token() {
         const [token, setValue] = useState<string>(this.token$.value);
         useEffect(() => { this.token$.asObservable().pipe(distinct()).subscribe(setValue); });
@@ -74,33 +87,34 @@ class AppState {
         return user;
     }
 
+    public get shipments() {
+        const [shipments, setValue] = useState<PaginatedShipments>();
+        useEffect(() => { this.shipments$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return shipments;
+    }
+
+    public get connections() {
+        const [connections, setValue] = useState<PaginatedConnections>();
+        useEffect(() => { this.connections$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return connections;
+    }
+
     public get references() {
-        const [references, setValue] = useState<References>({} as References);
+        const [references, setValue] = useState<References>();
         useEffect(() => { this.references$.asObservable().subscribe(setValue); });
         return references;
+    }
+
+    public get logs() {
+        const [logs, setValue] = useState<PaginatedLogs>();
+        useEffect(() => { this.logs$.asObservable().subscribe(setValue); });
+        return logs;
     }
 
     private async fetchReferences() {
         const references = await this.purplship.utils.references();
         this.references$.next(references);
         return references;
-    }
-
-    public async fetchShipments() {
-        const shipments = await this.purplship.shipments.list();
-        this.shipments$.next(shipments);
-        return shipments;
-    }
-
-    public async fetchProviders() {
-        const response = await fetch("/v1/providers" , { headers: this.headers });
-        if (response.ok) {
-            const providers = await response.json();
-            this.providers$.next(providers);
-            return providers;
-        } else {
-            throw new Error("Unable fetch user info.");
-        }
     }
 
     public async getUserInfo() {
@@ -141,7 +155,7 @@ class AppState {
         const response = await fetch("/token", {
             method: "PUT",
             headers: this.headers,
-            body: (JSON.stringify({ username: this.user$.value.username, password }) as any)
+            body: (JSON.stringify({ username: this.user$.value.email, password }) as any)
         });
         if (response.ok) {
             const data = await response.json();
@@ -152,30 +166,30 @@ class AppState {
         }
     }
 
-    public async connectProvider(info: ProviderData) {
-        const response = await fetch("/v1/providers", {
+    public async connectProvider(info: ConnectionData) {
+        const response = await fetch("/connections", {
             method: "POST",
             headers: this.headers,
             body: (JSON.stringify(info) as any)
         });
         if (response.ok) {
             const data = await response.json();
-            this.fetchProviders();
+            this.fetchConnections();
             return data;
         } else {
             throw new Error("Failed to connect the service provider.");
         }
     }
 
-    public async updateProvider(id: string, info: ProviderData) {
-        const response = await fetch(`/v1/providers/${id}`, { 
+    public async updateConnection(id: string, info: ConnectionData) {
+        const response = await fetch(`/connections/${id}`, { 
             method: "PATCH",
             headers: this.headers,
             body: (JSON.stringify(info) as any)
         });
         if (response.ok) {
             const data = await response.json();
-            this.fetchProviders();
+            this.fetchConnections();
             return data;
         } else {
             throw new Error("Failed to update the service provider connection.");
@@ -183,16 +197,59 @@ class AppState {
     }
 
     public async disconnectProvider(id: string) {
-        const response = await fetch(`/v1/providers/${id}`, { 
+        const response = await fetch(`/connections/${id}`, { 
             method: "DELETE",
             headers: this.headers,
         });
         if (response.ok) {
             const data = await response.json();
-            this.fetchProviders();
+            this.fetchConnections();
             return data;
         } else {
             throw new Error("Failed to disconnect the service provider.");
+        }
+    }
+
+    public async fetchConnections(url?: string): Promise<PaginatedConnections> {
+        const response = await fetch(url || `/connections?limit=20&offset=0` , { headers: this.headers });
+        if (response.ok) {
+            const connections = await response.json();
+            this.connections$.next(connections);
+            return connections;
+        } else {
+            throw new Error("Unable fetch connected carriers.");
+        }
+    }
+
+    public async fetchShipments(url?: string): Promise<PaginatedShipments> {
+        const response = await fetch(url || `/shipments?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.shipments$.next(data);
+            return data;
+        } else {
+            throw new Error("Failed to fetch shipments.");
+        }
+    }
+
+    public async fetchLogs(url?: string): Promise<PaginatedLogs> {
+        const response = await fetch(url || `/logs?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.logs$.next(data);
+            return data;
+        } else {
+            throw new Error("Failed to fetch logs.");
+        }
+    }
+
+    public async retrieveLog(id: string): Promise<Log> {
+        const response = await fetch(`/logs/${id}`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error("Failed to fetch log.");
         }
     }
 }

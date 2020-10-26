@@ -38,33 +38,43 @@ class TestCustomsInfoDetails(APITestCase):
 
 
 CUSTOMS_DATA = {
-    "terms_of_trade": "DDU"
+    "incoterm": "DDU"
 }
 
 CUSTOMS_RESPONSE = {
-    "id": ANY,
-    "noEei": None,
-    "aes": None,
-    "description": None,
-    "termsOfTrade": "DDU",
-    "commodities": [],
-    "duty": None,
-    "invoice": None,
-    "commercialInvoice": None
+    'aes': None,
+    'certificate_number': None,
+    'certify': None,
+    'commercial_invoice': None,
+    'commodities': [],
+    'content_description': None,
+    'content_type': None,
+    'duty': None,
+    'eel_pfc': None,
+    'id': ANY,
+    'incoterm': 'DDU',
+    'invoice': None,
+    'options': {},
+    'signer': None
 }
 
 CUSTOMS_UPDATE_DATA = {
-    "terms_of_trade": "DDP"
+    "incoterm": "DDP"
 }
 
 CUSTOMS_UPDATE_RESPONSE = {
-    "id": ANY,
-    "noEei": None,
-    "aes": None,
-    "description": None,
-    "termsOfTrade": "DDP",
-    "commodities": [],
-    "duty": None,
-    "invoice": None,
-    "commercialInvoice": None
+    'aes': None,
+    'certificate_number': None,
+    'certify': None,
+    'commercial_invoice': None,
+    'commodities': [],
+    'content_description': None,
+    'content_type': None,
+    'duty': None,
+    'eel_pfc': None,
+    'id': ANY,
+    'incoterm': 'DDP',
+    'invoice': None,
+    'options': {},
+    'signer': None
 }

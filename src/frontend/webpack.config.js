@@ -6,7 +6,7 @@ const build_path = '../apps/client/purpleserver/client/static/purpleserver/clien
 
 module.exports = {
   entry: './src/dashboard.tsx',
-  mode: 'development',
+  mode: 'production',
   devtool: "source-map",
   module: {
     rules: [
@@ -14,6 +14,10 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       },
       {
         // For pure CSS - /\.css$/i,
