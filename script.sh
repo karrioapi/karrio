@@ -6,6 +6,10 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export wheels=~/Wheels
+export PIP_FIND_LINKS="https://git.io/purplship"
+[[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
+
 activate_env() {
   echo "Activate $BASE_DIR"
   deactivate || true
@@ -50,7 +54,7 @@ clean_builds() {
 }
 
 
-build() {
+_build() {
   clean_builds
   pushd "$1"
     python setup.py bdist_wheel
@@ -58,9 +62,9 @@ build() {
   backup_wheels
 }
 
-build_all() {
-  build "${ROOT:?}/src/eshipper"
-  build "${ROOT:?}/src/freightcom"
+build() {
+  _build "${ROOT:?}/src/eshipper"
+  _build "${ROOT:?}/src/freightcom"
 }
 
 env:on || true
