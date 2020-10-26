@@ -2129,6 +2129,7 @@ components:
           type: object
           additionalProperties:
             type: string
+            nullable: true
           description: any additional details
       description: The list of error messages
     ErrorResponse:
@@ -2545,7 +2546,6 @@ components:
       nullable: true
       x-nullable: true
     Card:
-      title: Credit card
       required:
       - expiry_month
       - expiry_year
@@ -2590,8 +2590,9 @@ components:
           description: The credit card registration address postal code
           nullable: true
       description: The payment credit card for payment by card
+      nullable: true
+      x-nullable: true
     Payment:
-      title: Duty
       required:
       - currency
       - paid_by
@@ -2777,6 +2778,8 @@ components:
 
         The payment details.<br/>
         Note that this is required for a Dutiable parcel shipped internationally.
+      nullable: true
+      x-nullable: true
     Customs:
       type: object
       properties:
@@ -3106,6 +3109,7 @@ components:
         parcels:
           type: array
           description: The shipment parcels to pickup.
+          nullable: true
           items:
             $ref: '#/components/schemas/ParcelData'
         ready_time:
@@ -3143,7 +3147,6 @@ components:
           description: Advanced carrier specific pickup options
           nullable: true
     Charge:
-      title: Pickup charge
       type: object
       properties:
         name:
@@ -3165,7 +3168,6 @@ components:
       nullable: true
       x-nullable: true
     Pickup:
-      title: Pickup
       required:
       - address
       - carrier_id
@@ -3220,6 +3222,7 @@ components:
         parcels:
           type: array
           description: The shipment parcels to pickup.
+          nullable: true
           items:
             $ref: '#/components/schemas/Parcel'
         instruction:
@@ -3285,6 +3288,7 @@ components:
         parcels:
           type: array
           description: The shipment parcels to pickup.
+          nullable: true
           items:
             $ref: '#/components/schemas/Parcel'
         confirmation_number:
@@ -3354,7 +3358,6 @@ components:
           type: string
           description: The reason of the pickup cancellation
     OperationConfirmation:
-      title: Confirmation
       required:
       - carrier_id
       - carrier_name
@@ -3569,6 +3572,8 @@ components:
         The list of documents to attach for a paperless interantional trade.
 
         eg: Invoices...
+      nullable: true
+      x-nullable: true
     ShippingRequest:
       required:
       - parcels
@@ -3627,7 +3632,6 @@ components:
           items:
             $ref: '#/components/schemas/Rate'
     Shipment:
-      title: Shipment
       required:
       - created_at
       - parcels
@@ -3849,8 +3853,9 @@ components:
           description: The tracking signature on delivery
           nullable: true
       description: The tracking details events
+      nullable: true
+      x-nullable: true
     TrackingStatus:
-      title: Tracking
       required:
       - carrier_id
       - carrier_name
@@ -4074,7 +4079,6 @@ components:
           type: string
           description: The reason of the pickup cancellation
     PaymentData:
-      title: Payment
       required:
       - currency
       - paid_by
@@ -4252,6 +4256,8 @@ components:
         contact:
           $ref: '#/components/schemas/Address'
       description: The payment details
+      nullable: true
+      x-nullable: true
     ShipmentData:
       required:
       - parcels

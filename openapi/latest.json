@@ -2192,7 +2192,8 @@
             "title": "Details",
             "type": "object",
             "additionalProperties": {
-              "type": "string"
+              "type": "string",
+              "nullable": true
             },
             "description": "any additional details"
           }
@@ -2636,7 +2637,6 @@
         "x-nullable": true
       },
       "Card": {
-        "title": "Credit card",
         "required": [
           "expiry_month",
           "expiry_year",
@@ -2689,10 +2689,11 @@
             "nullable": true
           }
         },
-        "description": "The payment credit card for payment by card"
+        "description": "The payment credit card for payment by card",
+        "nullable": true,
+        "x-nullable": true
       },
       "Payment": {
-        "title": "Duty",
         "required": [
           "currency",
           "paid_by"
@@ -2885,7 +2886,9 @@
             "$ref": "#/components/schemas/Address"
           }
         },
-        "description": "\nThe payment details.<br/>\nNote that this is required for a Dutiable parcel shipped internationally.\n"
+        "description": "\nThe payment details.<br/>\nNote that this is required for a Dutiable parcel shipped internationally.\n",
+        "nullable": true,
+        "x-nullable": true
       },
       "Customs": {
         "type": "object",
@@ -3256,6 +3259,7 @@
           "parcels": {
             "type": "array",
             "description": "The shipment parcels to pickup.",
+            "nullable": true,
             "items": {
               "$ref": "#/components/schemas/ParcelData"
             }
@@ -3294,7 +3298,6 @@
         }
       },
       "Charge": {
-        "title": "Pickup charge",
         "type": "object",
         "properties": {
           "name": {
@@ -3321,7 +3324,6 @@
         "x-nullable": true
       },
       "Pickup": {
-        "title": "Pickup",
         "required": [
           "address",
           "carrier_id",
@@ -3386,6 +3388,7 @@
           "parcels": {
             "type": "array",
             "description": "The shipment parcels to pickup.",
+            "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Parcel"
             }
@@ -3455,6 +3458,7 @@
           "parcels": {
             "type": "array",
             "description": "The shipment parcels to pickup.",
+            "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Parcel"
             }
@@ -3529,7 +3533,6 @@
         }
       },
       "OperationConfirmation": {
-        "title": "Confirmation",
         "required": [
           "carrier_id",
           "carrier_name",
@@ -3777,7 +3780,9 @@
             "nullable": true
           }
         },
-        "description": "\nThe list of documents to attach for a paperless interantional trade.\n\neg: Invoices...\n"
+        "description": "\nThe list of documents to attach for a paperless interantional trade.\n\neg: Invoices...\n",
+        "nullable": true,
+        "x-nullable": true
       },
       "ShippingRequest": {
         "required": [
@@ -3846,7 +3851,6 @@
         }
       },
       "Shipment": {
-        "title": "Shipment",
         "required": [
           "created_at",
           "parcels",
@@ -4100,10 +4104,11 @@
             "nullable": true
           }
         },
-        "description": "The tracking details events"
+        "description": "The tracking details events",
+        "nullable": true,
+        "x-nullable": true
       },
       "TrackingStatus": {
-        "title": "Tracking",
         "required": [
           "carrier_id",
           "carrier_name",
@@ -4359,7 +4364,6 @@
         }
       },
       "PaymentData": {
-        "title": "Payment",
         "required": [
           "currency",
           "paid_by"
@@ -4546,7 +4550,9 @@
             "$ref": "#/components/schemas/Address"
           }
         },
-        "description": "The payment details"
+        "description": "The payment details",
+        "nullable": true,
+        "x-nullable": true
       },
       "ShipmentData": {
         "required": [
