@@ -51,7 +51,7 @@ docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres 
 </details>
 
 ```shell script
-docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.10.0
+docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.10.1
 ```
 
 #### Docker Compose
@@ -75,7 +75,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
   web:
-    image: purplship/purplship-server:2020.10.0
+    image: purplship/purplship-server:2020.10.1
     restart: always
     environment:
       - DEBUG_MODE=True
