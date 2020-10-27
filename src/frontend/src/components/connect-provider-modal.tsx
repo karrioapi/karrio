@@ -145,7 +145,7 @@ function hasProperty(carrier_name: CarrierSettings.CarrierNameEnum, property: st
         [CarrierSettings.CarrierNameEnum.DhlExpress]: ["carrier_id", "test", "site_id", "password", "account_number"],
         [CarrierSettings.CarrierNameEnum.Eshipper]: ["carrier_id", "test", "username", "password"],
         [CarrierSettings.CarrierNameEnum.Freightcom]: ["carrier_id", "test", "username", "password"],
-        [CarrierSettings.CarrierNameEnum.FedexExpress]: ["carrier_id", "test", "userKey", "password", "meter_number", "account_number"],
+        [CarrierSettings.CarrierNameEnum.FedexExpress]: ["carrier_id", "test", "user_key", "password", "meter_number", "account_number"],
         [CarrierSettings.CarrierNameEnum.PurolatorCourier]: ["carrier_id", "test", "username", "password", "account_number", "user_token"],
         [CarrierSettings.CarrierNameEnum.UpsPackage]: ["carrier_id", "test", "username", "password", "access_license_number", "account_number"]
     }[carrier_name] || []).includes(property)

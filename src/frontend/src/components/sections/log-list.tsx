@@ -61,7 +61,7 @@ const LogList: React.FC<LogListView> = ({ handleLogSelection, logs }) => {
             </div>}
 
             <footer className="px-2 py-2 is-vcentered">
-                <div className="buttons is-centered">
+                <div className="buttons is-centered has-addons">
                     <button className="button is-small" onClick={getLogs(logs?.previous)} disabled={logs?.previous === null}>
                         Previous
                     </button>
