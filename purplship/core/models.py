@@ -275,7 +275,7 @@ class TrackingEvent:
 
     date: str
     description: str
-    location: str
+    location: str = None
     code: str = None
     time: str = None
     signatory: str = None
