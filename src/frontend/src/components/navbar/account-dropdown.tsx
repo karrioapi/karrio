@@ -10,24 +10,26 @@ interface AccountDropdownComponent {
 
 const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
     const [isActive, setIsActive] = useState(false);
-    const menu = useRef<HTMLDivElement>(null);
-    const handleBlur = (e: React.FocusEvent) => {
-        if (e.relatedTarget == null) {
+    const btn = useRef<HTMLButtonElement>(null);
+    const img = useRef<HTMLImageElement>(null);
+    const handleOnClick = (e: React.MouseEvent) => {
+        setIsActive(true);
+        e.stopPropagation();
+    };
+    document.addEventListener('click', (e: MouseEvent) => {
+        if (e.target !== btn.current && e.target !== img.current) {
             setIsActive(false);
         }
-    };
+    });
 
     return (
-        <div className={`dropdown-wrap is-right ${isActive ? "is-active": ""}`}
-            onBlur={handleBlur}
-            onClick={() => {setIsActive(true); menu.current?.focus()}}
-            >
+        <div className={`dropdown-wrap is-right ${isActive ? "is-active": ""}`}>
 
             <span className="indicator"></span>
-            <button className="dropdown-button has-image">
-                <img src="/static/purpleserver/client/profile.svg" alt="Purplship Profile" />
+            <button className="dropdown-button has-image"onClick={handleOnClick} ref={btn}>
+                <img src="/static/purpleserver/client/profile.svg" alt="Purplship Profile" ref={img}/>
             </button>
-            <div className="drop-menu" onBlur={() => setIsActive(false)} ref={menu}>
+            <div className="drop-menu">
                 <div className="menu-inner">
                     <div className="menu-header">
                         <h3>Menu</h3>

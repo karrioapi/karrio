@@ -12,10 +12,10 @@ const StatusCode: React.FC<StatusCodeComponent> = ({ code }) => {
         return <span className={`tag is-warning`}>{code}</span>;
     }
     if(`${code}`[0] == '5') {
-        return <span className={`tag is-warning`}>{code}</span>;
+        return <span className={`tag is-danger`}>{code}</span>;
     }
     else {
-        return <span className={`tag is-danger`}>{code}</span>;
+        return <span className={`tag is-dark`}>{code}</span>;
     }
 };
 
