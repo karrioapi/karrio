@@ -27,7 +27,7 @@ Pillow==8.0.1
 psycopg2-binary==2.8.6
 purplship==2020.10.1
 purplship-server==2020.10.0
-purplship-server.client==2020.10.0
+purplship-server.client==2020.10.1
 purplship-server.core==2020.10.0
 purplship-server.proxy==2020.10.0
 purplship.canadapost==2020.10.0
