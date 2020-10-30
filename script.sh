@@ -59,7 +59,7 @@ backup_wheels() {
   clean_builds
 }
 
-build_all() {
+build() {
   clean_builds
   mkdir -p ./dist
   for d in py-*/ ; do
