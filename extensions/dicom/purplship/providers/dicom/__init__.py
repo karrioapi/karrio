@@ -1,13 +1,20 @@
 from purplship.providers.dicom.utils import Settings
+from purplship.providers.dicom.rate import parse_rate_response, rate_request
 from purplship.providers.dicom.shipment import (
-    shipment_request,
+    parse_shipment_cancel_response,
     parse_shipment_response,
+    shipment_cancel_request,
+    shipment_request,
 )
-from purplship.providers.dicom.rating import (
-    mailing_scenario_request,
-    parse_price_quotes,
+from purplship.providers.dicom.pickup import (
+    parse_pickup_cancel_response,
+    parse_pickup_update_response,
+    parse_pickup_response,
+    pickup_update_request,
+    pickup_cancel_request,
+    pickup_request,
 )
-from purplship.providers.dicom.track import (
+from purplship.providers.dicom.tracking import (
     tracking_pins_request,
     parse_tracking_summary,
 )

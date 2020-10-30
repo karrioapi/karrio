@@ -1,8 +1,8 @@
 from typing import Tuple, List
 from purplship.core.utils import Serializable
 from purplship.core.models import (
-    RateRequest,
-    RateDetails,
+    PickupRequest,
+    PickupDetails,
     Message
 )
 
@@ -10,14 +10,14 @@ from purplship.providers.boxknight.error import parse_error_response
 from purplship.providers.boxknight.utils import Settings
 
 
-def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
+def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
     errors = parse_error_response(response, settings)
-    details = []
+    details = None
 
     return details, errors
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable:
+def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     request = None
 
     return Serializable(request)
