@@ -17,7 +17,8 @@ def parse_pickup_cancel_response(response: dict, settings: Settings) -> Tuple[Co
     return details, errors
 
 
-def pickup_cancel_request(payload: PickupCancelRequest, settings: Settings) -> Serializable:
-    request = None
+def pickup_cancel_request(payload: PickupCancelRequest, _) -> Serializable:
+
+    request = payload.confirmation_number
 
     return Serializable(request)

@@ -17,7 +17,7 @@ def parse_shipment_cancel_response(response: dict, settings: Settings) -> Tuple[
     return details, errors
 
 
-def shipment_cancel_request(payload: ShipmentCancelRequest, settings: Settings) -> Serializable:
-    request = None
+def shipment_cancel_request(payload: ShipmentCancelRequest, _) -> Serializable:
+    request = payload.shipment_identifier
 
     return Serializable(request)

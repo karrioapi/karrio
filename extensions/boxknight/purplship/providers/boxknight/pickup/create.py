@@ -1,13 +1,22 @@
-from typing import Tuple, List
-from purplship.core.utils import Serializable
+from typing import Tuple, List, Union
+from pyboxknight.pickups import (
+    PickupRequest as BoxKnightPickupRequest,
+    PickupRequestRecipientAddress,
+    Recipient,
+)
+from purplship.core.utils import Serializable, concat_str, to_date
 from purplship.core.models import (
+    ShipmentDetails,
+    ShipmentRequest,
     PickupRequest,
     PickupDetails,
-    Message
+    Message,
 )
 
 from purplship.providers.boxknight.error import parse_error_response
 from purplship.providers.boxknight.utils import Settings
+
+Shipment = Union[ShipmentRequest, ShipmentDetails]
 
 
 def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
@@ -17,7 +26,31 @@ def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDet
     return details, errors
 
 
-def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
-    request = None
+def pickup_request(payload: PickupRequest, _) -> Serializable:
+    shipments: List[Shipment] = payload.options.get('shipments', [])
+    after = to_date(f"{payload.pickup_date} {payload.ready_time}", current_format="%Y-%m-%d %H:%M")
+    before = to_date(f"{payload.pickup_date} {payload.ready_time}", current_format="%Y-%m-%d %H:%M")
+
+    request = BoxKnightPickupRequest(
+        packageCount=len(payload.parcels),
+        recipient=Recipient(
+            name=payload.address.person_name,
+            phone=payload.address.phone_number,
+            notes=None,
+            email=payload.address.email,
+        ),
+        recipientAddress=PickupRequestRecipientAddress(
+            street=concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
+            city=payload.address.city,
+            province=payload.address.state_code,
+            country=payload.address.country_code,
+            postalCode=payload.address.postal_code,
+            unit=None
+        ),
+        notes=payload.instruction,
+        completeAfter=int(after.timestamp() * 1000.0),
+        completeBefore=int(before.timestamp() * 1000.0),
+        orderIds=[shipment.shipment_identifier for shipment in shipments],
+    )
 
     return Serializable(request)

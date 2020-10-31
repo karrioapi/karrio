@@ -1,4 +1,7 @@
 from typing import Tuple, List
+from pyboxknight.rates import (
+    RateRequest as BoxKnightRateRequest,
+)
 from purplship.core.utils import Serializable
 from purplship.core.models import (
     RateRequest,
@@ -17,7 +20,11 @@ def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[RateDe
     return details, errors
 
 
-def rate_request(payload: RateRequest, settings: Settings) -> Serializable:
-    request = None
+def rate_request(payload: RateRequest, _) -> Serializable:
+
+    request = BoxKnightRateRequest(
+        postalCode=payload.recipient.postal_code,
+        originPostalCode=payload.shipper.postal_code
+    )
 
     return Serializable(request)
