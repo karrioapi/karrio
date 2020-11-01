@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     username: str
     password: str
+    billing_account: str = None
     id: str = None
 
     @property

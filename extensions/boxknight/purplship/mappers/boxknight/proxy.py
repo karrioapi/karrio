@@ -1,7 +1,7 @@
 from typing import List
 from purplship.core.utils.serializable import Serializable, Deserializable
-from purplship.package.mappers.boxknight.settings import Settings
-from purplship.package.proxy import Proxy as BaseProxy
+from purplship.mappers.boxknight.settings import Settings
+from purplship.api.proxy import Proxy as BaseProxy
 
 
 class Proxy(BaseProxy):

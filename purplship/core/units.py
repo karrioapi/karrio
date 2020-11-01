@@ -52,6 +52,15 @@ class CreditCardType(Enum):
     american_express = "AmericanExpress"
 
 
+class CustomsContentType(Enum):
+    documents = 'DOCUMENTS'
+    gift = 'GIFT'
+    sample = 'SAMPLE'
+    merchandise = 'MERCHANDISE'
+    return_merchandise = 'RETURN_MERCHANDISE'
+    other = 'OTHER'
+
+
 class WeightUnit(Enum):
     KG = "KG"
     LB = "LB"

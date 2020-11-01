@@ -10,11 +10,6 @@ class UnitOfMeasurement(Enum):
     LF = "LF"
 
 
-class DeliveryType(Enum):
-    air_delivery = "AIR"
-    ground_delivery = "GRD"
-
-
 class Category(Enum):
     parcel = "Parcel"
     freight = "Freight"
@@ -22,10 +17,31 @@ class Category(Enum):
     logistics = "Logistics"
 
 
+class Purpose(Enum):
+    com = "COM"
+    per = "PER"
+    doc = "DOC"
+    ret = "RET"
+
+    """ Unified Customs Content Type mapping """
+    
+    documents = doc
+    gift = per
+    sample = per
+    merchandise = com
+    return_merchandise = ret
+    other = per
+
+
 class PaymentType(Flag):
     prepaid = "Prepaid"
     third_party = "ThirdParty"
     collect = "Collect"
+
+    """ Unified Payment Type mapping """
+
+    sender = prepaid
+    recipient = collect
 
 
 class ParcelType(Flag):
@@ -54,7 +70,43 @@ class ParcelType(Flag):
     your_packaging = dicom_other
 
 
-class Service(Flag):
+class Service(Enum):  # DeliveryType
+    dicom_air_delivery = "AIR"
+    dicom_ground_delivery = "GRD"
+
+
+class Option(Flag):
+    dicom_common_declared_value = "DCV"
+    dicom_common_dangerous_goods = "DGG"
+    dicom_common_residential_delivery = "PHD"
+    dicom_common_tradeshow_delivery = "TRD"
+    dicom_common_signature_not_required = "SNR"
+    dicom_parcel_ca_hold_for_pickup = "HFP"
+    dicom_parcel_ca_non_conveyable = "NCV"
+    dicom_parcel_ca_residential_delivery_signature = "PHDS"
+    dicom_parcel_ca_weekend_delivery = "WKD"
+    dicom_freight_construction_site_delivery = "CNSTD"
+    dicom_freight_collect_on_delivery = "COD"
+    dicom_freight_heating = "HEAT"
+    dicom_freight_inside_delivery = "IDEL"
+    dicom_freight_residential_delivery_signature = "PHDS"
+    dicom_freight_residential_pickup = "PHPU"
+    dicom_freight_tailgate_delivery = "TGT"
+    dicom_freight_tailgate_pickup = "TGTPU"
+    dicom_parcel_us_adult_signature = "ADLSIG"
+    dicom_parcel_us_direct_signature = "DIRSIG"
+    dicom_parcel_us_saturday_delivery = "SAT"
+    dicom_parcel_us_sunday_delivery = "SUN"
+    dicom_parcel_us_residential_delivery_signature = "PHDS"
+    dicom_parcel_us_earliest_possible = "EP"
+    dicom_parcel_us_priority_service = "PR"
+    dicom_parcel_us_pouch_service = "PO"
+    dicom_parcel_us_pallet_service_pa = "PA"
+    dicom_parcel_us_pallet_service_rap = "RAP"
+    dicom_parcel_us_pallet_service_nd = "ND"
+
+
+class Surcharge(Flag):
     dicom_common_base = "BAS"
     dicom_common_declared_value = "DCV"
     dicom_common_dangerous_goods = "DGG"
@@ -94,34 +146,3 @@ class Service(Flag):
     dicom_freight_single_pickup = "SPU"
     dicom_freight_tailgate_delivery = "TGT"
     dicom_freight_tailgate_pickup = "TGTPU"
-
-
-class Option(Flag):
-    dicom_common_declared_value = "DCV"   
-    dicom_common_dangerous_goods = "DGG"   
-    dicom_common_residential_delivery = "PHD"   
-    dicom_common_tradeshow_delivery = "TRD"   
-    dicom_common_signature_not_required = "SNR"   
-    dicom_parcel_ca_hold_for_pickup = "HFP"   
-    dicom_parcel_ca_non_conveyable = "NCV"   
-    dicom_parcel_ca_residential_delivery_signature = "PHDS"  
-    dicom_parcel_ca_weekend_delivery = "WKD"   
-    dicom_freight_construction_site_delivery = "CNSTD" 
-    dicom_freight_collect_on_delivery = "COD"   
-    dicom_freight_heating = "HEAT"  
-    dicom_freight_inside_delivery = "IDEL"  
-    dicom_freight_residential_delivery_signature = "PHDS"  
-    dicom_freight_residential_pickup = "PHPU"  
-    dicom_freight_tailgate_delivery = "TGT"   
-    dicom_freight_tailgate_pickup = "TGTPU" 
-    dicom_parcel_us_adult_signature = "ADLSIG"
-    dicom_parcel_us_direct_signature = "DIRSIG"
-    dicom_parcel_us_saturday_delivery = "SAT"   
-    dicom_parcel_us_sunday_delivery = "SUN"   
-    dicom_parcel_us_residential_delivery_signature = "PHDS"  
-    dicom_parcel_us_earliest_possible = "EP"    
-    dicom_parcel_us_priority_service = "PR"    
-    dicom_parcel_us_pouch_service = "PO"    
-    dicom_parcel_us_pallet_service_pa = "PA"
-    dicom_parcel_us_pallet_service_rap = "RAP"
-    dicom_parcel_us_pallet_service_nd = "ND"

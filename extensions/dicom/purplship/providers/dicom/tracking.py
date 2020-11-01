@@ -17,7 +17,8 @@ def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[Tracki
     return details, errors
 
 
-def rate_request(payload: TrackingRequest, settings: Settings) -> Serializable:
-    request = None
+def rate_request(payload: TrackingRequest, _) -> Serializable[List[str]]:
+
+    request = payload.tracking_numbers
 
     return Serializable(request)
