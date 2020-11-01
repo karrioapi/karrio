@@ -39,6 +39,26 @@ class Sender:
 
 
 @attr.s(auto_attribs=True)
+class Shipment:
+    id: Optional[int] = None
+    status: Optional[int] = None
+
+
+@attr.s(auto_attribs=True)
+class Pickup:
+    shipments: Optional[List[Shipment]] = JStruct[Shipment]
+    id: Optional[int] = None
+    officeClose: Optional[str] = None
+    date: Optional[str] = None
+    ready: Optional[str] = None
+    location: Optional[str] = None
+    otherLocation: Optional[str] = None
+    category: Optional[str] = None
+    sender: Optional[Sender] = JStruct[Sender]
+    contact: Optional[Contact] = JStruct[Contact]
+
+
+@attr.s(auto_attribs=True)
 class ShipmentPickupRequest:
     date: str
     ready: str

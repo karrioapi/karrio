@@ -42,7 +42,7 @@ class Address:
 @attr.s(auto_attribs=True)
 class Broker:
     id: int
-    CSABusinessNumber: Optional[int] = None
+    CSA_BusinessNumber: Optional[int] = None
     href: Optional[str] = None
     otherBroker: Optional[str] = None
 

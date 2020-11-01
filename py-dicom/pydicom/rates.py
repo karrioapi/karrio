@@ -38,7 +38,7 @@ class Parcel:
     width: Optional[int] = None
     note: Optional[str] = None
     status: Optional[int] = None
-    FCAClass: Optional[str] = None
+    FCA_Class: Optional[str] = None
     hazmat: Optional[Hazmat] = JStruct[Hazmat]
     requestReturnLabel: Optional[bool] = None
     returnWaybill: Optional[str] = None
@@ -89,17 +89,17 @@ class Rate:
     fuelChargePercentage: Optional[int] = None
     accountType: Optional[str] = None
     rateType: Optional[str] = None
-    cubicWeight: Optional[str] = None
-    basicCharge: Optional[str] = None
-    weightCharge: Optional[str] = None
+    cubicWeight: Optional[float] = None
+    basicCharge: Optional[float] = None
+    weightCharge: Optional[float] = None
     surcharges: List[Surcharge] = JList[Surcharge]
-    subTotal: Optional[str] = None
+    subTotal: Optional[float] = None
     unitOfMeasurement: Optional[str] = None
     taxesDetails: List[TaxesDetail] = JList[TaxesDetail]
-    taxes: Optional[str] = None
-    fuelCharge: Optional[str] = None
-    zoneCharge: Optional[str] = None
-    total: Optional[str] = None
+    taxes: Optional[float] = None
+    fuelCharge: Optional[float] = None
+    zoneCharge: Optional[float] = None
+    total: Optional[float] = None
 
 
 @attr.s(auto_attribs=True)
