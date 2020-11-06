@@ -394,6 +394,9 @@ class Services:
     def __iter__(self) -> Iterator[Enum]:
         return iter(self._services)
 
+    def __contains__(self, item) -> bool:
+        return item in [s.name for s in self._services]
+
     @property
     def first(self) -> Enum:
         return next(iter(self._services), None)

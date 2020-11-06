@@ -25,7 +25,7 @@ def parse_pickup_update_response(response: dict, settings: Settings) -> Tuple[Pi
 
 def pickup_update_request(payload: PickupUpdateRequest, settings: Settings) -> Serializable[Pipeline]:
 
-    request = Pipeline(
+    request: Pipeline = Pipeline(
         delete_pickup=lambda *_: _delete_pickup(payload, settings),
         create_pickup=partial(_create_pickup, payload=payload, settings=settings),
         retrieve_pickup=partial(_retrieve_pickup, payload=payload, settings=settings)

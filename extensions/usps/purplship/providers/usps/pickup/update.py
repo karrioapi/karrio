@@ -1,9 +1,8 @@
-from typing import Tuple, List, Union
+from typing import Tuple, List
 from pyusps.carrier_pickup_change_request import CarrierPickupChangeRequest, PackageType
 from purplship.core.units import Packages
 from purplship.core.utils import Serializable, concat_str
 from purplship.core.models import (
-    ShipmentDetails,
     ShipmentRequest,
     PickupUpdateRequest,
     PickupDetails,
@@ -12,8 +11,6 @@ from purplship.core.models import (
 
 from purplship.providers.usps.error import parse_error_response
 from purplship.providers.usps.utils import Settings
-
-Shipment = Union[ShipmentRequest, ShipmentDetails]
 
 
 def parse_pickup_update_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
@@ -24,7 +21,7 @@ def parse_pickup_update_response(response: dict, settings: Settings) -> Tuple[Pi
 
 
 def pickup_update_request(payload: PickupUpdateRequest, settings: Settings) -> Serializable:
-    shipments: List[Shipment] = payload.options.get('shipments', [])
+    shipments: List[ShipmentRequest] = payload.options.get('shipments', [])
     packages = Packages(payload.parcels)
 
     request = CarrierPickupChangeRequest(

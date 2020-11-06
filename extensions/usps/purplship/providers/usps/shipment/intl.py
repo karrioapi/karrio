@@ -2,6 +2,7 @@ from typing import Tuple, List, Union, Type
 import pyusps.evs_express_mail_intl_request as evs_express
 import pyusps.evs_priority_mail_intl_request as evs_priority
 import pyusps.evs_first_class_mail_intl_request as evs_first_class
+import pyusps.evs_gxg_get_label_request as evs_gxg
 from purplship.core.utils import Serializable, export
 from purplship.core.models import (
     ShipmentRequest,
@@ -16,6 +17,7 @@ eVSREquest = Type[Union[
     evs_express.eVSExpressMailIntlRequest,
     evs_priority.eVSPriorityMailIntlRequest,
     evs_first_class.eVSFirstClassMailIntlRequest,
+    evs_gxg.eVSGXGGetLabelRequest
 ]]
 
 
@@ -27,12 +29,12 @@ def parse_shipment_response(response: dict, settings: Settings) -> Tuple[Shipmen
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[eVSREquest]:
-    service = None
 
-    data = dict(
     # data = evs_express.eVSExpressMailIntlRequest(
     # data = evs_priority.eVSPriorityMailIntlRequest(
     # data = evs_first_class.eVSFirstClassMailIntlRequest(
+    # data = evs_gxg.eVSGXGGetLabelRequest(
+    data = dict(
         USERID=settings.username,
         Option=None,
         Revision=None,
@@ -46,9 +48,12 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         FromUrbanization=None,
         FromCity=None,
         FromState=None,
+        FromZIP5=None,
         FromZip5=None,
+        FromZIP4=None,
         FromZip4=None,
         FromPhone=None,
+        ShipFromZIP=None,
         FromCustomsReference=None,
         ToName=None,
         ToFirstName=None,
@@ -58,6 +63,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ToAddress2=None,
         ToAddress3=None,
         ToCity=None,
+        ToDPID=None,
         ToProvince=None,
         ToCountry=None,
         ToPostalCode=None,
@@ -65,6 +71,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ToPhone=None,
         ToFax=None,
         ToEmail=None,
+        ToTaxID=None,
         FirstClassMailType=None,
         ImportersReferenceNumber=None,
         NonDeliveryOption=None,
@@ -78,6 +85,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         RedirectZip4=None,
         Container=None,
         ShippingContents=None,
+        PurposeOfShipment=None,
+        PartiesToTransaction=None,
         Insured=None,
         InsuredNumber=None,
         InsuredAmount=None,
@@ -87,6 +96,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ContentType=None,
         ContentTypeOther=None,
         Agreement=None,
+        InsuredValue=None,
         Comments=None,
         LicenseNumber=None,
         CertificateNumber=None,
@@ -105,6 +115,30 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         Width=None,
         Height=None,
         Girth=None,
+        Shape=None,
+        CIRequired=None,
+        InvoiceDate=None,
+        CustomerOrderNumber=None,
+        CustOrderNumber=None,
+        TermsDelivery=None,
+        TermsDeliveryOther=None,
+        PackingCost=None,
+        CountryUltDest=None,
+        CIAgreement=None,
+        ShipDate=None,
+        CommercialShipment=None,
+        BuyerFirstName=None,
+        BuyerLastName=None,
+        BuyerAddress1=None,
+        BuyerAddress2=None,
+        BuyerAddress3=None,
+        BuyerCity=None,
+        BuyerState=None,
+        BuyerPostalCode=None,
+        BuyerCountry=None,
+        BuyerTaxID=None,
+        BuyerRecipient=None,
+        TermsPayment=None,
         ExtraServices=None,
         LabelTime=None,
         MeterPaymentFlag=None,
@@ -123,6 +157,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         CRID=None,
         VendorCode=None,
         VendorProductVersionNumber=None,
+        OverrideMID=None,
         ePostageMailerReporting=None,
         SenderFirstName=None,
         SenderLastName=None,
@@ -137,9 +172,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ChargebackCode=None,
     )
 
-    if 'first_class' in service:
+    if 'first_class' in payload.service:
         request = evs_first_class.eVSFirstClassMailIntlRequest(**data)
-    elif 'express' in service:
+    elif 'express' in payload.service:
         request = evs_express.eVSExpressMailIntlRequest(**data)
     else:
         request = evs_priority.eVSPriorityMailIntlRequest(**data)

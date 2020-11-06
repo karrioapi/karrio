@@ -15,7 +15,7 @@ from purplship.providers.boxknight.utils import Settings
 
 def parse_rate_response(response: dict, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
     errors = parse_error_response(response, settings)
-    details = []
+    details: List[RateDetails] = []
 
     return details, errors
 

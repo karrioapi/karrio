@@ -1,4 +1,4 @@
-from typing import Tuple, List, Union
+from typing import Tuple, List
 from pyboxknight.pickups import (
     PickupRequest as BoxKnightPickupRequest,
     PickupRequestRecipientAddress,
@@ -7,7 +7,6 @@ from pyboxknight.pickups import (
 from purplship.core.utils import Serializable, concat_str, to_date
 from purplship.core.models import (
     ShipmentDetails,
-    ShipmentRequest,
     PickupRequest,
     PickupDetails,
     Message,
@@ -15,8 +14,6 @@ from purplship.core.models import (
 
 from purplship.providers.boxknight.error import parse_error_response
 from purplship.providers.boxknight.utils import Settings
-
-Shipment = Union[ShipmentRequest, ShipmentDetails]
 
 
 def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
@@ -27,7 +24,7 @@ def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDet
 
 
 def pickup_request(payload: PickupRequest, _) -> Serializable:
-    shipments: List[Shipment] = payload.options.get('shipments', [])
+    shipments: List[ShipmentDetails] = payload.options.get('shipments', [])
     after = to_date(f"{payload.pickup_date} {payload.ready_time}", current_format="%Y-%m-%d %H:%M")
     before = to_date(f"{payload.pickup_date} {payload.ready_time}", current_format="%Y-%m-%d %H:%M")
 

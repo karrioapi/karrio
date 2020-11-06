@@ -12,7 +12,7 @@ from purplship.core.models import (
     Message
 )
 
-from purplship.providers.usps.units import ServiceType, Container, LabelFormat
+from purplship.providers.usps.units import RateService, Container, LabelFormat
 from purplship.providers.usps.error import parse_error_response
 from purplship.providers.usps.utils import Settings
 
@@ -25,7 +25,7 @@ def parse_shipment_response(response: dict, settings: Settings) -> Tuple[Shipmen
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable:
-    service = ServiceType[payload.service].value
+    service = RateService[payload.service].value
     packages = Packages(payload.parcels)
     package = packages[0]
 

@@ -99,7 +99,7 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    products = Services(payload.services, ProductCode)
+    products = [*Services(payload.services, ProductCode)]
     special_services = [*Services(payload.options.keys(), SpecialServiceCode)]
     options = Options(payload.options)
 

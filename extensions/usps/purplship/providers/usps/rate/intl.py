@@ -1,12 +1,12 @@
 from typing import Tuple, List
 from datetime import datetime
 from pyusps.intl_rate_v2_request import IntlRateV2Request, PackageType, ExtraServicesType
-from pyusps.intl_rate_v2_response import RateService, ExtraServiceType
+from pyusps.intl_rate_v2_response import ServiceType, ExtraServiceType
 from purplship.core.utils import export, Serializable, Element, decimal, to_date, build
 from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
 from purplship.core.units import Packages, Country, Weight, WeightUnit, Services
 
-from purplship.providers.usps.units import ServiceType, ExtraService, IntlPackageType, Service
+from purplship.providers.usps.units import RateService, ExtraService, IntlPackageType, Service
 from purplship.providers.usps.error import parse_error_response
 from purplship.providers.usps import Settings
 
@@ -57,8 +57,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
     services = Services(payload.options.keys(), RateService)
     extra_services = Services(payload.services, ExtraService)
 
-    commercial = "Y" if "Commercial" in services else "N"
-    commercial_plus = "Y" if "Plus" in services else "N"
+    commercial = "Y" if "commercial" in services else "N"
+    commercial_plus = "Y" if "plus" in services else "N"
     country = (
         Country[payload.recipient.country_code].value
         if payload.recipient.country_code else None

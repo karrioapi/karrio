@@ -110,4 +110,4 @@ class Mapper(BaseMapper):
     def parse_tracking_response(
         self, response: Deserializable[str]
     ) -> Tuple[List[TrackingDetails], List[Message]]:
-        return parse_tracking_reponse(response.deserialize(), self.settings)
+        return parse_tracking_response(response.deserialize(), self.settings)

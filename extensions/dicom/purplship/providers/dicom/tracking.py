@@ -12,7 +12,7 @@ from purplship.providers.dicom.utils import Settings
 
 def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     errors = parse_error_response(response, settings)
-    details = []
+    details: List[TrackingDetails] = []
 
     return details, errors
 

@@ -37,7 +37,6 @@ from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
 from purplship.core.units import Options, Packages, PaymentType
-from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
 from purplship.providers.ups.units import (
     ShippingPackagingType,
@@ -223,7 +222,9 @@ def shipment_request(
                         [
                             NotificationType(
                                 NotificationCode=event,
-                                EMail=EmailDetailsType(EMailAddress=[notification_email]),
+                                EMail=EmailDetailsType(EMailAddress=[
+                                    options.notification_email or payload.recipient.email
+                                ]),
                                 VoiceMessage=None,
                                 TextMessage=None,
                                 Locale=None,
@@ -233,7 +234,7 @@ def shipment_request(
                         if options.notification_email is None else None
                     ),
                 )
-                if any([options.cash_on_delivery, options.notification]) else None
+                if any([options.cash_on_delivery, options.notification_email]) else None
             ),
             Package=[
                 PackageType(

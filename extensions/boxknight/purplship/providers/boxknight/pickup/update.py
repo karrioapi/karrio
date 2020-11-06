@@ -1,9 +1,8 @@
-from typing import Tuple, List, Union
+from typing import Tuple, List
 from pyboxknight.pickups import PickupUpdateRequest as BoxKnightPickupUpdateRequest
 from purplship.core.utils import Serializable
 from purplship.core.models import (
     ShipmentDetails,
-    ShipmentRequest,
     PickupUpdateRequest,
     PickupDetails,
     Message
@@ -11,8 +10,6 @@ from purplship.core.models import (
 
 from purplship.providers.boxknight.error import parse_error_response
 from purplship.providers.boxknight.utils import Settings
-
-Shipment = Union[ShipmentRequest, ShipmentDetails]
 
 
 def parse_pickup_update_response(response: dict, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
@@ -23,7 +20,7 @@ def parse_pickup_update_response(response: dict, settings: Settings) -> Tuple[Pi
 
 
 def pickup_update_request(payload: PickupUpdateRequest, _) -> Serializable:
-    shipments: List[Shipment] = payload.options.get('shipments', [])
+    shipments: List[ShipmentDetails] = payload.options.get('shipments', [])
 
     request = BoxKnightPickupUpdateRequest(
         orderIds=[shipment.shipment_identifier for shipment in shipments]
