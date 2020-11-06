@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from typing import List, Type, Optional, Iterator, Iterable
-from enum import Enum
-from purplship.core.utils import decimal
-from purplship.core.models import Insurance, COD, Notification, Parcel
+from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any
+from purplship.core.utils import decimal, Enum
+from purplship.core.models import Parcel
 from purplship.core.errors import (
     FieldError,
     FieldErrorCode,
@@ -255,35 +254,25 @@ class Packages(Iterable[Package]):
         parcels: List[Parcel],
         presets: Type[Enum] = None,
         required: List[str] = None,
+        max_weight: Weight = None,
     ):
         def compute_preset(parcel) -> Optional[PackagePreset]:
             if (presets is None) | (
-                presets is not None and parcel.package_preset not in presets.__members__
+                presets is not None and parcel.package_preset not in presets
             ):
                 return None
 
             return presets[parcel.package_preset].value
 
         self._items = [Package(parcel, compute_preset(parcel)) for parcel in parcels]
-
-        if required is not None:
-            errors = {}
-            for index, package in enumerate(self._items):
-                for field in required:
-                    prop = getattr(package, field)
-
-                    if prop is None or (hasattr(prop, "value") and prop.value is None):
-                        errors.update(
-                            {f"parcel[{index}].{field}": FieldErrorCode.required}
-                        )
-
-            if any(errors.items()):
-                raise FieldError(errors)
+        self._required = required
+        self._max_weight = max_weight
+        self.validate()
 
     def __getitem__(self, index: int) -> Package:
         return self._items[index]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._items)
 
     def __iter__(self) -> Iterator[Package]:
@@ -305,47 +294,109 @@ class Packages(Iterable[Package]):
             or None,
         )
 
+    def validate(self, required: List[str] = None, max_weight: Weight = None):
+        required = required or self._required
+        max_weight = max_weight or self._max_weight
+
+        if any(check is not None for check in [required, max_weight]):
+            errors = {}
+            for index, package in enumerate(self._items):
+                if required is not None:
+                    for field in required:
+                        prop = getattr(package, field)
+
+                        if prop is None or (hasattr(prop, "value") and prop.value is None):
+                            errors.update(
+                                {f"parcel[{index}].{field}": FieldErrorCode.required}
+                            )
+
+                if max_weight is not None and (package.weight.LB or 0.0) > max_weight.LB:
+                    errors.update({f"parcel[{index}].weight": FieldErrorCode.exceeds})
+
+            if any(errors.items()):
+                raise FieldError(errors)
+
 
 class Options:
-    def __init__(self, payload: dict):
-        self._payload = payload
+    def __init__(self, options: dict, option_type: Optional[Enum] = None):
+        self._options = (options if option_type is None else {
+            key: val for key, val in options.items()
+            if key in option_type or key in Options.Code
+        })
+
+        for key, val in self._options.items():
+            if not hasattr(Options, key):
+                setattr(self, key, val)
+
+    def __getitem__(self, item):
+        return self._options.get(item)
+
+    def __contains__(self, item) -> bool:
+        return item in self._options
+
+    def __len__(self) -> int:
+        return len(self._options.items())
+
+    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+        return iter(self._options.items())
 
     @property
     def has_content(self):
-        return any(o for o in self._payload if o in Options.Code.__members__)
+        return any(o for o in self._options if o in Options.Code.__members__)
 
     @property
-    def cash_on_delivery(self):
-        if Options.Code.cash_on_delivery.name in self._payload:
-            return COD(**self._payload[Options.Code.cash_on_delivery.name])
-        return None
+    def cash_on_delivery(self) -> float:
+        return self._options.get(Options.Code.cash_on_delivery.name)
 
     @property
-    def currency(self):
-        return self._payload.get(Options.Code.currency.name)
+    def currency(self) -> str:
+        return self._options.get(Options.Code.currency.name)
 
     @property
-    def insurance(self):
-        if Options.Code.insurance.name in self._payload:
-            return Insurance(**self._payload[Options.Code.insurance.name])
-        return None
+    def insurance(self) -> float:
+        return self._options.get(Options.Code.insurance.name)
 
     @property
-    def notification(self):
-        if Options.Code.notification.name in self._payload:
-            return Notification(**self._payload[Options.Code.notification.name])
-        return None
+    def label_format(self) -> str:
+        return self._options.get(Options.Code.label_format.name)
 
     @property
-    def printing(self):
-        return self._payload.get(Options.Code.printing.name)
+    def label_printing(self) -> str:
+        return self._options.get(Options.Code.label_printing.name)
+
+    @property
+    def notification_emails(self):
+        return self._options.get(Options.Code.notification.name)
+
+    @property
+    def notification_email(self):
+        emails = str.split(self.notification_emails or '', ',', maxsplit=1)
+        return next((email for email in emails if email != ''), None)
 
     class Code(Enum):  # TODO:: Need to be documented
         cash_on_delivery = "COD"
         currency = "currency"
         insurance = "insurance"
-        notification = "notification"
-        printing = "printing"
+        label_printing = "label_printing"
+        label_format = "label_format"
+        notification_emails = "notification_emails"
+
+
+class Services:
+    def __init__(self, services: Iterable, service_type: Type[Enum]):
+        self._services = [
+            service_type[s] for s in services if s in service_type
+        ]
+
+    def __len__(self) -> int:
+        return len(self._services)
+
+    def __iter__(self) -> Iterator[Enum]:
+        return iter(self._services)
+
+    @property
+    def first(self) -> Enum:
+        return next(iter(self._services), None)
 
 
 class Phone:

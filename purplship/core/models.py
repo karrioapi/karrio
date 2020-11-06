@@ -181,10 +181,10 @@ class PickupRequest:
 class PickupUpdateRequest:
     """pickup update request type."""
 
+    confirmation_number: str
     pickup_date: str
     ready_time: str
     closing_time: str
-    confirmation_number: str
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
