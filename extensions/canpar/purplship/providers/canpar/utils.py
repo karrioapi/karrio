@@ -7,7 +7,7 @@ from purplship.core.utils import Envelope, apply_namespaceprefix, export
 class Settings(BaseSettings):
     """Canpar connection settings."""
 
-    user_id: str
+    username: str
     password: str
     language: str = "en"
     id: str = None

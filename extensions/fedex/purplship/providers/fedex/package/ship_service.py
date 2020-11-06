@@ -137,7 +137,7 @@ def process_shipment_request(
             TotalWeight=FedexWeight(
                 Units=WeightUnits.LB.value, Value=packages.weight.LB
             ),
-            TotalInsuredValue=options.insurance.amount if options.insurance else None,
+            TotalInsuredValue=options.insurance,
             PreferredCurrency=options.currency,
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
@@ -242,8 +242,7 @@ def process_shipment_request(
                 PaymentType=payment_type,
                 Payor=Payor(
                     ResponsibleParty=Party(
-                        AccountNumber=payload.payment.account_number
-                        or settings.account_number,
+                        AccountNumber=(payload.payment.account_number or settings.account_number),
                         Tins=None,
                         Contact=None,
                         Address=None,
@@ -252,47 +251,48 @@ def process_shipment_request(
             ),
             SpecialServicesRequested=ShipmentSpecialServicesRequested(
                 SpecialServiceTypes=special_services,
-                CodDetail=CodDetail(
-                    CodCollectionAmount=Money(
-                        Currency=options.currency or "USD",
-                        Amount=options.cash_on_delivery.amount,
-                    ),
-                    AddTransportationChargesDetail=None,
-                    CollectionType=CodCollectionType.CASH,
-                    CodRecipient=None,
-                    FinancialInstitutionContactAndAddress=None,
-                    RemitToName=None,
-                    ReferenceIndicator=None,
-                    ReturnTrackingId=None,
-                )
-                if options.cash_on_delivery
-                else None,
+                CodDetail=(
+                    CodDetail(
+                        CodCollectionAmount=Money(
+                            Currency=options.currency or "USD",
+                            Amount=options.cash_on_delivery,
+                        ),
+                        AddTransportationChargesDetail=None,
+                        CollectionType=CodCollectionType.CASH,
+                        CodRecipient=None,
+                        FinancialInstitutionContactAndAddress=None,
+                        RemitToName=None,
+                        ReferenceIndicator=None,
+                        ReturnTrackingId=None,
+                    )
+                    if options.cash_on_delivery else None
+                ),
                 DeliveryOnInvoiceAcceptanceDetail=None,
                 HoldAtLocationDetail=None,
-                EventNotificationDetail=ShipmentEventNotificationDetail(
-                    AggregationType=None,
-                    PersonalMessage=None,
-                    EventNotifications=[
-                        ShipmentEventNotificationSpecification(
-                            Role=None,
-                            Events=NOTIFICATION_EVENTS,
-                            NotificationDetail=NotificationDetail(
-                                NotificationType="EMAIL",
-                                EmailDetail=EMailDetail(
-                                    EmailAddress=options.notification.email
-                                    or payload.shipper.email,
-                                    Name=payload.shipper.person_name,
+                EventNotificationDetail=(
+                    ShipmentEventNotificationDetail(
+                        AggregationType=None,
+                        PersonalMessage=None,
+                        EventNotifications=[
+                            ShipmentEventNotificationSpecification(
+                                Role=None,
+                                Events=NOTIFICATION_EVENTS,
+                                NotificationDetail=NotificationDetail(
+                                    NotificationType="EMAIL",
+                                    EmailDetail=EMailDetail(
+                                        EmailAddress=options.notification_email or payload.recipient.email,
+                                        Name=payload.recipient.person_name or payload.recipient.company_name,
+                                    ),
+                                    Localization=Localization(
+                                        LanguageCode="EN", LocaleCode=None
+                                    ),
                                 ),
-                                Localization=Localization(
-                                    LanguageCode="EN", LocaleCode=None
-                                ),
-                            ),
-                            FormatSpecification="TEXT",
-                        )
-                    ],
-                )
-                if options.notification
-                else None,
+                                FormatSpecification="TEXT",
+                            )
+                        ],
+                    )
+                    if options.notification_email is None else None
+                ),
                 ReturnShipmentDetail=None,
                 PendingShipmentDetail=None,
                 InternationalControlledExportDetail=None,

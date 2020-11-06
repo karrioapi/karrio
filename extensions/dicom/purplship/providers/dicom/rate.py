@@ -7,7 +7,7 @@ from pydicom.rates import (
     Rate,
     RateResponse,
 )
-from purplship.core.units import Packages
+from purplship.core.units import Packages, Services, Options
 from purplship.core.utils import Serializable, to_dict, decimal
 from purplship.core.models import (
     ChargeDetails,
@@ -64,15 +64,8 @@ def _extract_details(rate: Rate, response: RateResponse, settings: Settings) -> 
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DicomRateRequest]:
     packages = Packages(payload.parcels)
-    service = next(
-        (Service[s] for s in payload.services if s in Service.__members__),
-        Service.dicom_ground_delivery
-    ).value
-    options = {
-        key: (value if Option[key].value in ['DCV', 'COD'] else None)
-        for key, value in payload.options
-        if key in Option.__members__
-    }
+    service = (Services(payload.services, Service).first or Service.dicom_ground_delivery).value
+    options = Options(payload.options, Option)
 
     request = DicomRateRequest(
         category="Parcel",
@@ -112,7 +105,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Dicom
         billing=settings.billing_account,
         promoCodes=None,
         surcharges=[
-            Surcharge(type=key, value=value) for key, value in options.items()
+            Surcharge(
+                type=key,
+                value=(value if Option[key].value in ['DCV', 'COD'] else None)
+            )
+            for key, value in options
         ],
         appointment=None,
     )

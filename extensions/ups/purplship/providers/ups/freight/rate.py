@@ -18,7 +18,7 @@ from pyups.freight_rate_web_service_schema import (
 )
 from purplship.core.utils import export, concat_str, decimal, Serializable
 from purplship.core.utils.soap import clean_namespaces, create_envelope
-from purplship.core.units import Packages
+from purplship.core.units import Packages, Services
 from purplship.core.utils.xml import Element
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.providers.ups.units import (
@@ -89,13 +89,10 @@ def rate_request(
 ) -> Serializable[FreightRateRequest]:
     packages = Packages(payload.parcels, PackagePresets)
     service = (
-        [
-            RatingServiceCode[svc]
-            for svc in payload.services
-            if svc in RatingServiceCode.__members__
-        ]
-        + [RatingServiceCode.ups_freight_ltl_guaranteed]
-    )[0]
+        Services(payload.services, RatingServiceCode).first or
+        RatingServiceCode.ups_freight_ltl_guaranteed
+    )
+
     request = FreightRateRequest(
         Request=common.RequestType(
             TransactionReference=common.TransactionReferenceType(

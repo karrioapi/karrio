@@ -107,11 +107,10 @@ def shipment_request(
                     CountryCode=payload.shipper.country_code,
                 ),
                 AttentionName=payload.shipper.person_name,
-                Phone=FreightShipPhoneType(
-                    Number=payload.shipper.phone_number, Extension=None
-                )
-                if payload.shipper.phone_number is not None
-                else None,
+                Phone=(
+                    FreightShipPhoneType(Number=payload.shipper.phone_number)
+                    if payload.shipper.phone_number is not None else None
+                ),
                 FaxNumber=None,
                 EMailAddress=payload.shipper.email,
             ),
@@ -132,17 +131,19 @@ def shipment_request(
                 ),
                 TariffPoint=None,
                 AttentionName=payload.recipient.person_name,
-                Phone=PhoneType(Number=payload.recipient.phone_number, Extension=None)
-                if payload.recipient.phone_number is not None
-                else None,
+                Phone=(
+                    PhoneType(Number=payload.recipient.phone_number)
+                    if payload.recipient.phone_number is not None else None
+                ),
                 FaxNumber=None,
                 EMailAddress=payload.recipient.email,
             ),
             PaymentInformation=None,
             ManufactureInformation=None,
-            Service=ShipCodeDescriptionType(Code=service)
-            if service is not None
-            else None,
+            Service=(
+                ShipCodeDescriptionType(Code=service)
+                if service is not None else None
+            ),
             HandlingUnitOne=None,
             HandlingUnitTwo=None,
             ExistingShipmentID=None,
@@ -188,45 +189,47 @@ def shipment_request(
                 for package in packages
             ],
             Reference=None,
-            ShipmentServiceOptions=ShipmentServiceOptionsType(
-                EMailInformation=[
-                    EMailNotificationType(
-                        EMailAddress=options.notification.email
-                        or payload.shipper.email,
-                        EventType=NOTIFICATION_EVENT_TYPES,
-                    )
-                ]
-                if options.notification
-                else None,
-                PickupOptions=None,
-                DeliveryOptions=None,
-                OverSeasLeg=None,
-                COD=CODType(
-                    CODValue=CODValueType(
-                        CurrencyCode=options.currency or "USD",
-                        MonetaryValue=options.cash_on_delivery.amount,
+            ShipmentServiceOptions=(
+                ShipmentServiceOptionsType(
+                    EMailInformation=(
+                        [
+                            EMailNotificationType(
+                                EMailAddress=options.notification_email or payload.recipient.email,
+                                EventType=NOTIFICATION_EVENT_TYPES,
+                            )
+                        ]
+                        if options.notification_email is None else None
                     ),
-                    CODPaymentMethod=None,
-                    CODBillingOption=None,
-                    RemitTo=None,
+                    PickupOptions=None,
+                    DeliveryOptions=None,
+                    OverSeasLeg=None,
+                    COD=(
+                        CODType(
+                            CODValue=CODValueType(
+                                CurrencyCode=options.currency or "USD",
+                                MonetaryValue=options.cash_on_delivery,
+                            ),
+                            CODPaymentMethod=None,
+                            CODBillingOption=None,
+                            RemitTo=None,
+                        )
+                        if options.cash_on_delivery else None
+                    ),
+                    DangerousGoods=None,
+                    SortingAndSegregating=None,
+                    DeclaredValue=None,
+                    ExcessDeclaredValue=None,
+                    CustomsValue=None,
+                    DeliveryDutiesPaidIndicator=None,
+                    DeliveryDutiesUnpaidIndicator=None,
+                    HandlingCharge=None,
+                    CustomsClearanceIndicator=None,
+                    FreezableProtectionIndicator=None,
+                    ExtremeLengthIndicator=None,
+                    LinearFeet=None,
                 )
-                if options.cash_on_delivery
-                else None,
-                DangerousGoods=None,
-                SortingAndSegregating=None,
-                DeclaredValue=None,
-                ExcessDeclaredValue=None,
-                CustomsValue=None,
-                DeliveryDutiesPaidIndicator=None,
-                DeliveryDutiesUnpaidIndicator=None,
-                HandlingCharge=None,
-                CustomsClearanceIndicator=None,
-                FreezableProtectionIndicator=None,
-                ExtremeLengthIndicator=None,
-                LinearFeet=None,
-            )
-            if options.has_content
-            else None,
+                if options.has_content else None
+            ),
             PickupRequest=None,
             Documents=None,
             ITNNumber=None,

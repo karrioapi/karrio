@@ -20,7 +20,7 @@ from pyfedex.rate_service_v26 import (
 )
 from purplship.core.utils import export, concat_str, Serializable, decimal, to_date
 from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
-from purplship.core.units import Packages, Options
+from purplship.core.units import Packages, Options, Services
 from purplship.core.utils.xml import Element
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets
@@ -98,20 +98,13 @@ def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[FedexRateRequest]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    service = Services(payload.services, ServiceType).first
+    options = Options(payload.options)
     package_type = (
         PackagingType[packages[0].packaging_type or "your_packaging"].value
-        if len(packages) == 1
-        else None
+        if len(packages) == 1 else None
     )
-    service = next(
-        (
-            ServiceType[s].value
-            for s in payload.services
-            if s in ServiceType.__members__
-        ),
-        None,
-    )
-    options = Options(payload.options)
+    request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -125,7 +118,7 @@ def rate_request(
         RequestedShipment=RequestedShipment(
             ShipTimestamp=datetime.now(),
             DropoffType="REGULAR_PICKUP",
-            ServiceType=service,
+            ServiceType=service.value,
             PackagingType=package_type,
             VariationOptions=None,
             TotalWeight=FedexWeight(
@@ -137,15 +130,17 @@ def rate_request(
             ShipmentAuthorizationDetail=None,
             Shipper=Party(
                 AccountNumber=settings.account_number,
-                Tins=[
-                    TaxpayerIdentification(TinType=None, Number=tax)
-                    for tax in [
-                        payload.shipper.federal_tax_id,
-                        payload.shipper.state_tax_id,
+                Tins=(
+                    [
+                        TaxpayerIdentification(TinType=None, Number=tax)
+                        for tax in [
+                            payload.shipper.federal_tax_id,
+                            payload.shipper.state_tax_id,
+                        ]
                     ]
-                ]
-                if any([payload.shipper.federal_tax_id, payload.shipper.state_tax_id])
-                else None,
+                    if any([payload.shipper.federal_tax_id, payload.shipper.state_tax_id])
+                    else None
+                ),
                 Contact=Contact(
                     ContactId=None,
                     PersonName=payload.shipper.person_name,
@@ -245,9 +240,7 @@ def rate_request(
             BlockInsightVisibility=None,
             LabelSpecification=None,
             ShippingDocumentSpecification=None,
-            RateRequestTypes=(
-                ["LIST"] + ([] if "currency" not in payload.options else ["PREFERRED"])
-            ),
+            RateRequestTypes=request_types,
             EdtRequestType=None,
             PackageCount=len(packages),
             ShipmentOnlyFields=None,

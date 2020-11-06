@@ -15,6 +15,6 @@ from purplship.providers.dicom.pickup import (
     pickup_request,
 )
 from purplship.providers.dicom.tracking import (
-    tracking_pins_request,
-    parse_tracking_summary,
+    parse_tracking_response,
+    tracking_request,
 )

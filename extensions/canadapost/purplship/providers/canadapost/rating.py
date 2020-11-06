@@ -17,13 +17,8 @@ from datetime import datetime
 from typing import List, Tuple, cast
 from purplship.core.utils import Serializable, export, Element, decimal
 from purplship.providers.canadapost.utils import Settings
-from purplship.core.units import Country, Currency, Packages
-from purplship.core.errors import (
-    OriginNotServicedError,
-    FieldError,
-    FieldErrorCode,
-    MultiParcelNotSupportedError,
-)
+from purplship.core.units import Country, Currency, Packages, Services, Options
+from purplship.core.errors import OriginNotServicedError
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.providers.canadapost.error import parse_error_response
 from purplship.providers.canadapost.units import OptionCode, ServiceType, PackagePresets
@@ -94,14 +89,8 @@ def mailing_scenario_request(
         raise OriginNotServicedError(payload.shipper.country_code)
 
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
-    requested_services = [
-        svc for svc in payload.services if svc in ServiceType.__members__
-    ]
-    requested_options = {
-        code: value
-        for (code, value) in payload.options.items()
-        if code in OptionCode.__members__
-    }
+    requested_services = Services(payload.services, ServiceType)
+    requested_options = Options(payload.options, OptionCode)
 
     request = mailing_scenario(
         customer_number=settings.customer_number,
@@ -112,15 +101,11 @@ def mailing_scenario_request(
         options=(
             optionsType(
                 option=[
-                    optionType(
-                        option_amount=None,  # TODO:: correct this when integrating Options
-                        option_code=OptionCode[code].value,
-                    )
-                    for code, value in requested_options.items()
+                    optionType(option_code=code, option_amount=value)
+                    for code, value in requested_options
                 ]
             )
-            if (len(requested_options) > 0)
-            else None
+            if any(requested_options) else None
         ),
         parcel_characteristics=parcel_characteristicsType(
             weight=package.weight.KG,
@@ -137,8 +122,7 @@ def mailing_scenario_request(
             servicesType(
                 service_code=[ServiceType[code].value for code in requested_services]
             )
-            if (len(requested_services) > 0)
-            else None
+            if any(requested_services) else None
         ),
         origin_postal_code=payload.shipper.postal_code,
         destination=destinationType(

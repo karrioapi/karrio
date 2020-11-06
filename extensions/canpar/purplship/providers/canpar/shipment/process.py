@@ -142,7 +142,7 @@ def process_shipment_request(payload: ShipmentRequest, settings: Settings) -> Se
                     total_with_handling=None,
                     user_id=None,
                 ),
-                user_id=settings.user_id
+                user_id=settings.username
             )
         )
     )

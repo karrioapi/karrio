@@ -20,9 +20,9 @@ from purplship.core.models import (
 from purplship.providers.dicom import (
     parse_shipment_cancel_response,
     parse_pickup_update_response,
-    parse_pickup_cancel_reponse,
+    parse_pickup_cancel_response,
     parse_shipment_response,
-    parse_tracking_reponse,
+    parse_tracking_response,
     parse_pickup_response,
     parse_rate_response,
 

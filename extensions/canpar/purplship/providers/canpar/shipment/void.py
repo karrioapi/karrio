@@ -38,7 +38,7 @@ def void_shipment_request(payload: ShipmentCancelRequest, settings: Settings) ->
             request=VoidShipmentRq(
                 id=int(payload.shipment_identifier),
                 password=settings.password,
-                user_id=settings.user_id
+                user_id=settings.username
             )
         )
     )

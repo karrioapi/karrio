@@ -65,7 +65,7 @@ def create_shipping_request(
     options = Options(payload.options)
     shipper_phone_number = Phone(payload.shipper.phone_number)
     recipient_phone_number = Phone(payload.recipient.phone_number)
-    printing = PrinterType[options.printing or "regular"].value
+    printing = PrinterType[options.label_printing or "regular"].value
     special_services = {
         Service[name].value: value
         for name, value in payload.options.items()
@@ -272,13 +272,10 @@ def create_shipping_request(
                 PickupInformation=PickupInformation(
                     PickupType=PickupType.DROP_OFF.value
                 ),
-                NotificationInformation=NotificationInformation(
-                    ConfirmationEmailAddress=options.notification.email
-                    or payload.shipper.email,
-                    AdvancedShippingNotificationMessage=None,
-                )
-                if options.notification
-                else None,
+                NotificationInformation=(
+                    NotificationInformation(ConfirmationEmailAddress=options.notification_email or payload.recipient.email)
+                    if options.notification_email is None else None
+                ),
                 TrackingReferenceInformation=TrackingReferenceInformation(
                     Reference1=payload.reference
                 ),

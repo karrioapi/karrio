@@ -81,10 +81,10 @@ def contract_shipment_request(
     options = Options(payload.options)
 
     def compute_amount(code: str, _: Any):
-        if code == OptionCode.insurance.value:
-            return options.insurance.amount
-        if code == OptionCode.cash_on_delivery.value:
-            return options.cash_on_delivery.amount
+        if code == OptionCode.insurance.name:
+            return options.insurance
+        if code == OptionCode.cash_on_delivery.name:
+            return options.cash_on_delivery
         return None
 
     special_services = {
@@ -164,16 +164,17 @@ def contract_shipment_request(
             )
             if len(special_services) > 0
             else None,
-            notification=NotificationType(
-                email=options.notification.email or payload.shipper.email,
-                on_shipment=True,
-                on_exception=True,
-                on_delivery=True,
-            )
-            if options.notification
-            else None,
+            notification=(
+                NotificationType(
+                    email=options.notification_email or payload.recipient.email,
+                    on_shipment=True,
+                    on_exception=True,
+                    on_delivery=True,
+                )
+                if options.notification_email else None
+            ),
             print_preferences=PrintPreferencesType(
-                output_format=PrinterType[options.printing or "regular"].value,
+                output_format=PrinterType[options.label_printing or "regular"].value,
                 encoding=None,
             ),
             preferences=PreferencesType(

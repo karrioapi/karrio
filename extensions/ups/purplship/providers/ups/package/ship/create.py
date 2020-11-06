@@ -83,10 +83,8 @@ def shipment_request(
     options = Options(payload.options)
     service = ShippingServiceCode[payload.service].value
 
-    if (("freight" in service) or ("ground" in service)) and (
-        packages.weight.value is None
-    ):
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
+    if any(key in service for key in ["freight", "ground"]):
+        packages.validate(required=["weight"])
 
     charges: Dict[str, Payment] = {
         "01": payload.payment,
@@ -209,35 +207,34 @@ def shipment_request(
             if any(charges.values())
             else None,
             Service=(ServiceType(Code=service) if service is not None else None),
-            ShipmentServiceOptions=ShipmentServiceOptionsType(
-                COD=CODType(
-                    CODFundsCode=None,
-                    CODAmount=CurrencyMonetaryType(
-                        CurrencyCode=options.currency or "USD",
-                        MonetaryValue=options.cash_on_delivery.amount,
+            ShipmentServiceOptions=(
+                ShipmentServiceOptionsType(
+                    COD=(
+                        CODType(
+                            CODFundsCode=None,
+                            CODAmount=CurrencyMonetaryType(
+                                CurrencyCode=options.currency or "USD",
+                                MonetaryValue=options.cash_on_delivery,
+                            ),
+                        )
+                        if options.cash_on_delivery else None
+                    ),
+                    Notification=(
+                        [
+                            NotificationType(
+                                NotificationCode=event,
+                                EMail=EmailDetailsType(EMailAddress=[notification_email]),
+                                VoiceMessage=None,
+                                TextMessage=None,
+                                Locale=None,
+                            )
+                            for event in [8]
+                        ]
+                        if options.notification_email is None else None
                     ),
                 )
-                if options.cash_on_delivery
-                else None,
-                Notification=[
-                    NotificationType(
-                        NotificationCode=event,
-                        EMail=EmailDetailsType(
-                            EMailAddress=[
-                                options.notification.email or payload.shipper.email
-                            ],
-                        ),
-                        VoiceMessage=None,
-                        TextMessage=None,
-                        Locale=None,
-                    )
-                    for event in [8]
-                ]
-                if options.notification
-                else None,
-            )
-            if any([options.cash_on_delivery, options.notification])
-            else None,
+                if any([options.cash_on_delivery, options.notification]) else None
+            ),
             Package=[
                 PackageType(
                     Description=package.parcel.description,

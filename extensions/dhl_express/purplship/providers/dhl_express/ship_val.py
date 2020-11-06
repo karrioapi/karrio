@@ -90,7 +90,7 @@ def shipment_request(
     special_services = [
         SpecialServiceCode[s].value
         for s in payload.options.keys()
-        if s in SpecialServiceCode.__members__
+        if s in SpecialServiceCode
     ]
     if is_international and payload.doc_images is not None:
         special_services.append(SpecialServiceCode.dhl_paperless_trade.value)
@@ -201,11 +201,9 @@ def shipment_request(
             DimensionUnit=DimensionUnit.I.value,
             Date=time.strftime("%Y-%m-%d"),
             PackageType=package_type,
-            IsDutiable="Y" if payload.customs is not None else "N",
-            InsuredAmount=options.insurance.amount if options.insurance else None,
-            ShipmentCharges=options.cash_on_delivery.amount
-            if options.cash_on_delivery
-            else None,
+            IsDutiable=("Y" if payload.customs is not None else "N"),
+            InsuredAmount=options.insurance,
+            ShipmentCharges=(options.cash_on_delivery if options.cash_on_delivery else None),
             DoorTo=delivery_type,
             GlobalProductCode=product,
             LocalProductCode=product,
@@ -224,24 +222,24 @@ def shipment_request(
         SpecialService=[
             SpecialService(SpecialServiceType=service) for service in special_services
         ],
-        Notification=Notification(
-            EmailAddress=options.notification.email or payload.shipper.email,
-        )
-        if options.notification
-        else None,
+        Notification=(
+            Notification(EmailAddress=options.notification_email or payload.recipient.email)
+            if options.notification_email is None else None
+        ),
         LabelImageFormat="PDF",
-        DocImages=DocImages(
-            DocImage=[
-                DocImage(
-                    Type=doc.type,
-                    ImageFormat=doc.format,
-                    Image=b64decode(doc.image + "=" * (-len(doc.image) % 4)),
-                )
-                for doc in payload.doc_images
-            ]
-        )
-        if len(payload.doc_images) > 0
-        else None,
+        DocImages=(
+            DocImages(
+                DocImage=[
+                    DocImage(
+                        Type=doc.type,
+                        ImageFormat=doc.format,
+                        Image=b64decode(doc.image + "=" * (-len(doc.image) % 4)),
+                    )
+                    for doc in payload.doc_images
+                ]
+            )
+            if any(payload.doc_images) else None
+        ),
         RequestArchiveDoc=None,
         NumberOfArchiveDoc=None,
         Label=None,

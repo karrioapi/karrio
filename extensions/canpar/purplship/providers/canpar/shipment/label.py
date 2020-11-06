@@ -26,7 +26,7 @@ def get_label_request(payload: LabelRequest, settings: Settings) -> Serializable
                 id=payload.shipment_id,
                 password=settings.password,
                 thermal=payload.thermal,
-                user_id=settings.user_id
+                user_id=settings.username
             )
         )
     )

@@ -72,7 +72,7 @@ def schedule_pickup_request(payload: PickupRequest, settings: Settings) -> Seria
                     unit_of_measure=WeightUnit.LB.value,
                     weight=packages.weight.LB
                 ),
-                user_id=settings.user_id
+                user_id=settings.username
             )
         )
     )

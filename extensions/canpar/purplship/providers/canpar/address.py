@@ -60,7 +60,7 @@ def search_canada_post(payload: AddressValidationRequest, settings: Settings) ->
                 street_name=concat_str(payload.address.address_line1, payload.address.address_line2, join=True) or "",
                 street_num="",
                 street_type="",
-                user_id=settings.user_id,
+                user_id=settings.username,
                 validate_only=True
             )
         )

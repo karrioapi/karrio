@@ -38,7 +38,7 @@ def cancel_pickup_request(payload: PickupCancelRequest, settings: Settings) -> S
             request=CancelPickupRq(
                 id=int(payload.confirmation_number),
                 password=settings.password,
-                user_id=settings.user_id
+                user_id=settings.username
             )
         )
     )

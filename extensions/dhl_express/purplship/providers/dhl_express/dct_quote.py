@@ -16,7 +16,7 @@ from pydhl.dct_req_global_2_0 import (
 from pydhl.dct_requestdatatypes_global import DCTDutiable
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 from purplship.core.utils import export, Serializable, Element, decimal, to_date
-from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit
+from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit, Services
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.providers.dhl_express.units import (
     Product,
@@ -99,39 +99,28 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
 
 def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRequest]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    products = Services(payload.services, ProductCode)
+    special_services = [*Services(payload.options.keys(), SpecialServiceCode)]
     options = Options(payload.options)
+
     is_international = payload.shipper.country_code != payload.recipient.country_code
     is_document = all([parcel.is_document for parcel in payload.parcels])
     is_dutiable = not is_document
-    products = [
-        ProductCode[svc].value
-        for svc in payload.services
-        if svc in ProductCode.__members__
-    ]
-    special_services = [
-        SpecialServiceCode[s].value
-        for s in payload.options.keys()
-        if s in SpecialServiceCode.__members__
-    ]
+
     if is_international and is_dutiable:
         special_services.append(SpecialServiceCode.dhl_paperless_trade.value)
+
     if len(products) == 0:
-        if is_international:
-            products = [
-                (
-                    ProductCode.dhl_express_worldwide_doc
-                    if is_document
-                    else ProductCode.dhl_express_worldwide_nondoc
-                ).value
-            ]
+        if is_international and is_document:
+            product = 'dhl_express_worldwide_doc'
+        elif is_international:
+            product = 'dhl_express_worldwide_nondoc'
+        elif is_document:
+            product = 'dhl_express_worldwide_doc'
         else:
-            products = [
-                (
-                    ProductCode.dhl_express_easy_doc
-                    if is_document
-                    else ProductCode.dhl_express_easy_nondoc
-                ).value
-            ]
+            product = 'dhl_express_easy_nondoc'
+
+        products = [ProductCode[product]]
 
     request = DCTRequest(
         GetQuote=GetQuoteType(
@@ -179,18 +168,14 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                 ShipmentWeight=packages.weight.LB,
                 Volume=None,
                 PaymentAccountNumber=settings.account_number,
-                InsuredCurrency=options.currency
-                if options.insurance is not None
-                else None,
-                InsuredValue=options.insurance.amount
-                if options.insurance is not None
-                else None,
+                InsuredCurrency=(options.currency if options.insurance is not None else None),
+                InsuredValue=options.insurance,
                 PaymentType=None,
                 AcctPickupCloseTime=None,
                 QtdShp=[
                     QtdShpType(
-                        GlobalProductCode=product,
-                        LocalProductCode=product,
+                        GlobalProductCode=product.value,
+                        LocalProductCode=product.value,
                         QtdShpExChrg=[
                             QtdShpExChrgType(SpecialServiceType=service)
                             for service in special_services
@@ -199,19 +184,24 @@ def dct_request(payload: RateRequest, settings: Settings) -> Serializable[DCTReq
                     for product in products
                 ],
             ),
-            Dutiable=DCTDutiable(
-                DeclaredValue=payload.options.get("value", 1.0),
-                DeclaredCurrency=options.currency,
-            )
-            if is_international and is_dutiable
-            else None,
+            Dutiable=(
+                DCTDutiable(DeclaredValue=1.0, DeclaredCurrency=options.currency)
+                if is_international and is_dutiable else None
+            ),
         ),
     )
+
     return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: DCTRequest) -> str:
-    namespacedef_ = 'xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "'
+    namespacedef_ = (
+        'xmlns:p="http://www.dhl.com" '
+        'xmlns:p1="http://www.dhl.com/datatypes" '
+        'xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" '
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+        'xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "'
+    )
     return export(
         request,
         name_="p:DCTRequest",

@@ -1,4 +1,4 @@
-from enum import Enum, Flag
+from purplship.core.utils import Enum, Flag
 from purplship.core.units import PackagePreset as BasePackagePreset
 from dataclasses import dataclass
 
@@ -134,10 +134,10 @@ class RatingServiceCode(Enum):
 
 
 class RatingOption(Enum):
-    negotiated_rates_indicator = "NegotiatedRatesIndicator"
-    frs_shipment_indicator = "FRSShipmentIndicator"
-    rate_chart_indicator = "RateChartIndicator"
-    user_level_discount_indicator = "UserLevelDiscountIndicator"
+    ups_negotiated_rates_indicator = "NegotiatedRatesIndicator"
+    ups_frs_shipment_indicator = "FRSShipmentIndicator"
+    ups_rate_chart_indicator = "RateChartIndicator"
+    ups_user_level_discount_indicator = "UserLevelDiscountIndicator"
 
 
 class ShippingPackagingType(Flag):
@@ -211,24 +211,24 @@ class ShippingServiceCode(Enum):
 
 
 class ServiceOption(Enum):
-    saturday_delivery_indicator = "SaturdayDeliveryIndicator"
-    access_point_cod = "AccessPointCOD"
-    deliver_to_addressee_only_indicator = "DeliverToAddresseeOnlyIndicator"
-    direct_delivery_only_indicator = "DirectDeliveryOnlyIndicator"
-    cod = "COD"
-    delivery_confirmation = "DeliveryConfirmation"
-    return_of_document_indicator = "ReturnOfDocumentIndicator"
-    up_scarbonneutral_indicator = "UPScarbonneutralIndicator"
-    certificate_of_origin_indicator = "CertificateOfOriginIndicator"
-    pickup_options = "PickupOptions"
-    delivery_options = "DeliveryOptions"
-    restricted_articles = "RestrictedArticles"
-    shipper_export_declaration_indicator = "ShipperExportDeclarationIndicator"
-    commercial_invoice_removal_indicator = "CommercialInvoiceRemovalIndicator"
-    import_control = "ImportControl"
-    return_service = "ReturnService"
-    sdl_shipment_indicator = "SDLShipmentIndicator"
-    epra_indicator = "EPRAIndicator"
+    ups_saturday_delivery_indicator = "SaturdayDeliveryIndicator"
+    ups_access_point_cod = "AccessPointCOD"
+    ups_deliver_to_addressee_only_indicator = "DeliverToAddresseeOnlyIndicator"
+    ups_direct_delivery_only_indicator = "DirectDeliveryOnlyIndicator"
+    ups_cod = "COD"
+    ups_delivery_confirmation = "DeliveryConfirmation"
+    ups_return_of_document_indicator = "ReturnOfDocumentIndicator"
+    ups_up_scarbonneutral_indicator = "UPScarbonneutralIndicator"
+    ups_certificate_of_origin_indicator = "CertificateOfOriginIndicator"
+    ups_pickup_options = "PickupOptions"
+    ups_delivery_options = "DeliveryOptions"
+    ups_restricted_articles = "RestrictedArticles"
+    ups_shipper_export_declaration_indicator = "ShipperExportDeclarationIndicator"
+    ups_commercial_invoice_removal_indicator = "CommercialInvoiceRemovalIndicator"
+    ups_import_control = "ImportControl"
+    ups_return_service = "ReturnService"
+    ups_sdl_shipment_indicator = "SDLShipmentIndicator"
+    ups_epra_indicator = "EPRAIndicator"
 
 
 class FreightClass(Enum):

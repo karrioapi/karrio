@@ -1,4 +1,4 @@
-from enum import Enum, Flag
+from purplship.core.utils import Enum, Flag
 from purplship.core.units import PackagePreset as BasePackagePreset
 from dataclasses import dataclass
 

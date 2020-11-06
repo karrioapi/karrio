@@ -1,8 +1,8 @@
-from enum import Enum
+from purplship.core.utils import Enum
 
 
 class Option(Enum):
-    boxknight_signature_required = "SAMEDAY"
+    boxknight_signature_required = "signature_required"
 
 
 class Service(Enum):

@@ -1,4 +1,4 @@
-from enum import Enum, Flag
+from purplship.core.utils import Enum, Flag
 from purplship.core.units import PackagePreset as BasePackagePreset
 from dataclasses import dataclass
 
@@ -52,15 +52,15 @@ class CreditCardType(Flag):
 
 
 class Service(Enum):
-    dangerous_goods = "Dangerous Goods"
-    chain_of_signature = "Chain of Signature"
-    express_cheque = "ExpressCheque"
-    hold_for_pickup = "Hold For Pickup"
-    return_services = "Return Services"
-    saturday_service = "Saturday Service"
-    origin_signature_not_required = "Origin Signature Not Required (OSNR)"
-    adult_signature_required = "Adult Signature Required (ASR)"
-    special_handling = "Special Handling"
+    purolator_dangerous_goods = "Dangerous Goods"
+    purolator_chain_of_signature = "Chain of Signature"
+    purolator_express_cheque = "ExpressCheque"
+    purolator_hold_for_pickup = "Hold For Pickup"
+    purolator_return_services = "Return Services"
+    purolator_saturday_service = "Saturday Service"
+    purolator_origin_signature_not_required = "Origin Signature Not Required (OSNR)"
+    purolator_adult_signature_required = "Adult Signature Required (ASR)"
+    purolator_special_handling = "Special Handling"
 
 
 class Product(Enum):

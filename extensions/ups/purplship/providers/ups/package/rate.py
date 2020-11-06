@@ -27,7 +27,7 @@ from purplship.core.utils import (
     Element,
 )
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, build
-from purplship.core.units import Packages
+from purplship.core.units import Packages, Services
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.providers.ups.units import (
@@ -128,21 +128,13 @@ def rate_request(
 ) -> Serializable[UPSRateRequest]:
     packages = Packages(payload.parcels, PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    service: str = next(
-        (
-            RatingServiceCode[s].value
-            for s in payload.services
-            if s in RatingServiceCode.__members__
-        ),
-        None,
-    )
+    service = Services(payload.services, RatingServiceCode).first
 
     if (
         (service is not None)
-        and (("freight" in service) or ("ground" in service))
-        and (packages.weight.value is None)
+        and (("freight" in service.value) or ("ground" in service.value))
     ):
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
+        packages.validate(required=["weight"])
 
     mps_packaging = RatingPackagingType.ups_unknown.value if len(packages) > 1 else None
 

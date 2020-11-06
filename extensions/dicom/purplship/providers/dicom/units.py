@@ -1,4 +1,4 @@
-from enum import Flag, Enum
+from purplship.core.utils import Flag, Enum
 
 
 class UnitOfMeasurement(Enum):

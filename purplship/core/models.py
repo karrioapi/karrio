@@ -1,5 +1,6 @@
 """Purplship Unified datatypes module."""
 import attr
+import warnings
 from typing import List, Dict
 from jstruct import JList, JStruct, REQUIRED
 
@@ -209,34 +210,6 @@ class AddressValidationRequest:
     """address validation request type."""
 
     address: Address = JStruct[Address, REQUIRED]
-
-
-# *** Unified option data types ***
-
-
-@attr.s(auto_attribs=True)
-class COD:
-    """cash on delivery option type."""
-
-    amount: float
-
-
-@attr.s(auto_attribs=True)
-class Notification:
-    """notification option type."""
-
-    email: str = None  # Only defined if other email than recipient
-    locale: str = "en"
-
-
-@attr.s(auto_attribs=True)
-class Insurance:
-    """insurance option type."""
-
-    amount: float
-
-
-# *** Unified response data types ***
 
 
 @attr.s(auto_attribs=True)

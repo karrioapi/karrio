@@ -64,28 +64,22 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     )
 
 
-def non_contract_shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[NonContractShipmentType]:
-    package = Packages(payload.parcels, PackagePresets).single
-
-    if package.weight.value is None:
-        raise FieldError({"parcel.weight": FieldErrorCode.required})
-
+def non_contract_shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShipmentType]:
+    package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     service = ServiceType[payload.service].value
     options = Options(payload.options)
 
     def compute_amount(code: str, _: Any):
-        if code == OptionCode.insurance.value:
-            return options.insurance.amount
-        if code == OptionCode.cash_on_delivery.value:
-            return options.cash_on_delivery.amount
+        if code == OptionCode.insurance.name:
+            return options.insurance
+        if code == OptionCode.cash_on_delivery.name:
+            return options.cash_on_delivery
         return None
 
     special_services = {
         OptionCode[name].value: compute_amount(OptionCode[name].value, value)
         for name, value in payload.options.items()
-        if name in OptionCode.__members__
+        if name in OptionCode
     }
 
     request = NonContractShipmentType(
@@ -122,19 +116,20 @@ def non_contract_shipment_request(
                     postal_zip_code=payload.recipient.postal_code,
                 ),
             ),
-            options=optionsType(
-                option=[
-                    OptionType(
-                        option_code=code,
-                        option_amount=amount,
-                        option_qualifier_1=None,
-                        option_qualifier_2=None,
-                    )
-                    for code, amount in special_services.items()
-                ]
-            )
-            if len(special_services) > 0
-            else None,
+            options=(
+                optionsType(
+                    option=[
+                        OptionType(
+                            option_code=code,
+                            option_amount=amount,
+                            option_qualifier_1=None,
+                            option_qualifier_2=None,
+                        )
+                        for code, amount in special_services.items()
+                    ]
+                )
+                if len(special_services) > 0 else None
+            ),
             parcel_characteristics=ParcelCharacteristicsType(
                 weight=package.weight.KG,
                 dimensions=dimensionsType(
@@ -145,14 +140,15 @@ def non_contract_shipment_request(
                 unpackaged=None,
                 mailing_tube=None,
             ),
-            notification=NotificationType(
-                email=options.notification.email or payload.shipper.email,
-                on_shipment=True,
-                on_exception=True,
-                on_delivery=True,
-            )
-            if options.notification
-            else None,
+            notification=(
+                NotificationType(
+                    email=options.notification_email or payload.recipient.email,
+                    on_shipment=True,
+                    on_exception=True,
+                    on_delivery=True,
+                )
+                if options.notification_email is not None else None
+            ),
             preferences=PreferencesType(
                 show_packing_instructions=True,
                 show_postage_rate=True,
@@ -163,34 +159,35 @@ def non_contract_shipment_request(
                 customer_ref_1=payload.reference,
                 customer_ref_2=None,
             ),
-            customs=CustomsType(
-                currency=Currency.AUD.value,
-                conversion_from_cad=None,
-                reason_for_export=payload.customs.incoterm,
-                other_reason=payload.customs.content_description,
-                duties_and_taxes_prepaid=payload.customs.duty.account_number,
-                certificate_number=None,
-                licence_number=None,
-                invoice_number=None,
-                sku_list=sku_listType(
-                    item=[
-                        SkuType(
-                            customs_number_of_units=item.quantity,
-                            customs_description=item.description,
-                            sku=item.sku,
-                            hs_tariff_code=None,
-                            unit_weight=WeightUnit.KG.value,
-                            customs_value_per_unit=item.value_amount,
-                            customs_unit_of_measure=None,
-                            country_of_origin=payload.shipper.country_code,
-                            province_of_origin=None,
-                        )
-                        for item in payload.customs.commodities
-                    ]
-                ),
-            )
-            if payload.customs is not None
-            else None,
+            customs=(
+                CustomsType(
+                    currency=Currency.AUD.value,
+                    conversion_from_cad=None,
+                    reason_for_export=payload.customs.incoterm,
+                    other_reason=payload.customs.content_description,
+                    duties_and_taxes_prepaid=payload.customs.duty.account_number,
+                    certificate_number=None,
+                    licence_number=None,
+                    invoice_number=None,
+                    sku_list=sku_listType(
+                        item=[
+                            SkuType(
+                                customs_number_of_units=item.quantity,
+                                customs_description=item.description,
+                                sku=item.sku,
+                                hs_tariff_code=None,
+                                unit_weight=WeightUnit.KG.value,
+                                customs_value_per_unit=item.value_amount,
+                                customs_unit_of_measure=None,
+                                country_of_origin=payload.shipper.country_code,
+                                province_of_origin=None,
+                            )
+                            for item in payload.customs.commodities
+                        ]
+                    ),
+                )
+                if payload.customs is not None else None
+            ),
             settlement_info=None,
         ),
     )

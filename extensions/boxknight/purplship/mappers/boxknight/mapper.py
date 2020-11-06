@@ -18,7 +18,7 @@ from purplship.core.models import (
 from purplship.providers.boxknight import (
     parse_shipment_cancel_response,
     parse_pickup_update_response,
-    parse_pickup_cancel_reponse,
+    parse_pickup_cancel_response,
     parse_shipment_response,
     parse_pickup_response,
     parse_rate_response,

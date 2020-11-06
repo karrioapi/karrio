@@ -30,7 +30,7 @@ from pypurolator.estimate_service_2_1_2 import (
     DutyInformation,
     BusinessRelationship,
 )
-from purplship.core.units import Currency, Packages, Options, Phone
+from purplship.core.units import Currency, Packages, Options, Phone, Services
 from purplship.core.utils import Serializable, Element, concat_str, decimal
 from purplship.core.utils.soap import create_envelope
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
@@ -97,20 +97,19 @@ def get_full_estimate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    service = Services(payload.services, Product).first
+    options = Options(payload.options)
+
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    options = Options(payload.options)
-    shipper_phone_number = Phone(payload.shipper.phone_number)
-    recipient_phone_number = Phone(payload.recipient.phone_number)
+    shipper_phone = Phone(payload.shipper.phone_number)
+    recipient_phone = Phone(payload.recipient.phone_number)
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    service = next(
-        (Product[s].value for s in payload.services if s in Product.__members__), None
-    )
-    default_service = (
-        Product.purolator_express_international
-        if is_international
-        else Product.purolator_express
-    ).value
+
+    if service is None:
+        service = Product[
+            'purolator_express_international' if is_international else 'purolator_express'
+        ]
 
     request = create_envelope(
         header_content=RequestContext(
@@ -143,15 +142,16 @@ def get_full_estimate_request(
                         Country=payload.shipper.country_code,
                         PostalCode=payload.shipper.postal_code,
                         PhoneNumber=PhoneNumber(
-                            CountryCode=shipper_phone_number.country_code or "0",
-                            AreaCode=shipper_phone_number.area_code or "0",
-                            Phone=shipper_phone_number.phone or "0",
+                            CountryCode=shipper_phone.country_code or "0",
+                            AreaCode=shipper_phone.area_code or "0",
+                            Phone=shipper_phone.phone or "0",
                             Extension=None,
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=payload.shipper.federal_tax_id
-                    or payload.shipper.state_tax_id,
+                    TaxNumber=(
+                        payload.shipper.federal_tax_id or payload.shipper.state_tax_id
+                    ),
                 ),
                 ReceiverInformation=ReceiverInformation(
                     Address=Address(
@@ -176,64 +176,70 @@ def get_full_estimate_request(
                         Country=payload.recipient.country_code,
                         PostalCode=payload.recipient.postal_code,
                         PhoneNumber=PhoneNumber(
-                            CountryCode=recipient_phone_number.country_code or "0",
-                            AreaCode=recipient_phone_number.area_code or "0",
-                            Phone=recipient_phone_number.phone or "0",
+                            CountryCode=recipient_phone.country_code or "0",
+                            AreaCode=recipient_phone.area_code or "0",
+                            Phone=recipient_phone.phone or "0",
                             Extension=None,
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=payload.recipient.federal_tax_id
-                    or payload.recipient.state_tax_id,
+                    TaxNumber=(
+                        payload.recipient.federal_tax_id or payload.recipient.state_tax_id
+                    ),
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
                 ShipmentDate=datetime.today().strftime("%Y-%m-%d"),
                 PackageInformation=PackageInformation(
-                    ServiceID=(service or default_service),
+                    ServiceID=service.value,
                     Description=package_description,
-                    TotalWeight=TotalWeight(
-                        Value=packages.weight.LB,
-                        WeightUnit=PurolatorWeightUnit.LB.value,
-                    )
-                    if packages.weight.value is not None
-                    else None,
+                    TotalWeight=(
+                        TotalWeight(
+                            Value=packages.weight.LB,
+                            WeightUnit=PurolatorWeightUnit.LB.value,
+                        )
+                        if packages.weight.value is not None else None
+                    ),
                     TotalPieces=1,
                     PiecesInformation=ArrayOfPiece(
                         Piece=[
                             Piece(
-                                Weight=PurolatorWeight(
-                                    Value=package.weight.value,
-                                    WeightUnit=PurolatorWeightUnit[
-                                        package.weight_unit.value
-                                    ].value,
-                                )
-                                if package.weight.value
-                                else None,
-                                Length=PurolatorDimension(
-                                    Value=package.length.value,
-                                    DimensionUnit=PurolatorDimensionUnit[
-                                        package.dimension_unit.value
-                                    ].value,
-                                )
-                                if package.length.value
-                                else None,
-                                Width=PurolatorDimension(
-                                    Value=package.width.value,
-                                    DimensionUnit=PurolatorDimensionUnit[
-                                        package.dimension_unit.value
-                                    ].value,
-                                )
-                                if package.width.value
-                                else None,
-                                Height=PurolatorDimension(
-                                    Value=package.height.value,
-                                    DimensionUnit=PurolatorDimensionUnit[
-                                        package.dimension_unit.value
-                                    ].value,
-                                )
-                                if package.height.value
-                                else None,
+                                Weight=(
+                                    PurolatorWeight(
+                                        Value=package.weight.value,
+                                        WeightUnit=PurolatorWeightUnit[
+                                            package.weight_unit.value
+                                        ].value,
+                                    )
+                                    if package.weight.value else None
+                                ),
+                                Length=(
+                                    PurolatorDimension(
+                                        Value=package.length.value,
+                                        DimensionUnit=PurolatorDimensionUnit[
+                                            package.dimension_unit.value
+                                        ].value,
+                                    )
+                                    if package.length.value else None
+                                ),
+                                Width=(
+                                    PurolatorDimension(
+                                        Value=package.width.value,
+                                        DimensionUnit=PurolatorDimensionUnit[
+                                            package.dimension_unit.value
+                                        ].value,
+                                    )
+                                    if package.width.value else None
+                                ),
+                                Height=(
+                                    PurolatorDimension(
+                                        Value=package.height.value,
+                                        DimensionUnit=PurolatorDimensionUnit[
+                                            package.dimension_unit.value
+                                        ].value,
+                                    )
+                                    if package.height.value else None
+                                ),
                                 Options=None,
                             )
                             for package in packages
@@ -242,21 +248,22 @@ def get_full_estimate_request(
                     DangerousGoodsDeclarationDocumentIndicator=None,
                     OptionsInformation=None,
                 ),
-                InternationalInformation=InternationalInformation(
-                    DocumentsOnlyIndicator=is_document,
-                    ContentDetails=None,
-                    BuyerInformation=None,
-                    PreferredCustomsBroker=None,
-                    DutyInformation=DutyInformation(
-                        BillDutiesToParty=DutyPaymentType.recipient.value,
-                        BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
-                        Currency=options.currency,
-                    ),
-                    ImportExportType=None,
-                    CustomsInvoiceDocumentIndicator=None,
-                )
-                if is_international
-                else None,
+                InternationalInformation=(
+                    InternationalInformation(
+                        DocumentsOnlyIndicator=is_document,
+                        ContentDetails=None,
+                        BuyerInformation=None,
+                        PreferredCustomsBroker=None,
+                        DutyInformation=DutyInformation(
+                            BillDutiesToParty=DutyPaymentType.recipient.value,
+                            BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
+                            Currency=options.currency,
+                        ),
+                        ImportExportType=None,
+                        CustomsInvoiceDocumentIndicator=None,
+                    )
+                    if is_international else None
+                ),
                 ReturnShipmentInformation=None,
                 PaymentInformation=PaymentInformation(
                     PaymentType=PaymentType.SENDER.value,
@@ -266,11 +273,10 @@ def get_full_estimate_request(
                     PickupType=PickupType.DROP_OFF.value
                 ),
                 NotificationInformation=None,
-                TrackingReferenceInformation=TrackingReferenceInformation(
-                    Reference1=payload.reference,
-                )
-                if payload.reference != ""
-                else None,
+                TrackingReferenceInformation=(
+                    TrackingReferenceInformation(Reference1=payload.reference)
+                    if payload.reference != "" else None
+                ),
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),

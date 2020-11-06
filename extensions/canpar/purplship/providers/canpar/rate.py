@@ -13,7 +13,7 @@ from purplship.core.models import (
     Message,
     ChargeDetails
 )
-from purplship.core.units import Packages
+from purplship.core.units import Packages, Services, Options
 from purplship.core.utils import Serializable, Envelope, create_envelope, Element, build, decimal
 from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
@@ -64,19 +64,20 @@ def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
 
 def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
     packages = Packages(payload.parcels)
-    service_type: Optional[str] = next(
-        (Service[key].value for key in payload.services if key in Service.__members__),
+    service_type = Services(payload.services, Service).first
+    options = Options(payload.options, Option)
+    premium: Optional[bool] = next((True for option, _ in options if option in [
+        Option.canpar_ten_am.name,
+        Option.canpar_noon.name,
+        Option.canpar_saturday.name,
+    ]), None)
+    nsr = next(
+        (Option[o].value for o in [
+            'canpar_no_signature_required',
+            'canpar_not_no_signature_required'
+        ] if o in options),
         None
     )
-    options = {
-        Option[key].name: Option[key].value for key in payload.options.keys()
-        if key in Option.__members__
-    }
-    premium: Optional[bool] = next((True for option in options.keys() if option in [
-        Option.canpar_ten_am.value,
-        Option.canpar_noon.value,
-        Option.canpar_saturday.value,
-    ]), None)
 
     request = create_envelope(
         body_content=rateShipment(
@@ -86,7 +87,7 @@ def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializa
                 apply_invoice_discount=False,
                 password=settings.password,
                 shipment=Shipment(
-                    cod_type=options.get('canpar_cash_on_delivery'),
+                    cod_type=('Y' if 'canpar_cash_on_delivery' in options else None),
                     delivery_address=Address(
                         address_line_1=payload.recipient.address_line1,
                         address_line_2=payload.recipient.address_line2,
@@ -108,9 +109,7 @@ def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializa
                     handling=None,
                     handling_type=None,
                     instruction=None,
-                    nsr=(
-                        options.get('canpar_no_signature_required') or options.get('canpar_not_no_signature_required')
-                    ),
+                    nsr=nsr,
                     packages=[
                         Package(
                             alternative_reference=None,
@@ -156,7 +155,7 @@ def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializa
                     total_with_handling=None,
                     user_id=None,
                 ),
-                user_id=settings.user_id
+                user_id=settings.username
             )
         )
     )
