@@ -50,6 +50,19 @@ export interface PaginatedLogs extends PaginatedContent<Log>{}
 export interface PaginatedShipments extends PaginatedContent<Shipment>{}
 export interface PaginatedConnections extends PaginatedContent<Connection>{}
 
+
+export enum NotificationType {
+    error   = "is-danger",
+    warning = "is-warning",
+    info    = "is-info",
+    success = "is-success"
+}
+
+export interface Notification {
+    type: NotificationType;
+    message: JSX.Element | string;
+}
+
 class AppState {
     private token$: BehaviorSubject<string> = new BehaviorSubject<string>(INITIAL_TOKEN);
     private user$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>({} as UserInfo);
@@ -57,6 +70,7 @@ class AppState {
     private shipments$: Subject<PaginatedShipments> = new Subject<PaginatedShipments>();
     private references$: Subject<References> = new Subject<References>();
     private logs$: Subject<PaginatedLogs> = new Subject<PaginatedLogs>();
+    private notification$: Subject<Notification> = new Subject<Notification>();
 
     constructor() {
         this.getUserInfo();
@@ -111,6 +125,12 @@ class AppState {
         return logs;
     }
 
+    public get notification() {
+        const [notification, setValue] = useState<Notification>();
+        useEffect(() => { this.notification$.asObservable().subscribe(setValue); });
+        return notification;
+    }
+
     private async fetchReferences() {
         const references = await this.purplship.utils.references();
         this.references$.next(references);
@@ -118,18 +138,18 @@ class AppState {
     }
 
     public async getUserInfo() {
-        const response = await fetch("/user_info" , { headers: this.headers });
+        const response = await http("/user_info" , { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
             this.user$.next(data);
             return data;
         } else {
-            throw new Error("Unable fetch user info.");
+            throw new Error("Unable retrieve user info.");
         }
     }
 
     public async updateUserInfo(info: Partial<UserInfo>) {
-        const response = await fetch("/user_info", {
+        const response = await http("/user_info", {
             method: "PATCH",
             headers: this.headers,
             body: (JSON.stringify(info) as any)
@@ -144,11 +164,15 @@ class AppState {
     }
 
     public async closeAccount() {
-        await fetch("/user_info", { 
+        const response = await http("/user_info", { 
             method: "DELETE",
             headers: this.headers,
         });
-        document.location.href="/";
+        if (response.ok) {
+            document.location.href="/account/deactivated/";
+        } else {
+            throw new Error("An error occured during the account deactivation.");
+        }
     }
 
     public async regenerateToken(password: string) {
@@ -162,12 +186,12 @@ class AppState {
             this.token$.next((data as any).token);
             return data;
         } else {
-            throw new Error("Unable to log in with provided credentials.");
+            throw new Error("Unable to logIn with the provided credentials.");
         }
     }
 
     public async connectProvider(info: ConnectionData) {
-        const response = await fetch("/connections", {
+        const response = await http("/connections", {
             method: "POST",
             headers: this.headers,
             body: (JSON.stringify(info) as any)
@@ -182,7 +206,7 @@ class AppState {
     }
 
     public async updateConnection(id: string, info: ConnectionData) {
-        const response = await fetch(`/connections/${id}`, { 
+        const response = await http(`/connections/${id}`, { 
             method: "PATCH",
             headers: this.headers,
             body: (JSON.stringify(info) as any)
@@ -197,7 +221,7 @@ class AppState {
     }
 
     public async disconnectProvider(id: string) {
-        const response = await fetch(`/connections/${id}`, { 
+        const response = await http(`/connections/${id}`, { 
             method: "DELETE",
             headers: this.headers,
         });
@@ -211,7 +235,7 @@ class AppState {
     }
 
     public async fetchConnections(url?: string): Promise<PaginatedConnections> {
-        const response = await fetch(url || `/connections?limit=20&offset=0` , { headers: this.headers });
+        const response = await http(url || `/connections?limit=20&offset=0` , { headers: this.headers });
         if (response.ok) {
             const connections = await response.json();
             this.connections$.next(connections);
@@ -222,7 +246,7 @@ class AppState {
     }
 
     public async fetchShipments(url?: string): Promise<PaginatedShipments> {
-        const response = await fetch(url || `/shipments?limit=20&offset=0`, { headers: this.headers });
+        const response = await http(url || `/shipments?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
             this.shipments$.next(data);
@@ -233,7 +257,7 @@ class AppState {
     }
 
     public async fetchLogs(url?: string): Promise<PaginatedLogs> {
-        const response = await fetch(url || `/logs?limit=20&offset=0`, { headers: this.headers });
+        const response = await http(url || `/logs?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
             this.logs$.next(data);
@@ -244,13 +268,17 @@ class AppState {
     }
 
     public async retrieveLog(id: string): Promise<Log> {
-        const response = await fetch(`/logs/${id}`, { headers: this.headers });
+        const response = await http(`/logs/${id}`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
             return data;
         } else {
             throw new Error("Failed to fetch log.");
         }
+    }
+
+    public setNotification(notification?: Notification) {
+        this.notification$.next(notification);
     }
 }
 
@@ -275,6 +303,17 @@ function getCookie(name: string): string {
         }
     }
     return cookieValue;
+}
+
+async function http(...args: Parameters<typeof fetch>): ReturnType<typeof fetch> {
+    try {
+        return await fetch(...args);
+    } catch(err) {
+        if (err.message === 'Failed to fetch') {
+            throw new Error('Oups! Looks like you are offline');
+        }
+        throw err
+    }
 }
 
 // Initialize State: Fetch Data

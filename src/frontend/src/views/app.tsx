@@ -7,6 +7,7 @@ import APILogs from '@/views/api_logs';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import BoardFooter from '@/components/footer/board-footer';
 import Navbar from '@/components/navbar/navbar';
+import Notifier from '@/components/notifier';
 import { PaginatedLogs, state, } from '@/library/api';
 import { Logs, Reference } from '@/library/context';
 import '@/assets/scss/main.scss';
@@ -33,6 +34,7 @@ const App: React.FC = () => {
 
                 <div className="plex-wrapper">
                     <div className="wrapper-inner">
+                        <Notifier />
                         <Navbar user={user} />
 
                         <div className="dashboard-content">

@@ -1,4 +1,4 @@
-import { state, UserInfo } from '@/library/api';
+import { NotificationType, state, UserInfo } from '@/library/api';
 import React, { useState } from 'react';
 
 interface ProfileUpdateInputComponent {
@@ -24,8 +24,12 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
         try {
             await state.updateUserInfo({ [propertyKey]: propertyValue } as Partial<UserInfo>);
             setHasChanged(false);
+            state.setNotification({ 
+                type: NotificationType.success,
+                message: `${propertyValue} updated successfully!` 
+            });
         } catch (err) {
-            console.error(err);
+            state.setNotification({ type: NotificationType.error, message: err.message });
         }
     };
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -53,11 +53,17 @@ class RegistrationDoneView(TemplateView):
     title = _('Successfully signed up')
 
 
+class AccountDeactivateView(TemplateView):
+    template_name = 'registration/account_deactivate_done.html'
+    title = _('Successfully signed up')
+
+
 urlpatterns = [
     path('signup/', SignUp.as_view(), name='signup'),
     path('login/', LogIn.as_view(), name='login'),
 
-    path('registration/done', RegistrationDoneView.as_view(), name='registration_done'),
+    path('registration/done/', RegistrationDoneView.as_view(), name='registration_done'),
+    path('account/deactivated/', AccountDeactivateView.as_view(), name='account_deactivated'),
 
     path('email/', include(mail_urls)),
 ]

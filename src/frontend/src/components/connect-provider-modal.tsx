@@ -1,4 +1,4 @@
-import { Connection, state } from '@/library/api';
+import { Connection, NotificationType, state } from '@/library/api';
 import { CarrierSettings } from '@purplship/purplship';
 import React, { useState } from 'react';
 import { Reference } from '@/library/context';
@@ -8,10 +8,12 @@ interface ConnectProviderModalComponent {
     className?: string;
 }
 
+const DEFAULT_STATE: Partial<Connection> = { carrier_name: 'none', test: true };
+
 const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ children, connection, className }) => {
     const [key, setKey] = useState<string>(`connection-${Date.now()}`);
     const [isNew, _] = useState<boolean>(connection === null || connection === undefined);
-    const [payload, setPayload] = useState<Partial<Connection>>(connection || { carrier_name: 'none' });
+    const [payload, setPayload] = useState<Partial<Connection>>(connection || DEFAULT_STATE);
     const [error, setError] = useState<string>("");
     const [isActive, setIsActive] = useState<boolean>(false);
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
@@ -31,6 +33,10 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
                 const response = await state.updateConnection(payload.id as string, data);
                 setPayload(response);
             }
+            state.setNotification({
+                type: NotificationType.success,
+                message: `carrier connection ${isNew ? 'registered' : 'updated'} successfully`
+            });
             close();
         } catch (err) {
             setHasError(true);
@@ -39,7 +45,7 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
         }
     };
     const close = (_?: React.MouseEvent) => {
-        if(isNew) setPayload({ carrier_name: 'none' });
+        if(isNew) setPayload(DEFAULT_STATE);
         setKey(`connection-${Date.now()}`);
         setHasError(false);
         setIsDisabled(false);
@@ -49,12 +55,12 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
         let new_state = { ...payload, [property]: e.target.value || undefined };
         if (property === 'carrier_name') {
             setKey(`connection-${Date.now()}`);
-            new_state = { carrier_name: e.target.value };
+            new_state = { carrier_name: e.target.value, test: true };
         } else if(property == 'test') {
             new_state = { ...payload, test: e.target.checked };
         }
         setPayload(new_state);
-        setIsDisabled((connection || { carrier_name: 'none' }) == new_state);
+        setIsDisabled((connection || DEFAULT_STATE) == new_state);
     };
     const has = (property: string) => {
         return hasProperty(payload.carrier_name as CarrierSettings.CarrierNameEnum, property);

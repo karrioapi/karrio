@@ -149,24 +149,12 @@ class Parcel(EntitySerializer, ParcelData):
     pass
 
 
-class Card(Serializer):
-
-    type = CharField(required=True, help_text="The credit card type")
-    number = CharField(required=True, help_text="The credit card number")
-    expiry_month = CharField(required=True, help_text="The credit card expiry month (MM)")
-    expiry_year = CharField(required=True, help_text="The credit card expiry year (YYYY)")
-    security_code = CharField(required=True, help_text="The credit card security code often at the back (000)")
-    name = CharField(required=False, allow_blank=True, allow_null=True, help_text="The name inscribed on the credit card")
-    postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The credit card registration address postal code")
-
-
 class PaymentData(Serializer):
 
     paid_by = ChoiceField(required=True, choices=PAYMENT_TYPES, help_text="The payment payer")
     amount = FloatField(required=False, allow_null=True, help_text="The payment amount if known")
     currency = ChoiceField(required=True, choices=CURRENCIES, help_text="The payment amount currency")
     account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected rate carrier payer account number")
-    credit_card = Card(required=False, allow_null=True, help_text="The payment credit card for payment by card")
     contact = Address(required=False, allow_null=True, help_text="The billing address")
 
 

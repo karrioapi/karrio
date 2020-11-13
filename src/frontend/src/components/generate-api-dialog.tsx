@@ -1,9 +1,7 @@
-import { state } from '@/library/api';
+import { NotificationType, state } from '@/library/api';
 import React, { useState } from 'react';
 
-interface GenerateAPIModalComponent {
-
-}
+interface GenerateAPIModalComponent {}
 
 const GenerateAPIModal: React.FC<GenerateAPIModalComponent> = ({ children }) => {
     const [password, setPassword] = useState<string>("");
@@ -20,6 +18,10 @@ const GenerateAPIModal: React.FC<GenerateAPIModalComponent> = ({ children }) => 
             setIsDisabled(false);
             setIsActive(false);
             setHasError(false);
+            state.setNotification({ 
+                type: NotificationType.success,
+                message: "New token generated successfully!"
+            });
         } catch(err) {
             setError(err.message);
             setIsDisabled(false);
