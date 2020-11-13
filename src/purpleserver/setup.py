@@ -35,6 +35,7 @@ setup(
       packages=find_packages("."),
       install_requires=[
             'django',
+            'django-email-verification',
             'djangorestframework==3.11.1',
             'drf-api-tracking',
             'drf-yasg',

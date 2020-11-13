@@ -1,0 +1,16 @@
+{% extends "purpleserver/base_site.html" %}
+{% load i18n static %}
+
+{% block content %}
+
+<div class="card isolated-card">
+    <div class="card-content">
+        <p class="subtitle is-4">{% trans 'We are sad to see you go' %}</p>
+
+        <p>{% trans 'Your account has been deactivated. All history and config are scheduled for deletion' %}</p>
+        <p>{% trans 'Hope to see you soon.' %}</p>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -85,6 +85,7 @@ BASE_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework_tracking',
+    'django_email_verification',
 ]
 
 INSTALLED_APPS = [
@@ -113,7 +114,7 @@ ROOT_URLCONF = 'purpleserver.urls'
 LOGOUT_REDIRECT_URL = '/login/' if HAS_CLIENT_APP else '/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
-OPEN_API_PATH = 'api/' if HAS_CLIENT_APP else ''
+OPEN_API_PATH = 'api/'
 
 CLIENT_REGISTRATION_VIEWS = 'purpleserver.client.views.registration'
 

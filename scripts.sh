@@ -11,8 +11,11 @@ export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
 [[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
 
-export EMAIL_HOST="localhost"
-export EMAIL_PORT=1025
+#export EMAIL_HOST="smtp.gmail.com"
+#export EMAIL_PORT=587
+#export EMAIL_USE_TLS=True
+#export EMAIL_HOST_USER=""
+#export EMAIL_HOST_PASSWORD=""
 
 deactivate_env() {
   if command -v deactivate &> /dev/null
