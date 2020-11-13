@@ -1,5 +1,6 @@
 from django import forms
 from django.views import generic
+from django.conf import settings
 from django.urls import reverse_lazy, path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth import get_user_model
@@ -18,7 +19,7 @@ class SignUpForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit)
-        if commit:
+        if commit and settings.EMAIL_ENABLED:
             sendConfirm(user)
 
         return user

@@ -16,4 +16,9 @@ EMAIL_PASSWORD = EMAIL_HOST_PASSWORD
 EMAIL_MAIL_SUBJECT = 'Purplship - Verify Your New Account Email'
 EMAIL_MAIL_HTML = 'registration/registration_confirm_email.html'
 EMAIL_PAGE_TEMPLATE = 'registration/registration_confirm_done.html'
-EMAIL_PAGE_DOMAIN = config('DOMAIN', default='http://127.0.0.1:8000/')
+EMAIL_PAGE_DOMAIN = config('DOMAIN', default='')
+
+
+EMAIL_ENABLED = all(
+    config is not None for config in [EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD]
+)
