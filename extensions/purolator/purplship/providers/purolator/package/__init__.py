@@ -1,26 +1,23 @@
-from purplship.providers.purolator.package.shipping_service import (
-    create_shipment_request,
-    parse_shipment_creation_response,
-    parse_void_shipment_response,
-    void_shipment_request,
+from purplship.providers.purolator.package.rate import parse_rate_response, rate_request
+from purplship.providers.purolator.package.address import (
+    parse_address_validation_response,
+    address_validation_request
 )
-from purplship.providers.purolator.package.estimate_service import (
-    get_full_estimate_request,
-    parse_full_estimate_response,
+from purplship.providers.purolator.package.shipment import (
+    parse_shipment_cancel_response,
+    parse_shipment_response,
+    shipment_cancel_request,
+    shipment_request,
 )
-from purplship.providers.purolator.package.tracking_service import (
-    track_package_by_pin_request,
-    parse_track_package_response,
+from purplship.providers.purolator.package.pickup import (
+    parse_pickup_cancel_response,
+    parse_pickup_update_response,
+    parse_pickup_response,
+    pickup_update_request,
+    pickup_cancel_request,
+    pickup_request,
 )
-from purplship.providers.purolator.package.pickup_service import (
-    void_pickup_request,
-    parse_void_pickup_reply,
-    schedule_pickup_pipeline,
-    parse_schedule_pickup_reply,
-    modify_pickup_pipeline,
-    parse_modify_pickup_reply,
-)
-from purplship.providers.purolator.package.availability_service import (
-    validate_address_request,
-    parse_validate_address_response,
+from purplship.providers.purolator.package.tracking import (
+    parse_tracking_response,
+    tracking_request,
 )

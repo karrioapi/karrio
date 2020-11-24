@@ -50,7 +50,7 @@ class Mapper(BaseMapper):
     def create_tracking_request(
         self, payload: TrackingRequest
     ) -> Serializable:
-        return tracking_request(payload)
+        return tracking_request(payload, self.settings)
 
     def create_shipment_request(
         self, payload: ShipmentRequest
@@ -80,7 +80,7 @@ class Mapper(BaseMapper):
     def parse_cancel_pickup_response(
         self, response: Deserializable[str]
     ) -> Tuple[ConfirmationDetails, List[Message]]:
-        return parse_shipment_cancel_response(response.deserialize(), self.settings)
+        return parse_pickup_cancel_response(response.deserialize(), self.settings)
 
     def parse_cancel_shipment_response(
         self, response: Deserializable

@@ -20,7 +20,7 @@ from purplship.providers.canpar.utils import Settings, default_request_serialize
 from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service, Charges
 
 
-def parse_rate_shipment_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
+def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
     shipment_nodes = response.xpath(".//*[local-name() = $name]", name="shipment")
     rates: List[RateDetails] = [
         _extract_rate_details(node, settings) for node in shipment_nodes
@@ -62,7 +62,7 @@ def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
     )
 
 
-def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
+def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
     packages = Packages(payload.parcels)
     service_type = Services(payload.services, Service).first
     options = Options(payload.options, Option)
@@ -146,7 +146,7 @@ def rate_shipment_request(payload: RateRequest, settings: Settings) -> Serializa
                     reported_weight_unit=WeightUnit.LB.value,
                     send_email_to_delivery=payload.recipient.email,
                     send_email_to_pickup=payload.shipper.email,
-                    service_type=service_type,
+                    service_type=service_type.value,
                     shipper_num=None,
                     shipping_date=datetime.today().strftime('%Y-%m-%dT%H:%M:%S'),
                     subtotal=None,

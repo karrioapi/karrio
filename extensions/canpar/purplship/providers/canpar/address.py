@@ -22,7 +22,7 @@ from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
 
 
-def parse_search_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
+def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     address_node = next(iter(response.xpath(".//*[local-name() = $name]", name="address")), None)
     address = build(CanparAddress, address_node)
@@ -47,7 +47,7 @@ def parse_search_response(response: Element, settings: Settings) -> Tuple[Addres
     return validation_details, errors
 
 
-def search_canada_post(payload: AddressValidationRequest, settings: Settings) -> Serializable[Envelope]:
+def address_validation_request(payload: AddressValidationRequest, settings: Settings) -> Serializable[Envelope]:
 
     request = create_envelope(
         body_content=searchCanadaPost(

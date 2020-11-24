@@ -34,6 +34,7 @@ class Commodity:
 
     id: str = None
     weight: float = None
+    weight_unit: str = None
     description: str = None
     quantity: int = 1
     sku: str = None

@@ -47,6 +47,20 @@ class PackagePresets(Flag):
     )
 
 
+class Incoterm(Enum):
+    EXW = "Ex Works"
+    FCA = "Free Carrier"
+    CPT = "Carriage Paid To"
+    CFR = "CFR Cost and Freight"
+    CIP = "Carriage and Insurance Paid To"
+    CIF = "CIF Cost, Insurance and Freight"
+    DAT = "Delivered At Terminal"
+    DAP = "Delivered At Place"
+    DDP = "Delivered Duty Paid"
+    FAS = "FAS Free Alongside Ship"
+    FOB = "FOB Free On Board"
+
+
 class Dimension(Enum):
     CM = "C"
     IN = "I"

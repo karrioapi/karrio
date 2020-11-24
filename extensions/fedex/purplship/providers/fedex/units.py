@@ -49,6 +49,20 @@ class PackagePresets(Flag):
     fedex_pak = fedex_padded_pak
 
 
+class Incoterm(Enum):
+    DDP = "DDP"
+    DDU = "DDU"
+    DAP = "DAP"
+    DAT = "DAT"
+    EXW = "EXW"
+    CPT = "CPT"
+    C_F = "C&F"
+    CIP = "CIP"
+    CIF = "CIF"
+    FCA = "FCA"
+    FOB = "FOB"
+
+
 class PackagingType(Flag):
     fedex_envelope = "FEDEX_ENVELOPE"
     fedex_pak = "FEDEX_PAK"

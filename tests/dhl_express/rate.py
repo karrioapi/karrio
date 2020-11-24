@@ -100,7 +100,7 @@ RatePayload = {
         }
     ],
     "services": ["dhl_express_worldwide_doc"],
-    "options": {"currency": "CAD", "insurance": {"amount": 75}},
+    "options": {"currency": "CAD", "insurance": 75},
 }
 
 

@@ -13,6 +13,14 @@ class ContentType(Enum):
     lives = "LIVES"
 
 
+class Incoterm(Enum):
+    CPT = "CPT"
+    CIP = "CIP"
+    DAF = "DAF"
+    DDU = "DDU"
+    OTHER = "OTHER"
+
+
 class IntlContentType(Enum):
     cremated_remains = "CrematedRemains"
     non_negotiable_document = "NonnegotiableDocument"

@@ -71,7 +71,7 @@ class Mapper(BaseMapper):
     def parse_cancel_pickup_response(
         self, response: Deserializable[str]
     ) -> Tuple[ConfirmationDetails, List[Message]]:
-        return parse_shipment_cancel_response(response.deserialize(), self.settings)
+        return parse_pickup_cancel_response(response.deserialize(), self.settings)
 
     def parse_cancel_shipment_response(
         self, response: Deserializable

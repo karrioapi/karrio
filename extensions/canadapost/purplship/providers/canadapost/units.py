@@ -89,6 +89,13 @@ class ServiceType(Enum):
     canadapost_tracked_packet_international = "INT.TP"
 
 
+INTERNATIONAL_NON_DELIVERY_OPTION = [
+    'canadapost_return_at_senders_expense',
+    'canadapost_return_to_sender',
+    'canadapost_abandon'
+]
+
+
 class OptionCode(Flag):
     canadapost_signature = "SO"
     canadapost_coverage = "COV"

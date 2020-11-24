@@ -231,7 +231,7 @@ def shipment_request(
                             )
                             for event in [8]
                         ]
-                        if options.notification_email is None else None
+                        if options.notification_email is not None else None
                     ),
                 )
                 if any([options.cash_on_delivery, options.notification_email]) else None

@@ -24,6 +24,24 @@ class PackagePresets(Flag):
     ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3.0)
 
 
+class Incoterm(Enum):
+    CFR = "Cost and Freight"
+    CIF = "Cost Insurance and Freight"
+    CIP = "Carriage and Insurance Paid"
+    CPT = "Carriage Paid To"
+    DAF = "Delivered at Frontier"
+    DDP = "Delivery Duty Paid"
+    DDU = "Delivery Duty Unpaid"
+    DEQ = "Delivered Ex Quay"
+    DES = "Delivered Ex Ship"
+    EXW = "Ex Works"
+    FAS = "Free Alongside Ship"
+    FCA = "Free Carrier"
+    FOB = "Free On Board"
+
+
+
+
 class WeightUnit(Enum):
     KG = "KGS"
     LB = "LBS"

@@ -186,9 +186,8 @@ def rate_request(
             FreightShipmentInformation=None,
             GoodsNotInFreeCirculationIndicator=None,
             Service=(
-                UOMCodeDescriptionType(Code=service, Description=None)
-                if service is not None
-                else None
+                UOMCodeDescriptionType(Code=service.value, Description=None)
+                if service is not None else None
             ),
             NumOfPieces=None,  # Only required for Freight
             ShipmentTotalWeight=None,  # Only required for "timeintransit" requests

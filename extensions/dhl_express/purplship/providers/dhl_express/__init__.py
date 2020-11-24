@@ -1,26 +1,22 @@
 from purplship.providers.dhl_express.utils import Settings
-from purplship.providers.dhl_express.book_pickup import (
-    parse_book_pickup_response,
-    book_pickup_request,
+from purplship.providers.dhl_express.rate import parse_rate_response, rate_request
+from purplship.providers.dhl_express.address import (
+    parse_address_validation_response,
+    address_validation_request
 )
-from purplship.providers.dhl_express.cancel_pickup import (
-    cancel_pickup_request,
-    parse_cancel_pickup_response,
-)
-from purplship.providers.dhl_express.dct_quote import dct_request, parse_dct_response
-from purplship.providers.dhl_express.modify_pickup import (
-    modify_pickup_request,
-    parse_modify_pickup_response,
-)
-from purplship.providers.dhl_express.ship_val import (
-    shipment_request,
+from purplship.providers.dhl_express.shipment import (
     parse_shipment_response,
+    shipment_request,
 )
-from purplship.providers.dhl_express.tracking_known import (
-    known_tracking_request,
-    parse_known_tracking_response,
+from purplship.providers.dhl_express.pickup import (
+    parse_pickup_cancel_response,
+    parse_pickup_update_response,
+    parse_pickup_response,
+    pickup_update_request,
+    pickup_cancel_request,
+    pickup_request,
 )
-from purplship.providers.dhl_express.route_request import (
-    route_request,
-    parse_route_response,
+from purplship.providers.dhl_express.tracking import (
+    parse_tracking_response,
+    tracking_request,
 )

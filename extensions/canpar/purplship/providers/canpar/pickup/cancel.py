@@ -18,7 +18,7 @@ from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
 
 
-def parse_cancel_pickup_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
+def parse_pickup_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     success = len(errors) == 0
     confirmation: ConfirmationDetails = ConfirmationDetails(
@@ -31,7 +31,7 @@ def parse_cancel_pickup_response(response: Element, settings: Settings) -> Tuple
     return confirmation, errors
 
 
-def cancel_pickup_request(payload: PickupCancelRequest, settings: Settings) -> Serializable[Envelope]:
+def pickup_cancel_request(payload: PickupCancelRequest, settings: Settings) -> Serializable[Envelope]:
 
     request = create_envelope(
         body_content=cancelPickup(

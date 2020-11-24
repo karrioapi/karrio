@@ -25,7 +25,7 @@ from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
 
 
-def parse_cancel_pickup_reply(
+def parse_pickup_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
     reply = build(
@@ -47,7 +47,7 @@ def parse_cancel_pickup_reply(
     return cancellation, parse_error_response(response, settings)
 
 
-def cancel_pickup_request(
+def pickup_cancel_request(
     payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[CancelPickupRequest]:
 

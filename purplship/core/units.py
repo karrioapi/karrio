@@ -60,6 +60,33 @@ class CustomsContentType(Enum):
     other = 'OTHER'
 
 
+class Incoterm(Enum):
+    CFR = "Cost and Freight"
+    CIF = "Cost Insurance and Freight"
+    CIP = "Carriage and Insurance Paid"
+    CPT = "Carriage Paid To"
+    DAF = "Delivered at Frontier"
+    DDP = "Delivery Duty Paid"
+    DDU = "Delivery Duty Unpaid"
+    DEQ = "Delivered Ex Quay"
+    DES = "Delivered Ex Ship"
+    EXW = "Ex Works"
+    FAS = "Free Alongside Ship"
+    FCA = "Free Carrier"
+    FOB = "Free On Board"
+
+
+class Option(Enum):
+    cash_on_delivery = "COD"
+    currency = "currency"
+    insurance = "insurance"
+    label_printing = "label_printing"
+    label_format = "label_format"
+    notification_emails = "notification_emails"
+    shipment_date = "shipment_date"
+    signature_confirmation = "signature_confirmation"
+
+
 class WeightUnit(Enum):
     KG = "KG"
     LB = "LB"
@@ -321,7 +348,7 @@ class Options:
     def __init__(self, options: dict, option_type: Optional[Enum] = None):
         self._options = (options if option_type is None else {
             key: val for key, val in options.items()
-            if key in option_type or key in Options.Code
+            if key in option_type or key in Option
         })
 
         for key, val in self._options.items():
@@ -341,45 +368,41 @@ class Options:
         return iter(self._options.items())
 
     @property
-    def has_content(self):
-        return any(o for o in self._options if o in Options.Code.__members__)
+    def has_content(self) -> bool:
+        return any(o for o in self._options if o in Option.__members__)
 
     @property
     def cash_on_delivery(self) -> float:
-        return self._options.get(Options.Code.cash_on_delivery.name)
+        return self._options.get(Option.cash_on_delivery.name)
 
     @property
     def currency(self) -> str:
-        return self._options.get(Options.Code.currency.name)
+        return self._options.get(Option.currency.name)
 
     @property
     def insurance(self) -> float:
-        return self._options.get(Options.Code.insurance.name)
+        return self._options.get(Option.insurance.name)
 
     @property
     def label_format(self) -> str:
-        return self._options.get(Options.Code.label_format.name)
+        return self._options.get(Option.label_format.name)
 
     @property
     def label_printing(self) -> str:
-        return self._options.get(Options.Code.label_printing.name)
+        return self._options.get(Option.label_printing.name)
 
     @property
-    def notification_emails(self):
-        return self._options.get(Options.Code.notification.name)
+    def notification_emails(self) -> str:
+        return self._options.get(Option.notification_emails.name)
 
     @property
-    def notification_email(self):
+    def notification_email(self) -> str:
         emails = str.split(self.notification_emails or '', ',', maxsplit=1)
         return next((email for email in emails if email != ''), None)
 
-    class Code(Enum):  # TODO:: Need to be documented
-        cash_on_delivery = "COD"
-        currency = "currency"
-        insurance = "insurance"
-        label_printing = "label_printing"
-        label_format = "label_format"
-        notification_emails = "notification_emails"
+    @property
+    def shipment_date(self) -> str:
+        return self._options.get(Option.shipment_date.name)
 
 
 class Services:

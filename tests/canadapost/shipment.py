@@ -121,8 +121,8 @@ shipment_data = {
     "service": "canadapost_expedited_parcel",
     "options": {
         "canadapost_signature": True,
-        "cash_on_delivery": {"amount": 10.5},
-        "insurance": {"amount": 70.0},
+        "cash_on_delivery": 10.5,
+        "insurance": 70.0,
     },
 }
 
@@ -154,7 +154,7 @@ shipment_with_package_preset_data = {
         }
     ],
     "service": "canadapost_expedited_parcel",
-    "options": {"cash_on_delivery": {"amount": 25.5}},
+    "options": {"cash_on_delivery": 25.5},
 }
 
 ParsedShipmentResponse = [
