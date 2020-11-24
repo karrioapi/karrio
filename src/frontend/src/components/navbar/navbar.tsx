@@ -7,12 +7,17 @@ interface NavbarComponent {
 }
 
 const Navbar: React.FC<NavbarComponent> = ({ user }) => {
+    const openSidebar = (e: React.MouseEvent) => {
+        e.preventDefault();
+        document.querySelector('.plex-sidebar')?.classList.add('is-mobile-active');
+    };
+
     return (
         <div className="static-nav">
             <div className="nav-start">
 
                 <div className="nav-item mobile-item is-flex">
-                    <button className="menu-icon v-2 mobile-sidebar-trigger">
+                    <button className="menu-icon v-2 mobile-sidebar-trigger" onClick={openSidebar}>
                         <span></span>
                     </button>
                 </div>

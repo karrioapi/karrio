@@ -1,10 +1,17 @@
-import { CarrierSettings, References, Shipment, Purplship } from '@purplship/purplship';
+import { CarrierSettings, References, Shipment, Purplship, Address, Parcel, Rate, RateRequest, RateResponse, ShippingRequest, ShipmentResponse, OperationConfirmation, OperationResponse, ShipmentCancelRequest } from '@purplship/purplship';
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinct } from 'rxjs/operators';
 
 // Collect API token from the web page
 const INITIAL_TOKEN = collectToken();
+const DEFAULT_LABEL_DATA = {
+    shipment: {
+        shipper: {} as Address,
+        recipient: {} as Address,
+        parcels: [] as Parcel[],
+    } as Shipment
+}
 
 export interface UserInfo {
     full_name: string | null;
@@ -46,21 +53,25 @@ interface PaginatedContent<T> {
     results: T[];
 }
 
-export interface PaginatedLogs extends PaginatedContent<Log>{}
-export interface PaginatedShipments extends PaginatedContent<Shipment>{}
-export interface PaginatedConnections extends PaginatedContent<Connection>{}
+export interface PaginatedLogs extends PaginatedContent<Log> { }
+export interface PaginatedShipments extends PaginatedContent<Shipment> { }
+export interface PaginatedConnections extends PaginatedContent<Connection> { }
 
 
 export enum NotificationType {
-    error   = "is-danger",
+    error = "is-danger",
     warning = "is-warning",
-    info    = "is-info",
+    info = "is-info",
     success = "is-success"
 }
 
 export interface Notification {
     type: NotificationType;
     message: JSX.Element | string;
+}
+
+export interface LabelData {
+    shipment: Shipment;
 }
 
 class AppState {
@@ -71,6 +82,7 @@ class AppState {
     private references$: Subject<References> = new Subject<References>();
     private logs$: Subject<PaginatedLogs> = new Subject<PaginatedLogs>();
     private notification$: Subject<Notification> = new Subject<Notification>();
+    private labelData$: BehaviorSubject<LabelData> = new BehaviorSubject<LabelData>(DEFAULT_LABEL_DATA);
 
     constructor() {
         this.getUserInfo();
@@ -78,7 +90,7 @@ class AppState {
     }
 
     private get headers() {
-        return { 
+        return {
             "Content-Type": "application/json",
             'Accept': 'application/json',
             'X-CSRFToken': getCookie('csrftoken')
@@ -131,14 +143,61 @@ class AppState {
         return notification;
     }
 
+    public get labelData() {
+        const [labelData, setValue] = useState<LabelData>(this.labelData$.value);
+        useEffect(() => { this.labelData$.asObservable().subscribe(setValue); });
+        return labelData;
+    }
+
     private async fetchReferences() {
         const references = await this.purplship.utils.references();
         this.references$.next(references);
         return references;
     }
 
+    public async fetchShipmentRates(request: RateRequest): Promise<RateResponse> {
+        return this.purplship.rates.fetch(request, { headers: this.headers })
+            .catch(async err => {
+                let error: Error & { response?: {} } = new Error("Unable fetch shipment rates.");
+                try {
+                    error.response = await err.json();
+                } catch (e) { }
+                throw error;
+            });
+    }
+
+    public async buyShipmentLabel(request: ShippingRequest): Promise<ShipmentResponse> {
+        return this.purplship.shipping.buyLabel(request, { headers: this.headers })
+            .then(response => {
+                this.fetchShipments();
+                return response;
+            })
+            .catch(async err => {
+                let error: Error & { response?: {} } = new Error("Failed to buy the shipment label.");
+                try {
+                    error.response = await err.json();
+                } catch (e) { }
+                throw error;
+            });
+    }
+
+    public async cancelShipment(shipment: Shipment): Promise<OperationResponse> {
+        return this.purplship.shipping.voidLabel(
+            shipment as ShipmentCancelRequest,
+            shipment.carrier_name as string,
+            shipment.test_mode,
+            { headers: this.headers }
+        ).catch(async err => {
+            let error: Error & { response?: {} } = new Error("Failed to cancel the shipment.");
+            try {
+                error.response = await err.json();
+            } catch (e) { }
+            throw error;
+        });
+    }
+
     public async getUserInfo() {
-        const response = await http("/user_info" , { headers: this.headers });
+        const response = await http("/user_info", { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
             this.user$.next(data);
@@ -164,12 +223,12 @@ class AppState {
     }
 
     public async closeAccount() {
-        const response = await http("/user_info", { 
+        const response = await http("/user_info", {
             method: "DELETE",
             headers: this.headers,
         });
         if (response.ok) {
-            document.location.href="/account/deactivated/";
+            document.location.href = "/account/deactivated/";
         } else {
             throw new Error("An error occured during the account deactivation.");
         }
@@ -206,7 +265,7 @@ class AppState {
     }
 
     public async updateConnection(id: string, info: ConnectionData) {
-        const response = await http(`/connections/${id}`, { 
+        const response = await http(`/connections/${id}`, {
             method: "PATCH",
             headers: this.headers,
             body: (JSON.stringify(info) as any)
@@ -221,7 +280,7 @@ class AppState {
     }
 
     public async disconnectProvider(id: string) {
-        const response = await http(`/connections/${id}`, { 
+        const response = await http(`/connections/${id}`, {
             method: "DELETE",
             headers: this.headers,
         });
@@ -235,7 +294,7 @@ class AppState {
     }
 
     public async fetchConnections(url?: string): Promise<PaginatedConnections> {
-        const response = await http(url || `/connections?limit=20&offset=0` , { headers: this.headers });
+        const response = await http(url || `/connections?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const connections = await response.json();
             this.connections$.next(connections);
@@ -280,6 +339,10 @@ class AppState {
     public setNotification(notification?: Notification) {
         this.notification$.next(notification);
     }
+
+    public setLabelData(data?: LabelData) {
+        this.labelData$.next(data || DEFAULT_LABEL_DATA);
+    }
 }
 
 function collectToken(): string {
@@ -308,7 +371,7 @@ function getCookie(name: string): string {
 async function http(...args: Parameters<typeof fetch>): ReturnType<typeof fetch> {
     try {
         return await fetch(...args);
-    } catch(err) {
+    } catch (err) {
         if (err.message === 'Failed to fetch') {
             throw new Error('Oups! Looks like you are offline');
         }

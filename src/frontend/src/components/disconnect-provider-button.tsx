@@ -10,7 +10,7 @@ const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({
     const close = (evt?: React.MouseEvent) => {
         evt?.preventDefault();
         setIsActive(false);
-    }
+    };
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
         try {

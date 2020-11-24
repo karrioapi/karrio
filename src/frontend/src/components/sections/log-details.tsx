@@ -2,9 +2,9 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { View } from '@/library/types';
 import { Log, PaginatedLogs, state } from '@/library/api';
 import StatusCode from '@/components/status-code-badge';
-import { formatDate } from '@/views/api_logs';
 import Prism from 'prismjs';
 import { Link } from '@reach/router';
+import { formatDateTime, notEmptyJSON } from '@/library/helper';
 
 interface LogDetailsView extends View {
     logId?: string;
@@ -47,7 +47,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
                 <div className="card-content py-3">
                     <div className="columns my-0">
                         <div className="column is-3 py-1">Date</div>
-                        <div className="column is-8 py-1">{formatDate(log.requested_at)}</div>
+                        <div className="column is-8 py-1">{formatDateTime(log.requested_at)}</div>
                     </div>
                     <div className="columns my-0">
                         <div className="column is-3 py-1">IP Address</div>
@@ -61,7 +61,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
 
             </div>
 }
-            {isNotEmpty(query_params) && query_params !== data  && <div className="card my-3">
+            {notEmptyJSON(query_params) && query_params !== data  && <div className="card my-3">
 
                 <div className="log-card-header px-5 pt-5 pb-3">
                     <p className="title is-4">Request query params</p>
@@ -80,7 +80,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
 
             </div>}
 
-            {isNotEmpty(data) && <div className="card my-3">
+            {notEmptyJSON(data) && <div className="card my-3">
 
                 <div className="log-card-header px-5 pt-5 pb-3">
                     <p className="title is-4">Request {log?.method} body</p>
@@ -99,7 +99,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
 
             </div>}
 
-            {isNotEmpty(response) && <div className="card my-3">
+            {notEmptyJSON(response) && <div className="card my-3">
 
                 <div className="log-card-header px-5 pt-5 pb-3">
                     <p className="title is-4">Response body</p>
@@ -120,9 +120,5 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
         </>
     );
 };
-
-function isNotEmpty(value: string): boolean {
-    return value !== null && value !== JSON.stringify({});
-}
 
 export default LogDetails;

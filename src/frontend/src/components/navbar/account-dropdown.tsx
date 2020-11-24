@@ -13,20 +13,24 @@ const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
     const btn = useRef<HTMLButtonElement>(null);
     const img = useRef<HTMLImageElement>(null);
     const handleOnClick = (e: React.MouseEvent) => {
-        setIsActive(true);
+        if (!isActive) {
+            setIsActive(true);
+            document.addEventListener('click', onBodyClick);
+        }
         e.stopPropagation();
     };
-    document.addEventListener('click', (e: MouseEvent) => {
+    const onBodyClick = (e: MouseEvent) => {
         if (e.target !== btn.current && e.target !== img.current) {
             setIsActive(false);
+            document.removeEventListener('click', onBodyClick);
         }
-    });
+    };
 
     return (
         <div className={`dropdown-wrap is-right ${isActive ? "is-active": ""}`}>
 
             <span className="indicator"></span>
-            <button className="dropdown-button has-image"onClick={handleOnClick} ref={btn}>
+            <button className="dropdown-button has-image" onClick={handleOnClick} ref={btn}>
                 <img src="/static/purpleserver/client/profile.svg" alt="Purplship Profile" ref={img}/>
             </button>
             <div className="drop-menu">

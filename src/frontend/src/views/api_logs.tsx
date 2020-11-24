@@ -26,11 +26,4 @@ const APILogs: React.FC<APILogsView> = ({ logs }) => {
   );
 }
 
-export function formatDate(date_string: string): string {
-  const date = new Date(date_string);
-  let [month, day, year] = date.toLocaleDateString().split("/");
-  let [hour, minute, second] = date.toLocaleTimeString().split(/:| /);
-  return `${day}/${month}/${year}, ${hour}:${minute}:${second}`;
-}
-
 export default APILogs;

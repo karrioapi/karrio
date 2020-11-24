@@ -1,5 +1,5 @@
-import React from 'react';
-import NavLink from '@/components/navlink';
+import React, { useRef } from 'react';
+import NavLink from '@/components/generic/navlink';
 import { UserInfo } from '@/library/api';
 
 interface ExpandedSidebarComponent {
@@ -7,11 +7,17 @@ interface ExpandedSidebarComponent {
 }
 
 const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
+    const sidebar = useRef<HTMLDivElement>(null);
+    const dismiss = (e: React.MouseEvent) => {
+        e.preventDefault();
+        sidebar.current?.classList.remove('is-mobile-active');
+    };
+
     return (
-        <div className="plex-sidebar">
+        <div className="plex-sidebar" ref={sidebar}>
             <div className="sidebar-header">
                 <img src="/static/purpleserver/img/logo.svg" alt="Purplship" width="80" />
-                <button className="menu-icon v-5 is-open mobile-item is-block mobile-sidebar-trigger">
+                <button className="menu-icon v-5 is-open mobile-item is-block mobile-sidebar-trigger" onClick={dismiss}>
                     <span></span>
                 </button>
             </div>

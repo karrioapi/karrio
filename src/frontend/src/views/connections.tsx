@@ -11,6 +11,7 @@ interface ConnectionsView extends View {
 
 const Connections: React.FC<ConnectionsView> = ({ connections }) => {
   useEffect(() => { if (connections === undefined) state.fetchConnections(); }, []);
+
   return (
     <Fragment>
 
