@@ -1,14 +1,15 @@
-from purplship.providers.ups.package.ship import (
-    shipment_request,
+from purplship.providers.ups.package.rate import parse_rate_response, rate_request
+from purplship.providers.ups.package.shipment import (
+    parse_shipment_cancel_response,
     parse_shipment_response,
-    void_shipment_request,
-    parse_void_shipment_response,
+    shipment_cancel_request,
+    shipment_request,
 )
-from purplship.providers.ups.package.rate import rate_request, parse_rate_response
 from purplship.providers.ups.package.pickup import (
-    create_pickup_pipeline,
+    parse_pickup_cancel_response,
+    parse_pickup_update_response,
     parse_pickup_response,
-    update_pickup_pipeline,
-    cancel_pickup_request,
-    parse_cancel_pickup_response,
+    pickup_update_request,
+    pickup_cancel_request,
+    pickup_request,
 )

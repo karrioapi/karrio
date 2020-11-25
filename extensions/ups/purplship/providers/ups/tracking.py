@@ -13,7 +13,7 @@ from purplship.providers.ups.error import parse_error_response
 from purplship.providers.ups.utils import Settings
 
 
-def parse_track_response(
+def parse_tracking_response(
     response: Element, settings: Settings
 ) -> Tuple[List[TrackingDetails], List[Message]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="Shipment")
@@ -61,7 +61,7 @@ def _format_location(address: AddressType) -> str:
     ])
 
 
-def track_request(
+def tracking_request(
     payload: TrackingRequest, settings: Settings
 ) -> Serializable[List[Envelope]]:
     requests = [

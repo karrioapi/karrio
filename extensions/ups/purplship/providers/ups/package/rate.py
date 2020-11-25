@@ -29,7 +29,6 @@ from purplship.core.utils import (
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, build
 from purplship.core.units import Packages, Services
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
-from purplship.core.errors import FieldError, FieldErrorCode
 from purplship.providers.ups.units import (
     RatingServiceCode,
     RatingPackagingType,
