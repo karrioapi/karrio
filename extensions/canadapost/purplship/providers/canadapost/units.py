@@ -10,7 +10,10 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    canadapost_mailing_box = PackagePreset(width=10.2, height=15.2)
+    """
+    Note that dimensions are in CM and weight in KG
+    """
+    canadapost_mailing_box = PackagePreset(width=10.2, height=15.2, length=1.0)
     canadapost_extra_small_mailing_box = PackagePreset(
         width=14.0, height=14.0, length=14.0
     )

@@ -10,9 +10,12 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    purolator_express_envelope = PackagePreset(weight=1.0)
-    purolator_express_pack = PackagePreset(weight=3.0)
-    purolator_express_box = PackagePreset(weight=7.0)
+    """
+    Note that dimensions are in IN and weight in LB
+    """
+    purolator_express_envelope = PackagePreset(width=12.5, height=16, length=1.5, weight=1.0)
+    purolator_express_pack = PackagePreset(width=12.5, height=16, length=1.0, weight=3.0)
+    purolator_express_box = PackagePreset(width=18, height=12, length=3.5, weight=7.0)
 
 
 class PackagingType(Flag):
@@ -26,9 +29,9 @@ class PackagingType(Flag):
     pak = purolator_express_pack
     tube = purolator_customer_packaging
     pallet = purolator_customer_packaging
-    small_box = purolator_express_box
-    medium_box = purolator_express_box
-    large_box = purolator_express_box
+    small_box = purolator_customer_packaging
+    medium_box = purolator_customer_packaging
+    large_box = purolator_customer_packaging
     your_packaging = purolator_customer_packaging
 
 

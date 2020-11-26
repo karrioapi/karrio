@@ -17,10 +17,10 @@ class PackagePresets(Flag):
         weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"
     )
     dhl_express_standard_flyer = PackagePreset(
-        weight=2.0, width=40.0, height=30.0, packaging_type="pak"
+        weight=2.0, width=40.0, height=30.0, length=1.5, packaging_type="pak"
     )
     dhl_express_large_flyer = PackagePreset(
-        weight=3.0, width=47.5, height=37.5, packaging_type="pack"
+        weight=3.0, width=47.5, height=37.5, length=1.5, packaging_type="pak"
     )
     dhl_express_box_2 = PackagePreset(weight=1.0, width=33.7, height=18.2, length=10.0)
     dhl_express_box_3 = PackagePreset(weight=2.0, width=33.6, height=32.0, length=5.2)

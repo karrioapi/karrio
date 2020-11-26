@@ -20,7 +20,7 @@ class PackagePresets(Flag):
         weight=30.0, width=18.0, height=13.0, length=3.0
     )
     ups_express_tube = PackagePreset(width=38.0, height=6.0, length=6.0)
-    ups_express_pak = PackagePreset(width=16.0, height=11.75)
+    ups_express_pak = PackagePreset(width=16.0, height=11.75, length=1.5)
     ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3.0)
 
 
@@ -38,8 +38,6 @@ class Incoterm(Enum):
     FAS = "Free Alongside Ship"
     FCA = "Free Carrier"
     FOB = "Free On Board"
-
-
 
 
 class WeightUnit(Enum):

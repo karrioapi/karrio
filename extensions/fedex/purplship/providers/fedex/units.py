@@ -32,7 +32,9 @@ class PackagePresets(Flag):
     fedex_small_box = PackagePreset(
         weight=20.0, width=12.25, height=10.9, length=1.5, packaging_type="small_box"
     )
-    fedex_medium_box = PackagePreset(weight=20.0, width=13.25, height=11.5, length=2.38)
+    fedex_medium_box = PackagePreset(
+        weight=20.0, width=13.25, height=11.5, length=2.38
+    )
     fedex_large_box = PackagePreset(
         weight=20.0, width=17.88, height=12.38, length=3.0, packaging_type="large_box"
     )
