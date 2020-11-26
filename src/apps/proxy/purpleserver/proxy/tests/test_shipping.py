@@ -72,6 +72,7 @@ SHIPPING_DATA = {
     },
     "parcels": [{
         "weight": 1,
+        "weight_unit": "KG",
         "package_preset": "canadapost_corrugated_small_box"
     }],
     "rates": [
@@ -313,7 +314,7 @@ SHIPPING_RESPONSE = {
                 'description': None,
                 'content': None,
                 'is_document': False,
-                'weight_unit': None,
+                'weight_unit': "KG",
                 'dimension_unit': None
             }
         ],

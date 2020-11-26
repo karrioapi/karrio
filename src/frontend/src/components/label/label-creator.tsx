@@ -1,7 +1,7 @@
 import { LabelData, state } from '@/library/api';
 import { View } from '@/library/types';
 import { Link } from '@reach/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ShipmentCustomsInfo from '@/components/form-parts/shipment-customs-info';
 import ShipmentAddress from '@/components/form-parts/shipment-address';
 import ShipmentOptions from '@/components/form-parts/shipment-options';
@@ -11,11 +11,13 @@ import Tabs from '@/components/generic/tabs';
 import { Shipment } from '@purplship/purplship';
 
 interface LabelCreatorComponent extends View {
+    id?: string;
     data: LabelData;
 }
 
-const LabelCreator: React.FC<LabelCreatorComponent> = ({ data }) => {
+const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
     const tabs = ["shipper", "recipient", "parcel", "customs info", "options"];
+    const [key, setKey] = useState<string>(`${id}-${Date.now()}`);
     const filterDisabled = (shipment: Shipment) => {
         return tabs.reduce((disabled: string[], value: string) => {
             const is_local = shipment?.shipper.country_code === shipment?.recipient.country_code;
@@ -59,6 +61,15 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data }) => {
         state.setLabelData(new_state);
     };
 
+    useEffect(() => {
+        if (id !== undefined && id !== 'new') {
+            state.retrieveShipment(id).then(shipment => {
+                state.setLabelData({ shipment });
+                setKey(`${id}-${Date.now()}`);
+            });
+        }
+    }, []);
+
     return (
         <>
             <nav className="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
@@ -68,8 +79,8 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data }) => {
                 </ul>
             </nav>
 
-            <div className="columns px-2">
-                <div className="column is-7">
+            <div className="columns px-2" key={key}>
+                <div className="column is-7 px-0">
 
                     <div className="card px-3 py-3">
                         <Tabs tabs={tabs} disabled={filterDisabled(data.shipment)} eventKey="label-select-tab">
@@ -91,7 +102,7 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data }) => {
                 <div className="column is-5">
 
                     <div className="card px-3 py-3">
-                        <LiveRates shipment={data.shipment} update={update} />
+                        <LiveRates shipment={data.shipment} update={(data) => { update(data); setKey(`${id}-${Date.now()}`); }} />
                     </div>
 
                 </div>

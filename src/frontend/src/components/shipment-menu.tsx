@@ -28,12 +28,12 @@ const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment }) => {
         }
     };
     const createLabel = (e: React.MouseEvent) => {
-        navigate('create/label');
+        navigate('buy_label/' + shipment.id);
         state.setLabelData({ shipment });
     };
-    const cancelShipment = (shipment: Shipment) => (e: React.MouseEvent) => {
+    const cancelShipment = (shipment: Shipment) => async (e: React.MouseEvent) => {
         try {
-            state.cancelShipment(shipment);
+            await state.voidLabel(shipment);
             state.setNotification({ type: NotificationType.success, message: 'Shipment successfully cancelled!' });
         } catch (err) {
             let message = err.message

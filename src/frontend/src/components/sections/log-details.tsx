@@ -59,8 +59,8 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
                     </div>
                 </div>
 
-            </div>
-}
+            </div>}
+            
             {notEmptyJSON(query_params) && query_params !== data  && <div className="card my-3">
 
                 <div className="log-card-header px-5 pt-5 pb-3">

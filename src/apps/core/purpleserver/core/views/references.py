@@ -10,9 +10,9 @@ from drf_yasg.utils import swagger_auto_schema
 from purpleserver.providers.models import MODELS
 from purplship.core.utils import to_dict
 import purplship.core.units
-from purplship.core.units import Country, Currency, CountryState
+from purplship.core.units import Country, Currency, CountryState, PaymentType
 from purpleserver.core.router import router
-from purpleserver.core.serializers import StringListField, PlainDictField
+from purpleserver.core.serializers import PlainDictField, CustomsContentType, Incoterm
 
 line = "\n"
 
@@ -31,49 +31,49 @@ def import_pkg(pkg: str):
 
 
 PACKAGE_MAPPERS = {
-    'purplship': {
+    'universal': {
         'label': "Multi-carrier (purplship)",
         'package': purplship.core.units,
-        'packagingTypes': "PackagingUnit"
+        'packaging_types': "PackagingUnit"
     },
     'canadapost': {
         'label': "Canada Post",
         'package': import_pkg('purplship.providers.canadapost.units'),
         'services': "ServiceType",
         'options': "OptionCode",
-        'packagePresets': "PackagePresets",
+        'package_presets': "PackagePresets",
     },
     'dhl_express': {
         'label': "DHL Express",
         'package': import_pkg('purplship.providers.dhl_express.units'),
         'services': "Product",
         'options': "SpecialServiceCode",
-        'packagePresets': "PackagePresets",
-        'packagingTypes': "DCTPackageType"
+        'package_presets': "PackagePresets",
+        'packaging_types': "DCTPackageType"
     },
     'fedex_express': {
         'label': "FedEx Express",
         'package': import_pkg('purplship.providers.fedex.units'),
         'services': "ServiceType",
         'options': "SpecialServiceType",
-        'packagePresets': "PackagePresets",
-        'packagingTypes': "PackagingType"
+        'package_presets': "PackagePresets",
+        'packaging_types': "PackagingType"
     },
     'purolator_courier': {
         'label': "Purolator Courier",
         'package': import_pkg('purplship.providers.purolator.units'),
         'services': "Product",
         'options': "Service",
-        'packagePresets': "PackagePresets",
-        'packagingTypes': "PackagingType"
+        'package_presets': "PackagePresets",
+        'packaging_types': "PackagingType"
     },
     'ups_package': {
         'label': "UPS Package",
         'package': import_pkg('purplship.providers.ups.units'),
         'services': "ShippingServiceCode",
         'options': "ServiceOption",
-        'packagePresets': "PackagePresets",
-        'packagingTypes': "RatingPackagingType"
+        'package_presets': "PackagePresets",
+        'packaging_types': "RatingPackagingType"
     },
     'freightcom': {
         'label': "Freightcom",
@@ -94,6 +94,9 @@ REFERENCE_MODELS = {
     "currencies": {c.name: c.value for c in list(Currency)},
     "states": {c.name: {s.name: s.value for s in list(c.value)} for c in list(CountryState)},
     "carriers": {k: v['label'] for k, v in PACKAGE_MAPPERS.items() if k in MODELS},
+    "payment_types": {c.name: c.value for c in list(PaymentType)},
+    "incoterms": {c.name: c.value for c in list(Incoterm)},
+    "customs_content_type": {c.name: c.value for c in list(CustomsContentType)},
     "services": {
         key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['services']))}
         for key, mapper in PACKAGE_MAPPERS.items()
@@ -104,15 +107,15 @@ REFERENCE_MODELS = {
         for key, mapper in PACKAGE_MAPPERS.items()
         if 'options' in mapper and mapper.get('package') is not None
     },
-    "packagingTypes": {
-        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['packagingTypes']))}
+    "packaging_types": {
+        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['packaging_types']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if 'packagingTypes' in mapper and mapper.get('package') is not None
+        if 'packaging_types' in mapper and mapper.get('package') is not None
     },
-    "packagePresets": {
-        key: {c.name: to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
+    "package_presets": {
+        key: {c.name: to_dict(c.value) for c in list(getattr(mapper['package'], mapper['package_presets']))}
         for key, mapper in PACKAGE_MAPPERS.items()
-        if 'packagePresets' in mapper and mapper.get('package') is not None
+        if 'package_presets' in mapper and mapper.get('package') is not None
     }
 }
 
@@ -174,7 +177,7 @@ Code | Identifier
 
 </details><br/>
 '''
-for key, value in REFERENCE_MODELS["packagingTypes"].items() 
+for key, value in REFERENCE_MODELS["packaging_types"].items() 
 ])}
 
 </details><br/>
@@ -198,7 +201,7 @@ Code | Dimensions | Note
 
 </details><br/>
 '''
-for key, value in REFERENCE_MODELS["packagePresets"].items() 
+for key, value in REFERENCE_MODELS["package_presets"].items() 
 ])}
 
 </details><br/>
@@ -249,14 +252,17 @@ for key, value in REFERENCE_MODELS["services"].items()
 
 
 class References(Serializer):
-    countries = StringListField()
-    currencies = StringListField()
+    countries = PlainDictField()
+    currencies = PlainDictField()
     carriers = PlainDictField()
+    customs_content_type = PlainDictField()
+    incoterms = PlainDictField()
     states = PlainDictField()
     services = PlainDictField()
     options = PlainDictField()
     package_presets = PlainDictField()
     packaging_types = PlainDictField()
+    payment_types = PlainDictField()
 
 
 @swagger_auto_schema(

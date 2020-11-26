@@ -4,6 +4,7 @@ import ButtonField from '@/components/generic/button-field';
 import InputField from '../generic/input-field';
 import CheckBoxField from '../generic/checkbox-field';
 import SelectField from '../generic/select-field';
+import { NotificationType, state } from '@/library/api';
 
 interface ShipmentOptionsComponent {
     shipment: Shipment;
@@ -31,9 +32,19 @@ const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update 
         setOptions(new_state);
     };
     form?.current?.addEventListener('change', _);
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        update({ options });
+        try {
+            let data = { options };
+            if (shipment.id !== undefined) {
+                const updated_options = await state.setOptions(shipment.id, options);
+                data = { options: updated_options };
+                state.setNotification({ type: NotificationType.success, message: 'Shipment Options successfully updated!' });
+            }
+            update(data);
+        } catch(e) {
+            state.setNotification({ type: NotificationType.error, message: e.message });
+        }
     };
 
     return (
@@ -43,7 +54,7 @@ const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update 
 
                 <InputField label="shipment date" defaultValue={options.shipment_date} name="shipment_date" type="date" className="is-small" fieldClass="column mb-0 is-5 px-2 py-2" />
 
-                <CheckBoxField defaultChecked={options.signature} name="signature_confirmation" fieldClass="column mb-0 is-12 px-2 py-2">
+                <CheckBoxField defaultChecked={options.signature_confirmation} name="signature_confirmation" fieldClass="column mb-0 is-12 px-2 py-2">
                     <span>Add signature confirmation</span>
                 </CheckBoxField>
 

@@ -7,9 +7,9 @@ from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.utils import SerializerDecorator
-from purpleserver.core.serializers import ErrorResponse, CustomsData, Customs
+from purpleserver.core.serializers import ErrorResponse, CustomsData, Customs, Operation
 from purpleserver.manager.serializers import CustomsSerializer
 from purpleserver.manager.router import router
 
@@ -27,7 +27,7 @@ class CustomsList(GenericAPIView):
     )
     def get(self, request: Request):
         """
-        Retrieve all stored customs info.
+        Retrieve all stored customs declarations.
         """
         customs_info = request.user.customs_set.all()
         serializer = Customs(customs_info, many=True)
@@ -43,13 +43,13 @@ class CustomsList(GenericAPIView):
     )
     def post(self, request: Request):
         """
-        Create a new customs info
+        Create a new customs declaration.
         """
         customs = SerializerDecorator[CustomsSerializer](data=request.data).save(user=request.user).instance
         return Response(Customs(customs).data, status=status.HTTP_201_CREATED)
 
 
-class CustomsDetail(GenericAPIView):
+class CustomsDetail(APIView):
 
     @swagger_auto_schema(
         tags=['Customs'],
@@ -59,7 +59,7 @@ class CustomsDetail(GenericAPIView):
     )
     def get(self, request: Request, pk: str):
         """
-        Retrieve a customs.
+        Retrieve customs declaration.
         """
         address = request.user.customs_set.get(pk=pk)
         return Response(Customs(address).data)
@@ -73,11 +73,26 @@ class CustomsDetail(GenericAPIView):
     )
     def patch(self, request: Request, pk: str):
         """
-        modify an existing customs's details.
+        modify an existing customs declaration.
         """
         customs = request.user.customs_set.get(pk=pk)
         SerializerDecorator[CustomsSerializer](customs, data=request.data).save()
         return Response(Customs(customs).data)
+
+    @swagger_auto_schema(
+        tags=['Customs'],
+        operation_id=f"{ENDPOINT_ID}discard",
+        operation_summary="Discard a customs info",
+        responses={200: Operation(), 400: ErrorResponse()}
+    )
+    def delete(self, request: Request, pk: str):
+        """
+        Discard a customs declaration.
+        """
+        customs = request.user.customs_set.get(pk=pk)
+        customs.delete(keep_parents=True)
+        serializer = Operation(dict(operation="Discard customs info", success=True))
+        return Response(serializer.data)
 
 
 router.urls.append(path('customs_info', CustomsList.as_view(), name="customs-list"))

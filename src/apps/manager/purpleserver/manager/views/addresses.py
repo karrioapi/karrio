@@ -5,7 +5,7 @@ from rest_framework import status
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import ErrorResponse, AddressData, Address
 from purpleserver.manager.serializers import AddressSerializer
@@ -47,7 +47,7 @@ class AddressList(GenericAPIView):
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
-class AddressDetail(GenericAPIView):
+class AddressDetail(APIView):
 
     @swagger_auto_schema(
         tags=['Addresses'],

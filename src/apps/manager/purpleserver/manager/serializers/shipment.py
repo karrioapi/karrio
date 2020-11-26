@@ -153,6 +153,10 @@ class ShipmentSerializer(ShipmentData):
             instance.payment = SerializerDecorator[PaymentSerializer](
                 instance.payment, data=validated_data['payment']).save(user=instance.user).instance
 
+        if validated_data.get('customs') is not None:
+            instance.customs = SerializerDecorator[CustomsSerializer](
+                data=validated_data.get('customs')).save(user=instance.user).instance
+
         if validated_data.get('rates') is not None:
             instance.shipment_rates = to_dict(validated_data.get('rates', []))
 

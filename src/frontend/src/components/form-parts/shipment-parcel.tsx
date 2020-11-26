@@ -1,11 +1,12 @@
 import { Parcel, Shipment } from '@purplship/purplship';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import InputField from '@/components/generic/input-field';
 import { Reference } from '@/library/context';
 import SelectField from '@/components/generic/select-field';
 import ButtonField from '@/components/generic/button-field';
 import { findPreset, formatDimension } from '@/library/helper';
 import { DIMENSION_UNITS, PresetCollection, WEIGHT_UNITS } from '@/library/types';
+import { NotificationType, state } from '@/library/api';
 
 const DEFAULT_STATE: Partial<Parcel> = {
     weight_unit: Parcel.WeightUnitEnum.KG,
@@ -18,11 +19,12 @@ interface ShipmentParcelComponent {
 }
 
 const ShipmentParcel: React.FC<ShipmentParcelComponent> = ({ shipment, update }) => {
+    const form = useRef<HTMLFormElement>(null);
     const [key, setKey] = useState<string>(`parcel-${Date.now()}`);
     const [parcel, setParcel] = useState<Partial<Parcel>>(shipment.parcels.length > 0 ? shipment.parcels[0] : DEFAULT_STATE);
     const [parcel_type, setParcelType] = useState<string>(parcel.package_preset === undefined ? 'custom' : 'preset');
     const [presets, setPresets] = useState<PresetCollection>({});
-    const [preset, setPreset] = useState<Partial<Parcel> | undefined>(() => findPreset(presets, parcel.package_preset));
+    const [preset, setPreset] = useState<Partial<Parcel> | undefined>(undefined);
 
     const nextTab = shipment.shipper.country_code === shipment.recipient.country_code ? 'options' : 'customs info';
     const _ = (property: string) => (e: React.ChangeEvent<any>) => {
@@ -46,19 +48,32 @@ const ShipmentParcel: React.FC<ShipmentParcelComponent> = ({ shipment, update })
 
         setParcel(new_state);
     };
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        update({ parcels: [parcel] });
-        e.currentTarget.dispatchEvent(new CustomEvent(
-            'label-select-tab', { bubbles: true, detail: { nextTab } }
-        ));
+        try {
+            let data = { parcels: [parcel] };
+            if (parcel.id !== undefined) {
+                const updated_parcel = await state.updateParcel(parcel as Parcel);
+                data = { parcels: [updated_parcel] };
+                state.setNotification({ type: NotificationType.success, message: 'Parcel successfully updated!' });
+            }
+            update(data);
+            form.current?.dispatchEvent(new CustomEvent(
+                'label-select-tab', { bubbles: true, detail: { nextTab } }
+            ));
+        } catch(e) {
+            state.setNotification({ type: NotificationType.error, message: e.message });
+        }
     };
 
     return (
-        <form className="px-1 py-2" onSubmit={handleSubmit}>
+        <form className="px-1 py-2" onSubmit={handleSubmit} ref={form}>
             <Reference.Consumer>
                 {(ref) => {
-                    if (Object.values(ref || {}).length > 0) setPresets(ref.package_presets)
+                    if (Object.values(ref || {}).length > 0) { 
+                        setPresets(ref.package_presets);
+                        setPreset(findPreset(ref.package_presets, parcel.package_preset))
+                    }
                     return <></>;
                 }}
             </Reference.Consumer>

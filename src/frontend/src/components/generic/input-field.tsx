@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface InputFieldComponent extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputFieldComponent extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     fieldClass?: string;
     controlClass?: string;

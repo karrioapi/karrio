@@ -17,7 +17,7 @@ urlpatterns = [
     path('carrier_connections', index, name='carrier_connections'),
     path('api_logs', index, name='api_logs'),
     path('api_logs/<str:log_id>', index, name='api_logs'),
-    path('create/label', index, name='create_label'),
+    path('buy_label/<str:id>', index, name='buy_label'),
 
     path('', include('django.contrib.auth.urls')),
     path('', include(settings.CLIENT_REGISTRATION_VIEWS)),

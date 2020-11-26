@@ -11,13 +11,13 @@ interface ShipmentsView extends View {
 }
 
 const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
-  useEffect(() => { if (shipments === undefined) state.fetchShipments(); }, []);
+  useEffect(() => { if (shipments === undefined) state.fetchShipments(); }, shipments?.results);
   const navigate = useNavigate();
   const update = (url?: string | null) => async (_: React.MouseEvent) => {
     await state.fetchShipments(url as string);
   };
   const createLabel = (_: React.MouseEvent) => {
-    navigate('create/label');
+    navigate('buy_label/new');
     state.setLabelData();
   };
 

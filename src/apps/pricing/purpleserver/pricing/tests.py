@@ -52,6 +52,7 @@ RATING_DATA = {
     },
     "parcels": [{
         "weight": 1,
+        "weight_unit": "KG",
         "packagePreset": "canadapost_corrugated_small_box"
     }],
     "services": [],

@@ -47,6 +47,7 @@ class TestShipmentFixture(APITestCase):
         })
         self.parcel: models.Parcel = models.Parcel.objects.create(**{
             "weight": 1.0,
+            "weight_unit": "KG",
             "package_preset": "canadapost_corrugated_small_box",
             "user": self.user
         })
@@ -199,6 +200,7 @@ SHIPMENT_DATA = {
     },
     "parcels": [{
         "weight": 1,
+        "weight_unit": "KG",
         "package_preset": "canadapost_corrugated_small_box"
     }],
     "payment": {
@@ -298,7 +300,7 @@ SHIPMENT_RESPONSE = {
         "description": None,
         "content": None,
         "is_document": False,
-        "weight_unit": None,
+        "weight_unit": "KG",
         "dimension_unit": None
     }],
     "services": [],
@@ -476,7 +478,7 @@ PURCHASED_SHIPMENT = {
             "description": None,
             "content": None,
             "is_document": False,
-            "weight_unit": None,
+            "weight_unit": "KG",
             "dimension_unit": None
         }],
         "services": [],

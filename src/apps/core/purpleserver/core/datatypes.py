@@ -8,7 +8,6 @@ from purplship.core.models import (
     Parcel,
     Message,
     Address,
-    Insurance,
     TrackingRequest,
     ShipmentDetails,
     AddressValidationRequest,

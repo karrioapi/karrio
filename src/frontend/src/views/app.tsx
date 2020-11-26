@@ -45,7 +45,7 @@ const App: React.FC = () => {
                                 <Connections connections={connections} path="carrier_connections" />
                                 <Settings token={token} user={user} path="settings" />
                                 <APILogs path="api_logs/*" logs={logs}/>
-                                <LabelCreator data={labelData} path="create/label" />
+                                <LabelCreator data={labelData} path="buy_label/:id" />
                             </Router>
                         </div>
 

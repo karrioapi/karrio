@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, views
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
@@ -26,11 +26,19 @@ class PurplshipLoggingMixin(LoggingMixin):
         }).save()
 
 
-class BaseGenericAPIView(generics.GenericAPIView):
+class BaseView:
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
 
 
+class BaseGenericAPIView(generics.GenericAPIView, BaseView):
+    pass
+
+
 class GenericAPIView(PurplshipLoggingMixin, BaseGenericAPIView):
+    pass
+
+
+class APIView(views.APIView, PurplshipLoggingMixin, BaseView):
     pass

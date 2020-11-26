@@ -1,8 +1,8 @@
-import { LabelData, NotificationType, state } from '@/library/api';
+import { NotificationType, state } from '@/library/api';
 import { Reference } from '@/library/context';
 import { formatAddressName, formatDimension, formatFullAddress, formatRef, formatWeight } from '@/library/helper';
 import { Collection } from '@/library/types';
-import { ErrorResponse, Payment, Rate, Shipment } from '@purplship/purplship';
+import { ErrorResponse, Payment, Shipment } from '@purplship/purplship';
 import { useNavigate } from '@reach/router';
 import React, { useState } from 'react';
 import ButtonField from './generic/button-field';
@@ -27,12 +27,12 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
         );
     };
     const fetchRates = async () => {
-        let rates: Rate[] | undefined = undefined;
+        let data: Partial<Shipment> = { rates: undefined };
         try {
             setLoading(true);
             setLastSate(shipment);
-            const response = await state.fetchShipmentRates(shipment);
-            rates = response.rates;
+            const response = await state.fetchRates(shipment);
+            data = { ...data, ...(response || {}) };
         } catch (err) {
             let message = err.message
             if (err.response?.error !== undefined) {
@@ -43,17 +43,16 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             state.setNotification({ type: NotificationType.error, message });
         } finally {
             setLoading(false);
-            setSelectedRate(undefined);
-            update({ rates, selected_rate_id: undefined });
+            setSelectedRate(data.selected_rate_id);
+            update(data);
         }
     };
     const buyShipment = async () => {
         try {
             setLoading(true);
             let currency = (shipment.options || {}).currency || Payment.CurrencyEnum.CAD;
-            const response = await state.buyShipmentLabel({
+            const response = await state.buyLabel({
                 ...shipment,
-                rates: shipment.rates as Rate[],
                 selected_rate_id: selected_rate as string,
                 payment: { paid_by: Payment.PaidByEnum.Sender, currency } as Payment
             });
@@ -61,7 +60,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             state.setNotification({ type: NotificationType.success, message: 'Label successfully purchased!' });
             navigate('/');
         } catch (err) {
-            let message = err.message
+            let message = err.message;
             if (err.response?.error !== undefined) {
                 message = ((err.response.error.details as ErrorResponse).messages || []).map(msg => (
                     <p>{msg.carrier_name}: {msg.message}</p>
@@ -97,6 +96,10 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                     <p className="is-title is-size-6 my-2 has-text-weight-semibold">Shipper Address</p>
                     <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold">{formatAddressName(shipment.shipper)}</p>
                     <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{formatFullAddress(shipment.shipper, countries)}</p>
+                    {shipment.shipper.email !== undefined && 
+                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-info">{shipment.shipper.email}</p>}
+                    {shipment.shipper.phone_number !== undefined && 
+                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{shipment.shipper.phone_number}</p>}
 
                 </div>
 
@@ -105,6 +108,10 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                     <p className="is-title is-size-6 my-2 has-text-weight-semibold">Recipient Address</p>
                     <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold">{formatAddressName(shipment.recipient)}</p>
                     <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{formatFullAddress(shipment.recipient, countries)}</p>
+                    {shipment.recipient.email !== undefined && 
+                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-info">{shipment.recipient.email}</p>}
+                    {shipment.recipient.phone_number !== undefined && 
+                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{shipment.recipient.phone_number}</p>}
 
                 </div>
 

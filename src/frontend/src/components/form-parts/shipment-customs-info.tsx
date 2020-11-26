@@ -9,6 +9,7 @@ import DataInput from '@/components/generic/data-input';
 import { Reference, User } from '@/library/context';
 import { formatRef } from '@/library/helper';
 import { Collection, CURRENCY_OPTIONS, PAYOR_OPTIONS } from '@/library/types';
+import { NotificationType, state } from '@/library/api';
 
 
 const DEFAULT_CUSTOMS: Customs = {
@@ -24,8 +25,8 @@ interface ShipmentCustomsInfoComponent {
 
 const ShipmentCustomsInfo: React.FC<ShipmentCustomsInfoComponent> = ({ shipment, update }) => {
     const [customs, setCustoms] = useState<Customs>(shipment?.customs || DEFAULT_CUSTOMS);
-    const [optOut, setOptOut] = useState<boolean>(true);
-    const [hasDuty, setHasDuty] = useState<boolean>(false);
+    const [optOut, setOptOut] = useState<boolean>(!shipment.customs);
+    const [hasDuty, setHasDuty] = useState<boolean>(!!shipment?.customs?.duty);
     const form = useRef<any>(null);
     const _ = (e: ChangeEvent<any> & CustomEvent<{ name: keyof Customs, value: object }>) => {
         e.stopPropagation();
@@ -42,18 +43,40 @@ const ShipmentCustomsInfo: React.FC<ShipmentCustomsInfoComponent> = ({ shipment,
         if (!hasDuty) delete new_state.duty;
         setCustoms(new_state);
     };
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        update({ customs });
-        e.currentTarget.dispatchEvent(new CustomEvent(
-            'label-select-tab', { bubbles: true, detail: { nextTab: 'options' } }
-        ));
+        try {
+            let data = { customs };
+            if (customs.id !== undefined) {
+                const updated_customs = await state.updateCustoms(customs);
+                data = { customs: updated_customs };
+                state.setNotification({ type: NotificationType.success, message: 'Customs Declaration successfully updated!' });
+            }
+            else if (shipment.id !== undefined) {
+                const updated_customs = await state.addCustoms(shipment.id, customs);
+                data = { customs: updated_customs };
+                state.setNotification({ type: NotificationType.success, message: 'Customs Declaration added updated!' });
+            }
+            update(data);
+            form.current?.dispatchEvent(new CustomEvent(
+                'label-select-tab', { bubbles: true, detail: { nextTab: 'options' } }
+            ));
+        } catch (e) {
+            state.setNotification({ type: NotificationType.error, message: e.message });
+        }
     };
-    const optOutChanged = (e: ChangeEvent<any>) => {
+    const optOutChanged = async (e: ChangeEvent<any>) => {
         const optOut = e.target.checked;
         setHasDuty(false);
-        setOptOut(optOut);
-        update({ customs: undefined });
+        try {
+            if (customs.id !== undefined) {
+                await state.discardCustoms(customs.id);
+                state.setNotification({ type: NotificationType.success, message: 'Customs declaration discarded successfully!' });
+            }
+            update({ customs: undefined });
+        } catch (e) {
+            state.setNotification({ type: NotificationType.error, message: e.message });
+        }
         setCustoms(optOut ? {} : DEFAULT_CUSTOMS);
     };
 
@@ -62,10 +85,19 @@ const ShipmentCustomsInfo: React.FC<ShipmentCustomsInfoComponent> = ({ shipment,
     return (
         <>
             <div className="columns is-multiline">
-                <CheckBoxField defaultChecked={optOut} onChange={optOutChanged} fieldClass="column mb-0 is-12 px-3 py-3 has-text-weight-semibold">
+                <CheckBoxField defaultChecked={optOut} onChange={() => setOptOut(!optOut)} fieldClass="column mb-0 is-12 px-3 py-3 has-text-weight-semibold">
                     <span>Opt out of customs</span>
                 </CheckBoxField>
             </div>
+
+            {optOut && <div>
+                <ButtonField className="is-primary" fieldClass="has-text-centered mt-3" onClick={optOutChanged} disabled={!shipment.customs}>
+                    <span>Save</span>
+                    <span className="icon is-small">
+                        <i className="fas fa-chevron-right"></i>
+                    </span>
+                </ButtonField>
+            </div>}
 
             {!optOut && <form className="px-1 py-2" onSubmit={handleSubmit} ref={form}>
 
@@ -151,7 +183,7 @@ const ShipmentCustomsInfo: React.FC<ShipmentCustomsInfoComponent> = ({ shipment,
 
                 </div>
 
-                <ButtonField type="submit" className="is-primary" fieldClass="has-text-centered mt-3"  disabled={shipment.customs == customs}>
+                <ButtonField type="submit" className="is-primary" fieldClass="has-text-centered mt-3" disabled={shipment.customs == customs}>
                     <span>Save</span>
                     <span className="icon is-small">
                         <i className="fas fa-chevron-right"></i>
