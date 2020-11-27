@@ -1,7 +1,7 @@
 from setuptools import setup, find_namespace_packages
 
 setup(name='purplship.dicom',
-      version='2020.11.0',
+      version='2020.11-alpha',
       description='Multi-carrier shipping API integration with python',
       url='https://github.com/PurplShip/purplship',
       author='Purplship',

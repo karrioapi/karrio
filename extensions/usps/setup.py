@@ -3,7 +3,7 @@ from setuptools import setup, find_namespace_packages
 
 setup(
     name="purplship.usps",
-    version="2020.11",
+    version="2020.11-alpha",
     description="Multi-carrier shipping API integration with python",
     url="https://github.com/PurplShip/purplship",
     author="Purplship Team",
