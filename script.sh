@@ -5,6 +5,9 @@
 ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
+export wheels=~/Wheels
+export PIP_FIND_LINKS="https://git.io/purplship"
+[[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
 
 activate_env() {
   echo "Activate $BASE_DIR"
@@ -24,14 +27,14 @@ create_env() {
 }
 
 submodules() {
-    find "${ROOT:?}/extensions" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;
+    find "${ROOT:?}/extensions" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname '{}' \;
 }
 
 install_submodules() {
     pip install -e "${ROOT:?}[dev]" &&
     for module in $(submodules); do
       echo "installing ${module}..."
-      pip install -e "${module}" || break
+      pip install -e "${module}" || return $?
     done
 }
 
@@ -59,7 +62,7 @@ test() {
 
 typecheck() {
     for module in $(submodules); do
-      for submodule in $(find "$module" -type f -name "__init__.py" -exec dirname {} \;); do
+      for submodule in $(find "$module" -type f -name "__init__.py" -exec dirname '{}' \;); do
         mypy "$submodule" || return $?
       done
     done
@@ -71,17 +74,19 @@ check() {
 
 backup_wheels() {
     # shellcheck disable=SC2154
+    echo "backing up wheels..."
     [[ -d "$wheels" ]] &&
-    find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
+    find . -not -path "*$ENV_DIR/*" -name \*.whl -prune -exec mv '{}' "$wheels" \; &&
     clean_builds
 }
 
 build() {
     clean_builds
+    echo "building wheels..."
     for module in $(submodules); do
       cd "${module}"
       python setup.py bdist_wheel
-      popd
+      cd -
     done
     python "${ROOT:?}/setup.py" bdist_wheel
     backup_wheels
@@ -93,9 +98,10 @@ updaterelease() {
 }
 
 clean_builds() {
-    find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; || true
-    find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; || true
-    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; || true
+    echo "clean up builds..."
+    find . -type d -not -path "*$ENV_DIR/*" -name dist -prune -exec rm -r '{}' \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name build -prune -exec rm -r '{}' \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -prune -exec rm -r '{}' \; || true
 }
 
 cli() {
