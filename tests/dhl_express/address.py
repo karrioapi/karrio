@@ -92,7 +92,7 @@ AddressValidationRequestXML = """<RouteRequest xmlns:ns1="http://www.dhl.com" xm
     <City>North Dakhota</City>
     <Division>California</Division>
     <CountryCode>US</CountryCode>
-    <CountryName>UNITED STATES OF AMERICA</CountryName>
+    <CountryName>United States</CountryName>
     <OriginCountryCode>US</OriginCountryCode>
 </RouteRequest>
 """

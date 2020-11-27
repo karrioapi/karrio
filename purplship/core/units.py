@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from typing import List, Type, Optional, Iterator, Iterable
-from enum import Enum
-from purplship.core.utils import decimal
-from purplship.core.models import Insurance, COD, Notification, Parcel
+from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any
+from purplship.core.utils import decimal, Enum
+from purplship.core.models import Parcel
 from purplship.core.errors import (
     FieldError,
     FieldErrorCode,
@@ -50,6 +49,42 @@ class CreditCardType(Enum):
     visa = "Visa"
     mastercard = "Mastercard"
     american_express = "AmericanExpress"
+
+
+class CustomsContentType(Enum):
+    documents = 'DOCUMENTS'
+    gift = 'GIFT'
+    sample = 'SAMPLE'
+    merchandise = 'MERCHANDISE'
+    return_merchandise = 'RETURN_MERCHANDISE'
+    other = 'OTHER'
+
+
+class Incoterm(Enum):
+    CFR = "Cost and Freight"
+    CIF = "Cost Insurance and Freight"
+    CIP = "Carriage and Insurance Paid"
+    CPT = "Carriage Paid To"
+    DAF = "Delivered at Frontier"
+    DDP = "Delivery Duty Paid"
+    DDU = "Delivery Duty Unpaid"
+    DEQ = "Delivered Ex Quay"
+    DES = "Delivered Ex Ship"
+    EXW = "Ex Works"
+    FAS = "Free Alongside Ship"
+    FCA = "Free Carrier"
+    FOB = "Free On Board"
+
+
+class Option(Enum):
+    cash_on_delivery = "COD"
+    currency = "currency"
+    insurance = "insurance"
+    label_printing = "label_printing"
+    label_format = "label_format"
+    notification_emails = "notification_emails"
+    shipment_date = "shipment_date"
+    signature_confirmation = "signature_confirmation"
 
 
 class WeightUnit(Enum):
@@ -246,35 +281,25 @@ class Packages(Iterable[Package]):
         parcels: List[Parcel],
         presets: Type[Enum] = None,
         required: List[str] = None,
+        max_weight: Weight = None,
     ):
         def compute_preset(parcel) -> Optional[PackagePreset]:
             if (presets is None) | (
-                presets is not None and parcel.package_preset not in presets.__members__
+                presets is not None and parcel.package_preset not in presets
             ):
                 return None
 
             return presets[parcel.package_preset].value
 
         self._items = [Package(parcel, compute_preset(parcel)) for parcel in parcels]
-
-        if required is not None:
-            errors = {}
-            for index, package in enumerate(self._items):
-                for field in required:
-                    prop = getattr(package, field)
-
-                    if prop is None or (hasattr(prop, "value") and prop.value is None):
-                        errors.update(
-                            {f"parcel[{index}].{field}": FieldErrorCode.required}
-                        )
-
-            if any(errors.items()):
-                raise FieldError(errors)
+        self._required = required
+        self._max_weight = max_weight
+        self.validate()
 
     def __getitem__(self, index: int) -> Package:
         return self._items[index]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._items)
 
     def __iter__(self) -> Iterator[Package]:
@@ -296,47 +321,108 @@ class Packages(Iterable[Package]):
             or None,
         )
 
+    def validate(self, required: List[str] = None, max_weight: Weight = None):
+        required = required or self._required
+        max_weight = max_weight or self._max_weight
+
+        if any(check is not None for check in [required, max_weight]):
+            errors = {}
+            for index, package in enumerate(self._items):
+                if required is not None:
+                    for field in required:
+                        prop = getattr(package, field)
+
+                        if prop is None or (hasattr(prop, "value") and prop.value is None):
+                            errors.update(
+                                {f"parcel[{index}].{field}": FieldErrorCode.required}
+                            )
+
+                if max_weight is not None and (package.weight.LB or 0.0) > max_weight.LB:
+                    errors.update({f"parcel[{index}].weight": FieldErrorCode.exceeds})
+
+            if any(errors.items()):
+                raise FieldError(errors)
+
 
 class Options:
-    def __init__(self, payload: dict):
-        self._payload = payload
+    def __init__(self, options: dict, option_type: Optional[Enum] = None):
+        self._options = (options if option_type is None else {
+            key: val for key, val in options.items()
+            if key in option_type or key in Option
+        })
+
+        for key, val in self._options.items():
+            if not hasattr(Options, key):
+                setattr(self, key, val)
+
+    def __getitem__(self, item):
+        return self._options.get(item)
+
+    def __contains__(self, item) -> bool:
+        return item in self._options
+
+    def __len__(self) -> int:
+        return len(self._options.items())
+
+    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+        return iter(self._options.items())
 
     @property
-    def has_content(self):
-        return any(o for o in self._payload if o in Options.Code.__members__)
+    def has_content(self) -> bool:
+        return any(o for o in self._options if o in Option.__members__)
 
     @property
-    def cash_on_delivery(self):
-        if Options.Code.cash_on_delivery.name in self._payload:
-            return COD(**self._payload[Options.Code.cash_on_delivery.name])
-        return None
+    def cash_on_delivery(self) -> float:
+        return self._options.get(Option.cash_on_delivery.name)
 
     @property
-    def currency(self):
-        return self._payload.get(Options.Code.currency.name)
+    def currency(self) -> str:
+        return self._options.get(Option.currency.name)
 
     @property
-    def insurance(self):
-        if Options.Code.insurance.name in self._payload:
-            return Insurance(**self._payload[Options.Code.insurance.name])
-        return None
+    def insurance(self) -> float:
+        return self._options.get(Option.insurance.name)
 
     @property
-    def notification(self):
-        if Options.Code.notification.name in self._payload:
-            return Notification(**self._payload[Options.Code.notification.name])
-        return None
+    def label_format(self) -> str:
+        return self._options.get(Option.label_format.name)
 
     @property
-    def printing(self):
-        return self._payload.get(Options.Code.printing.name)
+    def label_printing(self) -> str:
+        return self._options.get(Option.label_printing.name)
 
-    class Code(Enum):  # TODO:: Need to be documented
-        cash_on_delivery = "COD"
-        currency = "currency"
-        insurance = "insurance"
-        notification = "notification"
-        printing = "printing"
+    @property
+    def notification_emails(self) -> str:
+        return self._options.get(Option.notification_emails.name)
+
+    @property
+    def notification_email(self) -> str:
+        emails = str.split(self.notification_emails or '', ',', maxsplit=1)
+        return next((email for email in emails if email != ''), None)
+
+    @property
+    def shipment_date(self) -> str:
+        return self._options.get(Option.shipment_date.name)
+
+
+class Services:
+    def __init__(self, services: Iterable, service_type: Type[Enum]):
+        self._services = [
+            service_type[s] for s in services if s in service_type
+        ]
+
+    def __len__(self) -> int:
+        return len(self._services)
+
+    def __iter__(self) -> Iterator[Enum]:
+        return iter(self._services)
+
+    def __contains__(self, item) -> bool:
+        return item in [s.name for s in self._services]
+
+    @property
+    def first(self) -> Enum:
+        return next(iter(self._services), None)
 
 
 class Phone:
@@ -511,240 +597,240 @@ class Currency(Enum):
 
 
 class Country(Enum):
-    AD = "ANDORRA"
-    AE = "UNITED ARAB EMIRATES"
-    AF = "AFGHANISTAN"
-    AG = "ANTIGUA"
-    AI = "ANGUILLA"
-    AL = "ALBANIA"
-    AM = "ARMENIA"
-    AN = "NETHERLANDS ANTILLES"
-    AO = "ANGOLA"
-    AR = "ARGENTINA"
-    AS = "AMERICAN SAMOA"
-    AT = "AUSTRIA"
-    AU = "AUSTRALIA"
-    AW = "ARUBA"
-    AZ = "AZERBAIJAN"
-    BA = "BOSNIA AND HERZEGOVINA"
-    BB = "BARBADOS"
-    BD = "BANGLADESH"
-    BE = "BELGIUM"
-    BF = "BURKINA FASO"
-    BG = "BULGARIA"
-    BH = "BAHRAIN"
-    BI = "BURUNDI"
-    BJ = "BENIN"
-    BM = "BERMUDA"
-    BN = "BRUNEI"
-    BO = "BOLIVIA"
-    BR = "BRAZIL"
-    BS = "BAHAMAS"
-    BT = "BHUTAN"
-    BW = "BOTSWANA"
-    BY = "BELARUS"
-    BZ = "BELIZE"
-    CA = "CANADA"
-    CD = "CONGO, THE DEMOCRATIC REPUBLIC OF"
-    CF = "CENTRAL AFRICAN REPUBLIC"
-    CG = "CONGO"
-    CH = "SWITZERLAND"
-    CI = "COTE D IVOIRE"
-    CK = "COOK ISLANDS"
-    CL = "CHILE"
-    CM = "CAMEROON"
-    CN = "CHINA, PEOPLES REPUBLIC"
-    CO = "COLOMBIA"
-    CR = "COSTA RICA"
-    CU = "CUBA"
-    CV = "CAPE VERDE"
-    CY = "CYPRUS"
-    CZ = "CZECH REPUBLIC, THE"
-    DE = "GERMANY"
-    DJ = "DJIBOUTI"
-    DK = "DENMARK"
-    DM = "DOMINICA"
-    DO = "DOMINICAN REPUBLIC"
-    DZ = "ALGERIA"
-    EC = "ECUADOR"
-    EE = "ESTONIA"
-    EG = "EGYPT"
-    ER = "ERITREA"
-    ES = "SPAIN"
-    ET = "ETHIOPIA"
-    FI = "FINLAND"
-    FJ = "FIJI"
-    FK = "FALKLAND ISLANDS"
-    FM = "MICRONESIA, FEDERATED STATES OF"
-    FO = "FAROE ISLANDS"
-    FR = "FRANCE"
-    GA = "GABON"
-    GB = "UNITED KINGDOM"
-    GD = "GRENADA"
-    GE = "GEORGIA"
-    GF = "FRENCH GUYANA"
-    GG = "GUERNSEY"
-    GH = "GHANA"
-    GI = "GIBRALTAR"
-    GL = "GREENLAND"
-    GM = "GAMBIA"
-    GN = "GUINEA REPUBLIC"
-    GP = "GUADELOUPE"
-    GQ = "GUINEA-EQUATORIAL"
-    GR = "GREECE"
-    GT = "GUATEMALA"
-    GU = "GUAM"
-    GW = "GUINEA-BISSAU"
-    GY = "GUYANA (BRITISH)"
-    HK = "HONG KONG"
-    HN = "HONDURAS"
-    HR = "CROATIA"
-    HT = "HAITI"
-    HU = "HUNGARY"
-    IC = "CANARY ISLANDS, THE"
-    ID = "INDONESIA"
-    IE = "IRELAND, REPUBLIC OF"
-    IL = "ISRAEL"
-    IN = "INDIA"
-    IQ = "IRAQ"
-    IR = "IRAN (ISLAMIC REPUBLIC OF)"
-    IS = "ICELAND"
-    IT = "ITALY"
-    JE = "JERSEY"
-    JM = "JAMAICA"
-    JO = "JORDAN"
-    JP = "JAPAN"
-    KE = "KENYA"
-    KG = "KYRGYZSTAN"
-    KH = "CAMBODIA"
-    KI = "KIRIBATI"
-    KM = "COMOROS"
-    KN = "ST. KITTS"
-    KP = "KOREA, THE D.P.R OF (NORTH K.)"
-    KR = "KOREA, REPUBLIC OF (SOUTH K.)"
-    KV = "KOSOVO"
-    KW = "KUWAIT"
-    KY = "CAYMAN ISLANDS"
-    KZ = "KAZAKHSTAN"
-    LA = "LAO PEOPLES DEMOCRATIC REPUBLIC"
-    LB = "LEBANON"
-    LC = "ST. LUCIA"
-    LI = "LIECHTENSTEIN"
-    LK = "SRI LANKA"
-    LR = "LIBERIA"
-    LS = "LESOTHO"
-    LT = "LITHUANIA"
-    LU = "LUXEMBOURG"
-    LV = "LATVIA"
-    LY = "LIBYA"
-    MA = "MOROCCO"
-    MC = "MONACO"
-    MD = "MOLDOVA, REPUBLIC OF"
-    ME = "MONTENEGRO, REPUBLIC OF"
-    MG = "MADAGASCAR"
-    MH = "MARSHALL ISLANDS"
-    MK = "MACEDONIA, REPUBLIC OF"
-    ML = "MALI"
-    MM = "MYANMAR"
-    MN = "MONGOLIA"
-    MO = "MACAU"
-    MP = "COMMONWEALTH NO. MARIANA ISLANDS"
-    MQ = "MARTINIQUE"
-    MR = "MAURITANIA"
-    MS = "MONTSERRAT"
-    MT = "MALTA"
-    MU = "MAURITIUS"
-    MV = "MALDIVES"
-    MW = "MALAWI"
-    MX = "MEXICO"
-    MY = "MALAYSIA"
-    MZ = "MOZAMBIQUE"
-    NA = "NAMIBIA"
-    NC = "NEW CALEDONIA"
-    NE = "NIGER"
-    NG = "NIGERIA"
-    NI = "NICARAGUA"
-    NL = "NETHERLANDS, THE"
-    NO = "NORWAY"
-    NP = "NEPAL"
-    NR = "NAURU, REPUBLIC OF"
-    NU = "NIUE"
-    NZ = "NEW ZEALAND"
-    OM = "OMAN"
-    PA = "PANAMA"
-    PE = "PERU"
-    PF = "TAHITI"
-    PG = "PAPUA NEW GUINEA"
-    PH = "PHILIPPINES, THE"
-    PK = "PAKISTAN"
-    PL = "POLAND"
-    PR = "PUERTO RICO"
-    PT = "PORTUGAL"
-    PW = "PALAU"
-    PY = "PARAGUAY"
-    QA = "QATAR"
-    RE = "REUNION, ISLAND OF"
-    RO = "ROMANIA"
-    RS = "SERBIA, REPUBLIC OF"
-    RU = "RUSSIAN FEDERATION, THE"
-    RW = "RWANDA"
-    SA = "SAUDI ARABIA"
-    SB = "SOLOMON ISLANDS"
-    SC = "SEYCHELLES"
-    SD = "SUDAN"
-    SE = "SWEDEN"
-    SG = "SINGAPORE"
-    SH = "SAINT HELENA"
-    SI = "SLOVENIA"
-    SK = "SLOVAKIA"
-    SL = "SIERRA LEONE"
-    SM = "SAN MARINO"
-    SN = "SENEGAL"
-    SO = "SOMALIA"
-    SR = "SURINAME"
-    SS = "SOUTH SUDAN"
-    ST = "SAO TOME AND PRINCIPE"
-    SV = "EL SALVADOR"
-    SY = "SYRIA"
-    SZ = "SWAZILAND"
-    TC = "TURKS AND CAICOS ISLANDS"
-    TD = "CHAD"
-    TG = "TOGO"
-    TH = "THAILAND"
-    TJ = "TAJIKISTAN"
-    TL = "TIMOR LESTE"
-    TN = "TUNISIA"
-    TO = "TONGA"
-    TR = "TURKEY"
-    TT = "TRINIDAD AND TOBAGO"
-    TV = "TUVALU"
-    TW = "TAIWAN"
-    TZ = "TANZANIA"
-    UA = "UKRAINE"
-    UG = "UGANDA"
-    US = "UNITED STATES OF AMERICA"
-    UY = "URUGUAY"
-    UZ = "UZBEKISTAN"
-    VA = "VATICAN CITY STATE"
-    VC = "ST. VINCENT"
-    VE = "VENEZUELA"
-    VG = "VIRGIN ISLANDS (BRITISH)"
-    VI = "VIRGIN ISLANDS (US)"
-    VN = "VIETNAM"
-    VU = "VANUATU"
-    WS = "SAMOA"
-    XB = "BONAIRE"
-    XC = "CURACAO"
-    XE = "ST. EUSTATIUS"
-    XM = "ST. MAARTEN"
-    XN = "NEVIS"
-    XS = "SOMALILAND, REP OF (NORTH SOMALIA)"
-    XY = "ST. BARTHELEMY"
-    YE = "YEMEN, REPUBLIC OF"
-    YT = "MAYOTTE"
-    ZA = "SOUTH AFRICA"
-    ZM = "ZAMBIA"
-    ZW = "ZIMBABWE"
+    AD = "Andorra"
+    AE = "United Arab Emirates"
+    AF = "Afghanistan"
+    AG = "Antigua"
+    AI = "Anguilla"
+    AL = "Albania"
+    AM = "Armenia"
+    AN = "Netherlands Antilles"
+    AO = "Angola"
+    AR = "Argentina"
+    AS = "American Samoa"
+    AT = "Austria"
+    AU = "Australia"
+    AW = "Aruba"
+    AZ = "Azerbaijan"
+    BA = "Bosnia And Herzegovina"
+    BB = "Barbados"
+    BD = "Bangladesh"
+    BE = "Belgium"
+    BF = "Burkina Faso"
+    BG = "Bulgaria"
+    BH = "Bahrain"
+    BI = "Burundi"
+    BJ = "Benin"
+    BM = "Bermuda"
+    BN = "Brunei"
+    BO = "Bolivia"
+    BR = "Brazil"
+    BS = "Bahamas"
+    BT = "Bhutan"
+    BW = "Botswana"
+    BY = "Belarus"
+    BZ = "Belize"
+    CA = "Canada"
+    CD = "Congo, The Democratic Republic Of"
+    CF = "Central African Republic"
+    CG = "Congo"
+    CH = "Switzerland"
+    CI = "Cote D Ivoire"
+    CK = "Cook Islands"
+    CL = "Chile"
+    CM = "Cameroon"
+    CN = "China, Peoples Republic"
+    CO = "Colombia"
+    CR = "Costa Rica"
+    CU = "Cuba"
+    CV = "Cape Verde"
+    CY = "Cyprus"
+    CZ = "Czech Republic, The"
+    DE = "Germany"
+    DJ = "Djibouti"
+    DK = "Denmark"
+    DM = "Dominica"
+    DO = "Dominican Republic"
+    DZ = "Algeria"
+    EC = "Ecuador"
+    EE = "Estonia"
+    EG = "Egypt"
+    ER = "Eritrea"
+    ES = "Spain"
+    ET = "Ethiopia"
+    FI = "Finland"
+    FJ = "Fiji"
+    FK = "Falkland Islands"
+    FM = "Micronesia, Federated States Of"
+    FO = "Faroe Islands"
+    FR = "France"
+    GA = "Gabon"
+    GB = "United Kingdom"
+    GD = "Grenada"
+    GE = "Georgia"
+    GF = "French Guyana"
+    GG = "Guernsey"
+    GH = "Ghana"
+    GI = "Gibraltar"
+    GL = "Greenland"
+    GM = "Gambia"
+    GN = "Guinea Republic"
+    GP = "Guadeloupe"
+    GQ = "Guinea-equatorial"
+    GR = "Greece"
+    GT = "Guatemala"
+    GU = "Guam"
+    GW = "Guinea-bissau"
+    GY = "Guyana (british)"
+    HK = "Hong Kong"
+    HN = "Honduras"
+    HR = "Croatia"
+    HT = "Haiti"
+    HU = "Hungary"
+    IC = "Canary Islands, The"
+    ID = "Indonesia"
+    IE = "Ireland, Republic Of"
+    IL = "Israel"
+    IN = "India"
+    IQ = "Iraq"
+    IR = "Iran (islamic Republic Of)"
+    IS = "Iceland"
+    IT = "Italy"
+    JE = "Jersey"
+    JM = "Jamaica"
+    JO = "Jordan"
+    JP = "Japan"
+    KE = "Kenya"
+    KG = "Kyrgyzstan"
+    KH = "Cambodia"
+    KI = "Kiribati"
+    KM = "Comoros"
+    KN = "St. Kitts"
+    KP = "Korea, The D.p.r Of (north K.)"
+    KR = "Korea, Republic Of (south K.)"
+    KV = "Kosovo"
+    KW = "Kuwait"
+    KY = "Cayman Islands"
+    KZ = "Kazakhstan"
+    LA = "Lao Peoples Democratic Republic"
+    LB = "Lebanon"
+    LC = "St. Lucia"
+    LI = "Liechtenstein"
+    LK = "Sri Lanka"
+    LR = "Liberia"
+    LS = "Lesotho"
+    LT = "Lithuania"
+    LU = "Luxembourg"
+    LV = "Latvia"
+    LY = "Libya"
+    MA = "Morocco"
+    MC = "Monaco"
+    MD = "Moldova, Republic Of"
+    ME = "Montenegro, Republic Of"
+    MG = "Madagascar"
+    MH = "Marshall Islands"
+    MK = "Macedonia, Republic Of"
+    ML = "Mali"
+    MM = "Myanmar"
+    MN = "Mongolia"
+    MO = "Macau"
+    MP = "Commonwealth No. Mariana Islands"
+    MQ = "Martinique"
+    MR = "Mauritania"
+    MS = "Montserrat"
+    MT = "Malta"
+    MU = "Mauritius"
+    MV = "Maldives"
+    MW = "Malawi"
+    MX = "Mexico"
+    MY = "Malaysia"
+    MZ = "Mozambique"
+    NA = "Namibia"
+    NC = "New Caledonia"
+    NE = "Niger"
+    NG = "Nigeria"
+    NI = "Nicaragua"
+    NL = "Netherlands, The"
+    NO = "Norway"
+    NP = "Nepal"
+    NR = "Nauru, Republic Of"
+    NU = "Niue"
+    NZ = "New Zealand"
+    OM = "Oman"
+    PA = "Panama"
+    PE = "Peru"
+    PF = "Tahiti"
+    PG = "Papua New Guinea"
+    PH = "Philippines, The"
+    PK = "Pakistan"
+    PL = "Poland"
+    PR = "Puerto Rico"
+    PT = "Portugal"
+    PW = "Palau"
+    PY = "Paraguay"
+    QA = "Qatar"
+    RE = "Reunion, Island Of"
+    RO = "Romania"
+    RS = "Serbia, Republic Of"
+    RU = "Russian Federation, The"
+    RW = "Rwanda"
+    SA = "Saudi Arabia"
+    SB = "Solomon Islands"
+    SC = "Seychelles"
+    SD = "Sudan"
+    SE = "Sweden"
+    SG = "Singapore"
+    SH = "Saint Helena"
+    SI = "Slovenia"
+    SK = "Slovakia"
+    SL = "Sierra Leone"
+    SM = "San Marino"
+    SN = "Senegal"
+    SO = "Somalia"
+    SR = "Suriname"
+    SS = "South Sudan"
+    ST = "Sao Tome And Principe"
+    SV = "El Salvador"
+    SY = "Syria"
+    SZ = "Swaziland"
+    TC = "Turks And Caicos Islands"
+    TD = "Chad"
+    TG = "Togo"
+    TH = "Thailand"
+    TJ = "Tajikistan"
+    TL = "Timor Leste"
+    TN = "Tunisia"
+    TO = "Tonga"
+    TR = "Turkey"
+    TT = "Trinidad And Tobago"
+    TV = "Tuvalu"
+    TW = "Taiwan"
+    TZ = "Tanzania"
+    UA = "Ukraine"
+    UG = "Uganda"
+    US = "United States"
+    UY = "Uruguay"
+    UZ = "Uzbekistan"
+    VA = "Vatican City State"
+    VC = "St. Vincent"
+    VE = "Venezuela"
+    VG = "British Virgin Islands"
+    VI = "U.S. Virgin Islands"
+    VN = "Vietnam"
+    VU = "Vanuatu"
+    WS = "Samoa"
+    XB = "Bonaire"
+    XC = "Curacao"
+    XE = "St. Eustatius"
+    XM = "St. Maarten"
+    XN = "Nevis"
+    XS = "Somaliland, Rep Of (north Somalia)"
+    XY = "St. Barthelemy"
+    YE = "Yemen, Republic Of"
+    YT = "Mayotte"
+    ZA = "South Africa"
+    ZM = "Zambia"
+    ZW = "Zimbabwe"
 
 
 class CountryCurrency(Enum):

@@ -251,11 +251,12 @@ SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org
                 <v2:PickupInformation>
                     <v2:PickupType>DropOff</v2:PickupType>
                 </v2:PickupInformation>
+                <v2:NotificationInformation/>
                 <v2:TrackingReferenceInformation>
                     <v2:Reference1>Reference For Shipment</v2:Reference1>
                 </v2:TrackingReferenceInformation>
             </v2:Shipment>
-            <v2:PrinterType>Thermal</v2:PrinterType>
+            <v2:PrinterType>Regular</v2:PrinterType>
         </v2:CreateShipmentRequest>
     </soap:Body>
 </soap:Envelope>

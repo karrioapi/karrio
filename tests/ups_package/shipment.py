@@ -108,7 +108,7 @@ package_shipment_data = {
         }
     ],
     "service": "ups_express",
-    "options": {"notification": {"email": "test@mail.com"}},
+    "options": {"notification_emails": "test@mail.com"},
     "payment": {"paid_by": "sender"},
     "reference": "Your Customer Context",
 }
@@ -144,7 +144,7 @@ package_shipment_with_package_preset_data = {
     ],
     "service": "ups_express",
     "payment": {"paid_by": "sender"},
-    "options": {"notification": {"email": "test@mail.com"}},
+    "options": {"notification_emails": "test@mail.com"},
     "reference": "Your Customer Context",
 }
 

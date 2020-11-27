@@ -99,7 +99,7 @@ shipment_data = {
         }
     ],
     "service": "dhl_express_worldwide_nondoc",
-    "options": {"paperless_trade": True, "insurance": {"amount": 148.0}},
+    "options": {"paperless_trade": True, "insurance": 148.0},
     "payment": {"paid_by": "sender", "account_number": "123456789"},
     "customs": {
         "commodities": [{"description": "cn", "sku": "cc"}],
@@ -229,7 +229,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
-        <CountryName>BELGIUM</CountryName>
+        <CountryName>Belgium</CountryName>
         <Contact>
             <PersonName>Mrs Orlander</PersonName>
             <PhoneNumber>506-851-2271</PhoneNumber>
@@ -281,7 +281,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
         <CountryCode>US</CountryCode>
-        <CountryName>UNITED STATES OF AMERICA</CountryName>
+        <CountryName>United States</CountryName>
         <Contact>
             <PersonName>Ms Lucian</PersonName>
             <PhoneNumber>1 23 8613402</PhoneNumber>
@@ -291,6 +291,9 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     <SpecialService>
         <SpecialServiceType>II</SpecialServiceType>
     </SpecialService>
+    <Notification>
+        <EmailAddress>c_orlander@gc.ca</EmailAddress>
+    </Notification>
     <DocImages>
         <DocImage>
             <Type>CIN</Type>

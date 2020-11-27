@@ -82,7 +82,7 @@ ParsedRateResponse = [
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 9.22, "currency": "USD", "name": "Fuel"}],
-            "service": "international_priority",
+            "service": "fedex_international_priority",
             "total_charge": 239.71,
         },
         {
@@ -93,7 +93,7 @@ ParsedRateResponse = [
             "discount": 0.0,
             "duties_and_taxes": 0.0,
             "extra_charges": [{"amount": 8.3, "currency": "USD", "name": "Fuel"}],
-            "service": "international_economy",
+            "service": "fedex_international_economy",
             "total_charge": 215.77,
         },
     ],

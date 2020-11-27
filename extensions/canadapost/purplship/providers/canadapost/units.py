@@ -1,4 +1,4 @@
-from enum import Enum, Flag
+from purplship.core.utils import Enum, Flag
 from purplship.core.units import PackagePreset as BasePackagePreset
 from dataclasses import dataclass
 
@@ -10,7 +10,10 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    canadapost_mailing_box = PackagePreset(width=10.2, height=15.2)
+    """
+    Note that dimensions are in CM and weight in KG
+    """
+    canadapost_mailing_box = PackagePreset(width=10.2, height=15.2, length=1.0)
     canadapost_extra_small_mailing_box = PackagePreset(
         width=14.0, height=14.0, length=14.0
     )
@@ -87,6 +90,13 @@ class ServiceType(Enum):
     canadapost_small_packet_international_air = "INT.SP.AIR"
     canadapost_small_packet_international_surface = "INT.SP.SURF"
     canadapost_tracked_packet_international = "INT.TP"
+
+
+INTERNATIONAL_NON_DELIVERY_OPTION = [
+    'canadapost_return_at_senders_expense',
+    'canadapost_return_to_sender',
+    'canadapost_abandon'
+]
 
 
 class OptionCode(Flag):

@@ -1,17 +1,24 @@
 from purplship.providers.canpar.utils import Settings
-from purplship.providers.canpar.rate import rate_shipment_request, parse_rate_shipment_response
-from purplship.providers.canpar.track import track_by_barcode, parse_track_response
-from purplship.providers.canpar.address import search_canada_post, parse_search_response
+from purplship.providers.canpar.rate import parse_rate_response, rate_request
+from purplship.providers.canpar.address import (
+    parse_address_validation_response,
+    address_validation_request
+)
 from purplship.providers.canpar.shipment import (
-    create_shipment_pipeline,
+    parse_shipment_cancel_response,
     parse_shipment_response,
-    void_shipment_request,
-    parse_void_shipment_response
+    shipment_cancel_request,
+    shipment_request,
 )
 from purplship.providers.canpar.pickup import (
-    cancel_pickup_request,
-    parse_cancel_pickup_response,
-    schedule_pickup_request,
-    parse_schedule_pickup_response,
-    update_pickup_request
+    parse_pickup_cancel_response,
+    parse_pickup_update_response,
+    parse_pickup_response,
+    pickup_update_request,
+    pickup_cancel_request,
+    pickup_request,
+)
+from purplship.providers.canpar.tracking import (
+    parse_tracking_response,
+    tracking_request,
 )

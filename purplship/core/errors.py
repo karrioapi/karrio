@@ -36,6 +36,7 @@ class MethodNotSupportedError(PurplShipError):
 class FieldErrorCode(Enum):
     required = dict(code="required", message="This field is required")
     invalid = dict(code="invalid", message="This field is invalid")
+    exceed = dict(code="exceed", message="This field exceeds the max value")
 
 
 class FieldError(PurplShipDetailedError):

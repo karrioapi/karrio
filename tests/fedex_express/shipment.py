@@ -106,7 +106,7 @@ shipment_data = {
             "height": 12,
         }
     ],
-    "service": "international_priority",
+    "service": "fedex_international_priority",
     "options": {"currency": "USD", "international_traffic_in_arms_regulations": True},
     "payment": {"paid_by": "third_party", "account_number": "2349857"},
     "customs": {"duty": {"paid_by": "sender", "amount": "100."}},
@@ -213,7 +213,28 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                     </v25:Payor>
                 </v25:ShippingChargesPayment>
                 <v25:SpecialServicesRequested>
-                    <v25:SpecialServiceTypes>INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS</v25:SpecialServiceTypes>
+                    <v25:EventNotificationDetail>
+                        <v25:EventNotifications>
+                            <v25:Events>ON_DELIVERY</v25:Events>
+                            <v25:Events>ON_ESTIMATED_DELIVERY</v25:Events>
+                            <v25:Events>ON_EXCEPTION</v25:Events>
+                            <v25:Events>ON_SHIPMENT</v25:Events>
+                            <v25:Events>ON_TENDER</v25:Events>
+                            <v25:NotificationDetail>
+                                <v25:NotificationType>EMAIL</v25:NotificationType>
+                                <v25:EmailDetail>
+                                    <v25:EmailAddress>Input Your Information</v25:EmailAddress>
+                                    <v25:Name>Input Your Information</v25:Name>
+                                </v25:EmailDetail>
+                                <v25:Localization>
+                                    <v25:LanguageCode>EN</v25:LanguageCode>
+                                </v25:Localization>
+                            </v25:NotificationDetail>
+                            <v25:FormatSpecification>
+                                <v25:Type>TEXT</v25:Type>
+                            </v25:FormatSpecification>
+                        </v25:EventNotifications>
+                    </v25:EventNotificationDetail>
                 </v25:SpecialServicesRequested>
                 <v25:LabelSpecification>
                     <v25:LabelFormatType>COMMON2D</v25:LabelFormatType>

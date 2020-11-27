@@ -352,6 +352,7 @@ RateRequestWithPackagePresetXML = """<tns:Envelope  xmlns:tns="http://schemas.xm
                         <rate:UnitOfMeasurement>
                             <rate:Code>IN</rate:Code>
                         </rate:UnitOfMeasurement>
+                        <rate:Length>1.5</rate:Length>
                         <rate:Width>16.0</rate:Width>
                         <rate:Height>11.75</rate:Height>
                     </rate:Dimensions>

@@ -1,12 +1,13 @@
 import urllib.parse
 from typing import Union
+from pyusps.rate_v4_request import RateV4Request
+from pyusps.intl_rate_v2_request import IntlRateV2Request
+from pyusps.track_field_request import TrackFieldRequest
+
+from purplship.api.proxy import Proxy as BaseProxy
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.utils.helpers import to_xml, request as http
 from purplship.mappers.usps.settings import Settings
-from purplship.api.proxy import Proxy as BaseProxy
-from pyusps.ratev4request import RateV4Request
-from pyusps.intlratev2request import IntlRateV2Request
-from pyusps.trackfieldrequest import TrackFieldRequest
 
 
 class Proxy(BaseProxy):

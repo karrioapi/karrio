@@ -1,4 +1,5 @@
 from typing import Tuple, List
+from functools import partial
 from pyups.pickup_web_service_schema import (
     PickupCreationRequest,
     PickupCreationResponse,
@@ -6,7 +7,6 @@ from pyups.pickup_web_service_schema import (
     ShipperType,
     PickupAddressType,
     WeightType,
-    UnitOfMeasurementType,
     PickupDateInfoType,
     PhoneType,
     RateResultType,
@@ -23,6 +23,9 @@ from purplship.core.utils import (
     concat_str,
     build,
     decimal,
+    to_xml,
+    Job,
+    Pipeline,
 )
 from purplship.core.models import (
     PickupRequest,
@@ -30,6 +33,7 @@ from purplship.core.models import (
     Message,
     ChargeDetails,
 )
+from purplship.providers.ups.package.pickup.rate import pickup_rate_request
 from purplship.providers.ups.error import parse_error_response
 from purplship.providers.ups.units import PackagePresets, WeightUnit
 from purplship.providers.ups.utils import Settings, default_request_serializer
@@ -91,7 +95,26 @@ def _extract_pickup_details(
     )
 
 
-def create_pickup_request(
+def pickup_request(
+    payload: PickupRequest, settings: Settings
+) -> Serializable[Pipeline]:
+    """
+    Create a pickup request
+    Steps
+        1 - rate pickup
+        2 - create pickup
+    :param payload: PickupRequest
+    :param settings: Settings
+    :return: Serializable[Pipeline]
+    """
+    request: Pipeline = Pipeline(
+        rate=lambda *_: _rate_pickup(payload=payload, settings=settings),
+        create=partial(_create_pickup, payload=payload, settings=settings),
+    )
+    return Serializable(request)
+
+
+def _create_pickup_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets)
@@ -160,3 +183,16 @@ def create_pickup_request(
             "v11", 'xmlns:v11="http://www.ups.com/XMLSchema/XOLTWS/Pickup/v1.1"'
         ),
     )
+
+
+def _rate_pickup(payload: PickupRequest, settings: Settings):
+    data = pickup_rate_request(payload, settings)
+
+    return Job(id="availability", data=data)
+
+
+def _create_pickup(rate_response: str, payload: PickupRequest, settings: Settings):
+    rate_result = build(RateResultType, to_xml(rate_response))
+    data = _create_pickup_request(payload, settings) if rate_result else None
+
+    return Job(id="create_pickup", data=data, fallback="")

@@ -1,23 +1,22 @@
 from purplship.providers.canadapost.utils import Settings
 from purplship.providers.canadapost.error import process_error
+from purplship.providers.canadapost.rate import parse_rate_response, rate_request
 from purplship.providers.canadapost.shipment import (
-    shipment_request,
+    parse_shipment_cancel_response,
     parse_shipment_response,
-    void_shipment_request,
-    parse_void_shipment_response,
-)
-from purplship.providers.canadapost.rating import (
-    mailing_scenario_request,
-    parse_price_quotes,
-)
-from purplship.providers.canadapost.track import (
-    tracking_pins_request,
-    parse_tracking_summary,
+    shipment_cancel_request,
+    shipment_request,
 )
 from purplship.providers.canadapost.pickup import (
+    parse_pickup_cancel_response,
+    parse_pickup_update_response,
     parse_pickup_response,
-    cancel_pickup_request,
-    create_pickup_request,
-    update_pickup_request,
-    parse_cancel_pickup_response,
+    pickup_update_request,
+    pickup_cancel_request,
+    pickup_request,
 )
+from purplship.providers.canadapost.tracking import (
+    parse_tracking_response,
+    tracking_request,
+)
+

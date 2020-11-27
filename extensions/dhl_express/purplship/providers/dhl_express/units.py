@@ -1,6 +1,6 @@
 """ DHL Native Types """
 
-from enum import Enum, Flag
+from purplship.core.utils import Enum, Flag
 from purplship.core.units import PackagePreset as BasePackagePreset
 from dataclasses import dataclass
 
@@ -17,10 +17,10 @@ class PackagePresets(Flag):
         weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"
     )
     dhl_express_standard_flyer = PackagePreset(
-        weight=2.0, width=40.0, height=30.0, packaging_type="pak"
+        weight=2.0, width=40.0, height=30.0, length=1.5, packaging_type="pak"
     )
     dhl_express_large_flyer = PackagePreset(
-        weight=3.0, width=47.5, height=37.5, packaging_type="pack"
+        weight=3.0, width=47.5, height=37.5, length=1.5, packaging_type="pak"
     )
     dhl_express_box_2 = PackagePreset(weight=1.0, width=33.7, height=18.2, length=10.0)
     dhl_express_box_3 = PackagePreset(weight=2.0, width=33.6, height=32.0, length=5.2)
@@ -45,6 +45,20 @@ class PackagePresets(Flag):
     dhl_jumbo_box_junior = PackagePreset(
         weight=20.0, width=39.9, height=34.0, length=24.1
     )
+
+
+class Incoterm(Enum):
+    EXW = "Ex Works"
+    FCA = "Free Carrier"
+    CPT = "Carriage Paid To"
+    CFR = "CFR Cost and Freight"
+    CIP = "Carriage and Insurance Paid To"
+    CIF = "CIF Cost, Insurance and Freight"
+    DAT = "Delivered At Terminal"
+    DAP = "Delivered At Place"
+    DDP = "Delivered Duty Paid"
+    FAS = "FAS Free Alongside Ship"
+    FOB = "FOB Free On Board"
 
 
 class Dimension(Enum):

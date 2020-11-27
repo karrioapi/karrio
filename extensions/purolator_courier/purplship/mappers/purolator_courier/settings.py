@@ -1,4 +1,4 @@
-"""PurplShip UPS connection settings."""
+"""Purplship UPS connection settings."""
 
 import attr
 from purplship.providers.purolator.utils import Settings as BaseSettings

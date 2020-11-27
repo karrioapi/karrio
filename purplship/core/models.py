@@ -1,5 +1,6 @@
 """Purplship Unified datatypes module."""
 import attr
+import warnings
 from typing import List, Dict
 from jstruct import JList, JStruct, REQUIRED
 
@@ -33,6 +34,7 @@ class Commodity:
 
     id: str = None
     weight: float = None
+    weight_unit: str = None
     description: str = None
     quantity: int = 1
     sku: str = None
@@ -181,10 +183,10 @@ class PickupRequest:
 class PickupUpdateRequest:
     """pickup update request type."""
 
+    confirmation_number: str
     pickup_date: str
     ready_time: str
     closing_time: str
-    confirmation_number: str
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
@@ -209,34 +211,6 @@ class AddressValidationRequest:
     """address validation request type."""
 
     address: Address = JStruct[Address, REQUIRED]
-
-
-# *** Unified option data types ***
-
-
-@attr.s(auto_attribs=True)
-class COD:
-    """cash on delivery option type."""
-
-    amount: float
-
-
-@attr.s(auto_attribs=True)
-class Notification:
-    """notification option type."""
-
-    email: str = None  # Only defined if other email than recipient
-    locale: str = "en"
-
-
-@attr.s(auto_attribs=True)
-class Insurance:
-    """insurance option type."""
-
-    amount: float
-
-
-# *** Unified response data types ***
 
 
 @attr.s(auto_attribs=True)

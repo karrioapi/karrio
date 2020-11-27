@@ -1,49 +1,47 @@
 from typing import List, Tuple
-from pyfedex.track_service_v18 import TrackRequest
-from pyfedex.ship_service_v25 import ProcessShipmentRequest
-from pyfedex.rate_service_v26 import RateRequest as FedexRateRequest
-from pyfedex.pickup_service_v20 import CancelPickupRequest
-from purplship.core.utils import Serializable, Deserializable, Pipeline
+from purplship.core.utils.serializable import Serializable, Deserializable
+from purplship.api.mapper import Mapper as BaseMapper
 from purplship.core.models import (
-    RateDetails,
-    RateRequest,
-    TrackingDetails,
-    TrackingRequest,
-    ShipmentRequest,
-    ShipmentDetails,
-    Message,
-    PickupDetails,
-    PickupRequest,
+    AddressValidationRequest,
+    ShipmentCancelRequest,
     PickupUpdateRequest,
     PickupCancelRequest,
-    ConfirmationDetails,
-    AddressValidationRequest,
+    ShipmentRequest,
+    TrackingRequest,
+    PickupRequest,
+    RateRequest,
+
     AddressValidationDetails,
-    ShipmentCancelRequest,
-)
-from purplship.providers.fedex import (
-    track_request,
-    parse_track_response,
-    address_validation_request,
-    parse_address_validation_response
-)
-from purplship.providers.fedex.pickup import (
-    create_pickup_request,
-    update_pickup_request,
-    cancel_pickup_request,
-    parse_pickup_response,
-    parse_cancel_pickup_reply,
+    ConfirmationDetails,
+    TrackingDetails,
+    ShipmentDetails,
+    PickupDetails,
+    RateDetails,
+    Message,
 )
 from purplship.providers.fedex.package import (
-    rate_request,
-    parse_rate_response,
-    process_shipment_request,
+    parse_shipment_cancel_response,
     parse_shipment_response,
-    void_shipment_request,
-    parse_void_shipment_response,
+    parse_rate_response,
+
+    shipment_cancel_request,
+    shipment_request,
+    rate_request,
+)
+from purplship.providers.fedex import (
+    parse_address_validation_response,
+    parse_pickup_update_response,
+    parse_pickup_cancel_response,
+    parse_tracking_response,
+    parse_pickup_response,
+
+    address_validation_request,
+    pickup_update_request,
+    pickup_cancel_request,
+    tracking_request,
+    pickup_request,
 )
 from purplship.mappers.fedex_express.settings import Settings
-from purplship.api.mapper import Mapper as BaseMapper
 
 
 class Mapper(BaseMapper):
@@ -56,61 +54,53 @@ class Mapper(BaseMapper):
 
     def create_rate_request(
         self, payload: RateRequest
-    ) -> Serializable[FedexRateRequest]:
+    ) -> Serializable:
         return rate_request(payload, self.settings)
 
     def create_tracking_request(
         self, payload: TrackingRequest
-    ) -> Serializable[TrackRequest]:
-        return track_request(payload, self.settings)
+    ) -> Serializable:
+        return tracking_request(payload, self.settings)
 
     def create_shipment_request(
         self, payload: ShipmentRequest
-    ) -> Serializable[ProcessShipmentRequest]:
-        return process_shipment_request(payload, self.settings)
+    ) -> Serializable:
+        return shipment_request(payload, self.settings)
 
-    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable:
-        return void_shipment_request(payload, self.settings)
-
-    def create_pickup_request(self, payload: PickupRequest) -> Serializable[Pipeline]:
-        return create_pickup_request(payload, self.settings)
+    def create_pickup_request(
+        self, payload: PickupRequest
+    ) -> Serializable:
+        return pickup_request(payload, self.settings)
 
     def create_pickup_update_request(
         self, payload: PickupUpdateRequest
-    ) -> Serializable[Pipeline]:
-        return update_pickup_request(payload, self.settings)
+    ) -> Serializable:
+        return pickup_update_request(payload, self.settings)
 
     def create_cancel_pickup_request(
         self, payload: PickupCancelRequest
-    ) -> Serializable[CancelPickupRequest]:
-        return cancel_pickup_request(payload, self.settings)
+    ) -> Serializable:
+        return pickup_cancel_request(payload, self.settings)
+
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable[str]:
+        return shipment_cancel_request(payload, self.settings)
 
     """Response Parsers"""
 
     def parse_address_validation_response(
-        self, response: Deserializable[str]
+        self, response: Deserializable
     ) -> Tuple[AddressValidationDetails, List[Message]]:
         return parse_address_validation_response(response.deserialize(), self.settings)
 
-    def parse_rate_response(
-        self, response: Deserializable[str]
-    ) -> Tuple[List[RateDetails], List[Message]]:
-        return parse_rate_response(response.deserialize(), self.settings)
-
-    def parse_tracking_response(
-        self, response: Deserializable[str]
-    ) -> Tuple[List[TrackingDetails], List[Message]]:
-        return parse_track_response(response.deserialize(), self.settings)
-
-    def parse_shipment_response(
-        self, response: Deserializable[str]
-    ) -> Tuple[ShipmentDetails, List[Message]]:
-        return parse_shipment_response(response.deserialize(), self.settings)
-
-    def parse_cancel_shipment_response(
+    def parse_cancel_pickup_response(
         self, response: Deserializable[str]
     ) -> Tuple[ConfirmationDetails, List[Message]]:
-        return parse_void_shipment_response(response.deserialize(), self.settings)
+        return parse_pickup_cancel_response(response.deserialize(), self.settings)
+
+    def parse_cancel_shipment_response(
+        self, response: Deserializable
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_shipment_cancel_response(response.deserialize(), self.settings)
 
     def parse_pickup_response(
         self, response: Deserializable[str]
@@ -120,9 +110,20 @@ class Mapper(BaseMapper):
     def parse_pickup_update_response(
         self, response: Deserializable[str]
     ) -> Tuple[PickupDetails, List[Message]]:
-        return parse_pickup_response(response.deserialize(), self.settings)
+        return parse_pickup_update_response(response.deserialize(), self.settings)
 
-    def parse_cancel_pickup_response(
+    def parse_rate_response(
         self, response: Deserializable[str]
-    ) -> Tuple[ConfirmationDetails, List[Message]]:
-        return parse_cancel_pickup_reply(response.deserialize(), self.settings)
+    ) -> Tuple[List[RateDetails], List[Message]]:
+        return parse_rate_response(response.deserialize(), self.settings)
+
+    def parse_shipment_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[ShipmentDetails, List[Message]]:
+        return parse_shipment_response(response.deserialize(), self.settings)
+
+    def parse_tracking_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
+        return parse_tracking_response(response.deserialize(), self.settings)
+

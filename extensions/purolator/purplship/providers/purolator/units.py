@@ -1,4 +1,4 @@
-from enum import Enum, Flag
+from purplship.core.utils import Enum, Flag
 from purplship.core.units import PackagePreset as BasePackagePreset
 from dataclasses import dataclass
 
@@ -10,13 +10,16 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    purolator_express_envelope = PackagePreset(weight=1.0)
-    purolator_express_pack = PackagePreset(weight=3.0)
-    purolator_express_box = PackagePreset(weight=7.0)
+    """
+    Note that dimensions are in IN and weight in LB
+    """
+    purolator_express_envelope = PackagePreset(width=12.5, height=16, length=1.5, weight=1.0)
+    purolator_express_pack = PackagePreset(width=12.5, height=16, length=1.0, weight=3.0)
+    purolator_express_box = PackagePreset(width=18, height=12, length=3.5, weight=7.0)
 
 
 class PackagingType(Flag):
-    purolator_express_envelope = "Envelop"
+    purolator_express_envelope = "Envelope"
     purolator_express_pack = "Pack"
     purolator_express_box = "Box"
     purolator_customer_packaging = "Customer Packaging"
@@ -26,9 +29,9 @@ class PackagingType(Flag):
     pak = purolator_express_pack
     tube = purolator_customer_packaging
     pallet = purolator_customer_packaging
-    small_box = purolator_express_box
-    medium_box = purolator_express_box
-    large_box = purolator_express_box
+    small_box = purolator_customer_packaging
+    medium_box = purolator_customer_packaging
+    large_box = purolator_customer_packaging
     your_packaging = purolator_customer_packaging
 
 
@@ -52,15 +55,15 @@ class CreditCardType(Flag):
 
 
 class Service(Enum):
-    dangerous_goods = "Dangerous Goods"
-    chain_of_signature = "Chain of Signature"
-    express_cheque = "ExpressCheque"
-    hold_for_pickup = "Hold For Pickup"
-    return_services = "Return Services"
-    saturday_service = "Saturday Service"
-    origin_signature_not_required = "Origin Signature Not Required (OSNR)"
-    adult_signature_required = "Adult Signature Required (ASR)"
-    special_handling = "Special Handling"
+    purolator_dangerous_goods = "Dangerous Goods"
+    purolator_chain_of_signature = "Chain of Signature"
+    purolator_express_cheque = "ExpressCheque"
+    purolator_hold_for_pickup = "Hold For Pickup"
+    purolator_return_services = "Return Services"
+    purolator_saturday_service = "Saturday Service"
+    purolator_origin_signature_not_required = "Origin Signature Not Required (OSNR)"
+    purolator_adult_signature_required = "Adult Signature Required (ASR)"
+    purolator_special_handling = "Special Handling"
 
 
 class Product(Enum):

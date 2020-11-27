@@ -1,37 +1,38 @@
 from typing import List, Tuple
-from pycanadapost.rating import mailing_scenario
-from purplship.core.utils.pipeline import Pipeline
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.api.mapper import Mapper as BaseMapper
 from purplship.core.models import (
-    ShipmentRequest,
-    TrackingRequest,
-    Message,
-    TrackingDetails,
-    RateDetails,
-    RateRequest,
-    ShipmentDetails,
-    PickupRequest,
-    PickupDetails,
+    ShipmentCancelRequest,
     PickupUpdateRequest,
     PickupCancelRequest,
+    ShipmentRequest,
+    TrackingRequest,
+    PickupRequest,
+    RateRequest,
+
     ConfirmationDetails,
-    ShipmentCancelRequest,
+    TrackingDetails,
+    ShipmentDetails,
+    PickupDetails,
+    RateDetails,
+    Message,
 )
 from purplship.providers.canadapost import (
-    mailing_scenario_request,
-    parse_price_quotes,
-    tracking_pins_request,
-    parse_tracking_summary,
-    shipment_request,
+    parse_shipment_cancel_response,
+    parse_pickup_update_response,
+    parse_pickup_cancel_response,
     parse_shipment_response,
-    cancel_pickup_request,
-    create_pickup_request,
-    update_pickup_request,
+    parse_tracking_response,
     parse_pickup_response,
-    parse_cancel_pickup_response,
-    parse_void_shipment_response,
-    void_shipment_request,
+    parse_rate_response,
+
+    shipment_cancel_request,
+    pickup_update_request,
+    pickup_cancel_request,
+    tracking_request,
+    shipment_request,
+    pickup_request,
+    rate_request,
 )
 from purplship.mappers.canadapost.settings import Settings
 
@@ -43,53 +44,48 @@ class Mapper(BaseMapper):
 
     def create_rate_request(
         self, payload: RateRequest
-    ) -> Serializable[mailing_scenario]:
-        return mailing_scenario_request(payload, self.settings)
+    ) -> Serializable:
+        return rate_request(payload, self.settings)
 
     def create_tracking_request(
         self, payload: TrackingRequest
-    ) -> Serializable[List[str]]:
-        return tracking_pins_request(payload)
+    ) -> Serializable:
+        return tracking_request(payload, self.settings)
 
     def create_shipment_request(
         self, payload: ShipmentRequest
-    ) -> Serializable[Pipeline]:
+    ) -> Serializable:
         return shipment_request(payload, self.settings)
 
     def create_pickup_request(
         self, payload: PickupRequest
-    ) -> Serializable[Pipeline]:
-        return create_pickup_request(payload, self.settings)
+    ) -> Serializable:
+        return pickup_request(payload, self.settings)
 
     def create_pickup_update_request(
         self, payload: PickupUpdateRequest
-    ) -> Serializable[Pipeline]:
-        return update_pickup_request(payload, self.settings)
+    ) -> Serializable:
+        return pickup_update_request(payload, self.settings)
 
     def create_cancel_pickup_request(
         self, payload: PickupCancelRequest
-    ) -> Serializable[str]:
-        return cancel_pickup_request(payload, self.settings)
+    ) -> Serializable:
+        return pickup_cancel_request(payload, self.settings)
 
     def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable[str]:
-        return void_shipment_request(payload, self.settings)
+        return shipment_cancel_request(payload, self.settings)
 
     """Response Parsers"""
 
-    def parse_rate_response(
+    def parse_cancel_pickup_response(
         self, response: Deserializable[str]
-    ) -> Tuple[List[RateDetails], List[Message]]:
-        return parse_price_quotes(response.deserialize(), self.settings)
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_pickup_cancel_response(response.deserialize(), self.settings)
 
-    def parse_tracking_response(
-        self, response: Deserializable[str]
-    ) -> Tuple[List[TrackingDetails], List[Message]]:
-        return parse_tracking_summary(response.deserialize(), self.settings)
-
-    def parse_shipment_response(
-        self, response: Deserializable[str]
-    ) -> Tuple[ShipmentDetails, List[Message]]:
-        return parse_shipment_response(response.deserialize(), self.settings)
+    def parse_cancel_shipment_response(
+        self, response: Deserializable
+    ) -> Tuple[ConfirmationDetails, List[Message]]:
+        return parse_shipment_cancel_response(response.deserialize(), self.settings)
 
     def parse_pickup_response(
         self, response: Deserializable[str]
@@ -99,14 +95,19 @@ class Mapper(BaseMapper):
     def parse_pickup_update_response(
         self, response: Deserializable[str]
     ) -> Tuple[PickupDetails, List[Message]]:
-        return parse_pickup_response(response.deserialize(), self.settings)
+        return parse_pickup_update_response(response.deserialize(), self.settings)
 
-    def parse_cancel_pickup_response(
+    def parse_rate_response(
         self, response: Deserializable[str]
-    ) -> Tuple[ConfirmationDetails, List[Message]]:
-        return parse_cancel_pickup_response(response.deserialize(), self.settings)
+    ) -> Tuple[List[RateDetails], List[Message]]:
+        return parse_rate_response(response.deserialize(), self.settings)
 
-    def parse_cancel_shipment_response(
-        self, response: Deserializable
-    ) -> Tuple[ConfirmationDetails, List[Message]]:
-        return parse_void_shipment_response(response.deserialize(), self.settings)
+    def parse_shipment_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[ShipmentDetails, List[Message]]:
+        return parse_shipment_response(response.deserialize(), self.settings)
+
+    def parse_tracking_response(
+        self, response: Deserializable[str]
+    ) -> Tuple[List[TrackingDetails], List[Message]]:
+        return parse_tracking_response(response.deserialize(), self.settings)

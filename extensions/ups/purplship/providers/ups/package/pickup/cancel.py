@@ -14,7 +14,7 @@ from purplship.providers.ups.utils import Settings, default_request_serializer
 from purplship.providers.ups.error import parse_error_response
 
 
-def parse_cancel_pickup_response(
+def parse_pickup_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
     status = build(
@@ -39,7 +39,7 @@ def parse_cancel_pickup_response(
     return cancellation, parse_error_response(response, settings)
 
 
-def cancel_pickup_request(
+def pickup_cancel_request(
     payload: PickupCancelRequest, settings: Settings
 ) -> Serializable[Envelope]:
 

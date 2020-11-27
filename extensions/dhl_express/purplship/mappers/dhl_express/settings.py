@@ -1,4 +1,4 @@
-"""PurplShip DHL client settings."""
+"""Purplship DHL client settings."""
 
 import attr
 from purplship.providers.dhl_express.utils import Settings as BaseSettings
