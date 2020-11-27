@@ -73,6 +73,7 @@ class Commodity(OwnedEntity):
     quantity = models.IntegerField(blank=True, null=True)
     sku = models.CharField(max_length=100, null=True, blank=True)
     value_amount = models.FloatField(blank=True, null=True)
+    weight_unit = models.CharField(max_length=2, choices=WEIGHT_UNIT, null=True, blank=True)
     value_currency = models.CharField(max_length=3, choices=COUNTRIES, null=True, blank=True)
     origin_country = models.CharField(max_length=3, choices=CURRENCIES, null=True, blank=True)
 
