@@ -27,17 +27,20 @@ const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
     };
 
     return (
-        <div className={`dropdown-wrap is-right ${isActive ? "is-active": ""}`}>
+        <div className={`dropdown-wrap is-right ${isActive ? "is-active" : ""}`}>
 
             <span className="indicator"></span>
             <button className="dropdown-button has-image" onClick={handleOnClick} ref={btn}>
-                <img src="/static/purpleserver/client/profile.svg" alt="Purplship Profile" ref={img}/>
+                <img src="/static/purpleserver/client/profile.svg" alt="Purplship Profile" ref={img} />
             </button>
             <div className="drop-menu">
                 <div className="menu-inner">
-                    <div className="menu-header">
-                        <h3>Menu</h3>
-                    </div>
+                    {user.full_name !== undefined && user.full_name !== null && user.full_name !== '' && <>
+                        <div className="menu-header">
+                            <h3>{user.full_name}</h3>
+                        </div>
+                    </>}
+                    <h6 className="is-size-7 mt-2 mx-3 has-text-weight-semibold">{user.email}</h6>
                     <div className="options-items">
                         <Link to="settings" className="options-item">
                             <i className="fas fa-user"></i>
@@ -46,14 +49,13 @@ const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
                                 <span>Manage your account</span>
                             </div>
                         </Link>
-                        { user.is_staff && <a href="/admin" className="options-item">
-                                <i className="fas fa-cog"></i>
-                                <div className="option-content">
-                                    <span>Console</span>
-                                    <span>Access the Administration panel</span>
-                                </div>
-                            </a>
-                        }
+                        {user.is_staff && <a href="/admin" className="options-item">
+                            <i className="fas fa-cog"></i>
+                            <div className="option-content">
+                                <span>Console</span>
+                                <span>Access the Administration panel</span>
+                            </div>
+                        </a>}
                         <a href="/logout" className="options-item">
                             <i className="fas fa-power-off"></i>
                             <div className="option-content">

@@ -4,6 +4,7 @@ import { PaginatedShipments, state } from '@/library/api';
 import ShipmentMenu from '@/components/shipment-menu';
 import { useNavigate } from '@reach/router';
 import { formatAddress, formatDate } from '@/library/helper';
+import CarrierBadge from '@/components/carrier-badge';
 
 
 interface ShipmentsView extends View {
@@ -50,7 +51,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
             {shipments?.results.map(shipment => (
               <tr key={shipment.id}>
                 <td className="is-vcentered">
-                  <span className="tag is-primary is-light">{shipment.carrier_name || "Not Selected"}</span>
+                  <CarrierBadge name={shipment.carrier_name as string} className="tag" style={{width: '100%'}} />
                 </td>
                 <td className="mode is-vcentered">
                   {shipment.test_mode ? <span className="tag is-warning is-centered">Test</span> : <></>}

@@ -32,7 +32,7 @@ const App: React.FC = () => {
             <Reference.Provider value={references as References}>
             <Logs.Provider value={logs as PaginatedLogs}>
             <User.Provider value={user as UserInfo}>
-                <ExpandedSidebar user={user} />
+                <ExpandedSidebar />
 
                 <div className="plex-wrapper">
                     <div className="wrapper-inner">

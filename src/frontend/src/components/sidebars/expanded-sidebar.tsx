@@ -1,12 +1,9 @@
 import React, { useRef } from 'react';
 import NavLink from '@/components/generic/navlink';
-import { UserInfo } from '@/library/api';
 
-interface ExpandedSidebarComponent {
-    user: UserInfo;
-}
+interface ExpandedSidebarComponent {}
 
-const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
+const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
     const sidebar = useRef<HTMLDivElement>(null);
     const dismiss = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -21,18 +18,7 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
                     <span></span>
                 </button>
             </div>
-            <div className="sidebar-profile">
-                <div className="avatar-container">
-                    <div className="avatar-wrapper">
-                        <div className="avatar">
-                            <img src="/static/purpleserver/client/profile.svg" alt="" />
-                        </div>
-                        <h3>{user.full_name}</h3>
-                        <p>{user.email}</p>
-                    </div>
-                </div>
-            </div>
-            <div className="sidebar-menu has-slimscroll pb-6">
+            <div className="sidebar-menu has-slimscroll py-6" style={{height: "calc(100% - 60px)"}}>
                 <NavLink to="/">
                     <span>Shipments</span>
                 </NavLink>

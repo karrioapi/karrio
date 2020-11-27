@@ -4,6 +4,7 @@ import { PaginatedConnections, state } from '@/library/api';
 import ConnectProviderModal from '@/components/connect-provider-modal';
 import { Reference } from '@/library/context';
 import DisconnectProviderButton from '@/components/disconnect-provider-button';
+import CarrierBadge from '@/components/carrier-badge';
 
 interface ConnectionsView extends View {
   connections?: PaginatedConnections;
@@ -35,39 +36,39 @@ const Connections: React.FC<ConnectionsView> = ({ connections }) => {
         <table className="table is-fullwidth">
 
           <tbody className="connections-table">
-            <Reference.Consumer>
-              {ref => (Object.values(ref || {}).length > 0) && connections?.results.map((connection) => (
+            {connections?.results.map((connection) => (
 
-                <tr key={connection.id}>
-                  <td className="carrier"><div className="box">{ref.carriers[connection.carrier_name]}</div></td>
-                  <td className="mode is-vcentered">
-                    {connection.test ? <span className="tag is-warning is-centered">Test</span> : <></>}
-                  </td>
-                  <td className="details">
-                    <div className="content is-small">
-                      <ul>
-                        <li>carrier id: <span className="tag is-info is-light" title="carrier nickname">{connection.carrier_id}</span></li>
-                      </ul>
-                    </div>
-                  </td>
-                  <td className="action is-vcentered">
-                    <div className="buttons is-centered">
-                      <ConnectProviderModal className="button" connection={connection}>
-                        <span className="icon is-small">
-                          <i className="fas fa-pen"></i>
-                        </span>
-                      </ConnectProviderModal>
-                      <DisconnectProviderButton connection={connection}>
-                        <span className="icon is-small">
-                          <i className="fas fa-trash"></i>
-                        </span>
-                      </DisconnectProviderButton>
-                    </div>
-                  </td>
-                </tr>
+              <tr key={connection.id}>
+                <td className="carrier">
+                  <CarrierBadge name={connection.carrier_name as string} className="box has-text-weight-bold" />
+                </td>
+                <td className="mode is-vcentered">
+                  {connection.test ? <span className="tag is-warning is-centered">Test</span> : <></>}
+                </td>
+                <td className="details">
+                  <div className="content is-small">
+                    <ul>
+                      <li>carrier id: <span className="tag is-info is-light" title="carrier nickname">{connection.carrier_id}</span></li>
+                    </ul>
+                  </div>
+                </td>
+                <td className="action is-vcentered">
+                  <div className="buttons is-centered">
+                    <ConnectProviderModal className="button" connection={connection}>
+                      <span className="icon is-small">
+                        <i className="fas fa-pen"></i>
+                      </span>
+                    </ConnectProviderModal>
+                    <DisconnectProviderButton connection={connection}>
+                      <span className="icon is-small">
+                        <i className="fas fa-trash"></i>
+                      </span>
+                    </DisconnectProviderButton>
+                  </div>
+                </td>
+              </tr>
 
-              ))}
-            </Reference.Consumer>
+            ))}
           </tbody>
 
         </table>
