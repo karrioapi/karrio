@@ -52,16 +52,16 @@ alias env:reset=init
 # shellcheck disable=SC2120
 test() {
     cd "${ROOT:?}"
-    r=$(coverage run -m unittest discover -f -v "${ROOT:?}/tests")
+    r=$(coverage run -m unittest discover -f -v "${ROOT:?}/tests"; echo $?)
     cd -
-    $r || false
+    return $r
 }
 
 typecheck() {
     for module in $(submodules); do
       for submodule in $(find "$module" -type f -name "__init__.py" -exec dirname {} \;); do
-        mypy "$submodule" || break
-      done || break
+        mypy "$submodule" || return $?
+      done
     done
 }
 
