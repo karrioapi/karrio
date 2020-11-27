@@ -1,10 +1,12 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
+omit =
+    */purplship/extensions/boxknight/*
+    */purplship/extensions/dicom/*
+    */purplship/extensions/usps/*
 
 [report]
 include =
-    */purplship/carriers/*
     */purplship/core/*
-    */purplship/package/*
-    */purplship/freight/*
+    */purplship/extensions/*
