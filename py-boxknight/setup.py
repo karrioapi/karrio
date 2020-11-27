@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='py-boxknight',
-      version='2020.11',
+      version='2020.11-beta',
       description='Boxknight API schemas Python Data types library',
       url='https://github.com/PurplShip/purplship-carriers/tree/master/py-boxknight',
       author='Purplship Team',

@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='py-dicom',
-      version='2020.11',
+      version='2020.11-beta',
       description='Dicom API schemas Python Data types library',
       url='https://github.com/PurplShip/purplship-carriers/tree/master/py-dicom',
       author='Purplship Team',

@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='py-usps',
-      version='2020.11',
+      version='2020.11-beta',
       description='USPS Web API Schemas Python Datatypes library',
       url='https://github.com/PurplShip/purplship-carriers/tree/master/py-usps',
       author='Purplship Team',
