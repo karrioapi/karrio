@@ -85,12 +85,12 @@
                             <xs:element name="TrackSummary" maxOccurs="1">
                                 <xs:complexType>
                                     <xs:sequence>
-                                        <xs:element type="xs:string" name="EventTime" minOccurs="1"/>
-                                        <xs:element type="xs:string" name="EventDate" minOccurs="1"/>
-                                        <xs:element type="xs:string" name="Event" minOccurs="1"/>
-                                        <xs:element type="xs:string" name="EventCity" minOccurs="1"/>
-                                        <xs:element type="xs:string" name="EventState" minOccurs="1"/>
-                                        <xs:element type="xs:int" name="EventZIPCode" minOccurs="1"/>
+                                        <xs:element type="xs:string" name="EventTime"/>
+                                        <xs:element type="xs:string" name="EventDate"/>
+                                        <xs:element type="xs:string" name="Event"/>
+                                        <xs:element type="xs:string" name="EventCity"/>
+                                        <xs:element type="xs:string" name="EventState"/>
+                                        <xs:element type="xs:int" name="EventZIPCode"/>
                                         <xs:element type="xs:string" name="EventCountry" minOccurs="0"/>
                                         <xs:element type="xs:string" name="FirmName" minOccurs="0"/>
                                         <xs:element type="xs:string" name="Name" minOccurs="0"/>
@@ -105,12 +105,12 @@
                             <xs:element name="TrackDetail" maxOccurs="1">
                                 <xs:complexType>
                                     <xs:sequence>
-                                        <xs:element type="xs:string" name="EventTime" minOccurs="1"/>
-                                        <xs:element type="xs:string" name="EventDate" minOccurs="1"/>
-                                        <xs:element type="xs:string" name="Event" minOccurs="1"/>
-                                        <xs:element type="xs:string" name="EventCity" minOccurs="1"/>
-                                        <xs:element type="xs:string" name="EventState" minOccurs="1"/>
-                                        <xs:element type="xs:short" name="EventZIPCode" minOccurs="1"/>
+                                        <xs:element type="xs:string" name="EventTime"/>
+                                        <xs:element type="xs:string" name="EventDate"/>
+                                        <xs:element type="xs:string" name="Event"/>
+                                        <xs:element type="xs:string" name="EventCity"/>
+                                        <xs:element type="xs:string" name="EventState"/>
+                                        <xs:element type="xs:short" name="EventZIPCode"/>
                                         <xs:element type="xs:string" name="EventCountry" minOccurs="0"/>
                                         <xs:element type="xs:string" name="FirmName" minOccurs="0"/>
                                         <xs:element type="xs:string" name="Name" minOccurs="0"/>

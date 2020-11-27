@@ -3,7 +3,7 @@
     <xs:element name="TrackRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="TrackID" maxOccurs="unbounded" minOccurs="1">
+                <xs:element name="TrackID" maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:simpleContent>
                             <xs:extension base="xs:string">

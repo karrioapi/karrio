@@ -15,7 +15,7 @@
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
-                            <xs:element name="Ounces" maxOccurs="1" use="required"/>
+                            <xs:element name="Ounces" maxOccurs="1" use="required">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:decimal">
                                         <xs:minInclusive value="0.0"/>
@@ -23,7 +23,7 @@
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
-                            <xs:element type="xs:string" name="Machinable" default="true" minOccurs="0"/>
+                            <xs:element type="xs:boolean" name="Machinable" default="true" minOccurs="0"/>
                             <xs:element type="xs:string" name="MailType" minOccurs="1" use="required"/>
                             <xs:element name="GXG" minOccurs="0">
                                 <xs:complexType>
@@ -33,19 +33,17 @@
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
-                            <xs:element type="xs:short" name="ValueOfContents" use="required"/>
+                            <xs:element type="xs:string" name="ValueOfContents" use="required"/>
                             <xs:element type="xs:string" name="Country" use="required"/>
                             <xs:element type="xs:string" name="Container" use="required"/>
                             <xs:element type="xs:string" name="Size" use="required"/>
-                            <xs:element type="xs:integer" name="Width" use="required"/>
-                            <xs:element type="xs:integer" name="Length" use="required"/>
-                            <xs:element type="xs:integer" name="Height" use="required"/>
-                            <xs:element type="xs:integer" name="Girth" use="required"/>
+                            <xs:element type="xs:decimal" name="Width" use="required"/>
+                            <xs:element type="xs:decimal" name="Length" use="required"/>
+                            <xs:element type="xs:decimal" name="Height" use="required"/>
+                            <xs:element type="xs:decimal" name="Girth" use="required"/>
                             <xs:element type="xs:string" name="OriginZip"/>
                             <xs:element type="xs:string" name="CommercialFlag"/>
                             <xs:element type="xs:string" name="CommercialPlusFlag"/>
-                            <xs:element type="xs:dateTime" name="AcceptanceDateTime" minOccurs="0"/>
-                            <xs:element type="xs:string" name="DestinationPostalCode" minOccurs="0"/>
                             <xs:element name="ExtraServices" use="required">
                                 <xs:complexType>
                                     <xs:sequence>
@@ -53,6 +51,8 @@
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
+                            <xs:element type="xs:string" name="AcceptanceDateTime" minOccurs="0"/>
+                            <xs:element type="xs:string" name="DestinationPostalCode" minOccurs="0"/>
                             <xs:element name="Content">
                                 <xs:complexType>
                                     <xs:sequence>
@@ -62,11 +62,11 @@
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
-                        <xs:attribute type="xs:string" name="ID" use="optional"/>
+                        <xs:attribute type="xs:string" name="ID" use="requirede"/>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
-            <xs:attribute type="xs:string" name="USERID"/>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>

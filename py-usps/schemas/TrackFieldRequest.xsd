@@ -11,7 +11,7 @@
                         <xs:pattern value="[0-9]{5}"/>
                     </xs:restriction>
                 </xs:simpleType>
-                <xs:element name="TrackID" maxOccurs="25" minOccurs="1">
+                <xs:element name="TrackID" maxOccurs="25">
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element type="xs:short" name="DestinationZipCode" minOccurs="0"/>
