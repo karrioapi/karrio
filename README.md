@@ -1,11 +1,21 @@
-# Purplship (Multi-carrier Shipping API SDK)
-
-[![CI](https://github.com/Purplship/Purplship/workflows/PuprlShip/badge.svg)](https://github.com/Purplship/Purplship/actions)
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
-[![codecov](https://codecov.io/gh/Purplship/Purplship/branch/master/graph/badge.svg)](https://codecov.io/gh/Purplship/Purplship)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709)](https://app.codacy.com/manual/DanH91/Purplship?utm_source=github.com&utm_medium=referral&utm_content=Purplship/Purplship&utm_campaign=Badge_Grade_Dashboard)
-[![Join the chat at https://gitter.im/Purplship/Purplship](https://badges.gitter.im/Purplship/purplship.svg)](https://gitter.im/Purplship/Purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+<p align="center">
+  <p align="center">
+    <a href="https://purplship.com" target="_blank">
+      <img src="https://github.com/PurplShip/purplship-server/raw/main/src/purpleserver/purpleserver/static/purpleserver/img/icon.png" alt="Purplship" height="200">
+    </a>
+  </p>
+  <h2 align="center">
+    Purplship (Multi-carrier Shipping API Development Kit)
+  </h2>
+  <p align="center">
+    <a href="https://github.com/Purplship/Purplship/actions"><img src="https://github.com/Purplship/Purplship/workflows/PuprlShip/badge.svg" alt="CI" style="max-width:100%;"></a>
+    <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: AGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
+    <a href="https://github.com/python/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" style="max-width:100%;"></a>
+    <a href="https://codecov.io/gh/Purplship/Purplship"><img src="https://codecov.io/gh/Purplship/Purplship/branch/master/graph/badge.svg" alt="codecov" style="max-width:100%;"></a>
+    <a href="https://app.codacy.com/manual/DanH91/Purplship?utm_source=github.com&utm_medium=referral&utm_content=Purplship/Purplship&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709" alt="Codacy Badge" style="max-width:100%;"></a>
+    <a href="https://gitter.im/Purplship/Purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/Purplship/purplship.svg" alt="Join the chat at https://gitter.im/Purplship/Purplship" style="max-width:100%;"></a>
+  </p>
+</p>
 
 ## Introduction
 
@@ -260,7 +270,7 @@ rates = request.from_(carrier).parse()
 
 ##### Pickup
 
-- Booking
+- Schedule
 
 ```python
 import purplship
@@ -339,7 +349,7 @@ request = purplship.Shipment.create(
 rates = request.with_(carrier).parse()
 ```
 
-- Void
+- Cancel
 
 ```python
 import purplship
@@ -389,7 +399,7 @@ rates = request.from_(carrier).parse()
 
     | Name | Type | Description 
     | --- | --- | --- | 
-    | `user_id` | `str` | **required**
+    | `username` | `str` | **required**
     | `password` | `str` | **required**
 
 
@@ -481,12 +491,6 @@ rates = request.from_(carrier).parse()
     | `address` | [Address](#Address) | 
 
 
-- <a name="COD"></a> COD
-    | Name | Type | Description 
-    | --- | --- | --- |
-    | `amount` | `float` | 
-
-
 - <a name="Card"></a> Card
     | Name | Type | Description 
     | --- | --- | --- |
@@ -512,6 +516,7 @@ rates = request.from_(carrier).parse()
     | --- | --- | --- |
     | `id` | `str` | 
     | `weight` | `float` | 
+    | `weight_unit` | `str` | 
     | `description` | `str` | 
     | `quantity` | `int` | 
     | `sku` | `str` | 
@@ -526,19 +531,26 @@ rates = request.from_(carrier).parse()
     | `carrier_name` | `str` | 
     | `carrier_id` | `str` | 
     | `success` | `bool` | 
+    | `operation` | `str` | 
 
 
 - <a name="Customs"></a> Customs
     | Name | Type | Description 
     | --- | --- | --- |
-    | `no_eei` | `str` | 
     | `aes` | `str` | 
-    | `description` | `str` | 
-    | `terms_of_trade` | `str` | 
+    | `eel_pfc` | `str` | 
+    | `certify` | `bool` | 
+    | `signer` | `str` | 
+    | `content_type` | `str` | 
+    | `content_description` | `str` | 
+    | `incoterm` | `str` | 
+    | `invoice` | `str` | 
+    | `certificate_number` | `str` | 
     | `commodities` | List[[Commodity](#Commodity)] | 
     | `duty` | [Payment](#Payment) | 
-    | `invoice` | [Invoice](#Invoice) | 
     | `commercial_invoice` | `bool` | 
+    | `options` | `dict` | 
+    | `id` | `str` | 
 
 
 - <a name="Doc"></a> Doc
@@ -549,21 +561,6 @@ rates = request.from_(carrier).parse()
     | `image` | `str` | 
 
 
-- <a name="Insurance"></a> Insurance
-    | Name | Type | Description 
-    | --- | --- | --- |
-    | `amount` | `float` | 
-
-
-- <a name="Invoice"></a> Invoice
-    | Name | Type | Description 
-    | --- | --- | --- |
-    | `date` | `str` | 
-    | `identifier` | `str` | 
-    | `type` | `str` | 
-    | `copies` | `int` | 
-
-
 - <a name="Message"></a> Message
     | Name | Type | Description 
     | --- | --- | --- |
@@ -572,13 +569,6 @@ rates = request.from_(carrier).parse()
     | `message` | `str` | 
     | `code` | `str` | 
     | `details` | `dict` | 
-
-
-- <a name="Notification"></a> Notification
-    | Name | Type | Description 
-    | --- | --- | --- |
-    | `email` | `str` | 
-    | `locale` | `str` | 
 
 
 - <a name="Parcel"></a> Parcel
@@ -607,6 +597,7 @@ rates = request.from_(carrier).parse()
     | `account_number` | `str` | 
     | `credit_card` | [Card](#Card) | 
     | `contact` | [Address](#Address) | 
+    | `id` | `str` | 
 
 
 - <a name="PickupCancelRequest"></a> PickupCancelRequest
@@ -616,8 +607,6 @@ rates = request.from_(carrier).parse()
     | `address` | [Address](#Address) | 
     | `pickup_date` | `str` | 
     | `reason` | `str` | 
-    | `person_name` | `str` | 
-    | `country_code` | `str` | 
 
 
 - <a name="PickupDetails"></a> PickupDetails
@@ -636,7 +625,7 @@ rates = request.from_(carrier).parse()
 - <a name="PickupRequest"></a> PickupRequest
     | Name | Type | Description 
     | --- | --- | --- |
-    | `date` | `str` | 
+    | `pickup_date` | `str` | 
     | `ready_time` | `str` | 
     | `closing_time` | `str` | 
     | `address` | [Address](#Address) | 
@@ -649,10 +638,10 @@ rates = request.from_(carrier).parse()
 - <a name="PickupUpdateRequest"></a> PickupUpdateRequest
     | Name | Type | Description 
     | --- | --- | --- |
-    | `date` | `str` | 
+    | `confirmation_number` | `str` | 
+    | `pickup_date` | `str` | 
     | `ready_time` | `str` | 
     | `closing_time` | `str` | 
-    | `confirmation_number` | `str` | 
     | `address` | [Address](#Address) | 
     | `parcels` | List[[Parcel](#Parcel)] | 
     | `instruction` | `str` | 
@@ -692,6 +681,8 @@ rates = request.from_(carrier).parse()
     | Name | Type | Description 
     | --- | --- | --- |
     | `shipment_identifier` | `str` | 
+    | `service` | `str` | 
+    | `options` | `dict` | 
 
 
 - <a name="ShipmentDetails"></a> ShipmentDetails
@@ -701,6 +692,7 @@ rates = request.from_(carrier).parse()
     | `carrier_id` | `str` | 
     | `label` | `str` | 
     | `tracking_number` | `str` | 
+    | `shipment_identifier` | `str` | 
     | `selected_rate` | [RateDetails](#RateDetails) | 
     | `meta` | `dict` | 
     | `id` | `str` | 
@@ -746,7 +738,7 @@ rates = request.from_(carrier).parse()
     | --- | --- | --- |
     | `tracking_numbers` | List[str] | 
     | `language_code` | `str` | 
-    | `level_of_details` | `str` | 
+    | `level_of_details` | `str` |
 
 </details>
 
@@ -794,7 +786,7 @@ rates = request.from_(carrier).parse()
 - <a name="services-purolator"></a> Purolator
     Code | Identifier
     --- | ---
-    | `purolator_express_envelope` | Envelop
+    | `purolator_express_envelope` | Envelope
     | `purolator_express_pack` | Pack
     | `purolator_express_box` | Box
     | `purolator_customer_packaging` | Customer Packaging
@@ -827,7 +819,7 @@ rates = request.from_(carrier).parse()
 - <a name="presets-canadapost"></a> Canada Post
     Code | Dimensions | Note
     --- | --- | ---
-    | `canadapost_mailing_box` | 15.2 x 10.2 | height x width
+    | `canadapost_mailing_box` | 15.2 x 1.0 x 10.2 | height x length x width
     | `canadapost_extra_small_mailing_box` | 14.0 x 14.0 x 14.0 | height x length x width
     | `canadapost_small_mailing_box` | 22.9 x 6.4 x 28.6 | height x length x width
     | `canadapost_medium_mailing_box` | 23.5 x 13.3 x 31.0 | height x length x width
@@ -844,8 +836,8 @@ rates = request.from_(carrier).parse()
     Code | Dimensions | Note
     --- | --- | ---
     | `dhl_express_envelope` | 27.5 x 1.0 x 0.5 x 35.0 | height x length x weight x width
-    | `dhl_express_standard_flyer` | 30.0 x 2.0 x 40.0 | height x weight x width
-    | `dhl_express_large_flyer` | 37.5 x 3.0 x 47.5 | height x weight x width
+    | `dhl_express_standard_flyer` | 30.0 x 1.5 x 2.0 x 40.0 | height x length x weight x width
+    | `dhl_express_large_flyer` | 37.5 x 1.5 x 3.0 x 47.5 | height x length x weight x width
     | `dhl_express_box_2` | 18.2 x 10.0 x 1.0 x 33.7 | height x length x weight x width
     | `dhl_express_box_3` | 32.0 x 5.2 x 2.0 x 33.6 | height x length x weight x width
     | `dhl_express_box_4` | 32.2 x 18.0 x 5.0 x 33.7 | height x length x weight x width
@@ -877,9 +869,9 @@ rates = request.from_(carrier).parse()
 - <a name="presets-purolator"></a> Purolator
     Code | Dimensions | Note
     --- | --- | ---
-    | `purolator_express_envelope` | 1.0 | weight
-    | `purolator_express_pack` | 3.0 | weight
-    | `purolator_express_box` | 7.0 | weight
+    | `purolator_express_envelope` | 1.5 x 1.0 x 12.5 | length x weight x width
+    | `purolator_express_pack` | 1.0 x 3.0 x 12.5 | length x weight x width
+    | `purolator_express_box` | 3.5 x 7.0 | length x weight
 
 
 - <a name="presets-ups"></a> UPS
@@ -889,7 +881,7 @@ rates = request.from_(carrier).parse()
     | `ups_medium_express_box` | 11.0 x 3.0 x 30.0 x 16.0 | height x length x weight x width
     | `ups_large_express_box` | 13.0 x 3.0 x 30.0 x 18.0 | height x length x weight x width
     | `ups_express_tube` | 6.0 x 6.0 x 38.0 | height x length x width
-    | `ups_express_pak` | 11.75 x 16.0 | height x width
+    | `ups_express_pak` | 11.75 x 1.5 x 16.0 | height x length x width
     | `ups_world_document_box` | 12.5 x 3.0 x 17.5 | height x length x width
 
 </details>
@@ -986,7 +978,7 @@ rates = request.from_(carrier).parse()
 - <a name="services-fedex"></a> FedEx
     Code | Identifier
     --- | ---
-    | `europe_first_international_priority` | EUROPE_FIRST_INTERNATIONAL_PRIORITY
+    | `fedex_europe_first_international_priority` | EUROPE_FIRST_INTERNATIONAL_PRIORITY
     | `fedex_1_day_freight` | FEDEX_1_DAY_FREIGHT
     | `fedex_2_day` | FEDEX_2_DAY
     | `fedex_2_day_am` | FEDEX_2_DAY_AM
@@ -1021,27 +1013,27 @@ rates = request.from_(carrier).parse()
     | `fedex_next_day_end_of_day` | FEDEX_NEXT_DAY_END_OF_DAY
     | `fedex_next_day_freight` | FEDEX_NEXT_DAY_FREIGHT
     | `fedex_next_day_mid_morning` | FEDEX_NEXT_DAY_MID_MORNING
-    | `first_overnight` | FIRST_OVERNIGHT
-    | `ground_home_delivery` | GROUND_HOME_DELIVERY
-    | `international_distribution_freight` | INTERNATIONAL_DISTRIBUTION_FREIGHT
-    | `international_economy` | INTERNATIONAL_ECONOMY
-    | `international_economy_distribution` | INTERNATIONAL_ECONOMY_DISTRIBUTION
-    | `international_economy_freight` | INTERNATIONAL_ECONOMY_FREIGHT
-    | `international_first` | INTERNATIONAL_FIRST
-    | `international_ground` | INTERNATIONAL_GROUND
-    | `international_priority` | INTERNATIONAL_PRIORITY
-    | `international_priority_distribution` | INTERNATIONAL_PRIORITY_DISTRIBUTION
-    | `international_priority_express` | INTERNATIONAL_PRIORITY_EXPRESS
-    | `international_priority_freight` | INTERNATIONAL_PRIORITY_FREIGHT
-    | `priority_overnight` | PRIORITY_OVERNIGHT
-    | `same_day` | SAME_DAY
-    | `same_day_city` | SAME_DAY_CITY
-    | `same_day_metro_afternoon` | SAME_DAY_METRO_AFTERNOON
-    | `same_day_metro_morning` | SAME_DAY_METRO_MORNING
-    | `same_day_metro_rush` | SAME_DAY_METRO_RUSH
-    | `smart_post` | SMART_POST
-    | `standard_overnight` | STANDARD_OVERNIGHT
-    | `transborder_distribution_consolidation` | TRANSBORDER_DISTRIBUTION_CONSOLIDATION
+    | `fedex_first_overnight` | FIRST_OVERNIGHT
+    | `fedex_ground_home_delivery` | GROUND_HOME_DELIVERY
+    | `fedex_international_distribution_freight` | INTERNATIONAL_DISTRIBUTION_FREIGHT
+    | `fedex_international_economy` | INTERNATIONAL_ECONOMY
+    | `fedex_international_economy_distribution` | INTERNATIONAL_ECONOMY_DISTRIBUTION
+    | `fedex_international_economy_freight` | INTERNATIONAL_ECONOMY_FREIGHT
+    | `fedex_international_first` | INTERNATIONAL_FIRST
+    | `fedex_international_ground` | INTERNATIONAL_GROUND
+    | `fedex_international_priority` | INTERNATIONAL_PRIORITY
+    | `fedex_international_priority_distribution` | INTERNATIONAL_PRIORITY_DISTRIBUTION
+    | `fedex_international_priority_express` | INTERNATIONAL_PRIORITY_EXPRESS
+    | `fedex_international_priority_freight` | INTERNATIONAL_PRIORITY_FREIGHT
+    | `fedex_priority_overnight` | PRIORITY_OVERNIGHT
+    | `fedex_same_day` | SAME_DAY
+    | `fedex_same_day_city` | SAME_DAY_CITY
+    | `fedex_same_day_metro_afternoon` | SAME_DAY_METRO_AFTERNOON
+    | `fedex_same_day_metro_morning` | SAME_DAY_METRO_MORNING
+    | `fedex_same_day_metro_rush` | SAME_DAY_METRO_RUSH
+    | `fedex_smart_post` | SMART_POST
+    | `fedex_standard_overnight` | STANDARD_OVERNIGHT
+    | `fedex_transborder_distribution_consolidation` | TRANSBORDER_DISTRIBUTION_CONSOLIDATION
 
 
 - <a name="services-purolator"></a> Purolator
@@ -1408,122 +1400,121 @@ rates = request.from_(carrier).parse()
 - <a name="options-fedex"></a> FedEx
     Code | Identifier
     --- | ---
-    | `blind_shipment` | BLIND_SHIPMENT
-    | `broker_select_option` | BROKER_SELECT_OPTION
-    | `call_before_delivery` | CALL_BEFORE_DELIVERY
-    | `cod` | COD
-    | `cod_remittance` | COD_REMITTANCE
-    | `custom_delivery_window` | CUSTOM_DELIVERY_WINDOW
-    | `cut_flowers` | CUT_FLOWERS
-    | `dangerous_goods` | DANGEROUS_GOODS
-    | `delivery_on_invoice_acceptance` | DELIVERY_ON_INVOICE_ACCEPTANCE
-    | `detention` | DETENTION
-    | `do_not_break_down_pallets` | DO_NOT_BREAK_DOWN_PALLETS
-    | `do_not_stack_pallets` | DO_NOT_STACK_PALLETS
-    | `dry_ice` | DRY_ICE
-    | `east_coast_special` | EAST_COAST_SPECIAL
-    | `electronic_trade_documents` | ELECTRONIC_TRADE_DOCUMENTS
-    | `event_notification` | EVENT_NOTIFICATION
-    | `exclude_from_consolidation` | EXCLUDE_FROM_CONSOLIDATION
-    | `exclusive_use` | EXCLUSIVE_USE
-    | `exhibition_delivery` | EXHIBITION_DELIVERY
-    | `exhibition_pickup` | EXHIBITION_PICKUP
-    | `expedited_alternate_delivery_route` | EXPEDITED_ALTERNATE_DELIVERY_ROUTE
-    | `expedited_one_day_earlier` | EXPEDITED_ONE_DAY_EARLIER
-    | `expedited_service_monitoring_and_delivery` | EXPEDITED_SERVICE_MONITORING_AND_DELIVERY
-    | `expedited_standard_day_early_delivery` | EXPEDITED_STANDARD_DAY_EARLY_DELIVERY
-    | `extra_labor` | EXTRA_LABOR
-    | `extreme_length` | EXTREME_LENGTH
+    | `fedex_blind_shipment` | BLIND_SHIPMENT
+    | `fedex_broker_select_option` | BROKER_SELECT_OPTION
+    | `fedex_call_before_delivery` | CALL_BEFORE_DELIVERY
+    | `fedex_cod` | COD
+    | `fedex_cod_remittance` | COD_REMITTANCE
+    | `fedex_custom_delivery_window` | CUSTOM_DELIVERY_WINDOW
+    | `fedex_cut_flowers` | CUT_FLOWERS
+    | `fedex_dangerous_goods` | DANGEROUS_GOODS
+    | `fedex_delivery_on_invoice_acceptance` | DELIVERY_ON_INVOICE_ACCEPTANCE
+    | `fedex_detention` | DETENTION
+    | `fedex_do_not_break_down_pallets` | DO_NOT_BREAK_DOWN_PALLETS
+    | `fedex_do_not_stack_pallets` | DO_NOT_STACK_PALLETS
+    | `fedex_dry_ice` | DRY_ICE
+    | `fedex_east_coast_special` | EAST_COAST_SPECIAL
+    | `fedex_electronic_trade_documents` | ELECTRONIC_TRADE_DOCUMENTS
+    | `fedex_event_notification` | EVENT_NOTIFICATION
+    | `fedex_exclude_from_consolidation` | EXCLUDE_FROM_CONSOLIDATION
+    | `fedex_exclusive_use` | EXCLUSIVE_USE
+    | `fedex_exhibition_delivery` | EXHIBITION_DELIVERY
+    | `fedex_exhibition_pickup` | EXHIBITION_PICKUP
+    | `fedex_expedited_alternate_delivery_route` | EXPEDITED_ALTERNATE_DELIVERY_ROUTE
+    | `fedex_expedited_one_day_earlier` | EXPEDITED_ONE_DAY_EARLIER
+    | `fedex_expedited_service_monitoring_and_delivery` | EXPEDITED_SERVICE_MONITORING_AND_DELIVERY
+    | `fedex_expedited_standard_day_early_delivery` | EXPEDITED_STANDARD_DAY_EARLY_DELIVERY
+    | `fedex_extra_labor` | EXTRA_LABOR
+    | `fedex_extreme_length` | EXTREME_LENGTH
     | `fedex_one_rate` | FEDEX_ONE_RATE
-    | `flatbed_trailer` | FLATBED_TRAILER
-    | `food` | FOOD
-    | `freight_guarantee` | FREIGHT_GUARANTEE
-    | `freight_to_collect` | FREIGHT_TO_COLLECT
-    | `future_day_shipment` | FUTURE_DAY_SHIPMENT
-    | `hold_at_location` | HOLD_AT_LOCATION
-    | `holiday_delivery` | HOLIDAY_DELIVERY
-    | `holiday_guarantee` | HOLIDAY_GUARANTEE
-    | `home_delivery_premium` | HOME_DELIVERY_PREMIUM
-    | `inside_delivery` | INSIDE_DELIVERY
-    | `inside_pickup` | INSIDE_PICKUP
-    | `international_controlled_export_service` | INTERNATIONAL_CONTROLLED_EXPORT_SERVICE
-    | `international_mail_service` | INTERNATIONAL_MAIL_SERVICE
-    | `international_traffic_in_arms_regulations` | INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS
-    | `liftgate_delivery` | LIFTGATE_DELIVERY
-    | `liftgate_pickup` | LIFTGATE_PICKUP
-    | `limited_access_delivery` | LIMITED_ACCESS_DELIVERY
-    | `limited_access_pickup` | LIMITED_ACCESS_PICKUP
-    | `marking_or_tagging` | MARKING_OR_TAGGING
-    | `non_business_time` | NON_BUSINESS_TIME
-    | `pallet_shrinkwrap` | PALLET_SHRINKWRAP
-    | `pallet_weight_allowance` | PALLET_WEIGHT_ALLOWANCE
-    | `pallets_provided` | PALLETS_PROVIDED
-    | `pending_complete` | PENDING_COMPLETE
-    | `pending_shipment` | PENDING_SHIPMENT
-    | `permit` | PERMIT
-    | `pharmacy_delivery` | PHARMACY_DELIVERY
-    | `poison` | POISON
-    | `port_delivery` | PORT_DELIVERY
-    | `port_pickup` | PORT_PICKUP
-    | `pre_delivery_notification` | PRE_DELIVERY_NOTIFICATION
-    | `pre_eig_processing` | PRE_EIG_PROCESSING
-    | `pre_multiplier_processing` | PRE_MULTIPLIER_PROCESSING
-    | `protection_from_freezing` | PROTECTION_FROM_FREEZING
-    | `regional_mall_delivery` | REGIONAL_MALL_DELIVERY
-    | `regional_mall_pickup` | REGIONAL_MALL_PICKUP
-    | `return_shipment` | RETURN_SHIPMENT
-    | `returns_clearance` | RETURNS_CLEARANCE
-    | `returns_clearance_special_routing_required` | RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED
-    | `saturday_delivery` | SATURDAY_DELIVERY
-    | `saturday_pickup` | SATURDAY_PICKUP
-    | `shipment_assembly` | SHIPMENT_ASSEMBLY
-    | `sort_and_segregate` | SORT_AND_SEGREGATE
-    | `special_delivery` | SPECIAL_DELIVERY
-    | `special_equipment` | SPECIAL_EQUIPMENT
-    | `storage` | STORAGE
-    | `sunday_delivery` | SUNDAY_DELIVERY
-    | `third_party_consignee` | THIRD_PARTY_CONSIGNEE
-    | `top_load` | TOP_LOAD
-    | `usps_delivery` | USPS_DELIVERY
-    | `usps_pickup` | USPS_PICKUP
-    | `weighing` | WEIGHING
+    | `fedex_flatbed_trailer` | FLATBED_TRAILER
+    | `fedex_food` | FOOD
+    | `fedex_freight_guarantee` | FREIGHT_GUARANTEE
+    | `fedex_freight_to_collect` | FREIGHT_TO_COLLECT
+    | `fedex_future_day_shipment` | FUTURE_DAY_SHIPMENT
+    | `fedex_hold_at_location` | HOLD_AT_LOCATION
+    | `fedex_holiday_delivery` | HOLIDAY_DELIVERY
+    | `fedex_holiday_guarantee` | HOLIDAY_GUARANTEE
+    | `fedex_home_delivery_premium` | HOME_DELIVERY_PREMIUM
+    | `fedex_inside_delivery` | INSIDE_DELIVERY
+    | `fedex_inside_pickup` | INSIDE_PICKUP
+    | `fedex_international_controlled_export_service` | INTERNATIONAL_CONTROLLED_EXPORT_SERVICE
+    | `fedex_international_mail_service` | INTERNATIONAL_MAIL_SERVICE
+    | `fedex_international_traffic_in_arms_regulations` | INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS
+    | `fedex_liftgate_delivery` | LIFTGATE_DELIVERY
+    | `fedex_liftgate_pickup` | LIFTGATE_PICKUP
+    | `fedex_limited_access_delivery` | LIMITED_ACCESS_DELIVERY
+    | `fedex_limited_access_pickup` | LIMITED_ACCESS_PICKUP
+    | `fedex_marking_or_tagging` | MARKING_OR_TAGGING
+    | `fedex_non_business_time` | NON_BUSINESS_TIME
+    | `fedex_pallet_shrinkwrap` | PALLET_SHRINKWRAP
+    | `fedex_pallet_weight_allowance` | PALLET_WEIGHT_ALLOWANCE
+    | `fedex_pallets_provided` | PALLETS_PROVIDED
+    | `fedex_pending_complete` | PENDING_COMPLETE
+    | `fedex_pending_shipment` | PENDING_SHIPMENT
+    | `fedex_permit` | PERMIT
+    | `fedex_pharmacy_delivery` | PHARMACY_DELIVERY
+    | `fedex_poison` | POISON
+    | `fedex_port_delivery` | PORT_DELIVERY
+    | `fedex_port_pickup` | PORT_PICKUP
+    | `fedex_pre_delivery_notification` | PRE_DELIVERY_NOTIFICATION
+    | `fedex_pre_eig_processing` | PRE_EIG_PROCESSING
+    | `fedex_pre_multiplier_processing` | PRE_MULTIPLIER_PROCESSING
+    | `fedex_protection_from_freezing` | PROTECTION_FROM_FREEZING
+    | `fedex_regional_mall_delivery` | REGIONAL_MALL_DELIVERY
+    | `fedex_regional_mall_pickup` | REGIONAL_MALL_PICKUP
+    | `fedex_return_shipment` | RETURN_SHIPMENT
+    | `fedex_returns_clearance` | RETURNS_CLEARANCE
+    | `fedex_returns_clearance_special_routing_required` | RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED
+    | `fedex_saturday_delivery` | SATURDAY_DELIVERY
+    | `fedex_saturday_pickup` | SATURDAY_PICKUP
+    | `fedex_shipment_assembly` | SHIPMENT_ASSEMBLY
+    | `fedex_sort_and_segregate` | SORT_AND_SEGREGATE
+    | `fedex_special_delivery` | SPECIAL_DELIVERY
+    | `fedex_special_equipment` | SPECIAL_EQUIPMENT
+    | `fedex_storage` | STORAGE
+    | `fedex_sunday_delivery` | SUNDAY_DELIVERY
+    | `fedex_third_party_consignee` | THIRD_PARTY_CONSIGNEE
+    | `fedex_top_load` | TOP_LOAD
+    | `fedex_usps_delivery` | USPS_DELIVERY
+    | `fedex_usps_pickup` | USPS_PICKUP
+    | `fedex_weighing` | WEIGHING
 
 
 - <a name="options-purolator"></a> Purolator
     Code | Identifier
     --- | ---
-    | `dangerous_goods` | Dangerous Goods
-    | `chain_of_signature` | Chain of Signature
-    | `express_cheque` | ExpressCheque
-    | `hold_for_pickup` | Hold For Pickup
-    | `return_services` | Return Services
-    | `saturday_service` | Saturday Service
-    | `origin_signature_not_required` | Origin Signature Not Required (OSNR)
-    | `adult_signature_required` | Adult Signature Required (ASR)
-    | `special_handling` | Special Handling
+    | `purolator_dangerous_goods` | Dangerous Goods
+    | `purolator_chain_of_signature` | Chain of Signature
+    | `purolator_express_cheque` | ExpressCheque
+    | `purolator_hold_for_pickup` | Hold For Pickup
+    | `purolator_return_services` | Return Services
+    | `purolator_saturday_service` | Saturday Service
+    | `purolator_origin_signature_not_required` | Origin Signature Not Required (OSNR)
+    | `purolator_adult_signature_required` | Adult Signature Required (ASR)
+    | `purolator_special_handling` | Special Handling
 
 
 - <a name="options-ups"></a> UPS
     Code | Identifier
     --- | ---
-    | `saturday_delivery_indicator` | SaturdayDeliveryIndicator
-    | `access_point_cod` | AccessPointCOD
-    | `deliver_to_addressee_only_indicator` | DeliverToAddresseeOnlyIndicator
-    | `direct_delivery_only_indicator` | DirectDeliveryOnlyIndicator
-    | `cod` | COD
-    | `delivery_confirmation` | DeliveryConfirmation
-    | `return_of_document_indicator` | ReturnOfDocumentIndicator
-    | `up_scarbonneutral_indicator` | UPScarbonneutralIndicator
-    | `certificate_of_origin_indicator` | CertificateOfOriginIndicator
-    | `pickup_options` | PickupOptions
-    | `delivery_options` | DeliveryOptions
-    | `restricted_articles` | RestrictedArticles
-    | `shipper_export_declaration_indicator` | ShipperExportDeclarationIndicator
-    | `commercial_invoice_removal_indicator` | CommercialInvoiceRemovalIndicator
-    | `import_control` | ImportControl
-    | `return_service` | ReturnService
-    | `sdl_shipment_indicator` | SDLShipmentIndicator
-    | `epra_indicator` | EPRAIndicator
-
+    | `ups_saturday_delivery_indicator` | SaturdayDeliveryIndicator
+    | `ups_access_point_cod` | AccessPointCOD
+    | `ups_deliver_to_addressee_only_indicator` | DeliverToAddresseeOnlyIndicator
+    | `ups_direct_delivery_only_indicator` | DirectDeliveryOnlyIndicator
+    | `ups_cod` | COD
+    | `ups_delivery_confirmation` | DeliveryConfirmation
+    | `ups_return_of_document_indicator` | ReturnOfDocumentIndicator
+    | `ups_up_scarbonneutral_indicator` | UPScarbonneutralIndicator
+    | `ups_certificate_of_origin_indicator` | CertificateOfOriginIndicator
+    | `ups_pickup_options` | PickupOptions
+    | `ups_delivery_options` | DeliveryOptions
+    | `ups_restricted_articles` | RestrictedArticles
+    | `ups_shipper_export_declaration_indicator` | ShipperExportDeclarationIndicator
+    | `ups_commercial_invoice_removal_indicator` | CommercialInvoiceRemovalIndicator
+    | `ups_import_control` | ImportControl
+    | `ups_return_service` | ReturnService
+    | `ups_sdl_shipment_indicator` | SDLShipmentIndicator
+    | `ups_epra_indicator` | EPRAIndicator
 
 </details>
