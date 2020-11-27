@@ -20,14 +20,14 @@
                             <xs:element type="xs:string" name="ZipOrigination" minOccurs="0"/>
                             <xs:element type="xs:string" name="ZipDestination" minOccurs="0"/>
                             <xs:element type="xs:integer" name="Pounds" minOccurs="0"/>
-                            <xs:element type="xs:float" name="Ounces" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Ounces" minOccurs="0"/>
                             <xs:element type="xs:string" name="FirstClassMailType" minOccurs="0"/>
                             <xs:element type="xs:string" name="Container" minOccurs="0"/>
                             <xs:element type="xs:string" name="Size" minOccurs="0"/>
-                            <xs:element type="xs:float" name="Width" minOccurs="0"/>
-                            <xs:element type="xs:float" name="Length" minOccurs="0"/>
-                            <xs:element type="xs:float" name="Height" minOccurs="0"/>
-                            <xs:element type="xs:float" name="Girth" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Width" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Length" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Height" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Girth" minOccurs="0"/>
                             <xs:element type="xs:string" name="Machinable" minOccurs="0"/>
                             <xs:element type="xs:byte" name="Zone" minOccurs="0"/>
                             <xs:element name="Postage" maxOccurs="unbounded" minOccurs="0">

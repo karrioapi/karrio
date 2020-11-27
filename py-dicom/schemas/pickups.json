@@ -1,0 +1,116 @@
+{
+    "ShipmentPickupRequest": {
+        "shipments": [
+            {
+                "id": "19456",
+                "status": 0
+            }
+        ],
+        "contact": {
+            "language": "en",
+            "email": "example@dicom.com",
+            "department": "IT",
+            "telephone": "4501234567",
+            "extension": "320",
+            "fullName": "FullName Contact"
+        },
+        "officeClose": "18:00",
+        "date": "2017-10-11",
+        "ready": "8:00",
+        "location": "BU",
+        "otherLocation": "none",
+        "category": "Parcel"
+    },
+    "PickupRequest": {
+        "sender": {
+            "addressLine1": "10500 mystreet",
+            "addressLine2": "Suite 10",
+            "streetNumber": "10500",
+            "streetType": "AVE",
+            "streetName": "mystreet",
+            "streetDirection": "N",
+            "suite": "10",
+            "city": "Montreal",
+            "provinceCode": "QC",
+            "postalCode": "H9P2T7",
+            "countryCode": "CA",
+            "customerName": "Test Company",
+            "customerNickName": "string",
+            "contact": {
+                "language": "en",
+                "email": "example@dicom.com",
+                "department": "IT",
+                "telephone": "4501234567",
+                "extension": "320",
+                "fullName": "FullName Contact"
+            }
+        },
+        "officeClose": "18:00",
+        "date": "2017-10-11",
+        "ready": "8:00",
+        "location": "BU",
+        "otherLocation": "none",
+        "category": "Parcel"
+    },
+    "PickupUpdateRequest": {
+        "shipments": [
+            {
+                "id": "19456",
+                "status": 0
+            }
+        ],
+        "contact": {
+            "language": "en",
+            "email": "example@dicom.com",
+            "department": "IT",
+            "telephone": "4501234567",
+            "extension": "320",
+            "fullName": "FullName Contact"
+        },
+        "officeClose": "18:00",
+        "date": "2017-10-11",
+        "ready": "8:00",
+        "location": "BU",
+        "otherLocation": "none",
+        "category": "Parcel"
+    },
+    "Pickup": {
+        "shipments": [
+            {
+                "id": "19456",
+                "status": 0
+            }
+        ],
+        "sender": {
+            "id": "4658",
+            "addressLine1": "10500 mystreet",
+            "addressLine2": "Suite 10",
+            "streetNumber": "10500",
+            "streetType": "AVE",
+            "streetName": "mystreet",
+            "streetDirection": "N",
+            "suite": "10",
+            "city": "Montreal",
+            "provinceCode": "QC",
+            "postalCode": "H9P2T7",
+            "countryCode": "CA",
+            "customerName": "Test Company",
+            "customerNickName": "string",
+            "contact": {
+                "language": "en",
+                "email": "example@dicom.com",
+                "department": "IT",
+                "telephone": "4501234567",
+                "extension": "320",
+                "fullName": "FullName Contact"
+            }
+        },
+        "id": "564",
+        "officeClose": "18:00",
+        "date": "2017-10-11",
+        "ready": "8:00",
+        "location": "BU",
+        "otherLocation": "none",
+        "category": "Parcel"
+    }
+}

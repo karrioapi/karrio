@@ -1,10 +1,10 @@
 from setuptools import setup
 
 setup(name='py-usps',
-      version='1.0-alpha',
-      description='USPS Python Data Structure',
-      url='https://github.com/OpenShip/py-usps',
-      author='PurplShip',
+      version='2020.11-beta',
+      description='USPS Web API Schemas Python Datatypes library',
+      url='https://github.com/PurplShip/purplship-carriers/tree/master/py-usps',
+      author='Purplship Team',
       author_email='danielk.developer@gmail.com',
       license='MIT',
       packages=['pyusps'],
