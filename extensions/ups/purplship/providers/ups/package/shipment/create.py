@@ -32,7 +32,7 @@ from pyups.ship_web_service_schema import (
     LabelSpecificationType,
     LabelImageFormatType,
 )
-from purplship.core.utils.helpers import export, concat_str, gif_to_pdf
+from purplship.core.utils.helpers import export, concat_str, gif_to_pdf, no_space
 from purplship.core.utils.serializable import Serializable
 from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.utils.xml import Element
@@ -124,7 +124,7 @@ def shipment_request(
                     ),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
-                    PostalCode=payload.shipper.postal_code,
+                    PostalCode=no_space(payload.shipper.postal_code),
                     CountryCode=payload.shipper.country_code,
                 ),
             ),
@@ -148,7 +148,7 @@ def shipment_request(
                     ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
-                    PostalCode=payload.recipient.postal_code,
+                    PostalCode=no_space(payload.recipient.postal_code),
                     CountryCode=payload.recipient.country_code,
                 ),
             ),
@@ -172,8 +172,8 @@ def shipment_request(
                                     ),
                                     City=payload.shipper.city,
                                     StateProvinceCode=payload.shipper.state_code,
-                                    PostalCode=payload.payment.credit_card.postal_code
-                                    or payload.shipper.postal_code,
+                                    PostalCode=no_space(payload.payment.credit_card.postal_code)
+                                    or no_space(payload.shipper.postal_code),
                                     CountryCode=payload.shipper.country_code,
                                 ),
                             )
@@ -186,7 +186,7 @@ def shipment_request(
                         BillReceiver=BillReceiverType(
                             AccountNumber=payment.account_number,
                             Address=BillReceiverAddressType(
-                                PostalCode=payload.recipient.postal_code
+                                PostalCode=no_space(payload.recipient.postal_code)
                             ),
                         )
                         if payment.paid_by == PaymentType.recipient.name

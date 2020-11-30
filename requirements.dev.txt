@@ -1,0 +1,15 @@
+-f https://git.io/purplship
+
+-e .[dev]
+-e ./extensions/boxknight
+-e ./extensions/canadapost
+-e ./extensions/canpar
+-e ./extensions/dhl_express
+-e ./extensions/dicom
+-e ./extensions/fedex
+-e ./extensions/fedex_express
+-e ./extensions/purolator
+-e ./extensions/purolator_courier
+-e ./extensions/ups
+-e ./extensions/ups_package
+-e ./extensions/usps

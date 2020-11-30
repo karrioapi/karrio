@@ -15,7 +15,7 @@ from pycanadapost.rating import (
 from functools import reduce
 from datetime import datetime
 from typing import List, Tuple, cast
-from purplship.core.utils import Serializable, export, Element, decimal
+from purplship.core.utils import Serializable, export, Element, decimal, no_space
 from purplship.providers.canadapost.utils import Settings
 from purplship.core.units import Country, Currency, Packages, Services, Options
 from purplship.core.errors import OriginNotServicedError
@@ -101,8 +101,8 @@ def rate_request(
         options=(
             optionsType(
                 option=[
-                    optionType(option_code=code, option_amount=value)
-                    for code, value in requested_options
+                    optionType(option_code=OptionCode[code].value, option_amount=_amount(value))
+                    for code, value in requested_options if code in OptionCode
                 ]
             )
             if any(requested_options) else None
@@ -124,20 +124,20 @@ def rate_request(
             )
             if any(requested_services) else None
         ),
-        origin_postal_code=payload.shipper.postal_code,
+        origin_postal_code=no_space(payload.shipper.postal_code),
         destination=destinationType(
             domestic=(
-                domesticType(postal_code=(payload.recipient.postal_code or '').strip())
+                domesticType(postal_code=no_space(payload.recipient.postal_code))
                 if (payload.recipient.country_code == Country.CA.name)
                 else None
             ),
             united_states=(
-                united_statesType(zip_code=(payload.recipient.postal_code or '').strip())
+                united_statesType(zip_code=no_space(payload.recipient.postal_code))
                 if (payload.recipient.country_code == Country.US.name)
                 else None
             ),
             international=(
-                internationalType(country_code=payload.recipient.country_code)
+                internationalType(country_code=no_space(payload.recipient.postal_code))
                 if (
                     payload.recipient.country_code
                     not in [Country.US.name, Country.CA.name]
@@ -154,3 +154,10 @@ def _request_serializer(request: mailing_scenario) -> str:
     return export(
         request, namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"'
     )
+
+
+def _amount(value):
+    if isinstance(value, (bool)):
+        return None
+
+    return float(value)

@@ -22,7 +22,7 @@ from pycanadapost.shipment import (
     groupIdOrTransmitShipment,
 )
 from purplship.core.units import Currency, WeightUnit, Options, Packages
-from purplship.core.utils import export, concat_str, Serializable, Element
+from purplship.core.utils import export, concat_str, Serializable, Element, no_space
 from purplship.core.models import (
     Message,
     ShipmentDetails,
@@ -90,7 +90,7 @@ def shipment_request(
 
     special_services = {
         OptionCode[name].value: compute_amount(OptionCode[name].value, value)
-        for name, value in options
+        for name, value in options if name in OptionCode
     }
     payment_type = (
         PaymentType[payload.payment.paid_by].value
@@ -106,7 +106,7 @@ def shipment_request(
         groupIdOrTransmitShipment=groupIdOrTransmitShipment(),
         quickship_label_requested=None,
         cpc_pickup_indicator=None,
-        requested_shipping_point=(payload.shipper.postal_code or '').strip(),
+        requested_shipping_point=no_space(payload.shipper.postal_code),
         shipping_point_id=None,
         expected_mailing_date=None,
         provide_pricing_info=True,
@@ -121,7 +121,7 @@ def shipment_request(
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
                     country_code=payload.shipper.country_code,
-                    postal_zip_code=(payload.shipper.postal_code or '').strip(),
+                    postal_zip_code=no_space(payload.shipper.postal_code),
                     address_line_1=concat_str(payload.shipper.address_line1, join=True),
                     address_line_2=concat_str(payload.shipper.address_line2, join=True),
                 ),
@@ -135,7 +135,7 @@ def shipment_request(
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=(payload.recipient.postal_code or '').strip(),
+                    postal_zip_code=no_space(payload.recipient.postal_code),
                     address_line_1=concat_str(
                         payload.recipient.address_line1, join=True
                     ),

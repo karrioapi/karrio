@@ -22,13 +22,8 @@ jobs:
     - name: Install and Run tests
       run: |
         source ./script.sh
-        create_env &&
-        mkdir "${ROOT:?}/wheels" &&
-        wheels="${ROOT:?}/wheels" PIP_FIND_LINKS=file://"${ROOT:?}/wheels" build
-        pip install -r "${ROOT:?}/requirements.txt" &&
-        install_submodules &&
-        typecheck &&
-        test &&
+        init &&
+        check &&
         coverage report -m &&
         pip install codecov &&
         codecov

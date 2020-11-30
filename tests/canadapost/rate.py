@@ -80,6 +80,7 @@ RatePayload = {
         }
     ],
     "services": ["canadapost_expedited_parcel"],
+    "options": {"signature_confirmation": True, "insurance": 1000}
 }
 
 RateWithPresetPayload = {
@@ -232,6 +233,15 @@ QuoteMissingArgsError = """<messages xmlns="http://www.canadapost.ca/ws/messages
 RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>2004381</customer-number>
     <expected-mailing-date>{datetime.today().strftime('%Y-%m-%d')}</expected-mailing-date>
+    <options>
+        <option>
+            <option-code>SO</option-code>
+        </option>
+        <option>
+            <option-code>COV</option-code>
+            <option-amount>1000.</option-amount>
+        </option>
+    </options>
     <parcel-characteristics>
         <weight>4.</weight>
         <dimensions>

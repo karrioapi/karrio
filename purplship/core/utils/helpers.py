@@ -24,6 +24,13 @@ def concat_str(*args, join: bool = False):
     return strings if not join else " ".join(strings)
 
 
+def no_space(text: str = None):
+    if text is None:
+        return None
+
+    return ''.join(text.split())
+
+
 def export(xml_element: Element, **kwds) -> str:
     """Return a XML string.
 

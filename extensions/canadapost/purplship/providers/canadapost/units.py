@@ -116,3 +116,4 @@ class OptionCode(Flag):
     """ Unified Option type mapping """
     insurance = canadapost_coverage
     cash_on_delivery = canadapost_collect_on_delivery
+    signature_confirmation = canadapost_signature
