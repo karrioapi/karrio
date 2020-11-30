@@ -1,11 +1,11 @@
 <p align="center">
   <p align="center">
     <a href="https://purplship.com" target="_blank">
-      <img src="https://github.com/PurplShip/purplship-server/raw/main/src/purpleserver/purpleserver/static/purpleserver/img/icon.png" alt="Purplship" height="200">
+      <img src="https://github.com/PurplShip/purplship-server/raw/main/src/purpleserver/purpleserver/static/purpleserver/img/icon.png" alt="Purplship" height="100">
     </a>
   </p>
   <h2 align="center">
-    Modern Multi-carrier Shipping API
+    The Open Source Multi-carrier Shipping API
   </h2>
   <p align="center">
     <a href="https://github.com/PurplShip/purplship-server/actions"><img src="https://github.com/PurplShip/purplship-server/workflows/PuprlShip-Server/badge.svg" alt="CI" style="max-width:100%;"></a>
@@ -15,17 +15,17 @@
 </p>
 
 
-# What's Purplship?
+## What's Purplship?
 
 Purplship server is an On-prem or private cloud Multi-carrier Shipping API.
-The server is in Python, but you can use any programming language to send 
-API request to any supported shipping carriers, in any application.
+The server is in Python, but you can use any programming language to send API request to 
+any supported shipping carriers (Canada Post, DHL, FedEx, UPS, Purolator...), in your application.
 
 <p align="center">
-  <img src="https://github.com/PurplShip/purplship-server/blob/main/screenshots/api.png" width="200">
-  <img src="https://github.com/PurplShip/purplship-server/blob/main/screenshots/shipments.png" width="200">
-  <img src="https://github.com/PurplShip/purplship-server/blob/main/screenshots/create_label.png" width="200">
-  <img src="https://github.com/PurplShip/purplship-server/blob/main/screenshots/connections.png" width="200">
+  <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/screenshots/api.png" width="200">
+  <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/screenshots/shipments.png" width="200">
+  <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/screenshots/create_label.png" width="200">
+  <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/screenshots/connections.png" width="200">
 </p>
 
 
