@@ -61,12 +61,12 @@ install_released() {
     purplship-server.proxy \
     purplship-server.extension \
     purplship.canadapost \
-    purplship.dhl \
-    purplship.fedex \
-    purplship.purolator \
-    purplship.ups \
-    eshipper.extension \
-    freightcom.extension
+    purplship.dhl_express \
+    purplship.fedex_express \
+    purplship.purolator_courier \
+    purplship.ups_package \
+    freightcom.extension \
+    eshipper.extension
 }
 
 migrate () {

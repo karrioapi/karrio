@@ -15,9 +15,18 @@
 </p>
 
 
-**Purplship server is an On-prem, private cloud Multi-carrier Shipping API** from https://purplship.com.
+# What's Purplship?
 
-The server is in Python, but you can use any programming language to send API request to any supported shipping carriers, in any application.
+Purplship server is an On-prem or private cloud Multi-carrier Shipping API.
+The server is in Python, but you can use any programming language to send 
+API request to any supported shipping carriers, in any application.
+
+<p align="center">
+  <img src="https://github.com/PurplShip/purplship-server/blob/main/screenshots/api.png" width="200">
+  <img src="https://github.com/PurplShip/purplship-server/blob/main/screenshots/shipments.png" width="200">
+  <img src="https://github.com/PurplShip/purplship-server/blob/main/screenshots/create_label.png" width="200">
+  <img src="https://github.com/PurplShip/purplship-server/blob/main/screenshots/connections.png" width="200">
+</p>
 
 
 ## Documentation
@@ -26,15 +35,6 @@ Purplship has usage and reference documentation at [docs.purplship.com](https://
 
 
 ## Try out Purplship
-
-### Live Demo
-
-Check out our [live demo](https://purplship-demo.herokuapp.com/) on Heroku
-
-Demo Credentials | |
---- | --- |
-username | `admin@test.com`  |
-password | `demo` |
 
 ### Docker
 
@@ -51,7 +51,7 @@ docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres 
 </details>
 
 ```shell script
-docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:2020.10.1
+docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:[version]
 ```
 
 #### Docker Compose
@@ -75,7 +75,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
   web:
-    image: purplship/purplship-server:2020.10.1
+    image: purplship/purplship-server:[version]
     restart: always
     environment:
       - DEBUG_MODE=True
