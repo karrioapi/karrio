@@ -169,15 +169,15 @@ test_services() {
 }
 
 clean_builds() {
-    find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \; 2>/dev/null || true
-    find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \; 2>/dev/null || true
-    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \; 2>/dev/null || true
+    find . -type d -not -path "*$ENV_DIR/*" -name dist -prune -exec rm -r '{}' \; 2>/dev/null || true
+    find . -type d -not -path "*$ENV_DIR/*" -name build -prune -exec rm -r '{}' \; 2>/dev/null || true
+    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -prune -exec rm -r '{}' \; 2>/dev/null || true
 }
 
 backup_wheels() {
     # shellcheck disable=SC2154
     [[ -d "$wheels" ]] &&
-    find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; 2>/dev/null &&
+    find . -not -path "*$ENV_DIR/*" -name \*.whl -prune -exec mv '{}' "$wheels" \; 2>/dev/null &&
     clean_builds
 }
 
@@ -189,7 +189,7 @@ _build() {
 
 build() {
   clean_builds
-  sm=$(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname {} \;  2>&1 | grep -v 'permission denied')
+  sm=$(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
   while read -r module; do
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> building ${module} ..."
