@@ -1,4 +1,4 @@
-import { state } from '@/library/api';
+import { NotificationType, state } from '@/library/api';
 import React, { useState } from 'react';
 
 interface CloseAccountActionComponent {
@@ -13,7 +13,11 @@ const CloseAccountAction: React.FC<CloseAccountActionComponent> = ({ children })
     }
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
-        await state.closeAccount();
+        try {
+            await state.closeAccount();
+        } catch(err) {
+            state.setNotification({ type: NotificationType.error, message: err.message });
+        }
     };
 
     return (

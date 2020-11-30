@@ -7,7 +7,7 @@ from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import ErrorResponse, ParcelData, Parcel
 from purpleserver.manager.serializers import ParcelSerializer
@@ -49,7 +49,7 @@ class ParcelList(GenericAPIView):
         return Response(Parcel(parcel).data, status=status.HTTP_201_CREATED)
 
 
-class ParcelDetail(GenericAPIView):
+class ParcelDetail(APIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],

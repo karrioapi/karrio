@@ -1,32 +1,24 @@
-import React from 'react';
-import NavLink from '@/components/navlink';
-import { UserInfo } from '@/library/api';
+import React, { useRef } from 'react';
+import NavLink from '@/components/generic/navlink';
 
-interface ExpandedSidebarComponent {
-    user: UserInfo;
-}
+interface ExpandedSidebarComponent {}
 
-const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = ({ user }) => {
+const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
+    const sidebar = useRef<HTMLDivElement>(null);
+    const dismiss = (e: React.MouseEvent) => {
+        e.preventDefault();
+        sidebar.current?.classList.remove('is-mobile-active');
+    };
+
     return (
-        <div className="plex-sidebar">
+        <div className="plex-sidebar" ref={sidebar}>
             <div className="sidebar-header">
                 <img src="/static/purpleserver/img/logo.svg" alt="Purplship" width="80" />
-                <button className="menu-icon v-5 is-open mobile-item is-block mobile-sidebar-trigger">
+                <button className="menu-icon v-5 is-open mobile-item is-block mobile-sidebar-trigger" onClick={dismiss}>
                     <span></span>
                 </button>
             </div>
-            <div className="sidebar-profile">
-                <div className="avatar-container">
-                    <div className="avatar-wrapper">
-                        <div className="avatar">
-                            <img src="/static/purpleserver/client/profile.svg" alt="" />
-                        </div>
-                        <h3>{user.full_name}</h3>
-                        <p>{user.email}</p>
-                    </div>
-                </div>
-            </div>
-            <div className="sidebar-menu has-slimscroll pb-6">
+            <div className="sidebar-menu has-slimscroll py-6" style={{height: "calc(100% - 60px)"}}>
                 <NavLink to="/">
                     <span>Shipments</span>
                 </NavLink>

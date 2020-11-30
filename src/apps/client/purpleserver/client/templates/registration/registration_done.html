@@ -1,0 +1,20 @@
+{% extends "purpleserver/base_site.html" %}
+{% load i18n static %}
+
+{% block content %}
+
+<div class="card isolated-card">
+    <div class="card-content has-text-centered ">
+        <p class="subtitle is-4">{{title}}</p>
+
+        <p>{% trans 'Your account has been created.' %}</p>
+        <p>{% trans 'Check your registration email inbox to verify the address and activate your account.' %}</p>
+
+    </div>
+</div>
+
+<div class="has-text-centered my-4 is-size-6">
+    <a href="{% url 'login' %}">Sign in</a>
+</div>
+
+{% endblock %}

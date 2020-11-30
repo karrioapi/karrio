@@ -2,6 +2,7 @@
 {% load i18n static %}
 
 {% block extrastyle %}
+<link href="{% static 'purpleserver/client/fontawesome/all.min.css' %}" type="text/css" rel="stylesheet">
 <link href="{% static 'purpleserver/client/purpleboard.min.css' %}" type="text/css" rel="stylesheet">
 {% endblock %}
 
@@ -12,5 +13,4 @@
 
 {% block scripts %}
 <script src="{% static 'purpleserver/client/purpleboard.min.js' %}"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
 {% endblock %}

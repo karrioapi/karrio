@@ -2,7 +2,9 @@ from enum import Enum
 from drf_yasg import openapi
 from purpleserver.providers.models import MODELS
 from purplship.core.units import (
-    Country, WeightUnit, DimensionUnit, PackagingUnit, PaymentType, Currency, PrinterType
+    Country, WeightUnit, DimensionUnit,
+    PackagingUnit, PaymentType, Currency,
+    PrinterType, CustomsContentType, Incoterm
 )
 from rest_framework.serializers import (
     Serializer, CharField, FloatField,
@@ -28,6 +30,8 @@ class ShipmentStatus(Enum):
 
 
 SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
+CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(CustomsContentType)]
+INCOTERMS = [(c.name, c.name) for c in list(Incoterm)]
 
 
 class StringListField(ListField):
@@ -89,7 +93,9 @@ class AddressData(Serializer):
     state_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address state code")
     suburb = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address suburb if known")
     residential = BooleanField(
+        allow_null=True,
         required=False,
+        default=False,
         help_text="Indicate if the address is residential or commercial (enterprise)"
     )
 
@@ -107,6 +113,7 @@ class Address(EntitySerializer, AddressData):
 class CommodityData(Serializer):
 
     weight = FloatField(required=False, allow_null=True, help_text="The commodity's weight")
+    weight_unit = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=WEIGHT_UNIT, help_text="The commodity's weight unit")
     description = CharField(required=False, allow_blank=True, allow_null=True, help_text="A description of the commodity")
     quantity = IntegerField(required=False, allow_null=True, help_text="The commodity's quantity (number or item)")
     sku = CharField(required=False, allow_blank=True, allow_null=True, help_text="The commodity's sku number")
@@ -141,7 +148,7 @@ class ParcelData(Serializer):
     description = CharField(required=False, allow_blank=True, allow_null=True, help_text="The parcel's description")
     content = CharField(required=False, allow_blank=True, allow_null=True, help_text="The parcel's content description")
     is_document = BooleanField(required=False, allow_null=True, default=False, help_text="Indicates if the parcel is composed of documents only")
-    weight_unit = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=WEIGHT_UNIT, help_text="The parcel's weight unit")
+    weight_unit = ChoiceField(required=True, choices=WEIGHT_UNIT, help_text="The parcel's weight unit")
     dimension_unit = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=DIMENSION_UNIT, help_text="The parcel's dimension unit")
 
 
@@ -178,9 +185,9 @@ class CustomsData(Serializer):
 
     aes = CharField(required=False, allow_blank=True, allow_null=True)
     eel_pfc = CharField(required=False, allow_blank=True, allow_null=True)
-    content_type = CharField(required=False, allow_blank=True, allow_null=True)
+    content_type = ChoiceField(required=False, choices=CUSTOMS_CONTENT_TYPE, allow_blank=True, allow_null=True)
     content_description = CharField(required=False, allow_blank=True, allow_null=True)
-    incoterm = CharField(required=False, allow_null=True, help_text="The customs 'term of trade' also known as 'incoterm'")
+    incoterm = ChoiceField(required=False, allow_null=True, choices=INCOTERMS, help_text="The customs 'term of trade' also known as 'incoterm'")
     commodities = Commodity(many=True, required=False, allow_null=True, help_text="The parcel content items")
     duty = Payment(required=False, allow_null=True, help_text="""
     The payment details.<br/>
@@ -537,11 +544,14 @@ class Message(Serializer):
     details = DictField(required=False, help_text="any additional details")
 
 
-class OperationConfirmation(Serializer):
-    carrier_name = CharField(required=True, help_text="The operation carrier")
-    carrier_id = CharField(required=True, help_text="The targeted carrier's name (unique identifier)")
+class Operation(Serializer):
     operation = CharField(required=True, help_text="Operation performed")
     success = BooleanField(required=True, help_text="Specify whether the operation was successful")
+
+
+class OperationConfirmation(Operation):
+    carrier_name = CharField(required=True, help_text="The operation carrier")
+    carrier_id = CharField(required=True, help_text="The targeted carrier's name (unique identifier)")
 
 
 class OperationResponse(Serializer):

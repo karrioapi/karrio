@@ -15,6 +15,7 @@ class Address(OwnedEntity):
         db_table = "address"
         verbose_name = 'Address'
         verbose_name_plural = 'Addresses'
+        ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='adr_'), editable=False)
 
@@ -41,6 +42,7 @@ class Parcel(OwnedEntity):
         db_table = "parcel"
         verbose_name = 'Parcel'
         verbose_name_plural = 'Parcels'
+        ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pcl_'), editable=False)
 
@@ -62,6 +64,7 @@ class Commodity(OwnedEntity):
         db_table = "commodity"
         verbose_name = 'Commodity'
         verbose_name_plural = 'Commodities'
+        ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cdt_'), editable=False)
 
@@ -70,6 +73,7 @@ class Commodity(OwnedEntity):
     quantity = models.IntegerField(blank=True, null=True)
     sku = models.CharField(max_length=100, null=True, blank=True)
     value_amount = models.FloatField(blank=True, null=True)
+    weight_unit = models.CharField(max_length=2, choices=WEIGHT_UNIT, null=True, blank=True)
     value_currency = models.CharField(max_length=3, choices=COUNTRIES, null=True, blank=True)
     origin_country = models.CharField(max_length=3, choices=CURRENCIES, null=True, blank=True)
 
@@ -82,6 +86,7 @@ class Payment(OwnedEntity):
         db_table = "payment"
         verbose_name = 'Payment'
         verbose_name_plural = 'Payments'
+        ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pyt_'), editable=False)
 
@@ -104,6 +109,7 @@ class Customs(OwnedEntity):
         db_table = "customs"
         verbose_name = 'Customs Info'
         verbose_name_plural = 'Customs Info'
+        ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='cst_'), editable=False)
 
@@ -140,6 +146,7 @@ class Pickup(OwnedEntity):
         db_table = "pickup"
         verbose_name = 'Pickup'
         verbose_name_plural = 'Pickups'
+        ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pck_'), editable=False)
     confirmation_number = models.CharField(max_length=50, unique=True, blank=False)
@@ -183,6 +190,7 @@ class Tracking(OwnedEntity):
         db_table = "tracking-status"
         verbose_name = 'Tracking Satus'
         verbose_name_plural = 'Tracking Statuses'
+        ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
     tracking_number = models.CharField(max_length=50, unique=True)
@@ -215,6 +223,7 @@ class Shipment(OwnedEntity):
         db_table = "shipment"
         verbose_name = 'Shipment'
         verbose_name_plural = 'Shipments'
+        ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='shp_'), editable=False)
     status = models.CharField(max_length=50, choices=SHIPMENT_STATUS, default=SHIPMENT_STATUS[0][0])
@@ -228,8 +237,8 @@ class Shipment(OwnedEntity):
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
 
-    payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
-    customs = models.ForeignKey('Customs', on_delete=models.CASCADE, blank=True, null=True)
+    payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, blank=True, null=True)
+    customs = models.ForeignKey('Customs', on_delete=models.SET_NULL, blank=True, null=True)
 
     selected_rate = JSONField(blank=True, null=True)
 

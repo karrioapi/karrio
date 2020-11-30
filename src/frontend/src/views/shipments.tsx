@@ -1,7 +1,10 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View } from '@/library/types';
-import { Address } from '@purplship/purplship';
 import { PaginatedShipments, state } from '@/library/api';
+import ShipmentMenu from '@/components/shipment-menu';
+import { useNavigate } from '@reach/router';
+import { formatAddress, formatDate } from '@/library/helper';
+import CarrierBadge from '@/components/carrier-badge';
 
 
 interface ShipmentsView extends View {
@@ -9,16 +12,24 @@ interface ShipmentsView extends View {
 }
 
 const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
-  useEffect(() => { if(shipments === undefined ) state.fetchShipments(); }, []);
+  useEffect(() => { if (shipments === undefined) state.fetchShipments(); }, shipments?.results);
+  const navigate = useNavigate();
   const update = (url?: string | null) => async (_: React.MouseEvent) => {
-      await state.fetchShipments(url as string);
+    await state.fetchShipments(url as string);
+  };
+  const createLabel = (_: React.MouseEvent) => {
+    navigate('buy_label/new');
+    state.setLabelData();
   };
 
   return (
-    <Fragment>
+    <>
 
       <header className="px-2 pt-1 pb-6">
-        <h4 className="subtitle is-4">Shipments</h4>
+        <span className="subtitle is-4">Shipments</span>
+        <a className="button is-success is-pulled-right" onClick={createLabel}>
+          <span>Create Label</span>
+        </a>
       </header>
 
       <div className="table-container">
@@ -31,6 +42,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
               <th className="recipient">Recipient</th>
               <th className="creation">Created</th>
               <th className="status">Status</th>
+              <th className="action"></th>
             </tr>
           </thead>
 
@@ -38,13 +50,20 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
 
             {shipments?.results.map(shipment => (
               <tr key={shipment.id}>
-                <td><span className="tag is-primary is-light">{shipment.carrier_name || "Not Selected"}</span></td>
+                <td className="is-vcentered">
+                  <CarrierBadge name={shipment.carrier_name as string} className="tag" style={{width: '100%'}} />
+                </td>
                 <td className="mode is-vcentered">
                   {shipment.test_mode ? <span className="tag is-warning is-centered">Test</span> : <></>}
                 </td>
-                <td>{formatAddress(shipment.recipient)}</td>
-                <td>{formatDate(shipment.created_at)}</td>
-                <td><span className="tag is-info is-light">{shipment.status?.toString().toUpperCase()}</span></td>
+                <td className="is-vcentered">{formatAddress(shipment.recipient)}</td>
+                <td className="is-vcentered">{formatDate(shipment.created_at)}</td>
+                <td className="is-vcentered">
+                  <span className="tag is-info is-light">{shipment.status?.toString().toUpperCase()}</span>
+                </td>
+                <td className="is-vcentered">
+                  <ShipmentMenu shipment={shipment} />
+                </td>
               </tr>
             ))}
 
@@ -73,22 +92,8 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
         </div>
       </footer>
 
-    </Fragment>
+    </>
   );
 };
-
-function formatAddress(address: Address): string {
-  return [
-    address.person_name,
-    address.city,
-    address.postal_code,
-    address.country_code
-  ].filter(a => a !== null && a !== "").join(', ');
-}
-
-function formatDate(date: string): string {
-  let [month, day, year] = (new Date(date)).toLocaleDateString().split("/");
-  return `${day}/${month}/${year}`;
-}
 
 export default Shipments;

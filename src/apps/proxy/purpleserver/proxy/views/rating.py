@@ -6,7 +6,7 @@ from django.urls import path
 
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.views.api import APIView
 from purpleserver.core.serializers import (
     RateRequest, RateResponse, ErrorResponse
 )
@@ -24,7 +24,7 @@ Use this service to fetch a shipping rates available.
 """
 
 
-class RateViewAPI(GenericAPIView):
+class RateViewAPI(APIView):
 
     @swagger_auto_schema(
         tags=['Rates'],

@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@purplship/purplship@^2020.10.0":
-  version "2020.10.0"
-  resolved "https://registry.yarnpkg.com/@purplship/purplship/-/purplship-2020.10.0.tgz#aa473e259c42d47564a4ceed8a7cdfe8a96795d4"
-  integrity sha512-QSDJBO0nW8qPzsKMqIw3ehyT4mgt6OAYFieAq+T2Qf/TENwCk49Ah0teiJY105K7kl6Y+HTu436+nchLq7G4dA==
+"@purplship/purplship@^2020.11.0":
+  version "2020.11.0"
+  resolved "https://registry.yarnpkg.com/@purplship/purplship/-/purplship-2020.11.0.tgz#649c35bab3ca08eade22fe7fa35e6034d99a6760"
+  integrity sha512-L+PTrX+oAN8PCrKloFTLHSvU9evycyXoC7TsXilKBBKx+/uROiNGggdMUUOFqKd4dsKr2RMfyiZTV/OrNV3rmA==
   dependencies:
     portable-fetch "^3.0.0"
     url "^0.11.0"
@@ -3331,9 +3331,9 @@ webpack@^4.44.1:
     webpack-sources "^1.4.1"
 
 whatwg-fetch@>=0.10.0:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.4.1.tgz#e5f871572d6879663fa5674c8f833f15a8425ab3"
-  integrity sha512-sofZVzE1wKwO+EYPbWfiwzaKovWiZXf4coEzjGP9b2GBVgQRLQUZ2QcuPpQExGDAW5GItpEm6Tl4OU5mywnAoQ==
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.5.0.tgz#605a2cd0a7146e5db141e29d1c62ab84c0c4c868"
+  integrity sha512-jXkLtsR42xhXg7akoDKvKWE40eJeI+2KZqcp2h3NsOrRnDvtWX36KcKl30dy+hxECivdk2BVUHVNrPtoMBUx6A==
 
 which-module@^2.0.0:
   version "2.0.0"

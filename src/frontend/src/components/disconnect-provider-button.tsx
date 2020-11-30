@@ -1,4 +1,4 @@
-import { Connection, state } from '@/library/api';
+import { Connection, NotificationType, state } from '@/library/api';
 import React, { useState } from 'react';
 
 interface DisconnectProviderButtonComponent {
@@ -10,11 +10,19 @@ const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({
     const close = (evt?: React.MouseEvent) => {
         evt?.preventDefault();
         setIsActive(false);
-    }
+    };
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
-        await state.disconnectProvider(connection.id as string);
-        close();
+        try {
+            await state.disconnectProvider(connection.id as string);
+            state.setNotification({ 
+                type: NotificationType.success,
+                message: 'Carrier account disconnected successfully!'
+            });
+            close();
+        } catch(err) {
+            state.setNotification({ type: NotificationType.error, message: err.message });
+        }
     };
 
     return (

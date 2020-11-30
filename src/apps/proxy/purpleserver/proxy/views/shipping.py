@@ -6,7 +6,7 @@ from rest_framework.request import Request
 from rest_framework.reverse import reverse
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.views.api import APIView
 from purpleserver.proxy.router import router
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.gateway import Shipments
@@ -38,7 +38,7 @@ class ShippingRequestValidation(ShippingRequest):
     recipient = Address(required=True, help_text="The shipment destination address (address to)")
 
 
-class ShippingList(GenericAPIView):
+class ShippingList(APIView):
 
     @swagger_auto_schema(
         tags=['Shipping'],
@@ -69,7 +69,7 @@ class ShippingList(GenericAPIView):
         return Response(ShipmentResponse(response).data, status=status.HTTP_201_CREATED)
 
 
-class ShippingCancel(GenericAPIView):
+class ShippingCancel(APIView):
 
     @swagger_auto_schema(
         tags=['Shipping'],

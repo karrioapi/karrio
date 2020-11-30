@@ -1,0 +1,22 @@
+-f https://git.io/purplship
+eshipper.extension
+freightcom.extension
+purplship
+purplship-server
+purplship-server.client
+purplship-server.core
+purplship-server.proxy
+purplship.canadapost
+purplship.dhl_express
+purplship.fedex
+purplship.fedex_express
+purplship.purolator
+purplship.purolator_courier
+purplship.ups
+purplship.ups_package
+py-canadapost
+py-dhl
+py-fedex
+py-purolator
+py-soap
+py-ups

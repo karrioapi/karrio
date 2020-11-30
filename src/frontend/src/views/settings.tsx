@@ -1,6 +1,6 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { View } from '@/library/types';
-import GenerateAPIDropUp from '@/components/generate-api-dropup';
+import GenerateAPIModal from '@/components/generate-api-dialog';
 import CloseAccountAction from '@/components/close-account-action';
 import { UserInfo } from '@/library/api';
 import ProfileUpdateInput from '@/components/profile-update-input';
@@ -18,7 +18,7 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
   }
 
   return (
-    <Fragment>
+    <>
 
       <header className="px-2 pt-1 pb-4">
         <span className="subtitle is-4">Manage Account</span>
@@ -75,9 +75,9 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
               </button>
             </div>
           </div>
-          <GenerateAPIDropUp>
+          <GenerateAPIModal>
             <span>Regenerate API key...</span>
-          </GenerateAPIDropUp>
+          </GenerateAPIModal>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
         </div>
       </div>
 
-    </Fragment>
+    </>
   );
 }
 

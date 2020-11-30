@@ -2,6 +2,7 @@ import React, { MouseEventHandler } from 'react';
 import { View } from '@/library/types';
 import StatusCode from '@/components/status-code-badge';
 import { Log, PaginatedLogs, state } from '@/library/api';
+import { formatDateTime } from '@/library/helper';
 
 interface LogListView extends View {
     logs?: PaginatedLogs;
@@ -40,7 +41,7 @@ const LogList: React.FC<LogListView> = ({ handleLogSelection, logs }) => {
                                 <td className="status"><StatusCode code={log.status_code} /></td>
                                 <td className="description">{`${log.method} ${log.path}`}</td>
                                 <td className="date has-text-right">
-                                    <span className="mr-2">{formatDate(log.requested_at)}</span>
+                                    <span className="mr-2">{formatDateTime(log.requested_at)}</span>
                                 </td>
                             </tr>
 
@@ -73,13 +74,6 @@ const LogList: React.FC<LogListView> = ({ handleLogSelection, logs }) => {
 
         </>
     );
-}
-
-export function formatDate(date_string: string): string {
-    const date = new Date(date_string);
-    let [month, day, year] = date.toLocaleDateString().split("/");
-    let [hour, minute, second] = date.toLocaleTimeString().split(/:| /);
-    return `${day}/${month}/${year}, ${hour}:${minute}:${second}`;
 }
 
 export default LogList;

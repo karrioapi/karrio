@@ -1,17 +1,23 @@
-import { Connection, state } from '@/library/api';
+import { Connection, NotificationType, state } from '@/library/api';
 import { CarrierSettings } from '@purplship/purplship';
 import React, { useState } from 'react';
 import { Reference } from '@/library/context';
+import InputField from '@/components/generic/input-field';
+import CheckBoxField from '@/components/generic/checkbox-field';
+import ButtonField from '@/components/generic/button-field';
+import SelectField from './generic/select-field';
 
 interface ConnectProviderModalComponent {
     connection?: Connection;
     className?: string;
 }
 
+const DEFAULT_STATE: Partial<Connection> = { carrier_name: 'none', test: true };
+
 const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ children, connection, className }) => {
     const [key, setKey] = useState<string>(`connection-${Date.now()}`);
     const [isNew, _] = useState<boolean>(connection === null || connection === undefined);
-    const [payload, setPayload] = useState<Partial<Connection>>(connection || { carrier_name: 'none' });
+    const [payload, setPayload] = useState<Partial<Connection>>(connection || DEFAULT_STATE);
     const [error, setError] = useState<string>("");
     const [isActive, setIsActive] = useState<boolean>(false);
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
@@ -31,6 +37,10 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
                 const response = await state.updateConnection(payload.id as string, data);
                 setPayload(response);
             }
+            state.setNotification({
+                type: NotificationType.success,
+                message: `carrier connection ${isNew ? 'registered' : 'updated'} successfully`
+            });
             close();
         } catch (err) {
             setHasError(true);
@@ -39,7 +49,7 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
         }
     };
     const close = (_?: React.MouseEvent) => {
-        if(isNew) setPayload({ carrier_name: 'none' });
+        if (isNew) setPayload(DEFAULT_STATE);
         setKey(`connection-${Date.now()}`);
         setHasError(false);
         setIsDisabled(false);
@@ -49,12 +59,12 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
         let new_state = { ...payload, [property]: e.target.value || undefined };
         if (property === 'carrier_name') {
             setKey(`connection-${Date.now()}`);
-            new_state = { carrier_name: e.target.value };
-        } else if(property == 'test') {
+            new_state = { carrier_name: e.target.value, test: true };
+        } else if (property == 'test') {
             new_state = { ...payload, test: e.target.checked };
         }
         setPayload(new_state);
-        setIsDisabled((connection || { carrier_name: 'none' }) == new_state);
+        setIsDisabled((connection || DEFAULT_STATE) == new_state);
     };
     const has = (property: string) => {
         return hasProperty(payload.carrier_name as CarrierSettings.CarrierNameEnum, property);
@@ -73,61 +83,50 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
                         <h3 className="subtitle is-3">Connect a Carrier</h3>
                         <p className="is-size-7 has-text-danger my-1" style={{ visibility: (hasError ? "visible" : "hidden") }}>{error}</p>
 
-                        <div className="field">
-                            <div className="select is-fullwidth">
-                                <select defaultValue={payload.carrier_name} onChange={handleOnChange("carrier_name")} disabled={!isNew} key={`select-${key}`} required>
-                                    <option value='none'>Select Carrier</option>
+                        <SelectField value={payload.carrier_name} onChange={handleOnChange("carrier_name")} disabled={!isNew} key={`select-${key}`} className="is-fullwidth" required>
+                            <option value='none'>Select Carrier</option>
 
-                                    <Reference.Consumer>
-                                        {(ref) => (Object.values(ref || {}).length > 0) && Object.keys(ref.carriers).map(carrier => (
-                                            <option key={carrier} value={carrier}>{ref.carriers[carrier]}</option>
-                                        ))}
-                                    </Reference.Consumer>
+                            <Reference.Consumer>
+                                {(ref) => (Object.values(ref || {}).length > 0) && Object.keys(ref.carriers).map(carrier => (
+                                    <option key={carrier} value={carrier}>{ref.carriers[carrier]}</option>
+                                ))}
+                            </Reference.Consumer>
 
-                                </select>
-                            </div>
-                        </div>
+                        </SelectField>
 
                         {(payload.carrier_name !== 'none' && has("carrier_id")) &&
                             <>
                                 <hr />
 
-                                <FormInput label="Carrier Id" defaultValue={payload.carrier_id} onChange={handleOnChange("carrier_id")} required />
+                                <InputField label="Carrier Id" defaultValue={payload.carrier_id} onChange={handleOnChange("carrier_id")} className="is-small" required />
 
                                 {/* Carrier specific fields BEGING */}
 
-                                {has("site_id") && <FormInput label="Site Id" defaultValue={payload.site_id} onChange={handleOnChange("site_id")} required />}
+                                {has("site_id") && <InputField label="Site Id" defaultValue={payload.site_id} onChange={handleOnChange("site_id")} className="is-small" required />}
 
-                                {has("username") && <FormInput label="Username" defaultValue={payload.username} onChange={handleOnChange("username")} required />}
+                                {has("username") && <InputField label="Username" defaultValue={payload.username} onChange={handleOnChange("username")} className="is-small" required />}
 
-                                {has("password") && <FormInput label="Password" defaultValue={payload.password} onChange={handleOnChange("password")} required />}
+                                {has("password") && <InputField label="Password" defaultValue={payload.password} onChange={handleOnChange("password")} className="is-small" required />}
 
-                                {has("customer_number") && <FormInput label="Customer Number" defaultValue={payload.customer_number} onChange={handleOnChange("customer_number")} required />}
+                                {has("customer_number") && <InputField label="Customer Number" defaultValue={payload.customer_number} onChange={handleOnChange("customer_number")} className="is-small" required />}
 
-                                {has("contract_id") && <FormInput label="Contract Id" defaultValue={payload.contract_id} onChange={handleOnChange("contract_id")} />}
+                                {has("contract_id") && <InputField label="Contract Id" defaultValue={payload.contract_id} onChange={handleOnChange("contract_id")} className="is-small" />}
 
-                                {has("account_number") && <FormInput label="Account Number" defaultValue={payload.account_number} onChange={handleOnChange("account_number")} required />}
+                                {has("account_number") && <InputField label="Account Number" defaultValue={payload.account_number} onChange={handleOnChange("account_number")} className="is-small" required />}
 
-                                {has("user_key") && <FormInput label="User Key" defaultValue={payload.user_key} onChange={handleOnChange("user_key")} />}
+                                {has("user_key") && <InputField label="User Key" defaultValue={payload.user_key} onChange={handleOnChange("user_key")} className="is-small" />}
 
-                                {has("meter_number") && <FormInput label="Meter Number" defaultValue={payload.meter_number} onChange={handleOnChange("meter_number")} required />}
+                                {has("meter_number") && <InputField label="Meter Number" defaultValue={payload.meter_number} onChange={handleOnChange("meter_number")} className="is-small" required />}
 
-                                {has("user_token") && <FormInput label="User Token" defaultValue={payload.user_token} onChange={handleOnChange("user_token")} />}
+                                {has("user_token") && <InputField label="User Token" defaultValue={payload.user_token} onChange={handleOnChange("user_token")} className="is-small" />}
 
-                                {has("access_license_number") && <FormInput label="Access License Number" defaultValue={payload.access_license_number} onChange={handleOnChange("access_license_number")} required />}
+                                {has("access_license_number") && <InputField label="Access License Number" defaultValue={payload.access_license_number} onChange={handleOnChange("access_license_number")} className="is-small" required />}
 
                                 {/* Carrier specific fields END */}
 
-                                <div className="field">
-                                    <div className="control">
-                                        <label className="checkbox">
-                                            <input type="checkbox" defaultChecked={payload.test} onChange={handleOnChange("test")} />
-                                            <span>Test Mode</span>
-                                        </label>
-                                    </div>
-                                </div>
+                                <CheckBoxField defaultChecked={payload.test} onChange={handleOnChange("test")}>Test Mode</CheckBoxField>
 
-                                <input className="button is-small is-fullwidth mt-2" type="submit" value="Submit" disabled={isDisabled} />
+                                <ButtonField className="mt-2" fieldClass="has-text-centered" disabled={isDisabled}>Submit</ButtonField>
                             </>
                         }
                     </section>
@@ -150,21 +149,5 @@ function hasProperty(carrier_name: CarrierSettings.CarrierNameEnum, property: st
         [CarrierSettings.CarrierNameEnum.UpsPackage]: ["carrier_id", "test", "username", "password", "access_license_number", "account_number"]
     }[carrier_name] || []).includes(property)
 }
-
-const FormInput: React.FC<any> = ({ label, ...props }) => {
-    const Props = {
-        type: "text",
-        className: "input is-small",
-        ...props
-    };
-    return (
-        <div className="field">
-            <label className="label">{label}</label>
-            <div className="control">
-                <input {...Props} />
-            </div>
-        </div>
-    )
-};
 
 export default ConnectProviderModal;

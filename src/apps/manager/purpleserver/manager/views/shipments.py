@@ -3,11 +3,12 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 
+from drf_yasg import openapi
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
 from purplship.core.utils.helpers import to_dict
-from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import (
@@ -20,7 +21,7 @@ from purpleserver.core.serializers import (
     Message,
     Rate,
     OperationResponse,
-)
+    CustomsData)
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import (
     ShipmentSerializer,
@@ -69,7 +70,7 @@ class ShipmentList(GenericAPIView):
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
 
-class ShipmentDetail(GenericAPIView):
+class ShipmentDetail(APIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -116,7 +117,7 @@ class ShipmentDetail(GenericAPIView):
         return Response(OperationResponse(confirmation.instance).data)
 
 
-class ShipmentRates(GenericAPIView):
+class ShipmentRates(APIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -143,13 +144,18 @@ class ShipmentRates(GenericAPIView):
         return Response(ShipmentResponse(response).data)
 
 
-class ShipmentOptions(GenericAPIView):
+class ShipmentOptions(APIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}options",
+        operation_id=f"{ENDPOINT_ID}set_options",
         operation_summary="Add shipment options",
         responses={200: Shipment(), 400: ErrorResponse()},
+        request_body=openapi.Schema(
+            title='options',
+            type=openapi.TYPE_OBJECT,
+            additional_properties=True,
+        )
     )
     def post(self, request: Request, pk: str):
         """
@@ -186,7 +192,36 @@ class ShipmentOptions(GenericAPIView):
         return Response(Shipment(shipment).data)
 
 
-class ShipmentPurchase(GenericAPIView):
+class ShipmentCustoms(APIView):
+
+    @swagger_auto_schema(
+        tags=['Shipments'],
+        operation_id=f"{ENDPOINT_ID}add_customs",
+        operation_summary="Add shipment customs declaration",
+        responses={200: Shipment(), 400: ErrorResponse()},
+        request_body=CustomsData()
+    )
+    def post(self, request: Request, pk: str):
+        """
+        Add the customs declaration for the shipment if non existent.
+        """
+        shipment = request.user.shipment_set.get(pk=pk)
+
+        if shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
+            )
+
+        if shipment.customs is not None:
+            raise PurplShipApiException(
+                "Shipment customs declaration already defined", code='state_error', status_code=status.HTTP_409_CONFLICT
+            )
+
+        SerializerDecorator[ShipmentSerializer](shipment, data=dict(customs=request.data)).save()
+        return Response(Shipment(shipment).data)
+
+
+class ShipmentPurchase(APIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -231,4 +266,5 @@ router.urls.append(path('shipments', ShipmentList.as_view(), name="shipment-list
 router.urls.append(path('shipments/<str:pk>', ShipmentDetail.as_view(), name="shipment-details"))
 router.urls.append(path('shipments/<str:pk>/rates', ShipmentRates.as_view(), name="shipment-rates"))
 router.urls.append(path('shipments/<str:pk>/options', ShipmentOptions.as_view(), name="shipment-options"))
+router.urls.append(path('shipments/<str:pk>/customs', ShipmentCustoms.as_view(), name="shipment-customs"))
 router.urls.append(path('shipments/<str:pk>/purchase', ShipmentPurchase.as_view(), name="shipment-purchase"))

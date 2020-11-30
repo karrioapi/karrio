@@ -7,7 +7,7 @@ from rest_framework.request import Request
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
     Pickup,
     ErrorResponse,
@@ -40,7 +40,7 @@ class PickupList(GenericAPIView):
         return Response(response)
 
 
-class PickupRequest(GenericAPIView):
+class PickupRequest(APIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -65,7 +65,7 @@ class PickupRequest(GenericAPIView):
         return Response(Pickup(pickup).data, status=status.HTTP_201_CREATED)
 
 
-class PickupDetails(GenericAPIView):
+class PickupDetails(APIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -96,7 +96,7 @@ class PickupDetails(GenericAPIView):
         return Response(Pickup(instance).data, status=status.HTTP_200_OK)
 
 
-class PickupCancel(GenericAPIView):
+class PickupCancel(APIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],

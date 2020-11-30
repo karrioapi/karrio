@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.views.api import GenericAPIView
+from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
     TrackingStatus, ErrorResponse, TestFilters
 )
@@ -34,7 +34,7 @@ class TrackingList(GenericAPIView):
         return Response(response)
 
 
-class TrackingDetails(GenericAPIView):
+class TrackingDetails(APIView):
 
     @swagger_auto_schema(
         tags=['Shipments'],

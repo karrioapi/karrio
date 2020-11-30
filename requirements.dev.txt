@@ -1,5 +1,15 @@
 -f https://git.io/purplship
 
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship_canadapost&subdirectory=extensions/canadapost
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship_dhl_express&subdirectory=extensions/dhl_express
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship_fedex&subdirectory=extensions/fedex
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship_fedex_express&subdirectory=extensions/fedex_express
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship_purolator&subdirectory=extensions/purolator
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship_purolator_courier&subdirectory=extensions/purolator_courier
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship_ups&subdirectory=extensions/ups
+# -e git+https://github.com/PurplShip/purplship.git@purplship-bulk-apis-cleanup#egg=purplship_ups_package&subdirectory=extensions/ups_package
+
 -e ./src/apps/core
 -e ./src/purpleserver[dev]
 -e ./src/apps/client
