@@ -102,7 +102,7 @@ def rate_request(
             optionsType(
                 option=[
                     optionType(option_code=OptionCode[code].value, option_amount=_amount(value))
-                    for code, value in requested_options
+                    for code, value in requested_options if code in OptionCode
                 ]
             )
             if any(requested_options) else None
@@ -156,8 +156,8 @@ def _request_serializer(request: mailing_scenario) -> str:
     )
 
 
-def _amount(amount):
-    if isinstance(amount, (bool)):
+def _amount(value):
+    if isinstance(value, (bool)):
         return None
 
-    return amount
+    return float(value)

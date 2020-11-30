@@ -90,7 +90,7 @@ def shipment_request(
 
     special_services = {
         OptionCode[name].value: compute_amount(OptionCode[name].value, value)
-        for name, value in options
+        for name, value in options if name in OptionCode
     }
     payment_type = (
         PaymentType[payload.payment.paid_by].value

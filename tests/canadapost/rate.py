@@ -80,7 +80,7 @@ RatePayload = {
         }
     ],
     "services": ["canadapost_expedited_parcel"],
-    "options": {"signature_confirmation": True}
+    "options": {"signature_confirmation": True, "insurance": 1000}
 }
 
 RateWithPresetPayload = {
@@ -236,6 +236,10 @@ RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/r
     <options>
         <option>
             <option-code>SO</option-code>
+        </option>
+        <option>
+            <option-code>COV</option-code>
+            <option-amount>1000.</option-amount>
         </option>
     </options>
     <parcel-characteristics>

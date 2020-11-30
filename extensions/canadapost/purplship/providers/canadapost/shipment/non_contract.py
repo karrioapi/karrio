@@ -82,7 +82,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
 
     special_services = {
         OptionCode[name].value: compute_amount(OptionCode[name].value, value)
-        for name, value in options
+        for name, value in options if name in OptionCode
     }
 
     if is_intl and not any(key in special_services for key in INTERNATIONAL_NON_DELIVERY_OPTION):
