@@ -41,7 +41,7 @@ install_submodules() {
 init() {
     create_env &&
     pip install -r "${ROOT:?}/requirements.txt" &&
-    install_submodules
+    pip install -r "${ROOT:?}/requirements.dev.txt"
 }
 
 
@@ -108,4 +108,4 @@ cli() {
   python "${ROOT:?}/cli.py" "$@"
 }
 
-env:on || true
+activate_env || true
