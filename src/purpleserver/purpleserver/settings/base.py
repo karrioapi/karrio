@@ -287,6 +287,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
+            'formatter': 'verbose',
             'filename': LOG_FILE_NAME,
         },
         'console': {
