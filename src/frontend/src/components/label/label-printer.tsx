@@ -1,12 +1,11 @@
-import { state } from '@/library/api';
 import { Shipment } from '@purplship/purplship';
 import React, { useState } from 'react';
 
-interface LabelPrinterComponent {
+interface LabelPrinterComponent extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     shipment: Shipment;
 }
 
-const LabelPrinter: React.FC<LabelPrinterComponent> = ({ shipment }) => {
+const LabelPrinter: React.FC<LabelPrinterComponent> = ({ shipment, ...props }) => {
     const [isActive, setIsActive] = useState<boolean>(false);
     const close = (evt?: React.MouseEvent) => {
         evt?.preventDefault();
@@ -16,7 +15,7 @@ const LabelPrinter: React.FC<LabelPrinterComponent> = ({ shipment }) => {
 
     return (
         <>
-            <button className="button is-small" onClick={() => setIsActive(true)}>
+            <button className="button is-small" onClick={() => setIsActive(true)} {...props}>
                 <span>Print Label</span>
             </button>
 

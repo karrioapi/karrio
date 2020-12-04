@@ -59,10 +59,10 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
                 <td className="is-vcentered">{formatAddress(shipment.recipient)}</td>
                 <td className="is-vcentered">{formatDate(shipment.created_at)}</td>
                 <td className="is-vcentered">
-                  <span className="tag is-info is-light">{shipment.status?.toString().toUpperCase()}</span>
+                  <span className="tag is-info is-light" style={{width: '100%'}}>{shipment.status?.toString().toUpperCase()}</span>
                 </td>
                 <td className="is-vcentered">
-                  <ShipmentMenu shipment={shipment} />
+                  <ShipmentMenu shipment={shipment} style={{width: '100%'}}/>
                 </td>
               </tr>
             ))}

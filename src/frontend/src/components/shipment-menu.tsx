@@ -5,12 +5,12 @@ import { useNavigate } from '@reach/router';
 import { NotificationType, state } from '@/library/api';
 
 
-interface ShipmentMenuComponent {
+interface ShipmentMenuComponent extends React.AllHTMLAttributes<HTMLDivElement> {
     shipment: Shipment;
 }
 
 
-const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment }) => {
+const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment, ...props }) => {
     const [isActive, setIsActive] = useState(false);
     const btn = useRef<HTMLButtonElement>(null);
     const navigate = useNavigate();
@@ -47,10 +47,10 @@ const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment }) => {
     };
 
     return (
-        <div className={`dropdown is-right buttons has-addons ${isActive ? 'is-active' : ''}`} key={`menu-${shipment.id}`} >
-            <div className="dropdown-trigger">
-                {shipment.status !== Shipment.StatusEnum.Created && <LabelPrinter shipment={shipment} />}
-                {shipment.status === Shipment.StatusEnum.Created && <a className="button is-small" onClick={createLabel}>
+        <div className={`dropdown is-right buttons has-addons ${isActive ? 'is-active' : ''}`} key={`menu-${shipment.id}`} {...props}>
+            <div className="dropdown-trigger" style={{width: '100%'}}>
+                {shipment.status !== Shipment.StatusEnum.Created && <LabelPrinter shipment={shipment} style={{width: '70%'}} />}
+                {shipment.status === Shipment.StatusEnum.Created && <a className="button is-small" onClick={createLabel} style={{width: '70%'}}>
                     <span>Buy Label</span>
                 </a>}
                 <button
