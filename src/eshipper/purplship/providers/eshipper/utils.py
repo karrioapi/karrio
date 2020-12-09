@@ -1,7 +1,7 @@
 import math
 from typing import Optional
 from purplship.core import Settings as BaseSettings
-from purplship.core.utils import export
+from purplship.core.utils import XP
 
 
 class Settings(BaseSettings):
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
 
 
 def standard_request_serializer(request) -> str:
-    return export(request, namespacedef_='xmlns="http://www.eshipper.net/XMLSchema"')
+    return XP.export(request, namespacedef_='xmlns="http://www.eshipper.net/XMLSchema"')
 
 
 def ceil(value: Optional[float]) -> Optional[int]:

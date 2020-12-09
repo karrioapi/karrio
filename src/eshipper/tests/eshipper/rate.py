@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship.core.errors import FieldError
 from purplship import Rating
@@ -35,7 +35,7 @@ class TestEShipperRating(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse))
 
 
 if __name__ == "__main__":
