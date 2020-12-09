@@ -25,7 +25,7 @@ dev_requirements = [
 
 setup(
     name="eshipper.extension",
-    version="2020.10.0",
+    version="2020.12",
     description="eShipper purplship extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
