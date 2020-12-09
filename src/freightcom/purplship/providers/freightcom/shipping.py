@@ -21,7 +21,7 @@ from pyfreightcom.shipping_reply import (
     PackageType as ReplyPackageType,
     SurchargeType,
 )
-from purplship.core.utils import Element, Serializable, concat_str, decimal
+from purplship.core.utils import Element, Serializable, XP, SF, NF
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
@@ -61,8 +61,7 @@ def parse_shipping_reply(
 
 
 def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
-    shipping = ShippingReplyType()
-    shipping.build(node)
+    shipping = XP.build(ShippingReplyType, node)
     quote: QuoteType = shipping.Quote
     package: ReplyPackageType = next(iter(shipping.Package), None)
     tracking_number = package.trackingNumber if package is not None else None
@@ -71,7 +70,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     )
     surcharges = [
         ChargeDetails(
-            name=charge.name, amount=decimal(charge.amount), currency=quote.currency
+            name=charge.name, amount=NF.decimal(charge.amount), currency=quote.currency
         )
         for charge in cast(List[SurchargeType], quote.Surcharge)
     ]
@@ -79,7 +78,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     fuel_surcharge = (
         ChargeDetails(
             name="Fuel surcharge",
-            amount=decimal(quote.fuelSurcharge),
+            amount=NF.decimal(quote.fuelSurcharge),
             currency=quote.currency,
         )
         if quote.fuelSurcharge is not None
@@ -97,8 +96,8 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
             carrier_id=settings.carrier_id,
             service=service,
             currency=quote.currency,
-            base_charge=decimal(quote.baseCharge),
-            total_charge=decimal(quote.totalCharge),
+            base_charge=NF.decimal(quote.baseCharge),
+            total_charge=NF.decimal(quote.totalCharge),
             transit_days=quote.transitDays,
             extra_charges=[fuel_surcharge] + surcharges,
         )
@@ -197,8 +196,8 @@ def shipping_request(
                 phone=payload.shipper.phone_number,
                 tailgateRequired=None,
                 residential=payload.shipper.residential,
-                address1=concat_str(payload.shipper.address_line1, join=True),
-                address2=concat_str(payload.shipper.address_line2, join=True),
+                address1=SF.concat_str(payload.shipper.address_line1, join=True),
+                address2=SF.concat_str(payload.shipper.address_line2, join=True),
                 city=payload.shipper.city,
                 state=payload.shipper.state_code,
                 zip=payload.shipper.postal_code,
@@ -214,8 +213,8 @@ def shipping_request(
                 phone=payload.recipient.phone_number,
                 tailgateRequired=None,
                 residential=payload.recipient.residential,
-                address1=concat_str(payload.recipient.address_line1, join=True),
-                address2=concat_str(payload.recipient.address_line2, join=True),
+                address1=SF.concat_str(payload.recipient.address_line1, join=True),
+                address2=SF.concat_str(payload.recipient.address_line2, join=True),
                 city=payload.recipient.city,
                 state=payload.recipient.state_code,
                 zip=payload.recipient.postal_code,
@@ -226,7 +225,7 @@ def shipping_request(
                 CODReturnAddress=CODReturnAddressType(
                     codCompany=payload.recipient.company_name,
                     codName=payload.recipient.person_name,
-                    codAddress1=concat_str(payload.recipient.address_line1, join=True),
+                    codAddress1=SF.concat_str(payload.recipient.address_line1, join=True),
                     codCity=payload.recipient.city,
                     codStateCode=payload.recipient.state_code,
                     codZip=payload.recipient.postal_code,
@@ -263,7 +262,7 @@ def shipping_request(
                 BillTo=BillToType(
                     company=payer.company_name,
                     name=payer.person_name,
-                    address1=concat_str(payer.address_line1, join=True),
+                    address1=SF.concat_str(payer.address_line1, join=True),
                     city=payer.city,
                     state=payer.state_code,
                     zip=payer.postal_code,

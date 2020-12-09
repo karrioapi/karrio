@@ -38,14 +38,17 @@ alias env:reset=init
 
 # shellcheck disable=SC2120
 test() {
-    coverage run -m unittest discover -v "${ROOT:?}/tests"
+  cd "${ROOT:?}"
+  r=$(coverage run -m unittest discover -f -v "${ROOT:?}/tests"; echo $?)
+  cd -
+  return "$r"
 }
 
 typecheck() {
   cd "${ROOT:?}"
-  for submodule in $(find "purplship" -type f -name "__init__.py" -exec dirname {} \;); do
-    mypy -p "${submodule//'\/'/.}" || break
-  done || break
+  for submodule in $(find "purplship" -type f -name "__init__.py" -exec dirname '{}' \;); do
+    mypy "$submodule" || return $?
+  done
   cd -
 }
 
