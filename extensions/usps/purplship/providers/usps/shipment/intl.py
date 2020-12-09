@@ -3,7 +3,7 @@ import pyusps.evs_express_mail_intl_request as evs_express
 import pyusps.evs_priority_mail_intl_request as evs_priority
 import pyusps.evs_first_class_mail_intl_request as evs_first_class
 import pyusps.evs_gxg_get_label_request as evs_gxg
-from purplship.core.utils import Serializable, export
+from purplship.core.utils import Serializable, XP
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
@@ -179,4 +179,4 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     else:
         request = evs_priority.eVSPriorityMailIntlRequest(**data)
 
-    return Serializable(request, export)
+    return Serializable(request, XP.export)

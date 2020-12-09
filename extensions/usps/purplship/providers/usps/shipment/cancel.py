@@ -3,7 +3,7 @@ from pyusps.evs_cancel_request import eVSCancelRequest
 from pyusps.evs_cancel_response import eVSCancelResponse
 from pyusps.evsi_cancel_request import eVSICancelRequest
 from pyusps.evsi_cancel_response import eVSICancelResponse
-from purplship.core.utils import Serializable, build, Element
+from purplship.core.utils import Serializable, Element
 from purplship.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,
@@ -17,9 +17,9 @@ from purplship.providers.usps.utils import Settings
 def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
     errors: List[Message] = parse_error_response(response, settings)
     if response.tag == 'eVSCancelResponse':
-        cancel_response = build(eVSCancelResponse, response)
+        cancel_response = XP.build(eVSCancelResponse, response)
     else:
-        cancel_response = build(eVSICancelResponse, response)
+        cancel_response = XP.build(eVSICancelResponse, response)
 
     if cancel_response.Status != "Cancelled":
         errors.append(Message(

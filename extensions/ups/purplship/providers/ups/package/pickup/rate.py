@@ -10,9 +10,8 @@ from purplship.core.utils import (
     Serializable,
     create_envelope,
     Envelope,
-    to_date,
-    concat_str,
-    format_time,
+    DF,
+    SF,
 )
 from purplship.core.models import PickupRequest
 from purplship.providers.ups.utils import Settings, default_request_serializer
@@ -21,7 +20,7 @@ from purplship.providers.ups.utils import Settings, default_request_serializer
 def pickup_rate_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[Envelope]:
-    pickup_date = to_date(payload.pickup_date)
+    pickup_date = DF.date(payload.pickup_date)
     same_day = pickup_date.date() == datetime.today().date()
 
     request = create_envelope(
@@ -32,7 +31,7 @@ def pickup_rate_request(
             PickupAddress=PickupAddressType(
                 CompanyName=payload.address.company_name,
                 ContactName=payload.address.person_name,
-                AddressLine=concat_str(
+                AddressLine=SF.concat_str(
                     payload.address.address_line1, payload.address.address_line2
                 ),
                 Room=None,
@@ -51,8 +50,8 @@ def pickup_rate_request(
             AlternateAddressIndicator="Y",
             ServiceDateOption=("01" if same_day else "02"),
             PickupDateInfo=PickupDateInfoType(
-                CloseTime=format_time(payload.closing_time, "%H:%M", "%H%M"),
-                ReadyTime=format_time(payload.ready_time, "%H:%M", "%H%M"),
+                CloseTime=DF.ftime(payload.closing_time, "%H:%M", "%H%M"),
+                ReadyTime=DF.ftime(payload.ready_time, "%H:%M", "%H%M"),
                 PickupDate=pickup_date.strftime("%Y%m%d"),
             ),
             TaxInformationIndicator=None,

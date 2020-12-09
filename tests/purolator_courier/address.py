@@ -2,7 +2,7 @@ import unittest
 import logging
 from unittest.mock import patch
 import purplship
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import AddressValidationRequest
 from tests.purolator_courier.fixture import gateway
 
@@ -44,7 +44,7 @@ class TestPurolatorAddressValidation(unittest.TestCase):
             )
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedAddressValidationResponse)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedAddressValidationResponse)
             )
 
 

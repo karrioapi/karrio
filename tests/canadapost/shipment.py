@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import purplship
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from tests.canadapost.fixture import gateway, LabelResponse
 
@@ -67,7 +67,7 @@ class TestCanadaPostShipment(unittest.TestCase):
                 purplship.Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
 
     def test_parse_shipment_cancel_response(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mock:
@@ -79,7 +79,7 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedShipmentCancelResponse)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentCancelResponse)
             )
 
 
@@ -247,7 +247,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <output-format>8.5x11</output-format>
         </print-preferences>
         <preferences>
-            <show-packing-instructions>true</show-packing-instructions>
+            <show-packing-instructions>false</show-packing-instructions>
             <show-postage-rate>true</show-postage-rate>
             <show-insured-value>true</show-insured-value>
         </preferences>
@@ -309,7 +309,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             <output-format>8.5x11</output-format>
         </print-preferences>
         <preferences>
-            <show-packing-instructions>true</show-packing-instructions>
+            <show-packing-instructions>false</show-packing-instructions>
             <show-postage-rate>true</show-postage-rate>
             <show-insured-value>true</show-insured-value>
         </preferences>

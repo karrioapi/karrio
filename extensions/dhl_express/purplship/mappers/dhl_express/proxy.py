@@ -1,6 +1,5 @@
 from typing import Any
-from purplship.core.utils.helpers import to_xml, request as http
-from purplship.core.utils.serializable import Serializable, Deserializable
+from purplship.core.utils import XP, request as http, Serializable, Deserializable
 from purplship.api.proxy import Proxy as BaseProxy
 from pydhl.dct_req_global_2_0 import DCTRequest
 from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
@@ -26,44 +25,44 @@ class Proxy(BaseProxy):
     def validate_address(self, request: Serializable[RouteRequest]) -> Deserializable[str]:
         response = self._send_request(request)
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def get_rates(self, request: Serializable[DCTRequest]) -> Deserializable[str]:
         response = self._send_request(request)
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def get_tracking(
         self, request: Serializable[KnownTrackingRequest]
     ) -> Deserializable[str]:
         response = self._send_request(request)
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def create_shipment(
         self, request: Serializable[ShipmentRequest]
     ) -> Deserializable[str]:
         response = self._send_request(request)
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def schedule_pickup(
         self, request: Serializable[BookPURequest]
     ) -> Deserializable[str]:
         response = self._send_request(request)
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def modify_pickup(
         self, request: Serializable[ModifyPURequest]
     ) -> Deserializable[str]:
         response = self._send_request(request)
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def cancel_pickup(
         self, request: Serializable[CancelPURequest]
     ) -> Deserializable[str]:
         response = self._send_request(request)
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)

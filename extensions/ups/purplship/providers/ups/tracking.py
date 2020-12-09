@@ -1,8 +1,7 @@
 from typing import List, Tuple
 from pyups.common import RequestType, TransactionReferenceType
 from pyups.track_web_service_schema import TrackRequest, ShipmentType, ActivityType, AddressType
-from purplship.core.utils import export, Serializable, Element, format_date, format_time
-from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, Envelope, build
+from purplship.core.utils import Serializable, Element, apply_namespaceprefix, create_envelope, Envelope, XP, DF
 from purplship.core.models import (
     TrackingEvent,
     TrackingRequest,
@@ -24,9 +23,9 @@ def parse_tracking_response(
 
 
 def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDetails:
-    track_detail = build(ShipmentType, shipment_node)
+    track_detail = XP.build(ShipmentType, shipment_node)
     activities = [
-        build(ActivityType, node)
+        XP.build(ActivityType, node)
         for node in
         shipment_node.xpath(".//*[local-name() = $name]", name="Activity")
     ]
@@ -38,13 +37,13 @@ def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDet
         events=list(
             map(
                 lambda a: TrackingEvent(
-                    date=format_date(a.Date, "%Y%m%d"),
+                    date=DF.fdate(a.Date, "%Y%m%d"),
                     description=a.Status.Description if a.Status else None,
                     location=(
                         _format_location(a.ActivityLocation.Address)
                         if a.ActivityLocation is not None and a.ActivityLocation.Address is not None else None
                     ),
-                    time=format_time(a.Time, "%H%M%S"),
+                    time=DF.ftime(a.Time, "%H%M%S"),
                     code=a.Status.Code if a.Status else None,
                 ),
                 activities,
@@ -101,6 +100,6 @@ def _request_serializer(requests: List[Envelope]) -> List[str]:
         apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
         apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
 
-        return export(envelope, namespacedef_=namespacedef_)
+        return XP.export(envelope, namespacedef_=namespacedef_)
 
     return [serialize(request) for request in requests]

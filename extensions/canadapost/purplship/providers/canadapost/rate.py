@@ -15,7 +15,7 @@ from pycanadapost.rating import (
 from functools import reduce
 from datetime import datetime
 from typing import List, Tuple, cast
-from purplship.core.utils import Serializable, export, Element, decimal, no_space
+from purplship.core.utils import Serializable, Element, NF, XP
 from purplship.providers.canadapost.utils import Settings
 from purplship.core.units import Country, Currency, Packages, Services, Options
 from purplship.core.errors import OriginNotServicedError
@@ -42,7 +42,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         ChargeDetails(
             name=d.adjustment_name,
             currency=currency,
-            amount=decimal(d.adjustment_cost or 0),
+            amount=NF.decimal(d.adjustment_cost or 0),
         )
         for d in price_quote.price_details.adjustments.adjustment
     ]
@@ -54,10 +54,10 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
             service_standardType, price_quote.service_standard
         ).expected_transit_time,
         service=ServiceType(price_quote.service_code).name,
-        base_charge=decimal(price_quote.price_details.base or 0),
-        total_charge=decimal(price_quote.price_details.due or 0),
-        discount=decimal(reduce(lambda total, d: total + d.amount, discounts, 0.0)),
-        duties_and_taxes=decimal(
+        base_charge=NF.decimal(price_quote.price_details.base or 0),
+        total_charge=NF.decimal(price_quote.price_details.due or 0),
+        discount=NF.decimal(reduce(lambda total, d: total + d.amount, discounts, 0.0)),
+        duties_and_taxes=NF.decimal(
             float(price_quote.price_details.taxes.gst.valueOf_ or 0)
             + float(price_quote.price_details.taxes.pst.valueOf_ or 0)
             + float(price_quote.price_details.taxes.hst.valueOf_ or 0)
@@ -67,7 +67,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
                 lambda a: ChargeDetails(
                     name=a.adjustment_name,
                     currency=currency,
-                    amount=decimal(a.adjustment_cost or 0),
+                    amount=NF.decimal(a.adjustment_cost or 0),
                 ),
                 price_quote.price_details.adjustments.adjustment,
             )
@@ -124,20 +124,20 @@ def rate_request(
             )
             if any(requested_services) else None
         ),
-        origin_postal_code=no_space(payload.shipper.postal_code),
+        origin_postal_code=payload.shipper.postal_code,
         destination=destinationType(
             domestic=(
-                domesticType(postal_code=no_space(payload.recipient.postal_code))
+                domesticType(postal_code=payload.recipient.postal_code)
                 if (payload.recipient.country_code == Country.CA.name)
                 else None
             ),
             united_states=(
-                united_statesType(zip_code=no_space(payload.recipient.postal_code))
+                united_statesType(zip_code=payload.recipient.postal_code)
                 if (payload.recipient.country_code == Country.US.name)
                 else None
             ),
             international=(
-                internationalType(country_code=no_space(payload.recipient.postal_code))
+                internationalType(country_code=payload.recipient.postal_code)
                 if (
                     payload.recipient.country_code
                     not in [Country.US.name, Country.CA.name]
@@ -151,7 +151,7 @@ def rate_request(
 
 
 def _request_serializer(request: mailing_scenario) -> str:
-    return export(
+    return XP.export(
         request, namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"'
     )
 

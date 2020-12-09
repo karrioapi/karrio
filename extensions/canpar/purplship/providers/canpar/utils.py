@@ -1,7 +1,7 @@
 """Purplship Canpar client settings."""
 
 from purplship.core.settings import Settings as BaseSettings
-from purplship.core.utils import Envelope, apply_namespaceprefix, export
+from purplship.core.utils import Envelope, apply_namespaceprefix, XP
 
 
 class Settings(BaseSettings):
@@ -38,4 +38,4 @@ def default_request_serializer(envelope: Envelope) -> str:
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0].request, "")
     envelope.Body.anytypeobjs_[0].request.ns_prefix_ = "ws"
 
-    return export(envelope, namespacedef_=namespace_)
+    return XP.export(envelope, namespacedef_=namespace_)

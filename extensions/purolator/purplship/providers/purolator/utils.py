@@ -1,7 +1,6 @@
 from base64 import b64encode
 from purplship.core import Settings as BaseSettings
-from purplship.core.utils.soap import Envelope, apply_namespaceprefix
-from purplship.core.utils.helpers import export
+from purplship.core.utils import Envelope, apply_namespaceprefix, XP
 
 
 class Settings(BaseSettings):
@@ -41,4 +40,4 @@ def standard_request_serializer(envelope: Envelope, version: str = "v2") -> str:
         apply_namespaceprefix(node, version)
         for node in (envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_)
     ]
-    return export(envelope, namespacedef_=namespacedef_)
+    return XP.export(envelope, namespacedef_=namespacedef_)

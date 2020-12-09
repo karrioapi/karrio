@@ -15,8 +15,8 @@ from purplship.core.utils import (
     Element,
     create_envelope,
     Serializable,
-    format_datetime,
-    build
+    DF,
+    XP
 )
 from purplship.core.units import Packages
 from purplship.providers.canpar.error import parse_error_response
@@ -26,12 +26,12 @@ from purplship.providers.canpar.units import WeightUnit
 
 def parse_pickup_response(response: Element, settings: Settings) -> Tuple[PickupDetails, List[Message]]:
     pickup_node = next(iter(response.xpath(".//*[local-name() = $name]", name="pickup")), None)
-    pickup = build(PickupV2, pickup_node)
+    pickup = XP.build(PickupV2, pickup_node)
     details: PickupDetails = PickupDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         confirmation_number=str(pickup.id),
-        pickup_date=format_datetime(pickup.pickup_date, '%Y-%m-%dT%H:%M:%S')
+        pickup_date=DF.fdatetime(pickup.pickup_date, '%Y-%m-%dT%H:%M:%S')
     )
 
     return details, parse_error_response(response, settings)
@@ -63,7 +63,7 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[E
                         province=payload.address.state_code,
                         residential=payload.address.residential,
                     ),
-                    pickup_date=format_datetime(
+                    pickup_date=DF.fdatetime(
                         f"{payload.pickup_date} {payload.ready_time}", '%Y-%m-%d %H:%M', '%Y-%m-%dT%H:%M:%S'
                     ),
                     pickup_location=payload.package_location,

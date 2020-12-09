@@ -5,8 +5,7 @@ from purplship.core.utils import (
     Envelope,
     Pipeline,
     Job,
-    to_xml,
-    bundle_xml,
+    XP,
     request as http,
     exec_parrallel
 )
@@ -37,7 +36,7 @@ class Proxy(BaseProxy):
             request=request,
         )
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
@@ -46,7 +45,7 @@ class Proxy(BaseProxy):
             request=request,
         )
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def get_tracking(self, request: Serializable[List[Envelope]]) -> Deserializable[str]:
         """
@@ -62,7 +61,7 @@ class Proxy(BaseProxy):
 
         response: List[str] = exec_parrallel(get_tracking, request.serialize())
 
-        return Deserializable(bundle_xml(xml_strings=response), to_xml)
+        return Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
 
     def create_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
         def process(job: Job):
@@ -81,7 +80,7 @@ class Proxy(BaseProxy):
         pipeline: Pipeline = request.serialize()
         response = pipeline.apply(process)
 
-        return Deserializable(bundle_xml(response), to_xml)
+        return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     def cancel_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
@@ -90,7 +89,7 @@ class Proxy(BaseProxy):
             request=request,
         )
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def schedule_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
@@ -99,7 +98,7 @@ class Proxy(BaseProxy):
             request=request,
         )
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def modify_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
         def process(job: Job):
@@ -118,7 +117,7 @@ class Proxy(BaseProxy):
         pipeline: Pipeline = request.serialize()
         response = pipeline.apply(process)
 
-        return Deserializable(bundle_xml(response), to_xml)
+        return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
         response = self._send_request(
@@ -127,4 +126,4 @@ class Proxy(BaseProxy):
             request=request,
         )
 
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)

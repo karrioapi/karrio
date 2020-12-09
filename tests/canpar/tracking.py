@@ -1,7 +1,7 @@
 import unittest
 import logging
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship import Tracking
 from purplship.core.models import TrackingRequest
 from tests.canpar.fixture import gateway
@@ -37,7 +37,7 @@ class TestCanparTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse))
 
 
 if __name__ == "__main__":

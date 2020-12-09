@@ -2,7 +2,7 @@ import re
 import unittest
 import logging
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship import Rating
 from tests.fedex_express.fixture import gateway
@@ -46,13 +46,13 @@ class TestFeDexQuote(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse))
 
     def test_parse_rate_error_response(self):
         with patch("purplship.mappers.fedex_express.proxy.http") as mock:
             mock.return_value = RateErrorResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateErrorResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateErrorResponse))
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import unittest
 import logging
 from unittest.mock import patch, ANY
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.ups_package.fixture import gateway
@@ -47,7 +47,7 @@ class TestUPSShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
             self.assertListEqual(
-                to_dict(parsed_response), NegotiatedParsedShipmentResponse
+                DP.to_dict(parsed_response), NegotiatedParsedShipmentResponse
             )
 
     def test_parse_publish_rate_shipment_response(self):
@@ -56,7 +56,7 @@ class TestUPSShipment(unittest.TestCase):
             parsed_response = (
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
-            self.assertListEqual(to_dict(parsed_response), ParsedShipmentResponse)
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("purplship.mappers.ups_package.proxy.http") as mock:
@@ -64,7 +64,7 @@ class TestUPSShipment(unittest.TestCase):
             parsed_response = (
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )
-            self.assertListEqual(to_dict(parsed_response), ParsedShipmentCancelResponse)
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
 
 if __name__ == "__main__":

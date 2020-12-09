@@ -3,7 +3,7 @@ import unittest
 import logging
 from datetime import datetime
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.purolator_courier.fixture import gateway
@@ -87,7 +87,7 @@ class TestPurolatorShipment(unittest.TestCase):
             )
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(PARSED_SHIPMENT_RESPONSE)
+                DP.to_dict(parsed_response), DP.to_dict(PARSED_SHIPMENT_RESPONSE)
             )
 
     def test_parse_invalid_shipment_response(self):
@@ -97,7 +97,7 @@ class TestPurolatorShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
             self.assertEqual(
-                to_dict(parsed_response), to_dict(PARSED_INVALID_SHIPMENT_RESPONSE)
+                DP.to_dict(parsed_response), DP.to_dict(PARSED_INVALID_SHIPMENT_RESPONSE)
             )
 
     def test_parse_cancel_shipment_response(self):
@@ -108,7 +108,7 @@ class TestPurolatorShipment(unittest.TestCase):
             )
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(PARSED_CANCEL_SHIPMENT_RESPONSE)
+                DP.to_dict(parsed_response), DP.to_dict(PARSED_CANCEL_SHIPMENT_RESPONSE)
             )
 
 

@@ -8,8 +8,7 @@ from pypurolator.pickup_service_1_2_1 import (
 )
 from purplship.core.models import PickupUpdateRequest, PickupDetails, Message
 from purplship.core.utils import (
-    Serializable, create_envelope, Envelope, Element, build, to_xml,
-    Pipeline, Job
+    Serializable, create_envelope, Envelope, Element, XP, Pipeline, Job
 )
 from purplship.providers.purolator.package.pickup.create import _validate_pickup
 from purplship.providers.purolator.error import parse_error_response
@@ -19,7 +18,7 @@ from purplship.providers.purolator.utils import Settings, standard_request_seria
 def parse_pickup_update_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = build(
+    reply = XP.build(
         ModifyPickUpResponse,
         next(
             iter(
@@ -103,7 +102,7 @@ def _modify_pickup_request(
 def _modify_pickup(
     validation_response: str, payload: PickupUpdateRequest, settings: Settings
 ):
-    errors = parse_error_response(to_xml(validation_response), settings)
+    errors = parse_error_response(XP.to_xml(validation_response), settings)
     data = _modify_pickup_request(payload, settings) if len(errors) == 0 else None
 
     return Job(id="modify", data=data, fallback="")

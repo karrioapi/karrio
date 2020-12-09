@@ -1,6 +1,6 @@
 from typing import List
 from pyusps.error import Error
-from purplship.core.utils import Element, build
+from purplship.core.utils import Element
 from purplship.core.models import Message
 from purplship.providers.usps.utils import Settings
 

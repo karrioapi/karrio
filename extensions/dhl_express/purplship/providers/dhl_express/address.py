@@ -6,7 +6,7 @@ from pydhl.routing_global_req_2_0 import (
     Note
 )
 from purplship.core.units import CountryState, Country
-from purplship.core.utils import Serializable, export, Element, concat_str, build
+from purplship.core.utils import Serializable, Element, SF, XP
 from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails
 from purplship.providers.dhl_express.units import CountryRegion
 from purplship.providers.dhl_express.utils import Settings
@@ -15,7 +15,7 @@ from purplship.providers.dhl_express.error import parse_error_response
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
     notes = response.xpath(".//*[local-name() = $name]", name="Note")
-    success = next((True for note in notes if build(Note, note).ActionNote == "Success"), False)
+    success = next((True for note in notes if XP.build(Note, note).ActionNote == "Success"), False)
     validation_details = AddressValidationDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -43,8 +43,8 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
         ),
         RegionCode=CountryRegion[payload.address.country_code].value,
         RequestType=RequestType.D.value,
-        Address1=concat_str(payload.address.address_line1, join=True),
-        Address2=concat_str(payload.address.address_line2, join=True),
+        Address1=SF.concat_str(payload.address.address_line1, join=True),
+        Address2=SF.concat_str(payload.address.address_line2, join=True),
         Address3=None,
         PostalCode=payload.address.postal_code,
         City=payload.address.city,
@@ -62,4 +62,4 @@ def _request_serializer(request: RouteRequest) -> str:
         ' xsi:schemaLocation="http://www.dhl.com routing-global-req.xsd"'
     )
 
-    return export(request, namespacedef_=namespacedef_).replace('schemaVersion="2."', 'schemaVersion="2.0"')
+    return XP.export(request, namespacedef_=namespacedef_).replace('schemaVersion="2."', 'schemaVersion="2.0"')

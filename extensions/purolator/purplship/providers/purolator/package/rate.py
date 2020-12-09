@@ -31,8 +31,7 @@ from pypurolator.estimate_service_2_1_2 import (
     BusinessRelationship,
 )
 from purplship.core.units import Currency, Packages, Options, Phone, Services
-from purplship.core.utils import Serializable, Element, concat_str, decimal
-from purplship.core.utils.soap import create_envelope
+from purplship.core.utils import Serializable, Element, SF, NF, create_envelope
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.providers.purolator.utils import Settings, standard_request_serializer
 from purplship.providers.purolator.error import parse_error_response
@@ -56,7 +55,7 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     duties_and_taxes = [
         ChargeDetails(
             name=cast(Tax, tax).Description,
-            amount=decimal(cast(Tax, tax).Amount),
+            amount=NF.decimal(cast(Tax, tax).Amount),
             currency=currency,
         )
         for tax in estimate.Taxes.Tax
@@ -64,7 +63,7 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     surcharges = [
         ChargeDetails(
             name=cast(Surcharge, charge).Description,
-            amount=decimal(cast(Surcharge, charge).Amount),
+            amount=NF.decimal(cast(Surcharge, charge).Amount),
             currency=currency,
         )
         for charge in estimate.Surcharges.Surcharge
@@ -72,7 +71,7 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     option_charges = [
         ChargeDetails(
             name=cast(OptionPrice, charge).Description,
-            amount=decimal(cast(OptionPrice, charge).Amount),
+            amount=NF.decimal(cast(OptionPrice, charge).Amount),
             currency=currency,
         )
         for charge in estimate.OptionPrices.OptionPrice
@@ -85,10 +84,10 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
         carrier_id=settings.carrier_id,
         service=service,
         currency=currency,
-        base_charge=decimal(estimate.BasePrice),
+        base_charge=NF.decimal(estimate.BasePrice),
         transit_days=estimate.EstimatedTransitDays,
-        total_charge=decimal(estimate.TotalPrice),
-        duties_and_taxes=decimal(sum(c.amount for c in duties_and_taxes)),
+        total_charge=NF.decimal(estimate.TotalPrice),
+        duties_and_taxes=NF.decimal(sum(c.amount for c in duties_and_taxes)),
         extra_charges=(duties_and_taxes + surcharges + option_charges),
     )
 
@@ -128,12 +127,12 @@ def rate_request(
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=concat_str(payload.shipper.address_line1, join=True),
+                        StreetName=SF.concat_str(payload.shipper.address_line1, join=True),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=concat_str(
+                        StreetAddress2=SF.concat_str(
                             payload.shipper.address_line2, join=True
                         ),
                         StreetAddress3=None,
@@ -160,14 +159,14 @@ def rate_request(
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=concat_str(
+                        StreetName=SF.concat_str(
                             payload.recipient.address_line1, join=True
                         ),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=concat_str(
+                        StreetAddress2=SF.concat_str(
                             payload.recipient.address_line2, join=True
                         ),
                         StreetAddress3=None,

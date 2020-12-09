@@ -15,7 +15,7 @@ from pydhl.dct_req_global_2_0 import (
 )
 from pydhl.dct_requestdatatypes_global import DCTDutiable
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
-from purplship.core.utils import export, Serializable, Element, decimal, to_date
+from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit, Services
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.providers.dhl_express.units import (
@@ -52,7 +52,7 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     ExtraCharges = list(
         map(
             lambda s: ChargeDetails(
-                name=s.LocalServiceTypeName, amount=decimal(s.ChargeValue or 0)
+                name=s.LocalServiceTypeName, amount=NF.decimal(s.ChargeValue or 0)
             ),
             qtdshp.QtdShpExChrg,
         )
@@ -63,8 +63,8 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
     DutiesAndTaxes_ = reduce(
         lambda d, ec: d + ec.amount if "TAXES PAID" in ec.name else d, ExtraCharges, 0.0
     )
-    delivery_date = to_date(qtdshp.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
-    pricing_date = to_date(qtdshp.PricingDate)
+    delivery_date = DF.date(qtdshp.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
+    pricing_date = DF.date(qtdshp.PricingDate)
     transit = (
         (delivery_date - pricing_date).days
         if all([delivery_date, pricing_date])
@@ -80,15 +80,15 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
         currency=qtdshp.CurrencyCode,
         transit_days=transit,
         service=service_name,
-        base_charge=decimal(qtdshp.WeightCharge),
-        total_charge=decimal(qtdshp.ShippingCharge),
-        duties_and_taxes=decimal(DutiesAndTaxes_),
-        discount=decimal(Discount_),
+        base_charge=NF.decimal(qtdshp.WeightCharge),
+        total_charge=NF.decimal(qtdshp.ShippingCharge),
+        duties_and_taxes=NF.decimal(DutiesAndTaxes_),
+        discount=NF.decimal(Discount_),
         extra_charges=list(
             map(
                 lambda s: ChargeDetails(
                     name=s.LocalServiceTypeName,
-                    amount=decimal(s.ChargeValue),
+                    amount=NF.decimal(s.ChargeValue),
                     currency=qtdshp.CurrencyCode,
                 ),
                 qtdshp.QtdShpExChrg,
@@ -202,7 +202,7 @@ def _request_serializer(request: DCTRequest) -> str:
         'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
         'xsi:schemaLocation="http://www.dhl.com DCT-req.xsd "'
     )
-    return export(
+    return XP.export(
         request,
         name_="p:DCTRequest",
         namespacedef_=namespacedef_,

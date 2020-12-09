@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import TrackingRequest
 from tests.ups_package.fixture import gateway
 from purplship import Tracking
@@ -29,7 +29,7 @@ class TestUPSTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
 
     def test_tracking_response_parsing(self):
         with patch("purplship.mappers.ups_package.proxy.http") as mock:
@@ -38,7 +38,7 @@ class TestUPSTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse))
 
     def test_tracking_unknown_response_parsing(self):
         with patch("purplship.mappers.ups_package.proxy.http") as mock:
@@ -47,7 +47,7 @@ class TestUPSTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedInvalidTrackingNumberResponse)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedInvalidTrackingNumberResponse)
             )
 
 

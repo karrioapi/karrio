@@ -1,6 +1,6 @@
 from typing import Callable
 from purplship.core import Settings as BaseSettings
-from purplship.core.utils import Envelope, apply_namespaceprefix, export
+from purplship.core.utils import Envelope, apply_namespaceprefix, XP
 from pyfedex.rate_service_v26 import (
     WebAuthenticationCredential,
     WebAuthenticationDetail,
@@ -49,6 +49,6 @@ def default_request_serializer(
         envelope.Body.ns_prefix_ = envelope.ns_prefix_
         apply_namespaceprefix(envelope.Body.anytypeobjs_[0], prefix)
 
-        return export(envelope, namespacedef_=namespacedef_)
+        return XP.export(envelope, namespacedef_=namespacedef_)
 
     return serializer

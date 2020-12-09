@@ -37,7 +37,7 @@ from pypurolator.shipping_service_2_1_3 import (
     ArrayOfContentDetail,
 )
 from purplship.core.units import PrinterType, Options, Packages, Phone
-from purplship.core.utils import concat_str, Serializable, Element, to_xml, create_envelope, Pipeline, Job, Envelope
+from purplship.core.utils import Serializable, Element, create_envelope, Pipeline, Job, Envelope, NF, XP, SF
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 
 from purplship.providers.purolator.package.shipment.documents import get_shipping_documents_request
@@ -145,12 +145,12 @@ def _shipment_request(
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=concat_str(payload.shipper.address_line1, join=True),
+                        StreetName=SF.concat_str(payload.shipper.address_line1, join=True),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=concat_str(
+                        StreetAddress2=SF.concat_str(
                             payload.shipper.address_line2, join=True
                         ),
                         StreetAddress3=None,
@@ -176,14 +176,14 @@ def _shipment_request(
                         Department=None,
                         StreetNumber="",
                         StreetSuffix=None,
-                        StreetName=concat_str(
+                        StreetName=SF.concat_str(
                             payload.recipient.address_line1, join=True
                         ),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=concat_str(
+                        StreetAddress2=SF.concat_str(
                             payload.recipient.address_line2, join=True
                         ),
                         StreetAddress3=None,
@@ -354,7 +354,7 @@ def _validate_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
 def _create_shipment(
     validate_response: str, payload: ShipmentRequest, settings: Settings
 ) -> Job:
-    errors = parse_error_response(to_xml(validate_response), settings)
+    errors = parse_error_response(XP.to_xml(validate_response), settings)
     valid = len(errors) == 0
     return Job(
         id="create",
@@ -366,14 +366,14 @@ def _create_shipment(
 def _get_shipment_label(
     create_response: str, payload: ShipmentRequest, settings: Settings
 ) -> Job:
-    errors = parse_error_response(to_xml(create_response), settings)
+    errors = parse_error_response(XP.to_xml(create_response), settings)
     valid = len(errors) == 0
     shipment_pin = None
 
     if valid:
         node = next(
             iter(
-                to_xml(create_response).xpath(
+                XP.to_xml(create_response).xpath(
                     ".//*[local-name() = $name]", name="ShipmentPIN"
                 )
             ),

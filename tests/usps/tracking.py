@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from tests.usps.fixture import gateway
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import TrackingRequest
 from purplship import Tracking
 
@@ -22,7 +22,7 @@ class TestUSPSTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(
-                to_dict(parsed_response), to_dict(PARSED_TRACKING_RESPONSE)
+                DP.to_dict(parsed_response), DP.to_dict(PARSED_TRACKING_RESPONSE)
             )
 
 

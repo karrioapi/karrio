@@ -5,8 +5,7 @@ from pyusps.intl_rate_v2_request import IntlRateV2Request
 from pyusps.track_field_request import TrackFieldRequest
 
 from purplship.api.proxy import Proxy as BaseProxy
-from purplship.core.utils.serializable import Serializable, Deserializable
-from purplship.core.utils.helpers import to_xml, request as http
+from purplship.core.utils import Serializable, Deserializable, XP, request as http
 from purplship.mappers.usps.settings import Settings
 
 
@@ -20,11 +19,11 @@ class Proxy(BaseProxy):
     ) -> Deserializable[str]:
         query = urllib.parse.urlencode(request.serialize())
         response = http(url=f"{self.settings.server_url}?{query}", method="GET")
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)
 
     def get_tracking(
         self, request: Serializable[TrackFieldRequest]
     ) -> Deserializable[str]:
         query = urllib.parse.urlencode(request.serialize())
         response = http(url=f"{self.settings.server_url}?{query}", method="GET")
-        return Deserializable(response, to_xml)
+        return Deserializable(response, XP.to_xml)

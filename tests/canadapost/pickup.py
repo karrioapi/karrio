@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import purplship
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
@@ -95,7 +95,7 @@ class TestCanadaPostPickup(unittest.TestCase):
                 purplship.Pickup.schedule(self.PickupRequest).with_(gateway).parse()
             )
 
-            self.assertListEqual(to_dict(parsed_response), ParsedPickupResponse)
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_update_response(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
@@ -104,7 +104,7 @@ class TestCanadaPostPickup(unittest.TestCase):
                 purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(to_dict(parsed_response), ParsedPickupUpdateResponse)
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupUpdateResponse)
 
 
 if __name__ == "__main__":

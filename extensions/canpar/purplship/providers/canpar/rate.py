@@ -14,7 +14,7 @@ from purplship.core.models import (
     ChargeDetails
 )
 from purplship.core.units import Packages, Services, Options
-from purplship.core.utils import Serializable, Envelope, create_envelope, Element, build, decimal
+from purplship.core.utils import Serializable, Envelope, create_envelope, Element, NF, XP
 from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
 from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service, Charges
@@ -29,24 +29,24 @@ def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[Rat
 
 
 def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
-    shipment = build(Shipment, node)
+    shipment = XP.build(Shipment, node)
     surcharges = [
         ChargeDetails(
             name=charge.value,
-            amount=decimal(getattr(shipment, charge.name)),
+            amount=NF.decimal(getattr(shipment, charge.name)),
             currency='CAD'
         )
         for charge in list(Charges)
-        if decimal(getattr(shipment, charge.name)) > 0.0
+        if NF.decimal(getattr(shipment, charge.name)) > 0.0
     ]
     taxes = [
         ChargeDetails(
             name=f'{getattr(shipment, code)} Tax Charge',
-            amount=decimal(decimal(charge)),
+            amount=NF.decimal(charge),
             currency='CAD'
         )
         for code, charge in [('tax_code_1', shipment.tax_charge_1), ('tax_code_2', shipment.tax_charge_2)]
-        if decimal(charge) > 0.0
+        if NF.decimal(charge) > 0.0
     ]
 
     return RateDetails(
@@ -55,7 +55,7 @@ def _extract_rate_details(node: Element, settings: Settings) -> RateDetails:
         currency="CAD",
         transit_days=shipment.transit_time,
         service=Service(shipment.service_type).name,
-        base_charge=decimal(shipment.freight_charge),
+        base_charge=NF.decimal(shipment.freight_charge),
         total_charge=sum([c.amount for c in (surcharges + taxes)], 0.0),
         duties_and_taxes=sum([t.amount for t in taxes], 0.0),
         extra_charges=(surcharges + taxes),

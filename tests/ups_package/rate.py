@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from tests.ups_package.fixture import gateway
 from purplship import Rating
@@ -32,14 +32,14 @@ class TestUPSRating(unittest.TestCase):
         with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse))
 
     def test_parse_rate_error(self):
         with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = RateteParsingErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedRateteParsingError)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedRateteParsingError)
             )
 
     def test_parse_rate_missing_args_error(self):
@@ -47,7 +47,7 @@ class TestUPSRating(unittest.TestCase):
             mock.return_value = RateMissingArgsErrorXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedRateMissingArgsError)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedRateMissingArgsError)
             )
 
 

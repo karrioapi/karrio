@@ -12,12 +12,12 @@ from pyfedex.pickup_service_v20 import (
 from purplship.core.models import PickupRequest
 from purplship.core.utils import (
     Serializable,
-    export,
     create_envelope,
     apply_namespaceprefix,
     Envelope,
-    concat_str,
-    to_date,
+    SF,
+    XP,
+    DF,
 )
 from purplship.providers.fedex.utils import Settings
 
@@ -25,7 +25,7 @@ from purplship.providers.fedex.utils import Settings
 def pickup_availability_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[PickupAvailabilityRequest]:
-    same_day = to_date(payload.pickup_date).date() == datetime.today().date()
+    same_day = DF.date(payload.pickup_date).date() == datetime.today().date()
 
     request = PickupAvailabilityRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -38,7 +38,7 @@ def pickup_availability_request(
             AccountNumber=settings.account_number,
         ),
         PickupAddress=Address(
-            StreetLines=concat_str(
+            StreetLines=SF.concat_str(
                 payload.address.address_line1, payload.address.address_line2
             ),
             City=payload.address.city,
@@ -69,7 +69,7 @@ def _request_serializer(request: PickupAvailabilityRequest) -> str:
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v17")
 
-    return export(
+    return XP.export(
         envelope,
         namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17"',
     )

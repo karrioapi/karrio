@@ -8,7 +8,7 @@ from pydicom.rates import (
     RateResponse,
 )
 from purplship.core.units import Packages, Services, Options
-from purplship.core.utils import Serializable, to_dict, decimal
+from purplship.core.utils import Serializable, DP, NF
 from purplship.core.models import (
     ChargeDetails,
     RateRequest,
@@ -46,14 +46,14 @@ def _extract_details(rate: Rate, response: RateResponse, settings: Settings) -> 
         currency="CAD",
         transit_days=response.delay,
         service=Service(rate.rateType),
-        discount=decimal(rate.discountAmount),
-        base_charge=decimal(rate.basicCharge),
-        total_charge=decimal(rate.total),
-        duties_and_taxes=decimal(rate.taxes),
+        discount=NF.decimal(rate.discountAmount),
+        base_charge=NF.decimal(rate.basicCharge),
+        total_charge=NF.decimal(rate.total),
+        duties_and_taxes=NF.decimal(rate.taxes),
         extra_charges=[
             ChargeDetails(
                 name=charge.name,
-                amount=decimal(charge.amount),
+                amount=NF.decimal(charge.amount),
                 currency="CAD",
             )
             for charge in rate.surcharges
@@ -114,4 +114,4 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Dicom
         appointment=None,
     )
 
-    return Serializable(request, to_dict)
+    return Serializable(request, DP.to_dict)

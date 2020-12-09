@@ -2,7 +2,7 @@ from typing import Tuple, List
 from datetime import datetime
 from pyusps.intl_rate_v2_request import IntlRateV2Request, PackageType, ExtraServicesType
 from pyusps.intl_rate_v2_response import ServiceType, ExtraServiceType
-from purplship.core.utils import export, Serializable, Element, decimal, to_date, build
+from purplship.core.utils import Serializable, Element, NF, XP
 from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
 from purplship.core.units import Packages, Country, Weight, WeightUnit, Services
 
@@ -27,7 +27,7 @@ def _extract_details(service_node: Element, settings: Settings) -> RateDetails:
         build(ExtraServiceType, svc)
         for svc in service_node.xpath(".//*[local-name() = $name]", name="ExtraService")
     ]
-    delivery_date = to_date(service.GuaranteeAvailability, "%m/%d/%Y")
+    delivery_date = DF.date(service.GuaranteeAvailability, "%m/%d/%Y")
     transit = (
         (delivery_date - datetime.now()).days if delivery_date is not None else None
     )
@@ -37,14 +37,14 @@ def _extract_details(service_node: Element, settings: Settings) -> RateDetails:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         service=rate_service.value,
-        base_charge=decimal(service.Postage),
-        total_charge=decimal(service.Postage),
+        base_charge=NF.decimal(service.Postage),
+        total_charge=NF.decimal(service.Postage),
         currency=currency,
         transit_days=transit,
         extra_charges=[
             ChargeDetails(
                 name=ExtraService(special.ServiceID).name,
-                amount=decimal(special.Price),
+                amount=NF.decimal(special.Price),
                 currency=currency,
             )
             for special in special_services
@@ -95,4 +95,4 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
         ],
     )
 
-    return Serializable(request, export)
+    return Serializable(request, XP.export)

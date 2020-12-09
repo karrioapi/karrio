@@ -1,7 +1,7 @@
 import unittest
 import logging
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import TrackingRequest
 from purplship import Tracking
 from tests.fedex_express.fixture import gateway
@@ -32,14 +32,14 @@ class TestFeDexTracking(unittest.TestCase):
             mock.return_value = TrackingResponseXML
             parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse))
 
     def test_tracking_auth_error_parsing(self):
         with patch("purplship.mappers.fedex_express.proxy.http") as mock:
             mock.return_value = TrackingAuthErrorXML
             parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
 
     def test_parse_error_tracking_response(self):
         with patch("purplship.mappers.fedex_express.proxy.http") as mock:
@@ -47,7 +47,7 @@ class TestFeDexTracking(unittest.TestCase):
             parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedTrackingResponseError)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponseError)
             )
 
 

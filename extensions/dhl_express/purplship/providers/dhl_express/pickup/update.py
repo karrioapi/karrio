@@ -9,12 +9,11 @@ from pydhl.pickupdatatypes_global_3_0 import (
     WeightSeg,
 )
 from purplship.core.utils import (
-    export,
     Serializable,
     Element,
-    format_time,
-    format_date,
-    decimal,
+    DF,
+    NF,
+    XP,
 )
 from purplship.core.models import (
     Message,
@@ -47,14 +46,14 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
     pickup_charge = (
         ChargeDetails(
             name="Pickup Charge",
-            amount=decimal(pickup.PickupCharge),
+            amount=NF.decimal(pickup.PickupCharge),
             currency=pickup.CurrencyCode,
         )
         if pickup.PickupCharge is not None
         else None
     )
     pickup_date = (
-        format_date(pickup.NextPickupDate)
+        DF.fdate(pickup.NextPickupDate)
         if pickup.NextPickupDate is not None
         else None
     )
@@ -65,8 +64,8 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
         confirmation_number=str(pickup.ConfirmationNumber[0]),
         pickup_date=pickup_date,
         pickup_charge=pickup_charge,
-        ready_time=format_time(pickup.ReadyByTime),
-        closing_time=format_time(pickup.CallInTime),
+        ready_time=DF.ftime(pickup.ReadyByTime),
+        closing_time=DF.ftime(pickup.CallInTime),
     )
 
 
@@ -128,7 +127,7 @@ def pickup_update_request(
 
 
 def _request_serializer(request: ModifyPURequest) -> str:
-    xml_str = export(
+    xml_str = XP.export(
         request,
         name_="req:ModifyPURequest",
         namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd"',

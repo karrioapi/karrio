@@ -2,11 +2,10 @@ from typing import List, Optional, Tuple
 from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
 from pydhl.tracking_response import AWBInfo
 from purplship.core.utils import (
-    export,
     Serializable,
     Element,
-    format_date,
-    format_time,
+    XP,
+    DF,
 )
 from purplship.core.models import (
     TrackingEvent,
@@ -46,8 +45,8 @@ def _extract_tracking(
         events=list(
             map(
                 lambda e: TrackingEvent(
-                    date=format_date(e.Date),
-                    time=format_time(e.Time),
+                    date=DF.fdate(e.Date),
+                    time=DF.ftime(e.Time),
                     signatory=e.Signatory,
                     code=e.ServiceEvent.EventCode,
                     location=e.ServiceArea.Description,
@@ -72,7 +71,7 @@ def tracking_request(
 
 
 def _request_serializer(request: KnownTrackingRequest) -> str:
-    return export(
+    return XP.export(
         request,
         name_="req:KnownTrackingRequest",
         namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd"',

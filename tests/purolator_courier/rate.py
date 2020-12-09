@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship import Rating
 from tests.purolator_courier.fixture import gateway
@@ -32,7 +32,7 @@ class TestPurolatorQuote(unittest.TestCase):
             mock.return_value = RATE_RESPONSE_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(PARSED_RATE_RESPONSE))
 
 
 if __name__ == "__main__":

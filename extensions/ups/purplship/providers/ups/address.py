@@ -5,14 +5,14 @@ from pyups.av_request import (
     RequestType,
 )
 from pyups.av_response import Response
-from purplship.core.utils import Serializable, Element, build, export
+from purplship.core.utils import Serializable, Element, XP
 from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails
 from purplship.providers.ups.utils import Settings
 from purplship.providers.ups.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
-    status = build(
+    status = XP.build(
         Response,
         next(
             iter(response.xpath(".//*[local-name() = $name]", name="Response")),
@@ -49,4 +49,4 @@ def address_validation_request(payload: AddressValidationRequest, _) -> Serializ
 
 def _request_serializer(request: UPSAddressValidationRequest) -> str:
 
-    return export(request, namespacedef_='xml:lang="en-US"')
+    return XP.export(request, namespacedef_='xml:lang="en-US"')

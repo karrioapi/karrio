@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from pyusps.address_validate_request import AddressValidateRequest, AddressType
-from purplship.core.utils import Serializable, Element, concat_str, export
+from purplship.core.utils import Serializable, Element, NF, XP
 from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails
 
 from purplship.providers.usps.utils import Settings
@@ -23,7 +23,7 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
             ID=None,
             FirmName=(payload.address.company_name or payload.address.person_name),
             Address1=payload.address.address_line1,
-            Address2=concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
+            Address2=SF.concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
             City=payload.address.city,
             State=payload.address.state_code,
             Urbanization=None,
@@ -32,4 +32,4 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
         )
     )
 
-    return Serializable(request, export)
+    return Serializable(request, XP.export)

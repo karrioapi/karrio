@@ -19,14 +19,13 @@ from pyups.rate_web_service_schema import (
     EstimatedArrivalType,
 )
 from purplship.core.utils import (
-    export,
-    concat_str,
     Serializable,
-    decimal,
-    integer,
     Element,
+    SF,
+    NF,
+    XP,
 )
-from purplship.core.utils.soap import apply_namespaceprefix, create_envelope, build
+from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.units import Packages, Services
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.providers.ups.units import (
@@ -52,7 +51,7 @@ def _extract_package_rate(
     settings: Settings,
 ) -> Callable[[List[RateDetails], Element], List[RateDetails]]:
     def extract(rates: List[RateDetails], detail_node: Element) -> List[RateDetails]:
-        rate = build(RatedShipmentType, detail_node)
+        rate = XP.build(RatedShipmentType, detail_node)
 
         if rate.NegotiatedRateCharges is not None:
             total_charges = (
@@ -94,10 +93,10 @@ def _extract_package_rate(
                 carrier_id=settings.carrier_id,
                 currency=currency_,
                 service=service,
-                base_charge=decimal(rate.TransportationCharges.MonetaryValue),
-                total_charge=decimal(total_charges.MonetaryValue),
+                base_charge=NF.decimal(rate.TransportationCharges.MonetaryValue),
+                total_charge=NF.decimal(total_charges.MonetaryValue),
                 duties_and_taxes=reduce(
-                    lambda total, charge: total + decimal(charge.MonetaryValue),
+                    lambda total, charge: total + NF.decimal(charge.MonetaryValue),
                     taxes or [],
                     0.0,
                 ),
@@ -107,7 +106,7 @@ def _extract_package_rate(
                         + [
                             ChargeDetails(
                                 name=charge.Code,
-                                amount=decimal(charge.MonetaryValue),
+                                amount=NF.decimal(charge.MonetaryValue),
                                 currency=charge.CurrencyCode,
                             )
                         ]
@@ -115,7 +114,7 @@ def _extract_package_rate(
                     [charge for charge in extra_charges if charge is not None],
                     [],
                 ),
-                transit_days=integer(transit_days),
+                transit_days=NF.integer(transit_days),
             )
         ]
 
@@ -153,7 +152,7 @@ def rate_request(
                 Name=payload.shipper.company_name,
                 ShipperNumber=settings.account_number,
                 Address=ShipAddressType(
-                    AddressLine=concat_str(
+                    AddressLine=SF.concat_str(
                         payload.recipient.address_line1,
                         payload.recipient.address_line2,
                     ),
@@ -166,7 +165,7 @@ def rate_request(
             ShipTo=ShipToType(
                 Name=payload.recipient.company_name,
                 Address=ShipToAddressType(
-                    AddressLine=concat_str(
+                    AddressLine=SF.concat_str(
                         payload.recipient.address_line1,
                         payload.recipient.address_line2,
                     ),
@@ -272,4 +271,4 @@ def _request_serializer(envelope: Element) -> str:
     apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
 
-    return export(envelope, namespacedef_=namespace_)
+    return XP.export(envelope, namespacedef_=namespace_)

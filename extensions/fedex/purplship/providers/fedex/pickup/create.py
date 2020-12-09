@@ -23,17 +23,15 @@ from purplship.core.models import PickupRequest, PickupDetails, Message
 from purplship.core.units import Packages
 from purplship.core.utils import (
     Serializable,
-    export,
     create_envelope,
     apply_namespaceprefix,
     Envelope,
-    concat_str,
     Element,
-    to_date,
-    build,
     Pipeline,
     Job,
-    to_xml
+    SF,
+    DF,
+    XP,
 )
 from purplship.providers.fedex.pickup.availability import pickup_availability_request
 from purplship.providers.fedex.utils import Settings
@@ -44,7 +42,7 @@ from purplship.providers.fedex.error import parse_error_response
 def parse_pickup_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = build(
+    reply = XP.build(
         CreatePickupReply,
         next(
             iter(
@@ -95,7 +93,7 @@ def pickup_request(
 def _pickup_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[CreatePickupRequest]:
-    same_day = to_date(payload.pickup_date).date() == datetime.today().date()
+    same_day = DF.date(payload.pickup_date).date() == datetime.today().date()
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
 
     request = CreatePickupRequest(
@@ -119,7 +117,7 @@ def _pickup_request(
                     EMailAddress=payload.address.email,
                 ),
                 Address=Address(
-                    StreetLines=concat_str(
+                    StreetLines=SF.concat_str(
                         payload.address.address_line1, payload.address.address_line2
                     ),
                     City=payload.address.city,
@@ -164,7 +162,7 @@ def _request_serializer(request: CreatePickupRequest) -> str:
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v17")
 
-    return export(
+    return XP.export(
         envelope,
         namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17"',
     )
@@ -179,7 +177,7 @@ def _get_availability(payload: PickupRequest, settings: Settings):
 def _create_pickup(
     availability_response: str, payload: PickupRequest, settings: Settings
 ):
-    availability = build(PickupAvailabilityReply, to_xml(availability_response))
+    availability = XP.build(PickupAvailabilityReply, XP.to_xml(availability_response))
     data = _pickup_request(payload, settings) if availability else None
 
     return Job(id="create_pickup", data=data, fallback="")

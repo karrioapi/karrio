@@ -15,8 +15,8 @@ from purplship.core.utils import (
     Element,
     Envelope,
     Serializable,
-    concat_str,
-    build
+    SF,
+    XP,
 )
 from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
@@ -25,7 +25,7 @@ from purplship.providers.canpar.utils import Settings, default_request_serialize
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
     errors = parse_error_response(response, settings)
     address_node = next(iter(response.xpath(".//*[local-name() = $name]", name="address")), None)
-    address = build(CanparAddress, address_node)
+    address = XP.build(CanparAddress, address_node)
     success = len(errors) == 0
     validation_details = AddressValidationDetails(
         carrier_id=settings.carrier_id,
@@ -40,7 +40,7 @@ def parse_address_validation_response(response: Element, settings: Settings) -> 
             state_code=address.province,
             residential=address.residential,
             address_line1=address.address_line_1,
-            address_line2=concat_str(address.address_line_2, address.address_line_3, join=True)
+            address_line2=SF.concat_str(address.address_line_2, address.address_line_3, join=True)
         )
     ) if success else None
 
@@ -57,7 +57,7 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
                 postal_code=payload.address.postal_code or "",
                 province=payload.address.state_code or "",
                 street_direction="",
-                street_name=concat_str(payload.address.address_line1, payload.address.address_line2, join=True) or "",
+                street_name=SF.concat_str(payload.address.address_line1, payload.address.address_line2, join=True) or "",
                 street_num="",
                 street_type="",
                 user_id=settings.username,

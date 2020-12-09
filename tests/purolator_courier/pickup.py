@@ -2,7 +2,7 @@ import logging
 import unittest
 from unittest.mock import patch
 import purplship
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
@@ -97,7 +97,7 @@ class TestPurolatorPickup(unittest.TestCase):
                 purplship.Pickup.schedule(self.PickupRequest).with_(gateway).parse()
             )
 
-            self.assertListEqual(to_dict(parsed_response), ParsedPickupResponse)
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_cancel_reply(self):
         with patch("purplship.mappers.purolator_courier.proxy.http") as mock:
@@ -106,7 +106,7 @@ class TestPurolatorPickup(unittest.TestCase):
                 purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(to_dict(parsed_response), ParsedPickupCancelResponse)
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupCancelResponse)
 
 
 if __name__ == "__main__":

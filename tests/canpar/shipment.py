@@ -3,7 +3,7 @@ import unittest
 import logging
 from unittest.mock import patch
 import purplship
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from tests.canpar.fixture import gateway
 
@@ -85,7 +85,7 @@ class TestCanparShipment(unittest.TestCase):
                 purplship.Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
 
     def test_parse_void_shipment_response(self):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
@@ -97,7 +97,7 @@ class TestCanparShipment(unittest.TestCase):
             )
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedVoidShipmentResponse)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedVoidShipmentResponse)
             )
 
 
