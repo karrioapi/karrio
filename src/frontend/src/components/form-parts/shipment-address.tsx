@@ -36,8 +36,8 @@ const ShipmentAddress: React.FC<ShipmentAddressComponent> = ({ shipment, address
             form.current?.dispatchEvent(new CustomEvent(
                 'label-select-tab', { bubbles: true, detail: { nextTab } }
             ));
-        } catch (e) {
-            state.setNotification({ type: NotificationType.error, message: e.message });
+        } catch (err) {
+            state.setNotification({ type: NotificationType.error, message: err });
         }
     };
 

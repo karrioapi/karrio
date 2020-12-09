@@ -36,13 +36,7 @@ const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment, ...props }) =
             await state.voidLabel(shipment);
             state.setNotification({ type: NotificationType.success, message: 'Shipment successfully cancelled!' });
         } catch (err) {
-            let message = err.message
-            if (err.response?.error !== undefined) {
-                message = ((err.response.error.details as ErrorResponse).messages || []).map(msg => (
-                    <p>{msg.carrier_name}: {msg.message}</p>
-                ))
-            }
-            state.setNotification({ type: NotificationType.error, message });
+            state.setNotification({ type: NotificationType.error, message: err });
         }
     };
 

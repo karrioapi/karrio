@@ -61,8 +61,8 @@ const ShipmentCustomsInfo: React.FC<ShipmentCustomsInfoComponent> = ({ shipment,
             form.current?.dispatchEvent(new CustomEvent(
                 'label-select-tab', { bubbles: true, detail: { nextTab: 'options' } }
             ));
-        } catch (e) {
-            state.setNotification({ type: NotificationType.error, message: e.message });
+        } catch (err) {
+            state.setNotification({ type: NotificationType.error, message: err });
         }
     };
     const optOutChanged = async (e: ChangeEvent<any>) => {
@@ -74,8 +74,8 @@ const ShipmentCustomsInfo: React.FC<ShipmentCustomsInfoComponent> = ({ shipment,
                 state.setNotification({ type: NotificationType.success, message: 'Customs declaration discarded successfully!' });
             }
             update({ customs: undefined });
-        } catch (e) {
-            state.setNotification({ type: NotificationType.error, message: e.message });
+        } catch (err) {
+            state.setNotification({ type: NotificationType.error, message: err });
         }
         setCustoms(optOut ? {} : DEFAULT_CUSTOMS);
     };

@@ -2,6 +2,7 @@ import { CarrierSettings, References, Shipment, Purplship, Address, Parcel, Rate
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinct } from 'rxjs/operators';
+import { RequestError } from '@/library/types';
 
 // Collect API token from the web page
 const INITIAL_TOKEN = collectToken();
@@ -67,7 +68,7 @@ export enum NotificationType {
 
 export interface Notification {
     type: NotificationType;
-    message: JSX.Element | string;
+    message: string | Error | RequestError;
 }
 
 export interface LabelData {
@@ -156,86 +157,87 @@ class AppState {
     }
 
     public async retrieveShipment(shipment_id: string) {
-        const response = this.purplship.shipments.retrieve(shipment_id);
-        response.catch(HandleFailure);
-        return response;
+        return handleFailure(
+            this.purplship.shipments.retrieve(shipment_id)
+        );
     }
 
     public async fetchRates(shipment: Shipment) {
-        if (shipment.id !== undefined) {
-            const response = this.purplship.shipments.rates(shipment.id, { headers: this.headers });
-            response.then(() => this.fetchShipments()).catch(HandleFailure);
-            return (await response).shipment as Shipment
-        } else {
-            const response = this.purplship.shipments.create(shipment, { headers: this.headers });
-            response.then(() => this.fetchShipments()).catch(HandleFailure);
-            return response;
-        }
+        return handleFailure((async () => {
+            if (shipment.id !== undefined) {
+                const response = await this.purplship.shipments.rates(shipment.id, { headers: this.headers });
+                return response.shipment as Shipment;
+            } else {
+                return this.purplship.shipments.create(shipment, { headers: this.headers });
+            }
+        })());
     }
 
     public async buyLabel(shipment: Shipment) {
-        const response = this.purplship.shipments.purchase(
-            { selected_rate_id: shipment.selected_rate_id as string, payment: shipment.payment },
-            shipment.id as string,
-            { headers: this.headers }
+        const response = handleFailure(
+            this.purplship.shipments.purchase(
+                { selected_rate_id: shipment.selected_rate_id as string, payment: shipment.payment },
+                shipment.id as string,
+                { headers: this.headers }
+            )
         );
-        response.then(() => this.fetchShipments()).catch(HandleFailure);
+        response.then(() => this.fetchShipments());
         return response;
     }
 
     public async voidLabel(shipment: Shipment) {
-        const response = this.purplship.shipments.cancel(
-            shipment.id as string, { headers: this.headers }
+        const response = handleFailure(
+            this.purplship.shipments.cancel(shipment.id as string, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments()).catch(HandleFailure);
+        response.then(() => this.fetchShipments());
         return response;
     }
 
     public async setOptions(shipment_id: string, options: {}) {
-        const response = this.purplship.shipments.setOptions(
-            options, shipment_id, { headers: this.headers }
+        const response = handleFailure(
+            this.purplship.shipments.setOptions(options, shipment_id, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments()).catch(HandleFailure);
+        response.then(() => this.fetchShipments());
         return response;
     }
 
     public async addCustoms(shipment_id: string, customs: Customs) {
-        const response = this.purplship.shipments.addCustoms(
-            customs, shipment_id, { headers: this.headers }
+        const response = handleFailure(
+            this.purplship.shipments.addCustoms(customs, shipment_id, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments()).catch(HandleFailure);
+        response.then(() => this.fetchShipments());
         return response;
     }
 
     public async updateAddress(address: Address) {
-        const response = this.purplship.addresses.update(
-            address, address.id as string, { headers: this.headers }
+        const response = handleFailure(
+            this.purplship.addresses.update(address, address.id as string, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments()).catch(HandleFailure);
+        response.then(() => this.fetchShipments());
         return response;
     }
 
     public async updateParcel(parcel: Parcel) {
-        const response = this.purplship.parcels.update(
-            parcel, parcel.id as string, { headers: this.headers }
+        const response = handleFailure(
+            this.purplship.parcels.update(parcel, parcel.id as string, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments()).catch(HandleFailure);
+        response.then(() => this.fetchShipments());
         return response;
     }
 
     public async updateCustoms(customs: Customs) {
-        const response = this.purplship.customs.update(
-            customs, customs.id as string, { headers: this.headers }
+        const response = handleFailure(
+            this.purplship.customs.update(customs, customs.id as string, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments()).catch(HandleFailure);
+        response.then(() => this.fetchShipments());
         return response;
     }
 
     public async discardCustoms(customs_id: string) {
-        const response = this.purplship.customs.discard(
-            customs_id, { headers: this.headers }
+        const response = handleFailure(
+            this.purplship.customs.discard(customs_id, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments()).catch(HandleFailure);
+        response.then(() => this.fetchShipments());
         return response;
     }
 
@@ -417,17 +419,24 @@ async function http(...args: Parameters<typeof fetch>): ReturnType<typeof fetch>
     } catch (err) {
         if (err.message === 'Failed to fetch') {
             throw new Error('Oups! Looks like you are offline');
+        } else if (err instanceof Response) {
+            throw new RequestError(await err.json());
         }
         throw err
     }
 }
 
-async function HandleFailure<T>(err: any) {
-    let error = new Error(err.message);
+async function handleFailure<T>(request: Promise<T>): Promise<T> {
     try {
-        (error as { response?: {} }).response = await err.json();
-    } finally {
-        return Promise.reject<T>(error);
+        const response = await request;
+        return response
+    } catch (err) {
+        if (err.message === 'Failed to fetch') {
+            throw new Error('Oups! Looks like you are offline');
+        } else if (err instanceof Response) {
+            throw new RequestError(await err.json());
+        }
+        throw err
     }
 }
 

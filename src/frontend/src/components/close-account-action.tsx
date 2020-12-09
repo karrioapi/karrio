@@ -16,7 +16,7 @@ const CloseAccountAction: React.FC<CloseAccountActionComponent> = ({ children })
         try {
             await state.closeAccount();
         } catch(err) {
-            state.setNotification({ type: NotificationType.error, message: err.message });
+            state.setNotification({ type: NotificationType.error, message: err });
         }
     };
 

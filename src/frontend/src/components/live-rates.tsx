@@ -34,13 +34,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             const response = await state.fetchRates(shipment);
             data = { ...data, ...(response || {}) };
         } catch (err) {
-            let message = err.message
-            if (err.response?.error !== undefined) {
-                message = ((err.response.error.details as ErrorResponse).messages || []).map(msg => (
-                    <p>{msg.carrier_name}: {msg.message}</p>
-                ))
-            }
-            state.setNotification({ type: NotificationType.error, message });
+            state.setNotification({ type: NotificationType.error, message: err });
         } finally {
             setLoading(false);
             setSelectedRate(data.selected_rate_id);
@@ -53,20 +47,14 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             let currency = (shipment.options || {}).currency || Payment.CurrencyEnum.CAD;
             const response = await state.buyLabel({
                 ...shipment,
-                selected_rate_id: selected_rate as string,
+                selected_rate_id: selected_rate_id as string,
                 payment: { paid_by: Payment.PaidByEnum.Sender, currency } as Payment
             });
             update(response.shipment as Shipment);
             state.setNotification({ type: NotificationType.success, message: 'Label successfully purchased!' });
             navigate('/');
         } catch (err) {
-            let message = err.message;
-            if (err.response?.error !== undefined) {
-                message = ((err.response.error.details as ErrorResponse).messages || []).map(msg => (
-                    <p>{msg.carrier_name}: {msg.message}</p>
-                ))
-            }
-            state.setNotification({ type: NotificationType.error, message });
+            state.setNotification({ type: NotificationType.error, message: err });
         } finally {
             setLoading(false);
         }

@@ -61,8 +61,8 @@ const ShipmentParcel: React.FC<ShipmentParcelComponent> = ({ shipment, update })
             form.current?.dispatchEvent(new CustomEvent(
                 'label-select-tab', { bubbles: true, detail: { nextTab } }
             ));
-        } catch(e) {
-            state.setNotification({ type: NotificationType.error, message: e.message });
+        } catch (err) {
+            state.setNotification({ type: NotificationType.error, message: err });
         }
     };
 

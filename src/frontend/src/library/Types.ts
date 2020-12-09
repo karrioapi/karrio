@@ -1,4 +1,4 @@
-import { Parcel, Payment } from "@purplship/purplship";
+import { Message, Parcel, Payment } from "@purplship/purplship";
 
 export interface View {
     path: string
@@ -34,3 +34,24 @@ export const WEIGHT_UNITS = Array.from(new Set(
     Object
         .keys(Parcel.WeightUnitEnum)
 ));
+
+export type ErrorMessage = Message & {
+    carrier_id?: string;
+    carrier_name?: string;
+};
+
+export interface APIError {
+    error: {
+        code: string;
+        details: { messages?: ErrorMessage[] };
+    };
+}
+
+export class RequestError extends Error {
+    constructor(public data: APIError, ...params: any[]) {
+        super(...params);
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, RequestError)
+        }
+    }
+}

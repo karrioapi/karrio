@@ -42,8 +42,8 @@ const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update 
                 state.setNotification({ type: NotificationType.success, message: 'Shipment Options successfully updated!' });
             }
             update(data);
-        } catch(e) {
-            state.setNotification({ type: NotificationType.error, message: e.message });
+        } catch (err) {
+            state.setNotification({ type: NotificationType.error, message: err });
         }
     };
 
