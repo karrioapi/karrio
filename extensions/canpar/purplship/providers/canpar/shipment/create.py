@@ -48,7 +48,7 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
     return ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        label=label.text,
+        label=str(label.text),
         tracking_number=tracking_number,
         shipment_identifier=str(shipment.id),
         selected_rate=_extract_rate_details(shipment_node, settings),

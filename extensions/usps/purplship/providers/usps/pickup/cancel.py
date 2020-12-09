@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from pyusps.carrier_pickup_cancel_request import CarrierPickupCancelRequest
-from purplship.core.utils import Serializable, NF
+from purplship.core.utils import Serializable, SF
 from purplship.core.models import (
     PickupCancelRequest,
     ConfirmationDetails,

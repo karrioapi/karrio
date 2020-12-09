@@ -1,21 +1,21 @@
 """Purplship lxml typing and utilities wrappers"""
 
 import io
-from typing import List, TypeVar, Type, Optional, cast
-from xmltodict import parse
-
-
 from lxml import etree
-Element = etree.Element
-fromstring = etree.fromstring
-tostring = etree.tostring
+from xmltodict import parse
+from typing import List, TypeVar, Type, Optional, cast
+from pysoap.envelope import Envelope
+from lxml.etree import _Element
 
 T = TypeVar("T")
 
 
-class GenerateDSAbstract:
-    def build(self, *args):
-        pass
+class Element(_Element):
+    def xpath(self, *args, **kwargs) -> List['Element']: pass
+
+
+class GenerateDSAbstract(Envelope):
+    pass
 
 
 class XMLPARSER:
@@ -35,7 +35,7 @@ class XMLPARSER:
         return instance
 
     @staticmethod
-    def export(typed_xml_element: Element, **kwds) -> str:
+    def export(typed_xml_element: Type[GenerateDSAbstract], **kwds) -> str:
         """Serialize a class instance into XML string.
         => Invoke the export method of generated type to return the subsequent XML represented
 
@@ -44,7 +44,7 @@ class XMLPARSER:
         :return: an XML text
         """
         output = io.StringIO()
-        typed_xml_element.export(output, 0, **kwds)
+        cast(GenerateDSAbstract, typed_xml_element).export(output, 0, **kwds)
         return output.getvalue()
 
     @staticmethod
@@ -74,7 +74,7 @@ class XMLPARSER:
         :param xml_str:
         :return: Node Element
         """
-        return fromstring(bytes(bytearray(xml_str, encoding="utf-8")))
+        return etree.fromstring(bytes(bytearray(xml_str, encoding="utf-8")))
 
     @staticmethod
     def xml_tostring(xml_element: Element, encoding: str = "utf-8") -> str:
@@ -84,4 +84,4 @@ class XMLPARSER:
         :param encoding: the string format encoding
         :return: Node Element
         """
-        return str(tostring(xml_element), encoding)
+        return str(etree.tostring(xml_element), encoding)

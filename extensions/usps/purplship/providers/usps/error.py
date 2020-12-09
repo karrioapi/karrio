@@ -1,6 +1,6 @@
 from typing import List
 from pyusps.error import Error
-from purplship.core.utils import Element
+from purplship.core.utils import Element, XP
 from purplship.core.models import Message
 from purplship.providers.usps.utils import Settings
 
@@ -10,7 +10,7 @@ def parse_error_response(response: Element, settings: Settings) -> List[Message]
         [response] if response.tag == 'Error' else
         response.xpath(".//*[local-name() = $name]", name="Error")
     )
-    errors = [build(Error, node) for node in error_nodes]
+    errors = [XP.build(Error, node) for node in error_nodes]
 
     return [
         Message(

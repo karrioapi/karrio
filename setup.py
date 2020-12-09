@@ -27,6 +27,7 @@ setup(name='purplship',
             'jstruct',
             'xmltodict',
             'lxml',
+            'lxml-stubs',
             'py-soap',
             'six',
             'Pillow'

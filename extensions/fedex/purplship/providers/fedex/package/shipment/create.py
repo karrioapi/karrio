@@ -36,7 +36,7 @@ from pyfedex.ship_service_v25 import (
     LabelPrintingOrientationType,
     ShipmentNotificationFormatSpecification
 )
-from purplship.core.utils import SF, XP, Serializable, apply_namespaceprefix, create_envelope, Element
+from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
 from purplship.core.units import Options, Packages
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.providers.fedex.error import parse_error_response

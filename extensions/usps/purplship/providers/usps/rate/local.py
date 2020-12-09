@@ -8,7 +8,7 @@ from pyusps.rate_v4_request import (
     SpecialServicesType,
     ShipDateType,
 )
-from purplship.core.utils import Serializable, Element, NF, XP
+from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.core.units import Packages, Currency, Options, Services
 from purplship.providers.usps.utils import Settings
@@ -36,7 +36,7 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
     postage.build(postage_node)
     currency = Currency.USD.name
     services: List[SpecialServiceType] = [
-        build(SpecialServiceType, svc)
+        XP.build(SpecialServiceType, svc)
         for svc in postage_node.xpath(
             ".//*[local-name() = $name]", name="SpecialService"
         )

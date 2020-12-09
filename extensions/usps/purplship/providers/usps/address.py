@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from pyusps.address_validate_request import AddressValidateRequest, AddressType
-from purplship.core.utils import Serializable, Element, NF, XP
+from purplship.core.utils import Serializable, Element, SF, XP
 from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails
 
 from purplship.providers.usps.utils import Settings

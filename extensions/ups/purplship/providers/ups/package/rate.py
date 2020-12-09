@@ -68,7 +68,7 @@ def _extract_package_rate(
         extra_charges = itemized_charges + [rate.ServiceOptionsCharges]
         estimated_arrival = next(
             (
-                build(EstimatedArrivalType, n)
+                XP.build(EstimatedArrivalType, n)
                 for n in detail_node.xpath(
                     ".//*[local-name() = $name]", name="EstimatedArrival"
                 )

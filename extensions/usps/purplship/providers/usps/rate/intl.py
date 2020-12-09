@@ -2,7 +2,7 @@ from typing import Tuple, List
 from datetime import datetime
 from pyusps.intl_rate_v2_request import IntlRateV2Request, PackageType, ExtraServicesType
 from pyusps.intl_rate_v2_response import ServiceType, ExtraServiceType
-from purplship.core.utils import Serializable, Element, NF, XP
+from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
 from purplship.core.units import Packages, Country, Weight, WeightUnit, Services
 
@@ -24,7 +24,7 @@ def _extract_details(service_node: Element, settings: Settings) -> RateDetails:
     service.build(service_node)
     currency = "USD"
     special_services: List[ExtraServiceType] = [
-        build(ExtraServiceType, svc)
+        XP.build(ExtraServiceType, svc)
         for svc in service_node.xpath(".//*[local-name() = $name]", name="ExtraService")
     ]
     delivery_date = DF.date(service.GuaranteeAvailability, "%m/%d/%Y")
