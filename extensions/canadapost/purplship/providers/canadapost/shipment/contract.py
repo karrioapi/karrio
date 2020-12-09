@@ -238,11 +238,12 @@ def shipment_request(
         return_spec=None,
         pre_authorized_payment=None,
     )
+    request.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
+    
     return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: ShipmentType) -> str:
-    request.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
     return XP.export(
         request,
         name_="shipment",

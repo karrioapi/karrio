@@ -6,11 +6,10 @@ from purplship.core.errors import PurplShipError
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.utils.pipeline import Pipeline, Job
 from purplship.core.utils import (
-    XP,
     request as http,
     exec_parrallel,
+    XP,
 )
-from purplship.providers.canadapost import process_error
 from purplship.mappers.canadapost.settings import Settings
 
 
@@ -110,20 +109,43 @@ class Proxy(BaseProxy):
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     def cancel_shipment(self, request: Serializable) -> Deserializable:
-        shipment_id = request.serialize()
-        response = http(
-            url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}",
-            headers={
-                "Content-Type": "application/vnd.cpc.shipment-v8+xml",
-                "Accept": "application/vnd.cpc.shipment-v8+xml",
-                "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": f"{self.settings.language}-CA",
-            },
-            method="DELETE",
-            on_error=process_error,
-        )
 
-        return Deserializable(response or "<wrapper></wrapper>", XP.to_xml)
+        def _request(method: str, shipment_id: str, path: str = '', **kwargs):
+            return http(
+                url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}{path}",
+                headers={
+                    "Content-Type": "application/vnd.cpc.shipment-v8+xml",
+                    "Accept": "application/vnd.cpc.shipment-v8+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": f"{self.settings.language}-CA",
+                },
+                method=method,
+                **kwargs
+            )
+
+        def process(job: Job):
+            if job.data is None:
+                return job.fallback
+
+            subprocess = {
+                "info": lambda _: _request(
+                    'GET', job.data.serialize()
+                ),
+                "refund": lambda _: _request(
+                    'POST', job.data['id'], '/refund', data=bytearray(job.data['payload'].serialize(), "utf-8")
+                ),
+                "cancel": lambda _: _request(
+                    'DELETE', job.data.serialize()
+                ),
+            }
+            if job.id not in subprocess:
+                raise PurplShipError(f"Unknown shipment cancel request job id: {job.id}")
+
+            return subprocess[job.id](job)
+
+        pipeline: Pipeline = request.serialize()
+        response = pipeline.apply(process)
+        return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
         def _availability(job: Job) -> str:

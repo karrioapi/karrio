@@ -74,7 +74,8 @@ class XMLPARSER:
         :param xml_str:
         :return: Node Element
         """
-        return etree.fromstring(bytes(bytearray(xml_str, encoding="utf-8")))
+        element = etree.fromstring(bytes(bytearray(xml_str, encoding="utf-8")))
+        return cast(Element, element)
 
     @staticmethod
     def xml_tostring(xml_element: Element, encoding: str = "utf-8") -> str:
