@@ -17,11 +17,9 @@ const LogList: React.FC<LogListView> = ({ handleLogSelection, logs }) => {
     return (
         <>
 
-            <nav className="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
-                <ul>
-                    <li className="is-active"><a href="#" aria-current="page">Logs</a></li>
-                </ul>
-            </nav>
+            <header className="px-2 pt-1 pb-6">
+                <span className="subtitle is-4">Logs</span>
+            </header>
 
             <div className="table-container">
                 <table className="table is-fullwidth is-hoverable is-size-7">

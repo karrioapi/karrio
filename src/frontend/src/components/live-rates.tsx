@@ -2,9 +2,9 @@ import { NotificationType, state } from '@/library/api';
 import { Reference } from '@/library/context';
 import { formatAddressName, formatDimension, formatFullAddress, formatRef, formatWeight } from '@/library/helper';
 import { Collection } from '@/library/types';
-import { ErrorResponse, Payment, Shipment } from '@purplship/purplship';
+import { Payment, References, Shipment } from '@purplship/purplship';
 import { useNavigate } from '@reach/router';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import ButtonField from './generic/button-field';
 
 interface LiveRatesComponent {
@@ -13,11 +13,13 @@ interface LiveRatesComponent {
 }
 
 const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
-    const [lastState, setLastSate] = useState<Shipment | undefined>(undefined);
-    const [countries, setCountries] = useState<Collection | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [selected_rate, setSelectedRate] = useState<string | undefined>();
     const navigate = useNavigate();
+    const Ref = useContext<References>(Reference);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [selected_rate_id, setSelectedRate] = useState<string | undefined>(shipment?.selected_rate_id);
+    const [lastState, setLastSate] = useState<Shipment | undefined>(undefined);
+    const [countries] = useState<Collection | undefined>(Ref?.countries);
+
     const computeEnable = (shipment: Shipment) => {
         return (
             shipment.recipient.address_line1 === undefined ||
@@ -63,13 +65,6 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
     return (
         <div>
             <div className="columns is-multiline">
-
-                <Reference.Consumer>
-                    {(ref) => {
-                        if (Object.values(ref || {}).length > 0) setCountries(ref.countries as {})
-                        return <></>;
-                    }}
-                </Reference.Consumer>
 
                 <div className="column is-12 pb-2">
                     <span className="title is-5">Shipment Details</span>
@@ -118,10 +113,10 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                     <ul className="menu-list">
                         {shipment.rates?.map(rate => (
                             <li key={rate.id}>
-                                <a className={`columns mb-0 ${rate.id === selected_rate ? 'has-text-grey-dark' : 'has-text-grey'}`} onClick={() => setSelectedRate(rate.id)}>
+                                <a className={`columns mb-0 ${rate.id === selected_rate_id ? 'has-text-grey-dark' : 'has-text-grey'}`} onClick={() => setSelectedRate(rate.id)}>
 
-                                    <span className={`icon is-medium ${rate.id === selected_rate ? 'has-text-success' : ''}`}>
-                                        {(rate.id === selected_rate) ? <i className="fas fa-check-square"></i> : <i className="fas fa-square"></i>}
+                                    <span className={`icon is-medium ${rate.id === selected_rate_id ? 'has-text-success' : ''}`}>
+                                        {(rate.id === selected_rate_id) ? <i className="fas fa-check-square"></i> : <i className="fas fa-square"></i>}
                                     </span>
 
                                     <div className="is-size-7 has-text-weight-semibold">
@@ -143,7 +138,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                 fieldClass="has-text-centered mt-3"
                 className={`is-success ${loading ? 'is-loading' : ''}`}
                 style={shipment.rates === undefined ? { display: 'none' } : {}}
-                disabled={selected_rate === undefined}>
+                disabled={selected_rate_id === undefined}>
                 <span>Buy</span>
             </ButtonField>
 

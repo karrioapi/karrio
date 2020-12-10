@@ -10,18 +10,18 @@ const LocationTitle: React.FC<LocationTitleComponent> = () => {
                 let title = '';
 
                 if (location.pathname.includes('/carrier_connections')) {
-                    title = ' | Carrier Connections';
+                    title = '| Carrier Connections';
                 } else if (location.pathname.includes('/api_logs')) {
-                    title = ' | API Logs';
+                    title = '| API Logs';
                 } else if (location.pathname.includes('/buy_label/')) {
-                    title = ' | Buy Label';
+                    title = '| Buy Label';
                 } else if(location.pathname === '/settings') {
-                    title = ' | User Settings';
+                    title = '| User Settings';
                 } else if(location.pathname === '/') {
-                    title = ' | Shipments';
+                    title = '| Shipments';
                 }
 
-                document.title = `Purplship${title}`;
+                document.title = `Purplship ${title}`;
                 return <></>;
             }}
         </Location>

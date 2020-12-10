@@ -40,22 +40,26 @@ const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
                             <h3>{user.full_name}</h3>
                         </div>
                     </>}
-                    <h6 className="is-size-7 mt-2 mx-3 has-text-weight-semibold">{user.email}</h6>
+
+                    <h6 className="is-size-7 mt-2 px-4 has-text-weight-semibold">{user.email}</h6>
+
                     <div className="options-items">
                         <Link to="settings" className="options-item">
-                            <i className="fas fa-user"></i>
+                            <i className="fas fa-cog"></i>
                             <div className="option-content">
                                 <span>My Account</span>
                                 <span>Manage your account</span>
                             </div>
                         </Link>
+
                         {user.is_staff && <a href="/admin" className="options-item">
-                            <i className="fas fa-cog"></i>
+                            <i className="fas fa-tools"></i>
                             <div className="option-content">
                                 <span>Console</span>
                                 <span>Access the Administration panel</span>
                             </div>
                         </a>}
+
                         <a href="/logout" className="options-item">
                             <i className="fas fa-power-off"></i>
                             <div className="option-content">

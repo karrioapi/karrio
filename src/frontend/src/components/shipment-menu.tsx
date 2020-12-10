@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ErrorResponse, Shipment } from '@purplship/purplship';
+import { Shipment } from '@purplship/purplship';
 import LabelPrinter from './label/label-printer';
 import { useNavigate } from '@reach/router';
 import { NotificationType, state } from '@/library/api';
