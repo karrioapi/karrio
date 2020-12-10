@@ -65,7 +65,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
-        label=label.text if len(errors) == 0 else None
+        label=str(label.text) if len(errors) == 0 else None
     )
 
 
@@ -239,7 +239,7 @@ def shipment_request(
         pre_authorized_payment=None,
     )
     request.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
-    
+
     return Serializable(request, _request_serializer)
 
 
