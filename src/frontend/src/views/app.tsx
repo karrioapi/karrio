@@ -10,6 +10,7 @@ import LabelCreator from '@/components/label/label-creator';
 import BoardFooter from '@/components/footer/board-footer';
 import Navbar from '@/components/navbar/navbar';
 import Notifier from '@/components/notifier';
+import LocationTitle from '@/components/location-title';
 import { PaginatedLogs, state, UserInfo, } from '@/library/api';
 import { Logs, Reference, User } from '@/library/context';
 import 'prismjs';
@@ -56,6 +57,7 @@ const App: React.FC = () => {
             </User.Provider>
             </Logs.Provider>
             </Reference.Provider>
+            <LocationTitle />
         </Fragment>
     );
 };
