@@ -121,7 +121,7 @@ pickup_data = {
         "postal_code": "B3L2C2",
         "country_code": "CA",
         "person_name": "John Doe",
-        "phone_number": "1 514 5555555",
+        "phone_number": "15145555555",
         "state_code": "NS",
         "residential": True,
         "email": "john.doe@canadapost.ca",
@@ -137,7 +137,7 @@ pickup_update_data = {
     "address": {
         "person_name": "Jane Doe",
         "email": "john.doe@canadapost.ca",
-        "phone_number": "1 514 5555555",
+        "phone_number": "15145555555",
     },
     "parcels": [{"weight": 24, "weight_unit": "KG"}],
     "instruction": "Door at Back",

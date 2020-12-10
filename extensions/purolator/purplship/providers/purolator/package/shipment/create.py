@@ -37,7 +37,7 @@ from pypurolator.shipping_service_2_1_3 import (
     ArrayOfContentDetail,
 )
 from purplship.core.units import PrinterType, Options, Packages, Phone
-from purplship.core.utils import Serializable, Element, create_envelope, Pipeline, Job, Envelope, NF, XP, SF
+from purplship.core.utils import Serializable, Element, create_envelope, Pipeline, Job, Envelope, XP, SF
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 
 from purplship.providers.purolator.package.shipment.documents import get_shipping_documents_request
@@ -117,10 +117,10 @@ def _shipment_request(
     is_document = all([parcel.is_document for parcel in payload.parcels])
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     service = Product[payload.service].value
-    is_international = payload.shipper.country_code != payload.recipient.country_code
+    is_international = (payload.shipper.country_code != payload.recipient.country_code)
     options = Options(payload.options)
-    shipper_phone_number = Phone(payload.shipper.phone_number)
-    recipient_phone_number = Phone(payload.recipient.phone_number)
+    shipper_phone_number = Phone(payload.shipper.phone_number, payload.shipper.country_code)
+    recipient_phone_number = Phone(payload.recipient.phone_number, payload.recipient.country_code)
     printing = PrinterType[options.label_printing or "regular"].value
     special_services = {
         Service[name].value: value

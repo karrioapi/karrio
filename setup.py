@@ -30,7 +30,8 @@ setup(name='purplship',
             'lxml-stubs',
             'py-soap',
             'six',
-            'Pillow'
+            'Pillow',
+            'phonenumbers'
       ],
       extras_require={
             'dev': dev_requirements

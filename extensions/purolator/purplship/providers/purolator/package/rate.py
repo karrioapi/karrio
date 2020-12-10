@@ -101,8 +101,8 @@ def rate_request(
 
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    shipper_phone = Phone(payload.shipper.phone_number)
-    recipient_phone = Phone(payload.recipient.phone_number)
+    shipper_phone = Phone(payload.shipper.phone_number, payload.shipper.country_code or 'CA')
+    recipient_phone = Phone(payload.recipient.phone_number, payload.recipient.country_code)
     is_international = payload.shipper.country_code != payload.recipient.country_code
 
     if service is None:

@@ -70,7 +70,7 @@ class TestCanadaPostShipment(unittest.TestCase):
 
     def test_cancel_shipment(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
-            mocks.side_effect = [NonSubmittedShipmentResponseXML, "", ""]
+            mocks.side_effect = [NonSubmittedShipmentResponseXML, NonSubmittedShipmentResponseXML, ""]
 
             purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
@@ -86,7 +86,7 @@ class TestCanadaPostShipment(unittest.TestCase):
 
     def test_cancel_transmitted_shipment(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
-            mocks.side_effect = [ShipmentResponseXML, "", ""]
+            mocks.side_effect = [ShipmentResponseXML, ShipmentRefundResponseXML, ""]
 
             purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 

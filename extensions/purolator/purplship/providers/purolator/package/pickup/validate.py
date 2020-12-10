@@ -32,7 +32,7 @@ def validate_pickup_request(
     :return: Serializable[PickupRequest]
     """
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    phone = Phone(payload.address.phone_number)
+    phone = Phone(payload.address.phone_number, payload.address.country_code or 'CA')
     request = create_envelope(
         header_content=RequestContext(
             Version="1.2",

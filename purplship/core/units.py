@@ -1,3 +1,4 @@
+import phonenumbers
 from dataclasses import dataclass
 from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any
 from purplship.core.utils import NF, Enum
@@ -426,21 +427,32 @@ class Services:
 
 
 class Phone:
-    def __init__(self, phone_number: str = None):
-        self.number = phone_number
-        self.parts = phone_number.split(" ") if phone_number is not None else []
+    def __init__(self, phone_number: str = None, country_code: str = None):
+        try:
+            self.number = phonenumbers.parse(phone_number, country_code)
+        except Exception as e:
+            self.number = None
 
     @property
     def country_code(self):
-        return next((part for part in self.parts), None)
+        if self.number is None:
+            return None
+
+        return self.number.country_code
 
     @property
     def area_code(self):
-        return next((part[1] for part in [self.parts] if len(part) > 1), None)
+        if self.number is None:
+            return None
+
+        return str(self.number.national_number)[0:3]
 
     @property
     def phone(self):
-        return next((part[2] for part in [self.parts] if len(part) > 2), None)
+        if self.number is None:
+            return None
+
+        return str(self.number.national_number)[3:]
 
 
 class PrinterType(Enum):

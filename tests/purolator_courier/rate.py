@@ -47,7 +47,7 @@ RATE_REQUEST_PAYLOAD = {
         "country_code": "CA",
         "postal_code": "L4W5M8",
         "address_line1": "Main Street",
-        "phone_number": "1 514 5555555",
+        "phone_number": "15145555555",
     },
     "recipient": {
         "person_name": "Aaron Summer",
@@ -56,7 +56,7 @@ RATE_REQUEST_PAYLOAD = {
         "country_code": "CA",
         "postal_code": "V5C5A9",
         "address_line1": "Douglas Road",
-        "phone_number": "1 514 2982181",
+        "phone_number": "15142982181",
     },
     "parcels": [
         {
