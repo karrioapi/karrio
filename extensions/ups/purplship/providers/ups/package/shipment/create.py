@@ -33,7 +33,14 @@ from pyups.ship_web_service_schema import (
     LabelImageFormatType,
 )
 from purplship.core.utils import (
-    gif_to_pdf, Serializable, apply_namespaceprefix, create_envelope, Element, XP, SF
+    gif_to_pdf,
+    Serializable,
+    apply_namespaceprefix,
+    create_envelope,
+    Element,
+    Envelope,
+    XP,
+    SF
 )
 from purplship.core.units import Options, Packages, PaymentType
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
@@ -277,7 +284,7 @@ def shipment_request(
     )
 
 
-def _request_serializer(envelope: Element) -> str:
+def _request_serializer(envelope: Envelope) -> str:
     namespace_ = """
         xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"
         xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"

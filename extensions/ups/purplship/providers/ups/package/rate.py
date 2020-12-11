@@ -19,13 +19,15 @@ from pyups.rate_web_service_schema import (
     EstimatedArrivalType,
 )
 from purplship.core.utils import (
+    apply_namespaceprefix,
+    create_envelope,
     Serializable,
+    Envelope,
     Element,
     SF,
     NF,
     XP,
 )
-from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
 from purplship.core.units import Packages, Services
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.providers.ups.units import (
@@ -81,7 +83,7 @@ def _extract_package_rate(
             else estimated_arrival.BusinessDaysInTransit
         )
         currency_ = next(
-            c.text
+            str(c.text)
             for c in detail_node.xpath(
                 ".//*[local-name() = $name]", name="CurrencyCode"
             )
@@ -252,7 +254,7 @@ def rate_request(
     )
 
 
-def _request_serializer(envelope: Element) -> str:
+def _request_serializer(envelope: Envelope) -> str:
     namespace_ = """
         xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"

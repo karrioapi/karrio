@@ -45,7 +45,7 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
     transit = (
         (estimated_date - datetime.now()).days if estimated_date is not None else None
     )
-    postage_rate = str(postage_node.find("Rate").text)
+    postage_rate = postage_node.find("Rate").text
 
     def get(key: str) -> Any:
         return reduce(lambda r, v: v.text, postage_node.findall(key), None)

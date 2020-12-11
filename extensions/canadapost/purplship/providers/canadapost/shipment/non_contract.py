@@ -50,8 +50,9 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     info_node = next(
         iter(response.xpath(".//*[local-name() = $name]", name="shipment-info"))
     )
-    label = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
-    errors = parse_error_response(label, settings)
+    label_node = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
+    errors = parse_error_response(label_node, settings)
+    label = str(label_node.text) if len(errors) == 0 else None
     info: NonContractShipmentInfoType = NonContractShipmentInfoType()
     info.build(info_node)
 
@@ -60,7 +61,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
-        label=label.text if len(errors) == 0 else None,
+        label=label,
     )
 
 
