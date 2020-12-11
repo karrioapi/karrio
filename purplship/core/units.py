@@ -430,7 +430,7 @@ class Phone:
     def __init__(self, phone_number: str = None, country_code: str = None):
         try:
             self.number = phonenumbers.parse(phone_number, country_code)
-        except Exception as e:
+        except Exception:
             self.number = None
 
     @property

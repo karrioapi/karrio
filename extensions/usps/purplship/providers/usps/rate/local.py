@@ -45,6 +45,7 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
     transit = (
         (estimated_date - datetime.now()).days if estimated_date is not None else None
     )
+    postage_rate = str(postage_node.find("Rate").text)
 
     def get(key: str) -> Any:
         return reduce(lambda r, v: v.text, postage_node.findall(key), None)
@@ -53,7 +54,7 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         service=Service.find(get("MailService")).name,
-        total_charge=NF.decimal(postage_node.find("Rate").text),
+        total_charge=NF.decimal(postage_rate),
         currency=currency,
         transit_days=transit,
         extra_charges=[

@@ -1,4 +1,4 @@
-from typing import TypeVar, List, Type, Union, Any
+from typing import TypeVar, List, Union, Any
 from pysoap.envelope import Header, Body, Envelope, Fault
 from purplship.core.utils.xml import GenerateDSAbstract, Element, XMLPARSER
 from purplship.core.settings import Settings
