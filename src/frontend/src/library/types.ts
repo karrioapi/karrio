@@ -4,8 +4,8 @@ export interface View {
     path: string
 }
 
-export type Collection = {
-    [code: string]: string;
+export type Collection<T = string> = {
+    [code: string]: T;
 };
 
 export type PresetCollection = {
