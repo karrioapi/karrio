@@ -83,26 +83,44 @@ migrate () {
 
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
+
     (echo "
-from purpleserver.tenants.models import Client; Client.objects.create(name='public', schema_name='public', domain_url='localhost')
-" | purplship shell) > /dev/null 2>&1;
-    (echo "
-from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser('root@test.com', 'demo')
+from purpleserver.tenants.models import Client
+if not any(Client.objects.all()):
+  Client.objects.create(name='public', schema_name='public', domain_url='localhost')
 " | purplship shell) > /dev/null 2>&1;
 
     (echo "
-from purpleserver.tenants.models import Client; Client.objects.create(name='purpleserver', schema_name='purpleserver', domain_url='127.0.0.1')
+from django.contrib.auth import get_user_model
+if not any(get_user_model().objects.all()):
+   get_user_model().objects.create_superuser('root@test.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
+
+    (echo "
+from purpleserver.tenants.models import Client;
+if not any(Client.objects.all()):
+  Client.objects.create(name='purpleserver', schema_name='purpleserver', domain_url='127.0.0.1')
+" | purplship shell) > /dev/null 2>&1;
+
     (echo "
 from tenant_schemas.utils import tenant_context
 from django.contrib.auth import get_user_model
 from purpleserver.tenants.models import Client
 with tenant_context(Client.objects.get(schema_name='purpleserver')):
-  get_user_model().objects.create_superuser('admin@test.com', 'demo')
+  if not any(get_user_model().objects.all()):
+     get_user_model().objects.create_superuser('admin@test.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
+
   else
-    (echo "from django.contrib.auth import get_user_model; get_user_model().objects.create_superuser('admin@test.com', 'demo')" | purplship shell) > /dev/null 2>&1;
+
+    (echo "
+from django.contrib.auth import get_user_model
+if not any(get_user_model().objects.all()):
+   get_user_model().objects.create_superuser('admin@test.com', 'demo')
+" | purplship shell) > /dev/null 2>&1;
+
     (echo "from django.contrib.auth import get_user_model; from rest_framework.authtoken.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
+
     (echo "from django.contrib.auth import get_user_model; from purpleserver.providers.models import CanadaPostSettings;
 CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a', user=get_user_model().objects.first())" | purplship shell) > /dev/null 2>&1;
   fi
