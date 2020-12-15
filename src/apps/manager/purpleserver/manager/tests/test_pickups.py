@@ -199,7 +199,7 @@ PICKUP_RESPONSE = {
     "company_name": "A corp.",
     "country_code": "CA",
     "email": "john@a.com",
-    "phone_number": "514 000 0000",
+    "phone_number": "+1 514-000-0000",
     "state_code": "NB",
     "suburb": None,
     "residential": False,

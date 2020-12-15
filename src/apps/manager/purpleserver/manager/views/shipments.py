@@ -169,7 +169,7 @@ class ShipmentOptions(APIView):
 
         ```json
         {
-            "insurane": 120,
+            "insurance": 120,
             "currency": "USD"
         }
         ```

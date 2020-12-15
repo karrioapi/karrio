@@ -1,3 +1,4 @@
+from typing import Optional
 from django.db import transaction
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
@@ -219,7 +220,8 @@ class ShipmentCancelSerializer(Shipment):
         return response
 
 
-def reset_related_shipment_rates(shipment: models.Shipment):
-    shipment.shipment_rates = []
-    shipment.selected_rate = None
-    shipment.save()
+def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
+    if shipment is not None:
+        shipment.shipment_rates = []
+        shipment.selected_rate = None
+        shipment.save()

@@ -68,22 +68,24 @@ PARCEL_RESPONSE = {
 }
 
 PARCEL_UPDATE_DATA = {
-    "length": 25.0,
-    "weightUnit": None,
+    "width": 5.0,
+    "height": 4.5,
+    "length": 10.0,
+    "weight_unit": "LB",
     "dimension_unit": "IN"
 }
 
 PARCEL_UPDATE_RESPONSE = {
     "id": ANY,
     "weight": 1.0,
-    "width": 20.0,
-    "height": 10.0,
-    "length": 25.0,
+    "width": 5.0,
+    "height": 4.5,
+    "length": 10.0,
     "packaging_type": None,
     "package_preset": None,
     "description": None,
     "content": None,
     "is_document": False,
-    "weight_unit": "KG",
+    "weight_unit": "LB",
     "dimension_unit": "IN"
 }

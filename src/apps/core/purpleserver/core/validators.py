@@ -11,10 +11,10 @@ DIMENSIONS = ['width', 'height', 'length', 'dimension_unit']
 
 
 def dimensions_required_together(value):
-    is_any_dimension_specified = any(dim in value for dim in DIMENSIONS)
+    any_dimension_specified = any(value.get(dim) is not None for dim in DIMENSIONS)
     has_any_dimension_undefined = any(value.get(dim) is None for dim in DIMENSIONS)
 
-    if is_any_dimension_specified and has_any_dimension_undefined:
+    if any_dimension_specified and has_any_dimension_undefined:
         raise serializers.ValidationError(
             'When one dimension is specified, all must be specified with a dimension_unit'
         )
