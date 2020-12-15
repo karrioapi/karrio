@@ -18,7 +18,7 @@ export function formatDateTime(date_string: string): string {
 }
 
 export function notEmptyJSON(value?: string | null): boolean {
-    return value !== undefined && value !== undefined && value !== JSON.stringify({});
+    return !isNone(value) && value !== JSON.stringify({});
 }
 
 export function formatAddress(address: Address): string {
@@ -27,7 +27,7 @@ export function formatAddress(address: Address): string {
         address.city,
         address.postal_code,
         address.country_code
-    ].filter(a => a !== undefined && a !== "").join(', ');
+    ].filter(a => !isNone(a) && a !== "").join(', ');
 }
 
 export function formatFullAddress(address: Address, countries?: { [country_code: string]: string }): string {
@@ -38,24 +38,24 @@ export function formatFullAddress(address: Address, countries?: { [country_code:
         address.state_code,
         address.postal_code,
         country
-    ].filter(a => a !== undefined && a !== "").join(', ');
+    ].filter(a => !isNone(a) && a !== "").join(', ');
 }
 
 export function formatAddressName(address: Address): string {
     return [
         address.person_name,
         address.company_name
-    ].filter(a => a !== undefined && a !== "").join(' - ');
+    ].filter(a => !isNone(a) && a !== "").join(' - ');
 }
 
-export function findPreset(presets: PresetCollection, selected_preset?: string): Partial<Parcel> | undefined {
+export function findPreset(presets: PresetCollection, package_preset?: string): Partial<Parcel> | undefined {
     const carrier = Object.values(presets).find((carrier) => {
-        return Object.keys(carrier).includes(selected_preset as string);
+        return Object.keys(carrier).includes(package_preset as string);
     });
 
     if (carrier === undefined) return undefined;
 
-    return carrier[selected_preset as string];
+    return { ...carrier[package_preset as string], package_preset };
 }
 
 export function formatValues(separator: string, ...args: any[]): string {
@@ -70,7 +70,7 @@ export function formatDimension(parcel?: Partial<Parcel>): string {
 
         return `Dimensions: ${formatted} ${dimension_unit}`;
     }
-    return 'Dimensions: No specified...';
+    return 'Dimensions: None specified...';
 }
 
 export function formatWeight(parcel?: Partial<Parcel>): string {
@@ -80,5 +80,31 @@ export function formatWeight(parcel?: Partial<Parcel>): string {
 
         return `Weight: ${weight} ${weight_unit}`;
     }
-    return 'Weight: Not specified...';
+    return 'Weight: None specified...';
+}
+
+export function isNone(value: any): boolean {
+    return value === null || value === undefined;
+}
+
+export function deepEqual(value1: object, value2: object): boolean {
+    return JSON.stringify(value1, Object.keys(value1).sort()) === JSON.stringify(value2, Object.keys(value2).sort());
+}
+
+// Remove undefined values from objects
+export function cleanDict<T = object>(value: object): T {
+    return JSON.parse(JSON.stringify(value)) as T;
+}
+
+export function formatParcelLabel(parcel?: Parcel): string {
+    if (isNone(parcel) || (parcel && isNone(parcel?.package_preset) && isNone(parcel?.packaging_type))) {
+        return '';
+    }
+    if (!isNone(parcel?.package_preset)) {
+        return formatRef(parcel?.package_preset as string);
+    }
+    else if (!isNone(parcel?.packaging_type)) {
+        return formatRef(parcel?.packaging_type as string);
+    }
+    return '';
 }

@@ -11,8 +11,15 @@ const DEFAULT_LABEL_DATA = {
         shipper: {} as Address,
         recipient: {} as Address,
         parcels: [] as Parcel[],
+        options: {}
     } as Shipment
-}
+};
+const DEFAULT_PAGINATED_RESULT = {
+    count: 0,
+    next: null,
+    previous: null,
+    results: [],
+};
 
 export interface UserInfo {
     full_name: string | null;
@@ -83,7 +90,7 @@ class AppState {
     private references$: Subject<References> = new Subject<References>();
     private logs$: Subject<PaginatedLogs> = new Subject<PaginatedLogs>();
     private notification$: Subject<Notification> = new Subject<Notification>();
-    private labelData$: BehaviorSubject<LabelData> = new BehaviorSubject<LabelData>(DEFAULT_LABEL_DATA);
+    public labelData$: BehaviorSubject<LabelData> = new BehaviorSubject<LabelData>(DEFAULT_LABEL_DATA);
 
     constructor() {
         this.getUserInfo();
@@ -146,7 +153,7 @@ class AppState {
 
     public get labelData() {
         const [labelData, setValue] = useState<LabelData>(this.labelData$.value);
-        useEffect(() => { this.labelData$.asObservable().subscribe(setValue); });
+        useEffect(() => { this.labelData$.asObservable().pipe(distinct()).subscribe(setValue); });
         return labelData;
     }
 
@@ -181,7 +188,7 @@ class AppState {
                 { headers: this.headers }
             )
         );
-        response.then(() => this.fetchShipments());
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
@@ -197,7 +204,7 @@ class AppState {
         const response = handleFailure(
             this.purplship.shipments.setOptions(options, shipment_id, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments());
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
@@ -205,7 +212,7 @@ class AppState {
         const response = handleFailure(
             this.purplship.shipments.addCustoms(customs, shipment_id, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments());
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
@@ -213,7 +220,7 @@ class AppState {
         const response = handleFailure(
             this.purplship.addresses.update(address, address.id as string, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments());
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
@@ -221,7 +228,7 @@ class AppState {
         const response = handleFailure(
             this.purplship.parcels.update(parcel, parcel.id as string, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments());
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
@@ -229,7 +236,7 @@ class AppState {
         const response = handleFailure(
             this.purplship.customs.update(customs, customs.id as string, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments());
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
@@ -237,7 +244,7 @@ class AppState {
         const response = handleFailure(
             this.purplship.customs.discard(customs_id, { headers: this.headers })
         );
-        response.then(() => this.fetchShipments());
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
