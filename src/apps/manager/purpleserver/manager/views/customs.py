@@ -9,8 +9,9 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.utils import SerializerDecorator
-from purpleserver.core.serializers import ErrorResponse, CustomsData, Customs, Operation
-from purpleserver.manager.serializers import CustomsSerializer
+from purpleserver.core.exceptions import PurplShipApiException
+from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, CustomsData, Customs, Operation
+from purpleserver.manager.serializers import CustomsSerializer, reset_related_shipment_rates
 from purpleserver.manager.router import router
 
 logger = logging.getLogger(__name__)
@@ -76,7 +77,16 @@ class CustomsDetail(APIView):
         modify an existing customs declaration.
         """
         customs = request.user.customs_set.get(pk=pk)
+        shipment = customs.shipment_set.first()
+        if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "The shipment related to this customs info has been 'purchased' and can no longer be modified",
+                status_code=status.HTTP_409_CONFLICT,
+                code='state_error'
+            )
+
         SerializerDecorator[CustomsSerializer](customs, data=request.data).save()
+        reset_related_shipment_rates(shipment)
         return Response(Customs(customs).data)
 
     @swagger_auto_schema(
@@ -90,8 +100,17 @@ class CustomsDetail(APIView):
         Discard a customs declaration.
         """
         customs = request.user.customs_set.get(pk=pk)
+        shipment = customs.shipment_set.first()
+        if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "The shipment related to this customs info has been 'purchased' and cannot be discarded",
+                status_code=status.HTTP_409_CONFLICT,
+                code='state_error'
+            )
+
         customs.delete(keep_parents=True)
         serializer = Operation(dict(operation="Discard customs info", success=True))
+        reset_related_shipment_rates(shipment)
         return Response(serializer.data)
 
 

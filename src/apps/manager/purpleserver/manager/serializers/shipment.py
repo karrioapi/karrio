@@ -160,11 +160,14 @@ class ShipmentSerializer(ShipmentData):
         if validated_data.get('rates') is not None:
             instance.shipment_rates = to_dict(validated_data.get('rates', []))
 
-        if validated_data.get('selected_rate') is not None:
-            selected_rate = validated_data.get('selected_rate')
-            carrier = Carrier.objects.get(carrier_id=selected_rate['carrier_id'])
+        if 'selected_rate' in validated_data:
+            selected_rate = validated_data.get('selected_rate', {})
+            carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id')).first()
 
-            instance.selected_rate = {**selected_rate, 'carrier_ref': carrier.id}
+            instance.selected_rate = {
+                **selected_rate,
+                **({'carrier_ref': carrier.id} if carrier is not None else {})
+            }
             instance.selected_rate_carrier = carrier
 
         instance.save()
@@ -214,3 +217,9 @@ class ShipmentCancelSerializer(Shipment):
 
         instance.delete()
         return response
+
+
+def reset_related_shipment_rates(shipment: models.Shipment):
+    shipment.shipment_rates = []
+    shipment.selected_rate = None
+    shipment.save()

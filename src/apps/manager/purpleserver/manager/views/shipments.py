@@ -24,6 +24,7 @@ from purpleserver.core.serializers import (
     CustomsData)
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import (
+    reset_related_shipment_rates,
     ShipmentSerializer,
     ShipmentPurchaseData,
     ShipmentValidationData,
@@ -167,9 +168,7 @@ class ShipmentOptions(APIView):
 
         ```json
         {
-            "insurane": {
-                "amount": 120,
-            },
+            "insurane": 120,
             "currency": "USD"
         }
         ```
@@ -189,6 +188,7 @@ class ShipmentOptions(APIView):
         }))
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
+        reset_related_shipment_rates(shipment)
         return Response(Shipment(shipment).data)
 
 
@@ -218,6 +218,7 @@ class ShipmentCustoms(APIView):
             )
 
         SerializerDecorator[ShipmentSerializer](shipment, data=dict(customs=request.data)).save()
+        reset_related_shipment_rates(shipment)
         return Response(Shipment(shipment).data)
 
 

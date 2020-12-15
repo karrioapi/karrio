@@ -9,8 +9,9 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.utils import SerializerDecorator
-from purpleserver.core.serializers import ErrorResponse, ParcelData, Parcel
-from purpleserver.manager.serializers import ParcelSerializer
+from purpleserver.core.exceptions import PurplShipApiException
+from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, ParcelData, Parcel
+from purpleserver.manager.serializers import ParcelSerializer, reset_related_shipment_rates
 from purpleserver.manager.router import router
 
 logger = logging.getLogger(__name__)
@@ -76,7 +77,16 @@ class ParcelDetail(APIView):
         modify an existing parcel's details.
         """
         parcel = request.user.parcel_set.get(pk=pk)
+        shipment = parcel.shipment_parcels.first()
+        if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "The shipment related to this parcel has been 'purchased' and can no longer be modified",
+                status_code=status.HTTP_409_CONFLICT,
+                code='state_error'
+            )
+
         SerializerDecorator[ParcelSerializer](parcel, data=request.data).save()
+        reset_related_shipment_rates(shipment)
         return Response(Parcel(parcel).data)
 
 
