@@ -5,18 +5,18 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 
 from rest_framework_tracking.mixins import LoggingMixin
 from rest_framework_tracking.models import APIRequestLog
-from purplship.core.utils import jsonify
+from purplship.core.utils import DP
 
 
 class PurplshipLoggingMixin(LoggingMixin):
     def handle_log(self):
         data = (
             None if 'data' not in self.log else
-            jsonify(self.log['data'])
+            DP.jsonify(self.log['data'])
         )
         query_params = (
             None if 'query_params' not in self.log else
-            jsonify(self.log['query_params'])
+            DP.jsonify(self.log['query_params'])
         )
 
         APIRequestLog(**{

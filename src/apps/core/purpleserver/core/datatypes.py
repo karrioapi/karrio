@@ -2,7 +2,7 @@ import attr
 from typing import List, Dict
 from enum import Enum
 from jstruct import JStruct, JList, REQUIRED
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import (
     Doc,
     Parcel,
@@ -53,7 +53,7 @@ class CarrierSettings:
 
     @classmethod
     def create(cls, data: object):
-        return cls(**to_dict(data))
+        return cls(**DP.to_dict(data))
 
 
 @attr.s(auto_attribs=True)
