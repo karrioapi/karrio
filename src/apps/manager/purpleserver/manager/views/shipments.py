@@ -7,7 +7,7 @@ from drf_yasg import openapi
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.utils import SerializerDecorator
@@ -134,7 +134,8 @@ class ShipmentRates(APIView):
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
             data=ShipmentData(shipment).data).save().instance
-        payload: dict = to_dict(dict(rates=Rate(rate_response.rates, many=True).data))
+        payload: dict = DP.to_dict(dict(
+            rates=Rate(rate_response.rates, many=True).data, selected_rate=None))
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
 
@@ -182,10 +183,7 @@ class ShipmentOptions(APIView):
                 "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        payload: dict = to_dict(dict(options={
-            **ShipmentData(shipment).data.get('options'),
-            **request.data
-        }))
+        payload: dict = DP.to_dict(dict(options=request.data))
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
         reset_related_shipment_rates(shipment)
@@ -254,7 +252,7 @@ class ShipmentPurchase(APIView):
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](
-            shipment, data=to_dict(shipment_response.shipment)).save()
+            shipment, data=DP.to_dict(shipment_response.shipment)).save()
 
         response = dict(
             shipment=Shipment(shipment).data,

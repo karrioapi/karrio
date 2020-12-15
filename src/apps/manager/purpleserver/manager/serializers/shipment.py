@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.datatypes import RateResponse, ShipmentResponse, Confirmation, ConfirmationResponse
@@ -118,7 +118,7 @@ class ShipmentSerializer(ShipmentData):
             **{k: v for k, v in related_data.items() if v is not None},
             'user': user,
             'test_mode': test_mode,
-            'shipment_rates': to_dict(rate_response.rates),
+            'shipment_rates': DP.to_dict(rate_response.rates),
         })
         shipment.carriers.set(carriers)
 
@@ -158,7 +158,7 @@ class ShipmentSerializer(ShipmentData):
                 data=validated_data.get('customs')).save(user=instance.user).instance
 
         if validated_data.get('rates') is not None:
-            instance.shipment_rates = to_dict(validated_data.get('rates', []))
+            instance.shipment_rates = DP.to_dict(validated_data.get('rates', []))
 
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
