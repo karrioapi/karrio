@@ -10,6 +10,7 @@
     "@reactivex/rxjs": "^6.6.3",
     "@types/node": "^14.6.2",
     "@types/react-dom": "^16.9.8",
+    "libphonenumber-js": "^1.9.6",
     "prismjs": "^1.22.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
