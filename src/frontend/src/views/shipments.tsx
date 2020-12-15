@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from '@/library/types';
 import { PaginatedShipments, state } from '@/library/api';
 import ShipmentMenu from '@/components/shipment-menu';
@@ -12,8 +12,8 @@ interface ShipmentsView extends View {
 }
 
 const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
-  useEffect(() => { if (shipments === undefined) state.fetchShipments(); }, shipments?.results);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
   const update = (url?: string | null) => async (_: React.MouseEvent) => {
     await state.fetchShipments(url as string);
   };
@@ -21,6 +21,12 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
     navigate('buy_label/new');
     state.setLabelData();
   };
+  useEffect(() => {
+    if ((shipments === undefined || shipments?.results.length === 0) && loading === false) {
+      setLoading(true);
+      state.fetchShipments().catch(_ => _).then(() => setLoading(false));
+    }
+  }, shipments?.results);
 
   return (
     <>
@@ -37,11 +43,11 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
 
           <thead className="shipments-table">
             <tr>
-              <th className="carrier">Carriers</th>
+              <th className="carrier has-text-centered">Carriers</th>
               <th className="mode">Mode</th>
               <th className="recipient">Recipient</th>
-              <th className="creation">Created</th>
-              <th className="status">Status</th>
+              <th className="creation has-text-centered">Created</th>
+              <th className="status has-text-centered">Status</th>
               <th className="action"></th>
             </tr>
           </thead>
@@ -51,7 +57,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
             {shipments?.results.map(shipment => (
               <tr key={shipment.id}>
                 <td className="is-vcentered">
-                  <CarrierBadge name={shipment.carrier_name as string} className="tag" style={{width: '100%'}} />
+                  <CarrierBadge name={shipment.carrier_name as string} className="tag" style={{ width: '100%', minWidth: '120px' }} />
                 </td>
                 <td className="mode is-vcentered">
                   {shipment.test_mode ? <span className="tag is-warning is-centered">Test</span> : <></>}
@@ -59,10 +65,10 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
                 <td className="is-vcentered">{formatAddress(shipment.recipient)}</td>
                 <td className="is-vcentered">{formatDate(shipment.created_at)}</td>
                 <td className="is-vcentered">
-                  <span className="tag is-info is-light" style={{width: '100%'}}>{shipment.status?.toString().toUpperCase()}</span>
+                  <span className="tag is-info is-light" style={{ width: '100%' }}>{shipment.status?.toString().toUpperCase()}</span>
                 </td>
                 <td className="is-vcentered">
-                  <ShipmentMenu shipment={shipment} style={{width: '100%'}}/>
+                  <ShipmentMenu shipment={shipment} style={{ width: '100%' }} />
                 </td>
               </tr>
             ))}
@@ -72,11 +78,21 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
         </table>
       </div>
 
-      {(shipments?.count == 0) && <div className="card my-6">
+      {(!loading && shipments?.count == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
           <p>No shipment has been created yet.</p>
           <p>Use the <strong>API</strong> to create your first shipment.</p>
+        </div>
+
+      </div>}
+
+      {loading && <div className="card my-6">
+
+        <div className="card-content has-text-centered">
+          <span className="icon has-text-info is-large">
+            <i className="fas fa-spinner fa-pulse"></i>
+          </span>
         </div>
 
       </div>}
