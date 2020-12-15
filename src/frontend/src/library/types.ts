@@ -40,10 +40,15 @@ export type ErrorMessage = Message & {
     carrier_name?: string;
 };
 
+export type FieldError = {
+    [key: string]: { code: string; message: string; };
+};
+
 export interface APIError {
     error: {
         code: string;
-        details: { messages?: ErrorMessage[] };
+        message?: string;
+        details: { messages?: ErrorMessage[]; } & FieldError;
     };
 }
 
