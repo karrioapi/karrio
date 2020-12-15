@@ -32,10 +32,9 @@ services:
       EOF"
 
   nginx:
-    restart: always
     image: "nginx:latest"
     ports:
-      - "80:80"
+      - "85:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - ./src/purpleserver/staticfiles:/static
