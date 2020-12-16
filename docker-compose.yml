@@ -34,7 +34,7 @@ services:
   nginx:
     image: "nginx:latest"
     ports:
-      - "85:80"
+      - "80:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - ./src/purpleserver/staticfiles:/static
