@@ -31,6 +31,7 @@ purplship==2020.12
 purplship-server==2020.12
 purplship-server.client==2020.12
 purplship-server.core==2020.12
+purplship-server.manager==2020.12
 purplship-server.proxy==2020.12
 purplship.canadapost==2020.12
 purplship.dhl-express==2020.12

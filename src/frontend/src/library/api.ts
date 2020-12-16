@@ -19,6 +19,7 @@ const DEFAULT_PAGINATED_RESULT = {
     next: null,
     previous: null,
     results: [],
+    fetched: false,
 };
 
 export interface UserInfo {
@@ -59,6 +60,7 @@ interface PaginatedContent<T> {
     next?: string | null;
     previous?: string | null;
     results: T[];
+    fetched?: boolean;
 }
 
 export interface PaginatedLogs extends PaginatedContent<Log> { }
@@ -348,10 +350,11 @@ class AppState {
     public async fetchConnections(url?: string): Promise<PaginatedConnections> {
         const response = await http(url || `/connections?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
-            const connections = await response.json();
-            this.connections$.next(connections);
-            return connections;
+            const data = await response.json();
+            this.connections$.next({...data, fetched: true});
+            return data;
         } else {
+            this.connections$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
             throw new Error("Unable fetch connected carriers.");
         }
     }
@@ -360,9 +363,10 @@ class AppState {
         const response = await http(url || `/shipments?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.shipments$.next(data);
+            this.shipments$.next({...data, fetched: true});
             return data;
         } else {
+            this.shipments$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
             throw new Error("Failed to fetch shipments.");
         }
     }
