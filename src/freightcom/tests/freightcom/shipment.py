@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.freightcom.fixture import gateway
@@ -45,7 +45,7 @@ class TestFreightcomShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
 
     def test_parse_cancel_shipment_response(self):
         with patch("purplship.mappers.freightcom.proxy.http") as mock:
@@ -54,7 +54,7 @@ class TestFreightcomShipment(unittest.TestCase):
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedCancelShipmentResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedCancelShipmentResponse))
 
 
 if __name__ == "__main__":

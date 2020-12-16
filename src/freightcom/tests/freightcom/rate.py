@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship.core.errors import FieldError
 from purplship import Rating
@@ -35,14 +35,14 @@ class TestFreightcomRating(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedQuoteResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse))
 
     def test_parse_rate_response_error(self):
         with patch("purplship.mappers.freightcom.proxy.http") as mock:
             mock.return_value = RateErrorResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateError))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateError))
 
 
 if __name__ == "__main__":

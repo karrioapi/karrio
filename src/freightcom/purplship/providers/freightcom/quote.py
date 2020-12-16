@@ -8,7 +8,7 @@ from pyfreightcom.quote_request import (
     PackageType,
 )
 from pyfreightcom.quote_reply import QuoteType, SurchargeType
-from purplship.core.utils import Element, Serializable, concat_str, decimal
+from purplship.core.utils import Element, Serializable, SF, NF, XP
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.core.units import Packages, Options
 from purplship.providers.freightcom.utils import (
@@ -36,14 +36,13 @@ def parse_quote_reply(
 
 
 def _extract_rate(node: Element, settings: Settings) -> RateDetails:
-    quote = QuoteType()
-    quote.build(node)
+    quote = XP.build(QuoteType, node)
     service = next(
         (s.name for s in Service if str(quote.serviceId) == s.value), quote.serviceId
     )
     surcharges = [
         ChargeDetails(
-            name=charge.name, amount=decimal(charge.amount), currency=quote.currency
+            name=charge.name, amount=NF.decimal(charge.amount), currency=quote.currency
         )
         for charge in cast(List[SurchargeType], quote.Surcharge)
     ]
@@ -51,7 +50,7 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     fuel_surcharge = (
         ChargeDetails(
             name="Fuel surcharge",
-            amount=decimal(quote.fuelSurcharge),
+            amount=NF.decimal(quote.fuelSurcharge),
             currency=quote.currency,
         )
         if quote.fuelSurcharge is not None
@@ -63,8 +62,8 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         carrier_id=settings.carrier_id,
         currency=quote.currency,
         service=service,
-        base_charge=decimal(quote.baseCharge),
-        total_charge=decimal(quote.totalCharge),
+        base_charge=NF.decimal(quote.baseCharge),
+        total_charge=NF.decimal(quote.totalCharge),
         transit_days=quote.transitDays,
         extra_charges=[fuel_surcharge] + surcharges,
     )
@@ -145,8 +144,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                 phone=payload.shipper.phone_number,
                 tailgateRequired=None,
                 residential=payload.shipper.residential,
-                address1=concat_str(payload.shipper.address_line1, join=True),
-                address2=concat_str(payload.shipper.address_line2, join=True),
+                address1=SF.concat_str(payload.shipper.address_line1, join=True),
+                address2=SF.concat_str(payload.shipper.address_line2, join=True),
                 city=payload.shipper.city,
                 state=payload.shipper.state_code,
                 zip=payload.shipper.postal_code,
@@ -162,8 +161,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                 phone=payload.recipient.phone_number,
                 tailgateRequired=None,
                 residential=payload.recipient.residential,
-                address1=concat_str(payload.recipient.address_line1, join=True),
-                address2=concat_str(payload.recipient.address_line2, join=True),
+                address1=SF.concat_str(payload.recipient.address_line1, join=True),
+                address2=SF.concat_str(payload.recipient.address_line2, join=True),
                 city=payload.recipient.city,
                 state=payload.recipient.state_code,
                 zip=payload.recipient.postal_code,
