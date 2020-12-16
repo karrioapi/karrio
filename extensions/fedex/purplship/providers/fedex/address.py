@@ -9,15 +9,14 @@ from pyfedex.address_validation_service_v4 import (
     VersionId,
     NotificationSeverityType,
 )
-from purplship.core.utils import Serializable, Element, concat_str, Envelope, build
+from purplship.core.utils import create_envelope, Serializable, Element, Envelope, SF, XP
 from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails, Address
-from purplship.core.utils.soap import create_envelope
 from purplship.providers.fedex.utils import Settings, default_request_serializer
 from purplship.providers.fedex.error import parse_error_response
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
-    reply = build(
+    reply = XP.build(
         AddressValidationReply,
         next(iter(response.xpath(".//*[local-name() = $name]", name="AddressValidationReply")), None)
     )
@@ -36,7 +35,7 @@ def parse_address_validation_response(response: Element, settings: Settings) -> 
             country_code=address.CountryCode,
             residential=address.Residential,
             address_line1=next(iter(address.StreetLines), None),
-            address_line2=concat_str(lines, join=True)
+            address_line2=SF.concat_str(lines, join=True)
         ) if address is not None else None
     ) if success else None
 
@@ -74,7 +73,7 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
                         EMailAddress=contact['email']
                     ) if any(contact.values()) else None,
                     Address=FedexAddress(
-                        StreetLines=concat_str(payload.address.address_line1, payload.address.address_line2),
+                        StreetLines=SF.concat_str(payload.address.address_line1, payload.address.address_line2),
                         City=payload.address.city,
                         StateOrProvinceCode=payload.address.city,
                         PostalCode=payload.address.postal_code,

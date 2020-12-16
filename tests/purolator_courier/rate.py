@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship import Rating
 from tests.purolator_courier.fixture import gateway
@@ -32,7 +32,7 @@ class TestPurolatorQuote(unittest.TestCase):
             mock.return_value = RATE_RESPONSE_XML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(to_dict(parsed_response), to_dict(PARSED_RATE_RESPONSE))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(PARSED_RATE_RESPONSE))
 
 
 if __name__ == "__main__":
@@ -47,7 +47,7 @@ RATE_REQUEST_PAYLOAD = {
         "country_code": "CA",
         "postal_code": "L4W5M8",
         "address_line1": "Main Street",
-        "phone_number": "1 514 5555555",
+        "phone_number": "15145555555",
     },
     "recipient": {
         "person_name": "Aaron Summer",
@@ -56,7 +56,7 @@ RATE_REQUEST_PAYLOAD = {
         "country_code": "CA",
         "postal_code": "V5C5A9",
         "address_line1": "Douglas Road",
-        "phone_number": "1 514 2982181",
+        "phone_number": "15142982181",
     },
     "parcels": [
         {

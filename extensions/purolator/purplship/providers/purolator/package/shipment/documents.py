@@ -7,7 +7,7 @@ from pypurolator.shipping_documents_service_1_3_0 import (
 )
 from purplship.core.utils.soap import Envelope, create_envelope, apply_namespaceprefix
 from purplship.core.models import ShipmentRequest
-from purplship.core.utils import Serializable, export
+from purplship.core.utils import Serializable, XP
 from purplship.providers.purolator.utils import Settings
 
 
@@ -42,4 +42,4 @@ def _request_serializer(envelope: Envelope) -> str:
     envelope.Header.ns_prefix_ = envelope.ns_prefix_
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v1")
     apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "v1")
-    return export(envelope, namespacedef_=namespacedef_)
+    return XP.export(envelope, namespacedef_=namespacedef_)

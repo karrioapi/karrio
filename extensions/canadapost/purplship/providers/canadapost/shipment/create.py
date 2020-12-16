@@ -1,7 +1,7 @@
 from functools import partial
 from typing import Tuple, List
 
-from purplship.core.utils import Element, to_xml, Serializable
+from purplship.core.utils import Element, XP, Serializable
 from purplship.core.utils.pipeline import Pipeline, Job
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 
@@ -36,7 +36,7 @@ def _create_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
 
 
 def _get_shipment_label(shipement_response: str) -> Job:
-    links = to_xml(shipement_response).xpath(".//*[local-name() = $name]", name="link")
+    links = XP.to_xml(shipement_response).xpath(".//*[local-name() = $name]", name="link")
     label_url = next(
         (link.get("href") for link in links if link.get("rel") == "label"),
         None,

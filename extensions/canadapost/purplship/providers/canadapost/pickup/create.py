@@ -17,16 +17,13 @@ from pycanadapost.pickuprequest import (
 )
 from purplship.core.utils import (
     Serializable,
-    export,
     Element,
-    concat_str,
-    build,
-    format_date,
-    decimal,
     Job,
     Pipeline,
-    to_xml,
-    bundle_xml
+    SF,
+    DF,
+    NF,
+    XP,
 )
 from purplship.core.models import PickupRequest, PickupDetails, Message, ChargeDetails, PickupUpdateRequest
 from purplship.core.units import Packages
@@ -51,18 +48,18 @@ def parse_pickup_response(
 
 def _extract_pickup_details(response: Element, settings: Settings) -> PickupDetails:
     header = next(
-        (build(PickupRequestHeaderType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-header"))
+        (XP.build(PickupRequestHeaderType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-header"))
     )
     price = next(
-        (build(PickupRequestPriceType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-price")),
+        (XP.build(PickupRequestPriceType, elt) for elt in response.xpath(".//*[local-name() = $name]", name="pickup-request-price")),
         None
     )
 
     price_amount = sum(
         [
-            decimal(price.hst_amount or 0.0),
-            decimal(price.gst_amount or 0.0),
-            decimal(price.due_amount or 0.0),
+            NF.decimal(price.hst_amount or 0.0),
+            NF.decimal(price.gst_amount or 0.0),
+            NF.decimal(price.due_amount or 0.0),
         ],
         0.0,
     ) if price is not None else None
@@ -71,9 +68,9 @@ def _extract_pickup_details(response: Element, settings: Settings) -> PickupDeta
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         confirmation_number=header.request_id,
-        pickup_date=format_date(header.next_pickup_date),
+        pickup_date=DF.fdate(header.next_pickup_date),
         pickup_charge=ChargeDetails(
-            name="Pickup fees", amount=decimal(price_amount), currency="CAD"
+            name="Pickup fees", amount=NF.decimal(price_amount), currency="CAD"
         ) if price is not None else None,
     )
 
@@ -109,7 +106,7 @@ def _create_pickup_request(payload: PickupRequest, settings: Settings, update: b
     )
     address = dict(
         company=payload.address.company_name or "",
-        address_line_1=concat_str(
+        address_line_1=SF.concat_str(
             payload.address.address_line1, payload.address.address_line2, join=True
         ),
         city=payload.address.city,
@@ -170,21 +167,21 @@ def _get_pickup_availability(payload: PickupRequest):
 
 
 def _create_pickup(availability_response: str, payload: PickupRequest, settings: Settings):
-    availability = build(pickup_availability, to_xml(availability_response))
+    availability = XP.build(pickup_availability, XP.to_xml(availability_response))
     data = _create_pickup_request(payload, settings) if availability.on_demand_tour else None
 
     return Job(id="create_pickup", data=data, fallback="" if data is None else "")
 
 
 def _get_pickup(update_response: str, payload: PickupUpdateRequest, settings: Settings) -> Job:
-    errors = parse_error_response(to_xml(bundle_xml([update_response])), settings)
+    errors = parse_error_response(XP.to_xml(XP.bundle_xml([update_response])), settings)
     data = None if any(errors) else f"/enab/{settings.customer_number}/pickuprequest/{payload.confirmation_number}/details"
 
     return Job(id="get_pickup", data=Serializable(data), fallback="" if data is None else "")
 
 
 def _request_serializer(request: PickupRequestDetails, update: bool = False) -> str:
-    return export(
+    return XP.export(
         request,
         name_=("pickup-request-update" if update else "pickup-request-details"),
         namespacedef_='xmlns="http://www.canadapost.ca/ws/pickuprequest"',

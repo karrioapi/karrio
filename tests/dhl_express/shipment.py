@@ -1,7 +1,7 @@
 import re
 import unittest
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest
 from purplship import Shipment
 from tests.dhl_express.fixture import gateway
@@ -38,7 +38,7 @@ class TestDHLShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedShipmentParsingError)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentParsingError)
             )
 
     def test_shipment_missing_args_error_parsing(self):
@@ -48,7 +48,7 @@ class TestDHLShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedShipmentMissingArgsError)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentMissingArgsError)
             )
 
     def test_parse_shipment_response(self):
@@ -58,7 +58,7 @@ class TestDHLShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
 
 
 if __name__ == "__main__":

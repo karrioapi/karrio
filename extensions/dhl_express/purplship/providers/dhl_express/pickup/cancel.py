@@ -1,8 +1,7 @@
 import time
 from typing import Tuple, List
 from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
-from purplship.core.utils.helpers import export
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import XP,  Serializable
 from purplship.core.models import (
     PickupCancelRequest,
     Message,
@@ -57,7 +56,7 @@ def pickup_cancel_request(
 
 
 def _request_serializer(request: CancelPURequest) -> str:
-    xml_str = export(
+    xml_str = XP.export(
         request,
         name_="req:CancelPURequest",
         namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd"',

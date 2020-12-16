@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import purplship
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from tests.canadapost.fixture import gateway, LabelResponse
 
@@ -37,6 +37,26 @@ class TestCanadaPostShipment(unittest.TestCase):
         request = pipeline["create_shipment"]()
         self.assertEqual(request.data.serialize(), NonContractShipmentRequestXML)
 
+    def test_create_cancel_shipment_request(self):
+        requests = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        pipeline = requests.serialize()
+        info_request = pipeline["info"]()
+        refund_request = pipeline["refund"](NonSubmittedShipmentResponseXML)
+        # Assuming that the refund job will be skipped
+        cancel_request = pipeline["cancel"](refund_request.fallback)
+
+        self.assertEqual(info_request.data.serialize(), self.ShipmentCancelRequest.shipment_identifier)
+        self.assertEqual(cancel_request.data.serialize(), self.ShipmentCancelRequest.shipment_identifier)
+
+    def test_create_cancel_transmitted_shipment_request(self):
+        requests = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        pipeline = requests.serialize()
+        info_request = pipeline["info"]()
+        refund_request = pipeline["refund"](ShipmentResponseXML)
+
+        self.assertEqual(info_request.data.serialize(), self.ShipmentCancelRequest.shipment_identifier)
+        self.assertEqual(refund_request.data["payload"].serialize(), ShipmentRefundRequestXML)
+
     def test_create_shipment(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = ["<a></a>", ""]
@@ -49,15 +69,35 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_cancel_shipment(self):
-        with patch("purplship.mappers.canadapost.proxy.http") as mock:
-            mock.return_value = ""
+        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+            mocks.side_effect = [NonSubmittedShipmentResponseXML, NonSubmittedShipmentResponseXML, ""]
 
             purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
-            url = mock.call_args[1]["url"]
+            info_call, cancel_call = mocks.call_args_list
             self.assertEqual(
-                url,
+                info_call[1]["url"],
                 f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012",
+            )
+            self.assertEqual(
+                cancel_call[1]["url"],
+                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012",
+            )
+
+    def test_cancel_transmitted_shipment(self):
+        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+            mocks.side_effect = [ShipmentResponseXML, ShipmentRefundResponseXML, ""]
+
+            purplship.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+
+            info_call, refund_call = mocks.call_args_list
+            self.assertEqual(
+                info_call[1]["url"],
+                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012",
+            )
+            self.assertEqual(
+                refund_call[1]["url"],
+                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012/refund",
             )
 
     def test_parse_shipment_response(self):
@@ -67,11 +107,11 @@ class TestCanadaPostShipment(unittest.TestCase):
                 purplship.Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
 
     def test_parse_shipment_cancel_response(self):
-        with patch("purplship.mappers.canadapost.proxy.http") as mock:
-            mock.return_value = ""
+        with patch("purplship.mappers.canadapost.proxy.http") as mocks:
+            mocks.side_effect = [ShipmentResponseXML, ShipmentRefundResponseXML]
             parsed_response = (
                 purplship.Shipment.cancel(self.ShipmentCancelRequest)
                 .from_(gateway)
@@ -79,14 +119,18 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedShipmentCancelResponse)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentCancelResponse)
             )
 
 
 if __name__ == "__main__":
     unittest.main()
 
-shipment_cancel_data = {"shipment_identifier": "123456789012"}
+
+shipment_cancel_data = {
+    "shipment_identifier": "123456789012",
+    "options": {"email": "test@test.com"}
+}
 
 shipment_data = {
     "shipper": {
@@ -178,17 +222,6 @@ ParsedShipmentCancelResponse = [
     [],
 ]
 
-
-GetInfoRequestArgs = {
-    "url": "https://XX/rs/111111111/2222222222/shipment/347881315405043891/price",
-    "headers": {
-        "Accept": "application/vnd.cpc.shipment-v8+xml",
-        "Authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
-        "Accept-language": "en-CA",
-    },
-    "method": "GET",
-}
-
 ShipmentPriceLinkXML = """
 <link rel="price" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/price" media-type="application/vnd.cpc.shipment-v8+xml" />
 """
@@ -247,7 +280,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             <output-format>8.5x11</output-format>
         </print-preferences>
         <preferences>
-            <show-packing-instructions>true</show-packing-instructions>
+            <show-packing-instructions>false</show-packing-instructions>
             <show-postage-rate>true</show-postage-rate>
             <show-insured-value>true</show-insured-value>
         </preferences>
@@ -309,7 +342,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             <output-format>8.5x11</output-format>
         </print-preferences>
         <preferences>
-            <show-packing-instructions>true</show-packing-instructions>
+            <show-packing-instructions>false</show-packing-instructions>
             <show-postage-rate>true</show-postage-rate>
             <show-insured-value>true</show-insured-value>
         </preferences>
@@ -383,8 +416,7 @@ NonContractShipmentRequestXML = """<non-contract-shipment xmlns="http://www.cana
 """
 
 ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
-<shipment-info
-  xmlns="http://www.canadapost.ca/ws/shipment-v8">
+<shipment-info xmlns="http://www.canadapost.ca/ws/shipment-v8">
   <shipment-id>545021584835957806</shipment-id>
   <shipment-status>transmitted</shipment-status>
   <tracking-pin>123456789012</tracking-pin>
@@ -424,4 +456,58 @@ ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
     <link rel="label" href="https://ct.soa-gw.canadapost.ca/rs/artifact/6e93d53968881714/10001782951/0" media-type="application/pdf" index="0"/>
   </links>
 </shipment-info>
+"""
+
+NonSubmittedShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<shipment-info xmlns="http://www.canadapost.ca/ws/shipment-v8">
+  <shipment-id>545021584835957806</shipment-id>
+  <shipment-status>created</shipment-status>
+  <tracking-pin>123456789012</tracking-pin>
+  <po-number>P123456789</po-number>
+  <shipment-price>
+    <service-code>DOM.EP</service-code>
+    <base-amount>25.07</base-amount>
+    <priced-options>
+      <priced-option>
+        <option-code>DC</option-code>
+        <option-price>0.00</option-price>
+      </priced-option>
+    </priced-options>
+    <adjustments>
+      <adjustment>
+        <adjustment-code>FUELSC</adjustment-code>
+        <adjustment-amount>2.88</adjustment-amount>
+      </adjustment>
+    </adjustments>
+    <pre-tax-amount>27.95</pre-tax-amount>
+    <gst-amount>0.00</gst-amount>
+    <pst-amount>0.00</pst-amount>
+    <hst-amount>3.63</hst-amount>
+    <due-amount>31.58</due-amount>
+    <service-standard>
+      <am-delivery>false</am-delivery>
+      <guaranteed-delivery>true</guaranteed-delivery>
+      <expected-transmit-time>1</expected-transmit-time>
+      <expected-delivery-date>2020-03-24</expected-delivery-date>
+    </service-standard>
+    <rated-weight>20.000</rated-weight>
+  </shipment-price>
+  <links>
+    <link rel="self" href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/shipment/545021584835957806" media-type="application/vnd.cpc.shipment-v8+xml"/>
+    <link rel="details" href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/shipment/545021584835957806/details" media-type="application/vnd.cpc.shipment-v8+xml"/>
+    <link rel="refund" href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/shipment/545021584835957806/refund" media-type="application/vnd.cpc.shipment-v8+xml"/>
+    <link rel="label" href="https://ct.soa-gw.canadapost.ca/rs/artifact/6e93d53968881714/10001782951/0" media-type="application/pdf" index="0"/>
+  </links>
+</shipment-info>
+"""
+
+ShipmentRefundRequestXML = """<shipment-refund-request xmlns="http://www.canadapost.ca/ws/shipment-v8">
+    <email>test@test.com</email>
+</shipment-refund-request>
+"""
+
+ShipmentRefundResponseXML = """<shipment-refund-request-info>
+    <service-ticket-date>2015-01-28</service-ticket-date>
+    <service-ticket-id>GT12345678RT</service-ticket-id>
+</shipment-refund-request-info>
 """

@@ -22,8 +22,7 @@ from pydhl.ship_val_global_req_6_2 import (
     DimensionUnit,
 )
 from pydhl.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
-from purplship.core.utils.helpers import export, concat_str
-from purplship.core.utils.serializable import Serializable
+from purplship.core.utils import Serializable, SF, XP
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
     ShipmentRequest,
@@ -125,7 +124,7 @@ def shipment_request(
         Consignee=Consignee(
             CompanyName=payload.recipient.company_name or "  ",
             SuiteDepartmentName=None,
-            AddressLine=concat_str(
+            AddressLine=SF.concat_str(
                 payload.recipient.address_line1, payload.recipient.address_line2
             ),
             City=payload.recipient.city,
@@ -155,7 +154,7 @@ def shipment_request(
         Shipper=Shipper(
             ShipperID=settings.account_number or "  ",
             RegisteredAccount=settings.account_number,
-            AddressLine=concat_str(
+            AddressLine=SF.concat_str(
                 payload.shipper.address_line1, payload.shipper.address_line2
             ),
             CompanyName=payload.shipper.company_name or "  ",
@@ -251,7 +250,7 @@ def shipment_request(
 
 def _request_serializer(request: DHLShipmentRequest) -> str:
     xml_str = (
-        export(
+        XP.export(
             request,
             name_="req:ShipmentRequest",
             namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd"',

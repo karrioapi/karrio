@@ -19,7 +19,7 @@ from pycanadapost.ncshipment import (
     PreferencesType,
 )
 from purplship.core.units import Currency, WeightUnit, Options, Packages
-from purplship.core.utils import export, concat_str, Serializable, Element, no_space
+from purplship.core.utils import Serializable, Element, SF, XP
 from purplship.core.models import (
     Message,
     ShipmentDetails,
@@ -50,8 +50,9 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
     info_node = next(
         iter(response.xpath(".//*[local-name() = $name]", name="shipment-info"))
     )
-    label = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
-    errors = parse_error_response(label, settings)
+    label_node = next(iter(response.xpath(".//*[local-name() = $name]", name="label")))
+    errors = parse_error_response(label_node, settings)
+    label = str(label_node.text) if len(errors) == 0 else None
     info: NonContractShipmentInfoType = NonContractShipmentInfoType()
     info.build(info_node)
 
@@ -60,7 +61,7 @@ def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
-        label=label.text if len(errors) == 0 else None,
+        label=label,
     )
 
 
@@ -97,11 +98,11 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                 company=payload.shipper.company_name,
                 contact_phone=payload.shipper.phone_number,
                 address_details=DomesticAddressDetailsType(
-                    address_line_1=concat_str(payload.shipper.address_line1, join=True),
-                    address_line_2=concat_str(payload.shipper.address_line2, join=True),
+                    address_line_1=SF.concat_str(payload.shipper.address_line1, join=True),
+                    address_line_2=SF.concat_str(payload.shipper.address_line2, join=True),
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
-                    postal_zip_code=no_space(payload.shipper.postal_code),
+                    postal_zip_code=payload.shipper.postal_code,
                 ),
             ),
             destination=DestinationType(
@@ -110,16 +111,16 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                 additional_address_info=None,
                 client_voice_number=payload.recipient.phone_number,
                 address_details=DestinationAddressDetailsType(
-                    address_line_1=concat_str(
+                    address_line_1=SF.concat_str(
                         payload.recipient.address_line1, join=True
                     ),
-                    address_line_2=concat_str(
+                    address_line_2=SF.concat_str(
                         payload.recipient.address_line2, join=True
                     ),
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=no_space(payload.recipient.postal_code),
+                    postal_zip_code=payload.recipient.postal_code,
                 ),
             ),
             options=(
@@ -201,7 +202,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
 
 
 def _request_serializer(request: NonContractShipmentType) -> str:
-    return export(
+    return XP.export(
         request,
         name_="non-contract-shipment",
         namespacedef_='xmlns="http://www.canadapost.ca/ws/ncshipment-v4"',

@@ -9,7 +9,7 @@ from purplship.core.utils import (
     Pipeline,
     Job,
     Serializable,
-    to_xml
+    XP
 )
 from purplship.providers.canpar.utils import Settings
 from purplship.providers.canpar.error import parse_error_response
@@ -49,7 +49,7 @@ def _cancel_pickup(payload: PickupUpdateRequest, settings: Settings) -> Job:
 
 
 def _create_pickup(cancel_response: str, payload: PickupUpdateRequest, settings: Settings) -> Job:
-    errors = parse_error_response(to_xml(cancel_response), settings)
+    errors = parse_error_response(XP.to_xml(cancel_response), settings)
     canceled = len(errors) == 0
     data: Optional[PickupRequest] = (
         pickup_request(payload, settings) if canceled else None

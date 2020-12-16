@@ -17,9 +17,8 @@ from purplship.core.utils import (
     Element,
     create_envelope,
     Envelope,
-    build,
-    format_date,
-    format_time,
+    DF,
+    XP,
 )
 from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
@@ -35,15 +34,15 @@ def parse_tracking_response(response: Element, settings: Settings) -> Tuple[List
 
 
 def _extract_tracking_details(node: Element, settings: Settings) -> TrackingDetails:
-    result = build(TrackingResult, node)
+    result = XP.build(TrackingResult, node)
     is_en = settings.language == "en"
     events = [
         TrackingEvent(
-            date=format_date(event.local_date_time, '%Y%m%d %H%M%S'),
+            date=DF.fdate(event.local_date_time, '%Y%m%d %H%M%S'),
             description=(event.code_description_en if is_en else event.code_description_fr),
             location=_format_location(event.address),
             code=event.code,
-            time=format_time(event.local_date_time, '%Y%m%d %H%M%S'),
+            time=DF.ftime(event.local_date_time, '%Y%m%d %H%M%S'),
         ) for event in cast(List[CanparTrackingEvent], result.events)
     ]
 

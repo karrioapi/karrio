@@ -8,7 +8,7 @@ from pyusps.rate_v4_request import (
     SpecialServicesType,
     ShipDateType,
 )
-from purplship.core.utils import export, Serializable, Element, decimal, to_date, build
+from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.core.units import Packages, Currency, Options, Services
 from purplship.providers.usps.utils import Settings
@@ -36,15 +36,16 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
     postage.build(postage_node)
     currency = Currency.USD.name
     services: List[SpecialServiceType] = [
-        build(SpecialServiceType, svc)
+        XP.build(SpecialServiceType, svc)
         for svc in postage_node.xpath(
             ".//*[local-name() = $name]", name="SpecialService"
         )
     ]
-    estimated_date = to_date(postage.CommitmentDate)
+    estimated_date = DF.date(postage.CommitmentDate)
     transit = (
         (estimated_date - datetime.now()).days if estimated_date is not None else None
     )
+    postage_rate = postage_node.find("Rate").text
 
     def get(key: str) -> Any:
         return reduce(lambda r, v: v.text, postage_node.findall(key), None)
@@ -53,13 +54,13 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         service=Service.find(get("MailService")).name,
-        total_charge=decimal(postage_node.find("Rate").text),
+        total_charge=NF.decimal(postage_rate),
         currency=currency,
         transit_days=transit,
         extra_charges=[
             ChargeDetails(
                 name=SpecialService(str(svc.ServiceID)).name,
-                amount=decimal(svc.Price),
+                amount=NF.decimal(svc.Price),
                 currency=currency,
             )
             for svc in services
@@ -110,4 +111,4 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV
         ],
     )
 
-    return Serializable(request, export)
+    return Serializable(request, XP.export)

@@ -8,7 +8,7 @@ from pypurolator.shipping_service_2_1_3 import (
 )
 from pypurolator.shipping_documents_service_1_3_0 import DocumentDetail
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
-from purplship.core.utils import Serializable, Element, to_xml
+from purplship.core.utils import Serializable, Element, XP
 from purplship.core.utils.pipeline import Pipeline, Job
 from purplship.providers.purolator.utils import Settings
 from purplship.providers.purolator.error import parse_error_response
@@ -88,7 +88,7 @@ def _validate_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
 def _create_shipment(
     validate_response: str, payload: ShipmentRequest, settings: Settings
 ) -> Job:
-    errors = parse_error_response(to_xml(validate_response), settings)
+    errors = parse_error_response(XP.to_xml(validate_response), settings)
     valid = len(errors) == 0
     return Job(
         id="create",
@@ -100,14 +100,14 @@ def _create_shipment(
 def _get_shipment_label(
     create_response: str, payload: ShipmentRequest, settings: Settings
 ) -> Job:
-    errors = parse_error_response(to_xml(create_response), settings)
+    errors = parse_error_response(XP.to_xml(create_response), settings)
     valid = len(errors) == 0
     shipment_pin = None
 
     if valid:
         node = next(
             iter(
-                to_xml(create_response).xpath(
+                XP.to_xml(create_response).xpath(
                     ".//*[local-name() = $name]", name="ShipmentPIN"
                 )
             ),

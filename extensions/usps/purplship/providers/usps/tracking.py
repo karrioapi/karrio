@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from pyusps.track_field_request import TrackFieldRequest, TrackIDType
 from pyusps.track_response import TrackInfoType, TrackDetailType
-from purplship.core.utils import export, Serializable, Element, format_date, format_time
+from purplship.core.utils import Serializable, Element, XP, DF
 from purplship.core.models import (
     TrackingRequest,
     Message,
@@ -39,8 +39,8 @@ def _extract_details(tracking_node: Element, settings) -> TrackingDetails:
         events=[
             TrackingEvent(
                 code=str(event.EventCode),
-                date=format_date(event.EventDate, "%B %d, %Y"),
-                time=format_time(event.EventTime, "%H:%M %p"),
+                date=DF.fdate(event.EventDate, "%B %d, %Y"),
+                time=DF.ftime(event.EventTime, "%H:%M %p"),
                 description=event.ActionCode,
                 location=", ".join(
                     [
@@ -77,4 +77,4 @@ def tracking_request(
 
 
 def _request_serializer(request: TrackFieldRequest) -> dict:
-    return {"API": "TrackV2", "XML": export(request)}
+    return {"API": "TrackV2", "XML": XP.export(request)}

@@ -1,7 +1,7 @@
 import re
 import unittest
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import TrackingRequest
 from purplship import Tracking
 from tests.dhl_express.fixture import gateway
@@ -33,7 +33,7 @@ class TestDHLTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedAuthError))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
@@ -42,7 +42,7 @@ class TestDHLTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedTrackingResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse))
 
     def test_tracking_single_not_found_parsing(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
@@ -51,7 +51,7 @@ class TestDHLTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedTrackingSingNotFound)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingSingNotFound)
             )
 
 

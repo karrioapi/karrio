@@ -18,14 +18,12 @@ from purplship.core.utils import (
     create_envelope,
     Envelope,
     Element,
-    format_time,
-    to_date,
-    concat_str,
-    build,
-    decimal,
-    to_xml,
     Job,
     Pipeline,
+    NF,
+    XP,
+    DF,
+    SF,
 )
 from purplship.core.models import (
     PickupRequest,
@@ -42,7 +40,7 @@ from purplship.providers.ups.utils import Settings, default_request_serializer
 def parse_pickup_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = build(
+    reply = XP.build(
         PickupCreationResponse,
         next(
             iter(
@@ -65,7 +63,7 @@ def parse_pickup_response(
 def _extract_pickup_details(
     response: PickupCreationResponse, settings: Settings
 ) -> PickupDetails:
-    pickup = build(
+    pickup = XP.build(
         PickupCreationResponse,
         next(
             iter(
@@ -76,7 +74,7 @@ def _extract_pickup_details(
             None,
         ),
     )
-    rate = build(
+    rate = XP.build(
         RateResultType,
         next(
             iter(response.xpath(".//*[local-name() = $name]", name="RateResult")), None
@@ -90,7 +88,7 @@ def _extract_pickup_details(
         pickup_charge=ChargeDetails(
             name=rate.RateType,
             currency=rate.CurrencyCode,
-            amount=decimal(rate.GrandTotalOfAllCharge),
+            amount=NF.decimal(rate.GrandTotalOfAllCharge),
         ),
     )
 
@@ -136,14 +134,14 @@ def _create_pickup_request(
                 TaxInformation=None,
             ),
             PickupDateInfo=PickupDateInfoType(
-                CloseTime=format_time(payload.closing_time, "%H:%M", "%H%M"),
-                ReadyTime=format_time(payload.ready_time, "%H:%M", "%H%M"),
-                PickupDate=to_date(payload.pickup_date).strftime("%Y%m%d"),
+                CloseTime=DF.ftime(payload.closing_time, "%H:%M", "%H%M"),
+                ReadyTime=DF.ftime(payload.ready_time, "%H:%M", "%H%M"),
+                PickupDate=DF.date(payload.pickup_date).strftime("%Y%m%d"),
             ),
             PickupAddress=PickupAddressType(
                 CompanyName=payload.address.company_name,
                 ContactName=payload.address.person_name,
-                AddressLine=concat_str(
+                AddressLine=SF.concat_str(
                     payload.address.address_line1, payload.address.address_line2
                 ),
                 Room=None,
@@ -192,7 +190,7 @@ def _rate_pickup(payload: PickupRequest, settings: Settings):
 
 
 def _create_pickup(rate_response: str, payload: PickupRequest, settings: Settings):
-    rate_result = build(RateResultType, to_xml(rate_response))
+    rate_result = XP.build(RateResultType, XP.to_xml(rate_response))
     data = _create_pickup_request(payload, settings) if rate_result else None
 
     return Job(id="create_pickup", data=data, fallback="")

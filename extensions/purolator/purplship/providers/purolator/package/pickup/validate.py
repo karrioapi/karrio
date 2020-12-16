@@ -12,7 +12,7 @@ from pypurolator.pickup_service_1_2_1 import (
 )
 from purplship.core.units import Phone, Packages
 from purplship.core.models import PickupUpdateRequest, PickupRequest
-from purplship.core.utils import Serializable, create_envelope, Envelope, concat_str
+from purplship.core.utils import Serializable, create_envelope, Envelope, SF
 from purplship.providers.purolator.utils import Settings, standard_request_serializer
 from purplship.providers.purolator.units import PackagePresets
 
@@ -32,7 +32,7 @@ def validate_pickup_request(
     :return: Serializable[PickupRequest]
     """
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    phone = Phone(payload.address.phone_number)
+    phone = Phone(payload.address.phone_number, payload.address.country_code or 'CA')
     request = create_envelope(
         header_content=RequestContext(
             Version="1.2",
@@ -67,12 +67,12 @@ def validate_pickup_request(
                 Department=None,
                 StreetNumber="",
                 StreetSuffix=None,
-                StreetName=concat_str(payload.address.address_line1, join=True),
+                StreetName=SF.concat_str(payload.address.address_line1, join=True),
                 StreetType=None,
                 StreetDirection=None,
                 Suite=None,
                 Floor=None,
-                StreetAddress2=concat_str(payload.address.address_line2, join=True),
+                StreetAddress2=SF.concat_str(payload.address.address_line2, join=True),
                 StreetAddress3=None,
                 City=payload.address.city,
                 Province=payload.address.state_code,

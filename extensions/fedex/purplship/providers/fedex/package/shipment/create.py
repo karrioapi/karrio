@@ -36,10 +36,7 @@ from pyfedex.ship_service_v25 import (
     LabelPrintingOrientationType,
     ShipmentNotificationFormatSpecification
 )
-from purplship.core.utils import export, concat_str, to_date
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
-from purplship.core.utils.xml import Element
+from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
 from purplship.core.units import Options, Packages
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.providers.fedex.error import parse_error_response
@@ -124,7 +121,7 @@ def shipment_request(
     ]
     payment_type = PaymentType[payload.payment.paid_by or "sender"].value
     shipment_date = (
-        to_date(options.shipment_date) if 'shipment_date' in options else datetime.now()
+        DF.date(options.shipment_date) if 'shipment_date' in options else datetime.now()
     )
 
     request = ProcessShipmentRequest(
@@ -177,7 +174,7 @@ def shipment_request(
                 )
                 else None,
                 Address=Address(
-                    StreetLines=concat_str(
+                    StreetLines=SF.concat_str(
                         payload.shipper.address_line1, payload.shipper.address_line2
                     ),
                     City=payload.shipper.city,
@@ -225,7 +222,7 @@ def shipment_request(
                 )
                 else None,
                 Address=Address(
-                    StreetLines=concat_str(
+                    StreetLines=SF.concat_str(
                         payload.recipient.address_line1,
                         payload.recipient.address_line2,
                     ),
@@ -381,4 +378,4 @@ def _request_serializer(request: ProcessShipmentRequest) -> str:
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v25")
 
-    return export(envelope, namespacedef_=namespacedef_)
+    return XP.export(envelope, namespacedef_=namespacedef_)

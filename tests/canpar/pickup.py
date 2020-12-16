@@ -2,7 +2,7 @@ import logging
 import unittest
 from unittest.mock import patch
 import purplship
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
@@ -98,7 +98,7 @@ class TestCanparPickup(unittest.TestCase):
                 purplship.Pickup.schedule(self.PickupRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
 
     def test_parse_modify_pickup_response(self):
         with patch("purplship.mappers.canpar.proxy.http") as mocks:
@@ -110,7 +110,7 @@ class TestCanparPickup(unittest.TestCase):
                 purplship.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedPickupResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
 
     def test_parse_void_shipment_response(self):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
@@ -120,7 +120,7 @@ class TestCanparPickup(unittest.TestCase):
             )
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedPickupCancelResponse)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedPickupCancelResponse)
             )
 
 

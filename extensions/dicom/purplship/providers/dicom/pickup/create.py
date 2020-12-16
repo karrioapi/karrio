@@ -7,7 +7,7 @@ from pydicom.pickups import (
     Contact,
     Pickup,
 )
-from purplship.core.utils import Serializable, Pipeline, Job, to_dict, concat_str
+from purplship.core.utils import Serializable, Pipeline, Job, DP, SF
 from purplship.core.models import (
     PickupRequest,
     PickupDetails,
@@ -64,7 +64,7 @@ def _create_pickup(payload: PickupRequest) -> Job:
             postalCode=payload.address.postal_code,
             countryCode=payload.address.country_code,
             customerName=payload.address.company_name,
-            streetNumber=concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
+            streetNumber=SF.concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
             contact=Contact(
                 fullName=payload.address.person_name,
                 email=payload.address.email,
@@ -75,17 +75,17 @@ def _create_pickup(payload: PickupRequest) -> Job:
         otherLocation=payload.package_location
     )
 
-    return Job(id="create_pickup", data=Serializable(request, to_dict))
+    return Job(id="create_pickup", data=Serializable(request, DP.to_dict))
 
 
 def _retrieve_pickup(creation_response: str, payload: PickupRequest, settings: Settings) -> Job:
-    errors = parse_error_response(to_dict(creation_response), settings)
+    errors = parse_error_response(DP.to_dict(creation_response), settings)
     data = (
         Serializable(
             dict(
                 category=payload.options.get("category", "Parcel"),
                 pickupDate=payload.pickup_date,
-                streetNumber=concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
+                streetNumber=SF.concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
                 postalCode=payload.address.postal_code,
                 offset=10,
             ),

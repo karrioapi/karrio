@@ -1,7 +1,7 @@
 import re
 import unittest
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship import Rating
 from tests.dhl_express.fixture import gateway
@@ -57,20 +57,20 @@ class TestDHLRating(unittest.TestCase):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse))
 
     def test_parse_rate_parsing_error(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedRateParsingError))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateParsingError))
 
     def test_parse_rate_missing_args_error(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateMissingArgsError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedRateMissingArgsError)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedRateMissingArgsError)
             )
 
     def test_parse_rate_vol_weight_higher_response(self):
@@ -78,7 +78,7 @@ class TestDHLRating(unittest.TestCase):
             mock.return_value = RateVolWeightHigher
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedRateVolWeightHigher)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedRateVolWeightHigher)
             )
 
 

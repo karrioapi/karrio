@@ -15,7 +15,7 @@ from purplship.core.models import (
     Message,
     TrackingEvent,
 )
-from purplship.core.utils import Element, format_date, format_timestamp
+from purplship.core.utils import Element, DF
 from purplship.core.utils.soap import create_envelope
 from pysoap.envelope import Envelope
 from purplship.core.utils.serializable import Serializable
@@ -44,8 +44,8 @@ def _extract_tracking(node: Element, settings: Settings) -> TrackingDetails:
         tracking_number=str(track.PIN.Value),
         events=[
             TrackingEvent(
-                date=format_date(cast(Scan, scan).ScanDate),
-                time=format_timestamp(cast(Scan, scan).ScanTime),
+                date=DF.fdate(cast(Scan, scan).ScanDate),
+                time=DF.ftimestamp(cast(Scan, scan).ScanTime),
                 description=cast(Scan, scan).Description,
                 location=cast(Depot, cast(Scan, scan).Depot).Name,
                 code=cast(Scan, scan).ScanType,

@@ -18,11 +18,10 @@ from purplship.core.utils import (
     create_envelope,
     Envelope,
     Element,
-    concat_str,
-    build,
     Pipeline,
     Job,
-    to_xml
+    SF,
+    XP,
 )
 from purplship.providers.purolator.package.pickup.validate import validate_pickup_request
 from purplship.providers.purolator.error import parse_error_response
@@ -33,7 +32,7 @@ from purplship.providers.purolator.units import PackagePresets
 def parse_pickup_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = build(
+    reply = XP.build(
         SchedulePickUpResponse,
         next(
             iter(
@@ -99,7 +98,7 @@ def _schedule_pickup_request(
     :return: Serializable[PickupRequest]
     """
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    phone = Phone(payload.address.phone_number)
+    phone = Phone(payload.address.phone_number, payload.address.country_code or 'CA')
     request = create_envelope(
         header_content=RequestContext(
             Version="1.2",
@@ -134,12 +133,12 @@ def _schedule_pickup_request(
                 Department=None,
                 StreetNumber="",
                 StreetSuffix=None,
-                StreetName=concat_str(payload.address.address_line1, join=True),
+                StreetName=SF.concat_str(payload.address.address_line1, join=True),
                 StreetType=None,
                 StreetDirection=None,
                 Suite=None,
                 Floor=None,
-                StreetAddress2=concat_str(payload.address.address_line2, join=True),
+                StreetAddress2=SF.concat_str(payload.address.address_line2, join=True),
                 StreetAddress3=None,
                 City=payload.address.city,
                 Province=payload.address.state_code,
@@ -174,7 +173,7 @@ def _validate_pickup(
 def _schedule_pickup(
     validation_response: str, payload: PickupRequest, settings: Settings
 ):
-    errors = parse_error_response(to_xml(validation_response), settings)
+    errors = parse_error_response(XP.to_xml(validation_response), settings)
     data = _schedule_pickup_request(payload, settings) if len(errors) == 0 else None
 
     return Job(id="schedule", data=data, fallback="")

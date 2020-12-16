@@ -1,6 +1,7 @@
+import phonenumbers
 from dataclasses import dataclass
 from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any
-from purplship.core.utils import decimal, Enum
+from purplship.core.utils import NF, Enum
 from purplship.core.models import Parcel
 from purplship.core.errors import (
     FieldError,
@@ -111,25 +112,25 @@ class Dimension:
         if self._unit is None or self._value is None:
             return None
         if self._unit == DimensionUnit.CM:
-            return decimal(self._value)
+            return NF.decimal(self._value)
         else:
-            return decimal(self._value * 0.393701)
+            return NF.decimal(self._value * 0.393701)
 
     @property
     def IN(self):
         if self._unit is None or self._value is None:
             return None
         if self._unit == DimensionUnit.IN:
-            return decimal(self._value)
+            return NF.decimal(self._value)
         else:
-            return decimal(self._value * 2.54)
+            return NF.decimal(self._value * 2.54)
 
     @property
     def M(self):
         if self._unit is None or self._value is None:
             return None
         else:
-            return decimal(self.CM / 100)
+            return NF.decimal(self.CM / 100)
 
 
 class Volume:
@@ -145,13 +146,13 @@ class Volume:
         if not any([self._side1.value, self._side2.value, self._side3.value]):
             return None
 
-        return decimal(self._side1.M * self._side2.M * self._side3.M)
+        return NF.decimal(self._side1.M * self._side2.M * self._side3.M)
 
     @property
     def cubic_meter(self):
         if self.value is None:
             return None
-        return decimal(self.value * 250)
+        return NF.decimal(self.value * 250)
 
 
 class Girth:
@@ -170,7 +171,7 @@ class Girth:
 
         sides.sort()
         small_side1, small_side2, _ = sides
-        return decimal((small_side1 + small_side2) * 2)
+        return NF.decimal((small_side1 + small_side2) * 2)
 
 
 class Weight:
@@ -187,9 +188,9 @@ class Weight:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.KG:
-            return decimal(self._value)
+            return NF.decimal(self._value)
         elif self._unit == WeightUnit.LB:
-            return decimal(self._value * 0.453592)
+            return NF.decimal(self._value * 0.453592)
 
         return None
 
@@ -198,9 +199,9 @@ class Weight:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
-            return decimal(self._value)
+            return NF.decimal(self._value)
         elif self._unit == WeightUnit.KG:
-            return decimal(self._value * 2.204620823516057)
+            return NF.decimal(self._value * 2.204620823516057)
 
         return None
 
@@ -209,9 +210,9 @@ class Weight:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
-            return decimal(self._value * 16)
+            return NF.decimal(self._value * 16)
         elif self._unit == WeightUnit.KG:
-            return decimal(self._value * 35.274)
+            return NF.decimal(self._value * 35.274)
 
         return None
 
@@ -426,21 +427,32 @@ class Services:
 
 
 class Phone:
-    def __init__(self, phone_number: str = None):
-        self.number = phone_number
-        self.parts = phone_number.split(" ") if phone_number is not None else []
+    def __init__(self, phone_number: str = None, country_code: str = None):
+        try:
+            self.number = phonenumbers.parse(phone_number, country_code)
+        except Exception:
+            self.number = None
 
     @property
     def country_code(self):
-        return next((part for part in self.parts), None)
+        if self.number is None:
+            return None
+
+        return self.number.country_code
 
     @property
     def area_code(self):
-        return next((part[1] for part in [self.parts] if len(part) > 1), None)
+        if self.number is None:
+            return None
+
+        return str(self.number.national_number)[0:3]
 
     @property
     def phone(self):
-        return next((part[2] for part in [self.parts] if len(part) > 2), None)
+        if self.number is None:
+            return None
+
+        return str(self.number.national_number)[3:]
 
 
 class PrinterType(Enum):

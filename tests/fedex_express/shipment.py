@@ -2,7 +2,7 @@ import re
 import unittest
 import logging
 from unittest.mock import patch
-from purplship.core.utils.helpers import to_dict
+from purplship.core.utils import DP
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.fedex_express.fixture import gateway
@@ -53,7 +53,7 @@ class TestFedExShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(to_dict(parsed_response), to_dict(ParsedShipmentResponse))
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
 
     def test_parse_shipment_cancel_response(self):
         with patch("purplship.mappers.fedex_express.proxy.http") as mock:
@@ -63,7 +63,7 @@ class TestFedExShipment(unittest.TestCase):
             )
 
             self.assertEqual(
-                to_dict(parsed_response), to_dict(ParsedShipmentCancelResponse)
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentCancelResponse)
             )
 
 

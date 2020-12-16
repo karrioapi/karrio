@@ -6,7 +6,7 @@ from pypurolator.service_availability_service_2_0_2 import (
     ShortAddress,
     RequestContext,
 )
-from purplship.core.utils import Serializable, Element, create_envelope, Envelope, build
+from purplship.core.utils import Serializable, Element, create_envelope, Envelope, XP
 from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails, Address
 from purplship.providers.purolator.utils import Settings, standard_request_serializer
 from purplship.providers.purolator.error import parse_error_response
@@ -14,7 +14,7 @@ from purplship.providers.purolator.error import parse_error_response
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
     errors = parse_error_response(response, settings)
-    reply = build(
+    reply = XP.build(
         ValidateCityPostalCodeZipResponse,
         next(iter(response.xpath(".//*[local-name() = $name]", name="ValidateCityPostalCodeZipResponse")), None)
     )

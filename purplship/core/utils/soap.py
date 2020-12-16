@@ -1,29 +1,15 @@
-from typing import TypeVar, Type, Optional, cast, List
+from typing import TypeVar, List, Union, Any
 from pysoap.envelope import Header, Body, Envelope, Fault
-from purplship.core.utils.xml import Element
+from purplship.core.utils.xml import GenerateDSAbstract, Element, XMLPARSER
 from purplship.core.settings import Settings
 from purplship.core.models import Message
 
 T = TypeVar("T")
 
 
-class GenerateDSAbstract:
-    def build(self, *args):
-        pass
-
-
-def build(tp: Type[T], node: Element = None) -> Optional[T]:
-    if node is None:
-        return None
-
-    instance = tp()
-    cast(GenerateDSAbstract, instance).build(node)
-    return instance
-
-
 def create_envelope(
-    body_content: Element,
-    header_content: Element = None,
+    body_content: Union[GenerateDSAbstract, Any],
+    header_content: Union[GenerateDSAbstract, Any] = None,
     header_prefix: str = None,
     body_prefix: str = None,
     header_tag_name: str = None,
@@ -95,7 +81,7 @@ def apply_namespaceprefix(item, prefix: str):
 
 def extract_fault(response: Element, settings: Settings) -> List[Message]:
     faults = [
-        build(Fault, node)
+        XMLPARSER.build(Fault, node)
         for node in response.xpath(".//*[local-name() = $name]", name="Fault")
     ]
     return [

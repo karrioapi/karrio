@@ -4,7 +4,7 @@ from pyups.pickup_web_service_schema import (
     CodeDescriptionType,
     RequestType,
 )
-from purplship.core.utils import Envelope, Element, create_envelope, Serializable, build
+from purplship.core.utils import Envelope, Element, create_envelope, Serializable, XP
 from purplship.core.models import (
     PickupCancelRequest,
     ConfirmationDetails,
@@ -17,7 +17,7 @@ from purplship.providers.ups.error import parse_error_response
 def parse_pickup_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    status = build(
+    status = XP.build(
         CodeDescriptionType,
         next(
             iter(response.xpath(".//*[local-name() = $name]", name="ResponseStatus")),

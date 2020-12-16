@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from pyusps.carrier_pickup_cancel_request import CarrierPickupCancelRequest
-from purplship.core.utils import Serializable, concat_str
+from purplship.core.utils import Serializable, SF
 from purplship.core.models import (
     PickupCancelRequest,
     ConfirmationDetails,
@@ -32,7 +32,7 @@ def pickup_cancel_request(payload: PickupCancelRequest, settings: Settings) -> S
         UserID=settings.username,
         FirmName=payload.address.company_name,
         SuiteOrApt=payload.address.address_line1,
-        Address2=concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
+        Address2=SF.concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
         Urbanization=None,
         City=payload.address.city,
         State=payload.address.state_code,

@@ -18,10 +18,8 @@ from pyfedex.rate_service_v26 import (
     Dimensions,
     WeightUnits,
 )
-from purplship.core.utils import export, concat_str, Serializable, decimal, to_date
-from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
+from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, SF, DF
 from purplship.core.units import Packages, Options, Services
-from purplship.core.utils.xml import Element
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.providers.fedex.error import parse_error_response
@@ -59,7 +57,7 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         ),
     )
     discount = (
-        decimal(shipment_discount.Amount) if shipment_discount is not None else None
+        NF.decimal(shipment_discount.Amount) if shipment_discount is not None else None
     )
     currency = cast(Money, shipment_rate.TotalBaseCharge).Currency
     duties_and_taxes = (
@@ -68,12 +66,12 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
     surcharges = [
         ChargeDetails(
             name=cast(Surcharge, s).Description,
-            amount=decimal(cast(Surcharge, s).Amount.Amount),
+            amount=NF.decimal(cast(Surcharge, s).Amount.Amount),
             currency=currency,
         )
         for s in shipment_rate.Surcharges + shipment_rate.Taxes
     ]
-    estimated_delivery = to_date(rate.DeliveryTimestamp, "%Y-%m-%d %H:%M:%S")
+    estimated_delivery = DF.date(rate.DeliveryTimestamp, "%Y-%m-%d %H:%M:%S")
     transit = (
         (estimated_delivery - datetime.now()).days
         if estimated_delivery is not None
@@ -85,9 +83,9 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         carrier_id=settings.carrier_id,
         service=service,
         currency=currency,
-        base_charge=decimal(shipment_rate.TotalBaseCharge.Amount),
-        total_charge=decimal(shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount),
-        duties_and_taxes=decimal(duties_and_taxes),
+        base_charge=NF.decimal(shipment_rate.TotalBaseCharge.Amount),
+        total_charge=NF.decimal(shipment_rate.TotalNetChargeWithDutiesAndTaxes.Amount),
+        duties_and_taxes=NF.decimal(duties_and_taxes),
         discount=discount,
         transit_days=transit,
         extra_charges=surcharges,
@@ -163,7 +161,7 @@ def rate_request(
                 )
                 else None,
                 Address=Address(
-                    StreetLines=concat_str(
+                    StreetLines=SF.concat_str(
                         payload.shipper.address_line1, payload.shipper.address_line2
                     ),
                     City=payload.shipper.city,
@@ -211,7 +209,7 @@ def rate_request(
                 )
                 else None,
                 Address=Address(
-                    StreetLines=concat_str(
+                    StreetLines=SF.concat_str(
                         payload.recipient.address_line1,
                         payload.recipient.address_line2,
                     ),
@@ -293,4 +291,4 @@ def _request_serializer(request: FedexRateRequest) -> str:
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v26")
 
-    return export(envelope, namespacedef_=namespacedef_)
+    return XP.export(envelope, namespacedef_=namespacedef_)

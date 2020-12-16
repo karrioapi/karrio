@@ -13,7 +13,7 @@ dev_requirements = [
 ]
 
 setup(name='purplship',
-      version='2020.11.1',
+      version='2020.12',
       description='Multi-carrier shipping API integration with python',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -27,9 +27,11 @@ setup(name='purplship',
             'jstruct',
             'xmltodict',
             'lxml',
+            'lxml-stubs',
             'py-soap',
             'six',
-            'Pillow'
+            'Pillow',
+            'phonenumbers'
       ],
       extras_require={
             'dev': dev_requirements

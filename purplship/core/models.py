@@ -1,7 +1,6 @@
 """Purplship Unified datatypes module."""
 import attr
-import warnings
-from typing import List, Dict
+from typing import List, Dict, Any, Union
 from jstruct import JList, JStruct, REQUIRED
 
 
@@ -219,7 +218,7 @@ class Message:
 
     carrier_name: str
     carrier_id: str
-    message: str = None
+    message: Union[str, Any] = None
     code: str = None
     details: Dict = None
 

@@ -14,12 +14,11 @@ from purplship.core.models import (
 )
 from purplship.core.utils import (
     Serializable,
-    export,
     create_envelope,
     apply_namespaceprefix,
     Envelope,
     Element,
-    build,
+    XP,
 )
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
@@ -28,7 +27,7 @@ from purplship.providers.fedex.utils import Settings
 def parse_pickup_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    reply = build(
+    reply = XP.build(
         CancelPickupReply,
         next(
             iter(
@@ -81,7 +80,7 @@ def _request_serializer(request: CancelPickupRequest) -> str:
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v17")
 
-    return export(
+    return XP.export(
         envelope,
         namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17"',
     )

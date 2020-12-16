@@ -1,7 +1,7 @@
 from typing import Tuple, List
 from pyusps.carrier_pickup_change_request import CarrierPickupChangeRequest, PackageType
 from purplship.core.units import Packages
-from purplship.core.utils import Serializable, concat_str
+from purplship.core.utils import Serializable, SF
 from purplship.core.models import (
     ShipmentRequest,
     PickupUpdateRequest,
@@ -30,7 +30,7 @@ def pickup_update_request(payload: PickupUpdateRequest, settings: Settings) -> S
         LastName=None,
         FirmName=payload.address.company_name,
         SuiteOrApt=payload.address.address_line1,
-        Address2=concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
+        Address2=SF.concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
         Urbanization=None,
         City=payload.address.city,
         State=payload.address.state_code,

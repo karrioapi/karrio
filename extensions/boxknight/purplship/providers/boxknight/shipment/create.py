@@ -4,7 +4,7 @@ from pyboxknight.orders import (
     Address,
     Recipient,
 )
-from purplship.core.utils import Serializable, concat_str
+from purplship.core.utils import Serializable, SF
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
@@ -35,7 +35,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
             email=payload.recipient.email
         ),
         recipientAddress=Address(
-            street=concat_str(payload.recipient.address_line1, payload.recipient.address_line2, join=True),
+            street=SF.concat_str(payload.recipient.address_line1, payload.recipient.address_line2, join=True),
             city=payload.recipient.city,
             province=payload.recipient.state_code,
             country=payload.recipient.country_code,
@@ -43,7 +43,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable:
             unit=None
         ),
         originAddress=Address(
-            street=concat_str(payload.shipper.address_line1, payload.shipper.address_line2, join=True),
+            street=SF.concat_str(payload.shipper.address_line1, payload.shipper.address_line2, join=True),
             city=payload.shipper.city,
             province=payload.shipper.state_code,
             country=payload.shipper.country_code,

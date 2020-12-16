@@ -1,6 +1,6 @@
 from typing import Callable
 from purplship.core import Settings as BaseSettings
-from purplship.core.utils import Envelope, apply_namespaceprefix, export
+from purplship.core.utils import Envelope, apply_namespaceprefix, XP
 from pyups.ups_security import UPSSecurity, UsernameTokenType, ServiceAccessTokenType
 
 
@@ -51,6 +51,6 @@ def default_request_serializer(
         apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
         apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
 
-        return export(envelope, namespacedef_=namespace_)
+        return XP.export(envelope, namespacedef_=namespace_)
 
     return serializer

@@ -11,7 +11,7 @@ from purplship.core.models import (
     ConfirmationDetails,
     Message,
 )
-from purplship.core.utils import Serializable, create_envelope, Envelope, Element, build
+from purplship.core.utils import Serializable, create_envelope, Envelope, Element, XP
 from purplship.providers.purolator.error import parse_error_response
 from purplship.providers.purolator.utils import Settings, standard_request_serializer
 
@@ -19,7 +19,7 @@ from purplship.providers.purolator.utils import Settings, standard_request_seria
 def parse_shipment_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    void_response = build(VoidShipmentResponse, next(
+    void_response = XP.build(VoidShipmentResponse, next(
         iter(response.xpath(".//*[local-name() = $name]", name="VoidShipmentResponse")),
         None
     ))

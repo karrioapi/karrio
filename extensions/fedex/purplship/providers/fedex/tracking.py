@@ -8,7 +8,7 @@ from pyfedex.track_service_v18 import (
     TrackSelectionDetail,
     TrackPackageIdentifier,
 )
-from purplship.core.utils import export, Serializable, Element, format_date, format_time
+from purplship.core.utils import Serializable, Element, XP, DF
 from purplship.core.utils.soap import create_envelope, apply_namespaceprefix
 from purplship.core.models import (
     TrackingRequest,
@@ -48,8 +48,8 @@ def _extract_tracking(
         events=list(
             map(
                 lambda e: TrackingEvent(
-                    date=format_date(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
-                    time=format_time(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                    date=DF.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                    time=DF.ftime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
                     code=e.EventType,
                     location=e.ArrivalLocation,
                     description=e.EventDescription,
@@ -102,4 +102,4 @@ def _request_serializer(request: TrackRequest) -> str:
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v18")
 
-    return export(envelope, namespacedef_=namespacedef_)
+    return XP.export(envelope, namespacedef_=namespacedef_)

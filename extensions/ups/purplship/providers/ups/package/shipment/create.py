@@ -32,10 +32,16 @@ from pyups.ship_web_service_schema import (
     LabelSpecificationType,
     LabelImageFormatType,
 )
-from purplship.core.utils.helpers import export, concat_str, gif_to_pdf, no_space
-from purplship.core.utils.serializable import Serializable
-from purplship.core.utils.soap import apply_namespaceprefix, create_envelope
-from purplship.core.utils.xml import Element
+from purplship.core.utils import (
+    gif_to_pdf,
+    Serializable,
+    apply_namespaceprefix,
+    create_envelope,
+    Element,
+    Envelope,
+    XP,
+    SF
+)
 from purplship.core.units import Options, Packages, PaymentType
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message, Payment
 from purplship.providers.ups.units import (
@@ -119,12 +125,12 @@ def shipment_request(
                 FaxNumber=None,
                 EMailAddress=payload.shipper.email,
                 Address=ShipAddressType(
-                    AddressLine=concat_str(
+                    AddressLine=SF.concat_str(
                         payload.shipper.address_line1, payload.shipper.address_line2
                     ),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
-                    PostalCode=no_space(payload.shipper.postal_code),
+                    PostalCode=payload.shipper.postal_code,
                     CountryCode=payload.shipper.country_code,
                 ),
             ),
@@ -142,13 +148,13 @@ def shipment_request(
                 FaxNumber=None,
                 EMailAddress=payload.recipient.email,
                 Address=ShipAddressType(
-                    AddressLine=concat_str(
+                    AddressLine=SF.concat_str(
                         payload.recipient.address_line1,
                         payload.recipient.address_line2,
                     ),
                     City=payload.recipient.city,
                     StateProvinceCode=payload.recipient.state_code,
-                    PostalCode=no_space(payload.recipient.postal_code),
+                    PostalCode=payload.recipient.postal_code,
                     CountryCode=payload.recipient.country_code,
                 ),
             ),
@@ -166,14 +172,14 @@ def shipment_request(
                                 ),
                                 SecurityCode=payment.credit_card.security_code,
                                 Address=CreditCardAddressType(
-                                    AddressLine=concat_str(
+                                    AddressLine=SF.concat_str(
                                         payload.shipper.address_line1,
                                         payload.shipper.address_line2,
                                     ),
                                     City=payload.shipper.city,
                                     StateProvinceCode=payload.shipper.state_code,
-                                    PostalCode=no_space(payload.payment.credit_card.postal_code)
-                                    or no_space(payload.shipper.postal_code),
+                                    PostalCode=payload.payment.credit_card.postal_code
+                                    or payload.shipper.postal_code,
                                     CountryCode=payload.shipper.country_code,
                                 ),
                             )
@@ -186,7 +192,7 @@ def shipment_request(
                         BillReceiver=BillReceiverType(
                             AccountNumber=payment.account_number,
                             Address=BillReceiverAddressType(
-                                PostalCode=no_space(payload.recipient.postal_code)
+                                PostalCode=payload.recipient.postal_code
                             ),
                         )
                         if payment.paid_by == PaymentType.recipient.name
@@ -278,7 +284,7 @@ def shipment_request(
     )
 
 
-def _request_serializer(envelope: Element) -> str:
+def _request_serializer(envelope: Envelope) -> str:
     namespace_ = """
         xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"
         xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"
@@ -301,4 +307,4 @@ def _request_serializer(envelope: Element) -> str:
     apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
     apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
 
-    return export(envelope, namespacedef_=namespace_)
+    return XP.export(envelope, namespacedef_=namespace_)

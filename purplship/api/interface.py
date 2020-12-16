@@ -5,7 +5,7 @@ import logging
 import functools
 from typing import Callable, TypeVar, Union
 from purplship.api.gateway import Gateway
-from purplship.core.utils import Serializable, Deserializable, jsonify
+from purplship.core.utils import Serializable, Deserializable, DP
 from purplship.core.errors import PurplShipDetailedError
 from purplship.core.models import (
     AddressValidationRequest,
@@ -90,7 +90,7 @@ class IRequestWith:
 class Address:
     @staticmethod
     def validate(args: Union[AddressValidationRequest, dict]) -> IRequestFrom:
-        logger.debug(f'validate an address. payload: {jsonify(args)}')
+        logger.debug(f'validate an address. payload: {DP.jsonify(args)}')
         payload = (
             args if isinstance(args, AddressValidationRequest) else AddressValidationRequest(**args)
         )
@@ -111,7 +111,7 @@ class Address:
 class Pickup:
     @staticmethod
     def schedule(args: Union[PickupRequest, dict]):
-        logger.debug(f"book a pickup. payload: {jsonify(args)}")
+        logger.debug(f"book a pickup. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
 
         def action(gateway: Gateway):
@@ -128,7 +128,7 @@ class Pickup:
 
     @staticmethod
     def cancel(args: Union[PickupCancelRequest, dict]):
-        logger.debug(f"cancel a pickup. payload: {jsonify(args)}")
+        logger.debug(f"cancel a pickup. payload: {DP.jsonify(args)}")
         payload = (
             args
             if isinstance(args, PickupCancelRequest)
@@ -149,7 +149,7 @@ class Pickup:
 
     @staticmethod
     def update(args: Union[PickupUpdateRequest, dict]):
-        logger.debug(f"update a pickup. payload: {jsonify(args)}")
+        logger.debug(f"update a pickup. payload: {DP.jsonify(args)}")
         payload = (
             args
             if isinstance(args, PickupUpdateRequest)
@@ -172,7 +172,7 @@ class Pickup:
 class Rating:
     @staticmethod
     def fetch(args: Union[RateRequest, dict]):
-        logger.debug(f"fetch shipment rates. payload: {jsonify(args)}")
+        logger.debug(f"fetch shipment rates. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, RateRequest) else RateRequest(**args)
 
         def action(gateway: Gateway):
@@ -191,7 +191,7 @@ class Rating:
 class Shipment:
     @staticmethod
     def create(args: Union[ShipmentRequest, dict]):
-        logger.debug(f"create a shipment. payload: {jsonify(args)}")
+        logger.debug(f"create a shipment. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, ShipmentRequest) else ShipmentRequest(**args)
 
         def action(gateway: Gateway):
@@ -208,7 +208,7 @@ class Shipment:
 
     @staticmethod
     def cancel(args: Union[ShipmentCancelRequest, dict]):
-        logger.debug(f"void a shipment. payload: {jsonify(args)}")
+        logger.debug(f"void a shipment. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, ShipmentCancelRequest) else ShipmentCancelRequest(**args)
 
         def action(gateway: Gateway):
@@ -227,7 +227,7 @@ class Shipment:
 class Tracking:
     @staticmethod
     def fetch(args: Union[TrackingRequest, dict]) -> IRequestFrom:
-        logger.debug(f"track a shipment. payload: {jsonify(args)}")
+        logger.debug(f"track a shipment. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, TrackingRequest) else TrackingRequest(**args)
 
         def action(gateway: Gateway) -> IDeserialize:

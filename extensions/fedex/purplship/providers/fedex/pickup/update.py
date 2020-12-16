@@ -4,7 +4,7 @@ from pyfedex.pickup_service_v20 import (
     CreatePickupReply,
     NotificationSeverityType,
 )
-from purplship.core.utils import Job, Pipeline, to_xml, Serializable, build
+from purplship.core.utils import Job, Pipeline, XP, Serializable
 from purplship.core.models import (
     PickupRequest,
     PickupUpdateRequest,
@@ -52,13 +52,13 @@ def _cancel_pickup_request(
 ):
     reply = next(
         iter(
-            to_xml(response).xpath(
+            XP.to_xml(response).xpath(
                 ".//*[local-name() = $name]", name="CreatePickupReply"
             )
         ),
         None,
     )
-    new_pickup = build(CreatePickupReply, reply)
+    new_pickup = XP.build(CreatePickupReply, reply)
     data = (
         pickup_cancel_request(
             PickupCancelRequest(confirmation_number=payload.confirmation_number),

@@ -4,7 +4,7 @@ from pyboxknight.pickups import (
     PickupRequestRecipientAddress,
     Recipient,
 )
-from purplship.core.utils import Serializable, concat_str, to_date
+from purplship.core.utils import Serializable, SF, DF
 from purplship.core.models import (
     ShipmentDetails,
     PickupRequest,
@@ -25,8 +25,8 @@ def parse_pickup_response(response: dict, settings: Settings) -> Tuple[PickupDet
 
 def pickup_request(payload: PickupRequest, _) -> Serializable:
     shipments: List[ShipmentDetails] = payload.options.get('shipments', [])
-    after = to_date(f"{payload.pickup_date} {payload.ready_time}", current_format="%Y-%m-%d %H:%M")
-    before = to_date(f"{payload.pickup_date} {payload.ready_time}", current_format="%Y-%m-%d %H:%M")
+    after = DF.date(f"{payload.pickup_date} {payload.ready_time}", current_format="%Y-%m-%d %H:%M")
+    before = DF.date(f"{payload.pickup_date} {payload.ready_time}", current_format="%Y-%m-%d %H:%M")
 
     request = BoxKnightPickupRequest(
         packageCount=len(payload.parcels),
@@ -37,7 +37,7 @@ def pickup_request(payload: PickupRequest, _) -> Serializable:
             email=payload.address.email,
         ),
         recipientAddress=PickupRequestRecipientAddress(
-            street=concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
+            street=SF.concat_str(payload.address.address_line1, payload.address.address_line2, join=True),
             city=payload.address.city,
             province=payload.address.state_code,
             country=payload.address.country_code,
