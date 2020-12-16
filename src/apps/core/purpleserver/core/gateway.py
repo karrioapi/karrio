@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.exceptions import NotFound
 
 import purplship
-from purplship.core.utils import exec_async, to_dict
+from purplship.core.utils import exec_async, DP
 
 from purpleserver.providers import models
 from purpleserver.core.exceptions import PurplShipApiException
@@ -65,7 +65,7 @@ class Address:
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Address.validate(AddressValidationRequest(**to_dict(payload)))
+        request = purplship.Address.validate(AddressValidationRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -95,7 +95,7 @@ class Shipments:
             )
 
         carrier = carrier or Carriers.retrieve(carrier_id=selected_rate.carrier_id).data
-        request = ShipmentRequest(**{**to_dict(payload), 'service': selected_rate.service})
+        request = ShipmentRequest(**{**DP.to_dict(payload), 'service': selected_rate.service})
         gateway = purplship.gateway[carrier.carrier_name].create(carrier.dict())
 
         # The request is wrapped in identity to simplify mocking in tests
@@ -105,9 +105,9 @@ class Shipments:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
         shipment_rate = (
-            {**to_dict(shipment.selected_rate), 'id': f'rat_{uuid.uuid4().hex}'}
+            {**DP.to_dict(shipment.selected_rate), 'id': f'rat_{uuid.uuid4().hex}'}
             if shipment.selected_rate is not None else
-            to_dict(selected_rate)
+            DP.to_dict(selected_rate)
         )
 
         def generate_tracking_url():
@@ -119,7 +119,7 @@ class Shipments:
         return ShipmentResponse(
             shipment=Shipment(**{
                 **payload,
-                **to_dict(shipment),
+                **DP.to_dict(shipment),
                 "id": f"shp_{uuid.uuid4().hex}",
                 "test_mode": carrier.test,
                 "selected_rate": shipment_rate,
@@ -160,7 +160,7 @@ class Shipments:
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Tracking.fetch(TrackingRequest(**to_dict(payload)))
+        request = purplship.Tracking.fetch(TrackingRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -171,7 +171,7 @@ class Shipments:
 
         return TrackingResponse(
             tracking=Tracking(**{
-                **to_dict(results[0]),
+                **DP.to_dict(results[0]),
                 'id': f'trk_{uuid.uuid4().hex}',
                 'test_mode': carrier.test,
             }),
@@ -187,7 +187,7 @@ class Pickups:
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Pickup.schedule(PickupRequest(**to_dict(payload)))
+        request = purplship.Pickup.schedule(PickupRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -199,7 +199,7 @@ class Pickups:
         return PickupResponse(
             pickup=Pickup(**{
                 **payload,
-                **to_dict(pickup),
+                **DP.to_dict(pickup),
                 'id': f'pck_{uuid.uuid4().hex}',
                 'test_mode': carrier.test,
             }),
@@ -213,7 +213,7 @@ class Pickups:
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Pickup.update(PickupUpdateRequest(**to_dict(payload)))
+        request = purplship.Pickup.update(PickupUpdateRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -225,7 +225,7 @@ class Pickups:
         return PickupResponse(
             pickup=Pickup(**{
                 **payload,
-                **to_dict(pickup),
+                **DP.to_dict(pickup),
                 'test_mode': carrier.test,
             }),
             messages=messages
@@ -238,7 +238,7 @@ class Pickups:
         if carrier is None:
             raise NotFound('No configured carrier found')
 
-        request = purplship.Pickup.cancel(PickupCancelRequest(**to_dict(payload)))
+        request = purplship.Pickup.cancel(PickupCancelRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
@@ -259,7 +259,7 @@ class Rates:
 
     @staticmethod
     def fetch(payload: dict) -> RateResponse:
-        request = purplship.Rating.fetch(RateRequest(**to_dict(payload)))
+        request = purplship.Rating.fetch(RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
             carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []))
@@ -295,7 +295,7 @@ class Rates:
                 'id': f'rat_{uuid.uuid4().hex}',
                 'carrier_ref': carrier.id,
                 'test_mode': carrier.test,
-                **to_dict(rate)
+                **DP.to_dict(rate)
             })
 
         rates: List[Rate] = sorted(map(consolidate_rate, flattened_rates), key=lambda rate: rate.total_charge)

@@ -2,7 +2,6 @@ import React, { Fragment, useEffect } from 'react';
 import { View } from '@/library/types';
 import { PaginatedConnections, state } from '@/library/api';
 import ConnectProviderModal from '@/components/connect-provider-modal';
-import { Reference } from '@/library/context';
 import DisconnectProviderButton from '@/components/disconnect-provider-button';
 import CarrierBadge from '@/components/carrier-badge';
 

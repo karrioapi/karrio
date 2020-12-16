@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { View } from '@/library/types';
 import GenerateAPIModal from '@/components/generate-api-dialog';
 import CloseAccountAction from '@/components/close-account-action';
@@ -12,8 +12,9 @@ interface SettingsView extends View {
 
 const Settings: React.FC<SettingsView> = ({ token, user }) => {
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
+  const tokenInput = useRef<HTMLInputElement>(null);
   const copy = (e: React.MouseEvent) => {
-    (e.target as HTMLInputElement).select();
+    tokenInput.current?.select();
     document.execCommand("copy");
   }
 
@@ -62,16 +63,21 @@ const Settings: React.FC<SettingsView> = ({ token, user }) => {
         <div className="column is-5">
           <div className="field">
             <div className="control">
-              <input className="input is-small" 
-                type="text" 
-                title={ isRevealed ? "Click to Copy" : "" }
-                onClick={isRevealed ? copy : () =>{}}
-                value={ isRevealed ? token : "..........."}
-                style={{maxWidth: "80%"}} 
+              <input className="input is-small"
+                type="text"
+                title={isRevealed ? "Click to Copy" : ""}
+                value={isRevealed ? token : "..........."}
+                style={{ maxWidth: "80%" }}
+                ref={tokenInput}
                 readOnly
-                />
-              <button className="button is-small mr-1" onClick={() => setIsRevealed(!isRevealed) }>
-                { isRevealed ? "hide" : "reveal" }
+              />
+              <button className="button is-small is-light" onClick={copy} disabled={!isRevealed}>
+                <span className="icon is-small"><i className="fas fa-copy"></i></span>
+              </button>
+              <button className="button is-small is-light" onClick={() => setIsRevealed(!isRevealed)}>
+                {isRevealed ?
+                <span className="icon is-small"><i className="fas fa-eye-slash"></i></span> : 
+                <span className="icon is-small"><i className="fas fa-eye"></i></span>}
               </button>
             </div>
           </div>

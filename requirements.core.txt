@@ -5,6 +5,7 @@ purplship
 purplship-server
 purplship-server.client
 purplship-server.core
+purplship-server.manager
 purplship-server.proxy
 purplship.canadapost
 purplship.dhl_express

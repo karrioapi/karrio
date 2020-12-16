@@ -9,6 +9,7 @@ from purpleserver.manager.serializers.shipment import (
     ShipmentPurchaseData,
     ShipmentValidationData,
     ShipmentCancelSerializer,
+    reset_related_shipment_rates,
 )
 from purpleserver.manager.serializers.pickup import (
     PickupData,

@@ -266,7 +266,7 @@ REDOC_SETTINGS = {
 
 LOG_LEVEL = ('DEBUG' if DEBUG else config('LOG_LEVEL', default='INFO'))
 DJANGO_LOG_LEVEL = ('INFO' if DEBUG else config('DJANGO_LOG_LEVEL', default='WARNING'))
-LOG_FILE_DIR = config('LOG_PATH', default=WORK_DIR)
+LOG_FILE_DIR = config('LOG_DIR', default=WORK_DIR)
 LOG_FILE_NAME = os.path.join(LOG_FILE_DIR, 'debug.log')
 DRF_TRACKING_ADMIN_LOG_READONLY = True
 
@@ -287,6 +287,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
+            'formatter': 'verbose',
             'filename': LOG_FILE_NAME,
         },
         'console': {

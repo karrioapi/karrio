@@ -36,8 +36,9 @@ const Tabs: React.FC<TabsComponent> = ({ tabs, disabled, eventKey, tabClass, chi
 
             <div {...props} ref={ref}>
                 {React.Children.map(children, (child: any, index) => {
+                    const isActive = selected === tabs[index];
                     return (
-                        <div key={index} className={`tab-content ${selected === tabs[index] ? "is-active" : ""}`}>
+                        <div key={index} className={`tab-content ${isActive ? "is-active" : ""}`}>
                             {child}
                         </div>
                     );

@@ -32,7 +32,6 @@ services:
       EOF"
 
   nginx:
-    restart: always
     image: "nginx:latest"
     ports:
       - "80:80"

@@ -1,15 +1,22 @@
 from enum import Enum
 from drf_yasg import openapi
-from purpleserver.providers.models import MODELS
+from rest_framework.serializers import (
+    Serializer, CharField, FloatField,
+    BooleanField, IntegerField, ListField,
+    ChoiceField, DictField, URLField, NullBooleanField
+)
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit,
     PackagingUnit, PaymentType, Currency,
     PrinterType, CustomsContentType, Incoterm
 )
-from rest_framework.serializers import (
-    Serializer, CharField, FloatField,
-    BooleanField, IntegerField, ListField,
-    ChoiceField, DictField, URLField, NullBooleanField
+from purpleserver.providers.models import MODELS
+from purpleserver.core.validators import (
+    AugmentedAddressSerializer,
+    PresetSerializer,
+    dimensions_required_together,
+    valid_time_format,
+    valid_date_format,
 )
 
 CARRIERS = [(k, k) for k in MODELS.keys()]
@@ -65,7 +72,7 @@ class TestFilters(Serializer):
     """)
 
 
-class AddressData(Serializer):
+class AddressData(AugmentedAddressSerializer):
 
     postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address postal code")
     city = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
@@ -81,25 +88,16 @@ class AddressData(Serializer):
     company_name = CharField(required=False, allow_blank=True, allow_null=True, help_text="The company name if the party is a company")
     country_code = ChoiceField(required=True, choices=COUNTRIES, help_text="The address country code")
     email = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party email")
-    phone_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
-    The party phone number.<br/>
-    Note that the expected format is: **1 514 0000000**
-    
-    Country Code | Area Code | Phone
-    --- | --- | ---
-    1 | 514 | 0000000
-    """)
+    phone_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="""The party phone number.""")
 
     state_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address state code")
     suburb = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address suburb if known")
     residential = BooleanField(
-        allow_null=True,
-        required=False,
-        default=False,
+        allow_null=True, required=False, default=False,
         help_text="Indicate if the address is residential or commercial (enterprise)"
     )
 
-    address_line1 = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
+    address_line1 = CharField(required=True, allow_blank=True, allow_null=True, help_text="""
     The address line with street number <br/>
     **(required to create as shipment)**
     """)
@@ -112,8 +110,8 @@ class Address(EntitySerializer, AddressData):
 
 class CommodityData(Serializer):
 
-    weight = FloatField(required=False, allow_null=True, help_text="The commodity's weight")
-    weight_unit = ChoiceField(required=False, allow_blank=True, allow_null=True, choices=WEIGHT_UNIT, help_text="The commodity's weight unit")
+    weight = FloatField(required=True, help_text="The commodity's weight")
+    weight_unit = ChoiceField(required=True, choices=WEIGHT_UNIT, help_text="The commodity's weight unit")
     description = CharField(required=False, allow_blank=True, allow_null=True, help_text="A description of the commodity")
     quantity = IntegerField(required=False, allow_null=True, help_text="The commodity's quantity (number or item)")
     sku = CharField(required=False, allow_blank=True, allow_null=True, help_text="The commodity's sku number")
@@ -126,8 +124,11 @@ class Commodity(EntitySerializer, CommodityData):
     pass
 
 
-class ParcelData(Serializer):
-    weight = FloatField(required=False, allow_null=True, help_text="The parcel's weight")
+class ParcelData(PresetSerializer):
+    class Meta:
+        validators = [dimensions_required_together]
+
+    weight = FloatField(required=True, help_text="The parcel's weight")
     width = FloatField(required=False, allow_null=True, help_text="The parcel's width")
     height = FloatField(required=False, allow_null=True, help_text="The parcel's height")
     length = FloatField(required=False, allow_null=True, help_text="The parcel's length")
@@ -280,15 +281,23 @@ class TrackingRequest(Serializer):
 
 class PickupRequest(Serializer):
 
-    pickup_date = CharField(required=True, help_text="""
+    pickup_date = CharField(required=True, validators=[valid_date_format], help_text="""
     The expected pickup date
     
-    Date Format: YYYY-MM-DD
+    Date Format: `YYYY-MM-DD`
     """)
     address = AddressData(required=True, help_text="The pickup address")
     parcels = ParcelData(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
-    ready_time = CharField(required=True, help_text="The ready time for pickup.")
-    closing_time = CharField(required=True, help_text="The closing or late time of the pickup")
+    ready_time = CharField(required=True, validators=[valid_time_format], help_text="""
+    The ready time for pickup.
+    
+    Time Format: `HH:MM`
+    """)
+    closing_time = CharField(required=True, validators=[valid_time_format], help_text="""
+    The closing or late time of the pickup
+    
+    Time Format: `HH:MM`
+    """)
     instruction = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
     The pickup instruction.
     
@@ -307,13 +316,21 @@ class PickupUpdateRequest(Serializer):
     pickup_date = CharField(required=True, help_text="""
     The expected pickup date
     
-    Date Format: YYYY-MM-DD
+    Date Format: `YYYY-MM-DD`
     """)
     address = Address(required=True, help_text="The pickup address")
     parcels = Parcel(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
     confirmation_number = CharField(required=True, help_text="pickup identification number")
-    ready_time = CharField(required=True, help_text="The ready time for pickup.")
-    closing_time = CharField(required=True, help_text="The closing or late time of the pickup")
+    ready_time = CharField(required=True, validators=[valid_time_format], help_text="""
+    The ready time for pickup.
+    
+    Time Format: `HH:MM`
+    """)
+    closing_time = CharField(required=True, validators=[valid_time_format], help_text="""
+    The closing or late time of the pickup
+    
+    Time Format: `HH:MM`
+    """)
     instruction = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
     The pickup instruction.
     
@@ -348,10 +365,10 @@ class Pickup(PickupDetails, PickupRequest):
 class PickupCancelRequest(Serializer):
     confirmation_number = CharField(required=True, help_text="The pickup confirmation identifier")
     address = AddressData(required=False, help_text="The pickup address")
-    pickup_date = CharField(required=False, allow_null=True, help_text="""
+    pickup_date = CharField(required=False, allow_null=True, validators=[valid_date_format], help_text="""
     The pickup date
     
-    Date Format: YYYY-MM-DD
+    Date Format: `YYYY-MM-DD`
     """)
     reason = CharField(required=False, help_text="The reason of the pickup cancellation")
 
@@ -520,7 +537,7 @@ class ShipmentContent(Serializer):
     created_at = CharField(required=True, help_text="""
     The shipment creation date
     
-    Date Format: YYYY-MM-DD
+    Date Format: `YYYY-MM-DD`
     """)
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
 

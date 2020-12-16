@@ -67,7 +67,7 @@ ADDRESS_RESPONSE = {
     "company_name": None,
     "country_code": "CA",
     "email": None,
-    "phone_number": "438 222 2222",
+    "phone_number": "+1 438-222-2222",
     "state_code": "QC",
     "suburb": None,
     "residential": True,

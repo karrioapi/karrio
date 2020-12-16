@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.postgres.fields import DecimalRangeField
 
 from purplship.core.models import ChargeDetails
-from purplship.core.utils import to_dict, decimal
+from purplship.core.utils import DP, NF
 from purpleserver.core.fields import MultiChoiceField
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.views.references import REFERENCE_MODELS
@@ -52,8 +52,8 @@ class PricingCharge(OwnedEntity):
             if any(applicable) and all(applicable):
                 logger.debug('applying custom charge to returned rate')
                 return Rate(**{
-                    **to_dict(rate),
-                    'total_charge': decimal(rate.total_charge + cast(float, self.amount)),
+                    **DP.to_dict(rate),
+                    'total_charge': NF.decimal(rate.total_charge + cast(float, self.amount)),
                     'extra_charges': (rate.extra_charges + [
                         ChargeDetails(name="Service charge", amount=cast(float, self.amount), currency=rate.currency)
                     ])

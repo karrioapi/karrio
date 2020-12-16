@@ -8,7 +8,7 @@ from rest_framework.exceptions import (
 )
 from django.core.exceptions import ObjectDoesNotExist
 
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 from purplship.core.errors import ValidationError as PurplShipValidationError
 
 from purpleserver.core.datatypes import Error
@@ -56,26 +56,26 @@ def custom_exception_handler(exc, context):
     if isinstance(exc, PurplShipApiException):
         response.status_code = exc.status_code
         response.data = dict(
-            error=to_dict(Error(
+            error=DP.to_dict(Error(
                 code=exc.code,
                 message=exc.detail if isinstance(exc.detail, str) else None,
-                details=to_dict(exc.detail) if not isinstance(exc.detail, str) else None
+                details=DP.to_dict(exc.detail) if not isinstance(exc.detail, str) else None
             ))
         )
 
     elif isinstance(exc, APIException):
         response.data = dict(
-            error=to_dict(Error(
+            error=DP.to_dict(Error(
                 code=code,
                 message=exc.detail if isinstance(exc.detail, str) else None,
-                details=to_dict(exc.get_full_details()) if not isinstance(exc.detail, str) else None
+                details=DP.to_dict(exc.get_full_details()) if not isinstance(exc.detail, str) else None
             ))
         )
 
     elif isinstance(exc, Exception):
         message, *_ = list(exc.args)
         response = Response(
-            dict(error=to_dict(Error(code=code, message=message))),
+            dict(error=DP.to_dict(Error(code=code, message=message))),
             status=status_code or status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 

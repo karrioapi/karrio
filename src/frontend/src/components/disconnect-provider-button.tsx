@@ -21,7 +21,7 @@ const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({
             });
             close();
         } catch(err) {
-            state.setNotification({ type: NotificationType.error, message: err.message });
+            state.setNotification({ type: NotificationType.error, message: err });
         }
     };
 

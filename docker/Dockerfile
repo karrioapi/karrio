@@ -14,10 +14,11 @@ ENV DATABASE_NAME postgres
 ENV DATABASE_USERNAME postgres
 ENV DATABASE_PASSWORD postgres
 ENV WORK_DIR /app
+ENV LOG_DIR /log
 
 EXPOSE $PURPLSHIP_PORT
 
-RUN mkdir /app
+RUN mkdir /app /log
 WORKDIR /app
 
 COPY requirements.txt /temp/

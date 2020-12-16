@@ -9,11 +9,11 @@
     "license": {
       "name": "AGPLv3+ License"
     },
-    "version": "v1-2020.11"
+    "version": "v1-2020.12"
   },
   "servers": [
     {
-      "url": "http://instance.purplship.api/v1"
+      "url": "https://app.purplship.com/v1"
     }
   ],
   "security": [
@@ -246,8 +246,8 @@
                 "fedex_express",
                 "purolator_courier",
                 "ups_package",
-                "eshipper",
-                "freightcom"
+                "freightcom",
+                "eshipper"
               ]
             }
           },
@@ -1655,7 +1655,7 @@
           "Shipments"
         ],
         "summary": "Add shipment options",
-        "description": "Add one or many options to your shipment.<br/>\n**eg:**<br/>\n- add shipment **insurance**\n- specify the preferred transaction **currency**\n- setup a **cash collected on delivery** option\n\n```json\n{\n    \"insurane\": {\n        \"amount\": 120,\n    },\n    \"currency\": \"USD\"\n}\n```\n\nAnd many more, check additional options available in the [reference](#operation/all_references).",
+        "description": "Add one or many options to your shipment.<br/>\n**eg:**<br/>\n- add shipment **insurance**\n- specify the preferred transaction **currency**\n- setup a **cash collected on delivery** option\n\n```json\n{\n    \"insurance\": 120,\n    \"currency\": \"USD\"\n}\n```\n\nAnd many more, check additional options available in the [reference](#operation/all_references).",
         "operationId": "$$$$set_options",
         "parameters": [
           {
@@ -1916,6 +1916,7 @@
     "schemas": {
       "Address": {
         "required": [
+          "address_line1",
           "country_code"
         ],
         "type": "object",
@@ -2212,7 +2213,7 @@
           "phone_number": {
             "title": "Phone number",
             "type": "string",
-            "description": "\nThe party phone number.<br/>\nNote that the expected format is: **1 514 0000000**\n\nCountry Code | Area Code | Phone\n--- | --- | ---\n1 | 514 | 0000000\n",
+            "description": "The party phone number.",
             "nullable": true
           },
           "state_code": {
@@ -2305,6 +2306,7 @@
       },
       "AddressData": {
         "required": [
+          "address_line1",
           "country_code"
         ],
         "type": "object",
@@ -2595,7 +2597,7 @@
           "phone_number": {
             "title": "Phone number",
             "type": "string",
-            "description": "\nThe party phone number.<br/>\nNote that the expected format is: **1 514 0000000**\n\nCountry Code | Area Code | Phone\n--- | --- | ---\n1 | 514 | 0000000\n",
+            "description": "The party phone number.",
             "nullable": true
           },
           "state_code": {
@@ -2656,8 +2658,8 @@
               "fedex_express",
               "purolator_courier",
               "ups_package",
-              "eshipper",
-              "freightcom"
+              "freightcom",
+              "eshipper"
             ]
           },
           "carrier_id": {
@@ -2674,6 +2676,10 @@
         }
       },
       "Commodity": {
+        "required": [
+          "weight",
+          "weight_unit"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -2685,14 +2691,12 @@
           "weight": {
             "title": "Weight",
             "type": "number",
-            "description": "The commodity's weight",
-            "nullable": true
+            "description": "The commodity's weight"
           },
           "weight_unit": {
             "title": "Weight unit",
             "type": "string",
             "description": "The commodity's weight unit",
-            "nullable": true,
             "enum": [
               "KG",
               "LB"
@@ -3240,6 +3244,7 @@
       },
       "Parcel": {
         "required": [
+          "weight",
           "weight_unit"
         ],
         "type": "object",
@@ -3253,8 +3258,7 @@
           "weight": {
             "title": "Weight",
             "type": "number",
-            "description": "The parcel's weight",
-            "nullable": true
+            "description": "The parcel's weight"
           },
           "width": {
             "title": "Width",
@@ -3328,6 +3332,7 @@
       },
       "ParcelData": {
         "required": [
+          "weight",
           "weight_unit"
         ],
         "type": "object",
@@ -3335,8 +3340,7 @@
           "weight": {
             "title": "Weight",
             "type": "number",
-            "description": "The parcel's weight",
-            "nullable": true
+            "description": "The parcel's weight"
           },
           "width": {
             "title": "Width",
@@ -3422,7 +3426,7 @@
             "title": "Pickup date",
             "minLength": 1,
             "type": "string",
-            "description": "\nThe expected pickup date\n\nDate Format: YYYY-MM-DD\n"
+            "description": "\nThe expected pickup date\n\nDate Format: `YYYY-MM-DD`\n"
           },
           "address": {
             "$ref": "#/components/schemas/AddressData"
@@ -3439,13 +3443,13 @@
             "title": "Ready time",
             "minLength": 1,
             "type": "string",
-            "description": "The ready time for pickup."
+            "description": "\nThe ready time for pickup.\n\nTime Format: `HH:MM`\n"
           },
           "closing_time": {
             "title": "Closing time",
             "minLength": 1,
             "type": "string",
-            "description": "The closing or late time of the pickup"
+            "description": "\nThe closing or late time of the pickup\n\nTime Format: `HH:MM`\n"
           },
           "instruction": {
             "title": "Instruction",
@@ -3621,7 +3625,7 @@
             "title": "Pickup date",
             "minLength": 1,
             "type": "string",
-            "description": "\nThe expected pickup date\n\nDate Format: YYYY-MM-DD\n"
+            "description": "\nThe expected pickup date\n\nDate Format: `YYYY-MM-DD`\n"
           },
           "address": {
             "$ref": "#/components/schemas/Address"
@@ -3644,13 +3648,13 @@
             "title": "Ready time",
             "minLength": 1,
             "type": "string",
-            "description": "The ready time for pickup."
+            "description": "\nThe ready time for pickup.\n\nTime Format: `HH:MM`\n"
           },
           "closing_time": {
             "title": "Closing time",
             "minLength": 1,
             "type": "string",
-            "description": "The closing or late time of the pickup"
+            "description": "\nThe closing or late time of the pickup\n\nTime Format: `HH:MM`\n"
           },
           "instruction": {
             "title": "Instruction",
@@ -3692,7 +3696,7 @@
             "title": "Pickup date",
             "minLength": 1,
             "type": "string",
-            "description": "\nThe pickup date\n\nDate Format: YYYY-MM-DD\n",
+            "description": "\nThe pickup date\n\nDate Format: `YYYY-MM-DD`\n",
             "nullable": true
           },
           "reason": {
@@ -4178,7 +4182,7 @@
             "title": "Created at",
             "minLength": 1,
             "type": "string",
-            "description": "\nThe shipment creation date\n\nDate Format: YYYY-MM-DD\n"
+            "description": "\nThe shipment creation date\n\nDate Format: `YYYY-MM-DD`\n"
           },
           "test_mode": {
             "title": "Test mode",
@@ -4429,7 +4433,7 @@
             "title": "Pickup date",
             "minLength": 1,
             "type": "string",
-            "description": "\nThe expected pickup date\n\nDate Format: YYYY-MM-DD\n"
+            "description": "\nThe expected pickup date\n\nDate Format: `YYYY-MM-DD`\n"
           },
           "address": {
             "$ref": "#/components/schemas/AddressData"
@@ -4438,13 +4442,13 @@
             "title": "Ready time",
             "minLength": 1,
             "type": "string",
-            "description": "The ready time for pickup."
+            "description": "\nThe ready time for pickup.\n\nTime Format: `HH:MM`\n"
           },
           "closing_time": {
             "title": "Closing time",
             "minLength": 1,
             "type": "string",
-            "description": "The closing or late time of the pickup"
+            "description": "\nThe closing or late time of the pickup\n\nTime Format: `HH:MM`\n"
           },
           "instruction": {
             "title": "Instruction",

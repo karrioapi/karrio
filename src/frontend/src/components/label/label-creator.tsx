@@ -1,6 +1,6 @@
-import { LabelData, state } from '@/library/api';
+import { LabelData, NotificationType, state } from '@/library/api';
 import { View } from '@/library/types';
-import { Link } from '@reach/router';
+import { Link, useNavigate } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import ShipmentCustomsInfo from '@/components/form-parts/shipment-customs-info';
 import ShipmentAddress from '@/components/form-parts/shipment-address';
@@ -16,8 +16,9 @@ interface LabelCreatorComponent extends View {
 }
 
 const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
+    const navigate = useNavigate();
     const tabs = ["shipper", "recipient", "parcel", "customs info", "options"];
-    const [key, setKey] = useState<string>(`${id}-${Date.now()}`);
+    const [ckey, setKey] = useState<string>(`${id}-${Date.now()}`);
     const filterDisabled = (shipment: Shipment) => {
         return tabs.reduce((disabled: string[], value: string) => {
             const is_local = shipment?.shipper.country_code === shipment?.recipient.country_code;
@@ -53,19 +54,25 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
             return disabled;
         }, []);
     };
-    const update = (payload: Partial<Shipment>) => {
+    const update = (payload: Partial<Shipment>, refresh?: boolean) => {
         const new_state = { ...data, shipment: { ...data.shipment, ...payload } };
         Object.entries(payload).forEach(([key, val]) => {
             if (val === undefined) delete new_state.shipment[key as keyof Shipment];
         });
         state.setLabelData(new_state);
+        if (refresh) setKey(`${id}-${Date.now()}`);
     };
 
     useEffect(() => {
         if (id !== undefined && id !== 'new') {
             state.retrieveShipment(id).then(shipment => {
-                state.setLabelData({ shipment });
-                setKey(`${id}-${Date.now()}`);
+                if (shipment.status === Shipment.StatusEnum.Created) {
+                    state.setLabelData({ shipment });
+                    setKey(`${id}-${Date.now()}`);
+                } else {
+                    state.setNotification({ type: NotificationType.info, message: 'Label already purchased!' });
+                    navigate('/');
+                }
             });
         }
     }, []);
@@ -79,21 +86,21 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                 </ul>
             </nav>
 
-            <div className="columns px-2" key={key}>
+            <div className="columns px-2">
                 <div className="column is-7 px-0">
 
                     <div className="card px-3 py-3">
                         <Tabs tabs={tabs} disabled={filterDisabled(data.shipment)} eventKey="label-select-tab">
 
-                            <ShipmentAddress shipment={data.shipment} addressName="shipper" update={update} />
+                            <ShipmentAddress key={ckey} shipment={data.shipment} addressName="shipper" update={update} />
 
-                            <ShipmentAddress shipment={data.shipment} addressName="recipient" update={update} />
+                            <ShipmentAddress key={ckey} shipment={data.shipment} addressName="recipient" update={update} />
 
-                            <ShipmentParcel shipment={data.shipment} update={update} />
+                            <ShipmentParcel key={ckey} shipment={data.shipment} update={update} />
 
-                            <ShipmentCustomsInfo shipment={data.shipment} update={update} />
+                            <ShipmentCustomsInfo key={ckey} shipment={data.shipment} update={update} />
 
-                            <ShipmentOptions shipment={data.shipment} update={update} />
+                            <ShipmentOptions key={ckey} shipment={data.shipment} update={update} />
 
                         </Tabs>
                     </div>
@@ -102,7 +109,7 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                 <div className="column is-5">
 
                     <div className="card px-3 py-3">
-                        <LiveRates shipment={data.shipment} update={(data) => { update(data); setKey(`${id}-${Date.now()}`); }} />
+                        <LiveRates key={ckey} shipment={data.shipment} update={update} />
                     </div>
 
                 </div>

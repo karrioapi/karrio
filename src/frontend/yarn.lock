@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@purplship/purplship@^2020.11.0":
-  version "2020.11.0"
-  resolved "https://registry.yarnpkg.com/@purplship/purplship/-/purplship-2020.11.0.tgz#649c35bab3ca08eade22fe7fa35e6034d99a6760"
-  integrity sha512-L+PTrX+oAN8PCrKloFTLHSvU9evycyXoC7TsXilKBBKx+/uROiNGggdMUUOFqKd4dsKr2RMfyiZTV/OrNV3rmA==
+"@purplship/purplship@^2020.12.0":
+  version "2020.12.0"
+  resolved "https://registry.yarnpkg.com/@purplship/purplship/-/purplship-2020.12.0.tgz#f823fc7b6a324c6bab48ac609e4240ab1c6355d1"
+  integrity sha512-kzPL/e9HchiUvDzwnIt4rgDy3yHVdvE+85YTk1LNei0XpDjBgzqX87C43jMcB665sGjLYUgP7B1QhRBLwm3NFg==
   dependencies:
     portable-fetch "^3.0.0"
     url "^0.11.0"
@@ -1804,6 +1804,11 @@ klona@^2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.4.tgz#7bb1e3affb0cb8624547ef7e8f6708ea2e39dfc0"
   integrity sha512-ZRbnvdg/NxqzC7L9Uyqzf4psi1OM4Cuc+sJAkQPjO6XkQIJTNbfK2Rsmbw8fx1p2mkZdp2FZYo2+LwXYY/uwIA==
+
+libphonenumber-js@^1.9.6:
+  version "1.9.6"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.9.6.tgz#cdab0552a6705c5a5c1d69db15be9562b248591e"
+  integrity sha512-Ob419L88HxP3iVXPMI1Z/146izHrUPcV70ClnoP9WyNBgdy6mtlkCxx4ewMDmCzsdY5D4diDOUz8kboqLdKBoQ==
 
 line-column@^1.0.2:
   version "1.0.2"

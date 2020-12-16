@@ -29,7 +29,7 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
                 message: `${propertyValue} updated successfully!` 
             });
         } catch (err) {
-            state.setNotification({ type: NotificationType.error, message: err.message });
+            state.setNotification({ type: NotificationType.error, message: err });
         }
     };
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {

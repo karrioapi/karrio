@@ -116,16 +116,16 @@ class PickupSerializer(PickupRequest):
         return pickup
 
     def update(self, instance: models.Pickup, validated_data) -> models.Tracking:
-        request_data = SerializerDecorator[PickupUpdateRequest](data={
+        request_data = PickupUpdateRequest({
             **PickupUpdateRequest(instance).data,
             **validated_data,
             "address": AddressData({
                 **AddressData(instance.address).data,
                 **validated_data['address']
             }).data
-        })
+        }).data
 
-        Pickups.update(payload=request_data.data, carrier=instance.pickup_carrier)
+        Pickups.update(payload=request_data, carrier=instance.pickup_carrier)
 
         data = validated_data.copy()
         for key, val in data.items():

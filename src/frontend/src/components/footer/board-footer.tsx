@@ -13,11 +13,14 @@ const BoardFooter: React.FC<BoardFooterComponent> = () => {
                     </a>
                 </div>
                 <div className="column has-text-right-desktop">
+                    <a className="button is-white" target="_blank" href="/api">
+                        <span>API</span>
+                        <span className="icon is-small">
+                            <i className="fas fa-external-link-alt"></i>
+                        </span>
+                    </a>
                     <a className="button is-white" href="https://docs.purplship.com">
                         <span>Docs</span>
-                    </a>
-                    <a className="button is-white" href="/api">
-                        <span>API</span>
                     </a>
                     <a className="button is-white" href="https://github.com/PurplShip">
                         <span>Contribute</span>

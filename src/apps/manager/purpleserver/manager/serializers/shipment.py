@@ -1,8 +1,9 @@
+from typing import Optional
 from django.db import transaction
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.datatypes import RateResponse, ShipmentResponse, Confirmation, ConfirmationResponse
@@ -118,7 +119,7 @@ class ShipmentSerializer(ShipmentData):
             **{k: v for k, v in related_data.items() if v is not None},
             'user': user,
             'test_mode': test_mode,
-            'shipment_rates': to_dict(rate_response.rates),
+            'shipment_rates': DP.to_dict(rate_response.rates),
         })
         shipment.carriers.set(carriers)
 
@@ -158,13 +159,16 @@ class ShipmentSerializer(ShipmentData):
                 data=validated_data.get('customs')).save(user=instance.user).instance
 
         if validated_data.get('rates') is not None:
-            instance.shipment_rates = to_dict(validated_data.get('rates', []))
+            instance.shipment_rates = DP.to_dict(validated_data.get('rates', []))
 
-        if validated_data.get('selected_rate') is not None:
-            selected_rate = validated_data.get('selected_rate')
-            carrier = Carrier.objects.get(carrier_id=selected_rate['carrier_id'])
+        if 'selected_rate' in validated_data:
+            selected_rate = validated_data.get('selected_rate', {})
+            carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id')).first()
 
-            instance.selected_rate = {**selected_rate, 'carrier_ref': carrier.id}
+            instance.selected_rate = {
+                **selected_rate,
+                **({'carrier_ref': carrier.id} if carrier is not None else {})
+            }
             instance.selected_rate_carrier = carrier
 
         instance.save()
@@ -214,3 +218,10 @@ class ShipmentCancelSerializer(Shipment):
 
         instance.delete()
         return response
+
+
+def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
+    if shipment is not None:
+        shipment.shipment_rates = []
+        shipment.selected_rate = None
+        shipment.save()

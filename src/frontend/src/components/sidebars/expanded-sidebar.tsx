@@ -22,13 +22,10 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
                 <NavLink to="/">
                     <span>Shipments</span>
                 </NavLink>
+
                 <NavLink to="carrier_connections">
                     <span>Carrier Connections</span>
                 </NavLink>
-                <a className="menu-item" target="_blank" href="/api">
-                    <span>API Reference</span>
-                    <i className="fas fa-external-link-alt has-text-primary px-1 mx-1"></i>
-                </a>
 
                 <div className="menu-item menu-label my-0">
                     <span>Developers</span>
