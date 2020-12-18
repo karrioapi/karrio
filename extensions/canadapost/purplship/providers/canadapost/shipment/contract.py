@@ -22,7 +22,7 @@ from pycanadapost.shipment import (
     groupIdOrTransmitShipment,
 )
 from purplship.core.units import Currency, WeightUnit, Options, Packages
-from purplship.core.utils import Serializable, Element, XP, SF
+from purplship.core.utils import Serializable, Element, XP, SF, NF
 from purplship.core.models import (
     Message,
     ShipmentDetails,
@@ -145,11 +145,11 @@ def shipment_request(
                 ),
             ),
             parcel_characteristics=ParcelCharacteristicsType(
-                weight=package.weight.KG,
+                weight=NF.decimal(package.weight.KG, .1),
                 dimensions=dimensionsType(
-                    length=package.length.CM,
-                    width=package.width.CM,
-                    height=package.height.CM,
+                    length=NF.decimal(package.length.CM, .1),
+                    width=NF.decimal(package.width.CM, .1),
+                    height=NF.decimal(package.height.CM, .1),
                 ),
                 unpackaged=None,
                 mailing_tube=None,

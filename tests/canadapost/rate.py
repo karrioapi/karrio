@@ -80,7 +80,11 @@ RatePayload = {
         }
     ],
     "services": ["canadapost_expedited_parcel"],
-    "options": {"signature_confirmation": True, "insurance": 1000}
+    "options": {
+        "signature_confirmation": True,
+        "shipment_date": "2020-12-18",
+        "insurance": 1000
+    }
 }
 
 RateWithPresetPayload = {
@@ -264,7 +268,6 @@ RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/r
 
 RateRequestUsingPackagePresetXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>2004381</customer-number>
-    <expected-mailing-date>{datetime.today().strftime('%Y-%m-%d')}</expected-mailing-date>
     <parcel-characteristics>
         <weight>0.5</weight>
         <dimensions>

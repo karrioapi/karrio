@@ -97,7 +97,7 @@ def rate_request(
         contract_id=None,
         promo_code=None,
         quote_type=None,
-        expected_mailing_date=datetime.today().strftime("%Y-%m-%d"),
+        expected_mailing_date=requested_options.shipment_date,
         options=(
             optionsType(
                 option=[
@@ -108,11 +108,11 @@ def rate_request(
             if any(requested_options) else None
         ),
         parcel_characteristics=parcel_characteristicsType(
-            weight=package.weight.KG,
+            weight=NF.decimal(package.weight.KG, .1),
             dimensions=dimensionsType(
-                length=package.length.CM,
-                width=package.width.CM,
-                height=package.height.CM,
+                length=NF.decimal(package.length.CM, .1),
+                width=NF.decimal(package.width.CM, .1),
+                height=NF.decimal(package.height.CM, .1),
             ),
             unpackaged=None,
             mailing_tube=None,

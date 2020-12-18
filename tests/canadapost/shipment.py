@@ -331,7 +331,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             </option>
         </options>
         <parcel-characteristics>
-            <weight>9.07</weight>
+            <weight>9.1</weight>
             <dimensions>
                 <length>40.6</length>
                 <width>46.0</width>
