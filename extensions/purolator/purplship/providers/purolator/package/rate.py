@@ -136,10 +136,10 @@ def rate_request(
                             payload.shipper.address_line2, join=True
                         ),
                         StreetAddress3=None,
-                        City=payload.shipper.city,
-                        Province=payload.shipper.state_code,
-                        Country=payload.shipper.country_code,
-                        PostalCode=payload.shipper.postal_code,
+                        City=payload.shipper.city or "",
+                        Province=payload.shipper.state_code or "",
+                        Country=payload.shipper.country_code or "",
+                        PostalCode=payload.shipper.postal_code or "",
                         PhoneNumber=PhoneNumber(
                             CountryCode=shipper_phone.country_code or "0",
                             AreaCode=shipper_phone.area_code or "0",
@@ -170,10 +170,10 @@ def rate_request(
                             payload.recipient.address_line2, join=True
                         ),
                         StreetAddress3=None,
-                        City=payload.recipient.city,
-                        Province=payload.recipient.state_code,
-                        Country=payload.recipient.country_code,
-                        PostalCode=payload.recipient.postal_code,
+                        City=payload.recipient.city or "",
+                        Province=payload.recipient.state_code or "",
+                        Country=payload.recipient.country_code or "",
+                        PostalCode=payload.recipient.postal_code or "",
                         PhoneNumber=PhoneNumber(
                             CountryCode=recipient_phone.country_code or "0",
                             AreaCode=recipient_phone.area_code or "0",
