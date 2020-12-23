@@ -39,7 +39,8 @@ const formatMessage = (msg: string | Error | RequestError) => {
             } else {
                 return Object.entries(error?.details as FieldError)
                     .map(([_, msg]) => {
-                        return <p><strong>{msg.code}</strong> {msg.message}</p>;
+                        if (typeof msg.message === 'string') return <p><strong>{msg.code}</strong> {msg.message}</p>;
+                        return <p><strong>{msg.code}</strong> {(Object.values(msg)[0] as any).message}</p>;
                     });
             }
         }
