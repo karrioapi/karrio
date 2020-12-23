@@ -257,13 +257,6 @@ class AppState {
         return response;
     }
 
-    public async removeAddress(address_id: string) {
-        const response = handleFailure(
-            this.purplship.addresses.remove(address_id, { headers: this.headers })
-        );
-        return response;
-    }
-
     public async saveParcel(parcel: Parcel) {
         const response = handleFailure(
             this.purplship.parcels.create(parcel, { headers: this.headers })

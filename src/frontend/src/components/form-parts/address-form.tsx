@@ -68,13 +68,13 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
             <div className="columns mb-0">
                 <InputField label="name" name="person_name" onChange={handleChange} defaultValue={address.person_name} fieldClass="column mb-0 px-2 py-2" required />
 
-                <InputField label="company" name="company_name" onChange={handleChange} defaultValue={address.company_name} fieldClass="column mb-0 px-2 py-2" required={name === 'shipper'} />
+                <InputField label="company" name="company_name" onChange={handleChange} defaultValue={address.company_name} fieldClass="column mb-0 px-2 py-2" />
             </div>
 
             <div className="columns mb-0">
                 <InputField label="email" name="email" onChange={handleChange} defaultValue={address.email} fieldClass="column mb-0 px-2 py-2" type="email" />
 
-                <PhoneInput label="phone" onValueChange={value => dispatch({ name: "phone_number", value: value as string })} defaultValue={address.phone_number} country={address.country_code} fieldClass="column mb-0 px-2 py-2" required={name === 'shipper'} />
+                <PhoneInput label="phone" onValueChange={value => dispatch({ name: "phone_number", value: value as string })} defaultValue={address.phone_number} country={address.country_code} fieldClass="column mb-0 px-2 py-2" />
             </div>
 
 
