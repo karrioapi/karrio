@@ -2,9 +2,13 @@ import { NotificationType, state } from '@/library/api';
 import { Reference } from '@/library/context';
 import { deepEqual, formatAddressName, formatDate, formatDimension, formatFullAddress, formatParcelLabel, formatRef, formatWeight, isNone } from '@/library/helper';
 import { Collection } from '@/library/types';
-import { Payment, References, Shipment } from '@purplship/purplship';
+import { Customs, Payment, References, Shipment } from '@purplship/purplship';
 import { useNavigate } from '@reach/router';
 import React, { useContext, useState } from 'react';
+import AddressDescription from './descriptions/address-description';
+import CustomsInfoDescription from './descriptions/customs-info-description';
+import OptionsDescription from './descriptions/options-description';
+import ParcelDescription from './descriptions/parcel-description';
 import ButtonField from './generic/button-field';
 
 interface LiveRatesComponent {
@@ -80,58 +84,35 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                 <div className="column is-12 py-1" style={shipment.shipper.address_line1 === undefined ? { display: 'none' } : {}}>
 
                     <p className="is-title is-size-6 my-2 has-text-weight-semibold">Shipper Address</p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold">{formatAddressName(shipment.shipper)}</p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{formatFullAddress(shipment.shipper, countries)}</p>
-                    {shipment.shipper.email !== undefined &&
-                        <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-info">{shipment.shipper.email}</p>}
-                    {shipment.shipper.phone_number !== undefined &&
-                        <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{shipment.shipper.phone_number}</p>}
+                    <AddressDescription address={shipment.shipper} />
 
                 </div>
 
                 <div className="column is-12 py-1" style={{ display: `${shipment.recipient.address_line1 === undefined ? 'none' : 'block'}` }}>
 
                     <p className="is-title is-size-6 my-2 has-text-weight-semibold">Recipient Address</p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold">{formatAddressName(shipment.recipient)}</p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{formatFullAddress(shipment.recipient, countries)}</p>
-                    {shipment.recipient.email !== undefined &&
-                        <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-info">{shipment.recipient.email}</p>}
-                    {shipment.recipient.phone_number !== undefined &&
-                        <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{shipment.recipient.phone_number}</p>}
+                    <AddressDescription address={shipment.recipient} />
 
                 </div>
 
                 <div className="column is-12 py-1" style={{ display: `${shipment.parcels.length == 0 ? 'none' : 'block'}` }}>
 
                     <p className="is-title is-size-6 my-2 has-text-weight-semibold">Parcel</p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold">{formatParcelLabel(shipment.parcels[0])}</p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{formatDimension(shipment.parcels[0])}</p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">{formatWeight(shipment.parcels[0])}</p>
+                    <ParcelDescription parcel={shipment.parcels[0]} />
 
                 </div>
 
                 <div className="column is-12 py-1" style={{ display: `${Object.values(shipment.options).length === 0 ? 'none' : 'block'}` }}>
 
                     <p className="is-title is-size-6 my-2 has-text-weight-semibold">Options</p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                        {isNone(shipment.options.shipment_date) ? '' : <span>Shipment Date: <strong>{` ${formatDate(shipment.options.shipment_date)}`}</strong></span>}
-                    </p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                        {isNone(shipment.options.currency) ? '' : <span>Preferred Currency: <strong>{` ${shipment.options.currency}`}</strong></span>}
-                    </p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                        {isNone(shipment.options.signature_confirmation) ? '' : <span>Signature Confirmation <strong>Required</strong></span>}
-                    </p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                        {isNone(shipment.options.insurance) ? '' : <>
-                            <span>Insurance (Package Value <strong>{shipment.options.insurance} {shipment.options.currency}</strong>)</span>
-                        </>}
-                    </p>
-                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                        {isNone(shipment.options.cash_on_delivery) ? '' : <>
-                            <span>Amount To Collect <strong>{shipment.options.cash_on_delivery}{shipment.options.currency}</strong></span>
-                        </>}
-                    </p>
+                    <OptionsDescription options={shipment.options} />
+                    
+                </div>
+
+                <div className="column is-12 py-1" style={{ display: `${isNone(shipment.customs) ? 'none' : 'block'}` }}>
+
+                    <p className="is-title is-size-6 my-2 has-text-weight-semibold">Customs Declaration</p>
+                    <CustomsInfoDescription customs={(shipment.customs || {}) as Customs} />
 
                 </div>
 
