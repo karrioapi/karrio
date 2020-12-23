@@ -14,6 +14,7 @@ class Carrier(OwnedEntity):
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups..."
     )
     test = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.carrier_id

@@ -64,6 +64,9 @@ class CarrierSettings(Serializer):
     test = BooleanField(required=True, help_text="""
     The test flag indicates whether to use a carrier configured for test. 
     """)
+    active = BooleanField(required=True, help_text="""
+    The active flag indicates whether the carrier account is active or not. 
+    """)
 
 
 class TestFilters(Serializer):

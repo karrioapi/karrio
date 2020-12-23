@@ -34,9 +34,10 @@ class ShipmentStatus(Enum):
 
 
 class CarrierSettings:
-    def __init__(self, carrier_name: str, carrier_id: str, test: bool = None, id: str = None, **kwargs):
+    def __init__(self, carrier_name: str, carrier_id: str, test: bool = None, active: bool = None, id: str = None, **kwargs):
         self.carrier_name = carrier_name
         self.carrier_id = carrier_id
+        self.active = active
         self.test = test
         self.id = id
 
@@ -48,7 +49,7 @@ class CarrierSettings:
     def dict(self):
         return {
             name: value for name, value in self.__dict__.items()
-            if name not in ['carrier_name', 'user']
+            if name not in ['carrier_name', 'user', 'active']
         }
 
     @classmethod
