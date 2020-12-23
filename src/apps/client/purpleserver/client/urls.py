@@ -28,4 +28,4 @@ urlpatterns = [
     path('shipments', ShipmentsLogsAPI.as_view(), name='shipments_logs'),
     path('connections', ConnectionList.as_view()),
     path('connections/<str:pk>', ConnectionDetails.as_view()),
-]
+] + templates_urlpatterns

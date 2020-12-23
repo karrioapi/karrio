@@ -15,8 +15,8 @@ from purpleserver.core.datatypes import (
     CarrierSettings, ShipmentRequest, ShipmentResponse, RateRequest, Shipment,
     RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse,
     PickupRequest, Pickup, PickupUpdateRequest, PickupResponse, AddressValidation,
-    ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest, AddressValidationRequest,
-    Tracking,
+    ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest,
+    AddressValidationRequest, Tracking,
 )
 from purpleserver.core.serializers import ShipmentStatus
 from purpleserver.core.utils import identity, post_processing
