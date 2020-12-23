@@ -44,7 +44,7 @@ const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
                     <h6 className="is-size-7 mt-2 px-4 has-text-weight-semibold">{user.email}</h6>
 
                     <div className="options-items">
-                        <Link to="settings" className="options-item">
+                        <Link to="settings/account" className="options-item">
                             <i className="fas fa-cog"></i>
                             <div className="option-content">
                                 <span>My Account</span>

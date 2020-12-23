@@ -3,8 +3,12 @@ import { References } from '@purplship/purplship';
 import { Router } from "@reach/router";
 import Shipments from '@/views/shipments';
 import Connections from '@/views/connections';
-import Settings from '@/views/settings';
-import APILogs from '@/views/api_logs';
+import Addresses from '@/views/addresses';
+import Parcels from '@/views/parcels';
+import APILogs from '@/views/api-logs';
+import Account from '@/views/account';
+import APISettings from '@/views/api-settings';
+import CustomsInfos from '@/views/customs-infos';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import LabelCreator from '@/components/label/label-creator';
 import BoardFooter from '@/components/footer/board-footer';
@@ -22,11 +26,15 @@ import '@/assets/app.scss';
 const App: React.FC = () => {
     const user = state.user;
     const token = state.token;
-    const references = state.references;
-    const shipments = state.shipments;
-    const connections = state.connections;
     const logs = state.logs;
     const labelData = state.labelData;
+    const references = state.references;
+
+    const shipments = state.shipments;
+    const connections = state.connections;
+    const parcels = state.parcels;
+    const addresses = state.addresses;
+    const customsInfos = state.customsInfos;
 
     return (
         <Fragment>
@@ -42,11 +50,17 @@ const App: React.FC = () => {
 
                         <div className="dashboard-content">
                             <Router>
-                                <Shipments shipments={shipments} path="/" />
-                                <Connections connections={connections} path="carrier_connections" />
-                                <Settings token={token} user={user} path="settings" />
+                                <Shipments path="/" shipments={shipments} />
+                                <LabelCreator path="buy_label/:id" data={labelData} />
+
+                                <Connections path="configurations/carriers" connections={connections} />
+                                <Parcels path="configurations/parcels" templates={parcels} />
+                                <Addresses path="configurations/addresses" templates={addresses} />
+                                <CustomsInfos path="configurations/customs_infos" templates={customsInfos} />
+
                                 <APILogs path="api_logs/*" logs={logs}/>
-                                <LabelCreator data={labelData} path="buy_label/:id" />
+                                <APISettings path="settings/api" token={token} />
+                                <Account path="settings/account" user={user} />
                             </Router>
                         </div>
 

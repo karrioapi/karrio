@@ -9,14 +9,22 @@ const LocationTitle: React.FC<LocationTitleComponent> = () => {
             {({location}) => {
                 let title = '';
 
-                if (location.pathname.includes('/carrier_connections')) {
-                    title = '| Carrier Connections';
-                } else if (location.pathname.includes('/api_logs')) {
+                if (location.pathname.includes('/api_logs')) {
                     title = '| API Logs';
                 } else if (location.pathname.includes('/buy_label/')) {
                     title = '| Buy Label';
-                } else if(location.pathname === '/settings') {
-                    title = '| User Settings';
+                } else if(location.pathname === '/configurations/parcels') {
+                    title = '| Parcels';
+                } else if(location.pathname === '/configurations/addresses') {
+                    title = '| Addresses';
+                } else if(location.pathname === '/configurations/connections') {
+                    title = '| Carrier Connections';
+                } else if(location.pathname === '/configurations/customs_infos') {
+                    title = '| Customs Info';
+                } else if(location.pathname === '/settings/account') {
+                    title = '| User Account';
+                } else if(location.pathname === '/settings/api') {
+                    title = '| API Key';
                 } else if(location.pathname === '/') {
                     title = '| Shipments';
                 }

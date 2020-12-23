@@ -14,7 +14,7 @@ const BoardFooter: React.FC<BoardFooterComponent> = () => {
                 </div>
                 <div className="column has-text-right-desktop">
                     <a className="button is-white" target="_blank" href="/api">
-                        <span>API</span>
+                        <span>API Reference</span>
                         <span className="icon is-small">
                             <i className="fas fa-external-link-alt"></i>
                         </span>
