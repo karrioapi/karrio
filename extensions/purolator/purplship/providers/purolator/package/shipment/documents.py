@@ -8,12 +8,15 @@ from pypurolator.shipping_documents_service_1_3_0 import (
 from purplship.core.utils.soap import Envelope, create_envelope, apply_namespaceprefix
 from purplship.core.models import ShipmentRequest
 from purplship.core.utils import Serializable, XP
+from purplship.providers.purolator.units import LabelType
 from purplship.providers.purolator.utils import Settings
 
 
 def get_shipping_documents_request(
     pin: str, payload: ShipmentRequest, settings: Settings
 ) -> Serializable[Envelope]:
+    label_format = LabelType[payload.label_type or 'PDF'].value
+
     request = create_envelope(
         header_content=RequestContext(
             Version="1.3",
@@ -23,7 +26,7 @@ def get_shipping_documents_request(
             UserToken=settings.user_token,
         ),
         body_content=GetDocumentsRequest(
-            OutputType="PDF",
+            OutputType=label_format,
             Synchronous=True,
             DocumentCriterium=ArrayOfDocumentCriteria(
                 DocumentCriteria=[

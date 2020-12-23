@@ -31,8 +31,6 @@ from pyfedex.ship_service_v25 import (
     WeightUnits,
     LabelSpecification,
     LabelFormatType,
-    LabelStockType,
-    ShippingDocumentImageType,
     LabelPrintingOrientationType,
     ShipmentNotificationFormatSpecification
 )
@@ -47,6 +45,7 @@ from purplship.providers.fedex.units import (
     SpecialServiceType,
     PackagePresets,
     PaymentType,
+    LabelType,
 )
 
 
@@ -123,6 +122,7 @@ def shipment_request(
     shipment_date = (
         DF.date(options.shipment_date) if 'shipment_date' in options else datetime.now()
     )
+    label_type, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
 
     request = ProcessShipmentRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -318,8 +318,8 @@ def shipment_request(
             LabelSpecification=LabelSpecification(
                 Dispositions=None,
                 LabelFormatType=LabelFormatType.COMMON_2_D.value,
-                ImageType=ShippingDocumentImageType.PDF.value,
-                LabelStockType=LabelStockType.PAPER__7_X_4_75.value,
+                ImageType=label_type,
+                LabelStockType=label_format,
                 LabelPrintingOrientation=LabelPrintingOrientationType.TOP_EDGE_OF_TEXT_FIRST.value,
                 LabelOrder=None,
                 PrintedLabelOrigin=None,

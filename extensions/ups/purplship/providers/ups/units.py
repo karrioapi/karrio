@@ -24,6 +24,16 @@ class PackagePresets(Flag):
     ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3.0)
 
 
+class LabelType(Flag):
+    PDF_6x4 = ('GIF', 6, 4)
+    PDF_8x4 = ('GIF', 8, 4)
+    ZPL_6x4 = ('ZPL', 6, 4)
+
+    """ Unified Label type mapping """
+    PDF = PDF_6x4
+    ZPL = ZPL_6x4
+
+
 class Incoterm(Enum):
     CFR = "Cost and Freight"
     CIF = "Cost Insurance and Freight"

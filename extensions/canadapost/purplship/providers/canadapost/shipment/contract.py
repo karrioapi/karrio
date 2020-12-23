@@ -33,8 +33,8 @@ from purplship.providers.canadapost.units import (
     OptionCode,
     ServiceType,
     PackagePresets,
-    PrinterType,
     PaymentType,
+    LabelType,
     INTERNATIONAL_NON_DELIVERY_OPTION
 )
 from purplship.providers.canadapost.utils import Settings
@@ -100,6 +100,8 @@ def shipment_request(
 
     if is_intl and not any(key in special_services for key in INTERNATIONAL_NON_DELIVERY_OPTION):
         special_services['canadapost_return_to_sender'] = OptionCode.canadapost_return_to_sender.value
+
+    label_encoding, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
 
     request = ShipmentType(
         customer_request_id=None,
@@ -178,8 +180,8 @@ def shipment_request(
                 if options.notification_email else None
             ),
             print_preferences=PrintPreferencesType(
-                output_format=PrinterType[options.label_printing or "regular"].value,
-                encoding=None,
+                output_format=label_format,
+                encoding=label_encoding,
             ),
             preferences=PreferencesType(
                 service_code=None,

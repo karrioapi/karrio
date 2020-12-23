@@ -47,6 +47,22 @@ class PackagePresets(Flag):
     )
 
 
+class LabelType(Flag):
+    PDF_6x4 = ('PDF', '6X4_PDF')
+    PDF_8x4 = ('PDF', '8X4_PDF')
+    PDF_8x4_A4 = ('PDF', '8X4_A4_PDF')
+    PDF_6x4_A4 = ('PDF', '6X4_A4_PDF')
+    PDF_8x4_CI = ('PDF', '8X4_CI_PDF')
+    PDF_8x4_RU_A4 = ('PDF', '8X4_RU_A4_PDF')
+    ZPL_8x4 = ('ZPL2', '8X4_thermal')
+    ZPL_6x4 = ('ZPL2', '6X4_thermal')
+    ZPL_8x4_CI = ('ZPL2', '8X4_CI_thermal')
+
+    """ Unified Label type mapping """
+    PDF = PDF_6x4
+    ZPL = ZPL_6x4
+
+
 class Incoterm(Enum):
     EXW = "Ex Works"
     FCA = "Free Carrier"

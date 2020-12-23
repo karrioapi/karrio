@@ -146,6 +146,7 @@ package_shipment_with_package_preset_data = {
     "payment": {"paid_by": "sender"},
     "options": {"notification_emails": "test@mail.com"},
     "reference": "Your Customer Context",
+    "label_type": "ZPL"
 }
 
 
@@ -403,6 +404,10 @@ ShipmentRequestXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/schema/xpc
                 <ship:LabelImageFormat>
                     <ship:Code>GIF</ship:Code>
                 </ship:LabelImageFormat>
+                <ship:LabelStockSize>
+                    <ship:Height>6</ship:Height>
+                    <ship:Width>4</ship:Width>
+                </ship:LabelStockSize>
             </ship:LabelSpecification>
         </ship:ShipmentRequest>
     </tns:Body>
@@ -503,8 +508,12 @@ ShipmentRequestWithPresetXML = """<tns:Envelope  xmlns:auth="http://www.ups.com/
             </ship:Shipment>
             <ship:LabelSpecification>
                 <ship:LabelImageFormat>
-                    <ship:Code>GIF</ship:Code>
+                    <ship:Code>ZPL</ship:Code>
                 </ship:LabelImageFormat>
+                <ship:LabelStockSize>
+                    <ship:Height>6</ship:Height>
+                    <ship:Width>4</ship:Width>
+                </ship:LabelStockSize>
             </ship:LabelSpecification>
         </ship:ShipmentRequest>
     </tns:Body>

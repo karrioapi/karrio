@@ -22,6 +22,11 @@ class PackagePreset:
     packaging_type: str = None
 
 
+class LabelType(Enum):
+    PDF = "PDF"
+    ZPL = "ZPL"
+
+
 class DocFormat(Enum):
     gif = "GIF"
     jpg = "JPG"

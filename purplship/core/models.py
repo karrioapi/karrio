@@ -131,6 +131,7 @@ class ShipmentRequest:
 
     options: Dict = {}
     reference: str = ""
+    label_type: str = None
 
 
 @attr.s(auto_attribs=True)

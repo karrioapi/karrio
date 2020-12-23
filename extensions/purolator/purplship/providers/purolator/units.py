@@ -35,6 +35,11 @@ class PackagingType(Flag):
     your_packaging = purolator_customer_packaging
 
 
+class LabelType(Flag):
+    PDF = "PDF"
+    ZPL = "ZPL"
+
+
 class PaymentType(Flag):
     sender = "Sender"
     recipient = "Receiver"
