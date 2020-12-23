@@ -77,21 +77,27 @@ class TestFilters(Serializer):
 
 class AddressData(AugmentedAddressSerializer):
 
-    postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address postal code")
+    postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
+    The address postal code
+    
+    **(required for shipment purchase)**
+    """)
     city = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
-    The address city. <br/>
-    **(required to create as shipment)**
+    The address city.
+    
+    **(required for shipment purchase)**
     """)
     federal_tax_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party frederal tax id")
     state_tax_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party state id")
     person_name = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
-    attention to <br/>
-    **(required to create as shipment)**
+    attention to
+    
+    **(required for shipment purchase)**
     """)
     company_name = CharField(required=False, allow_blank=True, allow_null=True, help_text="The company name if the party is a company")
     country_code = ChoiceField(required=True, choices=COUNTRIES, help_text="The address country code")
     email = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party email")
-    phone_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="""The party phone number.""")
+    phone_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party phone number.")
 
     state_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address state code")
     suburb = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address suburb if known")
@@ -100,9 +106,9 @@ class AddressData(AugmentedAddressSerializer):
         help_text="Indicate if the address is residential or commercial (enterprise)"
     )
 
-    address_line1 = CharField(required=True, allow_blank=True, allow_null=True, help_text="""
+    address_line1 = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
     The address line with street number <br/>
-    **(required to create as shipment)**
+    **(required for shipment purchase)**
     """)
     address_line2 = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address line with suite number")
 
