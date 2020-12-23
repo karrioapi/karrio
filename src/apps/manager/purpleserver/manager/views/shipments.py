@@ -21,7 +21,9 @@ from purpleserver.core.serializers import (
     Message,
     Rate,
     OperationResponse,
-    CustomsData)
+    CustomsData,
+    ParcelData,
+)
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import (
     reset_related_shipment_rates,
@@ -30,6 +32,7 @@ from purpleserver.manager.serializers import (
     ShipmentValidationData,
     ShipmentCancelSerializer,
     RateSerializer,
+    ParcelSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -220,6 +223,32 @@ class ShipmentCustoms(APIView):
         return Response(Shipment(shipment).data)
 
 
+class ShipmentParcels(APIView):
+
+    @swagger_auto_schema(
+        tags=['Shipments'],
+        operation_id=f"{ENDPOINT_ID}add_parcel",
+        operation_summary="Add a parcel to a shipment",
+        responses={200: Shipment(), 400: ErrorResponse()},
+        request_body=ParcelData()
+    )
+    def post(self, request: Request, pk: str):
+        """
+        Add a parcel to an existing shipment for a multi-parcel shipment.
+        """
+        shipment = request.user.shipment_set.get(pk=pk)
+
+        if shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
+            )
+
+        parcel = SerializerDecorator[ParcelSerializer](data=request.data).save(user=request.user).instance
+        shipment.shipment_parcels.add(parcel)
+        reset_related_shipment_rates(shipment)
+        return Response(Shipment(shipment).data)
+
+
 class ShipmentPurchase(APIView):
 
     @swagger_auto_schema(
@@ -266,4 +295,5 @@ router.urls.append(path('shipments/<str:pk>', ShipmentDetail.as_view(), name="sh
 router.urls.append(path('shipments/<str:pk>/rates', ShipmentRates.as_view(), name="shipment-rates"))
 router.urls.append(path('shipments/<str:pk>/options', ShipmentOptions.as_view(), name="shipment-options"))
 router.urls.append(path('shipments/<str:pk>/customs', ShipmentCustoms.as_view(), name="shipment-customs"))
+router.urls.append(path('shipments/<str:pk>/parcels', ShipmentParcels.as_view(), name="shipment-parcels"))
 router.urls.append(path('shipments/<str:pk>/purchase', ShipmentPurchase.as_view(), name="shipment-purchase"))

@@ -119,7 +119,7 @@ class Customs(OwnedEntity):
     commercial_invoice = models.BooleanField(null=True)
     certificate_number = models.CharField(max_length=50, null=True, blank=True)
     content_type = models.CharField(max_length=50, null=True, blank=True)
-    content_description = models.CharField(max_length=20, null=True, blank=True)
+    content_description = models.CharField(max_length=250, null=True, blank=True)
     duty = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
     incoterm = models.CharField(max_length=20)
     invoice = models.CharField(max_length=50, null=True, blank=True)
