@@ -54,7 +54,7 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
         setHasError(false);
         setIsDisabled(false);
         setIsActive(false);
-    }
+    };
     const handleOnChange = (property: string) => (e: React.ChangeEvent<any>) => {
         let new_state = { ...payload, [property]: e.target.value || undefined };
         if (property === 'carrier_name') {
@@ -80,7 +80,7 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ childre
                 <div className="modal-background" onClick={close}></div>
                 <form className="modal-card" onSubmit={handleSubmit}>
                     <section className="modal-card-body">
-                        <h3 className="subtitle is-3">Connect a Carrier</h3>
+                        <h3 className="subtitle is-3">{isNew ? 'Connect a Carrier' : 'Update a Carrier Connection'}</h3>
                         <p className="is-size-7 has-text-danger my-1" style={{ visibility: (hasError ? "visible" : "hidden") }}>{error}</p>
 
                         <SelectField value={payload.carrier_name} onChange={handleOnChange("carrier_name")} disabled={!isNew} key={`select-${key}`} className="is-fullwidth" required>
