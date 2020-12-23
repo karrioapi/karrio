@@ -91,7 +91,7 @@ class ParcelDetail(APIView):
 
     @swagger_auto_schema(
         tags=['Parcels'],
-        operation_id=f"{ENDPOINT_ID}remove",
+        operation_id=f"{ENDPOINT_ID}discard",
         operation_summary="Remove a parcel",
         responses={200: Operation(), 400: ErrorResponse()}
     )

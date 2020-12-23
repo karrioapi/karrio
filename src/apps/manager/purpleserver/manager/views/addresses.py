@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.exceptions import PurplShipApiException
-from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, AddressData, Address, Operation
+from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, AddressData, Address
 from purpleserver.manager.serializers import AddressSerializer, reset_related_shipment_rates
 from purpleserver.manager.router import router
 
@@ -86,30 +86,6 @@ class AddressDetail(APIView):
         SerializerDecorator[AddressSerializer](address, data=request.data).save()
         reset_related_shipment_rates(shipment)
         return Response(Address(address).data)
-
-    @swagger_auto_schema(
-        tags=['Addresses'],
-        operation_id=f"{ENDPOINT_ID}remove",
-        operation_summary="Remove an address",
-        responses={200: Operation(), 400: ErrorResponse()}
-    )
-    def delete(self, request: Request, pk: str):
-        """
-        Remove an address.
-        """
-        address = request.user.address_set.get(pk=pk)
-        shipment = address.shipper.first() or address.recipient.first()
-        if shipment is not None:
-            raise PurplShipApiException(
-                "This address is attached to a shipment and cannot be remove",
-                status_code=status.HTTP_409_CONFLICT,
-                code='state_error'
-            )
-
-        address.delete(keep_parents=True)
-        serializer = Operation(dict(operation="Remove address", success=True))
-        reset_related_shipment_rates(shipment)
-        return Response(serializer.data)
 
 
 router.urls.append(path('addresses', AddressList.as_view(), name="address-list"))
