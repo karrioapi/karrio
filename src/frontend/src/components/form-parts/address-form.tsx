@@ -9,15 +9,19 @@ import CountryInput from '@/components/generic/country-input';
 import StateInput from '@/components/generic/state-input';
 import PostalInput from '@/components/generic/postal-input';
 import PhoneInput from '@/components/generic/phone-input';
+import { Collection } from '@/library/types';
 
-const DEFAULT_ADDRESS_CONTENT = {
+export const DEFAULT_ADDRESS_CONTENT = {
     residential: false,
     country_code: Address.CountryCodeEnum.CA,
 } as Partial<Address>;
 
-interface ShipmentAddressComponent {
-    shipment: Shipment;
-    addressName: "shipper" | "recipient";
+const NEXT_TAB_MAPPING: Collection = { "shipper": "recipient", "recipient": "parcel" };
+
+interface AddressFormComponent {
+    value?: Address;
+    shipment?: Shipment;
+    name: "shipper" | "recipient" | "template";
     update: (payload: {}, refresh?: boolean) => void;
 }
 
@@ -26,11 +30,11 @@ function reducer(state: any, { name, value }: { name: string, value: string | bo
 }
 
 
-const ShipmentAddress: React.FC<ShipmentAddressComponent> = ({ shipment, addressName, update }) => {
-    const [address, dispatch] = useReducer(reducer, shipment[addressName], () => (shipment[addressName] || DEFAULT_ADDRESS_CONTENT));
+const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, update, children }) => {
     const form = useRef<HTMLFormElement>(null);
     const [key, setKey] = useState<string>(`address-${Date.now()}`);
-    const nextTab: string = { "shipper": "recipient", "recipient": "parcel" }[addressName];
+    const [address, dispatch] = useReducer(reducer, value, () => (value || DEFAULT_ADDRESS_CONTENT));
+    const nextTab: string = NEXT_TAB_MAPPING[name];
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -41,13 +45,13 @@ const ShipmentAddress: React.FC<ShipmentAddressComponent> = ({ shipment, address
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            if (address.id !== undefined && shipment.id !== undefined) {
-                await state.updateAddress(address);
-                const updated_shipment = await state.retrieveShipment(shipment.id);
-                state.setNotification({ type: NotificationType.success, message: addressName + ' Address successfully updated!' });
-                update({ ...updated_shipment }, true);
+            if (address.id !== undefined) {
+                const udpated_address = await state.updateAddress(address);
+                const changes = shipment?.id === undefined ? { [name]: udpated_address } : await state.retrieveShipment(shipment.id);
+                state.setNotification({ type: NotificationType.success, message: name + ' Address successfully updated!' });
+                update({ ...changes }, true);
             } else {
-                update({ [addressName]: address });
+                update({ [name]: address });
                 form.current?.dispatchEvent(new CustomEvent('label-select-tab', { bubbles: true, detail: { nextTab } }));
             }
             setKey(`address-${Date.now()}`);
@@ -59,16 +63,18 @@ const ShipmentAddress: React.FC<ShipmentAddressComponent> = ({ shipment, address
     return (
         <form className="px-1 py-2" onSubmit={handleSubmit} key={key} ref={form}>
 
+            {React.Children.map(children, (child: any) => React.cloneElement(child, { ...child.props, address, onChange: handleChange }))}
+
             <div className="columns mb-0">
                 <InputField label="name" name="person_name" onChange={handleChange} defaultValue={address.person_name} fieldClass="column mb-0 px-2 py-2" required />
 
-                <InputField label="company" name="company_name" onChange={handleChange} defaultValue={address.company_name} fieldClass="column mb-0 px-2 py-2" required={addressName === 'shipper'} />
+                <InputField label="company" name="company_name" onChange={handleChange} defaultValue={address.company_name} fieldClass="column mb-0 px-2 py-2" required={name === 'shipper'} />
             </div>
 
             <div className="columns mb-0">
                 <InputField label="email" name="email" onChange={handleChange} defaultValue={address.email} fieldClass="column mb-0 px-2 py-2" type="email" />
 
-                <PhoneInput label="phone" onValueChange={value => dispatch({ name: "phone_number", value: value as string })} defaultValue={address.phone_number} country={address.country_code} fieldClass="column mb-0 px-2 py-2" required={addressName === 'shipper'} />
+                <PhoneInput label="phone" onValueChange={value => dispatch({ name: "phone_number", value: value as string })} defaultValue={address.phone_number} country={address.country_code} fieldClass="column mb-0 px-2 py-2" required={name === 'shipper'} />
             </div>
 
 
@@ -99,7 +105,7 @@ const ShipmentAddress: React.FC<ShipmentAddressComponent> = ({ shipment, address
 
             </div>
 
-            <ButtonField type="submit" className="is-primary" fieldClass="has-text-centered mt-3" disabled={deepEqual(shipment[addressName], address)}>
+            <ButtonField type="submit" className="is-primary" fieldClass="has-text-centered mt-3" disabled={deepEqual(value || {}, address)}>
                 <span>{address.id === undefined ? 'Continue' : 'Save'}</span>
                 {address.id === undefined && <span className="icon is-small">
                     <i className="fas fa-chevron-right"></i>
@@ -110,4 +116,4 @@ const ShipmentAddress: React.FC<ShipmentAddressComponent> = ({ shipment, address
     )
 };
 
-export default ShipmentAddress;
+export default AddressForm;

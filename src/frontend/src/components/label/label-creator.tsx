@@ -2,10 +2,10 @@ import { LabelData, NotificationType, state } from '@/library/api';
 import { View } from '@/library/types';
 import { Link, useNavigate } from '@reach/router';
 import React, { useEffect, useState } from 'react';
-import ShipmentCustomsInfo from '@/components/form-parts/shipment-customs-info';
-import ShipmentAddress from '@/components/form-parts/shipment-address';
+import CustomsInfoForm from '@/components/form-parts/customs-info-form';
+import AddressForm from '@/components/form-parts/address-form';
 import ShipmentOptions from '@/components/form-parts/shipment-options';
-import ShipmentParcel from '@/components/form-parts/shipment-parcel';
+import ParcelForm from '@/components/form-parts/parcel-form';
 import LiveRates from '@/components/live-rates';
 import Tabs from '@/components/generic/tabs';
 import { Shipment } from '@purplship/purplship';
@@ -92,13 +92,13 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                     <div className="card px-3 py-3">
                         <Tabs tabs={tabs} disabled={filterDisabled(data.shipment)} eventKey="label-select-tab">
 
-                            <ShipmentAddress key={ckey} shipment={data.shipment} addressName="shipper" update={update} />
+                            <AddressForm key={ckey} value={data.shipment.shipper} shipment={data.shipment} update={update} name="shipper" />
 
-                            <ShipmentAddress key={ckey} shipment={data.shipment} addressName="recipient" update={update} />
+                            <AddressForm key={ckey} value={data.shipment.recipient} shipment={data.shipment} update={update} name="recipient" />
 
-                            <ShipmentParcel key={ckey} shipment={data.shipment} update={update} />
+                            <ParcelForm key={ckey} value={data.shipment.parcels[0]} shipment={data.shipment} update={update} />
 
-                            <ShipmentCustomsInfo key={ckey} shipment={data.shipment} update={update} />
+                            <CustomsInfoForm key={ckey} value={data.shipment.customs} shipment={data.shipment} update={update} />
 
                             <ShipmentOptions key={ckey} shipment={data.shipment} update={update} />
 
