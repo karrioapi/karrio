@@ -1,4 +1,4 @@
-import { CarrierSettings, References, Shipment, Purplship, Address, Parcel, RateRequest, RateResponse, ShippingRequest, ShipmentResponse, OperationResponse, ShipmentCancelRequest, Customs, ErrorResponse } from '@purplship/purplship';
+import { CarrierSettings, References, Shipment, Purplship, Address, Parcel, Customs } from '@purplship/purplship';
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinct } from 'rxjs/operators';
@@ -16,6 +16,7 @@ const DEFAULT_LABEL_DATA = {
 };
 const DEFAULT_PAGINATED_RESULT = {
     count: 0,
+    url: null,
     next: null,
     previous: null,
     results: [],
@@ -55,8 +56,17 @@ export interface Log {
     status_code: string;
 }
 
+export interface Template {
+    id?: string;
+    label?: string;
+    address?: Address;
+    customs?: Customs;
+    parcel?: Parcel;
+}
+
 interface PaginatedContent<T> {
     count: Number;
+    url?: string | null;
     next?: string | null;
     previous?: string | null;
     results: T[];
@@ -65,6 +75,7 @@ interface PaginatedContent<T> {
 
 export interface PaginatedLogs extends PaginatedContent<Log> { }
 export interface PaginatedShipments extends PaginatedContent<Shipment> { }
+export interface PaginatedTemplates extends PaginatedContent<Template> { }
 export interface PaginatedConnections extends PaginatedContent<Connection> { }
 
 
@@ -87,8 +98,11 @@ export interface LabelData {
 class AppState {
     private token$: BehaviorSubject<string> = new BehaviorSubject<string>(INITIAL_TOKEN);
     private user$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>({} as UserInfo);
-    private connections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
     private shipments$: Subject<PaginatedShipments> = new Subject<PaginatedShipments>();
+    private parcels$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
+    private addresses$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
+    private connections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
+    private customsInfos$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
     private references$: Subject<References> = new Subject<References>();
     private logs$: Subject<PaginatedLogs> = new Subject<PaginatedLogs>();
     private notification$: Subject<Notification> = new Subject<Notification>();
@@ -133,6 +147,24 @@ class AppState {
         const [connections, setValue] = useState<PaginatedConnections>();
         useEffect(() => { this.connections$.asObservable().pipe(distinct()).subscribe(setValue); });
         return connections;
+    }
+
+    public get addresses() {
+        const [addresses, setValue] = useState<PaginatedTemplates>();
+        useEffect(() => { this.addresses$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return addresses;
+    }
+
+    public get parcels() {
+        const [parcels, setValue] = useState<PaginatedTemplates>();
+        useEffect(() => { this.parcels$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return parcels;
+    }
+
+    public get customsInfos() {
+        const [customsInfos, setValue] = useState<PaginatedTemplates>();
+        useEffect(() => { this.customsInfos$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return customsInfos;
     }
 
     public get references() {
@@ -210,11 +242,10 @@ class AppState {
         return response;
     }
 
-    public async addCustoms(shipment_id: string, customs: Customs) {
+    public async saveAddress(address: Address) {
         const response = handleFailure(
-            this.purplship.shipments.addCustoms(customs, shipment_id, { headers: this.headers })
+            this.purplship.addresses.create(address, { headers: this.headers })
         );
-        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
@@ -226,11 +257,47 @@ class AppState {
         return response;
     }
 
+    public async removeAddress(address_id: string) {
+        const response = handleFailure(
+            this.purplship.addresses.remove(address_id, { headers: this.headers })
+        );
+        return response;
+    }
+
+    public async saveParcel(parcel: Parcel) {
+        const response = handleFailure(
+            this.purplship.parcels.create(parcel, { headers: this.headers })
+        );
+        return response;
+    }
+
     public async updateParcel(parcel: Parcel) {
         const response = handleFailure(
             this.purplship.parcels.update(parcel, parcel.id as string, { headers: this.headers })
         );
         response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
+        return response;
+    }
+
+    public async removeParcel(parcel_id: string) {
+        const response = handleFailure(
+            this.purplship.parcels.remove(parcel_id, { headers: this.headers })
+        );
+        return response;
+    }
+
+    public async addCustoms(shipment_id: string, customs: Customs) {
+        const response = handleFailure(
+            this.purplship.shipments.addCustoms(customs, shipment_id, { headers: this.headers })
+        );
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
+        return response;
+    }
+
+    public async saveCustoms(customs: Customs) {
+        const response = handleFailure(
+            this.purplship.customs.create(customs, { headers: this.headers })
+        );
         return response;
     }
 
@@ -242,7 +309,7 @@ class AppState {
         return response;
     }
 
-    public async discardCustoms(customs_id: string) {
+    public async removeCustoms(customs_id: string) {
         const response = handleFailure(
             this.purplship.customs.discard(customs_id, { headers: this.headers })
         );
@@ -347,11 +414,88 @@ class AppState {
         }
     }
 
+    public async saveTemplate(payload: Template) {
+        const response = await http("/templates", {
+            method: "POST",
+            headers: this.headers,
+            body: (JSON.stringify(payload) as any)
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error("Failed create a new template.");
+        }
+    }
+
+    public async updateTemplate(id: string, payload: Template) {
+        const response = await http(`/templates/${id}`, {
+            method: "PATCH",
+            headers: this.headers,
+            body: (JSON.stringify(payload) as any)
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error("Failed to update the template.");
+        }
+    }
+
+    public async removeTemplate(id: string) {
+        const response = await http(`/templates/${id}`, {
+            method: "DELETE",
+            headers: this.headers,
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error("Failed to remove the template.");
+        }
+    }
+
+    public async fetchParcels(url?: string): Promise<PaginatedTemplates> {
+        const response = await http(url || `/parcels/templates?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.parcels$.next({...data, fetched: true, url});
+            return data;
+        } else {
+            this.parcels$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            throw new Error("Unable fetch parcel templates.");
+        }
+    }
+
+    public async fetchAddresses(url?: string): Promise<PaginatedTemplates> {
+        const response = await http(url || `/addresses/templates?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.addresses$.next({...data, fetched: true, url});
+            return data;
+        } else {
+            this.addresses$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            throw new Error("Unable fetch addresses templates.");
+        }
+    }
+
+    public async fetchCustomsInfos(url?: string): Promise<PaginatedTemplates> {
+        const response = await http(url || `/customs_infos/templates?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.customsInfos$.next({...data, fetched: true, url});
+            return data;
+        } else {
+            this.customsInfos$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            throw new Error("Unable fetch customs infos templates.");
+        }
+    }
+
     public async fetchConnections(url?: string): Promise<PaginatedConnections> {
         const response = await http(url || `/connections?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.connections$.next({...data, fetched: true});
+            this.connections$.next({...data, fetched: true, url});
             return data;
         } else {
             this.connections$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
@@ -363,7 +507,7 @@ class AppState {
         const response = await http(url || `/shipments?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.shipments$.next({...data, fetched: true});
+            this.shipments$.next({...data, fetched: true, url});
             return data;
         } else {
             this.shipments$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
@@ -375,9 +519,10 @@ class AppState {
         const response = await http(url || `/logs?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.logs$.next(data);
+            this.logs$.next({...data, fetched: true, url});
             return data;
         } else {
+            this.logs$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
             throw new Error("Failed to fetch logs.");
         }
     }
