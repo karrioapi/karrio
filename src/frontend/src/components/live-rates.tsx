@@ -1,10 +1,8 @@
 import { NotificationType, state } from '@/library/api';
-import { Reference } from '@/library/context';
-import { deepEqual, formatAddressName, formatDate, formatDimension, formatFullAddress, formatParcelLabel, formatRef, formatWeight, isNone } from '@/library/helper';
-import { Collection } from '@/library/types';
-import { Customs, Payment, References, Shipment } from '@purplship/purplship';
+import { deepEqual, formatRef, isNone } from '@/library/helper';
+import { Customs, Payment, Shipment } from '@purplship/purplship';
 import { useNavigate } from '@reach/router';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import AddressDescription from './descriptions/address-description';
 import CustomsInfoDescription from './descriptions/customs-info-description';
 import OptionsDescription from './descriptions/options-description';
@@ -18,11 +16,10 @@ interface LiveRatesComponent {
 
 const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
     const navigate = useNavigate();
-    const Ref = useContext<References>(Reference);
     const [loading, setLoading] = useState<boolean>(false);
     const [selected_rate_id, setSelectedRate] = useState<string | undefined>(shipment?.selected_rate_id);
+    const [label_type, setLabelType] = useState<Shipment.LabelTypeEnum>(shipment?.label_type || Shipment.LabelTypeEnum.PDF);
     const [lastState, setLastSate] = useState<Shipment>((shipment?.rates || []).length === 0 ? {} as Shipment : shipment);
-    const [countries] = useState<Collection | undefined>(Ref?.countries);
 
     const computeDisabled = (shipment: Shipment) => {
         return (
@@ -35,15 +32,14 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
     };
     const fetchRates = async () => {
         if (computeDisabled(shipment)) return;
-        setLastSate({ ...shipment });
         let data: Partial<Shipment> = { rates: undefined, selected_rate_id: undefined };
         try {
             setLoading(true);
-            setLastSate(shipment);
             const response = await state.fetchRates(shipment);
             data = { ...data, ...(response || {}) };
             if (shipment.id === undefined) navigate('/buy_label/' + response.id);
             update(data, true);
+            setLastSate({ ...shipment });
         } catch (err) {
             state.setNotification({ type: NotificationType.error, message: err });
         } finally {
@@ -56,6 +52,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             let currency = (shipment.options || {}).currency || Payment.CurrencyEnum.CAD;
             const response = await state.buyLabel({
                 ...shipment,
+                label_type: label_type,
                 selected_rate_id: selected_rate_id as string,
                 payment: { paid_by: Payment.PaidByEnum.Sender, currency } as Payment
             });
@@ -106,7 +103,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
 
                     <p className="is-title is-size-6 my-2 has-text-weight-semibold">Options</p>
                     <OptionsDescription options={shipment.options} />
-                    
+
                 </div>
 
                 <div className="column is-12 py-1" style={{ display: `${isNone(shipment.customs) ? 'none' : 'block'}` }}>
@@ -138,6 +135,23 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                             </li>
                         ))}
                     </ul>
+
+
+                </div>
+
+                <div className="column is-12 py-3" style={{ display: `${(shipment.rates || []).length === 0 ? 'none' : 'block'}` }}>
+
+                    <h6 className="is-title is-size-6 mt-1 mb-4 has-text-weight-semibold">Select your label type</h6>
+                    <div className="control">
+                        <label className="radio">
+                            <input className="mr-1" type="radio" name="label_type" defaultChecked={label_type === Shipment.LabelTypeEnum.PDF} onChange={() => setLabelType(Shipment.LabelTypeEnum.PDF)}/>
+                            <span className="is-size-6 has-text-weight-bold">{Shipment.LabelTypeEnum.PDF}</span>
+                        </label>
+                        <label className="radio">
+                            <input className="mr-1" type="radio" name="label_type" defaultChecked={label_type === Shipment.LabelTypeEnum.ZPL} onChange={() => setLabelType(Shipment.LabelTypeEnum.ZPL)} />
+                            <span className="is-size-6 has-text-weight-bold">{Shipment.LabelTypeEnum.ZPL}</span>
+                        </label>
+                    </div>
 
                 </div>
 

@@ -11,7 +11,12 @@ const LabelPrinter: React.FC<LabelPrinterComponent> = ({ shipment, ...props }) =
         evt?.preventDefault();
         setIsActive(false);
     }
-    const source = "data:application/pdf;base64," + encodeURI(shipment.label as string);
+    const label_type = shipment?.label_type || Shipment.LabelTypeEnum.PDF;
+    const format = {
+        [Shipment.LabelTypeEnum.PDF]: 'application/pdf',
+        [Shipment.LabelTypeEnum.ZPL]: 'application/zpl'
+    }[label_type];
+    const source = `data:${format};base64, ${encodeURI(shipment.label as string)}`;
 
     return (
         <>
@@ -23,7 +28,7 @@ const LabelPrinter: React.FC<LabelPrinterComponent> = ({ shipment, ...props }) =
                 <div className="modal-background" onClick={close}></div>
                 <div className="label-container">
 
-                    <iframe src={source} height="100%" width="100%"></iframe>
+                    {isActive && <iframe src={source} height="100%" width="100%"></iframe>}
 
                 </div>
                 <button className="modal-close is-large" aria-label="close" onClick={close}></button>

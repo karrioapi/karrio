@@ -217,7 +217,7 @@ class AppState {
     public async buyLabel(shipment: Shipment) {
         const response = handleFailure(
             this.purplship.shipments.purchase(
-                { selected_rate_id: shipment.selected_rate_id as string, payment: shipment.payment },
+                { selected_rate_id: shipment.selected_rate_id as string, payment: shipment.payment, label_type: shipment.label_type },
                 shipment.id as string,
                 { headers: this.headers }
             )
