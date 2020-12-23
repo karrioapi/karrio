@@ -9,15 +9,16 @@ from purpleserver.client.views.user import UserAPI
 from purpleserver.client.views.token import TokenAPI
 from purpleserver.client.views.logs import LogsAPI, LogDetailsAPI, ShipmentsLogsAPI
 from purpleserver.client.views.connections import ConnectionList, ConnectionDetails
+from purpleserver.client.views.templates import templates_urlpatterns
 
 urlpatterns = [
     path('', index, name='index'),
-    path('settings', index, name='settings'),
-    path('developers', index, name='developers'),
-    path('carrier_connections', index, name='carrier_connections'),
     path('api_logs', index, name='api_logs'),
     path('api_logs/<str:log_id>', index, name='api_logs'),
     path('buy_label/<str:id>', index, name='buy_label'),
+    path('configurations/<str:config_name>', index, name='configurations'),
+    path('developers', index, name='developers'),
+    path('settings/<str:settings_name>', index, name='settings'),
 
     path('', include('django.contrib.auth.urls')),
     path('', include(settings.CLIENT_REGISTRATION_VIEWS)),
