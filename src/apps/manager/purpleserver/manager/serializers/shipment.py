@@ -17,6 +17,8 @@ from purpleserver.core.serializers import (
     Rate,
     ShippingRequest,
     ShipmentCancelRequest,
+    LABEL_TYPES,
+    LabelType
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.payment import PaymentSerializer
@@ -178,6 +180,7 @@ class ShipmentSerializer(ShipmentData):
 
 class ShipmentPurchaseData(Serializer):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
+    label_type = ChoiceField(required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
     payment = Payment(required=False, help_text="The payment details")
 
 

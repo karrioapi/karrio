@@ -105,6 +105,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     options: Dict = {}
     reference: str = ""
+    label_type: str = None
     id: str = None
 
 
@@ -130,6 +131,7 @@ class Shipment:
 
     options: Dict = {}
     reference: str = ""
+    label_type: str = None
     tracking_url: str = None
     status: str = ""
     meta: dict = None

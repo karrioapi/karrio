@@ -8,7 +8,8 @@ from rest_framework.serializers import (
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit,
     PackagingUnit, PaymentType, Currency,
-    PrinterType, CustomsContentType, Incoterm
+    PrinterType, CustomsContentType, Incoterm,
+    LabelType
 )
 from purpleserver.providers.models import MODELS
 from purpleserver.core.validators import (
@@ -27,6 +28,7 @@ DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
 PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
 PRINTER_TYPES = [(c.name, c.name) for c in list(PrinterType)]
+LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 
 
 class ShipmentStatus(Enum):
@@ -458,6 +460,7 @@ class ShippingData(Serializer):
     eg: Invoices...
     """)
     reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
+    label_type = ChoiceField(required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
 
 
 class ShippingRequest(ShippingData):
@@ -537,6 +540,7 @@ class ShipmentContent(Serializer):
     eg: Invoices...
     """)
     reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
+    label_type = ChoiceField(required=False, choices=LABEL_TYPES, allow_blank=True, allow_null=True, help_text="The shipment label file type.")
     carrier_ids = StringListField(required=False, allow_null=True, default=[], help_text="""
     The list of configured carriers you wish to get rates from.
 

@@ -214,7 +214,7 @@ class Tracking(OwnedEntity):
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates',
+        'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates', 'label_type',
         'tracking_number', 'doc_images', 'tracking_url', 'shipment_identifier', 'test_mode',
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
@@ -230,6 +230,7 @@ class Shipment(OwnedEntity):
 
     recipient = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='recipient')
     shipper = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='shipper')
+    label_type = models.TextField(max_length=25, null=True, blank=True)
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
     shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
