@@ -91,15 +91,17 @@ shipment_data = {
         "height": 9,
         "length": 6,
         "width": 12,
-        "weight": 20.0,
+        "weight": 2.0,
+        "weight_unit": "KG",
+        "dimension_unit": "CM",
         "description": "desc.",
         "packaging_type": "eshipper_pallet",
     }],
     "service": "eshipper_fedex_ground",
     "options": {
         "freight_class": "eshipper_freight_class_70",
-        "cash_on_delivery": {"amount": 10.5},
-        "insurance": {"amount": 70.0},
+        "cash_on_delivery": 10.5,
+        "insurance": 70.0,
     },
     "customs": {
         "duty": {"paid_by": "receiver"},
@@ -165,7 +167,7 @@ ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" user
             <CODReturnAddress codCompany="Test Company" codName="RizTo" codAddress1="650 CIT Drive" codCity="Livingston" codStateCode="BC" codZip="V3N4R3" codCountry="CA"/>
         </COD>
         <Packages type="Pallet">
-            <Package length="6" width="12" height="9" weight="20" type="Pallet" freightClass="70" description="desc."/>
+            <Package length="3" width="5" height="4" weight="5" type="Pallet" freightClass="70" description="desc."/>
         </Packages>
         <Payment type="3rd Party"/>
         <CustomsInvoice>

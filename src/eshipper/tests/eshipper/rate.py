@@ -70,7 +70,9 @@ RatePayload = {
         "height": 9,
         "length": 6,
         "width": 12,
-        "weight": 20.0,
+        "weight": 2.0,
+        "weight_unit": "KG",
+        "dimension_unit": "CM",
         "description": "desc.",
         "packaging_type": "eshipper_pallet",
     }],
@@ -171,7 +173,7 @@ RateRequestXML = f"""<EShipper xmlns="http://www.eshipper.net/XMLSchema" usernam
         <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
         <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" country="CA" zip="V3N4R3"/>
         <Packages type="Pallet">
-            <Package length="6" width="12" height="9" weight="20" type="Pallet" description="desc."/>
+            <Package length="3" width="5" height="4" weight="5" type="Pallet" description="desc."/>
         </Packages>
     </QuoteRequest>
 </EShipper>
