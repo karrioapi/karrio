@@ -91,7 +91,10 @@ shipment_data = {
         "weight_unit": "KG",
     }],
     "service": "freightcom_central_transport",
-    "options": {"cash_on_delivery": {"amount": 10.5}, "insurance": {"amount": 70.0},},
+    "options": {
+        "cash_on_delivery": 10.5,
+        "insurance": 70.0
+    },
 }
 
 ParsedShipmentResponse = [
