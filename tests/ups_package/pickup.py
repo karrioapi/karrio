@@ -326,7 +326,7 @@ PickupUpdateRequestXML = """<tns:Envelope  xmlns:tns="http://schemas.xmlsoap.org
             </v11:PickupAddress>
             <v11:AlternateAddressIndicator>Y</v11:AlternateAddressIndicator>
             <v11:TotalWeight>
-                <v11:Weight>30.86</v11:Weight>
+                <v11:Weight>30.87</v11:Weight>
                 <v11:UnitOfMeasurement>LBS</v11:UnitOfMeasurement>
             </v11:TotalWeight>
             <v11:PaymentMethod>01</v11:PaymentMethod>

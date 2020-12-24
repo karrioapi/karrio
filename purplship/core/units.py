@@ -116,19 +116,19 @@ class Dimension:
     def CM(self):
         if self._unit is None or self._value is None:
             return None
-        if self._unit == DimensionUnit.CM:
-            return NF.decimal(self._value)
+        if self._unit == DimensionUnit.IN:
+            return NF.decimal(self._value * 2.54)
         else:
-            return NF.decimal(self._value * 0.393701)
+            return NF.decimal(self._value)
 
     @property
     def IN(self):
         if self._unit is None or self._value is None:
             return None
-        if self._unit == DimensionUnit.IN:
-            return NF.decimal(self._value)
+        if self._unit == DimensionUnit.CM:
+            return NF.decimal(self._value / 2.54)
         else:
-            return NF.decimal(self._value * 2.54)
+            return NF.decimal(self._value)
 
     @property
     def M(self):
@@ -195,7 +195,7 @@ class Weight:
         if self._unit == WeightUnit.KG:
             return NF.decimal(self._value)
         elif self._unit == WeightUnit.LB:
-            return NF.decimal(self._value * 0.453592)
+            return NF.decimal(self._value / 2.205)
 
         return None
 
@@ -206,7 +206,7 @@ class Weight:
         if self._unit == WeightUnit.LB:
             return NF.decimal(self._value)
         elif self._unit == WeightUnit.KG:
-            return NF.decimal(self._value * 2.204620823516057)
+            return NF.decimal(self._value * 2.205)
 
         return None
 
@@ -322,7 +322,7 @@ class Packages(Iterable[Package]):
         return Weight(
             unit=WeightUnit.LB,
             value=sum(
-                pkg.weight.LB for pkg in self._items if pkg.weight.value is not None
+                pkg.weight.LB for pkg in self._items if pkg.weight.LB is not None
             )
             or None,
         )

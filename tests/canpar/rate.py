@@ -129,10 +129,10 @@ RateRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soa
                     </delivery_address>
                     <dimention_unit>I</dimention_unit>
                     <packages>
-                        <height>1.18</height>
-                        <length>3.94</length>
+                        <height>7.62</height>
+                        <length>25.399999999999999</length>
                         <reported_weight>1.</reported_weight>
-                        <width>1.18</width>
+                        <width>7.62</width>
                         <xc>true</xc>
                     </packages>
                     <pickup_address>
