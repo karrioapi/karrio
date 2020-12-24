@@ -157,7 +157,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                 if options.notification_email is not None else None
             ),
             preferences=PreferencesType(
-                show_packing_instructions=True,
+                show_packing_instructions=False,
                 show_postage_rate=True,
                 show_insured_value=("insurance" in payload.options),
             ),
