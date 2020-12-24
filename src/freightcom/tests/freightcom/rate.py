@@ -132,7 +132,7 @@ RateRequestXML = f"""<Freightcom xmlns="http://www.freightcom.net/XMLSchema" use
         <From company=" " residential="False" country="CA" zip="H8Z2Z3"/>
         <To company=" " residential="False" zip="H8Z2V4" country="CA"/>
         <Packages type="Package">
-            <Package length="10" width="3" height="3" weight="4" type="Boxes"/>
+            <Package length="4" width="2" height="2" weight="9" type="Boxes"/>
         </Packages>
     </QuoteRequest>
 </Freightcom>

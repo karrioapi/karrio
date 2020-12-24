@@ -130,7 +130,7 @@ ShipmentRequestXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema" 
             <CODReturnAddress codCompany="CGI" codName="Jain" codAddress1="23 jardin private" codCity="Ottawa" codStateCode="ON" codZip="K1K4T3" codCountry="CA"/>
         </COD>
         <Packages type="Package">
-            <Package length="6" width="12" height="9" weight="20" type="Boxes"/>
+            <Package length="3" width="5" height="4" weight="45" type="Boxes"/>
         </Packages>
     </ShippingRequest>
 </Freightcom>
