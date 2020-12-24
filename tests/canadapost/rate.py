@@ -236,7 +236,7 @@ QuoteMissingArgsError = """<messages xmlns="http://www.canadapost.ca/ws/messages
 
 RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>2004381</customer-number>
-    <expected-mailing-date>{datetime.today().strftime('%Y-%m-%d')}</expected-mailing-date>
+    <expected-mailing-date>2020-12-18</expected-mailing-date>
     <options>
         <option>
             <option-code>SO</option-code>
