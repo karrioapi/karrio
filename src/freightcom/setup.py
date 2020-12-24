@@ -25,7 +25,7 @@ dev_requirements = [
 
 setup(
     name="freightcom.extension",
-    version="2020.12",
+    version="2020.12.1",
     description="Freightcom purplship extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
