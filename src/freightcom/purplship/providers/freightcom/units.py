@@ -62,6 +62,27 @@ class Service(Enum):
     freightcom_fedex_first_overnight = "4106"
     freightcom_purolator_express_9_am = "4004"
     freightcom_dayr_e_comm_am_service = "5706"
+    freightcom_ups_3_day_select = "4605"
+    freightcom_express_worldwide = "5211"
+    freightcom_fedex_international_economy = "4109"
+    freightcom_express_12_00 = "5215"
+    freightcom_ups_worldwide_expedited = "4606"
+    freightcom_express_10_30 = "5208"
+    freightcom_ups_worldwide_express_saver = "4609"
+    freightcom_ups_worldwide_express = "4607"
+    freightcom_fedex_international_priority = "4108"
+    freightcom_purolator_ground_us = "4016"
+    freightcom_economy_select = "5216"
+    freightcom_purolator_express_us = "4015"
+    freightcom_purolator_express_us_10_30_am = "4014"
+    freightcom_ups_worldwide_express_plus = "4608"
+    freightcom_purolator_express_us_9_am = "4013"
+    freightcom_express_easy = "5202"
+    freightcom_regular_parcel = "6301"
+    freightcom_expedited_parcel = "6300"
+    freightcom_xpresspost = "6303"
+    freightcom_priority = "6302"
+
 
 
 class Option(Flag):
