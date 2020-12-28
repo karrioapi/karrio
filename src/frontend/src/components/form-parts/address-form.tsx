@@ -62,7 +62,9 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
                 update({ ...changes }, true);
             } else {
                 update({ [name]: address });
-                form.current?.dispatchEvent(new CustomEvent('label-select-tab', { bubbles: true, detail: { nextTab } }));
+                form.current?.dispatchEvent(
+                    new CustomEvent('label-select-tab', { bubbles: true, detail: { nextTab, delay: 500 } })
+                );
             }
             setKey(`address-${Date.now()}`);
         } catch (err) {
