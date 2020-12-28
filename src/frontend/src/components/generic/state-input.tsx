@@ -9,20 +9,25 @@ interface StateInputComponent extends InputFieldComponent {
 }
 
 const StateInput: React.FC<StateInputComponent> = ({ defaultValue, onValueChange, ...props }) => {
+    const onClick = (e: React.MouseEvent<HTMLInputElement>) => e.currentTarget.select();
     const Ref = useContext(Reference);
-    const [states, setStates] = useState<Collection<Collection>>({});
+    const [states, setStates] = useState<Collection<Collection>>(Ref?.states || {});
     const onChange = (e: ChangeEvent<any>) => {
         e.preventDefault();
         let value = find(states, e.target.value);
-        onValueChange(value || null);
+        onValueChange(value || e.target.value);
     };
-    useEffect(() => { (Ref !== undefined) && setStates(Ref.states) }, [states]);
+    useEffect(() => { 
+        if(Ref !== undefined) {
+            setStates(Ref.states);
+        }
+    }, [states]);
 
-    return (
-        <InputField onChange={onChange} defaultValue={find(states, defaultValue)} list="state_or_provinces" {...props}>
+    return (<>
+        <InputField onChange={onChange} onClick={onClick} defaultValue={find(Ref?.states, defaultValue)} list="state_or_provinces" {...props}>
             <datalist id="state_or_provinces">
                 {Object
-                    .entries(states)
+                    .entries(Ref?.states || {})
                     .map(([_, value]) => (
                         <>
                             {Object.entries(value as object).map(([state, name]) => (
@@ -33,13 +38,13 @@ const StateInput: React.FC<StateInputComponent> = ({ defaultValue, onValueChange
                 }
             </datalist>
         </InputField>
-    )
+    </>)
 };
 
 function find(states: Collection<Collection<string>>, code_or_name?: string): string | undefined {
     const country = (
         Object
-            .values(states)
+            .values(states || {})
             .find(country => (
                 Object.keys(country).includes(code_or_name as string) ||
                 Object.values(country).includes(code_or_name as string)

@@ -8,6 +8,7 @@ import CountryInput from '@/components/generic/country-input';
 import StateInput from '@/components/generic/state-input';
 import PostalInput from '@/components/generic/postal-input';
 import PhoneInput from '@/components/generic/phone-input';
+import NameInput from '@/components/generic/name-input';
 import { Collection, NotificationType } from '@/library/types';
 import { state } from '@/library/api';
 import { Templates } from '@/library/context';
@@ -81,7 +82,8 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
             {React.Children.map(children, (child: any) => React.cloneElement(child, { ...child.props, address, onChange: handleChange }))}
 
             <div className="columns mb-0">
-                <InputField label="name" name="person_name" onChange={handleChange} defaultValue={address.person_name} fieldClass="column mb-0 px-2 py-2" required />
+                <NameInput label="name" onValueChange={value => dispatch({ name: "partial", value })} onChange={handleChange} defaultValue={address.person_name} disableSuggestion={isNone(shipment)} fieldClass="column mb-0 px-2 py-2" required />
+            </div>
 
             <div className="columns mb-0">
                 <InputField label="company" name="company_name" onChange={handleChange} defaultValue={address.company_name} fieldClass="column mb-0 px-2 py-2" />
