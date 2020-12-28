@@ -98,7 +98,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
                 data.update({**data, 'postal_code': formatted})
 
             # Format and validate Phone Number
-            if all(data.get(key) is not None for key in ['country_code', 'phone_number']):
+            if all(data.get(key) is not None and data.get(key) != "" for key in ['country_code', 'phone_number']):
                 phone_number = data['phone_number']
                 country_code = data['country_code']
 
@@ -107,7 +107,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
                     data.update({**data, 'phone_number': phonenumbers.format_number(formatted, phonenumbers.PhoneNumberFormat.INTERNATIONAL)})
                 except Exception as e:
                     logger.warning(e)
-                    raise serializers.ValidationError("The phone number must match match this format 1234567890")
+                    raise serializers.ValidationError("Invalid phone number format")
 
             kwargs.update(data=data)
         super().__init__(*args, **kwargs)
