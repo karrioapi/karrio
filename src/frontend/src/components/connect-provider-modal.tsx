@@ -1,4 +1,4 @@
-import { Connection, NotificationType, state } from '@/library/api';
+import { state } from '@/library/api';
 import { CarrierSettings } from '@purplship/purplship';
 import React, { useState } from 'react';
 import { Reference } from '@/library/context';
@@ -6,6 +6,7 @@ import InputField from '@/components/generic/input-field';
 import CheckBoxField from '@/components/generic/checkbox-field';
 import ButtonField from '@/components/generic/button-field';
 import SelectField from './generic/select-field';
+import { Connection, NotificationType } from '@/library/types';
 
 interface ConnectProviderModalComponent {
     connection?: Connection;

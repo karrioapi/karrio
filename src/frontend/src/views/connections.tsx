@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { View } from '@/library/types';
-import { Connection, ConnectionData, PaginatedConnections, state } from '@/library/api';
+import { Connection, ConnectionData, PaginatedConnections, View } from '@/library/types';
 import ConnectProviderModal from '@/components/connect-provider-modal';
 import DisconnectProviderButton from '@/components/disconnect-provider-button';
 import CarrierBadge from '@/components/carrier-badge';
+import { state } from '@/library/api';
 
 interface ConnectionsView extends View {
   connections?: PaginatedConnections;

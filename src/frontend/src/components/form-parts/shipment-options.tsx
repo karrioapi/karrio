@@ -4,8 +4,9 @@ import ButtonField from '@/components/generic/button-field';
 import InputField from '@/components/generic/input-field';
 import CheckBoxField from '@/components/generic/checkbox-field';
 import SelectField from '@/components/generic/select-field';
-import { NotificationType, state } from '@/library/api';
+import { state } from '@/library/api';
 import { cleanDict, deepEqual, isNone } from '@/library/helper';
+import { NotificationType } from '@/library/types';
 
 interface ShipmentOptionsComponent {
     shipment: Shipment;

@@ -1,7 +1,80 @@
-import { Message, Parcel, Payment } from "@purplship/purplship";
+import { Address, CarrierSettings, Customs, Message, Parcel, Payment, Shipment } from "@purplship/purplship";
 
 export interface View {
     path: string
+}
+
+export interface UserInfo {
+    full_name: string | null;
+    email: string | null;
+    readonly is_staff: boolean;
+}
+
+export interface Connection extends Omit<CarrierSettings, 'id' | 'carrier_name'> {
+    id: string | null | undefined;
+    carrier_name: CarrierSettings.CarrierNameEnum | 'none';
+    [property: string]: any;
+}
+
+export interface ConnectionData {
+    carrier_name: CarrierSettings.CarrierNameEnum;
+    carrier_config: Partial<Connection>;
+}
+
+export interface Log {
+    id: string;
+    requested_at: string;
+    response_ms: string;
+    path: string;
+    view: string;
+    view_method: string;
+    remote_addr: string;
+    host: string;
+    method: string;
+    query_params: string;
+    data: string;
+    response: string;
+    status_code: string;
+}
+
+export interface Template {
+    id?: string;
+    label?: string;
+    is_default?: boolean;
+    address?: Address;
+    customs?: Customs;
+    parcel?: Parcel;
+}
+
+export interface PaginatedContent<T> {
+    count: Number;
+    url?: string | null;
+    next?: string | null;
+    previous?: string | null;
+    results: T[];
+    fetched?: boolean;
+}
+
+export interface PaginatedLogs extends PaginatedContent<Log> { }
+export interface PaginatedShipments extends PaginatedContent<Shipment> { }
+export interface PaginatedTemplates extends PaginatedContent<Template> { }
+export interface PaginatedConnections extends PaginatedContent<Connection> { }
+
+
+export enum NotificationType {
+    error = "is-danger",
+    warning = "is-warning",
+    info = "is-info",
+    success = "is-success"
+}
+
+export interface Notification {
+    type: NotificationType;
+    message: string | Error | RequestError;
+}
+
+export interface LabelData {
+    shipment: Shipment;
 }
 
 export type Collection<T = string> = {

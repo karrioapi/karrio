@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { View } from '@/library/types';
-import { PaginatedTemplates, state, Template } from '@/library/api';
+import { PaginatedTemplates, Template, View } from '@/library/types';
 import ParcelDescription from '@/components/descriptions/parcel-description';
 import ParcelEditModal from '@/components/parcel-edit-modal';
 import DeleteItemModal from '@/components/delete-item-modal';
+import { state } from '@/library/api';
 
 interface ParcelsView extends View {
   templates?: PaginatedTemplates;

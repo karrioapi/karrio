@@ -1,5 +1,5 @@
-import { LabelData, NotificationType, state } from '@/library/api';
-import { View } from '@/library/types';
+import { state } from '@/library/api';
+import { LabelData, NotificationType, View } from '@/library/types';
 import { Link, useNavigate } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import CustomsInfoForm from '@/components/form-parts/customs-info-form';

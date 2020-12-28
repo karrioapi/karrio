@@ -1,4 +1,5 @@
-import { NotificationType, state } from '@/library/api';
+import { state } from '@/library/api';
+import { NotificationType } from '@/library/types';
 import React, { useState } from 'react';
 
 interface GenerateAPIModalComponent {}

@@ -2,7 +2,8 @@ import React, { useState, useRef } from 'react';
 import { Shipment } from '@purplship/purplship';
 import LabelPrinter from './label/label-printer';
 import { useNavigate } from '@reach/router';
-import { NotificationType, state } from '@/library/api';
+import { state } from '@/library/api';
+import { NotificationType } from '@/library/types';
 
 
 interface ShipmentMenuComponent extends React.AllHTMLAttributes<HTMLDivElement> {

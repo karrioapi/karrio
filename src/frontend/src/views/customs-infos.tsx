@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Customs } from '@purplship/purplship';
-import { View } from '@/library/types';
-import { PaginatedTemplates, state, Template } from '@/library/api';
+import { PaginatedTemplates, Template, View } from '@/library/types';
 import CustomsInfoDescription from '@/components/descriptions/customs-info-description';
 import DeleteItemModal from '@/components/delete-item-modal';
 import CustomsInfoEditModal from '@/components/customs-info-edit-modal';
+import { state } from '@/library/api';
 
 interface CustomsInfosView extends View {
   templates?: PaginatedTemplates;

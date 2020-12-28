@@ -1,9 +1,11 @@
 import React, { EventHandler, useState } from 'react';
 import { Customs } from '@purplship/purplship';
 import { isNone } from '@/library/helper';
-import { NotificationType, state, Template } from '@/library/api';
 import CustomsInfoForm, { DEFAULT_CUSTOMS_CONTENT } from './form-parts/customs-info-form';
 import InputField from '@/components/generic/input-field';
+import CheckBoxField from './generic/checkbox-field';
+import { NotificationType, Template } from '@/library/types';
+import { state } from '@/library/api';
 
 const DEFAULT_TEMPLATE_CONTENT = {
     customs: DEFAULT_CUSTOMS_CONTENT

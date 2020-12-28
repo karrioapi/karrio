@@ -1,7 +1,6 @@
 import React from 'react';
-import { View } from '@/library/types';
+import { UserInfo, View } from '@/library/types';
 import CloseAccountAction from '@/components/close-account-action';
-import { UserInfo } from '@/library/api';
 import ProfileUpdateInput from '@/components/profile-update-input';
 
 interface AccountView extends View {

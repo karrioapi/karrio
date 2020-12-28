@@ -1,12 +1,12 @@
 import { Parcel, Shipment } from '@purplship/purplship';
-import React, { EventHandler, FormEvent, useContext, useEffect, useReducer, useRef, useState } from 'react';
+import React, { FormEvent, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import InputField from '@/components/generic/input-field';
-import { Reference } from '@/library/context';
+import { ParcelTemplates, Reference, Templates } from '@/library/context';
 import SelectField from '@/components/generic/select-field';
 import ButtonField from '@/components/generic/button-field';
 import { deepEqual, findPreset, formatDimension, formatRef, isNone } from '@/library/helper';
-import { DIMENSION_UNITS, PresetCollection, WEIGHT_UNITS } from '@/library/types';
-import { NotificationType, state } from '@/library/api';
+import { DIMENSION_UNITS, NotificationType, PresetCollection, WEIGHT_UNITS } from '@/library/types';
+import { state } from '@/library/api';
 
 type stateValue = string | boolean | Partial<Parcel>;
 export const DEFAULT_PARCEL_CONTENT: Partial<Parcel> = {

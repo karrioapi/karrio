@@ -1,5 +1,5 @@
-import { NotificationType, state } from '@/library/api';
-import { FieldError, RequestError } from '@/library/types';
+import { state } from '@/library/api';
+import { FieldError, NotificationType, RequestError } from '@/library/types';
 import React from 'react';
 
 interface NotifierComponent { }

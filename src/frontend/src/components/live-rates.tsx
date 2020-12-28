@@ -1,5 +1,6 @@
-import { NotificationType, state } from '@/library/api';
+import { state } from '@/library/api';
 import { deepEqual, formatRef, isNone } from '@/library/helper';
+import { NotificationType } from '@/library/types';
 import { Customs, Payment, Shipment } from '@purplship/purplship';
 import { useNavigate } from '@reach/router';
 import React, { useState } from 'react';

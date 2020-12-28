@@ -1,6 +1,6 @@
 import { References } from '@purplship/purplship';
 import React from 'react';
-import { PaginatedLogs, UserInfo } from '@/library/api';
+import { DefaultTemplates, PaginatedLogs, PaginatedTemplates, UserInfo } from '@/library/types';
 
 export const Reference = React.createContext<References>({} as References);
 export const Logs = React.createContext<PaginatedLogs>({} as PaginatedLogs);

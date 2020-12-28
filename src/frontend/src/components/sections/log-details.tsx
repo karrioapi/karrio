@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { View } from '@/library/types';
-import { Log, PaginatedLogs, state } from '@/library/api';
+import { Log, PaginatedLogs, View } from '@/library/types';
+import { state } from '@/library/api';
 import StatusCode from '@/components/status-code-badge';
 import Prism from 'prismjs';
 import { Link } from '@reach/router';

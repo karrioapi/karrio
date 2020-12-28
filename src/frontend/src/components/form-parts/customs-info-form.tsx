@@ -8,8 +8,8 @@ import SelectField from '@/components/generic/select-field';
 import DataInput from '@/components/generic/data-input';
 import { Reference, User } from '@/library/context';
 import { deepEqual, formatRef, isNone } from '@/library/helper';
-import { Collection, CURRENCY_OPTIONS, PAYOR_OPTIONS } from '@/library/types';
-import { NotificationType, state } from '@/library/api';
+import { Collection, CURRENCY_OPTIONS, NotificationType, PAYOR_OPTIONS } from '@/library/types';
+import { state } from '@/library/api';
 
 
 export const DEFAULT_CUSTOMS_CONTENT: Customs = {

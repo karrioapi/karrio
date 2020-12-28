@@ -2,8 +2,10 @@ import React, { EventHandler, useState } from 'react';
 import { Address, Shipment } from '@purplship/purplship';
 import AddressForm, { DEFAULT_ADDRESS_CONTENT } from '@/components/form-parts/address-form';
 import { isNone } from '@/library/helper';
-import { NotificationType, state, Template } from '@/library/api';
 import InputField from '@/components/generic/input-field';
+import CheckBoxField from './generic/checkbox-field';
+import { NotificationType, Template } from '@/library/types';
+import { state } from '@/library/api';
 
 const DEFAULT_TEMPLATE_CONTENT = {
     address: DEFAULT_ADDRESS_CONTENT

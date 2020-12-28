@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Link } from "@reach/router";
-import { UserInfo } from '@/library/api';
+import { UserInfo } from '@/library/types';
 
 
 interface AccountDropdownComponent {

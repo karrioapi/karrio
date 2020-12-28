@@ -1,4 +1,5 @@
-import { NotificationType, state, UserInfo } from '@/library/api';
+import { state } from '@/library/api';
+import { NotificationType, UserInfo } from '@/library/types';
 import React, { useState } from 'react';
 
 interface ProfileUpdateInputComponent {

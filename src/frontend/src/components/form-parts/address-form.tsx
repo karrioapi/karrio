@@ -1,7 +1,6 @@
 import { Address, Shipment } from '@purplship/purplship';
-import React, { FormEvent, useReducer, useRef, useState } from 'react';
-import { NotificationType, state } from '@/library/api';
-import { deepEqual } from '@/library/helper';
+import React, { FormEvent, useContext, useEffect, useReducer, useRef, useState } from 'react';
+import { deepEqual, isNone } from '@/library/helper';
 import InputField from '@/components/generic/input-field';
 import ButtonField from '@/components/generic/button-field';
 import CheckBoxField from '@/components/generic/checkbox-field';
@@ -9,7 +8,9 @@ import CountryInput from '@/components/generic/country-input';
 import StateInput from '@/components/generic/state-input';
 import PostalInput from '@/components/generic/postal-input';
 import PhoneInput from '@/components/generic/phone-input';
-import { Collection } from '@/library/types';
+import { Collection, NotificationType } from '@/library/types';
+import { state } from '@/library/api';
+import { Templates } from '@/library/context';
 
 export const DEFAULT_ADDRESS_CONTENT = {
     residential: false,

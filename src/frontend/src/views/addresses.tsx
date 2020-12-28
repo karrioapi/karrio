@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { View } from '@/library/types';
-import { PaginatedTemplates, state, Template } from '@/library/api';
+import { PaginatedTemplates, Template, View } from '@/library/types';
+import { state } from '@/library/api';
 import AddressDescription from '@/components/descriptions/address-description';
 import AddressEditModal from '@/components/address-edit-modal';
 import DeleteItemModal from '@/components/delete-item-modal';

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View } from '@/library/types';
-import { PaginatedShipments, state } from '@/library/api';
+import { PaginatedShipments, View } from '@/library/types';
 import ShipmentMenu from '@/components/shipment-menu';
 import { useNavigate } from '@reach/router';
 import { formatAddress, formatDate } from '@/library/helper';
 import CarrierBadge from '@/components/carrier-badge';
+import { state } from '@/library/api';
 
 
 interface ShipmentsView extends View {

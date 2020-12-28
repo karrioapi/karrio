@@ -1,4 +1,4 @@
-import { Address, Customs, Parcel, Payment } from "@purplship/purplship";
+import { Address, Customs, Parcel } from "@purplship/purplship";
 import { PresetCollection } from "@/library/types";
 
 

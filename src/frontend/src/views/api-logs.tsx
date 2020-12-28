@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View } from '@/library/types';
+import { Log, PaginatedLogs, View } from '@/library/types';
 import { Router, useNavigate } from '@reach/router';
-import { Log, PaginatedLogs, state } from '@/library/api';
 import LogList from '@/components/sections/log-list';
 import LogDetails from '@/components/sections/log-details';
+import { state } from '@/library/api';
 
 interface APILogsView extends View {
   logs?: PaginatedLogs;
