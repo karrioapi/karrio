@@ -26,13 +26,21 @@ interface AddressFormComponent {
     update: (payload: {}, refresh?: boolean) => void;
 }
 
-function reducer(state: any, { name, value }: { name: string, value: string | boolean }) {
-    return { ...state, [name]: value }
+function reducer(state: any, { name, value }: { name: string, value: string | boolean | object }) {
+    switch (name) {
+        case "full":
+            return { ...(value as object) };
+        case "partial":
+            return { ...state, ...(value as object) };
+        default:
+            return { ...state, [name]: value };
+    }
 }
 
 
 const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, update, children }) => {
     const form = useRef<HTMLFormElement>(null);
+    const Defaults = useContext(Templates);
     const [key, setKey] = useState<string>(`address-${Date.now()}`);
     const [address, dispatch] = useReducer(reducer, value, () => (value || DEFAULT_ADDRESS_CONTENT));
     const nextTab: string = NEXT_TAB_MAPPING[name];
@@ -61,6 +69,12 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
         }
     };
 
+    useEffect(() => {
+        if (shipment !== undefined && isNone(shipment.id) && name === "shipper" && !isNone(Defaults?.address) && !deepEqual(Defaults.address, address)) {
+            dispatch({ name: "full", value: Defaults.address as Address });
+        }
+    }, [Defaults]);
+
     return (
         <form className="px-1 py-2" onSubmit={handleSubmit} key={key} ref={form}>
 
@@ -69,11 +83,12 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
             <div className="columns mb-0">
                 <InputField label="name" name="person_name" onChange={handleChange} defaultValue={address.person_name} fieldClass="column mb-0 px-2 py-2" required />
 
+            <div className="columns mb-0">
                 <InputField label="company" name="company_name" onChange={handleChange} defaultValue={address.company_name} fieldClass="column mb-0 px-2 py-2" />
             </div>
 
             <div className="columns mb-0">
-                <InputField label="email" name="email" onChange={handleChange} defaultValue={address.email} fieldClass="column mb-0 px-2 py-2" type="email" />
+                <InputField label="email" name="email" onChange={handleChange} defaultValue={address.email} fieldClass="column mb-0 is-7 px-2 py-2" type="email" />
 
                 <PhoneInput label="phone" onValueChange={value => dispatch({ name: "phone_number", value: value as string })} defaultValue={address.phone_number} country={address.country_code} fieldClass="column mb-0 px-2 py-2" />
             </div>

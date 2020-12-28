@@ -159,7 +159,7 @@ const CustomsInfoForm: React.FC<CustomsInfoFormComponent> = ({ value, shipment, 
                         <span>Duties</span>
                     </CheckBoxField>
 
-                    <DataInput state={customs?.duty} onChange={handleChange} name="duty" className="columns column is-multiline mb-0 ml-6 my-1 px-2 py-0 is-12" style={{ borderLeft: "solid 2px #ddd", display: `${!isNone(customs?.duty) ? 'block' : 'none'}` }}>
+                    <DataInput state={customs?.duty} onChange={handleChange} name="duty" className="columns column is-multiline mb-0 ml-6 my-1 px-2 py-0" style={{ borderLeft: "solid 2px #ddd", display: `${!isNone(customs?.duty) ? 'block' : 'none'}` }}>
 
                         <SelectField label="paid by" value={customs?.duty?.paid_by} name="paid_by" className="is-small is-fullwidth" fieldClass="column is-3 mb-0 px-1 py-2" required={isNone(customs?.duty)}>
                             {PAYOR_OPTIONS.map(unit => (
