@@ -11,6 +11,7 @@ class Template(OwnedEntity):
 
     id = models.CharField(max_length=50, primary_key=True, default=uuid, editable=False)
     label = models.CharField(max_length=50)
+    is_default = models.BooleanField(null=True)
 
     address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True)
     customs = models.OneToOneField(Customs, on_delete=models.CASCADE, null=True, blank=True)

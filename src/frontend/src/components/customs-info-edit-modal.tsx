@@ -51,7 +51,7 @@ const CustomsInfoEditModal: React.FC<CustomsInfoEditModalComponent> = ({ customs
         close(undefined, true);
     };
     const Extension: React.FC<{ onChange?: EventHandler<any>; customs?: ExtendedCustoms }> = ({ onChange, customs }) => (
-        <div className="columns mb-0">
+        <div className="columns mb-2">
             <InputField label="label" name="label" onChange={onChange} defaultValue={customs?.label} fieldClass="column mb-0 px-2 py-2" required />
         </div>
     );
@@ -70,7 +70,7 @@ const CustomsInfoEditModal: React.FC<CustomsInfoEditModalComponent> = ({ customs
                         <h3 className="subtitle is-3">{isNew ? 'New' : 'Update'} Customs Info</h3>
                         <hr />
                         {payload !== undefined && <CustomsInfoForm value={payload} update={update} cannotOptOut={true}>
-                            <Extension />    
+                            <Extension />
                         </CustomsInfoForm>}
                     </section>
 

@@ -47,7 +47,7 @@ const CustomsInfos: React.FC<CustomsInfosView> = ({ templates }) => {
             </tr>
           </thead>
 
-          <tbody className="CustomsInfos-table">
+          <tbody className="templates-table">
             {templates?.results.map((template) => (
 
               <tr key={`${template.id}-${Date.now()}`}>

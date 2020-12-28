@@ -42,7 +42,7 @@ const Addresses: React.FC<AddressesView> = ({ templates }) => {
 
           <thead className="templates-table">
             <tr>
-              <th>Address Templates</th>
+              <th colSpan={2}>Address Templates</th>
               <th className="action"></th>
             </tr>
           </thead>
@@ -54,6 +54,11 @@ const Addresses: React.FC<AddressesView> = ({ templates }) => {
                 <td className="template">
                   <p className="is-subtitle is-size-6 my-1 has-text-weight-semibold">{template.label}</p>
                   <AddressDescription address={template.address as Address} />
+                </td>
+                <td className="default is-vcentered">
+                  {template.is_default && <span className="is-size-7 has-text-weight-semibold">
+                    <span className="icon has-text-success"><i className="fas fa-check"></i></span> Default shipper address
+                  </span>}
                 </td>
                 <td className="action is-vcentered">
                   <div className="buttons is-centered">

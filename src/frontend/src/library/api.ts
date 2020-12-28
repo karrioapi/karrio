@@ -378,38 +378,58 @@ class AppState {
         }
     }
 
-    public async fetchParcels(url?: string): Promise<PaginatedTemplates> {
-        const response = await http(url || `/parcels/templates?limit=20&offset=0`, { headers: this.headers });
+    public async fetchDefaultTemplates(): Promise<DefaultTemplates> {
+        const response = await http(`/templates`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.parcels$.next({...data, fetched: true, url});
+            this.defaultTemplates$.next(new DefaultTemplates(data));
             return data;
         } else {
-            this.parcels$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
             throw new Error("Unable fetch parcel templates.");
         }
     }
 
-    public async fetchAddresses(url?: string): Promise<PaginatedTemplates> {
-        const response = await http(url || `/addresses/templates?limit=20&offset=0`, { headers: this.headers });
+    public async fetchParcels(url?: string): Promise<PaginatedTemplates> {
+        const response = await http(url || `/parcels/templates?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.addresses$.next({...data, fetched: true, url});
+            this.parcels$.next({ ...data, fetched: true, url });
             return data;
         } else {
-            this.addresses$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
-            throw new Error("Unable fetch addresses templates.");
+            this.parcels$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+            throw new Error("Unable fetch parcel templates.");
         }
+    }
+
+    public async fetchAddresses(current_url?: string) {
+        this.Queue['addresses'] = this.Queue['addresses'] || (() => {
+            const q = new Subject<string | undefined>()
+            q.asObservable().pipe(throttle(_ => interval(1000))).subscribe(async (url) => {
+                const response = await http(url || `/addresses/templates?limit=20&offset=0`, { headers: this.headers });
+                if (response.ok) {
+                    const data = await response.json();
+                    this.addresses$.next({ ...data, fetched: true, url });
+                    return data;
+                } else {
+                    this.addresses$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+                    throw new Error("Unable fetch addresses templates.");
+                }
+            })
+            return q;
+        })();
+        
+        this.Queue['addresses'].next(current_url);
+        return this.Queue['addresses'].toPromise();
     }
 
     public async fetchCustomsInfos(url?: string): Promise<PaginatedTemplates> {
         const response = await http(url || `/customs_infos/templates?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.customsInfos$.next({...data, fetched: true, url});
+            this.customsInfos$.next({ ...data, fetched: true, url });
             return data;
         } else {
-            this.customsInfos$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            this.customsInfos$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Unable fetch customs infos templates.");
         }
     }
@@ -418,10 +438,10 @@ class AppState {
         const response = await http(url || `/connections?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.connections$.next({...data, fetched: true, url});
+            this.connections$.next({ ...data, fetched: true, url });
             return data;
         } else {
-            this.connections$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            this.connections$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Unable fetch connected carriers.");
         }
     }
@@ -430,10 +450,10 @@ class AppState {
         const response = await http(url || `/shipments?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.shipments$.next({...data, fetched: true, url});
+            this.shipments$.next({ ...data, fetched: true, url });
             return data;
         } else {
-            this.shipments$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            this.shipments$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Failed to fetch shipments.");
         }
     }
@@ -442,10 +462,10 @@ class AppState {
         const response = await http(url || `/logs?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.logs$.next({...data, fetched: true, url});
+            this.logs$.next({ ...data, fetched: true, url });
             return data;
         } else {
-            this.logs$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            this.logs$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Failed to fetch logs.");
         }
     }

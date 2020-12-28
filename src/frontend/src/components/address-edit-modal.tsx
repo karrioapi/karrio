@@ -11,7 +11,7 @@ const DEFAULT_TEMPLATE_CONTENT = {
     address: DEFAULT_ADDRESS_CONTENT
 } as Template;
 
-type ExtendedAddress = Address & { label?: string; };
+type ExtendedAddress = Address & { label: string; is_default?: boolean; };
 type ExtendedShipment = Shipment & { template: ExtendedAddress; };
 
 interface AddressEditModalComponent {
@@ -28,10 +28,10 @@ const AddressEditModal: React.FC<AddressEditModalComponent> = ({ addressTemplate
 
     const open = () => {
         setIsActive(true);
-        const { label, address } = addressTemplate || DEFAULT_TEMPLATE_CONTENT;
+        const { label, is_default, address } = addressTemplate || DEFAULT_TEMPLATE_CONTENT;
         const { id, ...address_content } = address as Address;
 
-        setPayload({ ...address_content, label } as ExtendedAddress);
+        setPayload({ ...address_content, label, is_default } as ExtendedAddress);
     };
     const close = (_?: React.MouseEvent, changed?: boolean) => {
         if (isNew) setPayload(undefined);
@@ -40,22 +40,29 @@ const AddressEditModal: React.FC<AddressEditModalComponent> = ({ addressTemplate
         setKey(`address-${Date.now()}`);
     };
     const update = async (changes: {}, ..._: any[]) => {
-        const { label, ...address } = (changes as ExtendedShipment)["template"];
+        const { label, is_default, ...address } = (changes as ExtendedShipment).template;
         if (isNew) {
-            await state.saveTemplate({ label, address });
+            await state.saveTemplate({ label, is_default, address });
             state.setNotification({ type: NotificationType.success, message: 'Address successfully added!' });
         }
         else {
-            await state.updateTemplate(addressTemplate?.id as string, { label, address });
+            await state.updateTemplate(addressTemplate?.id as string, { label, is_default, address });
             state.setNotification({ type: NotificationType.success, message: 'Address successfully updated!' });
         }
 
         close(undefined, true);
     };
     const Extension: React.FC<{ onChange?: EventHandler<any>; address?: ExtendedAddress }> = ({ onChange, address }) => (
-        <div className="columns mb-0">
-            <InputField label="label" name="label" onChange={onChange} defaultValue={address?.label} fieldClass="column mb-0 px-2 py-2" required/>
-        </div>
+        <>
+            <div className="columns mb-0">
+                <InputField label="label" name="label" onChange={onChange} defaultValue={address?.label} fieldClass="column mb-0 px-2 py-2" required />
+            </div>
+            <div className="columns mb-1">
+                <CheckBoxField name="is_default" onChange={onChange} defaultChecked={address?.is_default} fieldClass="column mb-0 px-2 py-2">
+                    <span>Set as default address</span>
+                </CheckBoxField>
+            </div>
+        </>
     );
 
     return (

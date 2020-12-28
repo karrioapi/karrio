@@ -41,7 +41,7 @@ const Parcels: React.FC<ParcelsView> = ({ templates }) => {
 
           <thead className="templates-table">
             <tr>
-              <th>Parcel Templates</th>
+              <th colSpan={2}>Parcel Templates</th>
               <th className="action"></th>
             </tr>
           </thead>
@@ -53,6 +53,11 @@ const Parcels: React.FC<ParcelsView> = ({ templates }) => {
                 <td className="template">
                   <p className="is-subtitle is-size-6 my-1 has-text-weight-semibold">{template.label}</p>
                   <ParcelDescription parcel={template.parcel} />
+                </td>
+                <td className="default is-vcentered">
+                  {template.is_default && <span className="is-size-7 has-text-weight-semibold">
+                    <span className="icon has-text-success"><i className="fas fa-check"></i></span> Default shipping parcel
+                  </span>}
                 </td>
                 <td className="action is-vcentered">
                   <div className="buttons is-centered">
