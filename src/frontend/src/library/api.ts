@@ -36,6 +36,7 @@ class AppState {
     private references$: Subject<References> = new Subject<References>();
     private logs$: Subject<PaginatedLogs> = new Subject<PaginatedLogs>();
     private notification$: Subject<Notification> = new Subject<Notification>();
+    private defaultTemplates$: BehaviorSubject<DefaultTemplates> = new BehaviorSubject<DefaultTemplates>(new DefaultTemplates([]));
     public labelData$: BehaviorSubject<LabelData> = new BehaviorSubject<LabelData>(DEFAULT_LABEL_DATA);
 
     constructor() {
@@ -80,13 +81,13 @@ class AppState {
     }
 
     public get addresses() {
-        const [addresses, setValue] = useState<PaginatedTemplates>();
+        const [addresses, setValue] = useState<PaginatedTemplates>(DEFAULT_PAGINATED_RESULT);
         useEffect(() => { this.addresses$.asObservable().pipe(distinct()).subscribe(setValue); });
         return addresses;
     }
 
     public get parcels() {
-        const [parcels, setValue] = useState<PaginatedTemplates>();
+        const [parcels, setValue] = useState<PaginatedTemplates>(DEFAULT_PAGINATED_RESULT);
         useEffect(() => { this.parcels$.asObservable().pipe(distinct()).subscribe(setValue); });
         return parcels;
     }
@@ -113,6 +114,12 @@ class AppState {
         const [notification, setValue] = useState<Notification>();
         useEffect(() => { this.notification$.asObservable().subscribe(setValue); });
         return notification;
+    }
+
+    public get defaultTemplates() {
+        const [defaultTemplates, setValue] = useState<DefaultTemplates>();
+        useEffect(() => { this.defaultTemplates$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return defaultTemplates;
     }
 
     public get labelData() {

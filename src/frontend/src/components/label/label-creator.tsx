@@ -74,6 +74,8 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                     navigate('/');
                 }
             });
+        } else {
+            state.fetchDefaultTemplates();
         }
     }, []);
 

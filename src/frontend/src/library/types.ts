@@ -133,3 +133,28 @@ export class RequestError extends Error {
         }
     }
 }
+
+export class DefaultTemplates {
+    constructor(private templates: Template[]) { }
+
+    get customs(): Customs | undefined {
+        const template = this.templates.find(
+            template => template.customs !== undefined && template.customs !== null
+        );
+        return (template || {}).customs
+    }
+
+    get address(): Address | undefined {
+        const template = this.templates.find(
+            template => template.address !== undefined && template.address !== null
+        );
+        return (template || {}).address
+    }
+
+    get parcel(): Parcel | undefined {
+        const template = this.templates.find(
+            template => template.parcel !== undefined && template.parcel !== null
+        );
+        return (template || {}).parcel
+    }
+}

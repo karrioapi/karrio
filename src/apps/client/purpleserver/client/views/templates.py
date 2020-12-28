@@ -29,6 +29,13 @@ class TemplateList(GenericAPIView):
         template = SerializerDecorator[TemplateSerializer](data=request.data).save(user=request.user).instance
         return Response(TemplateSerializer(template).data, status=status.HTTP_201_CREATED)
 
+    def get(self, request: Request):
+        """
+        Returns the list default templates
+        """
+        templates = request.user.template_set.filter(is_default=True)
+        return Response(TemplateSerializer(templates, many=True).data)
+
 
 class TemplateDetails(TemplateList):
 

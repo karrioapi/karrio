@@ -27,14 +27,15 @@ import '@/assets/app.scss';
 const App: React.FC = () => {
     const user = state.user;
     const token = state.token;
+    const references = state.references;
+    const defatultTemplates = state.defaultTemplates;
+    const parcelTemplates = state.parcels;
+    const addressTemplates = state.addresses;
+
     const logs = state.logs;
     const labelData = state.labelData;
-    const references = state.references;
-
     const shipments = state.shipments;
     const connections = state.connections;
-    const parcels = state.parcels;
-    const addresses = state.addresses;
     const customsInfos = state.customsInfos;
 
     return (
@@ -42,6 +43,10 @@ const App: React.FC = () => {
             <Reference.Provider value={references as References}>
             <Logs.Provider value={logs as PaginatedLogs}>
             <User.Provider value={user as UserInfo}>
+            <ParcelTemplates.Provider value={parcelTemplates as PaginatedTemplates}>
+            <AddressTemplates.Provider value={addressTemplates as PaginatedTemplates}>
+            <Templates.Provider value={defatultTemplates as DefaultTemplates}>
+
                 <ExpandedSidebar />
 
                 <div className="plex-wrapper">
@@ -55,8 +60,8 @@ const App: React.FC = () => {
                                 <LabelCreator path="buy_label/:id" data={labelData} />
 
                                 <Connections path="configurations/carriers" connections={connections} />
-                                <Parcels path="configurations/parcels" templates={parcels} />
-                                <Addresses path="configurations/addresses" templates={addresses} />
+                                <Parcels path="configurations/parcels" templates={parcelTemplates} />
+                                <Addresses path="configurations/addresses" templates={addressTemplates} />
                                 <CustomsInfos path="configurations/customs_infos" templates={customsInfos} />
 
                                 <APILogs path="api_logs/*" logs={logs}/>
@@ -69,6 +74,10 @@ const App: React.FC = () => {
                 </div>
 
                 <BoardFooter />
+
+            </Templates.Provider>
+            </AddressTemplates.Provider>
+            </ParcelTemplates.Provider>
             </User.Provider>
             </Logs.Provider>
             </Reference.Provider>
