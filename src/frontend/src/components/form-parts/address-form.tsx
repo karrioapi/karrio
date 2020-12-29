@@ -16,6 +16,7 @@ import { Templates } from '@/library/context';
 export const DEFAULT_ADDRESS_CONTENT = {
     residential: false,
     country_code: Address.CountryCodeEnum.CA,
+    state_code: 'QC'
 } as Partial<Address>;
 
 const NEXT_TAB_MAPPING: Collection = { "shipper": "recipient", "recipient": "parcel" };
@@ -42,8 +43,9 @@ function reducer(state: any, { name, value }: { name: string, value: string | bo
 const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, update, children }) => {
     const form = useRef<HTMLFormElement>(null);
     const Defaults = useContext(Templates);
+    const init = () => deepEqual(value, {}) ? DEFAULT_ADDRESS_CONTENT : value;
     const [key, setKey] = useState<string>(`address-${Date.now()}`);
-    const [address, dispatch] = useReducer(reducer, value, () => (value || DEFAULT_ADDRESS_CONTENT));
+    const [address, dispatch] = useReducer(reducer, value, init);
     const nextTab: string = NEXT_TAB_MAPPING[name];
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const target = event.target;
@@ -63,7 +65,7 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
             } else {
                 update({ [name]: address });
                 form.current?.dispatchEvent(
-                    new CustomEvent('label-select-tab', { bubbles: true, detail: { nextTab, delay: 500 } })
+                    new CustomEvent('label-select-tab', { bubbles: true, detail: { nextTab, delay: 100 } })
                 );
             }
             setKey(`address-${Date.now()}`);
@@ -99,7 +101,7 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
 
 
             <div className="columns mb-0">
-                <CountryInput label="country" onValueChange={value => dispatch({ name: "country_code", value: value as string })} defaultValue={address.country_code} fieldClass="column mb-0 px-2 py-2" />
+                <CountryInput label="country" onValueChange={value => dispatch({ name: "country_code", value: value as string })} defaultValue={address.country_code} fieldClass="column mb-0 px-2 py-2" required/>
             </div>
 
             <div className="columns mb-0">
