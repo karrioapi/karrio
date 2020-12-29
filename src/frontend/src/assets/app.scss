@@ -186,3 +186,8 @@ td > div.dropdown.is-active .dropdown-menu {
     background-color:#333366 !important;
     color: #fff !important;
 }
+
+.dropped-panel {
+    max-height: 20.5rem;
+    overflow-y: auto;
+}
