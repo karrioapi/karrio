@@ -1,42 +1,23 @@
+import React, { useContext, useEffect, useState } from 'react';
+import DropdownInput, { DropdownInputComponent } from '@/components/generic/dropdown-input';
 import { Reference } from '@/library/context';
+import { isNone } from '@/library/helper';
 import { Collection } from '@/library/types';
-import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
-import InputField, { InputFieldComponent } from '@/components/generic/input-field';
 
-interface CountryInputComponent extends InputFieldComponent {
-    onValueChange: (value: string | null) => void;
-}
+interface CountryInputComponent extends Omit<DropdownInputComponent, 'items'> {}
 
-const CountryInput: React.FC<CountryInputComponent> = ({ defaultValue, onValueChange, ...props }) => {
+const CountryInput: React.FC<CountryInputComponent> = ({ name, ...props }) => {
     const Ref = useContext(Reference);
-    const onClick = (e: React.MouseEvent<HTMLInputElement>) => e.currentTarget.select();
-    const [countries, setCountries] = useState<Collection>(Ref?.countries || {});
-    const find = (key?: string): string | undefined => {
-        return Object.keys(countries).find(c =>
-            c.toLowerCase() === key?.toLowerCase() ||
-            countries[c].toLowerCase() === key?.toLowerCase()
-        );
-    };
-    const onChange = (e: ChangeEvent<any>) => {
-        e.preventDefault();
-        let value = find(e.target.value);
-        onValueChange(value || e.target.value);
-    };
+    const [items, setItems] = useState<[string, string][]>();
+
     useEffect(() => {
-        if (Ref !== undefined) {
-            setCountries(Ref.countries);
+        if (!isNone(Ref?.countries)) {
+            setItems(Object.entries(Ref.countries as Collection).map((value) => value));
         }
-    }, [countries]);
+    }, [Ref?.countries]);
 
     return (
-        <InputField onChange={onChange} onClick={onClick} defaultValue={Ref?.countries[defaultValue as string]} list="countries" {...props}>
-            <datalist id="countries">
-                {Object
-                    .entries(Ref?.countries as Collection || {})
-                    .map(([code, name]) => <option key={code} value={name} />)
-                }
-            </datalist>
-        </InputField>
+        <DropdownInput name={name || 'country'} items={items} {...props}/>
     )
 };
 

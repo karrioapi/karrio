@@ -2,11 +2,11 @@ import { AddressTemplates } from '@/library/context';
 import React, { ChangeEvent, useContext, useEffect } from 'react';
 import InputField, { InputFieldComponent } from '@/components/generic/input-field';
 import { state } from '@/library/api';
-import { formatAddress } from '@/library/helper';
+import { formatAddress, isNone } from '@/library/helper';
 import { Address } from '@purplship/purplship';
 
 interface NameInputComponent extends InputFieldComponent {
-    onValueChange: (value: Partial<Address>) => void;
+    onValueChange: (value: Partial<Address>, refresh?: boolean) => void;
     defaultValue?: string;
     disableSuggestion?: boolean;
 }
@@ -16,8 +16,9 @@ const NameInput: React.FC<NameInputComponent> = ({ defaultValue, disableSuggesti
     const addressTemplates = useContext(AddressTemplates);
     const onInput = (e: ChangeEvent<any>) => {
         e.preventDefault();
-        let value = addressTemplates.results.find(t => t.address?.person_name === e.target.value)?.address || { person_name: e.target.value };
-        onValueChange(value as Partial<Address>);
+        const template = addressTemplates.results.find(t => t.address?.person_name === e.target.value);
+        let value = template?.address || { person_name: e.target.value };
+        onValueChange(value as Partial<Address>, !isNone(template));
     };
 
     useEffect(() => {

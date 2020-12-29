@@ -84,7 +84,7 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
             {React.Children.map(children, (child: any) => React.cloneElement(child, { ...child.props, address, onChange: handleChange }))}
 
             <div className="columns mb-0">
-                <NameInput label="name" onValueChange={value => dispatch({ name: "partial", value })} onChange={handleChange} defaultValue={address.person_name} disableSuggestion={isNone(shipment)} fieldClass="column mb-0 px-2 py-2" required />
+                <NameInput label="name" onValueChange={(value, refresh) => { dispatch({ name: "partial", value }); refresh && setKey(`address-${Date.now()}`); }} defaultValue={address.person_name} disableSuggestion={isNone(shipment)} fieldClass="column mb-0 px-2 py-2" required />
             </div>
 
             <div className="columns mb-0">
@@ -98,21 +98,20 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
             </div>
 
 
-            <h6 className="is-size-7 my-2 has-text-weight-semibold">Address</h6>
-
+            <div className="columns mb-0">
+                <CountryInput label="country" onValueChange={value => dispatch({ name: "country_code", value: value as string })} defaultValue={address.country_code} fieldClass="column mb-0 px-2 py-2" />
+            </div>
 
             <div className="columns mb-0">
                 <InputField label="Street (Line 1)" name="address_line1" onChange={handleChange} defaultValue={address.address_line1} fieldClass="column mb-0 px-2 py-2" required />
-
-                <InputField label="Street (Line 2)" name="address_line2" onChange={handleChange} defaultValue={address.address_line2} fieldClass="column mb-0 px-2 py-2" />
             </div>
 
             <div className="columns is-multiline mb-0">
+                <InputField label="Street (Line 2)" name="address_line2" onChange={handleChange} defaultValue={address.address_line2} fieldClass="column is-6 mb-0 px-2 py-2" />
+
                 <InputField label="city" name="city" onChange={handleChange} defaultValue={address.city} fieldClass="column is-6 mb-0 px-2 py-2" />
 
-                <StateInput label="province or state" onValueChange={value => dispatch({ name: "state_code", value: value as string })} defaultValue={address.state_code} fieldClass="column is-6 mb-0 px-2 py-2" />
-
-                <CountryInput label="country" onValueChange={value => dispatch({ name: "country_code", value: value as string })} defaultValue={address.country_code} fieldClass="column is-6 mb-0 px-2 py-2" />
+                <StateInput label="province or state" onValueChange={value => dispatch({ name: "state_code", value: value as string })} defaultValue={address.state_code} country={address.country_code} fieldClass="column is-6 mb-0 px-2 py-2" />
 
                 <PostalInput label="postal code" onValueChange={value => dispatch({ name: "postal_code", value: value as string })} defaultValue={address.postal_code} country={address.country_code} fieldClass="column is-6 mb-0 px-2 py-2" />
             </div>

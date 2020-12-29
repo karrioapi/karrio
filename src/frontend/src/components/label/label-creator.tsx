@@ -91,7 +91,7 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
             <div className="columns px-2">
                 <div className="column is-7 px-0">
 
-                    <div className="card px-3 py-3">
+                    <div className="card px-3 py-3" style={{ overflow: 'visible'}}>
                         <Tabs tabs={tabs} disabled={filterDisabled(data.shipment)} eventKey="label-select-tab">
 
                             <AddressForm key={ckey} value={data.shipment.shipper} shipment={data.shipment} update={update} name="shipper" />
