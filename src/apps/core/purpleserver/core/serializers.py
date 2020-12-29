@@ -77,6 +77,15 @@ class TestFilters(Serializer):
     """)
 
 
+class Message(Serializer):
+
+    carrier_name = CharField(required=True, help_text="The targeted carrier")
+    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
+    message = CharField(required=False, help_text="The error or warning message")
+    code = CharField(required=False, help_text="The message code")
+    details = DictField(required=False, help_text="any additional details")
+
+
 class AddressData(AugmentedAddressSerializer):
 
     postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
@@ -553,6 +562,7 @@ class ShipmentContent(Serializer):
     Date Format: `YYYY-MM-DD`
     """)
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
+    messages = Message(required=False, many=True, default=[], help_text="The list of note or warning messages")
 
 
 class Shipment(EntitySerializer, ShipmentContent):
@@ -563,15 +573,6 @@ class ShipmentCancelRequest(Serializer):
     shipment_identifier = CharField(required=True, help_text="The shipment identifier returned during creation")
     service = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected shipment service")
     options = PlainDictField(required=False, allow_null=True, help_text="Advanced carrier specific cancellation options")
-
-
-class Message(Serializer):
-
-    carrier_name = CharField(required=True, help_text="The targeted carrier")
-    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
-    message = CharField(required=False, help_text="The error or warning message")
-    code = CharField(required=False, help_text="The message code")
-    details = DictField(required=False, help_text="any additional details")
 
 
 class Operation(Serializer):
@@ -597,11 +598,6 @@ class PickupResponse(Serializer):
 class RateResponse(Serializer):
     messages = Message(required=False, many=True, help_text="The list of note or warning messages")
     rates = Rate(many=True, help_text="The list of returned rates")
-
-
-class ShipmentResponse(Serializer):
-    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
-    shipment = Shipment(required=False, help_text="The submitted shipment's summary")
 
 
 class TrackingResponse(Serializer):

@@ -16,7 +16,6 @@ from purpleserver.core.serializers import (
     ErrorResponse,
     Shipment,
     ShipmentData,
-    ShipmentResponse,
     RateResponse,
     Message,
     Rate,
@@ -127,7 +126,7 @@ class ShipmentRates(APIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}rates",
         operation_summary="Fetch new shipment rates",
-        responses={200: ShipmentResponse(), 400: ErrorResponse()}
+        responses={200: Shipment(), 400: ErrorResponse()}
     )
     def get(self, request: Request, pk: str):
         """
@@ -138,15 +137,14 @@ class ShipmentRates(APIView):
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
             data=ShipmentData(shipment).data).save().instance
         payload: dict = DP.to_dict(dict(
-            rates=Rate(rate_response.rates, many=True).data, selected_rate=None))
+            rates=Rate(rate_response.rates, many=True).data,
+            messages=Message(rate_response.messages, many=True).data,
+            selected_rate=None
+        ))
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
 
-        response = dict(
-            shipment=Shipment(shipment).data,
-            messages=Message(rate_response.messages, many=True).data
-        )
-        return Response(ShipmentResponse(response).data)
+        return Response(Shipment(shipment).data)
 
 
 class ShipmentOptions(APIView):
@@ -255,7 +253,7 @@ class ShipmentPurchase(APIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}purchase",
         operation_summary="Buy a shipment label",
-        responses={200: ShipmentResponse(), 400: ErrorResponse()},
+        responses={200: Shipment(), 400: ErrorResponse()},
         request_body=ShipmentPurchaseData()
     )
     def post(self, request: Request, pk: str):
@@ -276,18 +274,13 @@ class ShipmentPurchase(APIView):
         }
 
         # Submit shipment to carriers
-        shipment_response: ShipmentResponse = SerializerDecorator[ShipmentValidationData](
+        response: Shipment = SerializerDecorator[ShipmentValidationData](
             data=payload).save().instance
 
         # Update shipment state
-        SerializerDecorator[ShipmentSerializer](
-            shipment, data=DP.to_dict(shipment_response.shipment)).save()
+        SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response)).save()
 
-        response = dict(
-            shipment=Shipment(shipment).data,
-            messages=Message(shipment_response.messages, many=True).data
-        )
-        return Response(ShipmentResponse(response).data)
+        return Response(Shipment(shipment).data)
 
 
 router.urls.append(path('shipments', ShipmentList.as_view(), name="shipment-list"))

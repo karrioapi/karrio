@@ -138,6 +138,7 @@ class Shipment:
     id: str = None
     created_at: str = None
     test_mode: bool = None
+    messages: List[Message] = JList[Message]
 
 
 @attr.s(auto_attribs=True)
@@ -199,12 +200,6 @@ class PickupResponse:
 class RateResponse:
     messages: List[Message] = JList[Message]
     rates: List[Rate] = JList[Rate]
-
-
-@attr.s(auto_attribs=True)
-class ShipmentResponse:
-    messages: List[Message] = JList[Message]
-    shipment: Shipment = JStruct[Shipment]
 
 
 @attr.s(auto_attribs=True)

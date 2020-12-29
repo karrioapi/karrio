@@ -12,7 +12,7 @@ from purplship.core.utils import exec_async, DP
 from purpleserver.providers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
-    CarrierSettings, ShipmentRequest, ShipmentResponse, RateRequest, Shipment,
+    CarrierSettings, ShipmentRequest, RateRequest, Shipment,
     RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse,
     PickupRequest, Pickup, PickupUpdateRequest, PickupResponse, AddressValidation,
     ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest,
@@ -86,7 +86,7 @@ class Address:
 
 class Shipments:
     @staticmethod
-    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None, carrier: models.Carrier = None) -> ShipmentResponse:
+    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None, carrier: models.Carrier = None) -> Shipment:
         selected_rate = next(
             (Rate(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
             None
@@ -120,21 +120,19 @@ class Shipments:
 
             return f"{resolve_tracking_url(shipment)}{'?test' if carrier.test else ''}"
 
-        return ShipmentResponse(
-            shipment=Shipment(**{
-                **payload,
-                **DP.to_dict(shipment),
-                "id": f"shp_{uuid.uuid4().hex}",
-                "test_mode": carrier.test,
-                "selected_rate": shipment_rate,
-                "service": shipment_rate["service"],
-                "selected_rate_id": shipment_rate["id"],
-                "tracking_url": generate_tracking_url(),
-                "status": ShipmentStatus.purchased.value,
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z")
-            }),
-            messages=messages
-        )
+        return Shipment(**{
+            **payload,
+            **DP.to_dict(shipment),
+            "id": f"shp_{uuid.uuid4().hex}",
+            "test_mode": carrier.test,
+            "selected_rate": shipment_rate,
+            "service": shipment_rate["service"],
+            "selected_rate_id": shipment_rate["id"],
+            "tracking_url": generate_tracking_url(),
+            "status": ShipmentStatus.purchased.value,
+            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
+            "messages": messages
+        })
 
     @staticmethod
     def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
