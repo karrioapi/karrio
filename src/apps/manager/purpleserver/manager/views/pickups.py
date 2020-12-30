@@ -56,7 +56,8 @@ class PickupRequest(APIView):
         """
         carrier_filter = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
-            "carrier_name": carrier_name
+            "carrier_name": carrier_name,
+            "user": request.user
         }
 
         pickup = SerializerDecorator[PickupData](
@@ -111,7 +112,7 @@ class PickupCancel(APIView):
         """
         pickup = request.user.pickup_set.get(pk=pk)
         confirmation = SerializerDecorator[PickupCancelData](
-            pickup, data=request.data).save().instance
+            pickup, data=request.data).save(user=request.user).instance
 
         return Response(OperationConfirmation(confirmation).data, status=status.HTTP_200_OK)
 

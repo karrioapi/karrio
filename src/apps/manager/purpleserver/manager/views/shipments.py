@@ -135,7 +135,7 @@ class ShipmentRates(APIView):
         shipment = request.user.shipment_set.get(pk=pk)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
-            data=ShipmentData(shipment).data).save().instance
+            data=ShipmentData(shipment).data).save(user=shipment.user).instance
         payload: dict = DP.to_dict(dict(
             rates=Rate(rate_response.rates, many=True).data,
             messages=Message(rate_response.messages, many=True).data,
@@ -275,7 +275,7 @@ class ShipmentPurchase(APIView):
 
         # Submit shipment to carriers
         response: Shipment = SerializerDecorator[ShipmentValidationData](
-            data=payload).save().instance
+            data=payload).save(user=request.user).instance
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response)).save()

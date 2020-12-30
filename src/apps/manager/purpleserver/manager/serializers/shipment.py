@@ -92,10 +92,10 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
-        carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
-        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save().instance
-        test_mode = all([r.test_mode for r in rate_response.rates])
         user = validated_data['user']
+        carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
+        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save(user=user).instance
+        test_mode = all([r.test_mode for r in rate_response.rates])
 
         shipment_data = {
             key: value for key, value in validated_data.items()
@@ -128,7 +128,7 @@ class ShipmentSerializer(ShipmentData):
 
         if validated_data.get('parcels') is not None:
             shipment_parcels = [
-                SerializerDecorator[ParcelSerializer](data=data).save(user=validated_data['user']).instance
+                SerializerDecorator[ParcelSerializer](data=data).save(user=user).instance
                 for data in validated_data.get('parcels', [])
             ]
             shipment.shipment_parcels.set(shipment_parcels)
@@ -226,7 +226,7 @@ class ShipmentCancelSerializer(Shipment):
 
 def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
     if shipment is not None:
+        shipment.selected_rate = None
         shipment.shipment_rates = []
         shipment.messages = []
-        shipment.selected_rate = None
         shipment.save()

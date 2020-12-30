@@ -45,6 +45,9 @@ class Carriers:
         if 'carrier_id' in list_filter:
             query.update(dict(carrier_id=list_filter['carrier_id']))
 
+        if 'user' in list_filter:
+            query.update(dict(user=list_filter['user']))
+
         if any(list_filter.get('carrier_ids', [])):
             query.update(dict(carrier_id__in=list_filter['carrier_ids']))
 
@@ -260,11 +263,11 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict) -> RateResponse:
+    def fetch(payload: dict, user = None) -> RateResponse:
         request = purplship.Rating.fetch(RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
-            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True)
+            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user)
         ]
 
         if len(carrier_settings_list) == 0:

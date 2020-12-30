@@ -88,7 +88,7 @@ class ShippingCancel(APIView):
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 
-        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
+        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'user': request.user})
 
         return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 

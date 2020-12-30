@@ -193,7 +193,7 @@ class Tracking(OwnedEntity):
         ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
-    tracking_number = models.CharField(max_length=50, unique=True)
+    tracking_number = models.CharField(max_length=50)
     events = JSONField(blank=True, null=True, default=[])
     test_mode = models.BooleanField(null=False)
 

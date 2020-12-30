@@ -51,10 +51,11 @@ class CarrierSerializer(Serializer):
         super().__init__(*args, **kwargs)
 
     def create(self, validated_data: dict) -> Carrier:
+        user = validated_data["user"]
         carrier_name = validated_data['carrier_name']
         carrier_config = {
             **validated_data['carrier_config'],
-            "user": validated_data["user"]
+            "user": user
         }
 
         return MODELS[carrier_name].objects.create(**carrier_config)

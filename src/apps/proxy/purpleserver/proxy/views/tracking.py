@@ -39,7 +39,7 @@ class TrackingAPIView(APIView):
 
         response = Shipments.track(
             tracking_request.data,
-            carrier_filter={**params.validated_data, 'carrier_name': carrier_name}
+            carrier_filter={**params.validated_data, 'carrier_name': carrier_name, 'user': request.user}
         )
 
         return Response(

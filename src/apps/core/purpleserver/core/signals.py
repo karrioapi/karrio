@@ -29,7 +29,6 @@ def update_settings(current):
     settings.EMAIL_ENABLED = all(
         cfg is not None and cfg != '' for cfg in [current.EMAIL_HOST, current.EMAIL_HOST_USER, current.EMAIL_HOST_PASSWORD]
     )
-    logger.debug(f"Email is enabled >>>>>>>>>>> {settings.EMAIL_ENABLED}")
 
 
 update_settings(config)
