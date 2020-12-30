@@ -89,6 +89,7 @@ BASE_APPS = [
 ]
 
 INSTALLED_APPS = [
+    'constance',
     *PURPLSHIP_APPS,
     *BASE_APPS,
 
@@ -96,6 +97,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 
     'drf_yasg',
+    'constance.backends.database',
 ]
 
 MIDDLEWARE = [
