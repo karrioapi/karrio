@@ -33,14 +33,12 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
     };
     const fetchRates = async () => {
         if (computeDisabled(shipment)) return;
-        let data: Partial<Shipment> = { rates: undefined, selected_rate_id: undefined };
         try {
             setLoading(true);
             const response = await state.fetchRates(shipment);
-            data = { ...data, ...(response || {}) };
             if (shipment.id === undefined) navigate('/buy_label/' + response.id);
-            update(data, true);
             setLastSate({ ...shipment });
+            update({ ...response }, true);
         } catch (err) {
             state.setNotification({ type: NotificationType.error, message: err });
         } finally {
@@ -57,7 +55,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                 selected_rate_id: selected_rate_id as string,
                 payment: { paid_by: Payment.PaidByEnum.Sender, currency } as Payment
             });
-            update(response.shipment as Shipment);
+            update(response as Shipment);
             state.setNotification({ type: NotificationType.success, message: 'Label successfully purchased!' });
             navigate('/');
         } catch (err) {

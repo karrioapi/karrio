@@ -56,14 +56,17 @@ const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, update, ch
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const target = event.target;
-        const name: string = target.name;
+        let name: string = target.name;
         let value: stateValue = target.type === 'checkbox' ? target.checked : target.value;
 
         if (name === 'parcel_type') {
-            const template = parcelTemplates.results.find(p => p.id === value)?.parcel || { ...parcel, package_preset: null };
+            const template = parcelTemplates.results.find(p => p.id === value)?.parcel;
+            const preset = { package_preset: undefined } as Partial<Parcel>;
+
             setParcelType(value as string);
-            setDimension(formatDimension(parcel_type === 'customs' ? undefined : template));
-            value = template;
+            setDimension(formatDimension(value === 'customs' ? undefined : template || preset));
+            value = template || preset;
+            name = isNone(template) ? name : 'template';
         }
         else if (name === 'package_preset') {
             const preset = findPreset(presets, value as string) || parcel;
@@ -102,10 +105,10 @@ const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, update, ch
     useEffect(() => {
         if (!isNone(Ref?.package_presets)) {
             setPresets(Ref.package_presets);
-            const value = findPreset(Ref.package_presets, parcel.package_preset) as Partial<Parcel>;
-            if (!isNone(value)) {
-                setDimension(formatDimension(value));
-                dispatch({ name: "package_preset", value: parcel.package_preset });
+            const preset = findPreset(Ref.package_presets, parcel.package_preset) as Partial<Parcel>;
+            if (!isNone(preset)) {
+                setDimension(formatDimension(preset));
+                dispatch({ name: "package_preset", value: preset });
             }
         }
     }, [Ref]);
@@ -161,7 +164,7 @@ const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, update, ch
 
             </>}
 
-            <div className="is-size-7 mt-1 mb-2 has-text-grey">{dimension}</div>
+            {parcel_type !== 'custom' && <div className="is-size-7 mt-1 mb-2 has-text-grey">{dimension}</div>}
 
             {parcel_type === 'custom' && <>
                 <h6 className="is-size-7 my-2 has-text-weight-semibold">Dimensions</h6>

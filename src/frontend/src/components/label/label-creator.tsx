@@ -1,7 +1,7 @@
 import { state } from '@/library/api';
 import { LabelData, NotificationType, View } from '@/library/types';
 import { Link, useNavigate } from '@reach/router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CustomsInfoForm from '@/components/form-parts/customs-info-form';
 import AddressForm from '@/components/form-parts/address-form';
 import ShipmentOptions from '@/components/form-parts/shipment-options';
@@ -9,6 +9,8 @@ import ParcelForm from '@/components/form-parts/parcel-form';
 import LiveRates from '@/components/live-rates';
 import Tabs from '@/components/generic/tabs';
 import { Shipment } from '@purplship/purplship';
+import { Reference } from '@/library/context';
+import { isNone } from '@/library/helper';
 
 interface LabelCreatorComponent extends View {
     id?: string;
@@ -17,7 +19,9 @@ interface LabelCreatorComponent extends View {
 
 const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
     const navigate = useNavigate();
+    const Ref = useContext(Reference);
     const tabs = ["shipper", "recipient", "parcel", "customs info", "options"];
+    const [ready, setReady] = useState<boolean>(false);
     const [ckey, setKey] = useState<string>(`${id}-${Date.now()}`);
     const filterDisabled = (shipment: Shipment) => {
         return tabs.reduce((disabled: string[], value: string) => {
@@ -78,6 +82,7 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
             state.fetchDefaultTemplates();
         }
     }, []);
+    useEffect(() => { if (!isNone(Ref?.countries)) setReady(true); }, [Ref?.countries]);
 
     return (
         <>
@@ -88,7 +93,7 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                 </ul>
             </nav>
 
-            <div className="columns px-2">
+            {ready && <div className="columns px-2">
                 <div className="column is-7 px-0">
 
                     <div className="card px-3 py-3" style={{ overflow: 'visible'}}>
@@ -115,7 +120,7 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                     </div>
 
                 </div>
-            </div>
+            </div>}
 
         </>
     )

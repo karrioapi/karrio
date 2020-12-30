@@ -143,8 +143,7 @@ class AppState {
     public async fetchRates(shipment: Shipment) {
         return handleFailure((async () => {
             if (shipment.id !== undefined) {
-                const response = await this.purplship.shipments.rates(shipment.id, { headers: this.headers });
-                return response.shipment as Shipment;
+                return this.purplship.shipments.rates(shipment.id, { headers: this.headers });
             } else {
                 return this.purplship.shipments.create(shipment, { headers: this.headers });
             }
@@ -211,7 +210,7 @@ class AppState {
 
     public async removeParcel(parcel_id: string) {
         const response = handleFailure(
-            this.purplship.parcels.remove(parcel_id, { headers: this.headers })
+            this.purplship.parcels.discard(parcel_id, { headers: this.headers })
         );
         return response;
     }

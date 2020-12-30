@@ -47,8 +47,8 @@ const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, items, d
     };
     const onRefChange = (e: ChangeEvent<any>) => {
         e.preventDefault();
-        const [key] = find(e.target.value) || [];
-        setValue(key || "");
+        const [key, value] = find(e.target.value) || [];
+        setValue(value || "");
         onValueChange(key as string);
     };
     const onSelect = (key: string) => (_: React.MouseEvent) => {

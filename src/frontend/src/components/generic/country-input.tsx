@@ -16,9 +16,9 @@ const CountryInput: React.FC<CountryInputComponent> = ({ name, ...props }) => {
         }
     }, [Ref?.countries]);
 
-    return (
-        <DropdownInput name={name || 'country'} items={items} {...props}/>
-    )
+    return (<>
+        {!isNone(items) && <DropdownInput name={name || 'country'} items={items} {...props}/>}
+    </>)
 };
 
 export default CountryInput;

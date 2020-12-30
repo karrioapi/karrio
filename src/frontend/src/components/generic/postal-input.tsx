@@ -11,7 +11,7 @@ const PostalInput: React.FC<PostalInputComponent> = ({ country, defaultValue, on
         e.preventDefault();
         const [formatted, isValid] = formatPostalCode(e.target.value, country);
         if (formatted !== e.target.value) e.target.value = formatted;
-        if (!isValid) {
+        if (!isValid && formatted !== "") {
             e.target.setCustomValidity(`Invalid Postal code ${samplePostalCode(country)}`);
             e.target.classList.add('is-danger');
         }
