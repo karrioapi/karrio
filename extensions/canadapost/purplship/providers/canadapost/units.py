@@ -46,6 +46,10 @@ class PackagePresets(Flag):
     )
 
 
+class MeasurementOptions(Enum):
+    quant = 0.1
+
+
 class LabelType(Enum):
     PDF_4x6 = ("PDF", "4x6")
     PDF_8_5x11 = ("PDF", "8.5x11")

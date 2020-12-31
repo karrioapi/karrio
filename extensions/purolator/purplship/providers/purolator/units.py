@@ -35,6 +35,11 @@ class PackagingType(Flag):
     your_packaging = purolator_customer_packaging
 
 
+class MeasurementOptions(Enum):
+    min_kg = 0.45
+    min_lb = 1
+
+
 class LabelType(Flag):
     PDF = "PDF"
     ZPL = "ZPL"

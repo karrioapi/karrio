@@ -35,7 +35,7 @@ from purplship.core.utils import Serializable, Element, SF, NF, create_envelope
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.providers.purolator.utils import Settings, standard_request_serializer
 from purplship.providers.purolator.error import parse_error_response
-from purplship.providers.purolator.units import Product, PackagePresets, DutyPaymentType
+from purplship.providers.purolator.units import Product, PackagePresets, DutyPaymentType, MeasurementOptions
 
 
 def parse_rate_response(
@@ -194,7 +194,7 @@ def rate_request(
                     Description=package_description,
                     TotalWeight=(
                         TotalWeight(
-                            Value=packages.weight.LB,
+                            Value=packages.weight.map(MeasurementOptions).LB,
                             WeightUnit=PurolatorWeightUnit.LB.value,
                         )
                         if packages.weight.value is not None else None
@@ -205,7 +205,7 @@ def rate_request(
                             Piece(
                                 Weight=(
                                     PurolatorWeight(
-                                        Value=package.weight.value,
+                                        Value=package.weight.map(MeasurementOptions).value,
                                         WeightUnit=PurolatorWeightUnit[
                                             package.weight_unit.value
                                         ].value,

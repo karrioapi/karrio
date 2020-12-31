@@ -49,6 +49,7 @@ from purplship.providers.purolator.units import (
     PackagePresets,
     PaymentType,
     DutyPaymentType,
+    MeasurementOptions,
 )
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
@@ -209,7 +210,7 @@ def _shipment_request(
                     ServiceID=service,
                     Description=package_description,
                     TotalWeight=TotalWeight(
-                        Value=packages.weight.value,
+                        Value=packages.weight.map(MeasurementOptions).LB,
                         WeightUnit=PurolatorWeightUnit.LB.value,
                     )
                     if packages.weight.value
@@ -219,7 +220,7 @@ def _shipment_request(
                         Piece=[
                             Piece(
                                 Weight=PurolatorWeight(
-                                    Value=package.weight.value,
+                                    Value=package.weight.map(MeasurementOptions).value,
                                     WeightUnit=PurolatorWeightUnit[
                                         package.weight_unit.value
                                     ].value,

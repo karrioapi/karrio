@@ -35,7 +35,7 @@ from pyfedex.ship_service_v25 import (
     ShipmentNotificationFormatSpecification
 )
 from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
-from purplship.core.units import Options, Packages
+from purplship.core.units import Options, Packages, WeightUnit, DimensionUnit
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
@@ -136,7 +136,7 @@ def shipment_request(
             PackagingType=package_type,
             ManifestDetail=None,
             TotalWeight=FedexWeight(
-                Units=WeightUnits.LB.value, Value=packages.weight.LB
+                Units=WeightUnit.LB.value, Value=packages.weight.LB
             ),
             TotalInsuredValue=options.insurance,
             PreferredCurrency=options.currency,

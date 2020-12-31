@@ -35,7 +35,8 @@ from purplship.providers.canadapost.units import (
     PackagePresets,
     PaymentType,
     LabelType,
-    INTERNATIONAL_NON_DELIVERY_OPTION
+    INTERNATIONAL_NON_DELIVERY_OPTION,
+    MeasurementOptions,
 )
 from purplship.providers.canadapost.utils import Settings
 
@@ -147,11 +148,11 @@ def shipment_request(
                 ),
             ),
             parcel_characteristics=ParcelCharacteristicsType(
-                weight=NF.decimal(package.weight.KG, .1),
+                weight=package.weight.map(MeasurementOptions).KG,
                 dimensions=dimensionsType(
-                    length=NF.decimal(package.length.CM, .1),
-                    width=NF.decimal(package.width.CM, .1),
-                    height=NF.decimal(package.height.CM, .1),
+                    length=package.length.map(MeasurementOptions).CM,
+                    width=package.width.map(MeasurementOptions).CM,
+                    height=package.height.map(MeasurementOptions).CM,
                 ),
                 unpackaged=None,
                 mailing_tube=None,
