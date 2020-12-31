@@ -8,15 +8,19 @@ from purpleserver.core.datatypes import CarrierSettings
 
 
 class Carrier(OwnedEntity):
+    class Meta:
+        unique_together = ['carrier_id', 'user']
+
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='car_'), editable=False)
     carrier_id = models.CharField(
-        max_length=200, unique=True,
+        max_length=200,
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups..."
     )
     test = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.carrier_id
+        return f"{self.carrier_id} - {self.user}"
 
     def _linked_settings(self):
         for field in [f for f in self._meta.get_fields() if isinstance(f, models.OneToOneRel)]:

@@ -8,7 +8,8 @@ from rest_framework.serializers import (
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit,
     PackagingUnit, PaymentType, Currency,
-    PrinterType, CustomsContentType, Incoterm
+    PrinterType, CustomsContentType, Incoterm,
+    LabelType
 )
 from purpleserver.providers.models import MODELS
 from purpleserver.core.validators import (
@@ -27,6 +28,7 @@ DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
 PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
 PRINTER_TYPES = [(c.name, c.name) for c in list(PrinterType)]
+LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 
 
 class ShipmentStatus(Enum):
@@ -64,6 +66,9 @@ class CarrierSettings(Serializer):
     test = BooleanField(required=True, help_text="""
     The test flag indicates whether to use a carrier configured for test. 
     """)
+    active = BooleanField(required=True, help_text="""
+    The active flag indicates whether the carrier account is active or not. 
+    """)
 
 
 class TestFilters(Serializer):
@@ -72,23 +77,38 @@ class TestFilters(Serializer):
     """)
 
 
+class Message(Serializer):
+
+    carrier_name = CharField(required=True, help_text="The targeted carrier")
+    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
+    message = CharField(required=False, help_text="The error or warning message")
+    code = CharField(required=False, help_text="The message code")
+    details = DictField(required=False, help_text="any additional details")
+
+
 class AddressData(AugmentedAddressSerializer):
 
-    postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address postal code")
+    postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
+    The address postal code
+    
+    **(required for shipment purchase)**
+    """)
     city = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
-    The address city. <br/>
-    **(required to create as shipment)**
+    The address city.
+    
+    **(required for shipment purchase)**
     """)
     federal_tax_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party frederal tax id")
     state_tax_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party state id")
     person_name = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
-    attention to <br/>
-    **(required to create as shipment)**
+    attention to
+    
+    **(required for shipment purchase)**
     """)
     company_name = CharField(required=False, allow_blank=True, allow_null=True, help_text="The company name if the party is a company")
     country_code = ChoiceField(required=True, choices=COUNTRIES, help_text="The address country code")
     email = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party email")
-    phone_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="""The party phone number.""")
+    phone_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The party phone number.")
 
     state_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address state code")
     suburb = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address suburb if known")
@@ -97,9 +117,9 @@ class AddressData(AugmentedAddressSerializer):
         help_text="Indicate if the address is residential or commercial (enterprise)"
     )
 
-    address_line1 = CharField(required=True, allow_blank=True, allow_null=True, help_text="""
+    address_line1 = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
     The address line with street number <br/>
-    **(required to create as shipment)**
+    **(required for shipment purchase)**
     """)
     address_line2 = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address line with suite number")
 
@@ -449,6 +469,7 @@ class ShippingData(Serializer):
     eg: Invoices...
     """)
     reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
+    label_type = ChoiceField(required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
 
 
 class ShippingRequest(ShippingData):
@@ -528,6 +549,7 @@ class ShipmentContent(Serializer):
     eg: Invoices...
     """)
     reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
+    label_type = ChoiceField(required=False, choices=LABEL_TYPES, allow_blank=True, allow_null=True, help_text="The shipment label file type.")
     carrier_ids = StringListField(required=False, allow_null=True, default=[], help_text="""
     The list of configured carriers you wish to get rates from.
 
@@ -540,6 +562,7 @@ class ShipmentContent(Serializer):
     Date Format: `YYYY-MM-DD`
     """)
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
+    messages = Message(required=False, many=True, default=[], help_text="The list of note or warning messages")
 
 
 class Shipment(EntitySerializer, ShipmentContent):
@@ -550,15 +573,6 @@ class ShipmentCancelRequest(Serializer):
     shipment_identifier = CharField(required=True, help_text="The shipment identifier returned during creation")
     service = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected shipment service")
     options = PlainDictField(required=False, allow_null=True, help_text="Advanced carrier specific cancellation options")
-
-
-class Message(Serializer):
-
-    carrier_name = CharField(required=True, help_text="The targeted carrier")
-    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
-    message = CharField(required=False, help_text="The error or warning message")
-    code = CharField(required=False, help_text="The message code")
-    details = DictField(required=False, help_text="any additional details")
 
 
 class Operation(Serializer):
@@ -584,11 +598,6 @@ class PickupResponse(Serializer):
 class RateResponse(Serializer):
     messages = Message(required=False, many=True, help_text="The list of note or warning messages")
     rates = Rate(many=True, help_text="The list of returned rates")
-
-
-class ShipmentResponse(Serializer):
-    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
-    shipment = Shipment(required=False, help_text="The submitted shipment's summary")
 
 
 class TrackingResponse(Serializer):

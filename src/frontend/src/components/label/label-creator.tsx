@@ -1,14 +1,16 @@
-import { LabelData, NotificationType, state } from '@/library/api';
-import { View } from '@/library/types';
+import { state } from '@/library/api';
+import { LabelData, NotificationType, View } from '@/library/types';
 import { Link, useNavigate } from '@reach/router';
-import React, { useEffect, useState } from 'react';
-import ShipmentCustomsInfo from '@/components/form-parts/shipment-customs-info';
-import ShipmentAddress from '@/components/form-parts/shipment-address';
+import React, { useContext, useEffect, useState } from 'react';
+import CustomsInfoForm from '@/components/form-parts/customs-info-form';
+import AddressForm from '@/components/form-parts/address-form';
 import ShipmentOptions from '@/components/form-parts/shipment-options';
-import ShipmentParcel from '@/components/form-parts/shipment-parcel';
+import ParcelForm from '@/components/form-parts/parcel-form';
 import LiveRates from '@/components/live-rates';
 import Tabs from '@/components/generic/tabs';
 import { Shipment } from '@purplship/purplship';
+import { Reference } from '@/library/context';
+import { isNone } from '@/library/helper';
 
 interface LabelCreatorComponent extends View {
     id?: string;
@@ -17,7 +19,9 @@ interface LabelCreatorComponent extends View {
 
 const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
     const navigate = useNavigate();
+    const Ref = useContext(Reference);
     const tabs = ["shipper", "recipient", "parcel", "customs info", "options"];
+    const [ready, setReady] = useState<boolean>(false);
     const [ckey, setKey] = useState<string>(`${id}-${Date.now()}`);
     const filterDisabled = (shipment: Shipment) => {
         return tabs.reduce((disabled: string[], value: string) => {
@@ -74,8 +78,11 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                     navigate('/');
                 }
             });
+        } else {
+            state.fetchDefaultTemplates();
         }
     }, []);
+    useEffect(() => { if (!isNone(Ref?.countries)) setReady(true); }, [Ref?.countries]);
 
     return (
         <>
@@ -86,19 +93,19 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                 </ul>
             </nav>
 
-            <div className="columns px-2">
+            {ready && <div className="columns px-2">
                 <div className="column is-7 px-0">
 
-                    <div className="card px-3 py-3">
+                    <div className="card px-3 py-3" style={{ overflow: 'visible'}}>
                         <Tabs tabs={tabs} disabled={filterDisabled(data.shipment)} eventKey="label-select-tab">
 
-                            <ShipmentAddress key={ckey} shipment={data.shipment} addressName="shipper" update={update} />
+                            <AddressForm key={ckey} value={data.shipment.shipper} shipment={data.shipment} update={update} name="shipper" />
 
-                            <ShipmentAddress key={ckey} shipment={data.shipment} addressName="recipient" update={update} />
+                            <AddressForm key={ckey} value={data.shipment.recipient} shipment={data.shipment} update={update} name="recipient" />
 
-                            <ShipmentParcel key={ckey} shipment={data.shipment} update={update} />
+                            <ParcelForm key={ckey} value={data.shipment.parcels[0]} shipment={data.shipment} update={update} />
 
-                            <ShipmentCustomsInfo key={ckey} shipment={data.shipment} update={update} />
+                            <CustomsInfoForm key={ckey} value={data.shipment.customs} shipment={data.shipment} update={update} />
 
                             <ShipmentOptions key={ckey} shipment={data.shipment} update={update} />
 
@@ -113,7 +120,7 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ data, id }) => {
                     </div>
 
                 </div>
-            </div>
+            </div>}
 
         </>
     )

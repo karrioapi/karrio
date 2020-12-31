@@ -8,6 +8,7 @@ interface PhoneInputComponent extends InputFieldComponent {
 }
 
 const PhoneInput: React.FC<PhoneInputComponent> = ({ country, defaultValue, onValueChange, ...props }) => {
+    const onClick = (e: React.MouseEvent<HTMLInputElement>) => e.currentTarget.select();
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         const [formatted, isValid] = formatPhoneNumber(e.target.value);
@@ -24,7 +25,7 @@ const PhoneInput: React.FC<PhoneInputComponent> = ({ country, defaultValue, onVa
     };
 
     return (
-        <InputField onChange={onChange} defaultValue={defaultValue} {...props} />
+        <InputField onChange={onChange} onClick={onClick} defaultValue={defaultValue} {...props} />
     )
 };
 

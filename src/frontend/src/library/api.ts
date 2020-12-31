@@ -1,8 +1,8 @@
-import { CarrierSettings, References, Shipment, Purplship, Address, Parcel, RateRequest, RateResponse, ShippingRequest, ShipmentResponse, OperationResponse, ShipmentCancelRequest, Customs, ErrorResponse } from '@purplship/purplship';
+import { ConnectionData, DefaultTemplates, LabelData, Log, PaginatedConnections, PaginatedLogs, PaginatedShipments, PaginatedTemplates, RequestError, Template, UserInfo, Notification } from '@/library/types';
+import { References, Shipment, Purplship, Address, Parcel, Customs } from '@purplship/purplship';
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinct } from 'rxjs/operators';
-import { RequestError } from '@/library/types';
 
 // Collect API token from the web page
 const INITIAL_TOKEN = collectToken();
@@ -16,82 +16,25 @@ const DEFAULT_LABEL_DATA = {
 };
 const DEFAULT_PAGINATED_RESULT = {
     count: 0,
+    url: null,
     next: null,
     previous: null,
     results: [],
     fetched: false,
 };
 
-export interface UserInfo {
-    full_name: string | null;
-    email: string | null;
-    readonly is_staff: boolean;
-}
-
-export interface Connection extends Omit<CarrierSettings, 'id' | 'carrier_name'> {
-    id: string | null | undefined;
-    carrier_name: CarrierSettings.CarrierNameEnum | 'none';
-    [property: string]: any;
-}
-
-export interface ConnectionData {
-    carrier_name: CarrierSettings.CarrierNameEnum;
-    carrier_config: Partial<Connection>;
-}
-
-export interface Log {
-    id: string;
-    requested_at: string;
-    response_ms: string;
-    path: string;
-    view: string;
-    view_method: string;
-    remote_addr: string;
-    host: string;
-    method: string;
-    query_params: string;
-    data: string;
-    response: string;
-    status_code: string;
-}
-
-interface PaginatedContent<T> {
-    count: Number;
-    next?: string | null;
-    previous?: string | null;
-    results: T[];
-    fetched?: boolean;
-}
-
-export interface PaginatedLogs extends PaginatedContent<Log> { }
-export interface PaginatedShipments extends PaginatedContent<Shipment> { }
-export interface PaginatedConnections extends PaginatedContent<Connection> { }
-
-
-export enum NotificationType {
-    error = "is-danger",
-    warning = "is-warning",
-    info = "is-info",
-    success = "is-success"
-}
-
-export interface Notification {
-    type: NotificationType;
-    message: string | Error | RequestError;
-}
-
-export interface LabelData {
-    shipment: Shipment;
-}
-
 class AppState {
     private token$: BehaviorSubject<string> = new BehaviorSubject<string>(INITIAL_TOKEN);
     private user$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>({} as UserInfo);
-    private connections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
     private shipments$: Subject<PaginatedShipments> = new Subject<PaginatedShipments>();
+    private parcels$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
+    private addresses$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
+    private connections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
+    private customsInfos$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
     private references$: Subject<References> = new Subject<References>();
     private logs$: Subject<PaginatedLogs> = new Subject<PaginatedLogs>();
     private notification$: Subject<Notification> = new Subject<Notification>();
+    private defaultTemplates$: BehaviorSubject<DefaultTemplates> = new BehaviorSubject<DefaultTemplates>(new DefaultTemplates([]));
     public labelData$: BehaviorSubject<LabelData> = new BehaviorSubject<LabelData>(DEFAULT_LABEL_DATA);
 
     constructor() {
@@ -135,6 +78,24 @@ class AppState {
         return connections;
     }
 
+    public get addresses() {
+        const [addresses, setValue] = useState<PaginatedTemplates>(DEFAULT_PAGINATED_RESULT);
+        useEffect(() => { this.addresses$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return addresses;
+    }
+
+    public get parcels() {
+        const [parcels, setValue] = useState<PaginatedTemplates>(DEFAULT_PAGINATED_RESULT);
+        useEffect(() => { this.parcels$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return parcels;
+    }
+
+    public get customsInfos() {
+        const [customsInfos, setValue] = useState<PaginatedTemplates>();
+        useEffect(() => { this.customsInfos$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return customsInfos;
+    }
+
     public get references() {
         const [references, setValue] = useState<References>();
         useEffect(() => { this.references$.asObservable().subscribe(setValue); });
@@ -151,6 +112,12 @@ class AppState {
         const [notification, setValue] = useState<Notification>();
         useEffect(() => { this.notification$.asObservable().subscribe(setValue); });
         return notification;
+    }
+
+    public get defaultTemplates() {
+        const [defaultTemplates, setValue] = useState<DefaultTemplates>();
+        useEffect(() => { this.defaultTemplates$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return defaultTemplates;
     }
 
     public get labelData() {
@@ -174,8 +141,7 @@ class AppState {
     public async fetchRates(shipment: Shipment) {
         return handleFailure((async () => {
             if (shipment.id !== undefined) {
-                const response = await this.purplship.shipments.rates(shipment.id, { headers: this.headers });
-                return response.shipment as Shipment;
+                return this.purplship.shipments.rates(shipment.id, { headers: this.headers });
             } else {
                 return this.purplship.shipments.create(shipment, { headers: this.headers });
             }
@@ -185,7 +151,7 @@ class AppState {
     public async buyLabel(shipment: Shipment) {
         const response = handleFailure(
             this.purplship.shipments.purchase(
-                { selected_rate_id: shipment.selected_rate_id as string, payment: shipment.payment },
+                { selected_rate_id: shipment.selected_rate_id as string, payment: shipment.payment, label_type: shipment.label_type },
                 shipment.id as string,
                 { headers: this.headers }
             )
@@ -210,11 +176,10 @@ class AppState {
         return response;
     }
 
-    public async addCustoms(shipment_id: string, customs: Customs) {
+    public async saveAddress(address: Address) {
         const response = handleFailure(
-            this.purplship.shipments.addCustoms(customs, shipment_id, { headers: this.headers })
+            this.purplship.addresses.create(address, { headers: this.headers })
         );
-        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
         return response;
     }
 
@@ -226,11 +191,40 @@ class AppState {
         return response;
     }
 
+    public async saveParcel(parcel: Parcel) {
+        const response = handleFailure(
+            this.purplship.parcels.create(parcel, { headers: this.headers })
+        );
+        return response;
+    }
+
     public async updateParcel(parcel: Parcel) {
         const response = handleFailure(
             this.purplship.parcels.update(parcel, parcel.id as string, { headers: this.headers })
         );
         response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
+        return response;
+    }
+
+    public async removeParcel(parcel_id: string) {
+        const response = handleFailure(
+            this.purplship.parcels.discard(parcel_id, { headers: this.headers })
+        );
+        return response;
+    }
+
+    public async addCustoms(shipment_id: string, customs: Customs) {
+        const response = handleFailure(
+            this.purplship.shipments.addCustoms(customs, shipment_id, { headers: this.headers })
+        );
+        response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
+        return response;
+    }
+
+    public async saveCustoms(customs: Customs) {
+        const response = handleFailure(
+            this.purplship.customs.create(customs, { headers: this.headers })
+        );
         return response;
     }
 
@@ -242,7 +236,7 @@ class AppState {
         return response;
     }
 
-    public async discardCustoms(customs_id: string) {
+    public async removeCustoms(customs_id: string) {
         const response = handleFailure(
             this.purplship.customs.discard(customs_id, { headers: this.headers })
         );
@@ -347,14 +341,102 @@ class AppState {
         }
     }
 
+    public async saveTemplate(payload: Template) {
+        const response = await http("/templates", {
+            method: "POST",
+            headers: this.headers,
+            body: (JSON.stringify(payload) as any)
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error("Failed create a new template.");
+        }
+    }
+
+    public async updateTemplate(id: string, payload: Template) {
+        const response = await http(`/templates/${id}`, {
+            method: "PATCH",
+            headers: this.headers,
+            body: (JSON.stringify(payload) as any)
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error("Failed to update the template.");
+        }
+    }
+
+    public async removeTemplate(id: string) {
+        const response = await http(`/templates/${id}`, {
+            method: "DELETE",
+            headers: this.headers,
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error("Failed to remove the template.");
+        }
+    }
+
+    public async fetchDefaultTemplates(): Promise<DefaultTemplates> {
+        const response = await http(`/templates`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.defaultTemplates$.next(new DefaultTemplates(data));
+            return data;
+        } else {
+            throw new Error("Unable fetch parcel templates.");
+        }
+    }
+
+    public async fetchParcels(url?: string): Promise<PaginatedTemplates> {
+        const response = await http(url || `/parcels/templates?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.parcels$.next({ ...data, fetched: true, url });
+            return data;
+        } else {
+            this.parcels$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+            throw new Error("Unable fetch parcel templates.");
+        }
+    }
+
+    public async fetchAddresses(url?: string) {
+        const response = await http(url || `/addresses/templates?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.addresses$.next({ ...data, fetched: true, url });
+            return data;
+        } else {
+            this.addresses$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+            throw new Error("Unable fetch addresses templates.");
+        }
+    }
+
+    public async fetchCustomsInfos(url?: string): Promise<PaginatedTemplates> {
+        const response = await http(url || `/customs_infos/templates?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.customsInfos$.next({ ...data, fetched: true, url });
+            return data;
+        } else {
+            this.customsInfos$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+            throw new Error("Unable fetch customs infos templates.");
+        }
+    }
+
     public async fetchConnections(url?: string): Promise<PaginatedConnections> {
         const response = await http(url || `/connections?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.connections$.next({...data, fetched: true});
+            this.connections$.next({ ...data, fetched: true, url });
             return data;
         } else {
-            this.connections$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            this.connections$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Unable fetch connected carriers.");
         }
     }
@@ -363,10 +445,10 @@ class AppState {
         const response = await http(url || `/shipments?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.shipments$.next({...data, fetched: true});
+            this.shipments$.next({ ...data, fetched: true, url });
             return data;
         } else {
-            this.shipments$.next({...DEFAULT_PAGINATED_RESULT, fetched: true});
+            this.shipments$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Failed to fetch shipments.");
         }
     }
@@ -375,9 +457,10 @@ class AppState {
         const response = await http(url || `/logs?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.logs$.next(data);
+            this.logs$.next({ ...data, fetched: true, url });
             return data;
         } else {
+            this.logs$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Failed to fetch logs.");
         }
     }

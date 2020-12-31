@@ -12,11 +12,11 @@ from purplship.core.utils import exec_async, DP
 from purpleserver.providers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
-    CarrierSettings, ShipmentRequest, ShipmentResponse, RateRequest, Shipment,
+    CarrierSettings, ShipmentRequest, RateRequest, Shipment,
     RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse,
     PickupRequest, Pickup, PickupUpdateRequest, PickupResponse, AddressValidation,
-    ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest, AddressValidationRequest,
-    Tracking,
+    ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest,
+    AddressValidationRequest, Tracking,
 )
 from purpleserver.core.serializers import ShipmentStatus
 from purpleserver.core.utils import identity, post_processing
@@ -38,8 +38,15 @@ class Carriers:
             test = False if list_filter['test'] is False else True
             query.update(dict(test=test))
 
+        if 'active' in list_filter:
+            active = False if list_filter['active'] is False else True
+            query.update(dict(active=active))
+
         if 'carrier_id' in list_filter:
             query.update(dict(carrier_id=list_filter['carrier_id']))
+
+        if 'user' in list_filter:
+            query.update(dict(user=list_filter['user']))
 
         if any(list_filter.get('carrier_ids', [])):
             query.update(dict(carrier_id__in=list_filter['carrier_ids']))
@@ -63,7 +70,7 @@ class Address:
         carrier = next(iter(Carriers.list(**(carrier_filter or {}))), None)
 
         if carrier is None:
-            raise NotFound('No configured carrier found')
+            raise NotFound('No configured and active carrier found')
 
         request = purplship.Address.validate(AddressValidationRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -82,7 +89,7 @@ class Address:
 
 class Shipments:
     @staticmethod
-    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None, carrier: models.Carrier = None) -> ShipmentResponse:
+    def create(payload: dict, resolve_tracking_url: Callable[[Shipment], str] = None, carrier: models.Carrier = None) -> Shipment:
         selected_rate = next(
             (Rate(**rate) for rate in payload.get('rates') if rate.get('id') == payload.get('selected_rate_id')),
             None
@@ -116,28 +123,26 @@ class Shipments:
 
             return f"{resolve_tracking_url(shipment)}{'?test' if carrier.test else ''}"
 
-        return ShipmentResponse(
-            shipment=Shipment(**{
-                **payload,
-                **DP.to_dict(shipment),
-                "id": f"shp_{uuid.uuid4().hex}",
-                "test_mode": carrier.test,
-                "selected_rate": shipment_rate,
-                "service": shipment_rate["service"],
-                "selected_rate_id": shipment_rate["id"],
-                "tracking_url": generate_tracking_url(),
-                "status": ShipmentStatus.purchased.value,
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z")
-            }),
-            messages=messages
-        )
+        return Shipment(**{
+            **payload,
+            **DP.to_dict(shipment),
+            "id": f"shp_{uuid.uuid4().hex}",
+            "test_mode": carrier.test,
+            "selected_rate": shipment_rate,
+            "service": shipment_rate["service"],
+            "selected_rate_id": shipment_rate["id"],
+            "tracking_url": generate_tracking_url(),
+            "status": ShipmentStatus.purchased.value,
+            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
+            "messages": messages
+        })
 
     @staticmethod
     def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
-        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured carrier found')
+            raise NotFound('No configured and active carrier found')
 
         request = purplship.Shipment.cancel(ShipmentCancelRequest(**payload))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -155,10 +160,10 @@ class Shipments:
 
     @staticmethod
     def track(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> TrackingResponse:
-        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured carrier found')
+            raise NotFound('No configured and active carrier found')
 
         request = purplship.Tracking.fetch(TrackingRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -182,10 +187,10 @@ class Shipments:
 class Pickups:
     @staticmethod
     def schedule(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> PickupResponse:
-        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured carrier found')
+            raise NotFound('No configured and active carrier found')
 
         request = purplship.Pickup.schedule(PickupRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -208,10 +213,10 @@ class Pickups:
 
     @staticmethod
     def update(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> PickupResponse:
-        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured carrier found')
+            raise NotFound('No configured and active carrier found')
 
         request = purplship.Pickup.update(PickupUpdateRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -233,10 +238,10 @@ class Pickups:
 
     @staticmethod
     def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
-        carrier = next(iter(Carriers.list(**(carrier_filter or {}))), carrier)
-
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
+        print(carrier)
         if carrier is None:
-            raise NotFound('No configured carrier found')
+            raise NotFound('No configured and active carrier found')
 
         request = purplship.Pickup.cancel(PickupCancelRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -258,15 +263,15 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict) -> RateResponse:
+    def fetch(payload: dict, user = None) -> RateResponse:
         request = purplship.Rating.fetch(RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
-            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []))
+            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user)
         ]
 
         if len(carrier_settings_list) == 0:
-            raise NotFound("No configured carriers specified")
+            raise NotFound("No configured and active carriers specified")
 
         def process(carrier_settings: CarrierSettings):
             try:

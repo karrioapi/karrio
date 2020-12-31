@@ -10,7 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.exceptions import PurplShipApiException
-from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, ParcelData, Parcel
+from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, ParcelData, Parcel, Operation
 from purpleserver.manager.serializers import ParcelSerializer, reset_related_shipment_rates
 from purpleserver.manager.router import router
 
@@ -88,6 +88,35 @@ class ParcelDetail(APIView):
         SerializerDecorator[ParcelSerializer](parcel, data=request.data).save()
         reset_related_shipment_rates(shipment)
         return Response(Parcel(parcel).data)
+
+    @swagger_auto_schema(
+        tags=['Parcels'],
+        operation_id=f"{ENDPOINT_ID}discard",
+        operation_summary="Remove a parcel",
+        responses={200: Operation(), 400: ErrorResponse()}
+    )
+    def delete(self, request: Request, pk: str):
+        """
+        Remove a parcel.
+        """
+        parcel = request.user.parcel_set.get(pk=pk)
+        shipment = parcel.shipment_parcels.first()
+
+        if shipment is not None and (
+            shipment.status == ShipmentStatus.purchased.value or
+            len(shipment.shipment_parcels.all()) == 1
+        ):
+            raise PurplShipApiException(
+                "A shipment attached to this parcel is purchased or has only one parcel. The parcel cannot be removed!",
+                status_code=status.HTTP_409_CONFLICT,
+                code='state_error'
+            )
+
+        parcel.delete(keep_parents=True)
+        shipment.shipment_parcels.set(shipment.shipment_parcels.exclude(id=parcel.id))
+        serializer = Operation(dict(operation="Remove parcel", success=True))
+        reset_related_shipment_rates(shipment)
+        return Response(serializer.data)
 
 
 router.urls.append(path('parcels', ParcelList.as_view(), name="parcel-list"))

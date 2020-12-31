@@ -1,11 +1,13 @@
-import { Connection, NotificationType, state } from '@/library/api';
+import { state } from '@/library/api';
+import { Connection, NotificationType } from '@/library/types';
 import React, { useState } from 'react';
 
 interface DisconnectProviderButtonComponent {
     connection: Connection;
+    className?: string;
 }
 
-const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({ children, connection }) => {
+const DisconnectProviderButton: React.FC<DisconnectProviderButtonComponent> = ({ children, connection, className }) => {
     const [isActive, setIsActive] = useState<boolean>(false);
     const close = (evt?: React.MouseEvent) => {
         evt?.preventDefault();

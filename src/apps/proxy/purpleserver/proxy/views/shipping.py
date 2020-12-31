@@ -17,7 +17,7 @@ from purpleserver.core.serializers import (
     ShipmentCancelRequest,
     OperationResponse,
     Address as BaseAddress,
-    ShipmentResponse,
+    Shipment,
     ErrorResponse,
     TestFilters,
 )
@@ -45,7 +45,7 @@ class ShippingList(APIView):
         operation_id=f"{ENDPOINT_ID}buy_label",
         operation_summary="Buy a shipment label",
         request_body=ShippingRequest(),
-        responses={200: ShipmentResponse(), 400: ErrorResponse()},
+        responses={200: Shipment(), 400: ErrorResponse()},
     )
     def post(self, request: Request):
         """
@@ -66,7 +66,7 @@ class ShippingList(APIView):
             )
         )
 
-        return Response(ShipmentResponse(response).data, status=status.HTTP_201_CREATED)
+        return Response(Shipment(response).data, status=status.HTTP_201_CREATED)
 
 
 class ShippingCancel(APIView):
@@ -88,7 +88,7 @@ class ShippingCancel(APIView):
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 
-        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name})
+        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'user': request.user})
 
         return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 

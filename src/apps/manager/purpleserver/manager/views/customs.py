@@ -85,7 +85,7 @@ class CustomsDetail(APIView):
                 code='state_error'
             )
 
-        SerializerDecorator[CustomsSerializer](customs, data=request.data).save()
+        SerializerDecorator[CustomsSerializer](customs, data=request.data).save(user=request.user)
         reset_related_shipment_rates(shipment)
         return Response(Customs(customs).data)
 
@@ -109,6 +109,7 @@ class CustomsDetail(APIView):
             )
 
         customs.delete(keep_parents=True)
+        shipment.customs = None
         serializer = Operation(dict(operation="Discard customs info", success=True))
         reset_related_shipment_rates(shipment)
         return Response(serializer.data)

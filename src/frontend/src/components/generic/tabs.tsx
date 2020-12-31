@@ -14,7 +14,7 @@ const Tabs: React.FC<TabsComponent> = ({ tabs, disabled, eventKey, tabClass, chi
         setSelected(tab);
     };
     ref?.current?.addEventListener(eventKey, (e: CustomEvent<any>) => {
-        __(e.detail.nextTab)();
+        setTimeout(() => __(e.detail.nextTab)(), e.detail.delay || 0);
     });
 
     return (

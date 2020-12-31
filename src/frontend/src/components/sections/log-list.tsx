@@ -1,7 +1,7 @@
 import React, { MouseEventHandler } from 'react';
-import { View } from '@/library/types';
+import { Log, PaginatedLogs, View } from '@/library/types';
 import StatusCode from '@/components/status-code-badge';
-import { Log, PaginatedLogs, state } from '@/library/api';
+import { state } from '@/library/api';
 import { formatDateTime } from '@/library/helper';
 
 interface LogListView extends View {

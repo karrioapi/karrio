@@ -51,7 +51,8 @@ class TrackingDetails(APIView):
         data = dict(tracking_number=tracking_number)
         carrier_filter = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
-            "carrier_name": carrier_name
+            "carrier_name": carrier_name,
+            "user": request.user
         }
         tracking = request.user.tracking_set.filter(tracking_number=tracking_number).first()
 

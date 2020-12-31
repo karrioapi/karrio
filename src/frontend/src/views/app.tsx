@@ -3,16 +3,21 @@ import { References } from '@purplship/purplship';
 import { Router } from "@reach/router";
 import Shipments from '@/views/shipments';
 import Connections from '@/views/connections';
-import Settings from '@/views/settings';
-import APILogs from '@/views/api_logs';
+import Addresses from '@/views/addresses';
+import Parcels from '@/views/parcels';
+import APILogs from '@/views/api-logs';
+import Account from '@/views/account';
+import APISettings from '@/views/api-settings';
+import CustomsInfos from '@/views/customs-infos';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import LabelCreator from '@/components/label/label-creator';
 import BoardFooter from '@/components/footer/board-footer';
 import Navbar from '@/components/navbar/navbar';
 import Notifier from '@/components/notifier';
 import LocationTitle from '@/components/location-title';
-import { PaginatedLogs, state, UserInfo, } from '@/library/api';
-import { Logs, Reference, User } from '@/library/context';
+import { state} from '@/library/api';
+import { DefaultTemplates, PaginatedLogs, PaginatedTemplates, UserInfo } from '@/library/types';
+import { Templates, Logs, Reference, User, ParcelTemplates, AddressTemplates } from '@/library/context';
 import 'prismjs';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism.css';
@@ -23,16 +28,25 @@ const App: React.FC = () => {
     const user = state.user;
     const token = state.token;
     const references = state.references;
-    const shipments = state.shipments;
-    const connections = state.connections;
+    const defatultTemplates = state.defaultTemplates;
+    const parcelTemplates = state.parcels;
+    const addressTemplates = state.addresses;
+
     const logs = state.logs;
     const labelData = state.labelData;
+    const shipments = state.shipments;
+    const connections = state.connections;
+    const customsInfos = state.customsInfos;
 
     return (
         <Fragment>
             <Reference.Provider value={references as References}>
             <Logs.Provider value={logs as PaginatedLogs}>
             <User.Provider value={user as UserInfo}>
+            <ParcelTemplates.Provider value={parcelTemplates as PaginatedTemplates}>
+            <AddressTemplates.Provider value={addressTemplates as PaginatedTemplates}>
+            <Templates.Provider value={defatultTemplates as DefaultTemplates}>
+
                 <ExpandedSidebar />
 
                 <div className="plex-wrapper">
@@ -42,11 +56,17 @@ const App: React.FC = () => {
 
                         <div className="dashboard-content">
                             <Router>
-                                <Shipments shipments={shipments} path="/" />
-                                <Connections connections={connections} path="carrier_connections" />
-                                <Settings token={token} user={user} path="settings" />
+                                <Shipments path="/" shipments={shipments} />
+                                <LabelCreator path="buy_label/:id" data={labelData} />
+
+                                <Connections path="configurations/carriers" connections={connections} />
+                                <Parcels path="configurations/parcels" templates={parcelTemplates} />
+                                <Addresses path="configurations/addresses" templates={addressTemplates} />
+                                <CustomsInfos path="configurations/customs_infos" templates={customsInfos} />
+
                                 <APILogs path="api_logs/*" logs={logs}/>
-                                <LabelCreator data={labelData} path="buy_label/:id" />
+                                <APISettings path="settings/api" token={token} />
+                                <Account path="settings/account" user={user} />
                             </Router>
                         </div>
 
@@ -54,6 +74,10 @@ const App: React.FC = () => {
                 </div>
 
                 <BoardFooter />
+
+            </Templates.Provider>
+            </AddressTemplates.Provider>
+            </ParcelTemplates.Provider>
             </User.Provider>
             </Logs.Provider>
             </Reference.Provider>

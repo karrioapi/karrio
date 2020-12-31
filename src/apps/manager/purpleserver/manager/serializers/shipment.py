@@ -6,7 +6,7 @@ from rest_framework.serializers import Serializer, CharField, ChoiceField, Boole
 from purplship.core.utils import DP
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.utils import SerializerDecorator
-from purpleserver.core.datatypes import RateResponse, ShipmentResponse, Confirmation, ConfirmationResponse
+import purpleserver.core.datatypes as datatypes
 from purpleserver.providers.models import Carrier
 from purpleserver.core.serializers import (
     SHIPMENT_STATUS,
@@ -17,6 +17,8 @@ from purpleserver.core.serializers import (
     Rate,
     ShippingRequest,
     ShipmentCancelRequest,
+    LABEL_TYPES,
+    LabelType
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.payment import PaymentSerializer
@@ -90,10 +92,10 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
-        carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
-        rate_response: RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save().instance
-        test_mode = all([r.test_mode for r in rate_response.rates])
         user = validated_data['user']
+        carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
+        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save(user=user).instance
+        test_mode = all([r.test_mode for r in rate_response.rates])
 
         shipment_data = {
             key: value for key, value in validated_data.items()
@@ -120,12 +122,13 @@ class ShipmentSerializer(ShipmentData):
             'user': user,
             'test_mode': test_mode,
             'shipment_rates': DP.to_dict(rate_response.rates),
+            'messages': DP.to_dict(rate_response.messages)
         })
         shipment.carriers.set(carriers)
 
         if validated_data.get('parcels') is not None:
             shipment_parcels = [
-                SerializerDecorator[ParcelSerializer](data=data).save(user=validated_data['user']).instance
+                SerializerDecorator[ParcelSerializer](data=data).save(user=user).instance
                 for data in validated_data.get('parcels', [])
             ]
             shipment.shipment_parcels.set(shipment_parcels)
@@ -163,7 +166,7 @@ class ShipmentSerializer(ShipmentData):
 
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
-            carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id')).first()
+            carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id'), user=instance.user).first()
 
             instance.selected_rate = {
                 **selected_rate,
@@ -172,12 +175,13 @@ class ShipmentSerializer(ShipmentData):
             instance.selected_rate_carrier = carrier
 
         instance.save()
-        instance.carriers.set(Carrier.objects.filter(carrier_id__in=carrier_ids))
+        instance.carriers.set(Carrier.objects.filter(carrier_id__in=carrier_ids, user=instance.user))
         return instance
 
 
 class ShipmentPurchaseData(Serializer):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
+    label_type = ChoiceField(required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
     payment = Payment(required=False, help_text="The payment details")
 
 
@@ -185,7 +189,7 @@ class ShipmentValidationData(Shipment):
     rates = Rate(many=True, required=True)
     payment = Payment(required=True)
 
-    def create(self, validated_data: dict) -> ShipmentResponse:
+    def create(self, validated_data: dict) -> datatypes.Shipment:
         return Shipments.create(
             ShippingRequest(validated_data).data,
             resolve_tracking_url=(
@@ -199,16 +203,16 @@ class ShipmentValidationData(Shipment):
 
 class ShipmentCancelSerializer(Shipment):
 
-    def update(self, instance: models.Shipment, validated_data: dict) -> ConfirmationResponse:
+    def update(self, instance: models.Shipment, validated_data: dict) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
             response = Shipments.cancel(
                 payload=ShipmentCancelRequest(instance).data,
                 carrier=instance.selected_rate_carrier
             )
         else:
-            response = ConfirmationResponse(
+            response = datatypes.ConfirmationResponse(
                 messages=[],
-                confirmation=Confirmation(
+                confirmation=datatypes.Confirmation(
                     carrier_name="None Selected",
                     carrier_id="None Selected",
                     success=True,
@@ -222,6 +226,7 @@ class ShipmentCancelSerializer(Shipment):
 
 def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
     if shipment is not None:
-        shipment.shipment_rates = []
         shipment.selected_rate = None
+        shipment.shipment_rates = []
+        shipment.messages = []
         shipment.save()

@@ -4,8 +4,9 @@ import ButtonField from '@/components/generic/button-field';
 import InputField from '@/components/generic/input-field';
 import CheckBoxField from '@/components/generic/checkbox-field';
 import SelectField from '@/components/generic/select-field';
-import { NotificationType, state } from '@/library/api';
+import { state } from '@/library/api';
 import { cleanDict, deepEqual, isNone } from '@/library/helper';
+import { NotificationType } from '@/library/types';
 
 interface ShipmentOptionsComponent {
     shipment: Shipment;
@@ -38,9 +39,10 @@ const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update 
             if (shipment.id !== undefined) {
                 const updated_shipment = await state.setOptions(shipment.id, options);
                 state.setNotification({ type: NotificationType.success, message: 'Shipment Options successfully updated!' });
-                update({ options: updated_shipment.options }, true);
+                update({ ...updated_shipment }, true);
+            } else {
+                update({ options });
             }
-            update({ options });
         } catch (err) {
             state.setNotification({ type: NotificationType.error, message: err });
         }
@@ -68,7 +70,7 @@ const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update 
 
                 <div className="column is-multiline mb-0 ml-6 my-1 px-2 py-0 is-12" style={{ borderLeft: "solid 2px #ddd", display: `${isNone(options?.insurance) ? 'none' : 'block'}` }}>
 
-                    <InputField defaultValue={options?.insurance} onChange={handleChange} label="Total package value" name="insurance" type="number" min={0} className="is-small" controlClass="has-icons-left has-icons-right" fieldClass="column mb-0 is-4 px-1 py-2" required={!isNone(options?.insurance)}>
+                    <InputField defaultValue={options?.insurance} onChange={handleChange} label="Total package value" name="insurance" type="number" min={0} step="any" className="is-small" controlClass="has-icons-left has-icons-right" fieldClass="column mb-0 is-4 px-1 py-2" required={!isNone(options?.insurance)}>
                         <span className="icon is-small is-left">
                             <i className="fas fa-dollar-sign"></i>
                         </span>
@@ -87,7 +89,7 @@ const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update 
 
                 <div className="column is-multiline mb-0 ml-6 my-1 px-2 py-0 is-12" style={{ borderLeft: "solid 2px #ddd", display: `${isNone(options?.cash_on_delivery) ? 'none' : 'block'}` }}>
 
-                    <InputField defaultValue={options?.cash_on_delivery} onChange={handleChange} label="Amount to collect" name="cash_on_delivery" type="number" min={0} className="is-small" controlClass="has-icons-left has-icons-right" fieldClass="column mb-0 is-4 px-1 py-2" required={!isNone(options?.cash_on_delivery)}>
+                    <InputField defaultValue={options?.cash_on_delivery} onChange={handleChange} label="Amount to collect" name="cash_on_delivery" type="number" min={0} step="any" className="is-small" controlClass="has-icons-left has-icons-right" fieldClass="column mb-0 is-4 px-1 py-2" required={!isNone(options?.cash_on_delivery)}>
                         <span className="icon is-small is-left">
                             <i className="fas fa-dollar-sign"></i>
                         </span>

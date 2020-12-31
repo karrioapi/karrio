@@ -1,6 +1,6 @@
 import React from 'react';
 import AccountDropdown from '@/components/navbar/account-dropdown';
-import { UserInfo } from '@/library/api';
+import { UserInfo } from '@/library/types';
 
 interface NavbarComponent {
     user: UserInfo;

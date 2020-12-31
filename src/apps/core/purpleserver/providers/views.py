@@ -36,7 +36,7 @@ class CarrierList(GenericAPIView):
         query = CarrierFilters(data=request.query_params)
         query.is_valid(raise_exception=True)
 
-        carriers = [carrier.data for carrier in Carriers.list(**query.validated_data)]
+        carriers = [carrier.data for carrier in Carriers.list(**{**query.validated_data, 'user': request.user})]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
         return Response(response)
 

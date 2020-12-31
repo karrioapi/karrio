@@ -43,6 +43,8 @@ setup(
             'jsonfield',
             'more-itertools',
             'python-decouple',
+            'django-constance',
+            'django-picklefield',
             'purplship-server.core',
       ],
       entry_points={

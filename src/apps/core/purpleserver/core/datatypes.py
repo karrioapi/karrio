@@ -34,9 +34,10 @@ class ShipmentStatus(Enum):
 
 
 class CarrierSettings:
-    def __init__(self, carrier_name: str, carrier_id: str, test: bool = None, id: str = None, **kwargs):
+    def __init__(self, carrier_name: str, carrier_id: str, test: bool = None, active: bool = None, id: str = None, **kwargs):
         self.carrier_name = carrier_name
         self.carrier_id = carrier_id
+        self.active = active
         self.test = test
         self.id = id
 
@@ -48,7 +49,7 @@ class CarrierSettings:
     def dict(self):
         return {
             name: value for name, value in self.__dict__.items()
-            if name not in ['carrier_name', 'user']
+            if name not in ['carrier_name', 'user', 'active']
         }
 
     @classmethod
@@ -104,6 +105,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     options: Dict = {}
     reference: str = ""
+    label_type: str = None
     id: str = None
 
 
@@ -129,12 +131,14 @@ class Shipment:
 
     options: Dict = {}
     reference: str = ""
+    label_type: str = None
     tracking_url: str = None
     status: str = ""
     meta: dict = None
     id: str = None
     created_at: str = None
     test_mode: bool = None
+    messages: List[Message] = JList[Message]
 
 
 @attr.s(auto_attribs=True)
@@ -196,12 +200,6 @@ class PickupResponse:
 class RateResponse:
     messages: List[Message] = JList[Message]
     rates: List[Rate] = JList[Rate]
-
-
-@attr.s(auto_attribs=True)
-class ShipmentResponse:
-    messages: List[Message] = JList[Message]
-    shipment: Shipment = JStruct[Shipment]
 
 
 @attr.s(auto_attribs=True)

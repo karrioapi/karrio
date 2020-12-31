@@ -1,4 +1,4 @@
-import { Address, Parcel } from "@purplship/purplship";
+import { Address, Customs, Parcel } from "@purplship/purplship";
 import { PresetCollection } from "@/library/types";
 
 
@@ -48,6 +48,15 @@ export function formatAddressName(address: Address): string {
     ].filter(a => !isNone(a) && a !== "").join(' - ');
 }
 
+export function formatCustomsLabel(customs: Customs): string {
+    return [
+        customs.content_type,
+        customs.incoterm
+    ]
+        .filter(c => !isNone(c))
+        .map(c => formatRef('' + c)).join(' - ');
+}
+
 export function findPreset(presets: PresetCollection, package_preset?: string): Partial<Parcel> | undefined {
     const carrier = Object.values(presets).find((carrier) => {
         return Object.keys(carrier).includes(package_preset as string);
@@ -87,8 +96,8 @@ export function isNone(value: any): boolean {
     return value === null || value === undefined;
 }
 
-export function deepEqual(value1: object, value2: object): boolean {
-    return JSON.stringify(value1, Object.keys(value1).sort()) === JSON.stringify(value2, Object.keys(value2).sort());
+export function deepEqual(value1?: object | null, value2?: object | null): boolean {
+    return JSON.stringify(value1, Object.keys(value1 || {}).sort()) === JSON.stringify(value2, Object.keys(value2 || {}).sort());
 }
 
 // Remove undefined values from objects
@@ -108,3 +117,8 @@ export function formatParcelLabel(parcel?: Parcel): string {
     }
     return '';
 }
+
+
+export const COUNTRY_WITH_POSTAL_CODE = [
+    'CA', 'US', 'UK', 'FR', //TODO:: Add more countries with postal code here.
+]

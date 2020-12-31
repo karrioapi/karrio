@@ -1,36 +1,23 @@
+import React, { useContext, useEffect, useState } from 'react';
+import DropdownInput, { DropdownInputComponent } from '@/components/generic/dropdown-input';
 import { Reference } from '@/library/context';
+import { isNone } from '@/library/helper';
 import { Collection } from '@/library/types';
-import React, { ChangeEvent, useContext } from 'react';
-import InputField, { InputFieldComponent } from '@/components/generic/input-field';
 
-interface CountryInputComponent extends InputFieldComponent {
-    onValueChange: (value: string | null) => void;
-}
+interface CountryInputComponent extends Omit<DropdownInputComponent, 'items'> { }
 
-const CountryInput: React.FC<CountryInputComponent> = ({ defaultValue, onValueChange, ...props }) => {
+const CountryInput: React.FC<CountryInputComponent> = ({ name, ...props }) => {
     const Ref = useContext(Reference);
-    const onChange = (e: ChangeEvent<any>) => {
-        e.preventDefault();
-        if (Ref?.countries !== undefined) {
-            let value = Object
-                .keys(Ref?.countries)
-                .find(key => Ref.countries[key] === e.target.value);
+    const [items, setItems] = useState<[string, string][]>();
 
-            onValueChange(value || null);
+    useEffect(() => {
+        if (!isNone(Ref?.countries)) {
+            setItems(Object.entries(Ref.countries as Collection).map((value) => value));
         }
-    };
+    }, [Ref?.countries]);
 
     return (
-        <InputField onChange={onChange} defaultValue={Ref?.countries[defaultValue as string]} list="countries" {...props}>
-            <datalist id="countries">
-                {Object
-                    .entries((Ref?.countries || {}) as Collection)
-                    .map(([code, name]) => (
-                        <option key={code} value={name} />
-                    ))
-                }
-            </datalist>
-        </InputField>
+        <DropdownInput name={name || 'country'} items={items} {...props} />
     )
 };
 

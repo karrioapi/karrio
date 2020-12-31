@@ -119,7 +119,7 @@ class Customs(OwnedEntity):
     commercial_invoice = models.BooleanField(null=True)
     certificate_number = models.CharField(max_length=50, null=True, blank=True)
     content_type = models.CharField(max_length=50, null=True, blank=True)
-    content_description = models.CharField(max_length=20, null=True, blank=True)
+    content_description = models.CharField(max_length=250, null=True, blank=True)
     duty = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
     incoterm = models.CharField(max_length=20)
     invoice = models.CharField(max_length=50, null=True, blank=True)
@@ -193,7 +193,7 @@ class Tracking(OwnedEntity):
         ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
-    tracking_number = models.CharField(max_length=50, unique=True)
+    tracking_number = models.CharField(max_length=50)
     events = JSONField(blank=True, null=True, default=[])
     test_mode = models.BooleanField(null=False)
 
@@ -214,8 +214,8 @@ class Tracking(OwnedEntity):
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates',
-        'tracking_number', 'doc_images', 'tracking_url', 'shipment_identifier', 'test_mode',
+        'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates', 'label_type',
+        'tracking_number', 'doc_images', 'tracking_url', 'shipment_identifier', 'test_mode', 'messages'
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
 
@@ -230,6 +230,7 @@ class Shipment(OwnedEntity):
 
     recipient = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='recipient')
     shipper = models.ForeignKey('Address', on_delete=models.CASCADE, related_name='shipper')
+    label_type = models.TextField(max_length=25, null=True, blank=True)
 
     tracking_number = models.CharField(max_length=50, null=True, blank=True)
     shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
@@ -246,6 +247,7 @@ class Shipment(OwnedEntity):
     services = JSONField(blank=True, null=True, default=[])
     doc_images = JSONField(blank=True, null=True, default=[])
     meta = JSONField(blank=True, null=True, default={})
+    messages = JSONField(blank=True, null=True, default=[])
 
     # System Reference fields
 
