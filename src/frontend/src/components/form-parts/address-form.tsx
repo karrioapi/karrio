@@ -1,6 +1,6 @@
 import { Address, Shipment } from '@purplship/purplship';
 import React, { FormEvent, useContext, useEffect, useReducer, useRef, useState } from 'react';
-import { deepEqual, isNone } from '@/library/helper';
+import { COUNTRY_WITH_POSTAL_CODE, deepEqual, isNone } from '@/library/helper';
 import InputField from '@/components/generic/input-field';
 import ButtonField from '@/components/generic/button-field';
 import CheckBoxField from '@/components/generic/checkbox-field';
@@ -11,7 +11,7 @@ import PhoneInput from '@/components/generic/phone-input';
 import NameInput from '@/components/generic/name-input';
 import { Collection, NotificationType } from '@/library/types';
 import { state } from '@/library/api';
-import { Templates } from '@/library/context';
+import { Reference, Templates } from '@/library/context';
 
 export const DEFAULT_ADDRESS_CONTENT = {
     residential: false,
@@ -42,6 +42,7 @@ function reducer(state: any, { name, value }: { name: string, value: string | bo
 
 const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, update, children }) => {
     const form = useRef<HTMLFormElement>(null);
+    const Ref = useContext(Reference);
     const Defaults = useContext(Templates);
     const init = () => deepEqual(value, {}) ? DEFAULT_ADDRESS_CONTENT : value;
     const [key, setKey] = useState<string>(`address-${Date.now()}`);
@@ -112,11 +113,11 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
             <div className="columns is-multiline mb-0">
                 <InputField label="Street (Line 2)" name="address_line2" onChange={handleChange} defaultValue={address.address_line2} fieldClass="column is-6 mb-0 px-2 py-2" />
 
-                <InputField label="city" name="city" onChange={handleChange} defaultValue={address.city} fieldClass="column is-6 mb-0 px-2 py-2" />
+                <InputField label="city" name="city" onChange={handleChange} defaultValue={address.city} fieldClass="column is-6 mb-0 px-2 py-2" required/>
 
-                <StateInput label="province or state" onValueChange={value => dispatch({ name: "state_code", value: value as string })} defaultValue={address.state_code} fieldClass="column is-6 mb-0 px-2 py-2" />
+                <StateInput label="province or state" onValueChange={value => dispatch({ name: "state_code", value: value as string })} defaultValue={address.state_code} fieldClass="column is-6 mb-0 px-2 py-2" required={Object.keys(Ref?.states || {}).includes(address.country_code)}/>
 
-                <PostalInput label="postal code" onValueChange={value => dispatch({ name: "postal_code", value: value as string })} defaultValue={address.postal_code} country={address.country_code} fieldClass="column is-6 mb-0 px-2 py-2" />
+                <PostalInput label="postal code" onValueChange={value => dispatch({ name: "postal_code", value: value as string })} defaultValue={address.postal_code} country={address.country_code} fieldClass="column is-6 mb-0 px-2 py-2" required={COUNTRY_WITH_POSTAL_CODE.includes(address.country_code)}/>
             </div>
 
             <div className="columns mb-0">

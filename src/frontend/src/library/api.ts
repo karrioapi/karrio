@@ -1,8 +1,8 @@
-import { ConnectionData, DefaultTemplates, LabelData, Log, PaginatedConnections, PaginatedLogs, PaginatedShipments, PaginatedTemplates, RequestError, Template, UserInfo, Notification, Collection } from '@/library/types';
+import { ConnectionData, DefaultTemplates, LabelData, Log, PaginatedConnections, PaginatedLogs, PaginatedShipments, PaginatedTemplates, RequestError, Template, UserInfo, Notification } from '@/library/types';
 import { References, Shipment, Purplship, Address, Parcel, Customs } from '@purplship/purplship';
 import { useEffect, useState } from 'react';
-import { Subject, BehaviorSubject, interval } from 'rxjs';
-import { distinct, throttle } from 'rxjs/operators';
+import { Subject, BehaviorSubject } from 'rxjs';
+import { distinct } from 'rxjs/operators';
 
 // Collect API token from the web page
 const INITIAL_TOKEN = collectToken();
@@ -24,8 +24,6 @@ const DEFAULT_PAGINATED_RESULT = {
 };
 
 class AppState {
-    private Queue: Collection<Subject<any>> = {};
-
     private token$: BehaviorSubject<string> = new BehaviorSubject<string>(INITIAL_TOKEN);
     private user$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>({} as UserInfo);
     private shipments$: Subject<PaginatedShipments> = new Subject<PaginatedShipments>();
@@ -407,25 +405,16 @@ class AppState {
         }
     }
 
-    public async fetchAddresses(current_url?: string) {
-        this.Queue['addresses'] = this.Queue['addresses'] || (() => {
-            const q = new Subject<string | undefined>()
-            q.asObservable().pipe(throttle(_ => interval(1000))).subscribe(async (url) => {
-                const response = await http(url || `/addresses/templates?limit=20&offset=0`, { headers: this.headers });
-                if (response.ok) {
-                    const data = await response.json();
-                    this.addresses$.next({ ...data, fetched: true, url });
-                    return data;
-                } else {
-                    this.addresses$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
-                    throw new Error("Unable fetch addresses templates.");
-                }
-            })
-            return q;
-        })();
-        
-        this.Queue['addresses'].next(current_url);
-        return this.Queue['addresses'].toPromise();
+    public async fetchAddresses(url?: string) {
+        const response = await http(url || `/addresses/templates?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.addresses$.next({ ...data, fetched: true, url });
+            return data;
+        } else {
+            this.addresses$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+            throw new Error("Unable fetch addresses templates.");
+        }
     }
 
     public async fetchCustomsInfos(url?: string): Promise<PaginatedTemplates> {

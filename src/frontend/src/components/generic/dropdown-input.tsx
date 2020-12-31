@@ -88,7 +88,7 @@ const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, items, d
                                 {(items || [])
                                     .filter(([_, val]) => search === "" || val.toLowerCase().includes(search.toLowerCase()))
                                     .map(([key, val]) => (
-                                        <a href="#" key={`${key}-${Date.now()}`} onClick={onSelect(key)} className={`panel-block  ${key === value ? 'is-active' : ''}`}>
+                                        <a key={`${key}-${Date.now()}`} onClick={onSelect(key)} className={`panel-block  ${key === value ? 'is-active' : ''}`}>
                                             <span>{val}</span>
                                         </a>
                                     ))

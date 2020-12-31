@@ -117,3 +117,8 @@ export function formatParcelLabel(parcel?: Parcel): string {
     }
     return '';
 }
+
+
+export const COUNTRY_WITH_POSTAL_CODE = [
+    'CA', 'US', 'UK', 'FR', //TODO:: Add more countries with postal code here.
+]
