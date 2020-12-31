@@ -35,7 +35,7 @@ from pyfedex.ship_service_v25 import (
     LabelOrderType,
 )
 from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
-from purplship.core.units import Options, Packages, WeightUnit, DimensionUnit
+from purplship.core.units import Options, Packages, WeightUnit
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings

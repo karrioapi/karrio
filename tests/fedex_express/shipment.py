@@ -241,6 +241,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                     <v25:ImageType>PDF</v25:ImageType>
                     <v25:LabelStockType>PAPER_4X6</v25:LabelStockType>
                     <v25:LabelPrintingOrientation>TOP_EDGE_OF_TEXT_FIRST</v25:LabelPrintingOrientation>
+                    <v25:LabelOrder>SHIPPING_LABEL_FIRST</v25:LabelOrder>
                 </v25:LabelSpecification>
                 <v25:PackageCount>1</v25:PackageCount>
                 <v25:RequestedPackageLineItems>
