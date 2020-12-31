@@ -40,7 +40,7 @@ def shipment_cancel_request(
 
     request = create_envelope(
         header_content=RequestContext(
-            Version="1.0",
+            Version="2.0",
             Language=settings.language,
             GroupID="",
             RequestReference="",
@@ -51,4 +51,4 @@ def shipment_cancel_request(
         ),
     )
 
-    return Serializable(request, partial(standard_request_serializer, version="v1"))
+    return Serializable(request, standard_request_serializer)
