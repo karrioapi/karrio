@@ -1,7 +1,7 @@
 import click
 import inspect
 from jinja2 import Template
-from purplship.core.utils import to_dict
+from purplship.core.utils import DP
 
 MODELS_TEMPLATE = Template('''
 {% for name, cls in classes.items() %}
@@ -135,7 +135,7 @@ def generate_shipment_options():
 @cli.command()
 def generate_package_presets():
     preset_mappers = {
-        key: {c.name: to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
+        key: {c.name: DP.to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
         for key, mapper in PACKAGE_MAPPERS.items()
         if mapper.get('packagePresets') is not None
     }
