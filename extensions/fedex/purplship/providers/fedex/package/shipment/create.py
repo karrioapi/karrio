@@ -28,11 +28,11 @@ from pyfedex.ship_service_v25 import (
     ShippingDocumentPart,
     Payment,
     Payor,
-    WeightUnits,
     LabelSpecification,
     LabelFormatType,
     LabelPrintingOrientationType,
-    ShipmentNotificationFormatSpecification
+    ShipmentNotificationFormatSpecification,
+    LabelOrderType,
 )
 from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
 from purplship.core.units import Options, Packages, WeightUnit, DimensionUnit
@@ -321,7 +321,7 @@ def shipment_request(
                 ImageType=label_type,
                 LabelStockType=label_format,
                 LabelPrintingOrientation=LabelPrintingOrientationType.TOP_EDGE_OF_TEXT_FIRST.value,
-                LabelOrder=None,
+                LabelOrder=LabelOrderType.SHIPPING_LABEL_FIRST.value,
                 PrintedLabelOrigin=None,
                 CustomerSpecifiedDetail=None,
             ),
