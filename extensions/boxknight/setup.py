@@ -1,7 +1,7 @@
 from setuptools import setup, find_namespace_packages
 
 setup(name='purplship.boxknight',
-      version='2020.12-alpha',
+      version='2020.12.1-alpha',
       description='Multi-carrier shipping API integration with python',
       url='https://github.com/PurplShip/purplship',
       author='Purplship Team',

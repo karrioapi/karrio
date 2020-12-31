@@ -22,7 +22,7 @@ from pycanadapost.shipment import (
     groupIdOrTransmitShipment,
 )
 from purplship.core.units import Currency, WeightUnit, Options, Packages
-from purplship.core.utils import Serializable, Element, XP, SF
+from purplship.core.utils import Serializable, Element, XP, SF, NF
 from purplship.core.models import (
     Message,
     ShipmentDetails,
@@ -33,9 +33,10 @@ from purplship.providers.canadapost.units import (
     OptionCode,
     ServiceType,
     PackagePresets,
-    PrinterType,
     PaymentType,
-    INTERNATIONAL_NON_DELIVERY_OPTION
+    LabelType,
+    INTERNATIONAL_NON_DELIVERY_OPTION,
+    MeasurementOptions,
 )
 from purplship.providers.canadapost.utils import Settings
 
@@ -101,6 +102,8 @@ def shipment_request(
     if is_intl and not any(key in special_services for key in INTERNATIONAL_NON_DELIVERY_OPTION):
         special_services['canadapost_return_to_sender'] = OptionCode.canadapost_return_to_sender.value
 
+    label_encoding, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
+
     request = ShipmentType(
         customer_request_id=None,
         groupIdOrTransmitShipment=groupIdOrTransmitShipment(),
@@ -145,11 +148,11 @@ def shipment_request(
                 ),
             ),
             parcel_characteristics=ParcelCharacteristicsType(
-                weight=package.weight.KG,
+                weight=package.weight.map(MeasurementOptions).KG,
                 dimensions=dimensionsType(
-                    length=package.length.CM,
-                    width=package.width.CM,
-                    height=package.height.CM,
+                    length=package.length.map(MeasurementOptions).CM,
+                    width=package.width.map(MeasurementOptions).CM,
+                    height=package.height.map(MeasurementOptions).CM,
                 ),
                 unpackaged=None,
                 mailing_tube=None,
@@ -178,8 +181,8 @@ def shipment_request(
                 if options.notification_email else None
             ),
             print_preferences=PrintPreferencesType(
-                output_format=PrinterType[options.label_printing or "regular"].value,
-                encoding=None,
+                output_format=label_format,
+                encoding=label_encoding,
             ),
             preferences=PreferencesType(
                 service_code=None,

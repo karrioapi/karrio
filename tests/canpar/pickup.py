@@ -154,7 +154,7 @@ pickup_update_data = {
         "email": "john.doe@canpar.ca",
         "phone_number": "1 514 5555555",
     },
-    "parcels": [{"weight": 24, "weight_unit": "KG"}],
+    "parcels": [{"weight": 4, "weight_unit": "KG"}],
     "instruction": "Door at Back",
     "ready_time": "15:00",
     "closing_time": "17:00",
@@ -235,7 +235,7 @@ PickupUpdateRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/200
                     <pickup_date>2015-01-28T15:00:00</pickup_date>
                     <pickup_phone>1 514 5555555</pickup_phone>
                     <unit_of_measure>L</unit_of_measure>
-                    <weight>52.909999999999997</weight>
+                    <weight>8.82</weight>
                 </pickup>
                 <user_id>user_id</user_id>
             </ws:request>

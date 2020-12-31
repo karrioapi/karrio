@@ -35,7 +35,7 @@ from purplship.core.utils import Serializable, Element, SF, NF, create_envelope
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.providers.purolator.utils import Settings, standard_request_serializer
 from purplship.providers.purolator.error import parse_error_response
-from purplship.providers.purolator.units import Product, PackagePresets, DutyPaymentType
+from purplship.providers.purolator.units import Product, PackagePresets, DutyPaymentType, MeasurementOptions
 
 
 def parse_rate_response(
@@ -136,10 +136,10 @@ def rate_request(
                             payload.shipper.address_line2, join=True
                         ),
                         StreetAddress3=None,
-                        City=payload.shipper.city,
-                        Province=payload.shipper.state_code,
-                        Country=payload.shipper.country_code,
-                        PostalCode=payload.shipper.postal_code,
+                        City=payload.shipper.city or "",
+                        Province=payload.shipper.state_code or "",
+                        Country=payload.shipper.country_code or "",
+                        PostalCode=payload.shipper.postal_code or "",
                         PhoneNumber=PhoneNumber(
                             CountryCode=shipper_phone.country_code or "0",
                             AreaCode=shipper_phone.area_code or "0",
@@ -170,10 +170,10 @@ def rate_request(
                             payload.recipient.address_line2, join=True
                         ),
                         StreetAddress3=None,
-                        City=payload.recipient.city,
-                        Province=payload.recipient.state_code,
-                        Country=payload.recipient.country_code,
-                        PostalCode=payload.recipient.postal_code,
+                        City=payload.recipient.city or "",
+                        Province=payload.recipient.state_code or "",
+                        Country=payload.recipient.country_code or "",
+                        PostalCode=payload.recipient.postal_code or "",
                         PhoneNumber=PhoneNumber(
                             CountryCode=recipient_phone.country_code or "0",
                             AreaCode=recipient_phone.area_code or "0",
@@ -194,7 +194,7 @@ def rate_request(
                     Description=package_description,
                     TotalWeight=(
                         TotalWeight(
-                            Value=packages.weight.LB,
+                            Value=packages.weight.map(MeasurementOptions).LB,
                             WeightUnit=PurolatorWeightUnit.LB.value,
                         )
                         if packages.weight.value is not None else None
@@ -205,7 +205,7 @@ def rate_request(
                             Piece(
                                 Weight=(
                                     PurolatorWeight(
-                                        Value=package.weight.value,
+                                        Value=package.weight.map(MeasurementOptions).value,
                                         WeightUnit=PurolatorWeightUnit[
                                             package.weight_unit.value
                                         ].value,

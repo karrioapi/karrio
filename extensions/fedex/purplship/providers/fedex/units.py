@@ -12,22 +12,22 @@ class PackagePreset(BasePackagePreset):
 
 class PackagePresets(Flag):
     fedex_envelope_legal_size = PackagePreset(
-        weight=1.0, width=9.5, height=15.5, packaging_type="envelope"
+        weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"
     )
     fedex_envelope_without_pouch = PackagePreset(
-        weight=1.0, width=9.5, height=15.5, packaging_type="envelope"
+        weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"
     )
     fedex_padded_pak = PackagePreset(
-        weight=2.2, width=11.75, height=14.75, packaging_type="pak"
+        weight=2.2, width=11.75, height=14.75, length=1, packaging_type="pak"
     )
     fedex_polyethylene_pak = PackagePreset(
-        weight=2.2, width=12.0, height=15.5, packaging_type="pak"
+        weight=2.2, width=12.0, height=15.5, length=1, packaging_type="pak"
     )
     fedex_clinical_pak = PackagePreset(
-        weight=2.2, width=13.5, height=18.0, packaging_type="pak"
+        weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"
     )
     fedex_un_3373_pak = PackagePreset(
-        weight=2.2, width=13.5, height=18.0, packaging_type="pak"
+        weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"
     )
     fedex_small_box = PackagePreset(
         weight=20.0, width=12.25, height=10.9, length=1.5, packaging_type="small_box"
@@ -49,6 +49,22 @@ class PackagePresets(Flag):
     )
     fedex_envelope = fedex_envelope_legal_size
     fedex_pak = fedex_padded_pak
+
+
+class LabelType(Flag):
+    PDF_4x6 = ('PDF', 'PAPER_4X6')
+    PDF_4x6_75 = ('PDF', 'PAPER_4X6.75')
+    PDF_4x8 = ('PDF', 'PAPER_4X8')
+    PDF_4x9 = ('PDF', 'PAPER_4X9')
+    PDF_7x4_75 = ('PDF', 'PAPER_7X4.75')
+    ZPL_4x6 = ('ZPLII', 'STOCK_4X6')
+    ZPL_4x6_75 = ('ZPLII', 'STOCK_4X6.75')
+    ZPL_4x8 = ('ZPLII', 'STOCK_4X8')
+    ZPL_4x9 = ('ZPLII', 'STOCK_4X9')
+
+    """ Unified Label type mapping """
+    PDF = PDF_4x6
+    ZPL = ZPL_4x6
 
 
 class Incoterm(Enum):

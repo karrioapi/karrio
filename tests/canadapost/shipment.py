@@ -62,9 +62,9 @@ class TestCanadaPostShipment(unittest.TestCase):
             mocks.side_effect = ["<a></a>", ""]
             purplship.Shipment.create(self.ShipmentRequest).with_(gateway)
 
-            url = mocks.call_args[1]["url"]
+            create_call, _ = mocks.call_args_list
             self.assertEqual(
-                url,
+                create_call[1]["url"],
                 f"{gateway.settings.server_url}/rs/{gateway.settings.customer_number}/{gateway.settings.customer_number}/shipment",
             )
 
@@ -199,6 +199,7 @@ shipment_with_package_preset_data = {
     ],
     "service": "canadapost_expedited_parcel",
     "options": {"cash_on_delivery": 25.5},
+    "label_type": "ZPL"
 }
 
 ParsedShipmentResponse = [
@@ -277,7 +278,8 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
             </dimensions>
         </parcel-characteristics>
         <print-preferences>
-            <output-format>8.5x11</output-format>
+            <output-format>4x6</output-format>
+            <encoding>PDF</encoding>
         </print-preferences>
         <preferences>
             <show-packing-instructions>false</show-packing-instructions>
@@ -331,7 +333,7 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             </option>
         </options>
         <parcel-characteristics>
-            <weight>9.07</weight>
+            <weight>9.1</weight>
             <dimensions>
                 <length>40.6</length>
                 <width>46.0</width>
@@ -339,7 +341,8 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
             </dimensions>
         </parcel-characteristics>
         <print-preferences>
-            <output-format>8.5x11</output-format>
+            <output-format>4x6</output-format>
+            <encoding>ZPL</encoding>
         </print-preferences>
         <preferences>
             <show-packing-instructions>false</show-packing-instructions>
@@ -404,7 +407,7 @@ NonContractShipmentRequestXML = """<non-contract-shipment xmlns="http://www.cana
             </dimensions>
         </parcel-characteristics>
         <preferences>
-            <show-packing-instructions>true</show-packing-instructions>
+            <show-packing-instructions>false</show-packing-instructions>
             <show-postage-rate>true</show-postage-rate>
             <show-insured-value>true</show-insured-value>
         </preferences>

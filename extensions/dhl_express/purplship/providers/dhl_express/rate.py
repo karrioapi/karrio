@@ -15,8 +15,10 @@ from pydhl.dct_req_global_2_0 import (
 )
 from pydhl.dct_requestdatatypes_global import DCTDutiable
 from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
+
+from purplship.core.errors import DestinationNotServicedError
 from purplship.core.utils import Serializable, Element, NF, XP, DF
-from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit, Services
+from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit, Services, CountryCurrency
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.providers.dhl_express.units import (
     Product,
@@ -107,6 +109,9 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
     is_document = all([parcel.is_document for parcel in payload.parcels])
     is_dutiable = not is_document
 
+    if not is_international and payload.shipper.country_code in ["CA"]:
+        raise DestinationNotServicedError(payload.shipper.country_code)
+
     if is_international and is_dutiable:
         special_services.append(SpecialServiceCode.dhl_paperless_trade)
 
@@ -185,7 +190,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                 ],
             ),
             Dutiable=(
-                DCTDutiable(DeclaredValue=1.0, DeclaredCurrency=options.currency)
+                DCTDutiable(
+                    DeclaredValue=options.insurance or 1.0,
+                    DeclaredCurrency=options.currency or CountryCurrency[payload.shipper.country_code].value
+                )
                 if is_international and is_dutiable else None
             ),
         ),

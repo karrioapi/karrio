@@ -278,7 +278,7 @@ PickupUpdateValidationRequestXML = """<soap:Envelope xmlns:soap="http://schemas.
                 <v1:AnyTimeAfter>1500</v1:AnyTimeAfter>
                 <v1:UntilTime>1700</v1:UntilTime>
                 <v1:TotalWeight>
-                    <v1:Value>52.91</v1:Value>
+                    <v1:Value>52.92</v1:Value>
                     <v1:WeightUnit>lb</v1:WeightUnit>
                 </v1:TotalWeight>
                 <v1:TotalPieces>1</v1:TotalPieces>

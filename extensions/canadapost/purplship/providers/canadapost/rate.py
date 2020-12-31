@@ -13,7 +13,6 @@ from pycanadapost.rating import (
     service_standardType,
 )
 from functools import reduce
-from datetime import datetime
 from typing import List, Tuple, cast
 from purplship.core.utils import Serializable, Element, NF, XP
 from purplship.providers.canadapost.utils import Settings
@@ -21,7 +20,7 @@ from purplship.core.units import Country, Currency, Packages, Services, Options
 from purplship.core.errors import OriginNotServicedError
 from purplship.core.models import RateDetails, ChargeDetails, Message, RateRequest
 from purplship.providers.canadapost.error import parse_error_response
-from purplship.providers.canadapost.units import OptionCode, ServiceType, PackagePresets
+from purplship.providers.canadapost.units import OptionCode, ServiceType, PackagePresets, MeasurementOptions
 
 
 def parse_rate_response(
@@ -97,7 +96,7 @@ def rate_request(
         contract_id=None,
         promo_code=None,
         quote_type=None,
-        expected_mailing_date=datetime.today().strftime("%Y-%m-%d"),
+        expected_mailing_date=requested_options.shipment_date,
         options=(
             optionsType(
                 option=[
@@ -108,11 +107,11 @@ def rate_request(
             if any(requested_options) else None
         ),
         parcel_characteristics=parcel_characteristicsType(
-            weight=package.weight.KG,
+            weight=package.weight.map(MeasurementOptions).KG,
             dimensions=dimensionsType(
-                length=package.length.CM,
-                width=package.width.CM,
-                height=package.height.CM,
+                length=package.length.map(MeasurementOptions).CM,
+                width=package.width.map(MeasurementOptions).CM,
+                height=package.height.map(MeasurementOptions).CM,
             ),
             unpackaged=None,
             mailing_tube=None,

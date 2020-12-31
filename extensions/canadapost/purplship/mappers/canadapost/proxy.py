@@ -80,9 +80,9 @@ class Proxy(BaseProxy):
         def _get_label(job: Job):
             label_string = http(
                 decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
-                url=job.data,
+                url=job.data["href"],
                 headers={
-                    "Accept": "application/pdf",
+                    "Accept": job.data["media"],
                     "Authorization": f"Basic {self.settings.authorization}",
                 },
                 method="GET",

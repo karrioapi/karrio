@@ -20,6 +20,7 @@ from pydhl.ship_val_global_req_6_2 import (
     SpecialService,
     WeightUnit,
     DimensionUnit,
+    Label,
 )
 from pydhl.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
 from purplship.core.utils import Serializable, SF, XP
@@ -38,6 +39,7 @@ from purplship.providers.dhl_express.units import (
     SpecialServiceCode,
     DeliveryType,
     PackagePresets,
+    LabelType,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
@@ -95,6 +97,7 @@ def shipment_request(
         special_services.append(SpecialServiceCode.dhl_paperless_trade.value)
     has_payment_config = payload.payment is not None
     has_customs_config = payload.customs is not None
+    label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
 
     request = DHLShipmentRequest(
         schemaVersion=6.2,
@@ -225,7 +228,6 @@ def shipment_request(
             Notification(EmailAddress=options.notification_email or payload.recipient.email)
             if options.notification_email is None else None
         ),
-        LabelImageFormat="PDF",
         DocImages=(
             DocImages(
                 DocImage=[
@@ -241,7 +243,8 @@ def shipment_request(
         ),
         RequestArchiveDoc=None,
         NumberOfArchiveDoc=None,
-        Label=None,
+        LabelImageFormat=label_format,
+        Label=Label(LabelTemplate=label_template),
         ODDLinkReq=None,
         DGs=None,
     )

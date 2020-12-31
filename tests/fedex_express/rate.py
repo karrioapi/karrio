@@ -262,6 +262,7 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
                         <v26:Value>2.2</v26:Value>
                     </v26:Weight>
                     <v26:Dimensions>
+                        <v26:Length>1</v26:Length>
                         <v26:Width>11</v26:Width>
                         <v26:Height>14</v26:Height>
                         <v26:Units>IN</v26:Units>

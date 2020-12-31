@@ -28,16 +28,14 @@ from pyfedex.ship_service_v25 import (
     ShippingDocumentPart,
     Payment,
     Payor,
-    WeightUnits,
     LabelSpecification,
     LabelFormatType,
-    LabelStockType,
-    ShippingDocumentImageType,
     LabelPrintingOrientationType,
-    ShipmentNotificationFormatSpecification
+    ShipmentNotificationFormatSpecification,
+    LabelOrderType,
 )
 from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
-from purplship.core.units import Options, Packages
+from purplship.core.units import Options, Packages, WeightUnit
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
@@ -47,6 +45,7 @@ from purplship.providers.fedex.units import (
     SpecialServiceType,
     PackagePresets,
     PaymentType,
+    LabelType,
 )
 
 
@@ -123,6 +122,7 @@ def shipment_request(
     shipment_date = (
         DF.date(options.shipment_date) if 'shipment_date' in options else datetime.now()
     )
+    label_type, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
 
     request = ProcessShipmentRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -136,7 +136,7 @@ def shipment_request(
             PackagingType=package_type,
             ManifestDetail=None,
             TotalWeight=FedexWeight(
-                Units=WeightUnits.LB.value, Value=packages.weight.LB
+                Units=WeightUnit.LB.value, Value=packages.weight.LB
             ),
             TotalInsuredValue=options.insurance,
             PreferredCurrency=options.currency,
@@ -318,10 +318,10 @@ def shipment_request(
             LabelSpecification=LabelSpecification(
                 Dispositions=None,
                 LabelFormatType=LabelFormatType.COMMON_2_D.value,
-                ImageType=ShippingDocumentImageType.PDF.value,
-                LabelStockType=LabelStockType.PAPER__7_X_4_75.value,
+                ImageType=label_type,
+                LabelStockType=label_format,
                 LabelPrintingOrientation=LabelPrintingOrientationType.TOP_EDGE_OF_TEXT_FIRST.value,
-                LabelOrder=None,
+                LabelOrder=LabelOrderType.SHIPPING_LABEL_FIRST.value,
                 PrintedLabelOrigin=None,
                 CustomerSpecifiedDetail=None,
             ),

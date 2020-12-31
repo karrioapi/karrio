@@ -31,6 +31,8 @@ from pyups.ship_web_service_schema import (
     BillReceiverAddressType,
     LabelSpecificationType,
     LabelImageFormatType,
+    LabelStockSizeType,
+    ImageFormatType,
 )
 from purplship.core.utils import (
     gif_to_pdf,
@@ -49,6 +51,7 @@ from purplship.providers.ups.units import (
     ShippingServiceCode,
     WeightUnit as UPSWeightUnit,
     PackagePresets,
+    LabelType,
 )
 from purplship.providers.ups.error import parse_error_response
 from purplship.providers.ups.utils import Settings
@@ -68,14 +71,20 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     shipment = ShipmentResultsType()
     shipment.build(node)
     package: PackageResultsType = next(iter(shipment.PackageResults), None)
-    graphic = cast(LabelType, package.ShippingLabel).GraphicImage
+    shipping_label = cast(LabelType, package.ShippingLabel)
+
+    label = (
+        gif_to_pdf(shipping_label.GraphicImage)
+        if cast(ImageFormatType, shipping_label.ImageFormat).Code == 'GIF' else
+        shipping_label.GraphicImage
+    )
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
-        label=gif_to_pdf(graphic),
+        label=label,
     )
 
 
@@ -98,6 +107,7 @@ def shipment_request(
     mps_packaging = (
         ShippingPackagingType.your_packaging.value if len(packages) > 1 else None
     )
+    label_format, label_height, label_width = LabelType[payload.label_type or 'PDF_6x4'].value
 
     request = UPSShipmentRequest(
         Request=common.RequestType(
@@ -270,9 +280,9 @@ def shipment_request(
             ],
         ),
         LabelSpecification=LabelSpecificationType(
-            LabelImageFormat=LabelImageFormatType(Code="GIF", Description=None),
+            LabelImageFormat=LabelImageFormatType(Code=label_format, Description=None),
             HTTPUserAgent=None,
-            LabelStockSize=None,
+            LabelStockSize=LabelStockSizeType(Height=label_height, Width=label_width),
             Instruction=None,
             CharacterSet=None,
         ),

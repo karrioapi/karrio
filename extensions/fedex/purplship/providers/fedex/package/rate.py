@@ -16,10 +16,9 @@ from pyfedex.rate_service_v26 import (
     Surcharge,
     RequestedPackageLineItem,
     Dimensions,
-    WeightUnits,
 )
 from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, SF, DF
-from purplship.core.units import Packages, Options, Services
+from purplship.core.units import Packages, Options, Services, DimensionUnit, WeightUnit
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.providers.fedex.error import parse_error_response
@@ -120,7 +119,7 @@ def rate_request(
             PackagingType=package_type,
             VariationOptions=None,
             TotalWeight=FedexWeight(
-                Units=WeightUnits.LB.value,
+                Units=WeightUnit.LB.value,
                 Value=packages.weight.LB,
             ),
             TotalInsuredValue=None,

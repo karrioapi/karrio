@@ -11,7 +11,7 @@
     <a href="https://github.com/Purplship/Purplship/actions"><img src="https://github.com/Purplship/Purplship/workflows/PuprlShip/badge.svg" alt="CI" style="max-width:100%;"></a>
     <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: AGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
     <a href="https://github.com/python/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" style="max-width:100%;"></a>
-    <a href="https://codecov.io/gh/Purplship/Purplship"><img src="https://codecov.io/gh/Purplship/Purplship/branch/master/graph/badge.svg" alt="codecov" style="max-width:100%;"></a>
+    <a href="https://codecov.io/gh/Purplship/Purplship"><img src="https://codecov.io/gh/Purplship/Purplship/branch/main/graph/badge.svg" alt="codecov" style="max-width:100%;"></a>
     <a href="https://app.codacy.com/manual/DanH91/Purplship?utm_source=github.com&utm_medium=referral&utm_content=Purplship/Purplship&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709" alt="Codacy Badge" style="max-width:100%;"></a>
     <a href="https://gitter.im/Purplship/Purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/Purplship/purplship.svg" alt="Join the chat at https://gitter.im/Purplship/Purplship" style="max-width:100%;"></a>
   </p>
@@ -36,7 +36,7 @@ With Purplship you can:
 Purplship has two layers
 
 - **Purplship SDK** for an integration as a Python library. *[documentation](#Documentation) bellow*
-- **Purplship Server** for an On-prem or private cloud REST API. *documentation and usage can be found at [docs.purplship.com](https://docs.purplship.com)*
+- **Purplship Server** for an On-prem or cloud REST API. *documentation and usage can be found at [docs.purplship.com](https://docs.purplship.com)*
 
 ## License
 
@@ -446,7 +446,7 @@ rates = request.from_(carrier).parse()
 
 | Name | Type | Description
 | --- | --- | --- |
-| `carrier_name` | `str` | default: carrier name (eg: CanadaPost, Purolator...)
+| `carrier_name` | `str` | default: carrier name (eg: canadapost, purolator...)
 | `id` | `str` | 
 | `test` | `boolean` |
 
@@ -566,7 +566,7 @@ rates = request.from_(carrier).parse()
     | --- | --- | --- |
     | `carrier_name` | `str` | 
     | `carrier_id` | `str` | 
-    | `message` | `str` | 
+    | `message` | Union[str, Any] | 
     | `code` | `str` | 
     | `details` | `dict` | 
 
@@ -710,6 +710,7 @@ rates = request.from_(carrier).parse()
     | `doc_images` | List[[Doc](#Doc)] | 
     | `options` | `dict` | 
     | `reference` | `str` | 
+    | `label_type` | `str` | 
 
 
 - <a name="TrackingDetails"></a> TrackingDetails
@@ -738,7 +739,7 @@ rates = request.from_(carrier).parse()
     | --- | --- | --- |
     | `tracking_numbers` | List[str] | 
     | `language_code` | `str` | 
-    | `level_of_details` | `str` |
+    | `level_of_details` | `str` | 
 
 </details>
 

@@ -46,14 +46,18 @@ class PackagePresets(Flag):
     )
 
 
-class PrinterType(Enum):
-    regular = "8.5x11"
-    thermal = "4x6"
+class MeasurementOptions(Enum):
+    quant = 0.1
 
 
-class LablelEncoding(Enum):
-    pdf = "PDF"
-    zpl = "ZPL"
+class LabelType(Enum):
+    PDF_4x6 = ("PDF", "4x6")
+    PDF_8_5x11 = ("PDF", "8.5x11")
+    ZPL_4x6 = ("ZPL", "4x6")
+
+    """ Unified Label type mapping """
+    PDF = PDF_4x6
+    ZPL = ZPL_4x6
 
 
 class PaymentType(Flag):

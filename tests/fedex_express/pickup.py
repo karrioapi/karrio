@@ -342,7 +342,7 @@ PickupUpdateRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.
             <v17:PackageCount>1</v17:PackageCount>
             <v17:TotalWeight>
                 <v17:Units>LB</v17:Units>
-                <v17:Value>52.91</v17:Value>
+                <v17:Value>52.92</v17:Value>
             </v17:TotalWeight>
             <v17:CarrierCode>FDXE</v17:CarrierCode>
             <v17:Remarks>Door at Back</v17:Remarks>

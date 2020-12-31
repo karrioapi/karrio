@@ -402,22 +402,22 @@ SHIPMENT_DOCUMENT_RESPONSE_XML = """<s:Envelope xmlns:s="http://schemas.xmlsoap.
 </s:Envelope>
 """
 
-SHIPMENT_CANCEL_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1">
+SHIPMENT_CANCEL_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <soap:Header>
-        <v1:RequestContext>
-            <v1:Version>1.0</v1:Version>
-            <v1:Language>en</v1:Language>
-            <v1:GroupID></v1:GroupID>
-            <v1:RequestReference></v1:RequestReference>
-            <v1:UserToken>token</v1:UserToken>
-        </v1:RequestContext>
+        <v2:RequestContext>
+            <v2:Version>2.0</v2:Version>
+            <v2:Language>en</v2:Language>
+            <v2:GroupID></v2:GroupID>
+            <v2:RequestReference></v2:RequestReference>
+            <v2:UserToken>token</v2:UserToken>
+        </v2:RequestContext>
     </soap:Header>
     <soap:Body>
-        <v1:VoidShipmentRequest>
-            <v1:PIN>
-                <v1:Value>329014521622</v1:Value>
-            </v1:PIN>
-        </v1:VoidShipmentRequest>
+        <v2:VoidShipmentRequest>
+            <v2:PIN>
+                <v2:Value>329014521622</v2:Value>
+            </v2:PIN>
+        </v2:VoidShipmentRequest>
     </soap:Body>
 </soap:Envelope>
 """
