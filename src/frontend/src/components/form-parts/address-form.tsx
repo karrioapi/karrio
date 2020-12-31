@@ -77,6 +77,7 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
     useEffect(() => {
         if (shipment !== undefined && isNone(shipment.id) && name === "shipper" && !isNone(Defaults?.address) && !deepEqual(Defaults.address, address)) {
             dispatch({ name: "full", value: Defaults.address as Address });
+            setKey(`address-${Date.now()}`);
         }
     }, [Defaults]);
 

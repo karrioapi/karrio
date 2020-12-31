@@ -20,14 +20,12 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [selected_rate_id, setSelectedRate] = useState<string | undefined>(shipment?.selected_rate_id);
     const [label_type, setLabelType] = useState<Shipment.LabelTypeEnum>(shipment?.label_type || Shipment.LabelTypeEnum.PDF);
-    const [lastState, setLastSate] = useState<Shipment>((shipment?.rates || []).length === 0 ? {} as Shipment : shipment);
 
     const computeDisabled = (shipment: Shipment) => {
         return (
             shipment.recipient.address_line1 === undefined ||
             shipment.shipper.address_line1 === undefined ||
             shipment.parcels.length === 0 ||
-            deepEqual(lastState || {}, shipment) ||
             loading === true
         );
     };
@@ -37,7 +35,6 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             setLoading(true);
             const response = await state.fetchRates(shipment);
             if (shipment.id === undefined) navigate('/buy_label/' + response.id);
-            setLastSate({ ...shipment });
             update({ ...response }, true);
         } catch (err) {
             state.setNotification({ type: NotificationType.error, message: err });
@@ -116,7 +113,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
 
                     <h6 className="is-title is-size-6 mt-1 mb-4 has-text-weight-semibold">Live Rates</h6>
 
-                    <ul className="menu-list">
+                    <ul className="menu-list py-2" style={{ maxHeight: "16em", overflowY: "auto" }}>
                         {shipment.rates?.map(rate => (
                             <li key={rate.id}>
                                 <a className={`columns mb-0 ${rate.id === selected_rate_id ? 'has-text-grey-dark' : 'has-text-grey'}`} onClick={() => setSelectedRate(rate.id)}>

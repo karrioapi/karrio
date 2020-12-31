@@ -47,7 +47,7 @@ const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, update, ch
     const Defaults = useContext(Templates);
     const parcelTemplates = useContext(ParcelTemplates);
     const form = useRef<HTMLFormElement>(null);
-    const [key] = useState<string>(`parcel-${Date.now()}`);
+    const [key, setKey] = useState<string>(`parcel-${Date.now()}`);
     const [presets, setPresets] = useState<PresetCollection>(Ref?.package_presets);
     const [parcel, dispatch] = useReducer(reducer, value, () => value || DEFAULT_PARCEL_CONTENT);
     const [parcel_type, setParcelType] = useState<string>(isNone(value?.package_preset) ? 'custom' : 'preset');
@@ -122,6 +122,7 @@ const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, update, ch
                 setParcelType('preset');
             }
             dispatch({ name: 'template', value: { ...(preset || {}), ...Defaults.parcel } as Parcel });
+            setKey(`parcel-${Date.now()}`);
         }
         if (parcelTemplates?.fetched === false) state.fetchParcels();
     }, [Defaults]);

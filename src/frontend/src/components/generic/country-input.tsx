@@ -4,7 +4,7 @@ import { Reference } from '@/library/context';
 import { isNone } from '@/library/helper';
 import { Collection } from '@/library/types';
 
-interface CountryInputComponent extends Omit<DropdownInputComponent, 'items'> {}
+interface CountryInputComponent extends Omit<DropdownInputComponent, 'items'> { }
 
 const CountryInput: React.FC<CountryInputComponent> = ({ name, ...props }) => {
     const Ref = useContext(Reference);
@@ -16,9 +16,9 @@ const CountryInput: React.FC<CountryInputComponent> = ({ name, ...props }) => {
         }
     }, [Ref?.countries]);
 
-    return (<>
-        {!isNone(items) && <DropdownInput name={name || 'country'} items={items} {...props}/>}
-    </>)
+    return (
+        <DropdownInput name={name || 'country'} items={items} {...props} />
+    )
 };
 
 export default CountryInput;

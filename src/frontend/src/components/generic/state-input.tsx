@@ -22,13 +22,13 @@ const StateInput: React.FC<StateInputComponent> = ({ name, onValueChange, defaul
         e.preventDefault();
         let [code, name] = find(states, e.target.value);
         onValueChange(code || null);
-        
+
         if (!isNone(code) && e.target.value === code) e.currentTarget.value = name;
     };
     useEffect(() => { (!isNone(Ref?.states)) && setStates(Ref.states) }, [Ref?.states]);
 
-    return (<>
-        {!isNone(states) && <InputField onChange={onChange} onClick={onClick} defaultValue={fname(defaultValue)} list="state_or_provinces" {...props} ref={input}>
+    return (
+        <InputField onChange={onChange} onClick={onClick} defaultValue={fname(defaultValue)} list="state_or_provinces" {...props} ref={input}>
             <datalist id="state_or_provinces">
                 {Object
                     .entries(states || {})
@@ -41,8 +41,8 @@ const StateInput: React.FC<StateInputComponent> = ({ name, onValueChange, defaul
                     ))
                 }
             </datalist>
-        </InputField>}
-    </>)
+        </InputField>
+    )
 };
 
 function find(states?: Collection<Collection<string>>, code_or_name?: string): [string, string] | [] {
