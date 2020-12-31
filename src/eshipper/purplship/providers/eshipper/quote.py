@@ -38,7 +38,8 @@ def parse_quote_reply(
 def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     quote = XP.build(QuoteType, node)
     service = next(
-        (s.name for s in Service if str(quote.serviceId) == s.value), quote.serviceId
+        (s.name for s in Service if str(quote.serviceId) == s.value),
+        quote.serviceId
     )
     surcharges = [
         ChargeDetails(
@@ -65,7 +66,8 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         base_charge=NF.decimal(quote.baseCharge),
         total_charge=NF.decimal(quote.totalCharge),
         transit_days=quote.transitDays,
-        extra_charges=[fuel_surcharge] + surcharges
+        extra_charges=[fuel_surcharge] + surcharges,
+        meta=dict(service_name=quote.serviceName)
     )
 
 
@@ -170,10 +172,10 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
             Packages=PackagesType(
                 Package=[
                     PackageType(
-                        length=ceil(package.length.value),
-                        width=ceil(package.width.value),
-                        height=ceil(package.height.value),
-                        weight=ceil(package.weight.value),
+                        length=ceil(package.length.IN),
+                        width=ceil(package.width.IN),
+                        height=ceil(package.height.IN),
+                        weight=ceil(package.weight.LB),
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,

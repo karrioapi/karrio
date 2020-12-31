@@ -66,6 +66,7 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         total_charge=NF.decimal(quote.totalCharge),
         transit_days=quote.transitDays,
         extra_charges=[fuel_surcharge] + surcharges,
+        meta=dict(service_name=quote.serviceName)
     )
 
 
@@ -172,10 +173,10 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
             Packages=PackagesType(
                 Package=[
                     PackageType(
-                        length=ceil(package.length.value),
-                        width=ceil(package.width.value),
-                        height=ceil(package.height.value),
-                        weight=ceil(package.weight.value),
+                        length=ceil(package.length.IN),
+                        width=ceil(package.width.IN),
+                        height=ceil(package.height.IN),
+                        weight=ceil(package.weight.LB),
                         type_=packaging_type,
                         freightClass=freight_class,
                         nmfcCode=None,

@@ -34,8 +34,12 @@ class TestEShipperRating(unittest.TestCase):
         with patch("purplship.mappers.eshipper.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
+            import logging
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse))
+            logging.warning(DP.to_dict(parsed_response))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -66,14 +70,18 @@ RatePayload = {
         "phone_number": "4162223333",
         "email": "riz@shaw.ca",
     },
-    "parcels": [{
-        "height": 9,
-        "length": 6,
-        "width": 12,
-        "weight": 20.0,
-        "description": "desc.",
-        "packaging_type": "eshipper_pallet",
-    }],
+    "parcels": [
+        {
+            "height": 9,
+            "length": 6,
+            "width": 12,
+            "weight": 2.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+            "description": "desc.",
+            "packaging_type": "eshipper_pallet",
+        }
+    ],
     "options": {
         "freight_class": "eshipper_freight_class_70",
         "cash_on_delivery": {"amount": 10.5},
@@ -91,76 +99,82 @@ ParsedQuoteResponse = [
     [
         {
             "base_charge": 177.0,
-            "carrier_name": "eshipper",
             "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
             "currency": "CAD",
-            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
+            "meta": {"service_name": "Air"},
             "service": "eshipper_purolator_air",
             "total_charge": 177.0,
+            "transit_days": 1,
         },
         {
             "base_charge": 28.65,
-            "carrier_name": "eshipper",
             "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
             "currency": "CAD",
-            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
+            "meta": {"service_name": "Ground"},
             "service": "eshipper_purolator_ground",
             "total_charge": 28.65,
+            "transit_days": 1,
         },
         {
             "base_charge": 46.27,
-            "carrier_name": "eshipper",
             "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
             "currency": "CAD",
-            "transit_days": 0,
             "extra_charges": [
                 {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
             ],
+            "meta": {"service_name": "Priority"},
             "service": "eshipper_fedex_priority",
             "total_charge": 52.52,
+            "transit_days": 0,
         },
         {
             "base_charge": 30.74,
-            "carrier_name": "eshipper",
             "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
             "currency": "CAD",
-            "transit_days": 0,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
                 {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
+            "meta": {"service_name": "Ground"},
             "service": "eshipper_fedex_ground",
             "total_charge": 31.82,
+            "transit_days": 0,
         },
         {
             "base_charge": 300.0,
-            "carrier_name": "eshipper",
             "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
             "currency": "CAD",
-            "transit_days": 0,
             "extra_charges": [
                 {"amount": 36.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
+            "meta": {"service_name": "Air Freight"},
             "service": "eshipper_canada_worldwide_air_freight",
             "total_charge": 336.0,
+            "transit_days": 0,
         },
         {
             "base_charge": 165.0,
-            "carrier_name": "eshipper",
             "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
             "currency": "CAD",
-            "transit_days": 0,
             "extra_charges": [
                 {"amount": 19.8, "currency": "CAD", "name": "Fuel surcharge"}
             ],
+            "meta": {"service_name": "Next Flight Out"},
             "service": "eshipper_canada_worldwide_next_flight_out",
             "total_charge": 184.8,
+            "transit_days": 0,
         },
     ],
     [],
@@ -171,7 +185,7 @@ RateRequestXML = f"""<EShipper xmlns="http://www.eshipper.net/XMLSchema" usernam
         <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
         <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" country="CA" zip="V3N4R3"/>
         <Packages type="Pallet">
-            <Package length="6" width="12" height="9" weight="20" type="Pallet" description="desc."/>
+            <Package length="3" width="5" height="4" weight="5" type="Pallet" description="desc."/>
         </Packages>
     </QuoteRequest>
 </EShipper>
