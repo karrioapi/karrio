@@ -166,7 +166,7 @@ class ShipmentSerializer(ShipmentData):
 
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
-            carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id')).first()
+            carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id'), user=instance.user).first()
 
             instance.selected_rate = {
                 **selected_rate,
@@ -175,7 +175,7 @@ class ShipmentSerializer(ShipmentData):
             instance.selected_rate_carrier = carrier
 
         instance.save()
-        instance.carriers.set(Carrier.objects.filter(carrier_id__in=carrier_ids))
+        instance.carriers.set(Carrier.objects.filter(carrier_id__in=carrier_ids, user=instance.user))
         return instance
 
 

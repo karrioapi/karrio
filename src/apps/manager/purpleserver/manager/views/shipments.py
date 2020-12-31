@@ -103,7 +103,7 @@ class ShipmentDetail(APIView):
 
         if shipment.status not in [ShipmentStatus.purchased.value, ShipmentStatus.created.value]:
             raise PurplShipApiException(
-                f"The shipment has is '{shipment.status}' and can therefore not be cancelled anymore...",
+                f"The shipment is '{shipment.status}' and can therefore not be cancelled anymore...",
                 code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 

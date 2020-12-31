@@ -139,7 +139,7 @@ class Shipments:
 
     @staticmethod
     def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
-        carrier = next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), carrier)
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
             raise NotFound('No configured and active carrier found')
@@ -160,7 +160,7 @@ class Shipments:
 
     @staticmethod
     def track(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> TrackingResponse:
-        carrier = next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), carrier)
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
             raise NotFound('No configured and active carrier found')
@@ -187,7 +187,7 @@ class Shipments:
 class Pickups:
     @staticmethod
     def schedule(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> PickupResponse:
-        carrier = next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), carrier)
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
             raise NotFound('No configured and active carrier found')
@@ -213,7 +213,7 @@ class Pickups:
 
     @staticmethod
     def update(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> PickupResponse:
-        carrier = next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), carrier)
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
             raise NotFound('No configured and active carrier found')
@@ -238,8 +238,8 @@ class Pickups:
 
     @staticmethod
     def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> ConfirmationResponse:
-        carrier = next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), carrier)
-
+        carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
+        print(carrier)
         if carrier is None:
             raise NotFound('No configured and active carrier found')
 
