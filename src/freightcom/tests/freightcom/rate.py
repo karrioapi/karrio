@@ -35,7 +35,9 @@ class TestFreightcomRating(unittest.TestCase):
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
+            )
 
     def test_parse_rate_response_error(self):
         with patch("purplship.mappers.freightcom.proxy.http") as mock:
@@ -51,14 +53,16 @@ if __name__ == "__main__":
 RatePayload = {
     "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
-    "parcels": [{
-        "height": 3,
-        "length": 10,
-        "width": 3,
-        "weight": 4.0,
-        "dimension_unit": "CM",
-        "weight_unit": "KG",
-    }],
+    "parcels": [
+        {
+            "height": 3,
+            "length": 10,
+            "width": 3,
+            "weight": 4.0,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
     "services": ["freightcom_central_transport"],
 }
 
@@ -72,45 +76,48 @@ ParsedQuoteResponse = [
     [
         {
             "base_charge": 177.0,
-            "carrier_name": "freightcom",
             "carrier_id": "freightcom",
+            "carrier_name": "freightcom",
             "currency": "CAD",
-            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
+            "meta": {"service_name": "Central Transport"},
             "service": "freightcom_central_transport",
             "total_charge": 177.0,
+            "transit_days": 1,
         },
         {
             "base_charge": 28.65,
-            "carrier_name": "freightcom",
             "carrier_id": "freightcom",
+            "carrier_name": "freightcom",
             "currency": "CAD",
-            "transit_days": 1,
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
+            "meta": {"service_name": "Estes"},
             "service": "freigthcom_estes",
             "total_charge": 28.65,
+            "transit_days": 1,
         },
         {
             "base_charge": 46.27,
-            "carrier_name": "freightcom",
             "carrier_id": "freightcom",
+            "carrier_name": "freightcom",
             "currency": "CAD",
-            "transit_days": 0,
             "extra_charges": [
                 {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
             ],
+            "meta": {"service_name": "USF Holland"},
             "service": "freigthcom_usf_holland",
             "total_charge": 52.52,
+            "transit_days": 0,
         },
     ],
     [
         {
-            "carrier_name": "freightcom",
             "carrier_id": "freightcom",
+            "carrier_name": "freightcom",
             "message": "Polaris:Military Base Delivery,Saturday Pickup,Construction Site,BORDER FEE,Homeland Security,Limited Access,Saturday Delivery,Sort and Segregate Charge,Pier Charge",
         }
     ],

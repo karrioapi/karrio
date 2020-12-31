@@ -18,7 +18,9 @@ class TestEShipperShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
 
         self.assertEqual(request.serialize(), ShipmentCancelRequestXML)
 
@@ -45,7 +47,9 @@ class TestEShipperShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
+            )
 
     def test_parse_cancel_shipment_response(self):
         with patch("purplship.mappers.eshipper.proxy.http") as mock:
@@ -54,7 +58,9 @@ class TestEShipperShipment(unittest.TestCase):
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedCancelShipmentResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedCancelShipmentResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -87,16 +93,18 @@ shipment_data = {
         "phone_number": "4162223333",
         "email": "riz@shaw.ca",
     },
-    "parcels": [{
-        "height": 9,
-        "length": 6,
-        "width": 12,
-        "weight": 2.0,
-        "weight_unit": "KG",
-        "dimension_unit": "CM",
-        "description": "desc.",
-        "packaging_type": "eshipper_pallet",
-    }],
+    "parcels": [
+        {
+            "height": 9,
+            "length": 6,
+            "width": 12,
+            "weight": 2.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+            "description": "desc.",
+            "packaging_type": "eshipper_pallet",
+        }
+    ],
     "service": "eshipper_fedex_ground",
     "options": {
         "freight_class": "eshipper_freight_class_70",
@@ -156,7 +164,15 @@ ParsedShipmentResponse = [
     [],
 ]
 
-ParsedCancelShipmentResponse = [{'carrier_id': 'eshipper', 'carrier_name': 'eshipper', 'operation': 'Cancel Shipment', 'success': True}, []]
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "eshipper",
+        "carrier_name": "eshipper",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
 
 
 ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">

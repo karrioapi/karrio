@@ -18,7 +18,9 @@ class TestFreightcomShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
 
         self.assertEqual(request.serialize(), ShipmentCancelRequestXML)
 
@@ -45,7 +47,9 @@ class TestFreightcomShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).with_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
+            )
 
     def test_parse_cancel_shipment_response(self):
         with patch("purplship.mappers.freightcom.proxy.http") as mock:
@@ -54,7 +58,9 @@ class TestFreightcomShipment(unittest.TestCase):
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedCancelShipmentResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedCancelShipmentResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -82,19 +88,18 @@ shipment_data = {
         "person_name": "Jain",
         "state_code": "ON",
     },
-    "parcels": [{
-        "height": 9,
-        "length": 6,
-        "width": 12,
-        "weight": 20.0,
-        "dimension_unit": "CM",
-        "weight_unit": "KG",
-    }],
+    "parcels": [
+        {
+            "height": 9,
+            "length": 6,
+            "width": 12,
+            "weight": 20.0,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
     "service": "freightcom_central_transport",
-    "options": {
-        "cash_on_delivery": 10.5,
-        "insurance": 70.0
-    },
+    "options": {"cash_on_delivery": 10.5, "insurance": 70.0},
 }
 
 ParsedShipmentResponse = [
@@ -117,12 +122,20 @@ ParsedShipmentResponse = [
             "total_charge": 31.82,
         },
         "tracking_number": 52800410000484,
-        "shipment_identifier": 181004
+        "shipment_identifier": 181004,
     },
     [],
 ]
 
-ParsedCancelShipmentResponse = [{'carrier_id': 'freightcom', 'carrier_name': 'freightcom', 'operation': 'Cancel Shipment', 'success': True}, []]
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "freightcom",
+        "carrier_name": "freightcom",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
 
 
 ShipmentRequestXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema" username="username" password="password" version="3.1.0">
