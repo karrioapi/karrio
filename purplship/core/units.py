@@ -104,9 +104,22 @@ class DimensionUnit(Enum):
 
 
 class Dimension:
-    def __init__(self, value: float, unit: DimensionUnit = DimensionUnit.CM):
+    def __init__(self, value: float, unit: DimensionUnit = DimensionUnit.CM, options: Enum = Enum):
         self._value = value
         self._unit = unit
+
+        # Options mapping
+        measurement_options = {m.name: m.value for m in list(options)}
+        self._min_in = measurement_options.get('min_in')
+        self._min_cm = measurement_options.get('min_cm')
+        self._quant = measurement_options.get('quant')
+
+    def _compute(self, value: float, min_value: float = None):
+        below_min = min_value is not None and value < min_value
+        return NF.decimal(
+            value=(min_value if below_min else value),
+            quant=self._quant
+        )
 
     @property
     def value(self):
@@ -117,25 +130,32 @@ class Dimension:
         if self._unit is None or self._value is None:
             return None
         if self._unit == DimensionUnit.IN:
-            return NF.decimal(self._value * 2.54)
+            return self._compute(self._value * 2.54, self._min_cm)
         else:
-            return NF.decimal(self._value)
+            return self._compute(self._value, self._min_cm)
 
     @property
     def IN(self):
         if self._unit is None or self._value is None:
             return None
         if self._unit == DimensionUnit.CM:
-            return NF.decimal(self._value / 2.54)
+            return self._compute(self._value / 2.54, self._min_in)
         else:
-            return NF.decimal(self._value)
+            return self._compute(self._value, self._min_in)
 
     @property
     def M(self):
         if self._unit is None or self._value is None:
             return None
         else:
-            return NF.decimal(self.CM / 100)
+            return self._compute(self.CM / 100)
+
+    def map(self, options: Enum):
+        return Dimension(
+            value=self._value,
+            unit=self._unit,
+            options=options
+        )
 
 
 class Volume:
@@ -180,46 +200,67 @@ class Girth:
 
 
 class Weight:
-    def __init__(self, value: float, unit: WeightUnit = WeightUnit.KG):
+    def __init__(self, value: float, unit: WeightUnit = WeightUnit.KG, options: Enum = Enum):
         self._value = value
         self._unit = unit
 
+        # Options mapping
+        measurement_options = {m.name: m.value for m in list(options)}
+        self._min_lb = measurement_options.get('min_lb')
+        self._min_kg = measurement_options.get('min_kg')
+        self._min_oz = measurement_options.get('min_oz')
+        self._quant = measurement_options.get('quant')
+
+    def _compute(self, value: float, min_value: float = None) -> Optional[float]:
+        below_min = min_value is not None and value < min_value
+        return NF.decimal(
+            value=(min_value if below_min else value),
+            quant=self._quant
+        )
+
     @property
-    def value(self):
+    def value(self) -> Optional[float]:
         return self.__getattribute__(str(self._unit.name))
 
     @property
-    def KG(self):
+    def KG(self) -> Optional[float]:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.KG:
-            return NF.decimal(self._value)
+            return self._compute(self._value, self._min_kg)
         elif self._unit == WeightUnit.LB:
-            return NF.decimal(self._value / 2.205)
+            return self._compute(self._value / 2.205, self._min_kg)
 
         return None
 
     @property
-    def LB(self):
+    def LB(self) -> Optional[float]:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
-            return NF.decimal(self._value)
+            return self._compute(self._value, self._min_lb)
         elif self._unit == WeightUnit.KG:
-            return NF.decimal(self._value * 2.205)
+            return self._compute(self._value * 2.205, self._min_lb)
 
         return None
 
     @property
-    def OZ(self):
+    def OZ(self) -> Optional[float]:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
-            return NF.decimal(self._value * 16)
+            return self._compute(self._value * 16, self._min_oz)
         elif self._unit == WeightUnit.KG:
-            return NF.decimal(self._value * 35.274)
+            return self._compute(self._value * 35.274, self._min_oz)
 
         return None
+
+    def map(self, options: Enum):
+        return Weight(
+            value=self._value,
+            unit=self._unit,
+            options=options
+        )
 
 
 class Package:
