@@ -1,7 +1,7 @@
 -f https://git.io/purplship
 attrs==19.3.0
 jstruct==2020.4.0
-lxml==4.5.0
+lxml==4.6.2
 phonenumbers==8.12.14
 Pillow==7.2.0
 py-boxknight==2020.11b0
