@@ -1,0 +1,45 @@
+import * as API from './api';
+import {Configuration} from './configuration';
+
+export interface PurplshipAPI {
+    addresses: API.AddressesApi;
+    carriers: API.CarriersApi;
+    customs: API.CustomsApi;
+    parcels: API.ParcelsApi;
+    pickups: API.PickupsApi;
+    rates: API.RatesApi;
+    shipments: API.ShipmentsApi;
+    shipping: API.ShippingApi;
+    tracking: API.TrackingApi;
+    utils: API.UtilsApi;
+}
+
+export class Purplship implements PurplshipAPI {
+    addresses: API.AddressesApi;
+    carriers: API.CarriersApi;
+    customs: API.CustomsApi;
+    parcels: API.ParcelsApi;
+    pickups: API.PickupsApi;
+    rates: API.RatesApi;
+    shipments: API.ShipmentsApi;
+    shipping: API.ShippingApi;
+    tracking: API.TrackingApi;
+    utils: API.UtilsApi;
+    
+    constructor(apiKey: string, host: string) {
+        const config = new Configuration();
+        config.basePath = host;
+        config.apiKey = apiKey;
+
+        this.addresses = new API.AddressesApi(config);
+        this.carriers = new API.CarriersApi(config);
+        this.customs = new API.CustomsApi(config);
+        this.parcels = new API.ParcelsApi(config);
+        this.pickups = new API.PickupsApi(config);
+        this.rates = new API.RatesApi(config);
+        this.shipments = new API.ShipmentsApi(config);
+        this.shipping = new API.ShippingApi(config);
+        this.tracking = new API.TrackingApi(config);
+        this.utils = new API.UtilsApi(config);
+    }
+}

@@ -46,14 +46,15 @@ docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:
 
 - [Python](https://github.com/PurplShip/purplship-python-client)
 - [PHP](https://github.com/PurplShip/purplship-php-client)
-- [Typescript](https://github.com/PurplShip/purplship-typescript-client)
+- [Node](https://github.com/PurplShip/purplship-node)
 
 Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with our [OpenAPI References](https://github.com/PurplShip/purplship-server/tree/main/openapi)
 
 ## Resources
 
 - **Documentation** - Learn more at [docs.purplship.com](https://docs.purplship.com)
-- **Community** - Bugs, feature requests, general questions on [Gitter](https://gitter.im/PurplShip/purplship)
+- **Community** - Feature requests, general questions on [Gitter](https://gitter.im/PurplShip/purplship)
+- **Bug Tracker** - [File bugs](https://github.com/PurplShip/purplship-server/issues)
 - **Blog** - Get the latest updates from the [Puprlship blog](https://blog.purplship.com).
 - **Twitter** - Follow [Purplship](https://twitter.com/purplship).
 

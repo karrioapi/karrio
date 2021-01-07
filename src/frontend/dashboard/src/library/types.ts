@@ -1,4 +1,4 @@
-import { Address, CarrierSettings, Customs, Message, Parcel, Payment, Shipment } from "@purplship/purplship";
+import { Address, CarrierSettings, Customs, Message, Parcel, Payment, Shipment } from '@purplship/purplship';
 
 export interface View {
     path: string
