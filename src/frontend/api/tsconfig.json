@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "strict": true,
+        "target": "es6",
+        "module": "commonjs",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false,
+        "outDir": "purplship",
+        "isolatedModules": true,
+        "baseUrl": ".",
+    },
+    "include": ["src/**/*"],
+    "exclude": [
+        "purplship",
+        "node_modules"
+    ],
+  }

@@ -141,9 +141,13 @@ class AppState {
     public async fetchRates(shipment: Shipment) {
         return handleFailure((async () => {
             if (shipment.id !== undefined) {
-                return this.purplship.shipments.rates(shipment.id, { headers: this.headers });
+                const response = this.purplship.shipments.rates(shipment.id, { headers: this.headers });
+                response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
+                return response;
             } else {
-                return this.purplship.shipments.create(shipment, { headers: this.headers });
+                const response = this.purplship.shipments.create(shipment, { headers: this.headers });
+                response.then(() => this.shipments$.next(DEFAULT_PAGINATED_RESULT as any));
+                return response;
             }
         })());
     }
