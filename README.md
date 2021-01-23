@@ -34,17 +34,14 @@ With Purplship you can:
 
 ## Integration
 
-Purplship comes in two flavours
-
-**Purplship SDK**
+**Purplship SDK** is ideal 
 
   - for an integration as a Python library
-  - documentation and usage can be found at [sdk.purplship.com](https://sdk.purplship.com)
- 
-**Purplship Server**
+  - if you want more control or a partial integration of a selected set of APIs
+  - to integrate custom shipping carrier services 
 
-  - for an On-prem or cloud REST API
-  - documentation and usage can be found at [docs.purplship.com](https://docs.purplship.com)
+
+For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).
 
 ## Quick start
 
@@ -160,7 +157,7 @@ We encourage you to contribute to Purplship! Please check out the
 [Contributing to Purplship guide](/docs/development/contributing.md) for guidelines about how to proceed.
 [Join us!](https://gitter.im/Purplship/Purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-Do you want to extend Purplship and integrate a custom carrier, check out [Extending Purplship](http://sdk.purplship.com/development/extending/)
+Do you want to extend Purplship and integrate a custom carrier, check out [Extending Purplship](https://sdk.purplship.com/development/extending/)
 
 ## License
 

@@ -26,21 +26,14 @@ With Purplship you can:
 
 ## Integration
 
-Purplship comes in two flavours
-
-**Purplship SDK**
+**Purplship SDK** is ideal 
 
   - for an integration as a Python library
-  - for a fine grain control and partial integration of a limited set of APIs
-  - can be wrapped in a gRPC service for interoperability with other programming languages
-  - integrate additional shipping carrier services under the Purplship unified interface
-  - documentation and usage can be found at [sdk.purplship.com](https://sdk.purplship.com)
- 
-**Purplship Server**
+  - if you want more control or a partial integration of a selected set of APIs
+  - to integrate custom shipping carrier services 
 
-  - for an On-prem or cloud REST API
-  - a complete shipping management API with a dashboard
-  - documentation and usage can be found at [docs.purplship.com](https://docs.purplship.com)
+
+For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).
 
 
 ## Installation
