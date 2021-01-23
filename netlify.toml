@@ -1,5 +1,5 @@
 [build]
-ignore = "git diff --quiet HEAD^ HEAD docs/"
+# ignore = "git diff --quiet HEAD^ HEAD docs/"
 publish = "site"
 environment = { PYTHON_VERSION = "3.8" }
 command = """
