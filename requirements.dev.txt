@@ -1,5 +1,17 @@
 -f https://git.io/purplship
 
+py-boxknight==2020.11b0
+py-canadapost==2020.4.0
+py-canpar==2020.10.0
+py-dhl==2020.4.0
+py-dicom==2020.11b0
+py-fedex==2020.3.0
+py-purolator==2020.4.0
+py-soap==2020.3.0
+py-ups==2020.3.0
+py-usps==2020.11b0
+
+
 -e .[dev]
 -e ./extensions/boxknight
 -e ./extensions/canadapost
