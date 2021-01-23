@@ -13,9 +13,12 @@ cross="\xE2\x9D\x8C"
 check="\xE2\x9C\x94"
 
 ## color vars
-default="$(tput sgr0)"
-green="$(tput setaf 2)"
-red="$(tput setaf 1)"
+#default="$(tput sgr0)"
+#green="$(tput setaf 2)"
+#red="$(tput setaf 1)"
+default=""
+green=""
+red=""
 
 
 activate_env() {
