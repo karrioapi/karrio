@@ -118,7 +118,7 @@ cli() {
 }
 
 docs() {
-	cd "${ROOT:?}" && mkdocs serve -a localhost:4000; cd -
+	cd "${ROOT:?}" && mkdocs serve -f ${ROOT}"/docs/mkdocs.yml" -a localhost:4000; cd -
 }
 
 

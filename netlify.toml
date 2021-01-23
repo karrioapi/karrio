@@ -1,8 +1,8 @@
 [build]
-# ignore = "git diff --quiet HEAD^ HEAD docs/"
-publish = "site"
-environment = { PYTHON_VERSION = "3.8" }
+# ignore = "git diff --quiet HEAD^ HEAD ."
+base = "purplship/"
+publish = "site/"
+environment = { PYTHON_VERSION = "3.7" }
 command = """
-pip3 install mkdocs-material==6.2.5 mkdocs==1.1.2 &&
-mkdocs build
+pip3 install mkdocs-material==6.2.5 mkdocs==1.1.2 && mkdocs build  -f ../mkdocs.yml -d ${PWD}/site
 """
