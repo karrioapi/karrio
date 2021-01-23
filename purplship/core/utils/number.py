@@ -8,7 +8,7 @@ class NUMBERFORMAT:
         if value is None:
             return None
         if quant is not None:
-            return float(Decimal(value).quantize(Decimal(str(quant))))
+            return float(Decimal(str(value)).quantize(Decimal(str(quant))))
 
         return round(float(value), 2)
 

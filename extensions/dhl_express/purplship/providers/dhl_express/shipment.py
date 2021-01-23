@@ -1,5 +1,5 @@
 import time
-from base64 import b64decode, encodebytes
+from base64 import encodebytes
 from typing import List, Tuple, Optional, cast
 from pydhl.ship_val_global_req_6_2 import (
     ShipmentRequest as DHLShipmentRequest,
@@ -12,8 +12,6 @@ from pydhl.ship_val_global_req_6_2 import (
     Pieces,
     Piece,
     Reference,
-    DocImage,
-    DocImages,
     Dutiable,
     MetaData,
     Notification,
@@ -77,7 +75,6 @@ def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[DHLShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    is_international = payload.shipper.country_code == payload.recipient.country_code
     options = Options(payload.options)
     product = ProductCode[payload.service].value
     package_type = (
@@ -93,8 +90,6 @@ def shipment_request(
         for s in payload.options.keys()
         if s in SpecialServiceCode
     ]
-    if is_international and payload.doc_images is not None:
-        special_services.append(SpecialServiceCode.dhl_paperless_trade.value)
     has_payment_config = payload.payment is not None
     has_customs_config = payload.customs is not None
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
@@ -228,19 +223,7 @@ def shipment_request(
             Notification(EmailAddress=options.notification_email or payload.recipient.email)
             if options.notification_email is None else None
         ),
-        DocImages=(
-            DocImages(
-                DocImage=[
-                    DocImage(
-                        Type=doc.type,
-                        ImageFormat=doc.format,
-                        Image=b64decode(doc.image + "=" * (-len(doc.image) % 4)),
-                    )
-                    for doc in payload.doc_images
-                ]
-            )
-            if any(payload.doc_images) else None
-        ),
+        DocImages=None,
         RequestArchiveDoc=None,
         NumberOfArchiveDoc=None,
         LabelImageFormat=label_format,

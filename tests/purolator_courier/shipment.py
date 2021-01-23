@@ -144,7 +144,7 @@ SHIPMENT_REQUEST_PAYLOAD = {
     ],
     "reference": "Reference For Shipment",
     "service": "purolator_express",
-    "options": {"printing": "thermal"},
+    "options": {"printing": "PDF"},
 }
 
 PARSED_SHIPMENT_RESPONSE = [

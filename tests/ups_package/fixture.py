@@ -1,5 +1,5 @@
 import purplship
-from purplship.mappers.ups_package import Settings
+from purplship.mappers.ups_package.settings import Settings
 
 gateway = purplship.gateway["ups_package"].create(
     Settings(

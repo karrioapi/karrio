@@ -10,7 +10,7 @@ class PackagePreset(BasePackagePreset):
 
 
 class PackagePresets(Flag):
-    """
+    """Purolator package presets
     Note that dimensions are in IN and weight in LB
     """
     purolator_express_envelope = PackagePreset(width=12.5, height=16, length=1.5, weight=1.0)
@@ -41,8 +41,8 @@ class MeasurementOptions(Enum):
 
 
 class LabelType(Flag):
-    PDF = "PDF"
-    ZPL = "ZPL"
+    PDF = "Regular"
+    ZPL = "Thermal"
 
 
 class PaymentType(Flag):
