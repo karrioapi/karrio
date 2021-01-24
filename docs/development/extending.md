@@ -7,12 +7,12 @@ We have experimented and studied approximately ~25 shipping carriers API/web ser
 The good news is that making adding a custom carrier easy fits perfectly in Purplship vision.
 
 !!! caution
-    The not so great news is that integrating a custom carrier at this stage require:
+    To integrate a custom carrier at this stage, you will need:
     
     - A minimal knowledge of Python
-    - Writing code to extend the abstract classes
+    - Write code to extend the abstract classes
     - Use the plugin/extension structure available
-    - Reading and Understanding the carrier developer documentations
+    - Read and Understand the carrier API documentation
 
 ---
 
@@ -33,7 +33,7 @@ The good news is that making adding a custom carrier easy fits perfectly in Purp
         and `extensions/[carrier-name]/purplship/providers/[carrier-name]/__init__.py`
     4. Implement all enabled mapping functions across the module
     5. Uncomment all methods you intend to integrate `extensions/[carrier-name]/purplship/mappers/[carrier-name]/proxy`
-        and implement them
+        and implement the right HTTP calls
 
 !!! info
     The package naming convention for extensions is `purplship.[carrier_name]`
@@ -112,6 +112,132 @@ extensions/carrier
     at the root of the project under [.templates/carrier](https://github.com/PurplShip/purplship/tree/main/.templates/carrier)
 
 ---
+
+#### Mappers implementation
+
+The mapper function implementations consists of instantiating carrier specific request data types assigning
+
+=== "Mapper"
+
+    ```python
+    # Import Purplship unified API models
+    from purplship.core.models import PickupRequest
+    
+    # Import requirements from the DHL generated data types library (py-dhl) 
+    from pydhl.book_pickup_global_req_3_0 import BookPURequest, MetaData
+    from pydhl.pickupdatatypes_global_3_0 import (
+        Requestor,
+        Place,
+        Pickup,
+        WeightSeg,
+        RequestorContact,
+    )
+    
+    def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[BookPURequest]:
+        weight = 0.00  # Total weight calculated from the sum of `payload.parcels[].weights`
+        # ...
+        request = BookPURequest(
+            Request=settings.Request(
+                MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)
+            ),
+            schemaVersion=3.0,
+            RegionCode="AM",
+            Requestor=Requestor(
+                AccountNumber=settings.account_number,
+                AccountType="D",
+                RequestorContact=RequestorContact(
+                    PersonName=payload.address.person_name,
+                    Phone=payload.address.phone_number,
+                    PhoneExtension=None,
+                ),
+                CompanyName=payload.address.company_name,
+            ),
+            Place=Place(
+                City=payload.address.city,
+                StateCode=payload.address.state_code,
+                PostalCode=payload.address.postal_code,
+                CompanyName=payload.address.company_name,
+                CountryCode=payload.address.country_code,
+                PackageLocation=payload.package_location,
+                LocationType="R" if payload.address.residential else "B",
+                Address1=payload.address.address_line1,
+                Address2=payload.address.address_line2,
+            ),
+            PickupContact=RequestorContact(
+                PersonName=payload.address.person_name, Phone=payload.address.phone_number
+            ),
+            Pickup=Pickup(
+                Pieces=len(payload.parcels),
+                PickupDate=payload.pickup_date,
+                ReadyByTime=f"{payload.ready_time}:00",
+                CloseTime=f"{payload.closing_time}:00",
+                SpecialInstructions=[payload.instruction],
+                RemotePickupFlag="Y",
+                weight=WeightSeg(
+                    Weight=sum(p.weight for p in payload.parcel),
+                    WeightUnit="LB"
+                ),
+            ),
+            ShipmentDetails=None,
+            ConsigneeDetails=None,
+        )
+    
+        return Serializable(request)
+    ```
+    
+=== "Carrier request output"
+    
+    ```xml
+    <req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req_EA.xsd" schemaVersion="3.">
+        <Request>
+            <ServiceHeader>
+                
+                <MessageReference>1234567890123456789012345678901</MessageReference>
+                <SiteID>site_id</SiteID>
+                <Password>password</Password>
+            </ServiceHeader>
+            <MetaData>
+                <SoftwareName>XMLPI</SoftwareName>
+                <SoftwareVersion>3.0</SoftwareVersion>
+            </MetaData>
+        </Request>
+        <RegionCode>AM</RegionCode>
+        <Requestor>
+            <AccountType>D</AccountType>
+            <AccountNumber>123456789</AccountNumber>
+            <RequestorContact>
+                <PersonName>Subhayu</PersonName>
+                <Phone>4801313131</Phone>
+            </RequestorContact>
+        </Requestor>
+        <Place>
+            <City>Montreal</City>
+            <CountryCode>CA</CountryCode>
+            <PostalCode>H8Z2Z3</PostalCode>
+        </Place>
+        <Pickup>
+            <PickupDate>2013-10-19</PickupDate>
+            <ReadyByTime>10:20</ReadyByTime>
+            <CloseTime>09:20</CloseTime>
+            <Pieces>1</Pieces>
+            <RemotePickupFlag>Y</RemotePickupFlag>
+            <weight>
+                <Weight>20.</Weight>
+                <WeightUnit>L</WeightUnit>
+            </weight>
+            <SpecialInstructions>behind the front desk</SpecialInstructions>
+        </Pickup>
+        <PickupContact>
+            <PersonName>Subhayu</PersonName>
+            <Phone>4801313131</Phone>
+        </PickupContact>
+    </req:BookPURequest>
+    ```
+
+
+!!! info
+    The mapping function instantiates the carrier data types like a tree to allow a global view and simplify the 
+    mental relation between the `code` and the formatted data output `schema`.
 
 ### Generated schema data types
 

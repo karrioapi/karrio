@@ -9,32 +9,25 @@
     <a href="https://gitter.im/Purplship/Purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/Purplship/purplship.svg" alt="Join the chat at https://gitter.im/Purplship/Purplship" style="max-width:100%;"></a>
 </p>
 
-## Multi-carrier Shipping SDK
-
-Purplship is a system for connecting multiple logistics carriers API.
-
-In addition to providing a unified and simplified interface across logistics carriers APIs, 
-Purplship offers a framework to facilitate the full access of advanced and specific carriers capabilities 
-while simplifying the addition of new carrier APIs.
-
-With Purplship you can:
-
-- Integrate one or multiple carriers web services `Canada Post`, `DHL`, `FedEx`, `UPS`, `USPS` ...
-- Use a modern and intuitive, unified API across carriers
-- Achieve a record integration time with a better developer experience
+## What is Purplship?
 
 
-## Integration
+Puprlship is a modern development kit that simplifies the integration of shipping carriers services into an app.
 
-**Purplship SDK** is ideal 
+The key features are:
 
-  - for an integration as a Python library
-  - if you want more control or a partial integration of a selected set of APIs
-  - to integrate custom shipping carrier services 
+- **Unified API**: A standardized set of models representing the common shipping data (`Address`, `Parcel`, `Shipment`...)
+- **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Pickup`, `Tracking`...) 
+- **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
+- **Custom carrier**: A framework that reduces months of shipping carrier service integration to hours
 
 
-For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).
+*For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).*
 
+
+## Requirements
+
+Python 3.7+
 
 ## Installation
 
@@ -62,7 +55,9 @@ curl -L -O https://raw.githubusercontent.com/PurplShip/purplship/main/requiremen
 pip install -f https://git.io/purplship -r requirements.txt
 ```
 
-## Usage
+## Example
+
+- Fetch shipping rates
 
 ```python
 import purplship
@@ -81,6 +76,8 @@ canadapost = purplship.gateway["canadapost"].create(
 )
 
 # Fetching shipment rates
+
+# Provide the shipper's address
 shipper = Address(
     postal_code="V6M2V9",
     city="Vancouver",
@@ -89,6 +86,7 @@ shipper = Address(
     address_line1="5840 Oak St"
 )
 
+# Provide the recipient's address
 recipient = Address(
     postal_code="E1C4Z8",
     city="Moncton",
@@ -98,6 +96,7 @@ recipient = Address(
     address_line1="125 Church St"
 )
 
+# Specify your package dimensions and weight
 parcel = Parcel(
     height=3.0,
     length=6.0,
@@ -107,39 +106,39 @@ parcel = Parcel(
     dimension_unit='CM'
 )
 
-request = purplship.Rating.fetch(
-    RateRequest(
-        shipper=shipper,
-        recipient=recipient,
-        parcels=[parcel],
-        services=["canadapost_priority"]
-    )
+# Prepare a rate request
+rate_request = RateRequest(
+    shipper=shipper,
+    recipient=recipient,
+    parcels=[parcel],
 )
 
-rates = request.from_(canadapost).parse()
-```
+# Send a rate request using a carrier gateway
+response = purplship.Rating.fetch(rate_request).from_(canadapost)
 
-```json
-[
-  [],
-    [
-        {
-            "base_charge": 12.26,
-            "carrier_name": "canadapost",
-            "carrier_id": "canadapost",
-            "currency": "CAD",
-            "discount": 1.38,
-            "duties_and_taxes": 0.0,
-            "transit_days": 2,
-            "extra_charges": [
-                {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
-                {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"}
-            ],
-            "service": "canadapost_xpresspost",
-            "total_charge": 13.64
-        }
-    ]
-]
+# Parse the returned response
+rates, messages = response.parse()
+
+print(rates)
+# [
+#     RateDetails(
+#         carrier_name="canadapost",
+#         carrier_id="canadapost",
+#         currency="CAD",
+#         transit_days=2,
+#         service="canadapost_xpresspost",
+#         discount=1.38,
+#         base_charge=12.26,
+#         total_charge=13.64,
+#         duties_and_taxes=0.0,
+#         extra_charges=[
+#             ChargeDetails(name="Automation discount", amount=-0.37, currency="CAD"),
+#             ChargeDetails(name="Fuel surcharge", amount=1.75, currency="CAD"),
+#         ],
+#         meta=None,
+#         id=None,
+#     )
+# ]
 ```
 
 ## License
@@ -150,5 +149,5 @@ Please see [LICENSE.md](https://github.com/Purplship/Purplship/blob/master/LICEN
 
 ## Authors
 
-- **Purplship Team** | hello@purplship.com | [purplship.com](https://purplship.com)
 - **Daniel K.** | [@DanHK91](https://twitter.com/DanHK91) | [danielk.xyz](https://danielk.xyz/)
+- **Purplship Team** | hello@purplship.com | [purplship.com](https://purplship.com)

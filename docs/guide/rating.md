@@ -62,6 +62,7 @@ response = request.from_(canadapost).parse()
 ```
 
 ???+ check "Rating output"
+
     ```python
     from purplship.core.utils import DP
     print(DP.jsonify(response))
@@ -69,7 +70,6 @@ response = request.from_(canadapost).parse()
     
     ```json
     [
-        [],
         [
             {
                 "base_charge": 12.26,
@@ -94,6 +94,7 @@ response = request.from_(canadapost).parse()
                 "total_charge": 13.64,
                 "transit_days": 2
             }
-        ]
+        ],
+        []
     ]
     ```

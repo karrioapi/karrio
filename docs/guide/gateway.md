@@ -39,3 +39,7 @@ e.g:
         )
     )
     ```
+
+
+!!! info
+    Check the [gateway reference](/references/#gateway) to see the settings required by all supported carriers

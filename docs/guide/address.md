@@ -16,3 +16,9 @@
     
     response = purplship.Address.validate(AddressValidationRequest(...))
     ```
+
+
+!!! info
+    Check the [Address validation request reference](/references/#addressvalidationrequest) 
+    to see the parameters
+

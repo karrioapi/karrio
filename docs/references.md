@@ -150,14 +150,14 @@
 | `carrier_name` | `str` | **required**
 | `carrier_id` | `str` | **required**
 | `success` | `bool` | **required**
-| `complete_address` | [Address](#Address) | 
+| `complete_address` | [Address](#address) | 
 
 
 #### AddressValidationRequest
 
 | Name | Type | Description 
 | --- | --- | --- |
-| `address` | [Address](#Address) | **required**
+| `address` | [Address](#address) | **required**
 
 
 #### ChargeDetails
@@ -207,8 +207,8 @@
 | `incoterm` | `str` | 
 | `invoice` | `str` | 
 | `certificate_number` | `str` | 
-| `commodities` | List[[Commodity](#Commodity)] | 
-| `duty` | [Payment](#Payment) | 
+| `commodities` | List[[Commodity](#commodity)] | 
+| `duty` | [Payment](#payment) | 
 | `commercial_invoice` | `bool` | 
 | `options` | `dict` | 
 | `id` | `str` | 
@@ -251,7 +251,7 @@
 | `amount` | `float` | 
 | `currency` | `str` | 
 | `account_number` | `str` | 
-| `contact` | [Address](#Address) | 
+| `contact` | [Address](#address) | 
 | `id` | `str` | 
 
 
@@ -260,7 +260,7 @@
 | Name | Type | Description 
 | --- | --- | --- |
 | `confirmation_number` | `str` | **required**
-| `address` | [Address](#Address) | 
+| `address` | [Address](#address) | 
 | `pickup_date` | `str` | 
 | `reason` | `str` | 
 
@@ -273,7 +273,7 @@
 | `carrier_id` | `str` | **required**
 | `confirmation_number` | `str` | **required**
 | `pickup_date` | `str` | 
-| `pickup_charge` | [ChargeDetails](#ChargeDetails) | 
+| `pickup_charge` | [ChargeDetails](#chargedetails) | 
 | `ready_time` | `str` | 
 | `closing_time` | `str` | 
 | `id` | `str` | 
@@ -286,8 +286,8 @@
 | `pickup_date` | `str` | **required**
 | `ready_time` | `str` | **required**
 | `closing_time` | `str` | **required**
-| `address` | [Address](#Address) | **required**
-| `parcels` | List[[Parcel](#Parcel)] | 
+| `address` | [Address](#address) | **required**
+| `parcels` | List[[Parcel](#parcel)] | 
 | `instruction` | `str` | 
 | `package_location` | `str` | 
 | `options` | `dict` | 
@@ -301,8 +301,8 @@
 | `pickup_date` | `str` | **required**
 | `ready_time` | `str` | **required**
 | `closing_time` | `str` | **required**
-| `address` | [Address](#Address) | **required**
-| `parcels` | List[[Parcel](#Parcel)] | 
+| `address` | [Address](#address) | **required**
+| `parcels` | List[[Parcel](#parcel)] | 
 | `instruction` | `str` | 
 | `package_location` | `str` | 
 | `options` | `dict` | 
@@ -321,7 +321,7 @@
 | `base_charge` | `float` | 
 | `total_charge` | `float` | 
 | `duties_and_taxes` | `float` | 
-| `extra_charges` | List[[ChargeDetails](#ChargeDetails)] | 
+| `extra_charges` | List[[ChargeDetails](#chargedetails)] | 
 | `meta` | `dict` | 
 | `id` | `str` | 
 
@@ -330,9 +330,9 @@
 
 | Name | Type | Description 
 | --- | --- | --- |
-| `shipper` | [Address](#Address) | **required**
-| `recipient` | [Address](#Address) | **required**
-| `parcels` | List[[Parcel](#Parcel)] | **required**
+| `shipper` | [Address](#address) | **required**
+| `recipient` | [Address](#address) | **required**
+| `parcels` | List[[Parcel](#parcel)] | **required**
 | `services` | List[str] | 
 | `options` | `dict` | 
 | `reference` | `str` | 
@@ -356,7 +356,7 @@
 | `label` | `str` | **required**
 | `tracking_number` | `str` | **required**
 | `shipment_identifier` | `str` | **required**
-| `selected_rate` | [RateDetails](#RateDetails) | 
+| `selected_rate` | [RateDetails](#ratedetails) | 
 | `meta` | `dict` | 
 | `id` | `str` | 
 
@@ -366,11 +366,11 @@
 | Name | Type | Description 
 | --- | --- | --- |
 | `service` | `str` | **required**
-| `shipper` | [Address](#Address) | **required**
-| `recipient` | [Address](#Address) | **required**
-| `parcels` | List[[Parcel](#Parcel)] | **required**
-| `payment` | [Payment](#Payment) | 
-| `customs` | [Customs](#Customs) | 
+| `shipper` | [Address](#address) | **required**
+| `recipient` | [Address](#address) | **required**
+| `parcels` | List[[Parcel](#parcel)] | **required**
+| `payment` | [Payment](#payment) | 
+| `customs` | [Customs](#customs) | 
 | `options` | `dict` | 
 | `reference` | `str` | 
 | `label_type` | `str` | 
@@ -383,7 +383,7 @@
 | `carrier_name` | `str` | **required**
 | `carrier_id` | `str` | **required**
 | `tracking_number` | `str` | **required**
-| `events` | List[[TrackingEvent](#TrackingEvent)] | **required**
+| `events` | List[[TrackingEvent](#trackingevent)] | **required**
 | `delivered` | `bool` | 
 
 
