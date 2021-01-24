@@ -1,5 +1,5 @@
 [build]
-# ignore = "git diff --quiet HEAD^ HEAD ."
+ignore = "/bin/false"
 base = "purplship/"
 publish = "site/"
 environment = { PYTHON_VERSION = "3.7" }
