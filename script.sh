@@ -12,14 +12,6 @@ export PIP_FIND_LINKS="https://git.io/purplship"
 cross="\xE2\x9D\x8C"
 check="\xE2\x9C\x94"
 
-## color vars
-#default="$(tput sgr0)"
-#green="$(tput setaf 2)"
-#red="$(tput setaf 1)"
-default=""
-green=""
-red=""
-
 
 activate_env() {
   	echo "Activate $BASE_DIR env"
@@ -92,9 +84,9 @@ build() {
 		r=$?;
 		cd - > /dev/null;
 		if [[ ${r} -eq 1 ]]; then
-			echo "${red}> building "$(basename ${pkg})" ${cross} ${default} \n $output"; return ${r};
+			echo "> building "$(basename ${pkg})" ${cross} \n $output"; return ${r};
 		else
-			echo "${green}> building "$(basename ${pkg})" ${check} ${default}";
+			echo "> building "$(basename ${pkg})" ${check} ";
 		fi;
     done
     backup
