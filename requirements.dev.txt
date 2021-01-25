@@ -1,4 +1,9 @@
--f https://git.io/purplship
+django-email-verification==0.1.0
+django-tenants==3.2.1
+djangorestframework==3.12.2
+phonenumbers==8.12.16
+Pillow==8.1.0
+python-decouple==3.4
 
 
 -e git+https://github.com/PurplShip/purplship.git@purplship-2021.0-doc-friendly#egg=purplship
