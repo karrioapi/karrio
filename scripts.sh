@@ -51,7 +51,8 @@ alias env:reset=init
 # Project helpers
 
 install_released() {
-  pip install purplship-server \
+  pip install -f https://git.io/purplship \
+  	purplship-server \
     purplship-server.core \
     purplship-server.proxy \
     purplship-server.extension \
