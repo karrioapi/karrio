@@ -1,15 +1,15 @@
--f https://git.io/purplship
 asgiref==3.3.1
 attrs==20.3.0
 certifi==2020.12.5
 chardet==4.0.0
 coreapi==2.3.3
 coreschema==0.0.4
-Django==3.1.4
+Django==3.1.5
 django-constance==2.8.0
-django-email-verification==0.0.7
+django-email-verification==0.1.0
 django-picklefield==3.0.1
-djangorestframework==3.11.1
+django-tenants==3.2.1
+djangorestframework==3.12.2
 drf-api-tracking==1.7.8
 drf-yasg==1.20.0
 eshipper.extension==2020.12.1
@@ -26,8 +26,8 @@ lxml-stubs==0.1.1
 MarkupSafe==1.1.1
 more-itertools==8.6.0
 packaging==20.8
-phonenumbers==8.12.15
-Pillow==8.0.1
+phonenumbers==8.12.16
+Pillow==8.1.0
 psycopg2-binary==2.8.6
 purplship==2020.12.1
 purplship-server==2020.12.1
@@ -50,7 +50,7 @@ py-purolator==2020.4.0
 py-soap==2020.3.0
 py-ups==2020.3.0
 pyparsing==2.4.7
-python-decouple==3.3
+python-decouple==3.4
 pytz==2020.5
 requests==2.25.1
 ruamel.yaml==0.16.12
