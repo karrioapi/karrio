@@ -12,6 +12,7 @@ from purpleserver.core.serializers import CarrierSettings
 from purpleserver.providers.serializers import CarrierSerializer
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class ConnectionList(GenericAPIView):

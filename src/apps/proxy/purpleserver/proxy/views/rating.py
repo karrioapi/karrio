@@ -2,9 +2,8 @@ import logging
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from django.urls import path
-
 from drf_yasg.utils import swagger_auto_schema
+from django.urls import path
 
 from purpleserver.core.views.api import APIView
 from purpleserver.core.serializers import (

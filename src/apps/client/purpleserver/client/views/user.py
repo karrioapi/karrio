@@ -26,9 +26,9 @@ class UserSerializer(ModelSerializer):
 
 
 class UserAPI(APIView):
+    swagger_schema = None
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    swagger_schema = None
 
     def get(self, request: Request):
         return Response(UserSerializer(request.user).data)

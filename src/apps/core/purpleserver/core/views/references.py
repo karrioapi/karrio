@@ -3,9 +3,8 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.serializers import Serializer
-
-from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
+from django.urls import path
 
 from purplship.core.units import Country
 from purpleserver.core.router import router

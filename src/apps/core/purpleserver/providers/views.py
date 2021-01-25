@@ -1,10 +1,10 @@
 import logging
 
 from django.urls import path
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.serializers import NullBooleanField, ChoiceField, Serializer
+from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.gateway import Carriers

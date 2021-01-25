@@ -2,7 +2,6 @@ import logging
 from django.dispatch import receiver
 from django.conf import settings
 
-from constance import config
 from constance.signals import config_updated
 
 logger = logging.getLogger(__name__)
@@ -31,4 +30,3 @@ def update_settings(current):
     )
 
 
-update_settings(config)

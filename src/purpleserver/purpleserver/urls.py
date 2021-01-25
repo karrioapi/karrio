@@ -20,13 +20,12 @@ from django.urls import include, path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from rest_framework import permissions
-
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 
-admin.site.site_header = "purplship"
-admin.site.site_title = "purplphip shipping API"
+admin.site.site_header = "Purplship"
+admin.site.site_title = "Purplphip shipping API"
 admin.site.index_title = "Administration"
 
 schema_view = get_schema_view(
@@ -35,7 +34,7 @@ schema_view = get_schema_view(
       default_version=f'v1-{settings.VERSION}',
       description=("""
       Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services
-      
+
       The **proxy** endpoints are stateless and forwards calls to carriers web services.
       """),
       contact=openapi.Contact(email="hello@purplship.com"),
