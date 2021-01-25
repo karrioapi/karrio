@@ -1,11 +1,12 @@
 {% extends "purpleserver/base_site.html" %}
 {% load i18n static %}
+{% block title %}Purplship | Sign Up{% endblock %}
 
 {% block content %}
 
 <div class="card isolated-card">
     <div class="card-content">
-        <p class="subtitle">{% trans 'Sign up with credentials' %}</p>
+        <p class="subtitle has-text-centered">{% trans 'Sign up with credentials' %}</p>
 
         <form method="post">{% csrf_token %}
 
@@ -78,6 +79,4 @@
 </div>
 
 {% endblock %}
-
-{% block footerclass %}footer{% endblock %}
 
