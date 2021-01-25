@@ -1,6 +1,7 @@
+"""Purplship universal data types and units definitions"""
 import phonenumbers
 from dataclasses import dataclass
-from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any
+from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any, cast
 from purplship.core.utils import NF, Enum
 from purplship.core.models import Parcel
 from purplship.core.errors import (
@@ -48,7 +49,6 @@ class PaymentType(Enum):
     sender = "SENDER"
     recipient = "RECIPIENT"
     third_party = "THIRD_PARTY"
-    credit_card = "CARD"
 
 
 class CreditCardType(Enum):
@@ -67,6 +67,7 @@ class CustomsContentType(Enum):
 
 
 class Incoterm(Enum):
+    """universal international shipment incoterm (term of trades)"""
     CFR = "Cost and Freight"
     CIF = "Cost Insurance and Freight"
     CIP = "Carriage and Insurance Paid"
@@ -83,6 +84,7 @@ class Incoterm(Enum):
 
 
 class Option(Enum):
+    """universal shipment options (special services)"""
     cash_on_delivery = "COD"
     currency = "currency"
     insurance = "insurance"
@@ -94,22 +96,25 @@ class Option(Enum):
 
 
 class WeightUnit(Enum):
+    """universal weight units"""
     KG = "KG"
     LB = "LB"
 
 
 class DimensionUnit(Enum):
+    """universal dimension units"""
     CM = "CM"
     IN = "IN"
 
 
 class Dimension:
-    def __init__(self, value: float, unit: DimensionUnit = DimensionUnit.CM, options: Enum = Enum):
+    """The dimension common processing helper"""
+    def __init__(self, value: float, unit: DimensionUnit = DimensionUnit.CM, options: Type[Enum] = Enum):
         self._value = value
         self._unit = unit
 
         # Options mapping
-        measurement_options = {m.name: m.value for m in list(options)}
+        measurement_options = {m.name: m.value for m in list(options)}  # type: ignore
         self._min_in = measurement_options.get('min_in')
         self._min_cm = measurement_options.get('min_cm')
         self._quant = measurement_options.get('quant')
@@ -150,7 +155,7 @@ class Dimension:
         else:
             return self._compute(self.CM / 100)
 
-    def map(self, options: Enum):
+    def map(self, options: Type[Enum]):
         return Dimension(
             value=self._value,
             unit=self._unit,
@@ -159,6 +164,7 @@ class Dimension:
 
 
 class Volume:
+    """The volume common processing helper"""
     def __init__(
         self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
     ):
@@ -181,6 +187,7 @@ class Volume:
 
 
 class Girth:
+    """The girth common processing helper"""
     def __init__(
         self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
     ):
@@ -200,12 +207,13 @@ class Girth:
 
 
 class Weight:
-    def __init__(self, value: float, unit: WeightUnit = WeightUnit.KG, options: Enum = Enum):
+    """The weight common processing helper"""
+    def __init__(self, value: float, unit: WeightUnit = WeightUnit.KG, options: Type[Enum] = Enum):
         self._value = value
         self._unit = unit
 
         # Options mapping
-        measurement_options = {m.name: m.value for m in list(options)}
+        measurement_options = {m.name: m.value for m in list(options)}  # type: ignore
         self._min_lb = measurement_options.get('min_lb')
         self._min_kg = measurement_options.get('min_kg')
         self._min_oz = measurement_options.get('min_oz')
@@ -255,7 +263,7 @@ class Weight:
 
         return None
 
-    def map(self, options: Enum):
+    def map(self, options: Type[Enum]):
         return Weight(
             value=self._value,
             unit=self._unit,
@@ -264,6 +272,7 @@ class Weight:
 
 
 class Package:
+    """The parcel common processing helper"""
     def __init__(self, parcel: Parcel, template: PackagePreset = None):
         self.parcel = parcel
         self.preset = template or PackagePreset()
@@ -323,6 +332,7 @@ class Package:
 
 
 class Packages(Iterable[Package]):
+    """The parcel collection common processing helper"""
     def __init__(
         self,
         parcels: List[Parcel],
@@ -392,10 +402,12 @@ class Packages(Iterable[Package]):
 
 
 class Options:
-    def __init__(self, options: dict, option_type: Optional[Enum] = None):
+    """The options common processing helper"""
+    def __init__(self, options: dict, option_type: Type[Enum] = Enum):
         self._options = (options if option_type is None else {
             key: val for key, val in options.items()
-            if key in option_type or key in Option
+            if key in option_type
+            or key in Option
         })
 
         for key, val in self._options.items():
@@ -453,6 +465,7 @@ class Options:
 
 
 class Services:
+    """The services common processing helper"""
     def __init__(self, services: Iterable, service_type: Type[Enum]):
         self._services = [
             service_type[s] for s in services if s in service_type
@@ -499,11 +512,6 @@ class Phone:
             return None
 
         return str(self.number.national_number)[3:]
-
-
-class PrinterType(Enum):
-    regular = "Regular"  # Regular
-    thermal = "Thermal"  # Thermal
 
 
 class Currency(Enum):
@@ -1128,8 +1136,12 @@ class CountryCurrency(Enum):
     ZW = "USD"
 
 
+def create_enum(name, values):
+    return Enum(name, values)  # type: ignore
+
+
 class CountryState(Enum):
-    AE = Enum(
+    AE = create_enum(
         "State",
         {
             "AB": "Abu Dhabi",
@@ -1141,7 +1153,7 @@ class CountryState(Enum):
             "UM": "Umm al-Qaiwain",
         },
     )
-    CA = Enum(
+    CA = create_enum(
         "State",
         {
             "AB": "Alberta",
@@ -1159,7 +1171,7 @@ class CountryState(Enum):
             "YT": "Yukon",
         },
     )
-    CN = Enum(
+    CN = create_enum(
         "State",
         {
             "anhui": "Anhui",
@@ -1192,7 +1204,7 @@ class CountryState(Enum):
             "zhejiang": "Zhejiang",
         },
     )
-    IN = Enum(
+    IN = create_enum(
         "State",
         {
             "AN": "Andaman & Nicobar (U.T)",
@@ -1232,7 +1244,7 @@ class CountryState(Enum):
             "WB": "West Bengal",
         },
     )
-    MX = Enum(
+    MX = create_enum(
         "State",
         {
             "AG": "Aguascalientes",
@@ -1269,7 +1281,7 @@ class CountryState(Enum):
             "ZA": "Zacatecas",
         },
     )
-    US = Enum(
+    US = create_enum(
         "State",
         {
             "AL": "Alabama",

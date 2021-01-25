@@ -4,7 +4,6 @@ from purplship.core.utils import DP
 from purplship import Rating
 from purplship.core.models import RateRequest
 from tests.canadapost.fixture import gateway
-from datetime import datetime
 
 
 class TestCanadaPostRating(unittest.TestCase):
@@ -110,7 +109,7 @@ RateWithPresetMissingWeightPayload = {
 }
 
 ProcessingError = [
-    None,
+    [],
     [
         {
             "carrier_name": "canadapost",

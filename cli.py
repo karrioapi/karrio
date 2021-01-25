@@ -1,120 +1,102 @@
 import click
 import inspect
+import pydoc
 from jinja2 import Template
-from purplship.core.utils import DP
+from purplship.references import collect_providers_data, collect_references
+import purplship.core.utils as utils
+
+PROVIDERS_DATA = collect_providers_data()
+REFERENCES = collect_references()
 
 MODELS_TEMPLATE = Template('''
 {% for name, cls in classes.items() %}
-- <a name="{{ name }}"></a> {{ name }}
-    | Name | Type | Description 
-    | --- | --- | --- |
-{% for prop, typedef in cls.__annotations__.items() %}    | `{{ prop }}` | {{ typedef }} | 
+#### {{ name }}
+
+| Name | Type | Description 
+| --- | --- | --- |
+{% for prop in cls.__attrs_attrs__ %}| `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
+{% endfor %}
+{% endfor %}
+''')
+
+SETTINGS_TEMPLATE = Template('''
+{% for name, cls in settings.items() %}
+#### {{ name }} Settings
+
+| Name | Type | Description 
+| --- | --- | --- |
+{% for prop in cls.__attrs_attrs__ %}| `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
 {% endfor %}
 {% endfor %}
 ''')
 
 SERVICES_TEMPLATE = Template('''
 {% for key, value in service_mappers.items() %}
-- <a name="services-{{ key }}"></a> {{ mappers[key]["label"] }}
-    Code | Identifier
-    --- | ---
-{% for code, name in value.items() %}    | `{{ code }}` | {{ name }}
+#### {{ mappers[key]["label"] }}
+
+| Code | Identifier
+| --- | ---
+{% for code, name in value.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 {% endfor %}
 ''')
 
 SHIPMENT_OPTIONS_TEMPLATE = Template('''
 {% for key, value in option_mappers.items() %}
-- <a name="options-{{ key }}"></a> {{ mappers[key]["label"] }}
-    Code | Identifier
-    --- | ---
-{% for code, name in value.items() %}    | `{{ code }}` | {{ name }}
+#### {{ mappers[key]["label"] }}
+
+| Code | Identifier
+| --- | ---
+{% for code, name in value.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 {% endfor %}
 ''')
 
 PACKAGING_TYPES_TEMPLATE = Template('''
-{% for key, value in option_mappers.items() %}
-- <a name="options-{{ key }}"></a> {{ mappers[key]["label"] }}
-    Code | Identifier
-    --- | ---
-{% for code, name in value.items() %}    | `{{ code }}` | {{ name }}
+{% for key, value in packaging_mappers.items() %}
+#### {{ mappers[key]["label"] }}
+
+| Code | Identifier
+| --- | ---
+{% for code, name in value.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 {% endfor %}
 ''')
 
 SHIPMENT_PRESETS_TEMPLATE = Template('''
 {% for key, value in preset_mappers.items() %}
-- <a name="presets-{{ key }}"></a> {{ mappers[key]["label"] }}
-    Code | Dimensions | Note
-    --- | --- | ---
-{% for code, dim in value.items() %}    {{ format_dimension(code, dim) }}
+#### {{ mappers[key]["label"] }}
+
+| Code | Dimensions | Note
+| --- | --- | ---
+{% for code, dim in value.items() %}{{ format_dimension(code, dim) }}
 {% endfor %}
 {% endfor %}
 ''')
 
+UTILS_TOOLS_TEMPLATE = Template('''
+{% for tool, import in utils %}
+- `{{ tool.__name__ }}`
+
+Usage: 
+```python
+{{ import }}
+```
+
+```text
+{{ doc(tool) }}
+```
+
+{% endfor %}
+''')
+
+
+def doc(entity):
+    return pydoc.render_doc(entity, renderer=pydoc.plaintext)
+
 
 def format_dimension(code, dim):
     return f'| `{ code }` | { f" x ".join([str(d) for d in dim.values() if isinstance(d, float)]) } | { f" x ".join([k for k in dim.keys() if isinstance(dim[k], float)]) }'
-
-
-def import_pkg(pkg: str):
-    *_, carrier, name = pkg.split(".")
-    return __import__(pkg, fromlist=[name])
-
-
-PACKAGE_MAPPERS = {
-    'purplship': {
-        'label': "Multi-carrier (Purplship)",
-        'package': import_pkg('purplship.core.units'),
-        'packagingTypes': "PackagingUnit"
-    },
-    'canadapost': {
-        'label': "Canada Post",
-        'package': import_pkg('purplship.providers.canadapost.units'),
-        'services': "ServiceType",
-        'options': "OptionCode",
-        'packagePresets': "PackagePresets"
-    },
-    'canpar': {
-        'label': "Canpar",
-        'package': import_pkg('purplship.providers.canpar.units'),
-        'services': "Service",
-        'options': "Option"
-    },
-    'dhl_express': {
-        'label': "DHL Express",
-        'package': import_pkg('purplship.providers.dhl_express.units'),
-        'services': "Product",
-        'options': "SpecialServiceCode",
-        'packagePresets': "PackagePresets",
-        'packagingTypes': "DCTPackageType"
-    },
-    'fedex': {
-        'label': "FedEx",
-        'package': import_pkg('purplship.providers.fedex.units'),
-        'services': "ServiceType",
-        'options': "SpecialServiceType",
-        'packagePresets': "PackagePresets",
-        'packagingTypes': "PackagingType"
-    },
-    'purolator': {
-        'label': "Purolator",
-        'package': import_pkg('purplship.providers.purolator.units'),
-        'services': "Product",
-        'options': "Service",
-        'packagePresets': "PackagePresets",
-        'packagingTypes': "PackagingType"
-    },
-    'ups': {
-        'label': "UPS",
-        'package': import_pkg('purplship.providers.ups.units'),
-        'services': "ShippingServiceCode",
-        'options': "ServiceOption",
-        'packagePresets': "PackagePresets",
-        'packagingTypes': "RatingPackagingType"
-    }
-}
 
 
 @click.group()
@@ -124,42 +106,22 @@ def cli():
 
 @cli.command()
 def generate_shipment_options():
-    option_mappers = {
-        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['options']))}
-        for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('options') is not None
-    }
-    click.echo(SHIPMENT_OPTIONS_TEMPLATE.render(option_mappers=option_mappers, mappers=PACKAGE_MAPPERS))
+    click.echo(SHIPMENT_OPTIONS_TEMPLATE.render(option_mappers=REFERENCES['options'], mappers=PROVIDERS_DATA))
 
 
 @cli.command()
 def generate_package_presets():
-    preset_mappers = {
-        key: {c.name: DP.to_dict(c.value) for c in list(getattr(mapper['package'], mapper['packagePresets']))}
-        for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('packagePresets') is not None
-    }
-    click.echo(SHIPMENT_PRESETS_TEMPLATE.render(preset_mappers=preset_mappers, mappers=PACKAGE_MAPPERS, format_dimension=format_dimension))
+    click.echo(SHIPMENT_PRESETS_TEMPLATE.render(preset_mappers=REFERENCES['package_presets'], mappers=PROVIDERS_DATA, format_dimension=format_dimension))
 
 
 @cli.command()
 def generate_services():
-    service_mappers = {
-        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['services']))}
-        for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('services') is not None
-    }
-    click.echo(SERVICES_TEMPLATE.render(service_mappers=service_mappers, mappers=PACKAGE_MAPPERS))
+    click.echo(SERVICES_TEMPLATE.render(service_mappers=REFERENCES['services'], mappers=PROVIDERS_DATA))
 
 
 @cli.command()
 def generate_packaging_types():
-    service_mappers = {
-        key: {c.name: c.value for c in list(getattr(mapper['package'], mapper['packagingTypes']))}
-        for key, mapper in PACKAGE_MAPPERS.items()
-        if mapper.get('packagingTypes') is not None
-    }
-    click.echo(SERVICES_TEMPLATE.render(service_mappers=service_mappers, mappers=PACKAGE_MAPPERS))
+    click.echo(PACKAGING_TYPES_TEMPLATE.render(packaging_mappers=REFERENCES['packaging_types'], mappers=PROVIDERS_DATA))
 
 
 @cli.command()
@@ -167,7 +129,8 @@ def generate_models():
     import purplship.core.models as m
     classes = {i: t for i, t in inspect.getmembers(m) if inspect.isclass(t)}
     docstr = MODELS_TEMPLATE.render(
-        classes=classes
+        classes=classes,
+        str=str
     ).replace(
         "purplship.core.models.", ""
     ).replace(
@@ -183,12 +146,35 @@ def generate_models():
     for name, _ in classes.items():
         cls = name.strip()
         docstr = docstr.replace(
-            f"| `{cls}` |", f"| [{cls}](#{cls}) |"
+            f"| `{cls}` |", f"| [{cls}](#{cls.lower()}) |"
         ).replace(
-            f"[{cls}] ", f"[[{cls}](#{cls})] "
+            f"[{cls}] ", f"[[{cls}](#{cls.lower()})] "
         )
 
     click.echo(docstr)
+
+
+@cli.command()
+def generate_settings():
+    settings = {v['label']: v['Settings'] for k, v in PROVIDERS_DATA.items() if v.get('Settings') is not None}
+    docstr = SETTINGS_TEMPLATE.render(
+        settings=settings,
+        str=str
+    )
+
+    click.echo(docstr)
+
+
+@cli.command()
+def generate_utilities_info():
+    utilities = [
+        (utils.DP, 'from purplship.core.utils import DP'),
+        (utils.XP, 'from purplship.core.utils import XP'),
+        (utils.DF, 'from purplship.core.utils import DF'),
+        (utils.SF, 'from purplship.core.utils import SF'),
+        (utils.helpers, 'from purplship.core.utils import [function]'),
+    ]
+    click.echo(UTILS_TOOLS_TEMPLATE.render(utils=utilities, doc=doc))
 
 
 if __name__ == '__main__':

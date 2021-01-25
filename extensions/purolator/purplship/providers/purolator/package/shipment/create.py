@@ -25,7 +25,6 @@ from pypurolator.shipping_service_2_1_3 import (
     DimensionUnit as PurolatorDimensionUnit,
     TotalWeight,
     PhoneNumber,
-    PrinterType as PurolatorPrinterType,
     PaymentInformation,
     DutyInformation,
     NotificationInformation,
@@ -33,10 +32,11 @@ from pypurolator.shipping_service_2_1_3 import (
     OptionIDValuePair,
     CreditCardInformation,
     BusinessRelationship,
+    PrinterType,
     ContentDetail,
     ArrayOfContentDetail,
 )
-from purplship.core.units import PrinterType, Options, Packages, Phone
+from purplship.core.units import Options, Packages, Phone
 from purplship.core.utils import Serializable, Element, create_envelope, Pipeline, Job, Envelope, XP, SF
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 
@@ -50,6 +50,7 @@ from purplship.providers.purolator.units import (
     PaymentType,
     DutyPaymentType,
     MeasurementOptions,
+    LabelType,
 )
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
@@ -122,7 +123,7 @@ def _shipment_request(
     options = Options(payload.options)
     shipper_phone_number = Phone(payload.shipper.phone_number, payload.shipper.country_code)
     recipient_phone_number = Phone(payload.recipient.phone_number, payload.recipient.country_code)
-    printing = PrinterType[options.label_printing or "regular"].value
+    printing = LabelType[options.label_printing or "PDF"].value
     special_services = {
         Service[name].value: value
         for name, value in payload.options.items()
@@ -339,7 +340,7 @@ def _shipment_request(
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),
-            PrinterType=PurolatorPrinterType(printing).value,
+            PrinterType=PrinterType(printing).value,
         ),
     )
     return Serializable(request, standard_request_serializer)

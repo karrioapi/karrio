@@ -11,7 +11,7 @@ T = TypeVar("T")
 
 
 class Element(_Element):
-    def xpath(self, *args, **kwargs) -> List['Element']: pass
+    def xpath(self, *args, **kwargs) -> List['Element']: pass  # type: ignore
 
 
 class GenerateDSAbstract(Envelope):
@@ -85,4 +85,4 @@ class XMLPARSER:
         :param encoding: the string format encoding
         :return: Node Element
         """
-        return str(etree.tostring(xml_element), encoding)
+        return str(cast(bytes, etree.tostring(xml_element)), encoding)

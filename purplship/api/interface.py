@@ -1,11 +1,11 @@
-"""Interface."""
+"""The Fluent API Abstraction and interfaces definitions."""
 
 import attr
 import logging
 import functools
-from typing import Callable, TypeVar, Union
+from typing import Callable, TypeVar, Union, List, Tuple
 from purplship.api.gateway import Gateway
-from purplship.core.utils import Serializable, Deserializable, DP
+from purplship.core.utils import Serializable, Deserializable, DP, exec_async
 from purplship.core.errors import PurplShipDetailedError
 from purplship.core.models import (
     AddressValidationRequest,
@@ -25,14 +25,25 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
-def abort(error: PurplShipDetailedError, gateway: Gateway):
+def abort(error: PurplShipDetailedError, gateway: Gateway) -> Tuple[None, List[Message]]:
+    """Process aborting helper
+
+    Args:
+        error (PurplShipDetailedError): the purplship error raised during the process
+        gateway (Gateway): the gateway in use during on process
+
+    Returns:
+        Tuple[None, List[Message]]: a tuple of empty response and a list or error messages
+    """
     return (
         None,
         [
             Message(
-                code=error.code
-                if hasattr(error, "code")
-                else PurplShipDetailedError.code,
+                code=(
+                    error.code
+                    if hasattr(error, "code")
+                    else PurplShipDetailedError.code
+                ),
                 carrier_name=gateway.settings.carrier_name,
                 carrier_id=gateway.settings.carrier_id,
                 message=f"{error}",
@@ -43,6 +54,14 @@ def abort(error: PurplShipDetailedError, gateway: Gateway):
 
 
 def fail_safe(gateway: Gateway):
+    """Decorate operation and requests calls to enrich any failure context
+
+    Args:
+        gateway (Gateway): The gateway in use
+
+    Returns:
+        Decorator
+    """
     def catcher(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -62,9 +81,11 @@ def fail_safe(gateway: Gateway):
 
 @attr.s(auto_attribs=True)
 class IDeserialize:
+    """A lazy deserializer type class"""
     deserialize: Callable[[], S]
 
     def parse(self):
+        """Execute the response deserialization"""
         result = self.deserialize()
         if isinstance(result, IDeserialize):
             return result.parse()
@@ -73,23 +94,47 @@ class IDeserialize:
 
 @attr.s(auto_attribs=True)
 class IRequestFrom:
+    """A lazy request (from) type class"""
     action: Callable[[Gateway], IDeserialize]
 
     def from_(self, gateway: Gateway) -> IDeserialize:
+        """Execute the request action from the provided gateway"""
         return fail_safe(gateway)(self.action)(gateway)
 
 
 @attr.s(auto_attribs=True)
+class IRequestFromMany:
+    """A lazy request (from one or many) type class"""
+    action: Callable[[List[Gateway]], IDeserialize]
+
+    def from_(self, *gateways: Gateway) -> IDeserialize:
+        """Execute the request action(s) from the provided gateway(s)"""
+        return self.action(list(gateways))
+
+
+@attr.s(auto_attribs=True)
 class IRequestWith:
+    """A lazy request (with) type class"""
     action: Callable[[Gateway], IDeserialize]
 
     def with_(self, gateway: Gateway) -> IDeserialize:
+        """Execute the request action with the provided gateway"""
         return fail_safe(gateway)(self.action)(gateway)
 
 
 class Address:
+    """The unified Address API fluent interface"""
+
     @staticmethod
     def validate(args: Union[AddressValidationRequest, dict]) -> IRequestFrom:
+        """Validate an address
+        
+        Args:
+            args (Union[TrackingRequest, dict]): the address validation validation request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
         logger.debug(f'validate an address. payload: {DP.jsonify(args)}')
         payload = (
             args if isinstance(args, AddressValidationRequest) else AddressValidationRequest(**args)
@@ -109,8 +154,18 @@ class Address:
 
 
 class Pickup:
+    """The unified Pickup API fluent interface"""
+
     @staticmethod
-    def schedule(args: Union[PickupRequest, dict]):
+    def schedule(args: Union[PickupRequest, dict]) -> IRequestWith:
+        """Schedule a pickup for one or many shipments
+        
+        Args:
+            args (Union[TrackingRequest, dict]): the pickup schedule request payload
+
+        Returns:
+            IRequestWith: a lazy request dataclass instance
+        """
         logger.debug(f"book a pickup. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, PickupRequest) else PickupRequest(**args)
 
@@ -127,7 +182,15 @@ class Pickup:
         return IRequestWith(action)
 
     @staticmethod
-    def cancel(args: Union[PickupCancelRequest, dict]):
+    def cancel(args: Union[PickupCancelRequest, dict]) -> IRequestFrom:
+        """Cancel a pickup previously scheduled
+        
+        Args:
+            args (Union[TrackingRequest, dict]): the pickup cancellation request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
         logger.debug(f"cancel a pickup. payload: {DP.jsonify(args)}")
         payload = (
             args
@@ -149,6 +212,14 @@ class Pickup:
 
     @staticmethod
     def update(args: Union[PickupUpdateRequest, dict]):
+        """Update a pickup previously scheduled
+        
+        Args:
+            args (Union[TrackingRequest, dict]): the pickup update request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
         logger.debug(f"update a pickup. payload: {DP.jsonify(args)}")
         payload = (
             args
@@ -170,27 +241,59 @@ class Pickup:
 
 
 class Rating:
+    """The unified Rating API fluent interface"""
+
     @staticmethod
-    def fetch(args: Union[RateRequest, dict]):
+    def fetch(args: Union[RateRequest, dict]) -> IRequestFromMany:
+        """Fetch shipment rates from one or many carriers
+        
+        Args:
+            args (Union[TrackingRequest, dict]): the rate fetching request payload
+
+        Returns:
+            IRequestFromMany: a lazy request dataclass instance
+        """
         logger.debug(f"fetch shipment rates. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, RateRequest) else RateRequest(**args)
 
-        def action(gateway: Gateway):
-            request: Serializable = gateway.mapper.create_rate_request(payload)
-            response: Deserializable = gateway.proxy.get_rates(request)
+        def action(gateways: List[Gateway]):
+            def process(gateway: Gateway):
+                request: Serializable = gateway.mapper.create_rate_request(payload)
+                response: Deserializable = gateway.proxy.get_rates(request)
 
-            @fail_safe(gateway)
-            def deserialize():
-                return gateway.mapper.parse_rate_response(response)
+                @fail_safe(gateway)
+                def deserialize():
+                    return gateway.mapper.parse_rate_response(response)
 
-            return IDeserialize(deserialize)
+                return IDeserialize(deserialize)
 
-        return IRequestFrom(action)
+            deserializable_collection: List[IDeserialize] = exec_async(lambda g: fail_safe(g)(process)(g), gateways)
+
+            def flatten():
+                responses = [p.parse() for p in deserializable_collection]
+                flattened_rates = sum((r for r, _ in responses if r is not None), [])
+                messages = sum((m for _, m in responses), [])
+                return flattened_rates, messages
+
+            return IDeserialize(flatten)
+
+        return IRequestFromMany(action)
 
 
 class Shipment:
+    """The unified Shipment API fluent interface"""
+
     @staticmethod
-    def create(args: Union[ShipmentRequest, dict]):
+    def create(args: Union[ShipmentRequest, dict]) -> IRequestWith:
+        """Submit a shipment creation to a carrier.
+        This operation is often referred to as Buying a shipping label
+        
+        Args:
+            args (Union[TrackingRequest, dict]): the shipment creation request payload
+
+        Returns:
+            IRequestWith: a lazy request dataclass instance
+        """
         logger.debug(f"create a shipment. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, ShipmentRequest) else ShipmentRequest(**args)
 
@@ -207,7 +310,15 @@ class Shipment:
         return IRequestWith(action)
 
     @staticmethod
-    def cancel(args: Union[ShipmentCancelRequest, dict]):
+    def cancel(args: Union[ShipmentCancelRequest, dict]) -> IRequestFrom:
+        """Cancel a shipment previously created
+        
+        Args:
+            args (Union[TrackingRequest, dict]): the shipment cancellation request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
         logger.debug(f"void a shipment. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, ShipmentCancelRequest) else ShipmentCancelRequest(**args)
 
@@ -225,8 +336,18 @@ class Shipment:
 
 
 class Tracking:
+    """The unified Tracking API fluent interface"""
+
     @staticmethod
     def fetch(args: Union[TrackingRequest, dict]) -> IRequestFrom:
+        """Fetch tracking statuses and details from a carrier
+        
+        Args:
+            args (Union[TrackingRequest, dict]): the tracking request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
         logger.debug(f"track a shipment. payload: {DP.jsonify(args)}")
         payload = args if isinstance(args, TrackingRequest) else TrackingRequest(**args)
 

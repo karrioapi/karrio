@@ -26,8 +26,6 @@ from pyups.ship_web_service_schema import (
     BillShipperType,
     BillReceiverType,
     BillThirdPartyChargeType,
-    CreditCardType,
-    CreditCardAddressType,
     BillReceiverAddressType,
     LabelSpecificationType,
     LabelImageFormatType,
@@ -174,27 +172,7 @@ def shipment_request(
                         Type=charge_type,
                         BillShipper=BillShipperType(
                             AccountNumber=settings.account_number,
-                            CreditCard=CreditCardType(
-                                Type=payment.credit_card.type,
-                                Number=payment.credit_card.number,
-                                ExpirationDate=(
-                                    f"{payment.credit_card.expiry_year}{payment.credit_card.expiry_month}"
-                                ),
-                                SecurityCode=payment.credit_card.security_code,
-                                Address=CreditCardAddressType(
-                                    AddressLine=SF.concat_str(
-                                        payload.shipper.address_line1,
-                                        payload.shipper.address_line2,
-                                    ),
-                                    City=payload.shipper.city,
-                                    StateProvinceCode=payload.shipper.state_code,
-                                    PostalCode=payload.payment.credit_card.postal_code
-                                    or payload.shipper.postal_code,
-                                    CountryCode=payload.shipper.country_code,
-                                ),
-                            )
-                            if payment.credit_card is not None
-                            else None,
+                            CreditCard=None,
                             AlternatePaymentMethod=None,
                         )
                         if payment.paid_by == PaymentType.sender.name

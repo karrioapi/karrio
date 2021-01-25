@@ -3,7 +3,7 @@ from setuptools import setup, find_namespace_packages
 
 setup(
     name="purplship.purolator_courier",
-    version="2020.12.1",
+    version="2021.0",
     description="Multi-carrier shipping API integration with python",
     url="https://github.com/PurplShip/purplship",
     author="Purplship Team",

@@ -15,7 +15,7 @@ from purplship.providers.purolator.utils import Settings
 def get_shipping_documents_request(
     pin: str, payload: ShipmentRequest, settings: Settings
 ) -> Serializable[Envelope]:
-    label_format = LabelType[payload.label_type or 'PDF'].value
+    label_format = LabelType[payload.label_type or 'PDF'].name
 
     request = create_envelope(
         header_content=RequestContext(

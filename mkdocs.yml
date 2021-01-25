@@ -1,0 +1,54 @@
+site_name: Purplship
+repo_url: https://github.com/PurplShip/purplship
+repo_name: Purplship/purplship
+edit_uri: edit/master/docs/
+
+theme:
+  name: material
+  palette:
+    primary: purple
+    accent: purple
+  favicon: images/favicon.ico
+  logo: images/icon.png
+
+nav:
+  - Introduction: index.md
+  - User Guide:
+    - guide/gateway.md
+    - guide/rating.md
+    - guide/shipment.md
+    - guide/tracking.md
+    - guide/pickup.md
+    - guide/address.md
+    - Error Handling: guide/error.md
+  - Development:
+    - development/contributing.md
+    - development/architecture.md
+    - development/developing.md
+    - Extending Purplship: development/extending.md
+  - roadmap.md
+  - references.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/PurplShip
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/PurplShip
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+google_analytics:
+  - UA-111378601-2
+  - auto
+
+copyright: Copyright &copy; 2018 - 2020 Purplship Team

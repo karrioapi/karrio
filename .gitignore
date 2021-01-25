@@ -101,5 +101,3 @@ ENV/
 .mypy_cache/
 
 .idea/
-
-VERSION

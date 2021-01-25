@@ -105,14 +105,7 @@ shipment_data = {
         "commodities": [{"description": "cn", "sku": "cc"}],
         "incoterm": "DAP",
         "duty": {"account_number": "123456789", "paid_by": "sender", "amount": 200.00},
-    },
-    "doc_images": [
-        {
-            "type": "CIN",
-            "format": "PDF",
-            "image": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=",
-        }
-    ],
+    }
 }
 
 ParsedShipmentMissingArgsError = [
@@ -294,13 +287,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     <Notification>
         <EmailAddress>c_orlander@gc.ca</EmailAddress>
     </Notification>
-    <DocImages>
-        <DocImage>
-            <Type>CIN</Type>
-            <Image>dataimage/gifbase64R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADg==</Image>
-            <ImageFormat>PDF</ImageFormat>
-        </DocImage>
-    </DocImages>
     <LabelImageFormat>PDF</LabelImageFormat>
     <Label>
         <LabelTemplate>6X4_PDF</LabelTemplate>

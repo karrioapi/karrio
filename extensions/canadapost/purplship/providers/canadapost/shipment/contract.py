@@ -111,7 +111,7 @@ def shipment_request(
         cpc_pickup_indicator=None,
         requested_shipping_point=payload.shipper.postal_code,
         shipping_point_id=None,
-        expected_mailing_date=None,
+        expected_mailing_date=options.shipment_date,
         provide_pricing_info=True,
         provide_receipt_info=None,
         delivery_spec=DeliverySpecType(
