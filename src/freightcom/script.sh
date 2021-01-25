@@ -25,7 +25,7 @@ create_env() {
 
 init() {
     create_env &&
-    pip install -r "${ROOT:?}/requirements.dev.txt"
+    pip install -f https://git.io/purplship -r "${ROOT:?}/requirements.dev.txt"
 }
 
 
