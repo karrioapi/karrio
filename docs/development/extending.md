@@ -285,13 +285,15 @@ the Purplship unified interface. In some case, more than one API call are requir
     functions returning a `Job`.
     - The `Pipeline` exposes an `apply()` method that can be called to run sequentially the jobs provided following the
     definition order.
-    > every job receives the previous jobs response as first argument.
+    
+    > every job receives the response of the job runned before as first argument. This allow jobs to check the state
+    > and determine if the current job should be executed or not.
     >
     > the first job receive `None`
 
 !!! abstract "Job"
 
-    - The `Job` is a flexible structure that accept by default and `id`, a `data` and optionally a `fallback` value
+    - The `Job` is a flexible structure that accept by default an `id`, a `data` and optionally a `fallback` value
     > The `id` correspond to the job name used with a Pipeline
     >
     > The `data` is often a Serializable carrier request data.
