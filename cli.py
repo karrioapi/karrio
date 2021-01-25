@@ -2,15 +2,19 @@ import click
 import inspect
 import pydoc
 from jinja2 import Template
-from purplship.references import REFERENCES, PROVIDERS_DATA
+from purplship.references import collect_providers_data, collect_references
 import purplship.core.utils as utils
+
+PROVIDERS_DATA = collect_providers_data()
+REFERENCES = collect_references()
 
 MODELS_TEMPLATE = Template('''
 {% for name, cls in classes.items() %}
 #### {{ name }}
-    | Name | Type | Description 
-    | --- | --- | --- |
-{% for prop in cls.__attrs_attrs__ %}    | `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
+
+| Name | Type | Description 
+| --- | --- | --- |
+{% for prop in cls.__attrs_attrs__ %}| `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
 {% endfor %}
 {% endfor %}
 ''')
@@ -18,9 +22,10 @@ MODELS_TEMPLATE = Template('''
 SETTINGS_TEMPLATE = Template('''
 {% for name, cls in settings.items() %}
 #### {{ name }} Settings
-    | Name | Type | Description 
-    | --- | --- | --- |
-{% for prop in cls.__attrs_attrs__ %}    | `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
+
+| Name | Type | Description 
+| --- | --- | --- |
+{% for prop in cls.__attrs_attrs__ %}| `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
 {% endfor %}
 {% endfor %}
 ''')
@@ -28,9 +33,10 @@ SETTINGS_TEMPLATE = Template('''
 SERVICES_TEMPLATE = Template('''
 {% for key, value in service_mappers.items() %}
 #### {{ mappers[key]["label"] }}
-    Code | Identifier
-    --- | ---
-{% for code, name in value.items() %}    | `{{ code }}` | {{ name }}
+
+| Code | Identifier
+| --- | ---
+{% for code, name in value.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 {% endfor %}
 ''')
@@ -38,9 +44,10 @@ SERVICES_TEMPLATE = Template('''
 SHIPMENT_OPTIONS_TEMPLATE = Template('''
 {% for key, value in option_mappers.items() %}
 #### {{ mappers[key]["label"] }}
-    Code | Identifier
-    --- | ---
-{% for code, name in value.items() %}    | `{{ code }}` | {{ name }}
+
+| Code | Identifier
+| --- | ---
+{% for code, name in value.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 {% endfor %}
 ''')
@@ -48,9 +55,10 @@ SHIPMENT_OPTIONS_TEMPLATE = Template('''
 PACKAGING_TYPES_TEMPLATE = Template('''
 {% for key, value in packaging_mappers.items() %}
 #### {{ mappers[key]["label"] }}
-    Code | Identifier
-    --- | ---
-{% for code, name in value.items() %}    | `{{ code }}` | {{ name }}
+
+| Code | Identifier
+| --- | ---
+{% for code, name in value.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 {% endfor %}
 ''')
@@ -58,9 +66,10 @@ PACKAGING_TYPES_TEMPLATE = Template('''
 SHIPMENT_PRESETS_TEMPLATE = Template('''
 {% for key, value in preset_mappers.items() %}
 #### {{ mappers[key]["label"] }}
-    Code | Dimensions | Note
-    --- | --- | ---
-{% for code, dim in value.items() %}    {{ format_dimension(code, dim) }}
+
+| Code | Dimensions | Note
+| --- | --- | ---
+{% for code, dim in value.items() %}{{ format_dimension(code, dim) }}
 {% endfor %}
 {% endfor %}
 ''')
@@ -137,9 +146,9 @@ def generate_models():
     for name, _ in classes.items():
         cls = name.strip()
         docstr = docstr.replace(
-            f"| `{cls}` |", f"| [{cls}](#{cls}) |"
+            f"| `{cls}` |", f"| [{cls}](#{cls.lower()}) |"
         ).replace(
-            f"[{cls}] ", f"[[{cls}](#{cls})] "
+            f"[{cls}] ", f"[[{cls}](#{cls.lower()})] "
         )
 
     click.echo(docstr)
@@ -151,21 +160,7 @@ def generate_settings():
     docstr = SETTINGS_TEMPLATE.render(
         settings=settings,
         str=str
-    ).replace(
-        "<class '", "`"
-    ).replace(
-        "'>", "`"
-    ).replace(
-        "Dict", "`dict`"
     )
-
-    for name, _ in settings.items():
-        cls = name.strip()
-        docstr = docstr.replace(
-            f"| `{cls}` |", f"| [{cls}](#{cls}) |"
-        ).replace(
-            f"[{cls}] ", f"[[{cls}](#{cls})] "
-        )
 
     click.echo(docstr)
 
