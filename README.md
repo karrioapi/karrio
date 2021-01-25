@@ -144,8 +144,8 @@ print(rates)
 
 ## Resources
 
-- **Documentation** - Learn more at [sdk.purplship.com](https://sdk.purplship.com)
-- **Bug Tracker** - [File bugs](https://github.com/PurplShip/purplship/issues)
+- [**Documentation**](https://sdk.purplship.com)
+- [**Bug Tracker**](https://github.com/PurplShip/purplship/issues)
 
 ## Contributing
 
