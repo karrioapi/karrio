@@ -3,7 +3,10 @@ from django.apps import AppConfig
 
 class CoreConfig(AppConfig):
     name = 'purpleserver.core'
-    # verbose_name = "Carriers"
 
     def ready(self):
-        import purpleserver.core.signals
+        from constance import config
+        from constance.signals import config_updated
+        from purpleserver.core.signals import update_settings, constance_updated
+        config_updated.connect(constance_updated)
+        update_settings(config)
