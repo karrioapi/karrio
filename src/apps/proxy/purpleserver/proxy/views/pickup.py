@@ -26,7 +26,7 @@ ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique ma
 class PickupDetails(APIView):
 
     @swagger_auto_schema(
-        tags=['Pickups'],
+        tags=['Proxy'],
         operation_id=f"{ENDPOINT_ID}schedule",
         operation_summary="Schedule a pickup",
         query_serializer=TestFilters(),
@@ -49,7 +49,7 @@ class PickupDetails(APIView):
         return Response(PickupResponse(response).data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
-        tags=['Pickups'],
+        tags=['Proxy'],
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a pickup",
         query_serializer=TestFilters(),
@@ -58,8 +58,6 @@ class PickupDetails(APIView):
     )
     def put(self, request: Request, carrier_name: str):
         """
-        **[proxy]**
-
         Modify a scheduled pickup
         """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
@@ -73,7 +71,7 @@ class PickupDetails(APIView):
 class PickupCancel(APIView):
 
     @swagger_auto_schema(
-        tags=['Pickups'],
+        tags=['Proxy'],
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a pickup",
         query_serializer=TestFilters(),
@@ -82,8 +80,6 @@ class PickupCancel(APIView):
     )
     def post(self, request: Request, carrier_name: str):
         """
-        **[proxy]**
-
         Cancel a pickup previously scheduled
         """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data

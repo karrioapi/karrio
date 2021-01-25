@@ -26,7 +26,7 @@ Use this service to fetch a shipping rates available.
 class RateViewAPI(APIView):
 
     @swagger_auto_schema(
-        tags=['Rates'],
+        tags=['Proxy'],
         operation_id=f"{ENDPOINT_ID}fetch",
         operation_summary="Fetch shipment rates",
         operation_description=DESCRIPTIONS,

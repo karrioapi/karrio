@@ -19,7 +19,7 @@ ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique mak
 class TrackingAPIView(APIView):
 
     @swagger_auto_schema(
-        tags=['Tracking'],
+        tags=['Proxy'],
         operation_id=f"{ENDPOINT_ID}fetch",
         operation_summary="Track a shipment",
         query_serializer=TestFilters(),

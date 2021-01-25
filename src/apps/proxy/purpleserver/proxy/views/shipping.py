@@ -41,7 +41,7 @@ class ShippingRequestValidation(ShippingRequest):
 class ShippingList(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipping'],
+        tags=['Proxy'],
         operation_id=f"{ENDPOINT_ID}buy_label",
         operation_summary="Buy a shipment label",
         request_body=ShippingRequest(),
@@ -72,7 +72,7 @@ class ShippingList(APIView):
 class ShippingCancel(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipping'],
+        tags=['Proxy'],
         operation_id=f"{ENDPOINT_ID}void_label",
         operation_summary="Void a shipment label",
         query_serializer=TestFilters(),

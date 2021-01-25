@@ -24,8 +24,8 @@ ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique m
 class PickupList(GenericAPIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}pickups",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
         responses={200: Pickup(many=True), 400: ErrorResponse()}
     )
@@ -42,8 +42,8 @@ class PickupList(GenericAPIView):
 class PickupRequest(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}schedule_pickup",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}schedule",
         operation_summary="Schedule a pickup",
         responses={200: Pickup(), 400: ErrorResponse()},
         query_serializer=TestFilters(),
@@ -68,8 +68,8 @@ class PickupRequest(APIView):
 class PickupDetails(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}retrieve_pickup",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a pickup",
         responses={200: Pickup(), 400: ErrorResponse()},
     )
@@ -79,8 +79,8 @@ class PickupDetails(APIView):
         return Response(Pickup(pickup).data)
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}update_pickup",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a pickup",
         responses={200: OperationConfirmation(), 400: ErrorResponse()},
         request_body=PickupUpdateData()
@@ -99,8 +99,8 @@ class PickupDetails(APIView):
 class PickupCancel(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}cancel_pickup",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a pickup",
         responses={200: OperationConfirmation(), 400: ErrorResponse()},
         request_body=PickupCancelData()
