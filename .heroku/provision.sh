@@ -1,13 +1,8 @@
 #!/bin/sh
-export DJANGO_SETTINGS_MODULE='heroku.settings'
+export DJANGO_SETTINGS_MODULE='purpleserver.settings.heroku'
 
-cd ./heroku
-
-pip3 install -r requirements.txt &&
 purplship migrate &&
-purplship collectstatic --noinput
-
-
+purplship collectstatic --noinput &&
 # Create super user for demo
 (echo "
 from django.contrib.auth import get_user_model

@@ -20,14 +20,14 @@ from purpleserver.core.serializers import (
 )
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class PickupDetails(APIView):
 
     @swagger_auto_schema(
         tags=['Proxy'],
-        operation_id=f"{ENDPOINT_ID}schedule",
+        operation_id=f"{ENDPOINT_ID}schedule_pickup",
         operation_summary="Schedule a pickup",
         query_serializer=TestFilters(),
         request_body=PickupRequest(),
@@ -35,8 +35,6 @@ class PickupDetails(APIView):
     )
     def post(self, request: Request, carrier_name: str):
         """
-        **[proxy]**
-
         Schedule one or many parcels pickup
         """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
@@ -50,7 +48,7 @@ class PickupDetails(APIView):
 
     @swagger_auto_schema(
         tags=['Proxy'],
-        operation_id=f"{ENDPOINT_ID}update",
+        operation_id=f"{ENDPOINT_ID}update_pickup",
         operation_summary="Update a pickup",
         query_serializer=TestFilters(),
         request_body=PickupUpdateRequest(),
@@ -72,7 +70,7 @@ class PickupCancel(APIView):
 
     @swagger_auto_schema(
         tags=['Proxy'],
-        operation_id=f"{ENDPOINT_ID}cancel",
+        operation_id=f"{ENDPOINT_ID}cancel_pickup",
         operation_summary="Cancel a pickup",
         query_serializer=TestFilters(),
         request_body=PickupCancelRequest(),

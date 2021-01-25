@@ -1,2 +1,0 @@
-dj-database-url==0.5.0
-whitenoise==5.2.0

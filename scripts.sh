@@ -9,7 +9,7 @@ ENV_DIR=".venv"
 export SECRET_KEY="n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r"
 export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
-[[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
+[[ -d "$wheels" ]] && export PIP_FIND_LINKS="${PIP_FIND_LINKS} file://${wheels}"
 
 deactivate_env() {
   if command -v deactivate &> /dev/null
@@ -55,7 +55,9 @@ install_released() {
   	purplship-server \
     purplship-server.core \
     purplship-server.proxy \
-    purplship-server.extension \
+    purplship-server.client \
+    purplship-server.manager \
+    purplship-server.pricing \
     purplship.canadapost \
     purplship.dhl_express \
     purplship.fedex_express \

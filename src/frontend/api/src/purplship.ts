@@ -7,9 +7,8 @@ export interface PurplshipAPI {
     customs: API.CustomsApi;
     parcels: API.ParcelsApi;
     pickups: API.PickupsApi;
-    rates: API.RatesApi;
+    proxy: API.ProxyApi;
     shipments: API.ShipmentsApi;
-    shipping: API.ShippingApi;
     tracking: API.TrackingApi;
     utils: API.UtilsApi;
 }
@@ -20,9 +19,8 @@ export class Purplship implements PurplshipAPI {
     customs: API.CustomsApi;
     parcels: API.ParcelsApi;
     pickups: API.PickupsApi;
-    rates: API.RatesApi;
+    proxy: API.ProxyApi;
     shipments: API.ShipmentsApi;
-    shipping: API.ShippingApi;
     tracking: API.TrackingApi;
     utils: API.UtilsApi;
     
@@ -36,9 +34,8 @@ export class Purplship implements PurplshipAPI {
         this.customs = new API.CustomsApi(config);
         this.parcels = new API.ParcelsApi(config);
         this.pickups = new API.PickupsApi(config);
-        this.rates = new API.RatesApi(config);
+        this.proxy = new API.ProxyApi(config);
         this.shipments = new API.ShipmentsApi(config);
-        this.shipping = new API.ShippingApi(config);
         this.tracking = new API.TrackingApi(config);
         this.utils = new API.UtilsApi(config);
     }

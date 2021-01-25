@@ -23,7 +23,7 @@ from purpleserver.core.serializers import (
 )
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class Address(BaseAddress):
@@ -49,8 +49,6 @@ class ShippingList(APIView):
     )
     def post(self, request: Request):
         """
-        **[proxy]**
-
         Once the shipping rates are retrieved, provide the required info to
         submit the shipment by specifying your preferred rate.
         """
@@ -81,8 +79,6 @@ class ShippingCancel(APIView):
     )
     def post(self, request: Request, carrier_name: str):
         """
-        **[proxy]**
-
         Cancel a shipment and the label previously created
         """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data

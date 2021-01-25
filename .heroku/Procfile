@@ -1,1 +1,0 @@
-web: gunicorn purpleserver.wsgi --preload --log-file -

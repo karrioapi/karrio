@@ -11,6 +11,8 @@ from purpleserver.core.router import router
 from purpleserver.core.serializers import PlainDictField
 from purpleserver.core.dataunits import REFERENCE_MODELS, PACKAGE_MAPPERS
 
+ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+
 line = "\n"
 
 MODELS_DOCUMENTATION = f"""
@@ -162,7 +164,7 @@ class References(Serializer):
 @swagger_auto_schema(
     methods=['get'],
     tags=['Utils'],
-    operation_id="references",
+    operation_id=f"{ENDPOINT_ID}references",
     operation_summary="Data References",
     operation_description=MODELS_DOCUMENTATION,
     responses={200: References()}

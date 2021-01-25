@@ -334,7 +334,7 @@ SHIPMENT_OPTIONS = {
 }
 
 
-RETURNED_RATES_VALUE = [(
+RETURNED_RATES_VALUE = (
     [
         RateDetails(
             carrier_id="canadapost",
@@ -361,7 +361,7 @@ RETURNED_RATES_VALUE = [(
         )
     ],
     [],
-)]
+)
 
 
 SHIPMENT_PURCHASE_DATA = {

@@ -13,11 +13,9 @@ from purpleserver.core.gateway import Rates
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 DESCRIPTIONS = """
-**[proxy]**
-
 The Shipping process begins by fetching rates for your shipment.
 Use this service to fetch a shipping rates available.
 """

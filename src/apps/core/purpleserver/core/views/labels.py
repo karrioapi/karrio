@@ -16,6 +16,7 @@ from purpleserver.core.router import router
 from purpleserver.core.serializers import ErrorResponse
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class LabelPrintingRequest(Serializer):
@@ -32,7 +33,7 @@ class Utils(APIView):
 
     @swagger_auto_schema(
         tags=['Utils'],
-        operation_id="print_label",
+        operation_id=f"{ENDPOINT_ID}print_label",
         operation_summary="Print a Label",
         operation_description="Returns a label PDF file.",
         request_body=LabelPrintingRequest(),

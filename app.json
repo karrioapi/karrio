@@ -19,7 +19,9 @@
     "ADMIN_PASSWORD": {
       "description": "The default system administrator password.",
       "value": "demo"
-    }
+    },
+    "DEBUG_MODE": "False",
+    "USE_HTTPS": "True"
   },
   "buildpacks": [
     {
@@ -30,6 +32,6 @@
     "heroku-postgresql:hobby-dev"
   ],
   "scripts": {
-    "postdeploy": "./heroku/provision.sh"
+    "postdeploy": ".heroku/provision.sh"
   }
 }

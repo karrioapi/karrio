@@ -18,7 +18,7 @@ from purpleserver.manager.router import router
 from purpleserver.manager.serializers import PickupData, PickupUpdateData, PickupCancelData
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class PickupList(GenericAPIView):
@@ -116,7 +116,7 @@ class PickupCancel(APIView):
         return Response(OperationConfirmation(confirmation).data, status=status.HTTP_200_OK)
 
 
-router.urls.append(path('shipment_pickups', PickupList.as_view(), name="shipment-pickup-list"))
-router.urls.append(path('shipment_pickups/<str:pk>', PickupDetails.as_view(), name="shipment-pickup-details"))
-router.urls.append(path('shipment_pickups/<str:pk>/cancel', PickupCancel.as_view(), name="shipment-pickup-cancel"))
-router.urls.append(path('shipment_pickups/<str:carrier_name>/schedule', PickupRequest.as_view(), name="shipment-pickup-request"))
+router.urls.append(path('pickups', PickupList.as_view(), name="shipment-pickup-list"))
+router.urls.append(path('pickups/<str:pk>', PickupDetails.as_view(), name="shipment-pickup-details"))
+router.urls.append(path('pickups/<str:pk>/cancel', PickupCancel.as_view(), name="shipment-pickup-cancel"))
+router.urls.append(path('pickups/<str:carrier_name>/schedule', PickupRequest.as_view(), name="shipment-pickup-request"))

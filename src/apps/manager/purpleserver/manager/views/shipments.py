@@ -35,7 +35,7 @@ from purpleserver.manager.serializers import (
 )
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class ShipmentList(GenericAPIView):
