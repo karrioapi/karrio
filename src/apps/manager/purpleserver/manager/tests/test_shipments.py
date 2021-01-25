@@ -312,11 +312,9 @@ SHIPMENT_RESPONSE = {
         "amount": None,
         "currency": "CAD",
         "account_number": None,
-        "credit_card": None,
         "contact": None
     },
     "customs": None,
-    "doc_images": [],
     "reference": None,
     "carrier_ids": [
         "canadapost"
@@ -490,11 +488,9 @@ PURCHASED_SHIPMENT = {
         "amount": None,
         "currency": "CAD",
         "account_number": None,
-        "credit_card": None,
         "contact": None
     },
     "customs": None,
-    "doc_images": [],
     "reference": None,
     "carrier_ids": [],
     "created_at": ANY,

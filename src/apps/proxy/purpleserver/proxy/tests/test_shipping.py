@@ -325,11 +325,9 @@ SHIPPING_RESPONSE = {
         'amount': None,
         'currency': 'CAD',
         'account_number': None,
-        'credit_card': None,
         'contact': None
     },
     'customs': None,
-    'doc_images': [],
     'reference': '',
     'carrier_ids': [],
     'meta': None,
