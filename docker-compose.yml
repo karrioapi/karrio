@@ -4,7 +4,7 @@ services:
   purpleserver:
     build:
       context: ./
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./.docker/Dockerfile
     image: purplship/purplship-server:latest
     env_file: .env
     volumes:
@@ -19,7 +19,7 @@ services:
     entrypoint: |
       bash -c "bash -s <<EOF
       cd /temp/dev &&
-      pip install -r requirements.dev.txt --upgrade --src /temp/src &&
+      pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade --src /temp/src &&
       cd /app &&
       if [[ "${TEST:-False}" == "True" ]];
       then

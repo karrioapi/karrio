@@ -11,8 +11,6 @@ export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
 [[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
 
-export MULTI_TENANT_ENABLE=True
-
 deactivate_env() {
   if command -v deactivate &> /dev/null
   then
@@ -39,7 +37,8 @@ create_env() {
 }
 
 init() {
-    create_env && pip install -r "${ROOT:?}/requirements.dev.txt"
+    create_env &&
+    pip install -f https://git.io/purplship -r "${ROOT:?}/requirements.dev.txt"
 }
 
 
@@ -216,7 +215,7 @@ build_client() {
 }
 
 build_image() {
-  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/docker/Dockerfile" "${ROOT:?}"
+  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}"
 }
 
 
