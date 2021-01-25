@@ -34,9 +34,7 @@ class TestEShipperRating(unittest.TestCase):
         with patch("purplship.mappers.eshipper.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            import logging
 
-            logging.warning(DP.to_dict(parsed_response))
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
             )
