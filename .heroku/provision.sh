@@ -1,9 +1,12 @@
 #!/bin/sh
-
 export DJANGO_SETTINGS_MODULE='heroku.settings'
 
+cd ./heroku
+
+pip3 install -r requirements.txt &&
 purplship migrate &&
 purplship collectstatic --noinput
+
 
 # Create super user for demo
 (echo "

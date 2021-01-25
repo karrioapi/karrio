@@ -17,7 +17,7 @@
 
 ## What's Purplship?
 
-Purplship server is an On-prem or private cloud Multi-carrier Shipping API.
+Purplship server is an On-prem or cloud Multi-carrier Shipping API.
 The server is in Python, but you can use any programming language to send API requests to 
 any supported shipping carriers (Canada Post, DHL, FedEx, UPS, Purolator...), from your application.
 
@@ -27,28 +27,74 @@ any supported shipping carriers (Canada Post, DHL, FedEx, UPS, Purolator...), fr
 </p>
 
 
-## Try out Purplship
+## Deployment
+
+### `Docker`
 
 <details>
-<summary>Docker Preview</summary>
+<summary>Deploy with docker compose</summary>
+
+```yaml
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+
+  purplship:
+    image: purplship/purplship-server:[version]
+    restart: always
+    environment:
+      - DEBUG_MODE=True
+      - ALLOWED_HOSTS=*
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=db
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+    ports:
+      - "5002:5002"
+    depends_on:
+      - db
+```
+
+</details>
+
+OR use our image 
+
+<details>
+<summary>Run an instance of Postgres image</summary>
 
 ```bash
 docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres
 ```
 
-```shell script
+</details>
+
+```bash
 docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:[version]
 ```
 
-</details>
+### `Heroku`
 
-## Official Purplship SDKs
+Host your own Purplship server for FREE with [One-Click Deploy](https://heroku.com/deploy).
 
-- [Python](https://github.com/PurplShip/purplship-python-client)
-- [PHP](https://github.com/PurplShip/purplship-php-client)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/PurplShip/purplship-server/tree/main/)
+
+
+## Official Purplship Client Libraries
+
 - [Node](https://github.com/PurplShip/purplship-node)
+- [PHP](https://github.com/PurplShip/purplship-php-client)
+- [Python](https://github.com/PurplShip/purplship-python-client)
 
 Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with our [OpenAPI References](https://github.com/PurplShip/purplship-server/tree/main/openapi)
+
 
 ## Resources
 
@@ -58,8 +104,13 @@ Use the [swagger editor](https://editor.swagger.io/) to generate any additional 
 - **Blog** - Get the latest updates from the [Puprlship blog](https://blog.purplship.com).
 - **Twitter** - Follow [Purplship](https://twitter.com/purplship).
 
+
 ## License
 
-See the [LICENSE file](https://github.com/PurplShip/purplship-server/blob/main/LICENSE) for license rights and limitations.
+This project is licensed under the terms of the `AGPL v3` license.
+
+We also release a community image under the `Apache 2` license.
+
+See the [LICENSE file](/LICENSE) for license rights and limitations.
 
 Any other questions, mail us at hello@purplship.com. We’d love to meet you!
