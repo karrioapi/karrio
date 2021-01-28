@@ -13,22 +13,20 @@ from purpleserver.core.gateway import Shipments
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class TrackingAPIView(APIView):
 
     @swagger_auto_schema(
-        tags=['Tracking'],
-        operation_id=f"{ENDPOINT_ID}fetch",
+        tags=['Proxy'],
+        operation_id=f"{ENDPOINT_ID}track_shipment",
         operation_summary="Track a shipment",
         query_serializer=TestFilters(),
         responses={200: TrackingResponse(), 400: ErrorResponse()}
     )
     def get(self, request: Request, carrier_name: str, tracking_number: str):
         """
-        **[proxy]**
-
         You can track a shipment by specifying the carrier and the shipment tracking number.
         """
         params = TestFilters(data=request.query_params)

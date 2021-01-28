@@ -1,7 +1,7 @@
 # Ignore everything
 *
 
-!/docker
+!/.docker
 !/requirements.txt
 !/gunicorn-cfg.py
 !/licenses/APACHE-LICENSE-2.0

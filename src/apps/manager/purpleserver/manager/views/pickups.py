@@ -3,9 +3,8 @@ import logging
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-
-from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
+from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
@@ -19,14 +18,14 @@ from purpleserver.manager.router import router
 from purpleserver.manager.serializers import PickupData, PickupUpdateData, PickupCancelData
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class PickupList(GenericAPIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}pickups",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
         responses={200: Pickup(many=True), 400: ErrorResponse()}
     )
@@ -43,8 +42,8 @@ class PickupList(GenericAPIView):
 class PickupRequest(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}schedule_pickup",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}schedule",
         operation_summary="Schedule a pickup",
         responses={200: Pickup(), 400: ErrorResponse()},
         query_serializer=TestFilters(),
@@ -69,8 +68,8 @@ class PickupRequest(APIView):
 class PickupDetails(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}retrieve_pickup",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a pickup",
         responses={200: Pickup(), 400: ErrorResponse()},
     )
@@ -80,8 +79,8 @@ class PickupDetails(APIView):
         return Response(Pickup(pickup).data)
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}update_pickup",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a pickup",
         responses={200: OperationConfirmation(), 400: ErrorResponse()},
         request_body=PickupUpdateData()
@@ -100,8 +99,8 @@ class PickupDetails(APIView):
 class PickupCancel(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}cancel_pickup",
+        tags=['Pickups'],
+        operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a pickup",
         responses={200: OperationConfirmation(), 400: ErrorResponse()},
         request_body=PickupCancelData()
@@ -117,7 +116,7 @@ class PickupCancel(APIView):
         return Response(OperationConfirmation(confirmation).data, status=status.HTTP_200_OK)
 
 
-router.urls.append(path('shipment_pickups', PickupList.as_view(), name="shipment-pickup-list"))
-router.urls.append(path('shipment_pickups/<str:pk>', PickupDetails.as_view(), name="shipment-pickup-details"))
-router.urls.append(path('shipment_pickups/<str:pk>/cancel', PickupCancel.as_view(), name="shipment-pickup-cancel"))
-router.urls.append(path('shipment_pickups/<str:carrier_name>/schedule', PickupRequest.as_view(), name="shipment-pickup-request"))
+router.urls.append(path('pickups', PickupList.as_view(), name="shipment-pickup-list"))
+router.urls.append(path('pickups/<str:pk>', PickupDetails.as_view(), name="shipment-pickup-details"))
+router.urls.append(path('pickups/<str:pk>/cancel', PickupCancel.as_view(), name="shipment-pickup-cancel"))
+router.urls.append(path('pickups/<str:carrier_name>/schedule', PickupRequest.as_view(), name="shipment-pickup-request"))

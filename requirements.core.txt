@@ -1,4 +1,3 @@
--f https://git.io/purplship
 eshipper.extension
 freightcom.extension
 purplship

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.pricing',
-      version='2020.12.1',
+      version='2021.0',
       description='Multi-carrier shipping API Pricing panel',
       long_description=long_description,
       long_description_content_type="text/markdown",

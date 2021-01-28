@@ -2,7 +2,6 @@
 purplship server accounts module urls
 """
 from django.urls import include, path
-from django.conf import settings
 
 from purpleserver.client.views import index
 from purpleserver.client.views.user import UserAPI
@@ -21,7 +20,7 @@ urlpatterns = [
     path('settings/<str:settings_name>', index, name='settings'),
 
     path('', include('django.contrib.auth.urls')),
-    path('', include(settings.CLIENT_REGISTRATION_VIEWS)),
+    path('', include('purpleserver.client.views.registration')),
     path('token', TokenAPI.as_view(), name='token'),
     path('user_info', UserAPI.as_view(), name='user_info'),
     path('logs', LogsAPI.as_view(), name='logs'),

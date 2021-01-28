@@ -78,23 +78,25 @@ PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF if 'urls' in cfg]
 
 BASE_APPS = [
     'purpleserver.user',
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework_tracking',
-    'django_email_verification',
+    'django.contrib.admin',
 ]
 
 INSTALLED_APPS = [
     'constance',
+
     *PURPLSHIP_APPS,
     *BASE_APPS,
 
     'rest_framework',
     'rest_framework.authtoken',
+
+    'django_email_verification',
+    'rest_framework_tracking',
 
     'drf_yasg',
     'constance.backends.database',
@@ -110,15 +112,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-HAS_CLIENT_APP = importlib.util.find_spec('purpleserver.client') is not None
-
 ROOT_URLCONF = 'purpleserver.urls'
-LOGOUT_REDIRECT_URL = '/login/' if HAS_CLIENT_APP else '/'
+LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 OPEN_API_PATH = 'api/'
-
-CLIENT_REGISTRATION_VIEWS = 'purpleserver.client.views.registration'
 
 
 TEMPLATES = [

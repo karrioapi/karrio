@@ -3,9 +3,9 @@ FROM python:3.8
 ENV DEBUG_MODE False
 ENV USE_HTTPS False
 ENV ALLOWED_HOSTS *
-ENV ADMIN_EMAIL admin@example.com
+ENV ADMIN_EMAIL admin@domain.com
 ENV ADMIN_PASSWORD demo
-ENV TENANT_ADMIN_EMAIL root@example.com
+ENV TENANT_ADMIN_EMAIL root@domain.com
 ENV TENANT_ADMIN_PASSWORD demo
 ENV PURPLSHIP_PORT 5002
 ENV DATABASE_HOST db
@@ -22,10 +22,10 @@ RUN mkdir /app /log
 WORKDIR /app
 
 COPY requirements.txt /temp/
-COPY gunicorn-cfg.py docker/docker-entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
+COPY gunicorn-cfg.py .docker/docker-entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
 
 RUN pip install --upgrade pip \
-    pip install -r /temp/requirements.txt \
+    pip install -f https://git.io/purplship -r /temp/requirements.txt \
     pip freeze
 
 RUN chmod +x docker-entrypoint.sh

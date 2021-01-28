@@ -7,8 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, ValidationError
 from django.utils.translation import gettext_lazy as _
-from django_email_verification import sendConfirm
-from django_email_verification import urls as mail_urls
+from django_email_verification import send_email, urls as mail_urls
 
 
 class SignUpForm(UserCreationForm):
@@ -20,7 +19,7 @@ class SignUpForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit)
         if commit and settings.EMAIL_ENABLED:
-            sendConfirm(user)
+            send_email(user)
 
         return user
 

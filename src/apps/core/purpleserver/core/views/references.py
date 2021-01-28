@@ -3,14 +3,15 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.serializers import Serializer
-
-from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
+from django.urls import path
 
 from purplship.core.units import Country
 from purpleserver.core.router import router
 from purpleserver.core.serializers import PlainDictField
 from purpleserver.core.dataunits import REFERENCE_MODELS, PACKAGE_MAPPERS
+
+ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 line = "\n"
 
@@ -163,7 +164,7 @@ class References(Serializer):
 @swagger_auto_schema(
     methods=['get'],
     tags=['Utils'],
-    operation_id="references",
+    operation_id=f"{ENDPOINT_ID}references",
     operation_summary="Data References",
     operation_description=MODELS_DOCUMENTATION,
     responses={200: References()}

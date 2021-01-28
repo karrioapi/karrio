@@ -9,13 +9,7 @@ ENV_DIR=".venv"
 export SECRET_KEY="n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r"
 export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
-[[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
-
-#export EMAIL_HOST="smtp.gmail.com"
-#export EMAIL_PORT=587
-#export EMAIL_USE_TLS=True
-#export EMAIL_HOST_USER=""
-#export EMAIL_HOST_PASSWORD=""
+[[ -d "$wheels" ]] && export PIP_FIND_LINKS="${PIP_FIND_LINKS} file://${wheels}"
 
 deactivate_env() {
   if command -v deactivate &> /dev/null
@@ -43,7 +37,8 @@ create_env() {
 }
 
 init() {
-    create_env && pip install -r "${ROOT:?}/requirements.dev.txt"
+    create_env &&
+    pip install -f https://git.io/purplship -r "${ROOT:?}/requirements.dev.txt"
 }
 
 
@@ -56,10 +51,13 @@ alias env:reset=init
 # Project helpers
 
 install_released() {
-  pip install purplship-server \
+  pip install -f https://git.io/purplship \
+  	purplship-server \
     purplship-server.core \
     purplship-server.proxy \
-    purplship-server.extension \
+    purplship-server.client \
+    purplship-server.manager \
+    purplship-server.pricing \
     purplship.canadapost \
     purplship.dhl_express \
     purplship.fedex_express \
@@ -70,45 +68,35 @@ install_released() {
 }
 
 migrate () {
+  purplship makemigrations
+
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
-    migrate="purplship migrate_schemas --shared"
+    purplship migrate_schemas --shared
   else
-    migrate="purplship migrate"
+    purplship migrate
   fi
 
-  purplship makemigrations &&
-  eval "$migrate" &&
-  purplship collectstatic --noinput
-
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
 
     (echo "
-from purpleserver.tenants.models import Client
+from purpleserver.tenants.models import Client, Domain
 if not any(Client.objects.all()):
-  Client.objects.create(name='public', schema_name='public', domain_url='localhost')
+  Domain.objects.create(domain='localhost', tenant=Client.objects.create(name='public', schema_name='public'))
+  Domain.objects.create(domain='127.0.0.1', tenant=Client.objects.create(name='purplship', schema_name='purplship'))
 " | purplship shell) > /dev/null 2>&1;
 
     (echo "
-from django.contrib.auth import get_user_model
-if not any(get_user_model().objects.all()):
-   get_user_model().objects.create_superuser('root@test.com', 'demo')
-" | purplship shell) > /dev/null 2>&1;
-
-    (echo "
-from purpleserver.tenants.models import Client;
-if not any(Client.objects.all()):
-  Client.objects.create(name='purpleserver', schema_name='purpleserver', domain_url='127.0.0.1')
-" | purplship shell) > /dev/null 2>&1;
-
-    (echo "
-from tenant_schemas.utils import tenant_context
+from django_tenants.utils import tenant_context
 from django.contrib.auth import get_user_model
 from purpleserver.tenants.models import Client
-with tenant_context(Client.objects.get(schema_name='purpleserver')):
+with tenant_context(Client.objects.get(schema_name='public')):
   if not any(get_user_model().objects.all()):
-     get_user_model().objects.create_superuser('admin@test.com', 'demo')
+     get_user_model().objects.create_superuser('root@domain.com', 'demo')
+with tenant_context(Client.objects.get(schema_name='purplship')):
+  if not any(get_user_model().objects.all()):
+     get_user_model().objects.create_superuser('admin@domain.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
   else
@@ -116,7 +104,7 @@ with tenant_context(Client.objects.get(schema_name='purpleserver')):
     (echo "
 from django.contrib.auth import get_user_model
 if not any(get_user_model().objects.all()):
-   get_user_model().objects.create_superuser('admin@test.com', 'demo')
+   get_user_model().objects.create_superuser('admin@domain.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
     (echo "from django.contrib.auth import get_user_model; from rest_framework.authtoken.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
@@ -125,6 +113,7 @@ if not any(get_user_model().objects.all()):
 CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a', user=get_user_model().objects.first())" | purplship shell) > /dev/null 2>&1;
   fi
 
+  purplship collectstatic --noinput
 }
 
 runservices() {
@@ -166,7 +155,7 @@ runserver() {
   fi
 
   if [[ "$*" == *--rdata* ]]; then
-    migrate "$@"
+    migrate
   fi
 
   purplship runserver
@@ -229,7 +218,7 @@ build_client() {
 }
 
 build_image() {
-  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/docker/Dockerfile" "${ROOT:?}"
+  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}"
 }
 
 

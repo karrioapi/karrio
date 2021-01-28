@@ -273,25 +273,12 @@ class Rates:
         if len(carrier_settings_list) == 0:
             raise NotFound("No configured and active carriers specified")
 
-        def process(carrier_settings: CarrierSettings):
-            try:
-                gateway = purplship.gateway[carrier_settings.carrier_name].create(carrier_settings.dict())
-                return request.from_(gateway).parse()
-            except Exception as e:
-                logger.exception(e)
-                return [[], [Message(
-                    code="500",
-                    carrier_name=carrier_settings.carrier_name,
-                    carrier_id=carrier_settings.carrier_id,
-                    message=str(e)
-                )]]
+        gateways = (purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list)
 
         # The request call is wrapped in identity to simplify mocking in tests
-        results = identity(lambda: exec_async(process, carrier_settings_list))
-        flattened_rates = sum((r for r, _ in results if r is not None), [])
-        messages = sum((m for _, m in results), [])
+        rates, messages = identity(lambda: request.from_(*gateways).parse())
 
-        if not any(flattened_rates) and any(messages):
+        if not any(rates) and any(messages):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
         def consolidate_rate(rate: Rate) -> Rate:
@@ -303,7 +290,7 @@ class Rates:
                 **DP.to_dict(rate)
             })
 
-        rates: List[Rate] = sorted(map(consolidate_rate, flattened_rates), key=lambda rate: rate.total_charge)
+        rates: List[Rate] = sorted(map(consolidate_rate, rates), key=lambda rate: rate.total_charge)
 
         return RateResponse(
             rates=sorted(rates, key=lambda rate: rate.total_charge),

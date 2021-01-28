@@ -4,7 +4,6 @@ from enum import Enum
 from jstruct import JStruct, JList, REQUIRED
 from purplship.core.utils import DP
 from purplship.core.models import (
-    Doc,
     Parcel,
     Message,
     Address,
@@ -91,8 +90,8 @@ class RateRequest(BaseRateRequest):
 
 @attr.s(auto_attribs=True)
 class ShipmentRequest(BaseShipmentRequest):
-    service: str = JStruct[str, REQUIRED]
-    selected_rate_id: str = JStruct[str, REQUIRED]
+    service: str
+    selected_rate_id: str
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
@@ -101,7 +100,6 @@ class ShipmentRequest(BaseShipmentRequest):
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
-    doc_images: List[Doc] = JList[Doc]
 
     options: Dict = {}
     reference: str = ""
@@ -127,7 +125,6 @@ class Shipment:
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
-    doc_images: List[Doc] = JList[Doc]
 
     options: Dict = {}
     reference: str = ""

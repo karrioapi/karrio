@@ -1,9 +1,9 @@
 import logging
 from django.urls import path
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
+from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.core.views.api import APIView
 from purpleserver.proxy.router import router
@@ -20,14 +20,14 @@ from purpleserver.core.serializers import (
 )
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class PickupDetails(APIView):
 
     @swagger_auto_schema(
-        tags=['Pickups'],
-        operation_id=f"{ENDPOINT_ID}schedule",
+        tags=['Proxy'],
+        operation_id=f"{ENDPOINT_ID}schedule_pickup",
         operation_summary="Schedule a pickup",
         query_serializer=TestFilters(),
         request_body=PickupRequest(),
@@ -35,8 +35,6 @@ class PickupDetails(APIView):
     )
     def post(self, request: Request, carrier_name: str):
         """
-        **[proxy]**
-
         Schedule one or many parcels pickup
         """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
@@ -49,8 +47,8 @@ class PickupDetails(APIView):
         return Response(PickupResponse(response).data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
-        tags=['Pickups'],
-        operation_id=f"{ENDPOINT_ID}update",
+        tags=['Proxy'],
+        operation_id=f"{ENDPOINT_ID}update_pickup",
         operation_summary="Update a pickup",
         query_serializer=TestFilters(),
         request_body=PickupUpdateRequest(),
@@ -58,8 +56,6 @@ class PickupDetails(APIView):
     )
     def put(self, request: Request, carrier_name: str):
         """
-        **[proxy]**
-
         Modify a scheduled pickup
         """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
@@ -73,8 +69,8 @@ class PickupDetails(APIView):
 class PickupCancel(APIView):
 
     @swagger_auto_schema(
-        tags=['Pickups'],
-        operation_id=f"{ENDPOINT_ID}cancel",
+        tags=['Proxy'],
+        operation_id=f"{ENDPOINT_ID}cancel_pickup",
         operation_summary="Cancel a pickup",
         query_serializer=TestFilters(),
         request_body=PickupCancelRequest(),
@@ -82,8 +78,6 @@ class PickupCancel(APIView):
     )
     def post(self, request: Request, carrier_name: str):
         """
-        **[proxy]**
-
         Cancel a pickup previously scheduled
         """
         filters = SerializerDecorator[TestFilters](data=request.query_params).data

@@ -1,5 +1,5 @@
 from django.db import models
-from tenant_schemas.models import TenantMixin
+from django_tenants.models import TenantMixin, DomainMixin
 
 
 class Client(TenantMixin):
@@ -12,3 +12,9 @@ class Client(TenantMixin):
 
     def __str__(self):
         return self.name
+
+
+class Domain(DomainMixin):
+
+    def __str__(self):
+        return self.domain

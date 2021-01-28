@@ -2,9 +2,8 @@ import logging
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from django.urls import path
-
 from drf_yasg.utils import swagger_auto_schema
+from django.urls import path
 
 from purpleserver.core.views.api import APIView
 from purpleserver.core.serializers import (
@@ -14,11 +13,9 @@ from purpleserver.core.gateway import Rates
 from purpleserver.proxy.router import router
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 DESCRIPTIONS = """
-**[proxy]**
-
 The Shipping process begins by fetching rates for your shipment.
 Use this service to fetch a shipping rates available.
 """
@@ -27,7 +24,7 @@ Use this service to fetch a shipping rates available.
 class RateViewAPI(APIView):
 
     @swagger_auto_schema(
-        tags=['Rates'],
+        tags=['Proxy'],
         operation_id=f"{ENDPOINT_ID}fetch",
         operation_summary="Fetch shipment rates",
         operation_description=DESCRIPTIONS,

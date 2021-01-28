@@ -6,6 +6,7 @@ from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import CARRIERS, PlainDictField
 from purpleserver.providers.models import MODELS, Carrier
 
+
 CarrierName = str
 CarrierSerializer = Type[ModelSerializer]
 
@@ -13,12 +14,12 @@ CarrierSerializer = Type[ModelSerializer]
 def generate_provider_serializer() -> Dict[CarrierName, CarrierSerializer]:
 
     def _create_serializer(name) -> CarrierSerializer:
-        class _Serializer(ModelSerializer):
+        class _CarrierSerializer(ModelSerializer):
             class Meta:
                 model = MODELS[name]
                 exclude = ['id', 'created_at', 'updated_at', 'user']
 
-        return _Serializer
+        return _CarrierSerializer
 
     return {
         name: _create_serializer(name) for name in MODELS.keys()

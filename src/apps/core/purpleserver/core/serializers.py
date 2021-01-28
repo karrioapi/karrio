@@ -8,7 +8,7 @@ from rest_framework.serializers import (
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit,
     PackagingUnit, PaymentType, Currency,
-    PrinterType, CustomsContentType, Incoterm,
+    CustomsContentType, Incoterm,
     LabelType
 )
 from purpleserver.providers.models import MODELS
@@ -27,7 +27,6 @@ WEIGHT_UNIT = [(c.name, c.name) for c in list(WeightUnit)]
 DIMENSION_UNIT = [(c.name, c.name) for c in list(DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(PackagingUnit)]
 PAYMENT_TYPES = [(c.name, c.name) for c in list(PaymentType)]
-PRINTER_TYPES = [(c.name, c.name) for c in list(PrinterType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 
 
@@ -177,24 +176,12 @@ class Parcel(EntitySerializer, ParcelData):
     pass
 
 
-class Card(Serializer):
-
-    type = CharField(required=True, help_text="The credit card type")
-    number = CharField(required=True, help_text="The credit card number")
-    expiry_month = CharField(required=True, help_text="The credit card expiry month (MM)")
-    expiry_year = CharField(required=True, help_text="The credit card expiry year (YYYY)")
-    security_code = CharField(required=True, help_text="The credit card security code often at the back (000)")
-    name = CharField(required=False, allow_blank=True, allow_null=True, help_text="The name inscribed on the credit card")
-    postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The credit card registration address postal code")
-
-
 class PaymentData(Serializer):
 
     paid_by = ChoiceField(required=True, choices=PAYMENT_TYPES, help_text="The payment payer")
     amount = FloatField(required=False, allow_null=True, help_text="The payment amount if known")
     currency = ChoiceField(required=True, choices=CURRENCIES, help_text="The payment amount currency")
     account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected rate carrier payer account number")
-    credit_card = Card(required=False, allow_null=True, help_text="The payment credit card for payment by card")
     contact = Address(required=False, allow_null=True, help_text="The billing address")
 
 
@@ -224,13 +211,6 @@ class CustomsData(Serializer):
 
 class Customs(EntitySerializer, CustomsData):
     pass
-
-
-class Doc(Serializer):
-
-    type = CharField(required=True, help_text="The document type")
-    image = CharField(required=True, help_text="encoded base64 string of the document")
-    format = CharField(required=False, allow_blank=True, allow_null=True, help_text="The document format")
 
 
 class COD(Serializer):
@@ -463,11 +443,6 @@ class ShippingData(Serializer):
     The customs details.<br/>
     Note that this is required for the shipment of an international Dutiable parcel.
     """)
-    doc_images = Doc(many=True, required=False, allow_null=True, help_text="""
-    The list of documents to attach for a paperless interantional trade.
-    
-    eg: Invoices...
-    """)
     reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
     label_type = ChoiceField(required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
 
@@ -542,11 +517,6 @@ class ShipmentContent(Serializer):
     customs = Customs(required=False, allow_null=True, help_text="""
     The customs details.<br/>
     Note that this is required for the shipment of an international Dutiable parcel.
-    """)
-    doc_images = Doc(many=True, required=False, allow_null=True, default=[], help_text="""
-    The list of documents to attach for a paperless interantional trade.
-
-    eg: Invoices...
     """)
     reference = CharField(required=False, allow_blank=True, allow_null=True, help_text="The shipment reference")
     label_type = ChoiceField(required=False, choices=LABEL_TYPES, allow_blank=True, allow_null=True, help_text="The shipment label file type.")

@@ -58,3 +58,12 @@ $footer-background-color: $white;
       min-width: 448px;
     }
 }
+
+@media screen and (max-width: 768px) {
+    .isolated-card {
+      box-shadow: none;
+    }
+    .container {
+    	margin: 0;
+    }
+}

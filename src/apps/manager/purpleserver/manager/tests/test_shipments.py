@@ -312,11 +312,9 @@ SHIPMENT_RESPONSE = {
         "amount": None,
         "currency": "CAD",
         "account_number": None,
-        "credit_card": None,
         "contact": None
     },
     "customs": None,
-    "doc_images": [],
     "reference": None,
     "carrier_ids": [
         "canadapost"
@@ -336,7 +334,7 @@ SHIPMENT_OPTIONS = {
 }
 
 
-RETURNED_RATES_VALUE = [(
+RETURNED_RATES_VALUE = (
     [
         RateDetails(
             carrier_id="canadapost",
@@ -363,7 +361,7 @@ RETURNED_RATES_VALUE = [(
         )
     ],
     [],
-)]
+)
 
 
 SHIPMENT_PURCHASE_DATA = {
@@ -490,11 +488,9 @@ PURCHASED_SHIPMENT = {
         "amount": None,
         "currency": "CAD",
         "account_number": None,
-        "credit_card": None,
         "contact": None
     },
     "customs": None,
-    "doc_images": [],
     "reference": None,
     "carrier_ids": [],
     "created_at": ANY,

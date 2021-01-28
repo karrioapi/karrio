@@ -1,9 +1,8 @@
 import logging
 from rest_framework.response import Response
 from rest_framework.request import Request
-
-from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
+from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
@@ -14,14 +13,14 @@ from purpleserver.manager.router import router
 from purpleserver.manager.serializers import TrackingSerializer
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class TrackingList(GenericAPIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}tracking_statuses",
+        tags=['Tracking'],
+        operation_id=f"{ENDPOINT_ID}statuses",
         operation_summary="List all tracking statuses",
         responses={200: TrackingStatus(many=True), 400: ErrorResponse()}
     )
@@ -37,8 +36,8 @@ class TrackingList(GenericAPIView):
 class TrackingDetails(APIView):
 
     @swagger_auto_schema(
-        tags=['Shipments'],
-        operation_id=f"{ENDPOINT_ID}track",
+        tags=['Tracking'],
+        operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a tracking status",
         query_serializer=TestFilters(),
         responses={200: TrackingStatus(), 404: ErrorResponse()}

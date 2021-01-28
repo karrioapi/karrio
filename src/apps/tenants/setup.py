@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.tenants',
-      version='2020.10.0',
+      version='2021.0',
       description='Multi-carrier shipping API muti-tenant module',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -16,7 +16,7 @@ setup(
       packages=find_namespace_packages("."),
       install_requires=[
             'purplship-server.core',
-            'django-tenant-schemas',
+            'django-tenants',
       ],
       dependency_links=[
             'https://git.io/purplship',
