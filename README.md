@@ -1,19 +1,28 @@
 # purplship-carriers
 
-Carrier services Python data types libraries
+This repository is the host to multiple carrier web services generated Python data types libraries.
 
-- [Aramex - carrier.aramex](https://github.com/PurplShip/purplship-carriers/tree/master/aramex)
-- [Australia Post - carrier.australiapost](https://github.com/PurplShip/purplship-carriers/tree/master/australiapost)
-- [BoxKnight - carrier.boxknight](https://github.com/PurplShip/purplship-carriers/tree/master/boxknight)
-- [Canada Post - carrier.canadapost](https://github.com/PurplShip/purplship-carriers/tree/master/canadapost)
-- [Canpar - carrier.canpar](https://github.com/PurplShip/purplship-carriers/tree/master/canpar)
-- [DHL - carrier.dhl](https://github.com/PurplShip/purplship-carriers/tree/master/dhl)
-- [Dicom - carrier.dicom](https://github.com/PurplShip/purplship-carriers/tree/master/dicom)
-- [FedEx - carrier.fedex](https://github.com/PurplShip/purplship-carriers/tree/master/fedex)
-- [Purolator - carrier.purolator](https://github.com/PurplShip/purplship-carriers/tree/master/purolator)
-- [Royalmail - carrier.royalmail](https://github.com/PurplShip/purplship-carriers/tree/master/royalmail)
-- [DB Schenker - carrier.schenker](https://github.com/PurplShip/purplship-carriers/tree/master/schenker)
-- [Sendle - carrier.sendle](https://github.com/PurplShip/purplship-carriers/tree/master/sendle)
-- [TNT - carrier.tnt](https://github.com/PurplShip/purplship-carriers/tree/master/tnt)
-- [UPS - carrier.ups](https://github.com/PurplShip/purplship-carriers/tree/master/ups)
-- [USPS - carrier.usps](https://github.com/PurplShip/purplship-carriers/tree/master/usps)
+- [Australia Post - carrier.australiapost](/australiapost)
+- [BoxKnight - carrier.boxknight](/boxknight)
+- [Canada Post - carrier.canadapost](/canadapost)
+- [Canpar - carrier.canpar](/canpar)
+- [DHL - carrier.dhl_express](/dhl_express)
+- [Dicom - carrier.dicom](/dicom)
+- [FedEx - carrier.fedex](/fedex)
+- [Purolator - carrier.purolator](/purolator)
+- [Sendle - carrier.sendle](/sendle)
+- [UPS - carrier.ups](/ups)
+- [USPS - carrier.usps](/usps)
+
+*These packages are used by the [Purplship Multi-carrier Shipping SDK](https://github.com/PurplShip/purplship)*
+
+## License
+
+This project is licensed under the terms of the `MIT` license.
+Please see [LICENSE.md](/LICENSE) for licensing details.
+
+
+## Authors
+
+- **Daniel K.** | [@DanHK91](https://twitter.com/DanHK91) | [danielk.xyz](https://danielk.xyz/)
+- **Purplship Team** | hello@purplship.com | [purplship.com](https://purplship.com)
