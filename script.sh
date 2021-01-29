@@ -5,10 +5,15 @@
 ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
+DIST="${ROOT:?}/.dist"
+
+## icon vars
+cross="\xE2\x9D\x8C"
+check="\xE2\x9C\x94"
 
 export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
-[[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
+[[ -d "$wheels" ]] && export PIP_FIND_LINKS="${PIP_FIND_LINKS} file://${wheels}"
 
 activate_env() {
   echo "Activate $BASE_DIR"
@@ -47,28 +52,44 @@ generate () {
 }
 
 clean_builds() {
-  find . -type d -not -path "*$ENV_DIR/*" -name dist -exec rm -r {} \;
-  find . -type d -not -path "*$ENV_DIR/*" -name build -exec rm -r {} \;
-  find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -exec rm -r {} \;
+	echo "Clean up..."
+    find . -type d -not -path "*$ENV_DIR/*" -name dist -prune -exec rm -r '{}' \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name build -prune -exec rm -r '{}' \; || true
+    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -prune -exec rm -r '{}' \; || true
 }
 
 backup_wheels() {
+  echo "Backup..."
   # shellcheck disable=SC2154
   [[ -d "$wheels" ]] &&
-  find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} "$wheels" \; &&
+  find "${DIST}" -name \*.whl -exec cp '{}' "$wheels" \; &&
   clean_builds
 }
 
 build() {
+  echo "Building..."
   clean_builds
-  mkdir -p ./dist
-  for d in py-*/ ; do
-    pushd ${d} &&
-    python setup.py bdist_wheel
-    popd
+  rm -rf "${DIST}"
+  mkdir -p "${DIST}"
+
+  for pkg in $(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname '{}' \;); do
+    cd ${pkg};
+	output=$(python setup.py -q bdist_wheel 2>&1);
+	r=$?;
+	cd - > /dev/null;
+	if [[ ${r} -eq 1 ]]; then
+		echo "> building "$(basename ${pkg})" ${cross} \n $output"; return ${r};
+	else
+		echo "> building "$(basename ${pkg})" ${check} ";
+	fi;
   done
-  find . -not -path "*$ENV_DIR/*" -name \*.whl -exec mv {} ./dist \;
+
+  find . -maxdepth 3 -mindepth 3 -not -path "*$ENV_DIR/*" -name \*.whl -prune -exec mv '{}' "${DIST}" \;
   backup_wheels
+}
+
+upload() {
+	python -m twine upload "${DIST}/.dist/*"
 }
 
 env:on || true
