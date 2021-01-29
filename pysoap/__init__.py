@@ -1,1 +1,1 @@
-from .envelope import Header, Body, Envelope
+from pysoap.envelope import Header, Body, Envelope
