@@ -72,9 +72,9 @@ build() {
   rm -rf "${DIST}"
   mkdir -p "${DIST}"
 
-  for pkg in $(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname '{}' \;); do
+  for pkg in $(find "${ROOT:?}" -type f -name "pyproject.toml" ! -path "*$ENV_DIR/*" -exec dirname '{}' \;); do
     cd ${pkg};
-	output=$(python setup.py -q bdist_wheel 2>&1);
+	output=$(poetry build 2>&1);
 	r=$?;
 	cd - > /dev/null;
 	if [[ ${r} -eq 1 ]]; then
@@ -89,7 +89,7 @@ build() {
 }
 
 upload() {
-	python -m twine upload "${DIST}/.dist/*"
+	twine upload "${DIST}/*"
 }
 
 env:on || true

@@ -1,3 +1,4 @@
 generateDS
+poetry
 twine
 wheel
