@@ -78,13 +78,14 @@ build() {
     clean
 	rm -rf "${DIST}"
 	mkdir -p "${DIST}"
+	yes | cp "${ROOT}/README.md" "${ROOT}/purplship/README.md"
 
     echo "building wheels..."
     packages=("${ROOT}/purplship")
     packages+=($(submodules))
 	for pkg in ${packages}; do
 		cd ${pkg};
-		output=$(poetry build 2>&1);
+		output=$(poetry build -f wheel 2>&1);
 		r=$?;
 		cd - > /dev/null;
 		if [[ ${r} -eq 1 ]]; then
