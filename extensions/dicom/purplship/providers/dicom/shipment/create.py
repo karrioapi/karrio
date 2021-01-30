@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pydicom.shipments import (
+from dicom_lib.shipments import (
     ShipmentRequest as DicomShipmentRequest,
     Address as DicomAddress,
     Parcel,

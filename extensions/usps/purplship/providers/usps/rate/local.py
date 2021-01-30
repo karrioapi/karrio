@@ -1,8 +1,8 @@
 from functools import reduce
 from typing import List, Any, Tuple
 from datetime import datetime
-from pyusps.rate_v4_response import PostageType, SpecialServiceType
-from pyusps.rate_v4_request import (
+from usps_lib.rate_v4_response import PostageType, SpecialServiceType
+from usps_lib.rate_v4_request import (
     RateV4Request,
     PackageType,
     SpecialServicesType,

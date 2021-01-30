@@ -1,5 +1,5 @@
 from typing import List, Tuple, cast
-from pycanpar.CanparAddonsService import (
+from canpar_lib.CanparAddonsService import (
     trackByBarcodeV2,
     TrackByBarcodeV2Rq,
     TrackingResult,

@@ -47,7 +47,7 @@ class TestPurolatorShipment(unittest.TestCase):
                 SHIPMENT_RESPONSE_XML,
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
             ]
-            Shipment.create(self.ShipmentRequest).with_(gateway)
+            Shipment.create(self.ShipmentRequest).from_(gateway)
 
             validate_call, create_call, document_call = mocks.call_args_list
 
@@ -83,7 +83,7 @@ class TestPurolatorShipment(unittest.TestCase):
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
             ]
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertEqual(
@@ -94,7 +94,7 @@ class TestPurolatorShipment(unittest.TestCase):
         with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
             mocks.side_effect = [VALIDATE_SHIPMENT_ERROR_RESPONSE_XML]
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(PARSED_INVALID_SHIPMENT_RESPONSE)

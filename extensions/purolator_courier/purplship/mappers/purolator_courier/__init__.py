@@ -3,7 +3,7 @@ from purplship.core.metadata import Metadata
 from purplship.mappers.purolator_courier.mapper import Mapper
 from purplship.mappers.purolator_courier.proxy import Proxy
 from purplship.mappers.purolator_courier.settings import Settings
-import purplship.providers.purolator.units as units
+import purplship.providers.purolator_courier.units as units
 
 
 METADATA = Metadata(

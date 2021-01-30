@@ -1,7 +1,7 @@
 from typing import Callable
 from purplship.core import Settings as BaseSettings
 from purplship.core.utils import Envelope, apply_namespaceprefix, XP
-from pyfedex.rate_service_v26 import (
+from fedex_lib.rate_service_v26 import (
     WebAuthenticationCredential,
     WebAuthenticationDetail,
     ClientDetail,

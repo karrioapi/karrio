@@ -60,7 +60,7 @@ class TestCanadaPostShipment(unittest.TestCase):
     def test_create_shipment(self):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = ["<a></a>", ""]
-            purplship.Shipment.create(self.ShipmentRequest).with_(gateway)
+            purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             create_call, _ = mocks.call_args_list
             self.assertEqual(
@@ -104,7 +104,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         with patch("purplship.mappers.canadapost.proxy.http") as mocks:
             mocks.side_effect = [ShipmentResponseXML, LabelResponse]
             parsed_response = (
-                purplship.Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))

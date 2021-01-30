@@ -1,7 +1,7 @@
 from typing import Callable
 from purplship.core import Settings as BaseSettings
 from purplship.core.utils import Envelope, apply_namespaceprefix, XP
-from pyups.ups_security import UPSSecurity, UsernameTokenType, ServiceAccessTokenType
+from ups_lib.ups_security import UPSSecurity, UsernameTokenType, ServiceAccessTokenType
 
 
 class Settings(BaseSettings):

@@ -19,7 +19,7 @@ from purplship.core.models import (
     RateDetails,
     Message,
 )
-from purplship.providers.purolator.package import (
+from purplship.providers.purolator_courier import (
     parse_address_validation_response,
     parse_pickup_update_response,
     parse_pickup_cancel_response,

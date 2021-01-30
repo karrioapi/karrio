@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Tuple, List, Optional, cast
-from pyfedex.rate_service_v26 import (
+from fedex_lib.rate_service_v26 import (
     RateRequest as FedexRateRequest,
     RateReplyDetail,
     TransactionDetail,

@@ -43,7 +43,7 @@ class TestUPSPickup(unittest.TestCase):
     def test_create_pickup(self):
         with patch("purplship.mappers.ups_package.proxy.http") as mocks:
             mocks.side_effect = [PickupRateResponseXML, PickupResponseXML]
-            purplship.Pickup.schedule(self.PickupRequest).with_(gateway)
+            purplship.Pickup.schedule(self.PickupRequest).from_(gateway)
 
             rate_call, create_call = mocks.call_args_list
             self.assertEqual(
@@ -82,7 +82,7 @@ class TestUPSPickup(unittest.TestCase):
         with patch("purplship.mappers.ups_package.proxy.http") as mocks:
             mocks.side_effect = [PickupRateResponseXML, PickupResponseXML]
             parsed_response = (
-                purplship.Pickup.schedule(self.PickupRequest).with_(gateway).parse()
+                purplship.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)

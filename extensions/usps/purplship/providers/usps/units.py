@@ -1,5 +1,6 @@
 """Purplship USPS enumerations module"""
 
+import typing
 from purplship.core.utils import Enum
 
 
@@ -140,7 +141,7 @@ class Service(Enum):
     @staticmethod
     def find(service: str) -> 'Service':
         return next(reversed(sorted(
-            [s for s in list(Service) if s.value in service],
+            [s for s in list(typing.cast(Enum, Service)) if s.value in service],
             key=lambda s: len(s.value)
         )))
 

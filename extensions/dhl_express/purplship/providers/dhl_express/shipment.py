@@ -1,7 +1,7 @@
 import time
 from base64 import encodebytes
 from typing import List, Tuple, Optional, cast
-from pydhl.ship_val_global_req_6_2 import (
+from dhl_express_lib.ship_val_global_req_6_2 import (
     ShipmentRequest as DHLShipmentRequest,
     Billing,
     Consignee,
@@ -20,7 +20,7 @@ from pydhl.ship_val_global_req_6_2 import (
     DimensionUnit,
     Label,
 )
-from pydhl.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
+from dhl_express_lib.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
 from purplship.core.utils import Serializable, SF, XP
 from purplship.core.utils.xml import Element
 from purplship.core.models import (

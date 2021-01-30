@@ -1,6 +1,6 @@
 from functools import reduce
 from typing import Callable, List, Tuple
-from pyups.rate_web_service_schema import (
+from ups_lib.rate_web_service_schema import (
     RateRequest as UPSRateRequest,
     RatedShipmentType,
     ShipmentRatingOptionsType,

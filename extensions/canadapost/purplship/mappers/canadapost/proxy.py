@@ -1,6 +1,6 @@
 import base64
 from typing import List
-from pycanadapost.rating import mailing_scenario
+from canadapost_lib.rating import mailing_scenario
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.core.errors import PurplShipError
 from purplship.core.utils.serializable import Serializable, Deserializable

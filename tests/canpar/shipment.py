@@ -43,7 +43,7 @@ class TestCanparShipment(unittest.TestCase):
                 ShipmentResponseXML,
                 ShipmentLabelResponseXML,
             ]
-            purplship.Shipment.create(self.ShipmentRequest).with_(gateway)
+            purplship.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             process_shipment_call, get_label_call = mocks.call_args_list
 
@@ -82,7 +82,7 @@ class TestCanparShipment(unittest.TestCase):
                 ShipmentLabelResponseXML,
             ]
             parsed_response = (
-                purplship.Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                purplship.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))

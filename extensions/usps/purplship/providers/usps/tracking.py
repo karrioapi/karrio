@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from pyusps.track_field_request import TrackFieldRequest, TrackIDType
-from pyusps.track_response import TrackInfoType, TrackDetailType
+from usps_lib.track_field_request import TrackFieldRequest, TrackIDType
+from usps_lib.track_response import TrackInfoType, TrackDetailType
 from purplship.core.utils import Serializable, Element, XP, DF
 from purplship.core.models import (
     TrackingRequest,

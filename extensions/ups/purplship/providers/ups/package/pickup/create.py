@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from functools import partial
-from pyups.pickup_web_service_schema import (
+from ups_lib.pickup_web_service_schema import (
     PickupCreationRequest,
     PickupCreationResponse,
     RequestType,

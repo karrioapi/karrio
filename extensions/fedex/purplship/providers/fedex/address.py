@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pyfedex.address_validation_service_v4 import (
+from fedex_lib.address_validation_service_v4 import (
     AddressValidationRequest as FedexAddressValidationRequest,
     AddressValidationReply,
     AddressToValidate,

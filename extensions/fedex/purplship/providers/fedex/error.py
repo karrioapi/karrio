@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pyfedex.rate_service_v26 import Notification
+from fedex_lib.rate_service_v26 import Notification
 from purplship.core.models import Message
 from purplship.core.utils import Element, extract_fault, XP
 from purplship.providers.fedex.utils import Settings

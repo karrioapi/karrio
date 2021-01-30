@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pyusps.evs_request import (
+from usps_lib.evs_request import (
     eVSRequest,
     ImageParametersType,
     LabelSequenceType,

@@ -35,7 +35,7 @@ class TestUPSShipment(unittest.TestCase):
 
     @patch("purplship.mappers.ups_package.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        Shipment.create(self.ShipmentRequest).with_(gateway)
+        Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, f"{gateway.settings.server_url}/Ship")
@@ -44,7 +44,7 @@ class TestUPSShipment(unittest.TestCase):
         with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = NegotiatedShipmentResponseXML
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
             self.assertListEqual(
                 DP.to_dict(parsed_response), NegotiatedParsedShipmentResponse
@@ -54,7 +54,7 @@ class TestUPSShipment(unittest.TestCase):
         with patch("purplship.mappers.ups_package.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 

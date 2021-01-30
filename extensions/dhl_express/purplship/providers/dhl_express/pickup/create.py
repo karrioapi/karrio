@@ -1,7 +1,7 @@
 from typing import Tuple, List
-from pydhl.book_pickup_global_req_3_0 import BookPURequest, MetaData
-from pydhl.book_pickup_global_res_3_0 import BookPUResponse
-from pydhl.pickupdatatypes_global_3_0 import (
+from dhl_express_lib.book_pickup_global_req_3_0 import BookPURequest, MetaData
+from dhl_express_lib.book_pickup_global_res_3_0 import BookPUResponse
+from dhl_express_lib.pickupdatatypes_global_3_0 import (
     Requestor,
     Place,
     Pickup,

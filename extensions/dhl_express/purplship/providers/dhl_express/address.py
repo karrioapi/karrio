@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pydhl.routing_global_req_2_0 import (
+from dhl_express_lib.routing_global_req_2_0 import (
     RouteRequest,
     RequestTypeType as RequestType,
     MetaData,

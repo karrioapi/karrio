@@ -1,8 +1,8 @@
 from typing import Tuple, List, Union, Type
-import pyusps.evs_express_mail_intl_request as evs_express
-import pyusps.evs_priority_mail_intl_request as evs_priority
-import pyusps.evs_first_class_mail_intl_request as evs_first_class
-import pyusps.evs_gxg_get_label_request as evs_gxg
+import usps_lib.evs_express_mail_intl_request as evs_express
+import usps_lib.evs_priority_mail_intl_request as evs_priority
+import usps_lib.evs_first_class_mail_intl_request as evs_first_class
+import usps_lib.evs_gxg_get_label_request as evs_gxg
 from purplship.core.utils import Serializable, XP
 from purplship.core.models import (
     ShipmentRequest,

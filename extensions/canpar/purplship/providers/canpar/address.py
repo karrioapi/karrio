@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pycanpar.CanparRatingService import (
+from canpar_lib.CanparRatingService import (
     searchCanadaPost,
     SearchCanadaPostRq,
     Address as CanparAddress

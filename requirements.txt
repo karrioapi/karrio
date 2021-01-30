@@ -1,8 +1,0 @@
-attrs==20.3.0
-jstruct==2020.4.0
-lxml==4.6.2
-lxml-stubs==0.1.1
-phonenumbers==8.12.16
-Pillow==8.1.0
-purplship==2021.0
-xmltodict==0.12.0

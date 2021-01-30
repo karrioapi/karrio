@@ -1,7 +1,7 @@
 import urllib.parse
 from typing import Tuple, List
 from functools import partial
-from pydicom.pickups import (
+from dicom_lib.pickups import (
     PickupRequest as DicomPickupRequest,
     Sender,
     Contact,

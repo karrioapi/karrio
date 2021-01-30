@@ -1,5 +1,5 @@
 from typing import List, Any
-from pyups.av_request import AddressValidationRequest
+from ups_lib.av_request import AddressValidationRequest
 from purplship.core.utils import (
     XP,
     request as http,

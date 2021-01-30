@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pyups.pickup_web_service_schema import (
+from ups_lib.pickup_web_service_schema import (
     PickupCancelRequest as UPSPickupCancelRequest,
     CodeDescriptionType,
     RequestType,

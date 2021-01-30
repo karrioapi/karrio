@@ -4,7 +4,7 @@ from urllib.error import HTTPError
 from purplship.core.utils.xml import Element
 from purplship.providers.canadapost import Settings
 from purplship.core.models import Message
-from pycanadapost.messages import messageType
+from canadapost_lib.messages import messageType
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:

@@ -1,8 +1,8 @@
 from typing import Tuple, List
-from pyusps.evs_cancel_request import eVSCancelRequest
-from pyusps.evs_cancel_response import eVSCancelResponse
-from pyusps.evsi_cancel_request import eVSICancelRequest
-from pyusps.evsi_cancel_response import eVSICancelResponse
+from usps_lib.evs_cancel_request import eVSCancelRequest
+from usps_lib.evs_cancel_response import eVSCancelResponse
+from usps_lib.evsi_cancel_request import eVSICancelRequest
+from usps_lib.evsi_cancel_response import eVSICancelResponse
 from purplship.core.utils import Serializable, Element, XP
 from purplship.core.models import (
     ShipmentCancelRequest,

@@ -26,7 +26,7 @@ class TestDHLShipment(unittest.TestCase):
 
     @patch("purplship.mappers.dhl_express.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        Shipment.create(self.ShipmentRequest).with_(gateway)
+        Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, gateway.settings.server_url)
@@ -35,7 +35,7 @@ class TestDHLShipment(unittest.TestCase):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = ShipmentParsingError
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentParsingError)
@@ -45,7 +45,7 @@ class TestDHLShipment(unittest.TestCase):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = ShipmentMissingArgsError
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentMissingArgsError)
@@ -55,7 +55,7 @@ class TestDHLShipment(unittest.TestCase):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = ShipmentResponseXml
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))

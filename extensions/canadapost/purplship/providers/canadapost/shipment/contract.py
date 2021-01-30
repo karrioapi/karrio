@@ -1,5 +1,5 @@
 from typing import Tuple, List, Any
-from pycanadapost.shipment import (
+from canadapost_lib.shipment import (
     ShipmentType,
     ShipmentInfoType,
     DeliverySpecType,

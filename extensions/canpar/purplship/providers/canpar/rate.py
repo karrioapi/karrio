@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List, Tuple, Optional
-from pycanpar.CanparRatingService import (
+from canpar_lib.CanparRatingService import (
     rateShipment,
     RateShipmentRq,
     Shipment,

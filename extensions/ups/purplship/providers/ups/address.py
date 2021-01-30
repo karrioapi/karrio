@@ -1,10 +1,10 @@
 from typing import Tuple, List
-from pyups.av_request import (
+from ups_lib.av_request import (
     AddressValidationRequest as UPSAddressValidationRequest,
     AddressType,
     RequestType,
 )
-from pyups.av_response import Response
+from ups_lib.av_response import Response
 from purplship.core.utils import Serializable, Element, XP
 from purplship.core.models import AddressValidationRequest, Message, AddressValidationDetails
 from purplship.providers.ups.utils import Settings

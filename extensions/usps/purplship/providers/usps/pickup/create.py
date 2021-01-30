@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pyusps.carrier_pickup_schedule_request import CarrierPickupScheduleRequest, PackageType
+from usps_lib.carrier_pickup_schedule_request import CarrierPickupScheduleRequest, PackageType
 from purplship.core.utils import Serializable, SF
 from purplship.core.units import Packages
 from purplship.core.models import (
