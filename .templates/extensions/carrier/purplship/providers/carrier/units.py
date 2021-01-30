@@ -1,20 +1,19 @@
 """ [carrier] Native Types """
 
 from purplship.core.utils import Enum, Flag
-from purplship.core.units import PackagePreset as BasePackagePreset
-from dataclasses import dataclass
 
-
-@dataclass
-class PackagePreset(BasePackagePreset):
-    dimension_unit: str = "IN"
-    weight_unit: str = "LB"
-    packaging_type: str = "medium_box"
+PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
 
 class PackagePresets(Flag):
-    # carrier_envelope = PackagePreset(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope")
-    # carrier_box = PackagePreset(weight=1.0, width=33.7, height=18.2, length=10.0)
+    # carrier_envelope = PackagePreset(
+    #     **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"),
+    #     **PRESET_DEFAULTS
+    # )
+    # carrier_box = PackagePreset(
+    #     **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="medium_box"),
+    #     **PRESET_DEFAULTS
+    # )
     pass
 
 

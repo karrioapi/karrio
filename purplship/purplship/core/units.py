@@ -1,6 +1,6 @@
 """Purplship universal data types and units definitions"""
+import attr
 import phonenumbers
-from dataclasses import dataclass
 from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any, cast
 from purplship.core.utils import NF, Enum
 from purplship.core.models import Parcel
@@ -11,7 +11,7 @@ from purplship.core.errors import (
 )
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class PackagePreset:
     width: float = None
     height: float = None
