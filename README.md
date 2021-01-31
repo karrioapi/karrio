@@ -23,7 +23,7 @@ The key features are:
 - **Unified API**: A standardized set of models representing the common shipping data (`Address`, `Parcel`, `Shipment`...)
 - **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Pickup`, `Tracking`...) 
 - **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
-- **Custom carrier**: A framework that reduces months of shipping carrier service integration to hours
+- **Custom carrier**: A framework to integrate a shipping carrier services within hours instead of months
 
 
 *For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).*
@@ -37,11 +37,13 @@ Python 3.7+
 
 ```bash
 # install purplship core
-pip install -f https://git.io/purplship purplship
+pip install purplship
 
 # install the purplship canadapost extention
-pip install -f https://git.io/purplship purplship.canadapost
+pip install purplship.canadapost
 ```
+
+Additional extensions:
 
 <details>
 <summary>Available carriers</summary>
@@ -158,7 +160,7 @@ Do you want to extend Purplship and integrate a custom carrier, check out [Exten
 ## License
 
 This project is licensed under the terms of the `LGPL v3` license.
-Please see [LICENSE.md](https://github.com/Purplship/Purplship/blob/master/LICENSE) for licensing details.
+Please see [LICENSE.md](/LICENSE) for licensing details.
 
 
 ## Authors

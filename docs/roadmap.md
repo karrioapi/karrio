@@ -2,7 +2,9 @@
 
 ## Carrier Support
 
-:white_check_mark: - `Integrated` |  :black_circle: - `Alpha`, `Beta` | :ballot_box_with_check: - `Missing Live Test` :white_circle: - `Roadmap (Future)` | :red_circle: - `Not Supported`
+
+!!! hint ""
+    :white_check_mark: - `Integrated` | :ballot_box_with_check: - `Missing Live Test` |  :black_circle: - `Alpha`, `Beta` :white_circle: - `Roadmap (Future)` | :red_circle: - `Not Supported`
 
 <table>
   <tr>
@@ -42,6 +44,15 @@
     <td align="center"><img alt="☑" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2611.svg" title=":ballot_box_with_check:"></td>
     <td><code>purplship.fedex_express</code></td>
   </tr>
+  <tr>
+    <td><code>UPS</code></td>
+    <td align="center"><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"></td>
+    <td align="center"><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"></td>
+    <td align="center"><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"></td>
+    <td align="center"><img alt="☑" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2611.svg" title=":ballot_box_with_check:"></td>
+    <td align="center"><img alt="☑" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2611.svg" title=":ballot_box_with_check:"></td>
+    <td><code>purplship.ups_package</code></td>
+  </tr>
   
   <tr>
     <td colspan="7"><strong>Canada</strong></td>
@@ -66,15 +77,6 @@
     <td><code>purplship.purolator_courier</code></td>
   </tr>
   <tr>
-    <td><code>UPS - CA</code></td>
-    <td align="center"><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"></td>
-    <td align="center"><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"></td>
-    <td align="center"><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"></td>
-    <td align="center"><img alt="☑" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2611.svg" title=":ballot_box_with_check:"></td>
-    <td align="center"><img alt="☑" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2611.svg" title=":ballot_box_with_check:"></td>
-    <td><code>purplship.ups_package</code></td>
-  </tr>
-  <tr>
     <td><code>Canpar</code></td>
     <td align="center"><img alt="☑" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2611.svg" title=":ballot_box_with_check:"></td>
     <td align="center"><img alt="☑" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2611.svg" title=":ballot_box_with_check:"></td>
@@ -97,7 +99,7 @@
     <td align="center"><img alt="⚫" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26ab.svg" title=":black_circle:"></td>
     <td align="center"><img alt="⚫" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26ab.svg" title=":black_circle:"></td>
     <td align="center"><img alt="🔴" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f534.svg" title=":red_circle:"></td>
-    <td align="center"><img alt="🔴" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f534.svg" title=":red_circle:"></td>
+    <td align="center"><img alt="⚫" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26ab.svg" title=":black_circle:"></td>
     <td align="center"><img alt="🔴" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f534.svg" title=":red_circle:"></td>
     <td><code>purplship.boxknight</code></td>
   </tr>
@@ -114,15 +116,6 @@
     <td align="center"><img alt="⚫" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26ab.svg" title=":black_circle:"></td>
     <td align="center"><img alt="⚫" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26ab.svg" title=":black_circle:"></td>
     <td><code>purplship.usps</code></td>
-  </tr>
-  <tr>
-    <td><code>UPS - US</code></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td></td>
   </tr>
   
   <tr>
@@ -147,27 +140,16 @@
     <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
     <td></td>
   </tr>
-  <tr>
-    <td><code>UPS - AUS</code></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td align="center"><img alt="⚪" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26aa.svg" title=":white_circle:"></td>
-    <td></td>
-  </tr>
   
 </table>
 
-### Legend
+!!! hint "Legend"
 
-| Icons | Info |
-|:---:| --- |
-| :white_check_mark: | `Integrated`
-| :ballot_box_with_check: | `Missing Live Test`
-| :black_circle: | `Alpha`, `Beta`
-| :white_circle: | `Roadmap (Future)`
-| :red_circle: | `Not Supported`
+    - :white_check_mark: `Integrated`
+    - :ballot_box_with_check: `Missing Live Test`
+    - :black_circle: `Alpha`, `Beta`
+    - :white_circle: `Roadmap (Future)`
+    - :red_circle: `Not Supported`
 
 
 ## Shipping Integration Enhancement

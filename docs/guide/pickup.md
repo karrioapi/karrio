@@ -1,56 +1,56 @@
 ## `Schedule`
 
-=== "Plain"
-    ```python
-    import purplship
-    
-    response = purplship.Pickup.schedule({
-        ...
-    })
-    ```
+```python
+import purplship
+from purplship.core.models import PickupRequest
 
-=== "Typed"
-    ```python
-    import purplship
-    from purplship.core.models import PickupRequest
+request = PickupRequest(...)
+
+pickup, messages = purplship.Pickup.schedule(request).from_(gateway).parse()
+```
+
+
+!!! info
+    Checkout the reference for more details on the `PickupRequest` and 
+    the returned `PickupDetails` and potential `Message` in case of 
+    failure or notice 
     
-    response = purplship.Pickup.schedule(PickupRequest(...))
-    ```
+    [REFERENCES](/references)
 
 ## `Update`
 
-=== "Plain"
-    ```python
-    import purplship
-    
-    response = purplship.Pickup.update({
-        ...
-    })
-    ```
+```python
+import purplship
+from purplship.core.models import PickupUpdateRequest
 
-=== "Typed"
-    ```python
-    import purplship
-    from purplship.core.models import PickupUpdateRequest
+request = PickupUpdateRequest(...)
+
+pickup, messages = purplship.Pickup.update(request).from_(gateway).parse()
+```
+
+
+!!! info
+    Checkout the reference for more details on the `PickupUpdateRequest` and 
+    the returned `PickupDetails` and potential `Message` in case of 
+    failure or notice 
     
-    response = purplship.Pickup.update(PickupRequest(...))
-    ```
+    [REFERENCES](/references)
 
 ## `Cancel`
 
-=== "Plain"
-    ```python
-    import purplship
-    
-    response = purplship.Pickup.cancel({
-        ...
-    })
-    ```
+```python
+import purplship
+from purplship.core.models import PickupCancelRequest
 
-=== "Typed"
-    ```python
-    import purplship
-    from purplship.core.models import PickupCancelRequest
+request = PickupCancelRequest(...)
+
+confirmation, messages = purplship.Pickup.cancel(request).from_(gateway).parse()
+```
+
+
+!!! info
+    Checkout the reference for more details on the `PickupCancelRequest` and 
+    the returned `ConfirmationDetails` and potential `Message` in case of 
+    failure or notice 
     
-    response = purplship.Pickup.cancel(PickupCancelRequest(...))
-    ```
+    [REFERENCES](/references)

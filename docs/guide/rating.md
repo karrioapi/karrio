@@ -1,21 +1,22 @@
 ## `Fetch`
 
-Using the fluent API with a gateway previously initialized, you can fetch live shipment rates
+Using the fluent API with a gateway previously initialized, you can fetch live shipping rates
 
-=== "Plain"
-    ```python
-    import purplship
-    
-    response = purplship.Rating.fetch({...})
-    ```
 
-=== "Typed"
-    ```python
-    import purplship
-    from purplship.core.models import RateRequest
-    
-    response = purplship.Rating.fetch(RateRequest(...))
-    ```
+```python
+import purplship
+from purplship.core.models import RateRequest
+
+request = RateRequest(...)
+
+rates, messages = purplship.Rating.fetch(request).from_(gateway).parse()
+```
+
+
+!!! info
+    Checkout the reference for more details on the `RateRequest` and the returned `RateDetails` and 
+    potential `Message` in case of error
+
 
 ### Example
 
@@ -58,43 +59,30 @@ request = purplship.Rating.fetch(
     )
 )
 
-response = request.from_(canadapost).parse()
+response = request.from_(gateway).parse()
 ```
 
 ???+ check "Rating output"
 
     ```python
-    from purplship.core.utils import DP
-    print(DP.jsonify(response))
-    ```
-    
-    ```json
-    [
-        [
-            {
-                "base_charge": 12.26,
-                "carrier_id": "canadapost",
-                "carrier_name": "canadapost",
-                "currency": "CAD",
-                "discount": 1.38,
-                "duties_and_taxes": 0.0,
-                "extra_charges": [
-                    {
-                        "amount": -0.37,
-                        "currency": "CAD",
-                        "name": "Automation discount"
-                    },
-                    {
-                        "amount": 1.75,
-                        "currency": "CAD",
-                        "name": "Fuel surcharge"
-                    }
-                ],
-                "service": "canadapost_xpresspost",
-                "total_charge": 13.64,
-                "transit_days": 2
-            }
-        ],
-        []
-    ]
+    print(rates)
+    # [
+    #     RateDetails(
+    #         carrier_name="canadapost",
+    #         carrier_id="canadapost",
+    #         currency="CAD",
+    #         transit_days=2,
+    #         service="canadapost_xpresspost",
+    #         discount=1.38,
+    #         base_charge=12.26,
+    #         total_charge=13.64,
+    #         duties_and_taxes=0.0,
+    #         extra_charges=[
+    #             ChargeDetails(name="Automation discount", amount=-0.37, currency="CAD"),
+    #             ChargeDetails(name="Fuel surcharge", amount=1.75, currency="CAD"),
+    #         ],
+    #         meta=None,
+    #         id=None,
+    #     )
+    # ]
     ```

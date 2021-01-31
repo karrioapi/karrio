@@ -35,6 +35,7 @@ def request(decoder: Callable = decode_bytes, on_error: Callable[[HTTPError], st
     logger.debug(f"sending request")
     try:
         req = Request(**args)
+        logger.info(f"Request URL:: {req.full_url}")
         with urlopen(req) as f:
             res = f.read()
             try:

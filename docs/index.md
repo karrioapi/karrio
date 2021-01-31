@@ -19,7 +19,7 @@ The key features are:
 - **Unified API**: A standardized set of models representing the common shipping data (`Address`, `Parcel`, `Shipment`...)
 - **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Pickup`, `Tracking`...) 
 - **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
-- **Custom carrier**: A framework that reduces months of shipping carrier service integration to hours
+- **Custom carrier**: A framework to integrate a shipping carrier services within minutes
 
 
 *For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).*
@@ -32,28 +32,22 @@ Python 3.7+
 ## Installation
 
 ```bash
-# Get the latest core dependencies version freeze
-curl -L -O https://raw.githubusercontent.com/PurplShip/purplship/main/requirements.txt
-```
+# Install Purplship
+pip install purplship
 
+# Install carrier extensions
+pip install purplship.canadapost
+```
 
 !!! info ""
-    **Add carrier extensions**
+    **Available carrier extensions**
     
-    ```text
-    # requirement.txt
-    ...
-    purplship.canadapost
-    purplship.dhl_express
-    purplship.fedex_express
-    purplship.purolator_courier
-    purplship.ups_package
-    ```
+    - `purplship.canadapost`
+    - `purplship.dhl_express`
+    - `purplship.fedex_express`
+    - `purplship.purolator_courier`
+    - `purplship.ups_package`
 
-```bash
-# Install purplship
-pip install -f https://git.io/purplship -r requirements.txt
-```
 
 ## Example
 
@@ -144,7 +138,7 @@ print(rates)
 ## License
 
 This project is licensed under the terms of the `LGPL v3` license.
-Please see [LICENSE.md](https://github.com/Purplship/Purplship/blob/master/LICENSE) for licensing details.
+Please see [LICENSE.md](https://github.com/Purplship/Purplship/blob/main/LICENSE) for licensing details.
 
 
 ## Authors
