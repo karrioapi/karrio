@@ -1,24 +1,19 @@
 ## `Validation`
 
-=== "Plain"
-    ```python
-    import purplship
-    
-    response = purplship.Address.validate({
-        ...
-    })
-    ```
+```python
+import purplship
+from purplship.core.models import AddressValidationRequest
 
-=== "Typed"
-    ```python
-    import purplship
-    from purplship.core.models import AddressValidationRequest
-    
-    response = purplship.Address.validate(AddressValidationRequest(...))
-    ```
+request = AddressValidationRequest(...)
+
+validation, messages = purplship.Address.validate(request).from_(gateway).parse()
+```
 
 
 !!! info
-    Check the [Address validation request reference](/references/#addressvalidationrequest) 
-    to see the parameters
+    Checkout the reference for more details on the `AddressValidationRequest` and 
+    the returned `AddressValidationDetails` and potential `Message` in case of 
+    failure or notice 
+    
+    [REFERENCES](/references)
 

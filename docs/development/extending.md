@@ -68,6 +68,36 @@ Two modules are required to create a Purplship extension.
 
 !!! abstract "`purplship.providers.[carrier_name]`"
     This is where the mapping between Purplship Unified API data is mapped on the carrier data type corresponding requests
+    
+#### extension signature
+
+The Mapper is the cornerstone of Purplship's abstraction. A `Metadata` declared at `purplship.mappers.[carrier_name].__init__`
+specifies the integration classes required to define a Purplship compatible extension.
+
+```text
+from purplship.core.metadata import Metadata
+
+from purplship.mappers.[carrier_name].mapper import Mapper
+from purplship.mappers.[carrier_name].proxy import Proxy
+from purplship.mappers.[carrier_name].settings import Settings
+import purplship.providers.[carrier_name].units as units
+
+
+METADATA = Metadata(
+    label="[Carrier Name]",
+
+    # Integrations
+    Mapper=Mapper,
+    Proxy=Proxy,
+    Settings=Settings,
+
+    # Data Units (Optional...)
+    options=units.OptionCode,  # Enum of Shipping options supported by the carrier
+    package_presets=units.PackagePresets, # Enum of parcel presets/templates
+    services=units.ServiceType,  # Enum of Shipping services supported by the carrier
+)
+``` 
+
 
 #### file structure
 
@@ -265,7 +295,7 @@ Check the [py-canadapost](https://github.com/PurplShip/purplship-carriers/tree/m
 to define yours.
 
 !!! info
-    The package naming convention for carrier data types library is `py-[carrier_name]`
+    The package naming convention for carrier data types library is `carrier.[carrier_name]`
 
 ---
 

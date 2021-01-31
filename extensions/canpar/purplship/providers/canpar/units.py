@@ -1,12 +1,4 @@
 from purplship.core.utils import Enum, Flag
-from purplship.core.units import PackagePreset as BasePackagePreset
-from dataclasses import dataclass
-
-
-@dataclass
-class PackagePreset(BasePackagePreset):
-    dimension_unit: str = "IN"
-    weight_unit: str = "LB"
 
 
 class WeightUnit(Flag):

@@ -1,4 +1,4 @@
-from pycanadapost.rating import (
+from canadapost_lib.rating import (
     mailing_scenario,
     optionsType,
     optionType,

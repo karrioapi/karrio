@@ -47,15 +47,6 @@ typecheck
 !!! info
     This command run type checker provided by `mypy`
 
-## Run the type checker
-
-```bash
-typecheck
-```
-
-!!! info
-    This command run type checker provided by `mypy`
-
 ## Docs
 
 First, make sure you set up your environment as described above, that will install all the requirements.

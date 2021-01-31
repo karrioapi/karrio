@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pydicom.rates import (
+from dicom_lib.rates import (
     RateRequest as DicomRateRequest,
     Address,
     Parcel,

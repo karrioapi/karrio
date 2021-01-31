@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pyboxknight.orders import (
+from boxknight_lib.orders import (
     OrderRequest,
     Address,
     Recipient,

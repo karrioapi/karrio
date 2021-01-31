@@ -1,5 +1,5 @@
 from typing import List
-from pyups.error_1_1 import CodeType
+from ups_lib.error_1_1 import CodeType
 from purplship.core.models import Message
 from purplship.core.utils.xml import Element
 from purplship.providers.ups.utils import Settings

@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pycanpar.CanshipBusinessService import (
+from canpar_lib.CanshipBusinessService import (
     voidShipment,
     VoidShipmentRq,
 )

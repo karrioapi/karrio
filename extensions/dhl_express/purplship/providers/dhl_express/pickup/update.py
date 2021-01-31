@@ -1,7 +1,7 @@
 from typing import Tuple, List
-from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest, MetaData
-from pydhl.modify_pickup_global_res_3_0 import ModifyPUResponse
-from pydhl.pickupdatatypes_global_3_0 import (
+from dhl_express_lib.modify_pickup_global_req_3_0 import ModifyPURequest, MetaData
+from dhl_express_lib.modify_pickup_global_res_3_0 import ModifyPUResponse
+from dhl_express_lib.pickupdatatypes_global_3_0 import (
     Requestor,
     Place,
     RequestorContact,

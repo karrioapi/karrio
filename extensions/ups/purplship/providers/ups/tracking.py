@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from pyups.common import RequestType, TransactionReferenceType
-from pyups.track_web_service_schema import TrackRequest, ShipmentType, ActivityType, AddressType
+from ups_lib.common import RequestType, TransactionReferenceType
+from ups_lib.track_web_service_schema import TrackRequest, ShipmentType, ActivityType, AddressType
 from purplship.core.utils import Serializable, Element, apply_namespaceprefix, create_envelope, Envelope, XP, DF
 from purplship.core.models import (
     TrackingEvent,

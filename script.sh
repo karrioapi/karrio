@@ -4,9 +4,10 @@
 ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
+DIST="${ROOT:?}/.dist"
+
 export wheels=~/Wheels
-export PIP_FIND_LINKS="https://git.io/purplship"
-[[ -d "$wheels" ]] && export PIP_FIND_LINKS=file://${wheels}
+[[ -d "$wheels" ]] && export PIP_FIND_LINKS="file://${wheels}"
 
 ## icon vars
 cross="\xE2\x9D\x8C"
@@ -27,17 +28,17 @@ create_env() {
     mkdir -p "${ROOT:?}/$ENV_DIR"
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
     activate_env &&
-    pip install --upgrade pip wheel > /dev/null
+    pip install --upgrade pip poetry twine > /dev/null
 }
 
 submodules() {
-    find "${ROOT:?}/extensions" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -exec dirname '{}' \;
+    find "${ROOT:?}/extensions" -type f -name "pyproject.toml" ! -path "*$ENV_DIR/*" -exec dirname '{}' \;
 }
 
 init() {
 	echo "Dev setup..."
     create_env &&
-    pip install -r "${ROOT:?}/requirements.dev.txt" > /dev/null
+    poetry install > /dev/null
 }
 
 # Project helpers
@@ -53,7 +54,7 @@ test() {
 
 typecheck() {
 	echo "Checking typing..."
-    packages=(${ROOT}"/purplship")
+    packages=(${ROOT}"/purplship/purplship")
     packages+=($(submodules))
 	for module in ${packages}; do
 		for submodule in $(find ${module} -type f -name "__init__.py" -exec dirname '{}' \;); do
@@ -69,18 +70,22 @@ check() {
 backup() {
     echo "Listing submodules..."
     [[ -d "$wheels" ]] &&
-    find . -not -path "*$ENV_DIR/*" -name \*.whl -prune -exec mv '{}' "$wheels" \; &&
+    find "${DIST}" -not -path "*$ENV_DIR/*" -name \*.whl -prune -exec cp '{}' "$wheels" \; &&
     clean
 }
 
 build() {
     clean
+	rm -rf "${DIST}"
+	mkdir -p "${DIST}"
+	yes | cp "${ROOT}/README.md" "${ROOT}/purplship/README.md"
+
     echo "building wheels..."
-    packages=(${ROOT})
+    packages=("${ROOT}/purplship")
     packages+=($(submodules))
 	for pkg in ${packages}; do
 		cd ${pkg};
-		output=$(python setup.py -q bdist_wheel 2>&1);
+		output=$(poetry build -f wheel 2>&1);
 		r=$?;
 		cd - > /dev/null;
 		if [[ ${r} -eq 1 ]]; then
@@ -89,6 +94,8 @@ build() {
 			echo "> building "$(basename ${pkg})" ${check} ";
 		fi;
     done
+
+	find . -mindepth 3 ! -path "*$ENV_DIR/*" -name \*.whl -prune -exec mv '{}' "${DIST}" \;
     backup
 }
 
@@ -111,6 +118,10 @@ cli() {
 
 docs() {
 	cd "${ROOT:?}" && mkdocs serve -a localhost:4000; cd -
+}
+
+upload() {
+	twine upload "${DIST}/*"
 }
 
 

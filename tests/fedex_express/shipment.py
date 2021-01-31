@@ -34,7 +34,7 @@ class TestFedExShipment(unittest.TestCase):
 
     @patch("purplship.mappers.fedex_express.proxy.http", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
-        Shipment.create(self.ShipmentRequest).with_(gateway)
+        Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(url, f"{gateway.settings.server_url}/ship")
@@ -50,7 +50,7 @@ class TestFedExShipment(unittest.TestCase):
         with patch("purplship.mappers.fedex_express.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))

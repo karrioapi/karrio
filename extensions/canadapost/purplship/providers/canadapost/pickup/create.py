@@ -1,7 +1,7 @@
 from typing import Tuple, List, Union
 from functools import partial
-from pycanadapost.pickup import pickup_availability
-from pycanadapost.pickuprequest import (
+from canadapost_lib.pickup import pickup_availability
+from canadapost_lib.pickuprequest import (
     PickupRequestDetailsType,
     PickupRequestUpdateDetailsType,
     PickupLocationType,

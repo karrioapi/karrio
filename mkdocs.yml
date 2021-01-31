@@ -16,11 +16,11 @@ nav:
   - User Guide:
     - guide/gateway.md
     - guide/rating.md
-    - guide/shipment.md
+    - guide/shipping.md
     - guide/tracking.md
     - guide/pickup.md
     - guide/address.md
-    - Error Handling: guide/error.md
+    - Error & Debug: guide/error.md
   - Development:
     - development/contributing.md
     - development/architecture.md

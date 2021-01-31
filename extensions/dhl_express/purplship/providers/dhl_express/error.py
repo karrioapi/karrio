@@ -3,7 +3,7 @@ from functools import reduce
 from purplship.core.utils.xml import Element
 from purplship.providers.dhl_express import Settings
 from purplship.core.models import Message
-from pydhl.dct_response_global_2_0 import ConditionType
+from dhl_express_lib.dct_response_global_2_0 import ConditionType
 
 
 def parse_error_response(response, settings: Settings) -> List[Message]:

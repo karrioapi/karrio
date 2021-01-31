@@ -1,7 +1,7 @@
 from typing import Tuple, List
 from datetime import datetime
-from pyusps.intl_rate_v2_request import IntlRateV2Request, PackageType, ExtraServicesType
-from pyusps.intl_rate_v2_response import ServiceType, ExtraServiceType
+from usps_lib.intl_rate_v2_request import IntlRateV2Request, PackageType, ExtraServicesType
+from usps_lib.intl_rate_v2_response import ServiceType, ExtraServiceType
 from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
 from purplship.core.units import Packages, Country, Weight, WeightUnit, Services

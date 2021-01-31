@@ -1,6 +1,6 @@
 import time
 from typing import Tuple, List
-from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
+from dhl_express_lib.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
 from purplship.core.utils import XP,  Serializable
 from purplship.core.models import (
     PickupCancelRequest,

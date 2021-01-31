@@ -1,5 +1,5 @@
 from jstruct import struct
-from pycanpar.CanshipBusinessService import (
+from canpar_lib.CanshipBusinessService import (
     GetLabelsAdvancedRq,
     getLabelsAdvanced
 )

@@ -1,13 +1,13 @@
 from typing import Any
 from purplship.core.utils import XP, request as http, Serializable, Deserializable
 from purplship.api.proxy import Proxy as BaseProxy
-from pydhl.dct_req_global_2_0 import DCTRequest
-from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
-from pydhl.ship_val_global_req_6_2 import ShipmentRequest
-from pydhl.book_pickup_global_req_3_0 import BookPURequest
-from pydhl.modify_pickup_global_req_3_0 import ModifyPURequest
-from pydhl.cancel_pickup_global_req_3_0 import CancelPURequest
-from pydhl.routing_global_req_2_0 import RouteRequest
+from dhl_express_lib.dct_req_global_2_0 import DCTRequest
+from dhl_express_lib.tracking_request_known_1_0 import KnownTrackingRequest
+from dhl_express_lib.ship_val_global_req_6_2 import ShipmentRequest
+from dhl_express_lib.book_pickup_global_req_3_0 import BookPURequest
+from dhl_express_lib.modify_pickup_global_req_3_0 import ModifyPURequest
+from dhl_express_lib.cancel_pickup_global_req_3_0 import CancelPURequest
+from dhl_express_lib.routing_global_req_2_0 import RouteRequest
 from purplship.mappers.dhl_express.settings import Settings
 
 

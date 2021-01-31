@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 from functools import partial
-from pyfedex.pickup_service_v20 import (
+from fedex_lib.pickup_service_v20 import (
     PickupAvailabilityReply,
     CreatePickupRequest,
     TransactionDetail,

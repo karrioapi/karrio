@@ -13,7 +13,6 @@
     <a href="https://github.com/python/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" style="max-width:100%;"></a>
     <a href="https://codecov.io/gh/Purplship/Purplship"><img src="https://codecov.io/gh/Purplship/Purplship/branch/main/graph/badge.svg" alt="codecov" style="max-width:100%;"></a>
     <a href="https://app.codacy.com/manual/DanH91/Purplship?utm_source=github.com&utm_medium=referral&utm_content=Purplship/Purplship&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709" alt="Codacy Badge" style="max-width:100%;"></a>
-    <a href="https://gitter.im/Purplship/Purplship?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/Purplship/purplship.svg" alt="Join the chat at https://gitter.im/Purplship/Purplship" style="max-width:100%;"></a>
   </p>
 </p>
 
@@ -24,7 +23,7 @@ The key features are:
 - **Unified API**: A standardized set of models representing the common shipping data (`Address`, `Parcel`, `Shipment`...)
 - **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Pickup`, `Tracking`...) 
 - **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
-- **Custom carrier**: A framework that reduces months of shipping carrier service integration to hours
+- **Custom carrier**: A framework to integrate a shipping carrier services within hours instead of months
 
 
 *For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).*
@@ -38,11 +37,13 @@ Python 3.7+
 
 ```bash
 # install purplship core
-pip install -f https://git.io/purplship purplship
+pip install purplship
 
 # install the purplship canadapost extention
-pip install -f https://git.io/purplship purplship.canadapost
+pip install purplship.canadapost
 ```
+
+Additional extensions:
 
 <details>
 <summary>Available carriers</summary>
@@ -146,6 +147,7 @@ print(rates)
 
 - [**Documentation**](https://sdk.purplship.com)
 - [**Bug Tracker**](https://github.com/PurplShip/purplship/issues)
+- [**Community on Discord**](https://discord.gg/kXEa3UMRHd)
 
 ## Contributing
 
@@ -158,7 +160,7 @@ Do you want to extend Purplship and integrate a custom carrier, check out [Exten
 ## License
 
 This project is licensed under the terms of the `LGPL v3` license.
-Please see [LICENSE.md](https://github.com/Purplship/Purplship/blob/master/LICENSE) for licensing details.
+Please see [LICENSE.md](/LICENSE) for licensing details.
 
 
 ## Authors

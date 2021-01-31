@@ -1,7 +1,7 @@
 import time
 from functools import reduce
 from typing import List, Tuple, cast, Iterable
-from pydhl.dct_req_global_2_0 import (
+from dhl_express_lib.dct_req_global_2_0 import (
     DCTRequest,
     DCTTo,
     DCTFrom,
@@ -13,8 +13,8 @@ from pydhl.dct_req_global_2_0 import (
     QtdShpType,
     QtdShpExChrgType,
 )
-from pydhl.dct_requestdatatypes_global import DCTDutiable
-from pydhl.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
+from dhl_express_lib.dct_requestdatatypes_global import DCTDutiable
+from dhl_express_lib.dct_response_global_2_0 import QtdShpType as ResponseQtdShpType
 
 from purplship.core.errors import DestinationNotServicedError
 from purplship.core.utils import Serializable, Element, NF, XP, DF

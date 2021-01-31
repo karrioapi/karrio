@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pyboxknight.pickups import PickupUpdateRequest as BoxKnightPickupUpdateRequest
+from boxknight_lib.pickups import PickupUpdateRequest as BoxKnightPickupUpdateRequest
 from purplship.core.utils import Serializable
 from purplship.core.models import (
     ShipmentDetails,

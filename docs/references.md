@@ -8,6 +8,9 @@
 | `date - str` | `YYYY-MM-DD`
 | `datetime - str` | `YYYY-MM-DD HH:MM`
 
+---
+
+
 ## Gateway
 
 #### USPS Settings
@@ -117,10 +120,12 @@
 | `id` | `str` | 
 | `test` | `boolean` |
 
+---
+
 
 ## Models
 
-### Carrier models
+All models can be imported at `from purplship.core.models import [ModelName]`
 
 #### Address
 
@@ -407,7 +412,7 @@
 | `language_code` | `str` | 
 | `level_of_details` | `str` | 
 
-
+---
 
 
 ## Packaging Types
@@ -478,7 +483,7 @@
 | `dhl_double_pallets` | DBL
 | `dhl_box` | BOX
 
-
+---
 
 
 ## Package Presets
@@ -556,7 +561,7 @@
 | `canadapost_xexpresspost_certified_envelope` | 15.9 x 1.5 x 0.5 x 26.0 | height x length x weight x width
 | `canadapost_xexpresspost_national_large_envelope` | 29.2 x 1.5 x 1.36 x 40.0 | height x length x weight x width
 
-
+---
 
 
 ## Shipping Services
@@ -787,10 +792,10 @@
 | `canadapost_small_packet_international_surface` | INT.SP.SURF
 | `canadapost_tracked_packet_international` | INT.TP
 
+---
 
 
-
-## Shipment Options
+## Shipping Options
 
 
 #### UPS Package
@@ -1165,3 +1170,612 @@
 | `canadapost_return_to_sender` | RTS
 | `canadapost_abandon` | ABAN
 
+
+---
+
+## Countries
+
+| Code | Name
+| --- | ---
+| `AD` | Andorra
+| `AE` | United Arab Emirates
+| `AF` | Afghanistan
+| `AG` | Antigua
+| `AI` | Anguilla
+| `AL` | Albania
+| `AM` | Armenia
+| `AN` | Netherlands Antilles
+| `AO` | Angola
+| `AR` | Argentina
+| `AS` | American Samoa
+| `AT` | Austria
+| `AU` | Australia
+| `AW` | Aruba
+| `AZ` | Azerbaijan
+| `BA` | Bosnia And Herzegovina
+| `BB` | Barbados
+| `BD` | Bangladesh
+| `BE` | Belgium
+| `BF` | Burkina Faso
+| `BG` | Bulgaria
+| `BH` | Bahrain
+| `BI` | Burundi
+| `BJ` | Benin
+| `BM` | Bermuda
+| `BN` | Brunei
+| `BO` | Bolivia
+| `BR` | Brazil
+| `BS` | Bahamas
+| `BT` | Bhutan
+| `BW` | Botswana
+| `BY` | Belarus
+| `BZ` | Belize
+| `CA` | Canada
+| `CD` | Congo, The Democratic Republic Of
+| `CF` | Central African Republic
+| `CG` | Congo
+| `CH` | Switzerland
+| `CI` | Cote D Ivoire
+| `CK` | Cook Islands
+| `CL` | Chile
+| `CM` | Cameroon
+| `CN` | China, Peoples Republic
+| `CO` | Colombia
+| `CR` | Costa Rica
+| `CU` | Cuba
+| `CV` | Cape Verde
+| `CY` | Cyprus
+| `CZ` | Czech Republic, The
+| `DE` | Germany
+| `DJ` | Djibouti
+| `DK` | Denmark
+| `DM` | Dominica
+| `DO` | Dominican Republic
+| `DZ` | Algeria
+| `EC` | Ecuador
+| `EE` | Estonia
+| `EG` | Egypt
+| `ER` | Eritrea
+| `ES` | Spain
+| `ET` | Ethiopia
+| `FI` | Finland
+| `FJ` | Fiji
+| `FK` | Falkland Islands
+| `FM` | Micronesia, Federated States Of
+| `FO` | Faroe Islands
+| `FR` | France
+| `GA` | Gabon
+| `GB` | United Kingdom
+| `GD` | Grenada
+| `GE` | Georgia
+| `GF` | French Guyana
+| `GG` | Guernsey
+| `GH` | Ghana
+| `GI` | Gibraltar
+| `GL` | Greenland
+| `GM` | Gambia
+| `GN` | Guinea Republic
+| `GP` | Guadeloupe
+| `GQ` | Guinea-equatorial
+| `GR` | Greece
+| `GT` | Guatemala
+| `GU` | Guam
+| `GW` | Guinea-bissau
+| `GY` | Guyana (british)
+| `HK` | Hong Kong
+| `HN` | Honduras
+| `HR` | Croatia
+| `HT` | Haiti
+| `HU` | Hungary
+| `IC` | Canary Islands, The
+| `ID` | Indonesia
+| `IE` | Ireland, Republic Of
+| `IL` | Israel
+| `IN` | India
+| `IQ` | Iraq
+| `IR` | Iran (islamic Republic Of)
+| `IS` | Iceland
+| `IT` | Italy
+| `JE` | Jersey
+| `JM` | Jamaica
+| `JO` | Jordan
+| `JP` | Japan
+| `KE` | Kenya
+| `KG` | Kyrgyzstan
+| `KH` | Cambodia
+| `KI` | Kiribati
+| `KM` | Comoros
+| `KN` | St. Kitts
+| `KP` | Korea, The D.p.r Of (north K.)
+| `KR` | Korea, Republic Of (south K.)
+| `KV` | Kosovo
+| `KW` | Kuwait
+| `KY` | Cayman Islands
+| `KZ` | Kazakhstan
+| `LA` | Lao Peoples Democratic Republic
+| `LB` | Lebanon
+| `LC` | St. Lucia
+| `LI` | Liechtenstein
+| `LK` | Sri Lanka
+| `LR` | Liberia
+| `LS` | Lesotho
+| `LT` | Lithuania
+| `LU` | Luxembourg
+| `LV` | Latvia
+| `LY` | Libya
+| `MA` | Morocco
+| `MC` | Monaco
+| `MD` | Moldova, Republic Of
+| `ME` | Montenegro, Republic Of
+| `MG` | Madagascar
+| `MH` | Marshall Islands
+| `MK` | Macedonia, Republic Of
+| `ML` | Mali
+| `MM` | Myanmar
+| `MN` | Mongolia
+| `MO` | Macau
+| `MP` | Commonwealth No. Mariana Islands
+| `MQ` | Martinique
+| `MR` | Mauritania
+| `MS` | Montserrat
+| `MT` | Malta
+| `MU` | Mauritius
+| `MV` | Maldives
+| `MW` | Malawi
+| `MX` | Mexico
+| `MY` | Malaysia
+| `MZ` | Mozambique
+| `NA` | Namibia
+| `NC` | New Caledonia
+| `NE` | Niger
+| `NG` | Nigeria
+| `NI` | Nicaragua
+| `NL` | Netherlands, The
+| `NO` | Norway
+| `NP` | Nepal
+| `NR` | Nauru, Republic Of
+| `NU` | Niue
+| `NZ` | New Zealand
+| `OM` | Oman
+| `PA` | Panama
+| `PE` | Peru
+| `PF` | Tahiti
+| `PG` | Papua New Guinea
+| `PH` | Philippines, The
+| `PK` | Pakistan
+| `PL` | Poland
+| `PR` | Puerto Rico
+| `PT` | Portugal
+| `PW` | Palau
+| `PY` | Paraguay
+| `QA` | Qatar
+| `RE` | Reunion, Island Of
+| `RO` | Romania
+| `RS` | Serbia, Republic Of
+| `RU` | Russian Federation, The
+| `RW` | Rwanda
+| `SA` | Saudi Arabia
+| `SB` | Solomon Islands
+| `SC` | Seychelles
+| `SD` | Sudan
+| `SE` | Sweden
+| `SG` | Singapore
+| `SH` | Saint Helena
+| `SI` | Slovenia
+| `SK` | Slovakia
+| `SL` | Sierra Leone
+| `SM` | San Marino
+| `SN` | Senegal
+| `SO` | Somalia
+| `SR` | Suriname
+| `SS` | South Sudan
+| `ST` | Sao Tome And Principe
+| `SV` | El Salvador
+| `SY` | Syria
+| `SZ` | Swaziland
+| `TC` | Turks And Caicos Islands
+| `TD` | Chad
+| `TG` | Togo
+| `TH` | Thailand
+| `TJ` | Tajikistan
+| `TL` | Timor Leste
+| `TN` | Tunisia
+| `TO` | Tonga
+| `TR` | Turkey
+| `TT` | Trinidad And Tobago
+| `TV` | Tuvalu
+| `TW` | Taiwan
+| `TZ` | Tanzania
+| `UA` | Ukraine
+| `UG` | Uganda
+| `US` | United States
+| `UY` | Uruguay
+| `UZ` | Uzbekistan
+| `VA` | Vatican City State
+| `VC` | St. Vincent
+| `VE` | Venezuela
+| `VG` | British Virgin Islands
+| `VI` | U.S. Virgin Islands
+| `VN` | Vietnam
+| `VU` | Vanuatu
+| `WS` | Samoa
+| `XB` | Bonaire
+| `XC` | Curacao
+| `XE` | St. Eustatius
+| `XM` | St. Maarten
+| `XN` | Nevis
+| `XS` | Somaliland, Rep Of (north Somalia)
+| `XY` | St. Barthelemy
+| `YE` | Yemen, Republic Of
+| `YT` | Mayotte
+| `ZA` | South Africa
+| `ZM` | Zambia
+| `ZW` | Zimbabwe
+
+---
+
+
+## States and Provinces
+
+
+## States and Provinces
+
+
+
+### United Arab Emirates
+
+| Code | Name
+| --- | ---
+| `AB` | Abu Dhabi
+| `AJ` | Ajman
+| `DU` | Dubai
+| `FU` | Fujairah
+| `RA` | Ras al-Khaimah
+| `SH` | Sharjah
+| `UM` | Umm al-Qaiwain
+
+
+
+### Canada
+
+| Code | Name
+| --- | ---
+| `AB` | Alberta
+| `BC` | British Columbia
+| `MB` | Manitoba
+| `NB` | New Brunswick
+| `NL` | Newfoundland
+| `NT` | Northwest Territories
+| `NS` | Nova Scotia
+| `NU` | Nunavut
+| `ON` | Ontario
+| `PE` | Prince Edward Island
+| `QC` | Quebec
+| `SK` | Saskatchewan
+| `YT` | Yukon
+
+
+
+### China, Peoples Republic
+
+| Code | Name
+| --- | ---
+| `anhui` | Anhui
+| `hainan` | Hainan
+| `jiangxi` | Jiangxi
+| `shanghai` | Shanghai
+| `beijing` | Beijing
+| `hebei` | Hebei
+| `jilin` | Jilin
+| `shanxi` | Shanxi
+| `chongqing` | Chongqing
+| `heilongjiang` | Heilongjiang
+| `liaoning` | Liaoning
+| `sichuan` | Sichuan
+| `fujian` | Fujian
+| `henan` | Henan
+| `nei_mongol` | Nei Mongol
+| `tianjin` | Tianjin
+| `gansu` | Gansu
+| `hubei` | Hubei
+| `qinghai` | Qinghai
+| `xinjiang` | Xinjiang
+| `guangdong` | Guangdong
+| `hunan` | Hunan
+| `shaanxi` | Shaanxi
+| `yunnan` | Yunnan
+| `guizhou` | Guizhou
+| `jiangsu` | Jiangsu
+| `shandong` | Shandong
+| `zhejiang` | Zhejiang
+
+
+
+### India
+
+| Code | Name
+| --- | ---
+| `AN` | Andaman & Nicobar (U.T)
+| `AP` | Andhra Pradesh
+| `AR` | Arunachal Pradesh
+| `AS` | Assam
+| `BR` | Bihar
+| `CG` | Chattisgarh
+| `CH` | Chandigarh (U.T.)
+| `DD` | Daman & Diu (U.T.)
+| `DL` | Delhi (U.T.)
+| `DN` | Dadra and Nagar Haveli (U.T.)
+| `GA` | Goa
+| `GJ` | Gujarat
+| `HP` | Himachal Pradesh
+| `HR` | Haryana
+| `JH` | Jharkhand
+| `JK` | Jammu & Kashmir
+| `KA` | Karnataka
+| `KL` | Kerala
+| `LD` | Lakshadweep (U.T)
+| `MH` | Maharashtra
+| `ML` | Meghalaya
+| `MN` | Manipur
+| `MP` | Madhya Pradesh
+| `MZ` | Mizoram
+| `NL` | Nagaland
+| `OR` | Orissa
+| `PB` | Punjab
+| `PY` | Puducherry (U.T.)
+| `RJ` | Rajasthan
+| `SK` | Sikkim
+| `TN` | Tamil Nadu
+| `TR` | Tripura
+| `UA` | Uttaranchal
+| `UP` | Uttar Pradesh
+| `WB` | West Bengal
+
+
+
+### Mexico
+
+| Code | Name
+| --- | ---
+| `AG` | Aguascalientes
+| `BC` | Baja California
+| `BS` | Baja California Sur
+| `CM` | Campeche
+| `CS` | Chiapas
+| `CH` | Chihuahua
+| `CO` | Coahuila
+| `CL` | Colima
+| `DF` | Ciudad de México
+| `DG` | Durango
+| `GT` | Guanajuato
+| `GR` | Guerrero
+| `HG` | Hidalgo
+| `JA` | Jalisco
+| `EM` | Estado de México
+| `MI` | Michoacán
+| `MO` | Morelos
+| `NA` | Nayarit
+| `NL` | Nuevo León
+| `OA` | Oaxaca
+| `PU` | Puebla
+| `QE` | Querétaro
+| `QR` | Quintana Roo
+| `SL` | San Luis Potosí
+| `SI` | Sinaloa
+| `SO` | Sonora
+| `TB` | Tabasco
+| `TM` | Tamaulipas
+| `TL` | Tlaxcala
+| `VE` | Veracruz
+| `YU` | Yucatán
+| `ZA` | Zacatecas
+
+
+
+### United States
+
+| Code | Name
+| --- | ---
+| `AL` | Alabama
+| `AK` | Alaska
+| `AZ` | Arizona
+| `AR` | Arkansas
+| `CA` | California
+| `CO` | Colorado
+| `CT` | Connecticut
+| `DE` | Delaware
+| `DC` | District of Columbia
+| `FL` | Florida
+| `GA` | Georgia
+| `HI` | Hawaii
+| `ID` | Idaho
+| `IL` | Illinois
+| `IN` | Indiana
+| `IA` | Iowa
+| `KS` | Kansas
+| `KY` | Kentucky
+| `LA` | Louisiana
+| `ME` | Maine
+| `MD` | Maryland
+| `MA` | Massachusetts
+| `MI` | Michigan
+| `MN` | Minnesota
+| `MS` | Mississippi
+| `MO` | Missouri
+| `MT` | Montana
+| `NE` | Nebraska
+| `NV` | Nevada
+| `NH` | New Hampshire
+| `NJ` | New Jersey
+| `NM` | New Mexico
+| `NY` | New York
+| `NC` | North Carolina
+| `ND` | North Dakota
+| `OH` | Ohio
+| `OK` | Oklahoma
+| `OR` | Oregon
+| `PA` | Pennsylvania
+| `RI` | Rhode Island
+| `SC` | South Carolina
+| `SD` | South Dakota
+| `TN` | Tennessee
+| `TX` | Texas
+| `UT` | Utah
+| `VT` | Vermont
+| `VA` | Virginia
+| `WA` | Washington State
+| `WV` | West Virginia
+| `WI` | Wisconsin
+| `WY` | Wyoming
+| `PR` | Puerto Rico
+
+
+---
+
+## Currencies
+
+| Code | Name
+| --- | ---
+| `EUR` | Euro
+| `AED` | UAE Dirham
+| `USD` | US Dollar
+| `XCD` | East Caribbean Dollar
+| `AMD` | Dran
+| `ANG` | Netherlands Antilles Guilder
+| `AOA` | Kwanza
+| `ARS` | Argentine Peso
+| `AUD` | Australian Dollar
+| `AWG` | Aruba Guilder
+| `AZN` | Manat
+| `BAM` | Convertible Marks
+| `BBD` | Barbadian Dollar
+| `BDT` | Taka
+| `XOF` | CFA Franc West Africa
+| `BGN` | Bulgarian Lev
+| `BHD` | Bahraini Dinar
+| `BIF` | Burundese Franc
+| `BMD` | Bermudian Dollar
+| `BND` | Brunei Dollar
+| `BOB` | Boliviano
+| `BRL` | Real
+| `BSD` | Bahamian Dollar
+| `BTN` | Ngultrum
+| `BWP` | Pula
+| `BYN` | Belarussian Ruble
+| `BZD` | Belize Dollar
+| `CAD` | Canadian Dollar
+| `CDF` | Franc Congolais
+| `XAF` | CFA Franc Central Africa
+| `CHF` | Swiss Franc
+| `NZD` | New Zealand Dollar
+| `CLP` | New Chile Peso
+| `CNY` | Yuan (Ren Min Bi)
+| `COP` | Colombian Peso
+| `CRC` | Costa Rican Colon
+| `CUC` | Peso Convertible
+| `CVE` | Cape Verde Escudo
+| `CZK` | Czech Koruna
+| `DJF` | Djibouti Franc
+| `DKK` | Danish Krone
+| `DOP` | Dominican Republic Peso
+| `DZD` | Algerian Dinar
+| `EGP` | Egyptian Pound
+| `ERN` | Nakfa
+| `ETB` | Birr
+| `FJD` | Fijian Dollar
+| `GBP` | Pound Sterling
+| `GEL` | Georgian Lari
+| `GHS` | Cedi
+| `GMD` | Dalasi
+| `GNF` | Guinea Franc
+| `GTQ` | Quetzal
+| `GYD` | Guyanan Dollar
+| `HKD` | Hong Kong Dollar
+| `HNL` | Lempira
+| `HRK` | Croatian Kuna
+| `HTG` | Gourde
+| `HUF` | Forint
+| `IDR` | Rupiah
+| `ILS` | New Israeli Shekel
+| `INR` | Indian Rupee
+| `IRR` | Iranian Rial
+| `ISK` | Icelandic Krona
+| `JMD` | Jamaican Dollar
+| `JOD` | Jordanian Dinar
+| `JPY` | Yen
+| `KES` | Kenyan Shilling
+| `KGS` | Som
+| `KHR` | Khmer Rial
+| `KMF` | Comoros Franc
+| `KPW` | North Korean Won
+| `KRW` | Won
+| `KWD` | Kuwaiti Dinar
+| `KYD` | Cayman Islands Dollar
+| `KZT` | Tenge
+| `LAK` | Kip
+| `LKR` | Sri Lankan Rupee
+| `LRD` | Liberian Dollar
+| `LSL` | Loti
+| `LYD` | Libyan Dinar
+| `MAD` | Moroccan Dirham
+| `MDL` | Leu
+| `MGA` | Ariary
+| `MKD` | Denar
+| `MMK` | Kyat
+| `MNT` | Tugrik
+| `MOP` | Pataca
+| `MRO` | Ouguiya
+| `MUR` | Mauritius Rupee
+| `MVR` | Rufiyaa
+| `MWK` | Kwacha
+| `MXN` | Mexican Nuevo Peso
+| `MYR` | Ringgit
+| `MZN` | Mozambique Metical
+| `NAD` | Namibian Dollar
+| `XPF` | CFP Franc
+| `NGN` | Naira
+| `NIO` | Cordoba Oro
+| `NOK` | Norwegian Krone
+| `NPR` | Nepalese Rupee
+| `OMR` | Omani Rial
+| `PEN` | Nuevo Sol
+| `PGK` | Kina
+| `PHP` | Phillipines Peso
+| `PKR` | Pakistani Rupee
+| `PLN` | Zloty
+| `PYG` | Guarani
+| `QAR` | Qatar Rial
+| `RSD` | Serbia, Dinars
+| `RUB` | Russian Ruble
+| `RWF` | Rwanda Franc
+| `SAR` | Saudi Riyal
+| `SBD` | Solomon Islands Dollar
+| `SCR` | Seychelles Rupee
+| `SDG` | Sudanese Pound
+| `SEK` | Swedish Krona
+| `SGD` | Singapore Dollar
+| `SHP` | St. Helena Pound
+| `SLL` | Leone
+| `SOS` | Somali Shilling
+| `SRD` | Suriname Dollar
+| `SSP` | South Sudanese pound
+| `STD` | Dobra
+| `SYP` | Syrian Pound
+| `SZL` | Lilangeni
+| `THB` | Baht
+| `TJS` | Somoni
+| `TND` | Tunisian Dinar
+| `TOP` | Pa'anga
+| `TRY` | New Turkish Lira
+| `TTD` | Trinidad and Tobago Dollar
+| `TWD` | New Taiwan Dollar
+| `TZS` | Tanzanian Shilling
+| `UAH` | Hryvna
+| `UYU` | Peso Uruguayo
+| `UZS` | Sum
+| `VEF` | Bolivar Fuerte
+| `VND` | Dong
+| `VUV` | Vanuatu Vatu
+| `WST` | Tala
+| `YER` | Yemeni Riyal
+| `ZAR` | South African Rand

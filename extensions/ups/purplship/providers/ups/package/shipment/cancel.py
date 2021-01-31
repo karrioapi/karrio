@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pyups.void_web_service_schema import (
+from ups_lib.void_web_service_schema import (
     VoidShipmentRequest,
     CodeDescriptionType,
     RequestType,

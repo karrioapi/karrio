@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pycanadapost.shipment import ShipmentRefundRequestType, ShipmentInfoType
+from canadapost_lib.shipment import ShipmentRefundRequestType, ShipmentInfoType
 from purplship.core.models import (
     ShipmentCancelRequest,
     ConfirmationDetails,

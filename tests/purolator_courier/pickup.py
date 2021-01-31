@@ -43,7 +43,7 @@ class TestPurolatorPickup(unittest.TestCase):
     def test_create_pickup(self):
         with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
             mocks.side_effect = [PickupValidationResponseXML, PickupResponseXML]
-            purplship.Pickup.schedule(self.PickupRequest).with_(gateway)
+            purplship.Pickup.schedule(self.PickupRequest).from_(gateway)
 
             validate_call, schedule_call = mocks.call_args_list
             self.assertEqual(
@@ -94,7 +94,7 @@ class TestPurolatorPickup(unittest.TestCase):
         with patch("purplship.mappers.purolator_courier.proxy.http") as mocks:
             mocks.side_effect = [PickupValidationResponseXML, PickupResponseXML]
             parsed_response = (
-                purplship.Pickup.schedule(self.PickupRequest).with_(gateway).parse()
+                purplship.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)

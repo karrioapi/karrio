@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pyboxknight.pickups import (
+from boxknight_lib.pickups import (
     PickupRequest as BoxKnightPickupRequest,
     PickupRequestRecipientAddress,
     Recipient,

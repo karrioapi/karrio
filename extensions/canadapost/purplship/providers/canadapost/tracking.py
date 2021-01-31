@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pycanadapost.track import pin_summary
+from canadapost_lib.track import pin_summary
 from purplship.providers.canadapost.utils import Settings
 from purplship.core.utils import Element, Serializable, DF
 from purplship.core.models import (

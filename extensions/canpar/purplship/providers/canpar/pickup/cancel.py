@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pycanpar.CanparAddonsService import (
+from canpar_lib.CanparAddonsService import (
     cancelPickup,
     CancelPickupRq,
 )

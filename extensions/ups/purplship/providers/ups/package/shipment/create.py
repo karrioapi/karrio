@@ -1,6 +1,6 @@
 from typing import List, Tuple, Dict, cast
-from pyups import common
-from pyups.ship_web_service_schema import (
+from ups_lib import common
+from ups_lib.ship_web_service_schema import (
     ShipmentRequest as UPSShipmentRequest,
     ShipmentType,
     ShipperType,

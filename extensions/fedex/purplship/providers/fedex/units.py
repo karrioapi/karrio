@@ -1,51 +1,57 @@
 from purplship.core.utils import Enum, Flag
-from purplship.core.units import PackagePreset as BasePackagePreset
-from dataclasses import dataclass
+from purplship.core.units import PackagePreset
 
-
-@dataclass
-class PackagePreset(BasePackagePreset):
-    dimension_unit: str = "IN"
-    weight_unit: str = "LB"
-    packaging_type: str = "medium_box"
+PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
 
 class PackagePresets(Flag):
     fedex_envelope_legal_size = PackagePreset(
-        weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"
+        **dict(weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"),
+        **PRESET_DEFAULTS
     )
     fedex_envelope_without_pouch = PackagePreset(
-        weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"
+        **dict(weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"),
+        **PRESET_DEFAULTS
     )
     fedex_padded_pak = PackagePreset(
-        weight=2.2, width=11.75, height=14.75, length=1, packaging_type="pak"
+        **dict(weight=2.2, width=11.75, height=14.75, length=1, packaging_type="pak"),
+        **PRESET_DEFAULTS
     )
     fedex_polyethylene_pak = PackagePreset(
-        weight=2.2, width=12.0, height=15.5, length=1, packaging_type="pak"
+        **dict(weight=2.2, width=12.0, height=15.5, length=1, packaging_type="pak"),
+        **PRESET_DEFAULTS
     )
     fedex_clinical_pak = PackagePreset(
-        weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"
+        **dict(weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"),
+        **PRESET_DEFAULTS
     )
     fedex_un_3373_pak = PackagePreset(
-        weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"
+        **dict(weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"),
+        **PRESET_DEFAULTS
     )
     fedex_small_box = PackagePreset(
-        weight=20.0, width=12.25, height=10.9, length=1.5, packaging_type="small_box"
+        **dict(weight=20.0, width=12.25, height=10.9, length=1.5, packaging_type="small_box"),
+        **PRESET_DEFAULTS
     )
     fedex_medium_box = PackagePreset(
-        weight=20.0, width=13.25, height=11.5, length=2.38
+        **dict(weight=20.0, width=13.25, height=11.5, length=2.38, packaging_type="medium_box"),
+        **PRESET_DEFAULTS
     )
     fedex_large_box = PackagePreset(
-        weight=20.0, width=17.88, height=12.38, length=3.0, packaging_type="large_box"
+        **dict(weight=20.0, width=17.88, height=12.38, length=3.0, packaging_type="large_box"),
+        **PRESET_DEFAULTS
     )
     fedex_10_kg_box = PackagePreset(
-        weight=10.0, width=15.81, height=12.94, length=10.19
+        **dict(weight=10.0, width=15.81, height=12.94, length=10.19, packaging_type="medium_box"),
+        **PRESET_DEFAULTS
     )
     fedex_25_kg_box = PackagePreset(
-        weight=25.0, width=21.56, height=16.56, length=13.19
+        **dict(weight=25.0, width=21.56, height=16.56, length=13.19, packaging_type="medium_box"),
+        **PRESET_DEFAULTS
     )
     fedex_tube = PackagePreset(
-        weight=20.0, width=38.0, height=6.0, length=6.0, packaging_type="tube"
+        **dict(weight=20.0, width=38.0, height=6.0, length=6.0, packaging_type="tube"),
+        **PRESET_DEFAULTS
     )
     fedex_envelope = fedex_envelope_legal_size
     fedex_pak = fedex_padded_pak

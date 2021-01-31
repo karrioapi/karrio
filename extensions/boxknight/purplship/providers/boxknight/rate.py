@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pyboxknight.rates import (
+from boxknight_lib.rates import (
     RateRequest as BoxKnightRateRequest,
 )
 from purplship.core.utils import Serializable

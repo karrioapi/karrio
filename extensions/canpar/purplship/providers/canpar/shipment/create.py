@@ -1,7 +1,7 @@
 import time
 from functools import partial
 from typing import List, Tuple, Optional
-from pycanpar.CanshipBusinessService import (
+from canpar_lib.CanshipBusinessService import (
     processShipment,
     ProcessShipmentRq,
     Shipment,

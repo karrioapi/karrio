@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple
-from pydhl.tracking_request_known_1_0 import KnownTrackingRequest
-from pydhl.tracking_response import AWBInfo
+from dhl_express_lib.tracking_request_known_1_0 import KnownTrackingRequest
+from dhl_express_lib.tracking_response import AWBInfo
 from purplship.core.utils import (
     Serializable,
     Element,

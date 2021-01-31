@@ -43,7 +43,7 @@ class TestCanparPickup(unittest.TestCase):
     def test_request_pickup(self):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            purplship.Pickup.schedule(self.PickupRequest).with_(gateway)
+            purplship.Pickup.schedule(self.PickupRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -95,7 +95,7 @@ class TestCanparPickup(unittest.TestCase):
         with patch("purplship.mappers.canpar.proxy.http") as mock:
             mock.return_value = PickupResponseXML
             parsed_response = (
-                purplship.Pickup.schedule(self.PickupRequest).with_(gateway).parse()
+                purplship.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
 
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))

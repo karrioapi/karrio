@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from pyfedex.ship_service_v25 import (
+from fedex_lib.ship_service_v25 import (
     DeleteShipmentRequest,
     TrackingId,
     TransactionDetail,

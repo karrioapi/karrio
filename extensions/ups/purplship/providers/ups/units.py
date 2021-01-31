@@ -1,27 +1,34 @@
 from purplship.core.utils import Enum, Flag
-from purplship.core.units import PackagePreset as BasePackagePreset
-from dataclasses import dataclass
+from purplship.core.units import PackagePreset
 
-
-@dataclass
-class PackagePreset(BasePackagePreset):
-    dimension_unit: str = "IN"
-    weight_unit: str = "LB"
+PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
 
 class PackagePresets(Flag):
     ups_small_express_box = PackagePreset(
-        weight=30.0, width=13.0, height=11.0, length=2.0
+        **dict(weight=30.0, width=13.0, height=11.0, length=2.0),
+        **PRESET_DEFAULTS
     )
     ups_medium_express_box = PackagePreset(
-        weight=30.0, width=16.0, height=11.0, length=3.0
+        **dict(weight=30.0, width=16.0, height=11.0, length=3.0),
+        **PRESET_DEFAULTS
     )
     ups_large_express_box = PackagePreset(
-        weight=30.0, width=18.0, height=13.0, length=3.0
+        **dict(weight=30.0, width=18.0, height=13.0, length=3.0),
+        **PRESET_DEFAULTS
     )
-    ups_express_tube = PackagePreset(width=38.0, height=6.0, length=6.0)
-    ups_express_pak = PackagePreset(width=16.0, height=11.75, length=1.5)
-    ups_world_document_box = PackagePreset(width=17.5, height=12.5, length=3.0)
+    ups_express_tube = PackagePreset(
+        **dict(width=38.0, height=6.0, length=6.0),
+        **PRESET_DEFAULTS
+    )
+    ups_express_pak = PackagePreset(
+        **dict(width=16.0, height=11.75, length=1.5),
+        **PRESET_DEFAULTS
+    )
+    ups_world_document_box = PackagePreset(
+        **dict(width=17.5, height=12.5, length=3.0),
+        **PRESET_DEFAULTS
+    )
 
 
 class LabelType(Flag):

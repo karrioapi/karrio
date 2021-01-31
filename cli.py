@@ -90,13 +90,45 @@ Usage:
 {% endfor %}
 ''')
 
+COUNTRY_INFO_TEMPLATES = Template('''
+## Countries
+
+| Code | Name
+| --- | ---
+{% for code, name in countries.items() %}| `{{ code }}` | {{ name }}
+{% endfor %}
+
+## States and Provinces
+
+{% for country, states in country_states.items() %}
+
+### {{ countries[country] }}
+
+| Code | Name
+| --- | ---
+{% for code, name in states.items() %}| `{{ code }}` | {{ name }}
+{% endfor %}
+{% endfor %}
+
+## Currencies
+
+| Code | Name
+| --- | ---
+{% for code, name in currencies.items() %}| `{{ code }}` | {{ name }}
+{% endfor %}
+''')
+
 
 def doc(entity):
     return pydoc.render_doc(entity, renderer=pydoc.plaintext)
 
 
 def format_dimension(code, dim):
-    return f'| `{ code }` | { f" x ".join([str(d) for d in dim.values() if isinstance(d, float)]) } | { f" x ".join([k for k in dim.keys() if isinstance(dim[k], float)]) }'
+    return (
+        f'| `{ code }` '
+        f'| { f" x ".join([str(d) for d in dim.values() if isinstance(d, float)]) } '
+        f'| { f" x ".join([k for k in dim.keys() if isinstance(dim[k], float)]) }'
+    )
 
 
 @click.group()
@@ -122,6 +154,15 @@ def generate_services():
 @cli.command()
 def generate_packaging_types():
     click.echo(PACKAGING_TYPES_TEMPLATE.render(packaging_mappers=REFERENCES['packaging_types'], mappers=PROVIDERS_DATA))
+
+
+@cli.command()
+def generate_country_info():
+    click.echo(COUNTRY_INFO_TEMPLATES.render(
+        countries=REFERENCES['countries'],
+        currencies=REFERENCES['currencies'],
+        country_states=REFERENCES['states'],
+    ))
 
 
 @cli.command()

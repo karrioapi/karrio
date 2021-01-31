@@ -1,8 +1,8 @@
 import urllib.parse
 from typing import Union
-from pyusps.rate_v4_request import RateV4Request
-from pyusps.intl_rate_v2_request import IntlRateV2Request
-from pyusps.track_field_request import TrackFieldRequest
+from usps_lib.rate_v4_request import RateV4Request
+from usps_lib.intl_rate_v2_request import IntlRateV2Request
+from usps_lib.track_field_request import TrackFieldRequest
 
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.core.utils import Serializable, Deserializable, XP, request as http

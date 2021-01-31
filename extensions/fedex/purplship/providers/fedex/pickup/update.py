@@ -1,6 +1,6 @@
 from typing import cast
 from functools import partial
-from pyfedex.pickup_service_v20 import (
+from fedex_lib.pickup_service_v20 import (
     CreatePickupReply,
     NotificationSeverityType,
 )

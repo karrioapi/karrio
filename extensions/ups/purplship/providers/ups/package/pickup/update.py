@@ -1,6 +1,6 @@
 from typing import cast
 from functools import partial
-from pyups.pickup_web_service_schema import PickupCreationResponse
+from ups_lib.pickup_web_service_schema import PickupCreationResponse
 from purplship.core.utils import Job, Pipeline, XP, Serializable
 from purplship.core.models import (
     PickupRequest,

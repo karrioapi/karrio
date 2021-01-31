@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from pycanpar.CanparAddonsService import (
+from canpar_lib.CanparAddonsService import (
     schedulePickupV2,
     SchedulePickupV2Rq,
     PickupV2,
