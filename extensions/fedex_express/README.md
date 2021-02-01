@@ -4,7 +4,7 @@ This package is a FedEx Express extension of the [purplship](https://pypi.org/pr
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.6+`
 
 ## Installation
 

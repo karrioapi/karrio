@@ -6,7 +6,7 @@ authors = ["Dan Kobina <danielkobina@gmail.com>"]
 license = "LGPLv3"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.0"

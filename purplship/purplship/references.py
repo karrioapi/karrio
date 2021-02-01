@@ -55,6 +55,8 @@ def collect_references() -> dict:
     REFERENCES = {
         "countries": {c.name: c.value for c in list(units.Country)},
         "currencies": {c.name: c.value for c in list(units.Currency)},
+        "weight_units": {c.name: c.value for c in list(units.WeightUnit)},
+        "dimension_units": {c.name: c.value for c in list(units.DimensionUnit)},
         "states": {c.name: {s.name: s.value for s in list(c.value)} for c in list(units.CountryState)},
         "payment_types": {c.name: c.value for c in list(units.PaymentType)},
         "carriers": {carrier_name: metadata.label for carrier_name, metadata in PROVIDERS.items()},

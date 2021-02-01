@@ -16,6 +16,8 @@ rates, messages = purplship.Rating.fetch(request).from_(gateway).parse()
 !!! info
     Checkout the reference for more details on the `RateRequest` and the returned `RateDetails` and 
     potential `Message` in case of error
+    
+    [REFERENCES](/references)
 
 
 ### Example

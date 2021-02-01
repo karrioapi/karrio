@@ -4,7 +4,7 @@ This package is a Dicom extension of the [purplship](https://pypi.org/project/pu
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.6+`
 
 ## Installation
 

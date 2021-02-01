@@ -4,7 +4,7 @@ This package is a Purolator Courier extension of the [purplship](https://pypi.or
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.6+`
 
 ## Installation
 

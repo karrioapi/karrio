@@ -118,6 +118,23 @@ COUNTRY_INFO_TEMPLATES = Template('''
 {% endfor %}
 ''')
 
+UNITS_TEMPLATES = Template('''
+## WEIGHT UNITS
+
+| Code | Identifier
+| --- | ---
+{% for code, name in weight_units.items() %}| `{{ code }}` | {{ name }}
+{% endfor %}
+
+## DIMENSION UNITS
+
+| Code | Identifier
+| --- | ---
+{% for code, name in dimension_units.items() %}| `{{ code }}` | {{ name }}
+{% endfor %}
+
+''')
+
 
 def doc(entity):
     return pydoc.render_doc(entity, renderer=pydoc.plaintext)
@@ -162,6 +179,14 @@ def generate_country_info():
         countries=REFERENCES['countries'],
         currencies=REFERENCES['currencies'],
         country_states=REFERENCES['states'],
+    ))
+
+
+@cli.command()
+def generate_units():
+    click.echo(UNITS_TEMPLATES.render(
+        weight_units=REFERENCES['weight_units'],
+        dimension_units=REFERENCES['dimension_units'],
     ))
 
 
