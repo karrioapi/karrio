@@ -8,6 +8,21 @@
 | `date - str` | `YYYY-MM-DD`
 | `datetime - str` | `YYYY-MM-DD HH:MM`
 
+## WEIGHT UNITS
+
+| Code | Identifier
+| --- | ---
+| `KG` | KG
+| `LB` | LB
+
+
+## DIMENSION UNITS
+
+| Code | Identifier
+| --- | ---
+| `CM` | CM
+| `IN` | IN
+
 ---
 
 
@@ -1173,6 +1188,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 
 ---
 
+
 ## Countries
 
 | Code | Name
@@ -1418,10 +1434,6 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 ## States and Provinces
 
 
-## States and Provinces
-
-
-
 ### United Arab Emirates
 
 | Code | Name
@@ -1433,7 +1445,6 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `RA` | Ras al-Khaimah
 | `SH` | Sharjah
 | `UM` | Umm al-Qaiwain
-
 
 
 ### Canada
@@ -1453,7 +1464,6 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `QC` | Quebec
 | `SK` | Saskatchewan
 | `YT` | Yukon
-
 
 
 ### China, Peoples Republic
@@ -1488,7 +1498,6 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `jiangsu` | Jiangsu
 | `shandong` | Shandong
 | `zhejiang` | Zhejiang
-
 
 
 ### India
@@ -1532,7 +1541,6 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `WB` | West Bengal
 
 
-
 ### Mexico
 
 | Code | Name
@@ -1569,7 +1577,6 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `VE` | Veracruz
 | `YU` | Yucatán
 | `ZA` | Zacatecas
-
 
 
 ### United States
@@ -1631,6 +1638,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 
 
 ---
+
 
 ## Currencies
 

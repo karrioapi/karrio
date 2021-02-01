@@ -4,7 +4,7 @@ This package is a USPS Express extension of the [purplship](https://pypi.org/pro
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.6+`
 
 ## Installation
 

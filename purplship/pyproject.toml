@@ -16,7 +16,7 @@ classifiers=[
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6"
 jstruct = "^2020.4.0"
 lxml = "^4.6.2"
 lxml-stubs = "^0.1.1"

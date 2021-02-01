@@ -10,7 +10,7 @@ from purplship.core.models import TrackingRequest
 
 request = TrackingRequest(...)
 
-response = purplship.Tracking.fetch(request).from_(gateway).parse()
+tracking_details_list, messages = purplship.Tracking.fetch(request).from_(gateway).parse()
 ```
 
 !!! info

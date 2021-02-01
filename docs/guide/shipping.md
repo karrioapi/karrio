@@ -9,7 +9,7 @@ from purplship.core.models import ShipmentRequest
 
 request = ShipmentRequest(...)
 
-response = purplship.Shipment.create(request).from_(gateway).parse()
+shipment, messages = purplship.Shipment.create(request).from_(gateway).parse()
 ```
 
 
@@ -36,7 +36,7 @@ from purplship.core.models import ShipmentCancelRequest
 
 request = ShipmentCancelRequest(...)
 
-response = purplship.Shipment.cancel(request).from_(gateway).parse()
+confirmation, messages = purplship.Shipment.cancel(request).from_(gateway).parse()
 ```
 
 
