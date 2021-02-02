@@ -1,1 +1,0 @@
-web: DJANGO_SETTINGS_MODULE='purpleserver.settings.heroku' gunicorn purpleserver.wsgi --preload --log-file -

@@ -39,7 +39,6 @@ setup(
             'django-constance',
             'django-picklefield',
             'django-email-verification',
-            'dj-database-url',
             'drf-api-tracking',
             'drf-yasg',
             'gunicorn',
@@ -47,7 +46,6 @@ setup(
             'more-itertools',
             'python-decouple',
             'purplship-server.core',
-            'whitenoise'
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]

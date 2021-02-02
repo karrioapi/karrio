@@ -83,7 +83,7 @@ docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:
 
 Host your own Purplship server for FREE with [One-Click Deploy](https://heroku.com/deploy).
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/PurplShip/purplship-server/tree/main/)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/PurplShip/purplship-heroku/tree/main/)
 
 
 ## Official Purplship Client Libraries
