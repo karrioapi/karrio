@@ -313,20 +313,9 @@ def _shipment_request(
                     or settings.account_number,
                     BillingAccountNumber=payload.payment.account_number
                     or settings.account_number,
-                    CreditCardInformation=CreditCardInformation(
-                        Type=payload.payment.credit_card.type,
-                        Number=payload.payment.credit_card.number,
-                        Name=payload.payment.credit_card.name,
-                        ExpiryMonth=payload.payment.credit_card.expiry_month,
-                        ExpiryYear=payload.payment.credit_card.expiry_year,
-                        CVV=payload.payment.credit_card.security_code,
-                        BillingPostalCode=payload.payment.credit_card.postal_code,
-                    )
-                    if payload.payment.credit_card is not None
-                    else None,
+                    CreditCardInformation=None,
                 )
-                if payload.payment is not None
-                else None,
+                if payload.payment is not None else None,
                 PickupInformation=PickupInformation(
                     PickupType=PickupType.DROP_OFF.value
                 ),
