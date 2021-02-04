@@ -1,5 +1,5 @@
 SCHEMAS=./schemas
-LIB_MODULES=${LIB_MODULES}
+LIB_MODULES=./purolator_lib
 find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
 touch "${LIB_MODULES}/__init__.py"
 
