@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.core',
-      version='2021.0',
+      version='2021.0.1',
       description='Multi-carrier shipping API Core module',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/PurplShip/purplship-server',
-      author='PurplShip',
+      author='Purplship',
       author_email='danielk.developer@gmail.com',
       license='AGPLv3',
       packages=find_namespace_packages(),
