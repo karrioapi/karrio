@@ -1,6 +1,6 @@
 from purplship.references import collect_providers_data, collect_references
 
-from purpleserver.core.serializers import CustomsContentType
+from purpleserver.core.serializers import CustomsContentType, Incoterm
 
 
 PACKAGE_MAPPERS = collect_providers_data()
@@ -8,4 +8,5 @@ PACKAGE_MAPPERS = collect_providers_data()
 REFERENCE_MODELS = {
     **collect_references(),
     "customs_content_type": {c.name: c.value for c in list(CustomsContentType)},
+    "incoterms": {c.name: c.value for c in list(Incoterm)},
 }
