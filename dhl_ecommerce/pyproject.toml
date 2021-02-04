@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "carrier.dhl_ecommerce"
+version = "2021.2-alpha"
+description = "DHL eCommerce API Schemas Python Data Types library"
+repository="https://github.com/PurplShip/purplship-carriers"
+homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.dhl_ecommerce"
+authors = ["Dan Kobina <danielkobina@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "dhl_ecommerce_lib" }]
+classifiers = [
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: MIT License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+pydantic = "^1.7.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
