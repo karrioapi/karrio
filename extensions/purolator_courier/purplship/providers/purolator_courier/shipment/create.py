@@ -1,4 +1,3 @@
-import time
 from functools import partial
 from typing import List, Tuple, cast, Union, Type
 from purolator_lib.shipping_documents_service_1_3_0 import DocumentDetail
@@ -30,7 +29,6 @@ from purolator_lib.shipping_service_2_1_3 import (
     NotificationInformation,
     ArrayOfOptionIDValuePair,
     OptionIDValuePair,
-    CreditCardInformation,
     BusinessRelationship,
     PrinterType,
     ContentDetail,
@@ -206,7 +204,7 @@ def _shipment_request(
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
-                ShipmentDate=(options.shipment_date or time.strftime("%Y-%m-%d")),
+                ShipmentDate=options.shipment_date,
                 PackageInformation=PackageInformation(
                     ServiceID=service,
                     Description=package_description,
