@@ -1,5 +1,4 @@
 from typing import List, Tuple, cast
-from datetime import datetime
 from pysoap.envelope import Envelope
 from purolator_lib.estimate_service_2_1_2 import (
     GetFullEstimateRequest,
@@ -35,7 +34,7 @@ from purplship.core.utils import Serializable, Element, SF, NF, create_envelope
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.providers.purolator_courier.utils import Settings, standard_request_serializer
 from purplship.providers.purolator_courier.error import parse_error_response
-from purplship.providers.purolator_courier.units import Product, PackagePresets, DutyPaymentType, MeasurementOptions
+from purplship.providers.purolator_courier.units import Product, PackagePresets, DutyPaymentType, MeasurementOptions, Service
 
 
 def parse_rate_response(
@@ -97,7 +96,7 @@ def rate_request(
 ) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     service = Services(payload.services, Product).first
-    options = Options(payload.options)
+    options = Options(payload.options, Service)
 
     package_description = packages[0].parcel.description if len(packages) == 1 else None
     is_document = all([parcel.is_document for parcel in payload.parcels])
@@ -105,10 +104,14 @@ def rate_request(
     recipient_phone = Phone(payload.recipient.phone_number, payload.recipient.country_code)
     is_international = payload.shipper.country_code != payload.recipient.country_code
 
+    # When no specific service is requested, set a default one.
     if service is None:
+        show_alternate_services = options['purolator_show_alternative_services'] is not False
         service = Product[
             'purolator_express_international' if is_international else 'purolator_express'
         ]
+    else:
+        show_alternate_services = options['purolator_show_alternative_services'] is True
 
     request = create_envelope(
         header_content=RequestContext(
@@ -188,7 +191,7 @@ def rate_request(
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
-                ShipmentDate=datetime.today().strftime("%Y-%m-%d"),
+                ShipmentDate=options.shipment_date,
                 PackageInformation=PackageInformation(
                     ServiceID=service.value,
                     Description=package_description,
@@ -279,7 +282,7 @@ def rate_request(
                 OtherInformation=None,
                 ProactiveNotification=None,
             ),
-            ShowAlternativeServicesIndicator=service is None,
+            ShowAlternativeServicesIndicator=show_alternate_services,
         ),
     )
     return Serializable(request, standard_request_serializer)

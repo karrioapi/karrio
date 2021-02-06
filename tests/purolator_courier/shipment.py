@@ -144,7 +144,7 @@ SHIPMENT_REQUEST_PAYLOAD = {
     ],
     "reference": "Reference For Shipment",
     "service": "purolator_express",
-    "options": {"printing": "PDF"},
+    "options": {"printing": "PDF", "shipment_date": "2021-02-04"},
 }
 
 PARSED_SHIPMENT_RESPONSE = [
@@ -231,7 +231,7 @@ SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org
                         </v2:PhoneNumber>
                     </v2:Address>
                 </v2:ReceiverInformation>
-                <v2:ShipmentDate>{str(datetime.now().strftime("%Y-%m-%d"))}</v2:ShipmentDate>
+                <v2:ShipmentDate>2021-02-04</v2:ShipmentDate>
                 <v2:PackageInformation>
                     <v2:ServiceID>PurolatorExpress</v2:ServiceID>
                     <v2:TotalWeight>

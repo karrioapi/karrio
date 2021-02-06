@@ -79,6 +79,9 @@ class Service(Enum):
     purolator_adult_signature_required = "Adult Signature Required (ASR)"
     purolator_special_handling = "Special Handling"
 
+    """Purplship specific option"""
+    purolator_show_alternative_services = "Show Alternate Services"
+
 
 class Product(Enum):
     purolator_express_9_am = "PurolatorExpress9AM"
