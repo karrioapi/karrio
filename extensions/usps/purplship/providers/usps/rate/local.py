@@ -69,7 +69,7 @@ def _extract_details(postage_node: Element, settings: Settings) -> RateDetails:
 
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV4Request]:
-    packages = Packages(payload.parcels)
+    package = Packages(payload.parcels).single
     options = Options(payload.options)
     service = Services(payload.services, RateService).first or RateService.usps_all
     special_services = Services(payload.options.keys(), SpecialService)
@@ -79,7 +79,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV
         Revision="2",
         Package=[
             PackageType(
-                ID=index,
+                ID=0,
                 Service=service.value,
                 FirstClassMailType=FirstClassMailType[package.packaging_type or "your_packaging"].value,
                 ZipOrigination=payload.shipper.postal_code,
@@ -107,7 +107,6 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV
                     valueOf_=str(datetime.today().strftime("%Y-%m-%d"))
                 ),
             )
-            for index, package in enumerate(packages)
         ],
     )
 

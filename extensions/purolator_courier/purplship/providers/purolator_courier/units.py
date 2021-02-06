@@ -1,4 +1,4 @@
-from purplship.core.utils import Enum, Flag
+from purplship.core.utils import Enum, Flag, Spec
 from purplship.core.units import PackagePreset
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
@@ -69,18 +69,23 @@ class CreditCardType(Flag):
 
 
 class Service(Enum):
-    purolator_dangerous_goods = "Dangerous Goods"
-    purolator_chain_of_signature = "Chain of Signature"
-    purolator_express_cheque = "ExpressCheque"
-    purolator_hold_for_pickup = "Hold For Pickup"
-    purolator_return_services = "Return Services"
-    purolator_saturday_service = "Saturday Service"
-    purolator_origin_signature_not_required = "Origin Signature Not Required (OSNR)"
-    purolator_adult_signature_required = "Adult Signature Required (ASR)"
-    purolator_special_handling = "Special Handling"
+    purolator_dangerous_goods = Spec.asKey("Dangerous Goods")
+    purolator_chain_of_signature = Spec.asKey("Chain of Signature")
+    purolator_express_cheque = Spec.asKey("ExpressCheque")
+    purolator_hold_for_pickup = Spec.asKey("Hold For Pickup")
+    purolator_return_services = Spec.asKey("Return Services")
+    purolator_saturday_service = Spec.asKey("Saturday Service")
+    purolator_origin_signature_not_required = Spec.asKey("Origin Signature Not Required (OSNR)")
+    purolator_adult_signature_required = Spec.asKey("Adult Signature Required (ASR)")
+    purolator_special_handling = Spec.asKey("Special Handling")
 
     """Purplship specific option"""
-    purolator_show_alternative_services = "Show Alternate Services"
+    purolator_show_alternative_services = Spec.asFlag("Show Alternate Services")
+
+
+NON_OFFICIAL_SERVICES = [
+    Service.purolator_show_alternative_services.name
+]
 
 
 class Product(Enum):

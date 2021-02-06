@@ -75,21 +75,17 @@ def shipment_request(
     payload: ShipmentRequest, settings: Settings
 ) -> Serializable[DHLShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    options = Options(payload.options)
+    options = Options(payload.options, SpecialServiceCode)
     product = ProductCode[payload.service].value
+
+    insurance = options['dhl_shipment_insurance'].value if 'dhl_shipment_insurance' in options else None
     package_type = (
         PackageType[packages[0].packaging_type or "your_packaging"].value
-        if len(packages) == 1
-        else None
+        if len(packages) == 1 else None
     )
     delivery_type = next(
         (d for d in DeliveryType if d.name in payload.options.keys()), None
     )
-    special_services = [
-        SpecialServiceCode[s].value
-        for s in payload.options.keys()
-        if s in SpecialServiceCode
-    ]
     has_payment_config = payload.payment is not None
     has_customs_config = payload.customs is not None
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
@@ -199,7 +195,7 @@ def shipment_request(
             Date=(options.shipment_date or time.strftime("%Y-%m-%d")),
             PackageType=package_type,
             IsDutiable=("Y" if payload.customs is not None else "N"),
-            InsuredAmount=options.insurance,
+            InsuredAmount=insurance,
             ShipmentCharges=(options.cash_on_delivery if options.cash_on_delivery else None),
             DoorTo=delivery_type,
             GlobalProductCode=product,
@@ -217,7 +213,8 @@ def shipment_request(
         ExportDeclaration=None,
         Reference=[Reference(ReferenceID=payload.reference)],
         SpecialService=[
-            SpecialService(SpecialServiceType=service) for service in special_services
+            SpecialService(SpecialServiceType=SpecialServiceCode[key].value.key)
+            for key, svc in options if key in SpecialServiceCode
         ],
         Notification=(
             Notification(EmailAddress=options.notification_email or payload.recipient.email)

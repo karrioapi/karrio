@@ -99,7 +99,7 @@ shipment_data = {
         }
     ],
     "service": "dhl_express_worldwide_nondoc",
-    "options": {"paperless_trade": True, "insurance": 148.0},
+    "options": {"dhl_paperless_trade": True, "insurance": 148.0},
     "payment": {"paid_by": "sender", "account_number": "123456789"},
     "customs": {
         "commodities": [{"description": "cn", "sku": "cc"}],
@@ -281,6 +281,9 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
             <Email>test@email.com</Email>
         </Contact>
     </Shipper>
+    <SpecialService>
+        <SpecialServiceType>WY</SpecialServiceType>
+    </SpecialService>
     <SpecialService>
         <SpecialServiceType>II</SpecialServiceType>
     </SpecialService>

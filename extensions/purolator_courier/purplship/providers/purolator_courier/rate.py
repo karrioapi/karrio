@@ -28,13 +28,17 @@ from purolator_lib.estimate_service_2_1_2 import (
     InternationalInformation,
     DutyInformation,
     BusinessRelationship,
+    ArrayOfOptionIDValuePair,
+    OptionIDValuePair,
 )
 from purplship.core.units import Currency, Packages, Options, Phone, Services
 from purplship.core.utils import Serializable, Element, SF, NF, create_envelope
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
 from purplship.providers.purolator_courier.utils import Settings, standard_request_serializer
 from purplship.providers.purolator_courier.error import parse_error_response
-from purplship.providers.purolator_courier.units import Product, PackagePresets, DutyPaymentType, MeasurementOptions, Service
+from purplship.providers.purolator_courier.units import (
+    Product, PackagePresets, DutyPaymentType, MeasurementOptions, Service, NON_OFFICIAL_SERVICES
+)
 
 
 def parse_rate_response(
@@ -91,9 +95,7 @@ def _extract_rate(estimate_node: Element, settings: Settings) -> RateDetails:
     )
 
 
-def rate_request(
-    payload: RateRequest, settings: Settings
-) -> Serializable[Envelope]:
+def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envelope]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     service = Services(payload.services, Product).first
     options = Options(payload.options, Service)
@@ -103,6 +105,9 @@ def rate_request(
     shipper_phone = Phone(payload.shipper.phone_number, payload.shipper.country_code or 'CA')
     recipient_phone = Phone(payload.recipient.phone_number, payload.recipient.country_code)
     is_international = payload.shipper.country_code != payload.recipient.country_code
+    option_ids = [
+        (key, value) for key, value in options if key in Service and key not in NON_OFFICIAL_SERVICES
+    ]
 
     # When no specific service is requested, set a default one.
     if service is None:
@@ -242,7 +247,13 @@ def rate_request(
                                     )
                                     if package.height.value else None
                                 ),
-                                Options=None,
+                                Options=ArrayOfOptionIDValuePair(
+                                    OptionIDValuePair=[
+                                        OptionIDValuePair(ID=key, Value=value)
+                                        for key, value in option_ids
+                                    ]
+                                )
+                                if any(option_ids) else None,
                             )
                             for package in packages
                         ]

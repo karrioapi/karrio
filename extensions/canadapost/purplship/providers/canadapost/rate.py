@@ -88,23 +88,26 @@ def rate_request(
         raise OriginNotServicedError(payload.shipper.country_code)
 
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
-    requested_services = Services(payload.services, ServiceType)
-    requested_options = Options(payload.options, OptionCode)
+    services = Services(payload.services, ServiceType)
+    options = Options(payload.options, OptionCode)
 
     request = mailing_scenario(
         customer_number=settings.customer_number,
         contract_id=None,
         promo_code=None,
         quote_type=None,
-        expected_mailing_date=requested_options.shipment_date,
+        expected_mailing_date=options.shipment_date,
         options=(
             optionsType(
                 option=[
-                    optionType(option_code=OptionCode[code].value, option_amount=_amount(value))
-                    for code, value in requested_options if code in OptionCode
+                    optionType(
+                        option_code=getattr(option, 'key', option),
+                        option_amount=getattr(option, 'value', None)
+                    )
+                    for code, option in options if code in OptionCode
                 ]
             )
-            if any(requested_options) else None
+            if any(options) else None
         ),
         parcel_characteristics=parcel_characteristicsType(
             weight=package.weight.map(MeasurementOptions).KG,
@@ -119,9 +122,9 @@ def rate_request(
         ),
         services=(
             servicesType(
-                service_code=[svc.value for svc in requested_services]
+                service_code=[svc.value for svc in services]
             )
-            if any(requested_services) else None
+            if any(services) else None
         ),
         origin_postal_code=payload.shipper.postal_code,
         destination=destinationType(

@@ -69,25 +69,16 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     service = ServiceType[payload.service].value
     options = Options(payload.options, OptionCode)
+
     is_intl = (
         payload.recipient.country_code is not None and
         payload.recipient.country_code != 'CA'
     )
-
-    def compute_amount(code: str, _: Any):
-        if code == OptionCode.insurance.value:
-            return options.insurance
-        if code == OptionCode.cash_on_delivery.value:
-            return options.cash_on_delivery
-        return None
-
-    special_services = {
-        OptionCode[name].value: compute_amount(OptionCode[name].value, value)
-        for name, value in options if name in OptionCode
-    }
-
-    if is_intl and not any(key in special_services for key in INTERNATIONAL_NON_DELIVERY_OPTION):
-        special_services['canadapost_return_to_sender'] = OptionCode.canadapost_return_to_sender.value
+    all_options = (
+        [*options] + [(OptionCode.canadapost_return_to_sender.name, OptionCode.canadapost_return_to_sender.value.apply(True))]
+        if is_intl and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
+        else [*options]
+    )
 
     request = NonContractShipmentType(
         requested_shipping_point=None,
@@ -127,15 +118,15 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                 optionsType(
                     option=[
                         OptionType(
-                            option_code=code,
-                            option_amount=amount,
+                            option_code=getattr(option, 'key', option),
+                            option_amount=getattr(option, 'value', None),
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for code, amount in special_services.items()
+                        for code, option in all_options if code in OptionCode
                     ]
                 )
-                if len(special_services) > 0 else None
+                if any(options) else None
             ),
             parcel_characteristics=ParcelCharacteristicsType(
                 weight=NF.decimal(package.weight.KG, .1),

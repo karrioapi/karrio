@@ -1,4 +1,4 @@
-from purplship.core.utils import Flag, Enum
+from purplship.core.utils import Flag, Enum, Spec
 
 
 class UnitOfMeasurement(Enum):
@@ -75,35 +75,35 @@ class Service(Enum):  # DeliveryType
     dicom_ground_delivery = "GRD"
 
 
-class Option(Flag):
-    dicom_common_declared_value = "DCV"
-    dicom_common_dangerous_goods = "DGG"
-    dicom_common_residential_delivery = "PHD"
-    dicom_common_tradeshow_delivery = "TRD"
-    dicom_common_signature_not_required = "SNR"
-    dicom_parcel_ca_hold_for_pickup = "HFP"
-    dicom_parcel_ca_non_conveyable = "NCV"
-    dicom_parcel_ca_residential_delivery_signature = "PHDS"
-    dicom_parcel_ca_weekend_delivery = "WKD"
-    dicom_freight_construction_site_delivery = "CNSTD"
-    dicom_freight_collect_on_delivery = "COD"
-    dicom_freight_heating = "HEAT"
-    dicom_freight_inside_delivery = "IDEL"
-    dicom_freight_residential_delivery_signature = "PHDS"
-    dicom_freight_residential_pickup = "PHPU"
-    dicom_freight_tailgate_delivery = "TGT"
-    dicom_freight_tailgate_pickup = "TGTPU"
-    dicom_parcel_us_adult_signature = "ADLSIG"
-    dicom_parcel_us_direct_signature = "DIRSIG"
-    dicom_parcel_us_saturday_delivery = "SAT"
-    dicom_parcel_us_sunday_delivery = "SUN"
-    dicom_parcel_us_residential_delivery_signature = "PHDS"
-    dicom_parcel_us_earliest_possible = "EP"
-    dicom_parcel_us_priority_service = "PR"
-    dicom_parcel_us_pouch_service = "PO"
-    dicom_parcel_us_pallet_service_pa = "PA"
-    dicom_parcel_us_pallet_service_rap = "RAP"
-    dicom_parcel_us_pallet_service_nd = "ND"
+class Option(Enum):
+    dicom_common_declared_value = Spec.asKeyVal("DCV")
+    dicom_common_dangerous_goods = Spec.asKey("DGG")
+    dicom_common_residential_delivery = Spec.asKey("PHD")
+    dicom_common_tradeshow_delivery = Spec.asKey("TRD")
+    dicom_common_signature_not_required = Spec.asKey("SNR")
+    dicom_parcel_ca_hold_for_pickup = Spec.asKey("HFP")
+    dicom_parcel_ca_non_conveyable = Spec.asKey("NCV")
+    dicom_parcel_ca_residential_delivery_signature = Spec.asKey("PHDS")
+    dicom_parcel_ca_weekend_delivery = Spec.asKey("WKD")
+    dicom_freight_construction_site_delivery = Spec.asKey("CNSTD")
+    dicom_freight_collect_on_delivery = Spec.asKeyVal("COD")
+    dicom_freight_heating = Spec.asKey("HEAT")
+    dicom_freight_inside_delivery = Spec.asKey("IDEL")
+    dicom_freight_residential_delivery_signature = Spec.asKey("PHDS")
+    dicom_freight_residential_pickup = Spec.asKey("PHPU")
+    dicom_freight_tailgate_delivery = Spec.asKey("TGT")
+    dicom_freight_tailgate_pickup = Spec.asKey("TGTPU")
+    dicom_parcel_us_adult_signature = Spec.asKey("ADLSIG")
+    dicom_parcel_us_direct_signature = Spec.asKey("DIRSIG")
+    dicom_parcel_us_saturday_delivery = Spec.asKey("SAT")
+    dicom_parcel_us_sunday_delivery = Spec.asKey("SUN")
+    dicom_parcel_us_residential_delivery_signature = Spec.asKey("PHDS")
+    dicom_parcel_us_earliest_possible = Spec.asKey("EP")
+    dicom_parcel_us_priority_service = Spec.asKey("PR")
+    dicom_parcel_us_pouch_service = Spec.asKey("PO")
+    dicom_parcel_us_pallet_service_pa = Spec.asKey("PA")
+    dicom_parcel_us_pallet_service_rap = Spec.asKey("RAP")
+    dicom_parcel_us_pallet_service_nd = Spec.asKey("ND")
 
 
 class Surcharge(Flag):

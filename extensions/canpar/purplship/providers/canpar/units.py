@@ -1,4 +1,4 @@
-from purplship.core.utils import Enum, Flag
+from purplship.core.utils import Enum, Flag, Spec
 
 
 class WeightUnit(Flag):
@@ -42,14 +42,14 @@ class Service(Enum):
 
 
 class Option(Flag):
-    canpar_cash_on_delivery = 'N'
-    canpar_dangerous_goods = 'dg'
-    canpar_extra_care = 'xc'
-    canpar_ten_am = 'A'
-    canpar_noon = 'B'
-    canpar_no_signature_required = '2'
-    canpar_not_no_signature_required = '0'
-    canpar_saturday = 'S'
+    canpar_cash_on_delivery = Spec.asKey('Y')
+    canpar_dangerous_goods = Spec.asFlag('dg')
+    canpar_extra_care = Spec.asFlag('xc')
+    canpar_ten_am = Spec.asFlag('A')
+    canpar_noon = Spec.asFlag('B')
+    canpar_no_signature_required = Spec.asFlag('2')
+    canpar_not_no_signature_required = Spec.asFlag('0')
+    canpar_saturday = Spec.asFlag('S')
 
     """ Unified Option type mapping """
     cash_on_delivery = canpar_cash_on_delivery

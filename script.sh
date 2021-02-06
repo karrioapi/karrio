@@ -125,9 +125,14 @@ upload() {
 	twine upload "${DIST}/*"
 }
 
+shell() {
+	ipython
+}
+
 
 alias env:new=create_env
 alias env:on=activate_env
 alias env:reset=init
+alias env:shell=shell
 
 activate_env || true

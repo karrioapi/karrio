@@ -8,4 +8,4 @@ from purplship.core.utils.datetime import DATEFORMAT as DF
 from purplship.core.utils.xml import XMLPARSER as XP, Element
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.utils.pipeline import Pipeline, Job
-from purplship.core.utils.enum import Enum, Flag
+from purplship.core.utils.enum import Enum, Flag, Spec

@@ -106,10 +106,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Dicom
         promoCodes=None,
         surcharges=[
             Surcharge(
-                type=key,
-                value=(value if Option[key].value in ['DCV', 'COD'] else None)
+                type=getattr(option, 'key', option),
+                value=getattr(option, 'value', None)
             )
-            for key, value in options
+            for _, option in options
         ],
         appointment=None,
     )

@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 from typing import List, Tuple, Optional
 from canpar_lib.CanparRatingService import (
     rateShipment,
@@ -14,7 +14,7 @@ from purplship.core.models import (
     ChargeDetails
 )
 from purplship.core.units import Packages, Services, Options
-from purplship.core.utils import Serializable, Envelope, create_envelope, Element, NF, XP
+from purplship.core.utils import Serializable, Envelope, create_envelope, Element, NF, XP, DF
 from purplship.providers.canpar.error import parse_error_response
 from purplship.providers.canpar.utils import Settings, default_request_serializer
 from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service, Charges
@@ -66,6 +66,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
     packages = Packages(payload.parcels)
     service_type = Services(payload.services, Service).first
     options = Options(payload.options, Option)
+
+    shipment_date = DF.fdatetime(
+        options.shipment_date or time.strftime('%Y-%m-%d'),
+        current_format='%Y-%m-%d', output_format='%Y-%m-%dT%H:%M:%S'
+    )
     premium: Optional[bool] = next((True for option, _ in options if option in [
         Option.canpar_ten_am.name,
         Option.canpar_noon.name,
@@ -87,7 +92,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                 apply_invoice_discount=False,
                 password=settings.password,
                 shipment=Shipment(
-                    cod_type=('Y' if 'canpar_cash_on_delivery' in options else None),
+                    cod_type=options['canpar_cash_on_delivery'],
                     delivery_address=Address(
                         address_line_1=payload.recipient.address_line1,
                         address_line_2=payload.recipient.address_line2,
@@ -104,7 +109,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                         residential=payload.recipient.residential,
                     ),
                     description=None,
-                    dg=('canpar_dangerous_goods' in options) or None,
+                    dg=options['canpar_dangerous_goods'],
                     dimention_unit=DimensionUnit.IN.value,
                     handling=None,
                     handling_type=None,
@@ -123,7 +128,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                             reported_weight=pkg.weight.LB,
                             store_num=None,
                             width=pkg.width.CM,
-                            xc=('canpar_extra_care' in options) or None
+                            xc=options['canpar_extra_care']
                         ) for pkg in packages
                     ],
                     pickup_address=Address(
@@ -148,7 +153,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
                     send_email_to_pickup=payload.shipper.email,
                     service_type=service_type.value,
                     shipper_num=None,
-                    shipping_date=datetime.today().strftime('%Y-%m-%dT%H:%M:%S'),
+                    shipping_date=shipment_date,
                     subtotal=None,
                     subtotal_with_handling=None,
                     total=None,

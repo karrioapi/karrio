@@ -49,6 +49,7 @@ from purplship.providers.purolator_courier.units import (
     DutyPaymentType,
     MeasurementOptions,
     LabelType,
+    NON_OFFICIAL_SERVICES,
 )
 
 ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]]
@@ -114,19 +115,18 @@ def _shipment_request(
     )
 
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+    service = Product[payload.service].value
+    options = Options(payload.options, Service)
+
     is_document = all([parcel.is_document for parcel in payload.parcels])
     package_description = packages[0].parcel.description if len(packages) == 1 else None
-    service = Product[payload.service].value
     is_international = (payload.shipper.country_code != payload.recipient.country_code)
-    options = Options(payload.options)
     shipper_phone_number = Phone(payload.shipper.phone_number, payload.shipper.country_code)
     recipient_phone_number = Phone(payload.recipient.phone_number, payload.recipient.country_code)
     printing = LabelType[options.label_printing or "PDF"].value
-    special_services = {
-        Service[name].value: value
-        for name, value in payload.options.items()
-        if name in Service.__members__
-    }
+    option_ids = [
+        (key, value) for key, value in options if key in Service and key not in NON_OFFICIAL_SERVICES
+    ]
 
     request = create_envelope(
         header_content=RequestContext(
@@ -259,11 +259,10 @@ def _shipment_request(
                     OptionsInformation=ArrayOfOptionIDValuePair(
                         OptionIDValuePair=[
                             OptionIDValuePair(ID=key, Value=value)
-                            for key, value in special_services.items()
+                            for key, value in option_ids
                         ]
                     )
-                    if len(special_services) > 0
-                    else None,
+                    if any(option_ids) else None,
                 ),
                 InternationalInformation=InternationalInformation(
                     DocumentsOnlyIndicator=is_document,
