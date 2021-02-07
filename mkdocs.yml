@@ -14,7 +14,7 @@ theme:
 nav:
   - Introduction: index.md
   - User Guide:
-    - guide/gateway.md
+    - guide/gateways.md
     - guide/rating.md
     - guide/shipping.md
     - guide/tracking.md
@@ -22,10 +22,10 @@ nav:
     - guide/address.md
     - Error & Debug: guide/error.md
   - Development:
-    - development/contributing.md
     - development/architecture.md
     - development/developing.md
     - Extending Purplship: development/extending.md
+  - contributing.md
   - roadmap.md
   - references.md
 

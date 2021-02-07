@@ -10,16 +10,61 @@ from purplship.core.models import TrackingRequest
 
 request = TrackingRequest(...)
 
-tracking_details_list, messages = purplship.Tracking.fetch(request).from_(gateway).parse()
+tracking_details_list, messages = purplship.Tracking.fetch(request).from_(carrier_gateway).parse()
 ```
 
-!!! info
-    Checkout the reference for more details on the `TrackingRequest` and the returned `TrackingDetails` and 
-    potential `Message` in case of error
-    
-    [REFERENCES](/references)
+### Parameters
 
-### Example
+
+#### TrackingRequest
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `tracking_numbers` | List[str] | **required**
+| `language_code` | `str` | 
+| `level_of_details` | `str` | 
+
+
+### Response
+
+
+#### TrackingDetails
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `carrier_name` | `str` | **required**
+| `carrier_id` | `str` | **required**
+| `tracking_number` | `str` | **required**
+| `events` | List[[TrackingEvent](#trackingevent)] | **required**
+| `delivered` | `bool` | 
+
+
+#### TrackingEvent
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `date` | `str` | **required**
+| `description` | `str` | **required**
+| `location` | `str` | 
+| `code` | `str` | 
+| `time` | `str` | 
+| `signatory` | `str` | 
+
+
+#### Message
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `carrier_name` | `str` | **required**
+| `carrier_id` | `str` | **required**
+| `message` | Union[str, Any] | 
+| `code` | `str` | 
+| `details` | `dict` | 
+
+
+---
+
+### Code sample
 
 ```python
 import purplship
@@ -29,10 +74,10 @@ request = purplship.Tracking.fetch(
     TrackingRequest(tracking_numbers=["1Z12345E6205277936"])
 )
 
-tracking_details_list, messages = request.from_(gateway).parse()
+tracking_details_list, messages = request.from_(carrier_gateway).parse()
 ```
 
-???+ check "Tracking output"
+???+ check "On success"
 
     ```python
     print(tracking_details_list)

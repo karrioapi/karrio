@@ -9,18 +9,115 @@ from purplship.core.models import RateRequest
 
 request = RateRequest(...)
 
-rates, messages = purplship.Rating.fetch(request).from_(gateway).parse()
+rates, messages = purplship.Rating.fetch(request).from_(carrier_gateway).parse()
 ```
 
-
-!!! info
-    Checkout the reference for more details on the `RateRequest` and the returned `RateDetails` and 
-    potential `Message` in case of error
+!!! tip
+    In a multi-carrier integration, we would often want to get shipping quotes from multiple carriers.
+    That can be achieve by fetching from multiple gateways
     
-    [REFERENCES](/references)
+    e.g:
+    `purplship.Rating.fetch(request).from_(candapost_gateway, purolator_gateway, ...).parse()`
+
+### Parameters
 
 
-### Example
+#### RateRequest
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `shipper` | [Address](#address) | **required**
+| `recipient` | [Address](#address) | **required**
+| `parcels` | List[[Parcel](#parcel)] | **required**
+| `services` | List[str] | 
+| `options` | `dict` | 
+| `reference` | `str` | 
+
+#### Address
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `id` | `str` | 
+| `postal_code` | `str` | 
+| `city` | `str` | 
+| `person_name` | `str` | 
+| `company_name` | `str` | 
+| `country_code` | `str` | 
+| `email` | `str` | 
+| `phone_number` | `str` | 
+| `state_code` | `str` | 
+| `suburb` | `str` | 
+| `residential` | `bool` | 
+| `address_line1` | `str` | 
+| `address_line2` | `str` | 
+| `federal_tax_id` | `str` | 
+| `state_tax_id` | `str` | 
+
+
+#### Parcel
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `id` | `str` | 
+| `weight` | `float` | 
+| `width` | `float` | 
+| `height` | `float` | 
+| `length` | `float` | 
+| `packaging_type` | `str` | 
+| `package_preset` | `str` | 
+| `description` | `str` | 
+| `content` | `str` | 
+| `is_document` | `bool` | 
+| `weight_unit` | `str` | 
+| `dimension_unit` | `str` | 
+
+
+
+### Response
+
+
+#### RateDetails
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `carrier_name` | `str` | **required**
+| `carrier_id` | `str` | **required**
+| `currency` | `str` | **required**
+| `transit_days` | `int` | 
+| `service` | `str` | 
+| `discount` | `float` | 
+| `base_charge` | `float` | 
+| `total_charge` | `float` | 
+| `duties_and_taxes` | `float` | 
+| `extra_charges` | List[[ChargeDetails](#chargedetails)] | 
+| `meta` | `dict` | 
+| `id` | `str` | 
+
+
+#### ChargeDetails
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `name` | `str` | 
+| `amount` | `float` | 
+| `currency` | `str` | 
+
+
+#### Message
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `carrier_name` | `str` | **required**
+| `carrier_id` | `str` | **required**
+| `message` | Union[str, Any] | 
+| `code` | `str` | 
+| `details` | `dict` | 
+
+
+---
+
+
+### Code sample
 
 ```python
 import purplship
@@ -61,10 +158,10 @@ request = purplship.Rating.fetch(
     )
 )
 
-response = request.from_(gateway).parse()
+rates, messages = request.from_(carrier_gateway).parse()
 ```
 
-???+ check "Rating output"
+???+ check "On success"
 
     ```python
     print(rates)
@@ -88,3 +185,5 @@ response = request.from_(gateway).parse()
     #     )
     # ]
     ```
+
+

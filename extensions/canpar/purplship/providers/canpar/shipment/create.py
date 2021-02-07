@@ -72,7 +72,7 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
     service_type: Optional[str] = (
         Service[payload.service] if payload.service in Service.__members__ else None
     )
-    premium: Optional[bool] = next((True for option in options if option in [
+    premium: Optional[bool] = next((True for option, _ in options if option in [
         Option.canpar_ten_am.value,
         Option.canpar_noon.value,
         Option.canpar_saturday.value,
