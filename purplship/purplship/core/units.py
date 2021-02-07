@@ -1,8 +1,8 @@
 """Purplship universal data types and units definitions"""
 import attr
 import phonenumbers
-from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any, cast
-from purplship.core.utils import NF, Enum
+from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any
+from purplship.core.utils import NF, Enum, Spec
 from purplship.core.models import Parcel
 from purplship.core.errors import (
     FieldError,
@@ -81,18 +81,6 @@ class Incoterm(Enum):
     FAS = "Free Alongside Ship"
     FCA = "Free Carrier"
     FOB = "Free On Board"
-
-
-class Option(Enum):
-    """universal shipment options (special services)"""
-    cash_on_delivery = "COD"
-    currency = "currency"
-    insurance = "insurance"
-    label_printing = "label_printing"
-    label_format = "label_format"
-    notification_emails = "notification_emails"
-    shipment_date = "shipment_date"
-    signature_confirmation = "signature_confirmation"
 
 
 class WeightUnit(Enum):
@@ -401,18 +389,29 @@ class Packages(Iterable[Package]):
                 raise FieldError(errors)
 
 
+class Option(Enum):
+    """universal shipment options (special services)"""
+    currency = Spec.asValue("currency")
+    insurance = Spec.asValue("insurance", float)
+    cash_on_delivery = Spec.asValue("COD", float)
+    label_format = Spec.asValue("label_format")
+    shipment_date = Spec.asValue("shipment_date")
+    label_printing = Spec.asValue("label_printing")
+    notification_emails = Spec.asValue("notification_emails")
+    signature_confirmation = Spec.asFlag("signature_confirmation")
+
+
 class Options:
     """The options common processing helper"""
     def __init__(self, options: dict, option_type: Type[Enum] = Enum):
-        self._options = (options if option_type is None else {
-            key: val for key, val in options.items()
-            if key in option_type
-            or key in Option
-        })
+        option_values = {}
+        for key, val in options.items():
+            if option_type is not None and key in option_type:
+                option_values[option_type[key].name] = option_type[key].value.apply(val)
+            elif key in Option and key:
+                option_values[key] = Option[key].value.apply(val)
 
-        for key, val in self._options.items():
-            if not hasattr(Options, key):
-                setattr(self, key, val)
+        self._options = option_values
 
     def __getitem__(self, item):
         return self._options.get(item)
@@ -428,31 +427,31 @@ class Options:
 
     @property
     def has_content(self) -> bool:
-        return any(o for o in self._options if o in Option.__members__)
+        return any(o for o in self._options)
 
     @property
     def cash_on_delivery(self) -> float:
-        return self._options.get(Option.cash_on_delivery.name)
+        return self[Option.cash_on_delivery.name]
 
     @property
     def currency(self) -> str:
-        return self._options.get(Option.currency.name)
+        return self[Option.currency.name]
 
     @property
     def insurance(self) -> float:
-        return self._options.get(Option.insurance.name)
+        return self[Option.insurance.name]
 
     @property
     def label_format(self) -> str:
-        return self._options.get(Option.label_format.name)
+        return self[Option.label_format.name]
 
     @property
     def label_printing(self) -> str:
-        return self._options.get(Option.label_printing.name)
+        return self[Option.label_printing.name]
 
     @property
     def notification_emails(self) -> str:
-        return self._options.get(Option.notification_emails.name)
+        return self[Option.notification_emails.name]
 
     @property
     def notification_email(self) -> str:
@@ -461,7 +460,11 @@ class Options:
 
     @property
     def shipment_date(self) -> str:
-        return self._options.get(Option.shipment_date.name)
+        return self[Option.shipment_date.name]
+
+    @property
+    def signature_confirmation(self) -> str:
+        return self[Option.signature_confirmation.name]
 
 
 class Services:

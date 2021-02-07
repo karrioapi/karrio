@@ -45,9 +45,9 @@ SHIPMENT_OPTIONS_TEMPLATE = Template('''
 {% for key, value in option_mappers.items() %}
 #### {{ mappers[key]["label"] }}
 
-| Code | Identifier
-| --- | ---
-{% for code, name in value.items() %}| `{{ code }}` | {{ name }}
+| Code | Identifier | Description
+| --- | --- | ---
+{% for code, spec in value.items() %}| `{{ code }}` | {{ spec.key }} | {{ spec.type }}
 {% endfor %}
 {% endfor %}
 ''')
@@ -155,7 +155,12 @@ def cli():
 
 @cli.command()
 def generate_shipment_options():
-    click.echo(SHIPMENT_OPTIONS_TEMPLATE.render(option_mappers=REFERENCES['options'], mappers=PROVIDERS_DATA))
+    click.echo(
+        SHIPMENT_OPTIONS_TEMPLATE.render(
+            option_mappers=REFERENCES['options'],
+            mappers=PROVIDERS_DATA
+        ).replace("<class '", "`").replace("'>", "`")
+    )
 
 
 @cli.command()

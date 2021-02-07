@@ -53,7 +53,7 @@ def _extract_details(service_node: Element, settings: Settings) -> RateDetails:
 
 
 def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlRateV2Request]:
-    packages = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB))
+    package = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB)).single
     services = Services(payload.options.keys(), RateService)
     extra_services = Services(payload.services, ExtraService)
 
@@ -69,7 +69,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
         Revision="2",
         Package=[
             PackageType(
-                ID=index,
+                ID=0,
                 Pounds=package.weight.LB,
                 Ounces=package.weight.OZ,
                 Machinable=("usps_machinable" in payload.options),
@@ -91,7 +91,6 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
                 ),
                 Content=None,
             )
-            for index, package in enumerate(packages)
         ],
     )
 

@@ -20,6 +20,7 @@ from purplship.core.utils import (
     Pipeline,
     XP,
     Job,
+    DF,
 )
 from purplship.core.units import Packages, Options
 from purplship.providers.canpar.shipment.label import get_label_request, LabelRequest
@@ -67,24 +68,26 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
 
 def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
     packages = Packages(payload.parcels)
+    options = Options(payload.options, Option)
     service_type: Optional[str] = (
         Service[payload.service] if payload.service in Service.__members__ else None
     )
-    options = Options(payload.options, Option)
-    option_values = {Option[key].name: Option[key].value for key, _ in options}
-    premium: Optional[bool] = next((True for option in options if option in [
+    premium: Optional[bool] = next((True for option, _ in options if option in [
         Option.canpar_ten_am.value,
         Option.canpar_noon.value,
         Option.canpar_saturday.value,
     ]), None)
-    shipping_date = options.shipment_date or time.strftime('%Y-%m-%dT%H:%M:%S')
+    shipping_date = DF.fdatetime(
+        options.shipment_date or time.strftime('%Y-%m-%d'),
+        current_format='%Y-%m-%d', output_format='%Y-%m-%dT%H:%M:%S'
+    )
 
     request = create_envelope(
         body_content=processShipment(
             request=ProcessShipmentRq(
                 password=settings.password,
                 shipment=Shipment(
-                    cod_type=option_values.get('canpar_cash_on_delivery'),
+                    cod_type=options['canpar_cash_on_delivery'],
                     delivery_address=Address(
                         address_line_1=payload.recipient.address_line1,
                         address_line_2=payload.recipient.address_line2,
@@ -101,14 +104,13 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
                         residential=payload.recipient.residential,
                     ),
                     description=None,
-                    dg=('canpar_dangerous_goods' in options) or None,
+                    dg=options['canpar_dangerous_goods'],
                     dimention_unit=DimensionUnit.IN.value,
                     handling=None,
                     handling_type=None,
                     instruction=None,
                     nsr=(
-                        option_values.get('canpar_no_signature_required') or
-                        option_values.get('canpar_not_no_signature_required')
+                        options['canpar_no_signature_required'] or options['canpar_not_no_signature_required']
                     ),
                     packages=[
                         Package(

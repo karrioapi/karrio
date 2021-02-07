@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.canadapost"
-version = "2021.1"
+version = "2021.2"
 homepage="https://sdk.purplship.com"
 repository="https://github.com/PurplShip/purplship"
 description = "Purplship - Canada Post Shipping Extension"
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.6"
-"purplship" = "^2021.1"
+"purplship" = "^2021.2"
 "carrier.canadapost" = "^2020.4.1"
 
 [tool.poetry.dev-dependencies]

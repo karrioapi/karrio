@@ -1,4 +1,4 @@
-from purplship.core.utils import Enum, Flag
+from purplship.core.utils import Enum, Flag, Spec
 from purplship.core.units import PackagePreset
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
@@ -112,28 +112,28 @@ class ServiceType(Enum):
     canadapost_tracked_packet_international = "INT.TP"
 
 
-INTERNATIONAL_NON_DELIVERY_OPTION = [
-    'canadapost_return_at_senders_expense',
-    'canadapost_return_to_sender',
-    'canadapost_abandon'
-]
-
-
-class OptionCode(Flag):
-    canadapost_signature = "SO"
-    canadapost_coverage = "COV"
-    canadapost_collect_on_delivery = "COD"
-    canadapost_proof_of_age_required_18 = "PA18"
-    canadapost_proof_of_age_required_19 = "PA19"
-    canadapost_card_for_pickup = "HFP"
-    canadapost_do_not_safe_drop = "DNS"
-    canadapost_leave_at_door = "LAD"
-    canadapost_deliver_to_post_office = "D2PO"
-    canadapost_return_at_senders_expense = "RASE"
-    canadapost_return_to_sender = "RTS"
-    canadapost_abandon = "ABAN"
+class OptionCode(Enum):
+    canadapost_signature = Spec.asKey("SO")
+    canadapost_coverage = Spec.asKeyVal("COV", float)
+    canadapost_collect_on_delivery = Spec.asKeyVal("COD", float)
+    canadapost_proof_of_age_required_18 = Spec.asKey("PA18")
+    canadapost_proof_of_age_required_19 = Spec.asKey("PA19")
+    canadapost_card_for_pickup = Spec.asKey("HFP")
+    canadapost_do_not_safe_drop = Spec.asKey("DNS")
+    canadapost_leave_at_door = Spec.asKey("LAD")
+    canadapost_deliver_to_post_office = Spec.asKey("D2PO")
+    canadapost_return_at_senders_expense = Spec.asKey("RASE")
+    canadapost_return_to_sender = Spec.asKey("RTS")
+    canadapost_abandon = Spec.asKey("ABAN")
 
     """ Unified Option type mapping """
     insurance = canadapost_coverage
     cash_on_delivery = canadapost_collect_on_delivery
     signature_confirmation = canadapost_signature
+
+
+INTERNATIONAL_NON_DELIVERY_OPTION = [
+    OptionCode.canadapost_return_at_senders_expense.name,
+    OptionCode.canadapost_return_to_sender.name,
+    OptionCode.canadapost_abandon.name,
+]

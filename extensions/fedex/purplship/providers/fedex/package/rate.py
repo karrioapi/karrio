@@ -18,7 +18,7 @@ from fedex_lib.rate_service_v26 import (
     Dimensions,
 )
 from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, SF, DF
-from purplship.core.units import Packages, Options, Services, DimensionUnit, WeightUnit
+from purplship.core.units import Packages, Options, Services, WeightUnit
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.providers.fedex.error import parse_error_response
@@ -97,6 +97,7 @@ def rate_request(
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     service = Services(payload.services, ServiceType).first
     options = Options(payload.options)
+
     package_type = (
         PackagingType[packages[0].packaging_type or "your_packaging"].value
         if len(packages) == 1 else None
@@ -113,7 +114,7 @@ def rate_request(
         VariableOptions=None,
         ConsolidationKey=None,
         RequestedShipment=RequestedShipment(
-            ShipTimestamp=datetime.now(),
+            ShipTimestamp=DF.date(options.shipment_date or datetime.now()),
             DropoffType="REGULAR_PICKUP",
             ServiceType=(service.value if service is not None else None),
             PackagingType=package_type,

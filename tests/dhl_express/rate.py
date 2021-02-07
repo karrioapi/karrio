@@ -275,7 +275,7 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
                     <SpecialServiceType>II</SpecialServiceType>
                 </QtdShpExChrg>
             </QtdShp>
-            <InsuredValue>75</InsuredValue>
+            <InsuredValue>75.</InsuredValue>
             <InsuredCurrency>CAD</InsuredCurrency>
         </BkgDetails>
         <To>
