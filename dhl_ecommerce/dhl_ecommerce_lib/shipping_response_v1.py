@@ -1,33 +1,34 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class BackendError:
     code: Optional[int] = None
     message: Optional[str] = None
     system: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Details:
     msgId: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Reason:
     msg: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Error:
-    reasons: Optional[List[Reason]] = None
-    details: Optional[Details] = None
-    backendError: Optional[BackendError] = None
+    reasons: Optional[List[Reason]] = JStruct[Reason]
+    details: Optional[Details] = JStruct[Details]
+    backendError: Optional[BackendError] = JStruct[BackendError]
     message: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class LabelResponse:
     packageId: Optional[int] = None
     trackingNumber: Optional[int] = None
@@ -35,7 +36,7 @@ class LabelResponse:
     labels: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ConsigneeAddress:
     postalCode: Optional[int] = None
     address1: Optional[str] = None
@@ -51,7 +52,7 @@ class ConsigneeAddress:
     state: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class PackageDetails:
     dgCategory: Optional[int] = None
     billingRef1: Optional[str] = None
@@ -75,7 +76,7 @@ class PackageDetails:
     width: Optional[float] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class LabelDetail:
     packageId: Optional[int] = None
     templateId: Optional[int] = None
@@ -83,27 +84,27 @@ class LabelDetail:
     labelData: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ResponseDetails:
     trackingNumber: Optional[int] = None
-    labelDetails: Optional[List[LabelDetail]] = None
+    labelDetails: Optional[List[LabelDetail]] = JList[LabelDetail]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Package:
-    consigneeAddress: Optional[ConsigneeAddress] = None
-    packageDetails: Optional[PackageDetails] = None
-    responseDetails: Optional[ResponseDetails] = None
+    consigneeAddress: Optional[ConsigneeAddress] = JStruct[ConsigneeAddress]
+    packageDetails: Optional[PackageDetails] = JStruct[PackageDetails]
+    responseDetails: Optional[ResponseDetails] = JStruct[ResponseDetails]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Shipment:
     consignmentNumber: Optional[int] = None
     pickupAccount: Optional[str] = None
     distributionCenter: Optional[str] = None
-    packages: Optional[List[Package]] = None
+    packages: Optional[List[Package]] = JList[Package]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ShippingResponse:
-    shipments: Optional[List[Shipment]] = None
+    shipments: Optional[List[Shipment]] = JList[Shipment]

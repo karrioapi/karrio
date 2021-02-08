@@ -1,29 +1,30 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Details:
     msgId: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Reason:
     msg: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Error:
     status: Optional[int] = None
     code: Optional[int] = None
     title: Optional[str] = None
     detail: Optional[str] = None
     instance: Optional[str] = None
-    reasons: Optional[List[Reason]] = None
+    reasons: Optional[List[Reason]] = JList[Reason]
     details: Optional[Details] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class LabelPiece:
     trackingNumber: Optional[int] = None
     id: Optional[str] = None
@@ -31,12 +32,12 @@ class LabelPiece:
     labels: Optional[List[str]] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Label:
-    pieces: Optional[List[LabelPiece]] = None
+    pieces: Optional[List[LabelPiece]] = JList[LabelPiece]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Piece:
     trackingNumber: Optional[int] = None
     id: Optional[str] = None
@@ -46,7 +47,7 @@ class Piece:
     title: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ShipmentPiece:
     pieceId: Optional[int] = None
     trackingNumber: Optional[int] = None
@@ -57,14 +58,14 @@ class ShipmentPiece:
     labels: Optional[List[str]] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Shipment:
     id: Optional[int] = None
     status: Optional[str] = None
     url: Optional[str] = None
-    pieces: Optional[List[ShipmentPiece]] = None
+    pieces: Optional[List[ShipmentPiece]] = JList[ShipmentPiece]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ShippingResponse:
-    shipments: Optional[List[Shipment]] = None
+    shipments: Optional[List[Shipment]] = JList[Shipment]

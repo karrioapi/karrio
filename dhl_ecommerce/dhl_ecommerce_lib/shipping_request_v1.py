@@ -1,8 +1,9 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ConsigneeAddress:
     postalCode: Optional[int] = None
     address1: Optional[str] = None
@@ -18,7 +19,7 @@ class ConsigneeAddress:
     state: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class CustomsDetail:
     hsCode: Optional[int] = None
     itemDescription: Optional[str] = None
@@ -28,7 +29,7 @@ class CustomsDetail:
     skuNumber: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class PackageDetails:
     dgCategory: Optional[int] = None
     billingRef1: Optional[str] = None
@@ -52,7 +53,7 @@ class PackageDetails:
     width: Optional[float] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ReturnAddress:
     address1: Optional[str] = None
     address2: Optional[str] = None
@@ -64,22 +65,22 @@ class ReturnAddress:
     state: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Package:
-    consigneeAddress: Optional[ConsigneeAddress] = None
-    packageDetails: Optional[PackageDetails] = None
-    returnAddress: Optional[ReturnAddress] = None
-    customsDetails: Optional[List[CustomsDetail]] = None
+    consigneeAddress: Optional[ConsigneeAddress] = JStruct[ConsigneeAddress]
+    packageDetails: Optional[PackageDetails] = JStruct[PackageDetails]
+    returnAddress: Optional[ReturnAddress] = JStruct[ReturnAddress]
+    customsDetails: Optional[List[CustomsDetail]] = JList[CustomsDetail]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Shipment:
     consignmentNumber: Optional[int] = None
     pickupAccount: Optional[str] = None
     distributionCenter: Optional[str] = None
-    packages: Optional[List[Package]] = None
+    packages: Optional[List[Package]] = JList[Package]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ShippingRequest:
-    shipments: Optional[List[Shipment]] = None
+    shipments: Optional[List[Shipment]] = JList[Shipment]

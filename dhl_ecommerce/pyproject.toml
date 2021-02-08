@@ -17,7 +17,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-pydantic = "^1.7.3"
+jstruct = "^2020.4.0"
 
 [tool.poetry.dev-dependencies]
 

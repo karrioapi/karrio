@@ -1,8 +1,9 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Package:
     consignmentNoteNumber: Optional[int] = None
     productId: Optional[int] = None
@@ -13,7 +14,7 @@ class Package:
     weight: Optional[int] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Pickup:
     pickup: Optional[str] = None
     customerName: Optional[str] = None
@@ -24,7 +25,7 @@ class Pickup:
     postalCode: Optional[int] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Recipient:
     postalCode: Optional[int] = None
     address1: Optional[str] = None
@@ -34,60 +35,60 @@ class Recipient:
     country: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class DetailedMailItemData:
-    recipient: Optional[Recipient] = None
+    recipient: Optional[Recipient] = JStruct[Recipient]
     pickup: Optional[Pickup] = None
     package: Optional[Package] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class DetailedMailItem:
     url: Optional[str] = None
     totalcount: Optional[int] = None
-    data: Optional[DetailedMailItemData] = None
+    data: Optional[DetailedMailItemData] = JStruct[DetailedMailItemData]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Errors:
     code: Optional[str] = None
     message: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Meta:
     timestamp: Optional[str] = None
     code: Optional[int] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Error:
-    meta: Optional[Meta] = None
-    errors: Optional[Errors] = None
+    meta: Optional[Meta] = JStruct[Meta]
+    errors: Optional[Errors] = JStruct[Errors]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Events:
     id: Optional[int] = None
     description: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class MailItemPackage:
     customerConfirmationNumber: Optional[int] = None
     mailIdentifier: Optional[str] = None
     dspNumber: Optional[int] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class MailItemData:
-    recipient: Optional[Recipient] = None
-    package: Optional[MailItemPackage] = None
-    events: Optional[Events] = None
+    recipient: Optional[Recipient] = JStruct[Recipient]
+    package: Optional[MailItemPackage] = JStruct[MailItemPackage]
+    events: Optional[Events] = JStruct[Events]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class MailItem:
     url: Optional[str] = None
     totalcount: Optional[int] = None
-    data: Optional[MailItemData] = None
+    data: Optional[MailItemData] = JStruct[MailItemData]

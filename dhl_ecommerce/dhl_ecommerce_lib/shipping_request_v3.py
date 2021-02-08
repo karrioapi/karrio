@@ -1,8 +1,9 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Address:
     postalCode: Optional[int] = None
     address1: Optional[str] = None
@@ -18,14 +19,14 @@ class Address:
     idType: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Piece:
     pieceId: Optional[int] = None
     packingType: Optional[str] = None
     weight: Optional[float] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ShipmentDetails:
     shipmentId: Optional[int] = None
     dgCategory: Optional[int] = None
@@ -42,14 +43,14 @@ class ShipmentDetails:
     isCompleteDelivery: Optional[bool] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Shipment:
-    consigneeAddress: Optional[Address] = None
-    shipmentDetails: Optional[ShipmentDetails] = None
+    consigneeAddress: Optional[Address] = JStruct[Address]
+    shipmentDetails: Optional[ShipmentDetails] = JStruct[ShipmentDetails]
     pieces: Optional[List[Piece]] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ShipperAddress:
     address1: Optional[str] = None
     address2: Optional[str] = None
@@ -58,11 +59,11 @@ class ShipperAddress:
     state: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ShippingRequest:
     distributionCenter: Optional[str] = None
     pickupAccount: Optional[str] = None
     isWorkshare: Optional[bool] = None
-    pickupAddress: Optional[Address] = None
-    shipperAddress: Optional[ShipperAddress] = None
-    shipments: Optional[List[Shipment]] = None
+    pickupAddress: Optional[Address] = JStruct[Address]
+    shipperAddress: Optional[ShipperAddress] = JStruct[ShipperAddress]
+    shipments: Optional[List[Shipment]] = JList[Shipment]

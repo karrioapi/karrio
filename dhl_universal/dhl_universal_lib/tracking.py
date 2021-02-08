@@ -1,6 +1,6 @@
 import attr
-from typing import Optional, List
 from jstruct import JList, JStruct
+from typing import Optional, List
 
 
 @attr.s(auto_attribs=True)
