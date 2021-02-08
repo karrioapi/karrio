@@ -25,7 +25,7 @@ COPY requirements.txt /temp/
 COPY gunicorn-cfg.py .docker/docker-entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
 
 RUN pip install --upgrade pip \
-    pip install -f https://git.io/purplship -r /temp/requirements.txt \
+    pip install -r /temp/requirements.txt \
     pip freeze
 
 RUN chmod +x docker-entrypoint.sh
