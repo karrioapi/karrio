@@ -1,0 +1,29 @@
+<xsd:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" elementFormDefault="qualified">
+    <xsd:complexType name="ArrayOfstring">
+        <xsd:sequence>
+            <xsd:element type="xsd:string" name="string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element type="tns:ArrayOfstring" name="ArrayOfstring" nillable="true"/>
+    <xsd:complexType name="ArrayOfKeyValueOfstringArrayOfTrackingResultmFAkxlpY">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <IsDictionary xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsDictionary>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="KeyValueOfstringArrayOfTrackingResultmFAkxlpY" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element type="xsd:string" name="Key" nillable="true"/>
+                        <xsd:element type="q3:ArrayOfTrackingResult" name="Value" nillable="true"
+                            xmlns:q3="http://ws.aramex.net/ShippingAPI/v1/"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element type="tns:ArrayOfKeyValueOfstringArrayOfTrackingResultmFAkxlpY" name="ArrayOfKeyValueOfstringArrayOfTrackingResultmFAkxlpY" nillable="true"/>
+</xsd:schema>
