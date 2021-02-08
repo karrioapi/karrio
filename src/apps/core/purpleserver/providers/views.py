@@ -1,11 +1,13 @@
 import logging
 
 from django.urls import path
+from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.serializers import NullBooleanField, ChoiceField, Serializer
 from drf_yasg.utils import swagger_auto_schema
 
+from purplship.core.utils import DP
+from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.gateway import Carriers
 from purpleserver.core.serializers import CarrierSettings, ErrorResponse, CARRIERS
@@ -15,9 +17,9 @@ logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class CarrierFilters(Serializer):
-    carrier_name = ChoiceField(choices=CARRIERS, required=False, help_text="Indicates a carrier (type)")
-    test = NullBooleanField(required=False, help_text="The test flag filter carrier configured in test mode")
+class CarrierFilters(serializers.Serializer):
+    carrier_name = serializers.ChoiceField(choices=CARRIERS, required=False, help_text="Indicates a carrier (type)")
+    test = serializers.NullBooleanField(required=False, default=None, help_text="The test flag filter carrier configured in test mode")
 
 
 class CarrierList(GenericAPIView):
@@ -33,10 +35,9 @@ class CarrierList(GenericAPIView):
         """
         Returns the list of configured carriers
         """
-        query = CarrierFilters(data=request.query_params)
-        query.is_valid(raise_exception=True)
+        query = DP.to_dict(SerializerDecorator[CarrierFilters](data=request.query_params).data)
 
-        carriers = [carrier.data for carrier in Carriers.list(**{**query.validated_data, 'user': request.user})]
+        carriers = [carrier.data for carrier in Carriers.list(**{**query, 'user': request.user})]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
         return Response(response)
 

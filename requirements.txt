@@ -33,7 +33,7 @@ psycopg2-binary==2.8.6
 purplship==2021.0
 purplship-server==2021.0
 purplship-server.client==2021.0
-purplship-server.core==2021.0.1
+purplship-server.core==2021.0.2
 purplship-server.manager==2021.0
 purplship-server.pricing==2021.0
 purplship-server.proxy==2021.0

@@ -12,8 +12,8 @@ from purplship.core.utils import exec_async, DP
 from purpleserver.providers import models
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.datatypes import (
-    CarrierSettings, ShipmentRequest, RateRequest, Shipment,
-    RateResponse, TrackingResponse, TrackingRequest, Message, Rate, ErrorResponse,
+    ShipmentRequest, RateRequest, Shipment,
+    RateResponse, TrackingResponse, TrackingRequest, Rate, ErrorResponse,
     PickupRequest, Pickup, PickupUpdateRequest, PickupResponse, AddressValidation,
     ConfirmationResponse, PickupCancelRequest, ShipmentCancelRequest,
     AddressValidationRequest, Tracking,
@@ -34,9 +34,8 @@ class Carriers:
         list_filter: Dict[str: Any] = kwargs
         query = {}
 
-        if 'test' in list_filter:
-            test = False if list_filter['test'] is False else True
-            query.update(dict(test=test))
+        if list_filter.get('test') is not None:
+            query.update(dict(test=list_filter['test']))
 
         if 'active' in list_filter:
             active = False if list_filter['active'] is False else True
