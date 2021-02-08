@@ -1,5 +1,3 @@
-"""Sendle Validation Error Datatypes definition module."""
-
 import attr
 from typing import Union
 
