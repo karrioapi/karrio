@@ -29,12 +29,12 @@ create_env() {
   mkdir -p "${ROOT:?}/$ENV_DIR"
   python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
   activate_env &&
-  pip install --upgrade pip
+  pip install --upgrade pip > /dev/null
 }
 
 init() {
   create_env &&
-  pip install -r requirements.txt
+  pip install -r requirements.txt > /dev/null
 }
 
 
