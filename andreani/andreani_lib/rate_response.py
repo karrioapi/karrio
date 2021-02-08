@@ -1,16 +1,17 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Tarifa:
     seguroDistribucion: Optional[str] = None
     distribucion: Optional[str] = None
     total: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Tarifas:
     pesoAforado: Optional[str] = None
-    tarifaSinIva: Optional[Tarifa] = None
-    tarifaConIva: Optional[Tarifa] = None
+    tarifaSinIva: Optional[Tarifa] = JStruct[Tarifa]
+    tarifaConIva: Optional[Tarifa] = JStruct[Tarifa]

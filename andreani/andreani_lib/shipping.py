@@ -1,8 +1,9 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Bulto:
     kilos: Optional[float] = None
     valorDeclaradoConImpuestos: Optional[int] = None
@@ -10,14 +11,14 @@ class Bulto:
     volumen: Optional[int] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Contacto:
     tipoYNumeroDeDocumento: Optional[str] = None
     nombreYApellido: Optional[str] = None
     eMail: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class PostalDeDestino:
     codigoPostal: Optional[int] = None
     localidad: Optional[str] = None
@@ -27,33 +28,33 @@ class PostalDeDestino:
     direccion: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Destino:
-    Postal: Optional[PostalDeDestino] = None
+    Postal: Optional[PostalDeDestino] = JStruct[PostalDeDestino]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class SucursalDeDistribucion:
     nomenclatura: Optional[str] = None
     descripcion: Optional[str] = None
     id: Optional[int] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Envio:
     contrato: Optional[int] = None
     numeroDeTracking: Optional[str] = None
     estado: Optional[str] = None
-    sucursalDeDistribucion: Optional[SucursalDeDistribucion] = None
+    sucursalDeDistribucion: Optional[SucursalDeDistribucion] = JStruct[SucursalDeDistribucion]
     fechaCreacion: Optional[str] = None
-    destino: Optional[Destino] = None
-    remitente: Optional[Contacto] = None
-    destinatario: Optional[Contacto] = None
-    bultos: Optional[List[Bulto]] = None
+    destino: Optional[Destino] = JStruct[Destino]
+    remitente: Optional[Contacto] = JStruct[Contacto]
+    destinatario: Optional[Contacto] = JStruct[Contacto]
+    bultos: Optional[List[Bulto]] = JList[Bulto]
     referencias: Optional[List[str]] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class FiltroDeEnvio:
     codigoCliente: Optional[str] = None
     idDeProducto: Optional[int] = None
@@ -62,9 +63,3 @@ class FiltroDeEnvio:
     fechaCreacionHasta: Optional[str] = None
     contrato: Optional[int] = None
     limit: Optional[int] = None
-
-
-@dataclass
-class Envios:
-    envios: Optional[List[Envio]] = None
-    filtroDeEnvio: Optional[FiltroDeEnvio] = None

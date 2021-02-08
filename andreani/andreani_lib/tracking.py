@@ -1,8 +1,9 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Evento:
     Motivo: Optional[str] = None
     Submotivo: Optional[str] = None
@@ -16,6 +17,6 @@ class Evento:
     Ciclo: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class EnviosTrazas:
-    eventos: Optional[List[Evento]] = None
+    eventos: Optional[List[Evento]] = JList[Evento]

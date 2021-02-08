@@ -1,8 +1,9 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Bulto:
     kilos: Optional[int] = None
     largoCm: Optional[int] = None
@@ -16,22 +17,22 @@ class Bulto:
     numeroDeEnvio: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Telefonos:
     tipo: Optional[int] = None
     numero: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Contacto:
     nombreCompleto: Optional[str] = None
     eMail: Optional[str] = None
     documentoTipo: Optional[str] = None
     documentoNumero: Optional[str] = None
-    telefonos: Optional[Telefonos] = None
+    telefonos: Optional[Telefonos] = JStruct[Telefonos]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Postal:
     localidad: Optional[str] = None
     region: Optional[str] = None
@@ -42,40 +43,40 @@ class Postal:
     componentesDeDireccion: Optional[List[str]] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Sucursal:
     id: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Direccion:
-    postal: Optional[Postal] = None
-    sucursal: Optional[Sucursal] = None
+    postal: Optional[Postal] = JStruct[Postal]
+    sucursal: Optional[Sucursal] = JStruct[Sucursal]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class FechaDeEntrega:
     fecha: Optional[int] = None
     horaDesde: Optional[int] = None
     horaHasta: Optional[int] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Remito:
     numeroRemito: Optional[str] = None
     complementarios: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class OrdenesDeEnvio:
     contrato: Optional[str] = None
     tipoServicio: Optional[str] = None
     sucursalClienteID: Optional[str] = None
-    origen: Optional[Direccion] = None
-    destino: Optional[Direccion] = None
-    remitente: Optional[Contacto] = None
-    destinatario: Optional[Contacto] = None
-    remito: Optional[Remito] = None
+    origen: Optional[Direccion] = JStruct[Direccion]
+    destino: Optional[Direccion] = JStruct[Direccion]
+    remitente: Optional[Contacto] = JStruct[Contacto]
+    destinatario: Optional[Contacto] = JStruct[Contacto]
+    remito: Optional[Remito] = JStruct[Remito]
     centroDeCostos: Optional[str] = None
     productoAEntregar: Optional[str] = None
     productoARetirar: Optional[str] = None
@@ -83,5 +84,5 @@ class OrdenesDeEnvio:
     categoriaFacturacion: Optional[str] = None
     pagoDestino: Optional[int] = None
     valorACobrar: Optional[int] = None
-    fechaDeEntrega: Optional[FechaDeEntrega] = None
-    bultos: Optional[List[Bulto]] = None
+    fechaDeEntrega: Optional[FechaDeEntrega] = JStruct[FechaDeEntrega]
+    bultos: Optional[List[Bulto]] = JList[Remito]

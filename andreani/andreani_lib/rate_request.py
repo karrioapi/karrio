@@ -1,8 +1,9 @@
-from pydantic.dataclasses import dataclass
+import attr
+from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Bulto:
     largoCm: Optional[int] = None
     anchoCm: Optional[int] = None
@@ -14,11 +15,11 @@ class Bulto:
     categoria: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Tarifas:
     pais: Optional[str] = None
     cpDestino: Optional[int] = None
     contrato: Optional[str] = None
     cliente: Optional[str] = None
     sucursalOrigen: Optional[str] = None
-    bultos: Optional[List[Bulto]] = None
+    bultos: Optional[List[Bulto]] = JList[Bulto]
