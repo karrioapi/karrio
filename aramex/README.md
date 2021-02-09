@@ -1,6 +1,6 @@
 # carrier.aramex
 
-Purolator Web API schemas Python Data Types generated with [generateDS](http://www.davekuhlman.org/generateDS.html)
+Aramex Web API schemas Python Data Types generated with [generateDS](http://www.davekuhlman.org/generateDS.html)
 
 ## Installation
 

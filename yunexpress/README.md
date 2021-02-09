@@ -1,6 +1,6 @@
 # carrier.yunexpress
 
-Purolator Web API schemas Python Data Types generated with [generateDS](http://www.davekuhlman.org/generateDS.html)
+Yunexpress Web API schemas Python Data Types generated with [generateDS](http://www.davekuhlman.org/generateDS.html)
 
 ## Installation
 

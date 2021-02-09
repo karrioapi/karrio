@@ -1,6 +1,6 @@
 # carrier.dhl_universal
 
-DHL eCommerce Web API schemas Python Data Types generated with [quicktype](https://github.com/quicktype/quicktype)
+DHL Universal Tracking Web API schemas Python Data Types generated with [quicktype](https://github.com/quicktype/quicktype)
 
 ## Installation
 

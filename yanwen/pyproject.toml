@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "carrier.yunexpress"
+name = "carrier.yanwen"
 version = "2021.2-alpha"
 description = "DHL eCommerce API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
-homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.yunexpress"
+homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.yanwen"
 authors = ["Dan Kobina <danielkobina@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{ include = "yunexpress_lib" }]
+packages = [{ include = "yanwen_lib" }]
 classifiers = [
 	"Intended Audience :: Developers",
 	"Operating System :: OS Independent",

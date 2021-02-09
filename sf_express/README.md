@@ -1,6 +1,6 @@
 # carrier.sf_express
 
-Purolator Web API schemas Python Data Types generated with [generateDS](http://www.davekuhlman.org/generateDS.html)
+SF-Express Web API schemas Python Data Types generated with [generateDS](http://www.davekuhlman.org/generateDS.html)
 
 ## Installation
 
