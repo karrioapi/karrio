@@ -3,10 +3,10 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-      name='purplship.[carrier]',
-      version='[version]',
+      name='purplship.[carrier_name]',
+      version='0.0.0-dev',
       license='LGPLv3',
       packages=find_namespace_packages(),
-      install_requires=['purplship', 'carrier.carrier_name'],
+      install_requires=['purplship', 'carrier.[carrier_name]'],
       zip_safe=False,
 )

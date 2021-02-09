@@ -2,7 +2,7 @@ from purplship.core import Settings as BaseSettings
 
 
 class Settings(BaseSettings):
-    """[carrier] connection settings."""
+    """[Carrier Name] connection settings."""
 
     # username: str
     # password: str
@@ -11,8 +11,12 @@ class Settings(BaseSettings):
 
     @property
     def carrier_name(self):
-        return "carrier"
+        return "[carrier_name]"
 
     @property
     def server_url(self):
-        return "https://api.carrier.com/"
+        return (
+            "https://dev-api.carrier.com"
+            if self.test
+            else "https://api.carrier.com"
+        )
