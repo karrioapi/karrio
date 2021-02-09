@@ -18,7 +18,7 @@ classifiers=[
 [tool.poetry.dependencies]
 python = "^3.6"
 "purplship" = "^2021.2"
-"carrier.usps" = "^2020.11.1b0"
+"carrier.usps" = ""
 
 [tool.poetry.dev-dependencies]
 
