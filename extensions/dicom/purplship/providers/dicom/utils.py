@@ -17,6 +17,14 @@ class Settings(BaseSettings):
         return "dicom"
 
     @property
+    def server_url(self):
+        return (
+            "https://ct.soa-gw.canadapost.ca"
+            if self.test
+            else "https://soa-gw.canadapost.ca"
+        )
+
+    @property
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
         return b64encode(pair.encode("utf-8")).decode("ascii")
