@@ -1,54 +1,53 @@
 """Australia Post Tracking Datatype definition module."""
 
 import attr
-from typing import List
+from typing import Optional, List
 from jstruct import JList, JStruct
 
 
 @attr.s(auto_attribs=True)
+class TrackingRequest:
+    tracking_ids: Optional[List[str]] = None
+
+
+@attr.s(auto_attribs=True)
 class Event:
-    location: str = None
-    description: str = None
-    date: str = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    date: Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class Consignment:
-    events: List[Event] = JList[Event]
-    status: str = None
-
-
-@attr.s(auto_attribs=True)
-class TrackingError:
-    code: str = None
-    name: str = None
-
-
-@attr.s(auto_attribs=True)
-class TrackableItem:
-    article_id: str = None
-    product_type: str = None
-    status: str = None
-    events: List[Event] = JList[Event]
-
-
-@attr.s(auto_attribs=True)
-class TrackingResult:
-    status: str = None
-    tracking_id: str = None
-    consignment: Consignment = JStruct[Consignment]
-    errors: List[TrackingError] = JList[TrackingError]
-    trackable_items: List[TrackableItem] = JList[TrackableItem]
+    events: Optional[List[Event]] = JList[Event]
+    status: Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class Error:
-    code: str = None
-    name: str = None
-    message: str = None
+    code: Optional[str] = None
+    name: Optional[str] = None
+    message: Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class TrackableItem:
+    article_id: Optional[str] = None
+    product_type: Optional[str] = None
+    events: Optional[List[Event]] = JList[Event]
+    status: Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class TrackingResult:
+    tracking_id: Optional[str] = None
+    errors: Optional[List[Error]] = JList[Error]
+    status: Optional[str] = None
+    trackable_items: Optional[List[TrackableItem]] = JList[Error]
+    consignment: Optional[List[Consignment]] = JList[Consignment]
 
 
 @attr.s(auto_attribs=True)
 class TrackingResponse:
-    tracking_results: List[TrackingResult] = JList[TrackingResult]
-    errors: List[Error] = JList[Error]
+    tracking_results: Optional[List[TrackingResult]] = JList[TrackingResult]
+    errors:  Optional[List[Error]] = JList[Error]
