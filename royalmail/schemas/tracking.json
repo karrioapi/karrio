@@ -1,0 +1,69 @@
+{
+    "TrackingResponse": {
+        "mailPieces": {
+            "mailPieceId": "090367574000000FE1E1B",
+            "carrierShortName": "RM",
+            "carrierFullName": "Royal Mail Group Ltd",
+            "summary": {
+                "uniqueItemId": "090367574000000FE1E1B",
+                "oneDBarcode": "FQ087430672GB",
+                "productId": "SD2",
+                "productName": "Special Delivery Guaranteed",
+                "productDescription": "Our guaranteed next working day service with tracking and a signature on delivery",
+                "productCategory": "NON-INTERNATIONAL",
+                "destinationCountryCode": "GBR",
+                "destinationCountryName": "United Kingdom of Great Britain and Northern Ireland",
+                "originCountryCode": "GBR",
+                "originCountryName": "United Kingdom of Great Britain and Northern Ireland",
+                "lastEventCode": "EVNMI",
+                "lastEventName": "Forwarded - Mis-sort",
+                "lastEventDateTime": "2016-10-20T10:04:00+01:00",
+                "lastEventLocationName": "Stafford DO",
+                "statusDescription": "It's being redirected",
+                "statusCategory": "IN TRANSIT",
+                "statusHelpText": "The item is in transit and a confirmation will be provided on delivery. For more information on levels of tracking by service, please see Sending Mail.",
+                "summaryLine": "Item FQ087430672GB was forwarded to the Delivery Office on 2016-10-20.",
+                "internationalPostalProvider": {
+                    "url": "https://www.royalmail.com/track-your-item",
+                    "title": "Royal Mail Group Ltd",
+                    "description": "Royal Mail Group Ltd"
+                }
+            },
+            "signature": {
+                "recipientName": "Simon",
+                "signatureDateTime": "2016-10-20T10:04:00+01:00",
+                "imageId": "001234"
+            },
+            "estimatedDelivery": {
+                "date": "2017-02-20",
+                "startOfEstimatedWindow": "08:00:00+01:00",
+                "endOfEstimatedWindow": "11:00:00+01:00"
+            },
+            "events": [
+                {
+                    "eventCode": "EVNMI",
+                    "eventName": "Forwarded - Mis-sort",
+                    "eventDateTime": "2016-10-20T10:04:00+01:00",
+                    "locationName": "Stafford DO"
+                }
+            ],
+            "links": {
+                "summary": {
+                    "href": "/mailpieces/v2/summary?mailPieceId=090367574000000FE1E1B",
+                    "title": "Summary",
+                    "description": "Get summary"
+                },
+                "signature": {
+                    "href": "/mailpieces/v2/090367574000000FE1E1B/signature",
+                    "title": "Signature",
+                    "description": "Get signature"
+                },
+                "redelivery": {
+                    "href": "/personal/receiving-mail/redelivery",
+                    "title": "Redelivery",
+                    "description": "Book a redelivery"
+                }
+            }
+        }
+    }
+}

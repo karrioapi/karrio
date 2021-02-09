@@ -1,0 +1,12 @@
+{
+    "httpCode": "400",
+    "httpMessage": "Bad Request",
+    "errors": [
+        {
+            "errorCode": "E0004",
+            "errorDescription": "Failed header validation for X-Accept-RMG-Terms",
+            "errorCause": "The submitted request was not valid against the required header definition",
+            "errorResolution": "Please check the API request against the required header definition and re-submit"
+        }
+    ]
+}
