@@ -39,7 +39,8 @@ submodules() {
 init() {
 	echo "Dev setup..."
     create_env &&
-    poetry install > /dev/null
+    poetry install > /dev/null &&
+    pip install -r "${ROOT:?}/requirements.dev.txt" > /dev/null
 }
 
 # Project helpers
