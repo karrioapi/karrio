@@ -3,7 +3,7 @@ from jstruct import JList, JStruct
 from typing import Optional, List
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Checkpoint:
     time_stamp: Optional[str] = None
     time_zone: Optional[str] = None
@@ -12,7 +12,7 @@ class Checkpoint:
     location: Optional[str] = None
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Result:
     tracking_number: Optional[str] = None
     tracking_status: Optional[str] = None
@@ -20,7 +20,7 @@ class Result:
     checkpoints: Optional[List[Checkpoint]] = JList[Checkpoint]
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class TrackingResponse:
     code: Optional[int] = None
     message: Optional[str] = None

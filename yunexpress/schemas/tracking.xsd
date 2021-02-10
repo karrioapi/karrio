@@ -4,7 +4,7 @@
       <xs:sequence>
         <xs:element type="xs:byte" name="ResultCode"/>
         <xs:element type="xs:string" name="ResultDesc"/>
-        <xs:element name="Item">
+        <xs:element name="Item" maxOccurs="unbounded" minOccurs="0">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="OrderInfo">

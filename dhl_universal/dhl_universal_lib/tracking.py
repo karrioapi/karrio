@@ -54,7 +54,7 @@ class Status:
 
 @attr.s(auto_attribs=True)
 class Shipment:
-    id: Optional[int] = None
+    id: Optional[str] = None
     service: Optional[str] = None
     origin: Location = JStruct[Location]
     destination: Location = JStruct[Location]
@@ -65,7 +65,7 @@ class Shipment:
     serviceUrl: Optional[str] = None
     rerouteUrl: Optional[str] = None
     details: Optional[dict] = None
-    events: Status = JList[Status]
+    events: List[Status] = JList[Status]
 
 
 @attr.s(auto_attribs=True)
