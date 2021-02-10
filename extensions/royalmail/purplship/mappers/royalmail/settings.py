@@ -9,9 +9,8 @@ class Settings(BaseSettings):
     """Royal Mail connection settings."""
 
     # Carrier specific properties
-    # username: str
-    # password: str
-    # account_number: str = None
+    client_id: str
+    client_secret: str
 
     # Base properties
     id: str = None

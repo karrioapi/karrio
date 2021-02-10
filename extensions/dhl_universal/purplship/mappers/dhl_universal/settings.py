@@ -9,9 +9,8 @@ class Settings(BaseSettings):
     """DHL Universal connection settings."""
 
     # Carrier specific properties
-    # username: str
-    # password: str
-    # account_number: str = None
+    consumer_key: str
+    consumer_secret: str
 
     # Base properties
     id: str = None

@@ -1,12 +1,14 @@
+from base64 import b64encode
 from purplship.core import Settings as BaseSettings
 
 
 class Settings(BaseSettings):
     """Yanwen connection settings."""
 
-    # username: str
-    # password: str
-    # account_number: str = None
+    # Carrier specific properties
+    customer_number: str
+    license_key: str
+
     id: str = None
 
     @property
@@ -15,8 +17,9 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return (
-            "https://secure.shippingapis.com/ShippingAPI.dll"
-            if self.test
-            else "https://secure.shippingapis.com/ShippingAPI.dll"
-        )
+        return ""
+
+    @property
+    def authorization(self):
+        pair = "%s&%s" % (self.customer_number, self.license_key)
+        return b64encode(pair.encode("utf-8")).decode("ascii")

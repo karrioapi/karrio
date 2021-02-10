@@ -4,9 +4,10 @@ from purplship.core import Settings as BaseSettings
 class Settings(BaseSettings):
     """Yunexpress  connection settings."""
 
-    # username: str
-    # password: str
-    # account_number: str = None
+    # Carrier specific properties
+    customer_number: str
+    api_secret: str
+
     id: str = None
 
     @property
@@ -15,8 +16,4 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return (
-            "https://secure.shippingapis.com/ShippingAPI.dll"
-            if self.test
-            else "https://secure.shippingapis.com/ShippingAPI.dll"
-        )
+        return "https://api.yunexpress.com/LMS.API/api"

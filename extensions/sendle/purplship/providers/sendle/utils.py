@@ -1,12 +1,14 @@
+from base64 import b64encode
 from purplship.core import Settings as BaseSettings
 
 
 class Settings(BaseSettings):
     """Sendle connection settings."""
 
-    # username: str
-    # password: str
-    # account_number: str = None
+    # Carrier specific properties
+    sendle_id: str
+    api_key: str
+
     id: str = None
 
     @property
@@ -16,7 +18,12 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            "https://ct.soa-gw.canadapost.ca"
-            if self.test
-            else "https://soa-gw.canadapost.ca"
+            "https://sandbox.sendle.com"
+            if self.test else
+            "https://api.sendle.com"
         )
+
+    @property
+    def authorization(self):
+        pair = "%s:%s" % (self.sendle_id, self.api_key)
+        return b64encode(pair.encode("utf-8")).decode("ascii")

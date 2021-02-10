@@ -4,9 +4,14 @@ from purplship.core import Settings as BaseSettings
 class Settings(BaseSettings):
     """Aramex connection settings."""
 
-    # username: str
-    # password: str
-    # account_number: str = None
+    # Carrier specific properties
+    username: str
+    password: str
+    account_pin: str
+    account_entity: str
+    account_number: str
+    account_country_code: str
+
     id: str = None
 
     @property
@@ -16,7 +21,7 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            "https://dev-api.carrier.com"
+            "http://ws.dev.aramex.net/shippingapi"
             if self.test
-            else "https://api.carrier.com"
+            else "http://ws.aramex.net/shippingapi"
         )

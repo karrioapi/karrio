@@ -11,9 +11,8 @@ class Proxy(BaseProxy):
 
     """ Proxy interface method implementations """
 
-    def get_tracking(
-        self, request: Serializable[TrackFieldRequest]
-    ) -> Deserializable[str]:
-        query = urllib.parse.urlencode(request.serialize())
+    def get_tracking(self, request: Serializable[TrackFieldRequest]) -> Deserializable[str]:
+        query = urllib.parse.urlencode({"API": "TrackV2", "XML": request.serialize()})
         response = http(url=f"{self.settings.server_url}?{query}", method="GET")
+
         return Deserializable(response, XP.to_xml)

@@ -51,13 +51,11 @@ PARSED_TRACKING_RESPONSE = [
 ]
 
 
-TRACKING_REQUEST_STR = f"""<TrackFieldRequest USERID="{gateway.settings.username}">
+TRACKING_REQUEST = f"""<TrackFieldRequest USERID="{gateway.settings.username}">
     <Revision>1</Revision>
     <TrackID ID="XXXXXXXXXXXX1"/>
 </TrackFieldRequest>
 """
-
-TRACKING_REQUEST = {"API": "TrackV2", "XML": TRACKING_REQUEST_STR}
 
 TRACKING_RESPONSE = """
 <TrackResponse>

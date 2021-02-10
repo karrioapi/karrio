@@ -4,9 +4,10 @@ from purplship.core import Settings as BaseSettings
 class Settings(BaseSettings):
     """SF-Express connection settings."""
 
-    # username: str
-    # password: str
-    # account_number: str = None
+    # Carrier specific properties
+    partner_id: str
+    checkword: str
+
     id: str = None
 
     @property
@@ -16,7 +17,7 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            "https://ct.soa-gw.canadapost.ca"
+            "https://sfapi-sbox.sf-express.com/std/service"
             if self.test
-            else "https://soa-gw.canadapost.ca"
+            else "https://sfapi.sf-express.com/std/service"
         )

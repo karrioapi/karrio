@@ -9,9 +9,8 @@ class Settings(BaseSettings):
     """SF-Express connection settings."""
 
     # Carrier specific properties
-    # username: str
-    # password: str
-    # account_number: str = None
+    partner_id: str
+    checkword: str
 
     # Base properties
     id: str = None

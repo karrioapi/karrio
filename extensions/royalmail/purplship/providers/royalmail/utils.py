@@ -4,9 +4,10 @@ from purplship.core import Settings as BaseSettings
 class Settings(BaseSettings):
     """Royal Mail connection settings."""
 
-    # username: str
-    # password: str
-    # account_number: str = None
+    # Carrier specific properties
+    client_id: str
+    client_secret: str
+
     id: str = None
 
     @property
@@ -16,7 +17,7 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            "https://ct.soa-gw.canadapost.ca"
+            "https://api.royalmail.net"
             if self.test
-            else "https://soa-gw.canadapost.ca"
+            else "https://api.royalmail.net"
         )

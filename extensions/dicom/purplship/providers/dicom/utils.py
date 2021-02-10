@@ -7,9 +7,11 @@ from purplship.core.settings import Settings as BaseSettings
 class Settings(BaseSettings):
     """Dicom connection settings."""
 
+    # Carrier specific properties
     username: str
     password: str
     billing_account: str = None
+
     id: str = None
 
     @property
@@ -19,9 +21,9 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            "https://ct.soa-gw.canadapost.ca"
+            "https://sandbox-smart4i.dicom.com"
             if self.test
-            else "https://soa-gw.canadapost.ca"
+            else "https://smart4i.dicom.com"
         )
 
     @property

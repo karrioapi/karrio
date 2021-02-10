@@ -4,9 +4,10 @@ from purplship.core import Settings as BaseSettings
 class Settings(BaseSettings):
     """DHL Universal connection settings."""
 
-    # username: str
-    # password: str
-    # account_number: str = None
+    # Carrier specific properties
+    consumer_key: str
+    consumer_secret: str
+
     id: str = None
 
     @property
@@ -15,8 +16,4 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return (
-            "https://ct.soa-gw.canadapost.ca"
-            if self.test
-            else "https://soa-gw.canadapost.ca"
-        )
+        return "https://api-eu.dhl.com/track/shipments"

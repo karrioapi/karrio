@@ -9,9 +9,8 @@ class Settings(BaseSettings):
     """Yanwen connection settings."""
 
     # Carrier specific properties
-    # username: str
-    # password: str
-    # account_number: str = None
+    customer_number: str
+    license_key: str
 
     # Base properties
     id: str = None

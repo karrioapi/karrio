@@ -9,9 +9,12 @@ class Settings(BaseSettings):
     """Aramex connection settings."""
 
     # Carrier specific properties
-    # username: str
-    # password: str
-    # account_number: str = None
+    username: str
+    password: str
+    account_pin: str
+    account_entity: str
+    account_number: str
+    account_country_code: str
 
     # Base properties
     id: str = None

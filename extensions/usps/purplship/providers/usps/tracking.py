@@ -29,7 +29,7 @@ def _extract_details(tracking_node: Element, settings) -> TrackingDetails:
         ".//*[local-name() = $name]", name="TrackDetail"
     )
     details: List[TrackDetailType] = [
-        (lambda t: (t, t.build(detail)))(TrackDetailType())[0]
+        XP.build(TrackDetailType, detail)
         for detail in track_detail_nodes
     ]
     return TrackingDetails(
@@ -76,5 +76,5 @@ def tracking_request(
     return Serializable(request, _request_serializer)
 
 
-def _request_serializer(request: TrackFieldRequest) -> dict:
-    return {"API": "TrackV2", "XML": XP.export(request)}
+def _request_serializer(request: TrackFieldRequest) -> str:
+    return XP.export(request)

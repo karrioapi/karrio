@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     """Australia Post connection settings."""
 
     # Carrier specific properties
-    # username: str
-    # password: str
-    # account_number: str = None
+    api_key: str
+    password: str
+    account_number: str
 
     # Base properties
     id: str = None

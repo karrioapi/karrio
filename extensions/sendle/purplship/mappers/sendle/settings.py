@@ -9,9 +9,8 @@ class Settings(BaseSettings):
     """Sendle connection settings."""
 
     # Carrier specific properties
-    # username: str
-    # password: str
-    # account_number: str = None
+    sendle_id: str
+    api_key: str
 
     # Base properties
     id: str = None
