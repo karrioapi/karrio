@@ -1,6 +1,10 @@
+import time
 from typing import List, Tuple
+from yunexpress_lib.tracking import OrderInfoType
 from purplship.core.utils import (
+    Element,
     Serializable,
+    XP,
 )
 from purplship.core.models import (
     TrackingEvent,
@@ -13,29 +17,30 @@ from purplship.providers.yunexpress.error import parse_error_response
 
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
-    details = []  # retrieve details from `response`
+    details = response.xpath(".//*[local-name() = $name]", name="OrderInfo")
     tracking_details = [_extract_detail(detail, settings) for detail in details]
 
     return tracking_details, parse_error_response(response, settings)
 
 
-def _extract_detail(detail: 'CarrierTrackingDetail', settings: Settings) -> TrackingDetails:
-    # return TrackingDetails(
-    #     carrier_name=settings.carrier_name,
-    #     carrier_id=settings.carrier_id,
-    #
-    #     tracking_number=detail.[tracking_number],
-    #     events=[],
-    # )
-    pass
+def _extract_detail(detail: Element, settings: Settings) -> TrackingDetails:
+    item = XP.build(OrderInfoType, detail)
+
+    return TrackingDetails(
+        carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
+
+        tracking_number=item.TrackingNumber,
+        events=[TrackingEvent(
+            date=time.strftime('%Y-%m-%d'),
+            description=item.msg
+        )],
+    )
 
 
-def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializable['CarrierTrackingRequest']:
-    # request = CarrierTrackingRequest(
-    # )
-    # return Serializable(request, _request_serializer)
-    pass
+def tracking_request(payload: TrackingRequest, _) -> Serializable[dict]:
+    request = dict(
+        trackingNumber=payload.tracking_numbers
+    )
 
-
-def _request_serializer(request: 'CarrierTrackingRequest') -> str:
-    pass
+    return Serializable(request)

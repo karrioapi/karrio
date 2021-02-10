@@ -15,7 +15,7 @@ from purplship.core.models import (
     # ShipmentDetails,
     # PickupDetails,
     # RateDetails,
-    # Message,
+    Message,
 )
 from purplship.providers.usps import (
     # parse_shipment_cancel_response,

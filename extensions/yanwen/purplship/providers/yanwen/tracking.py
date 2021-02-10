@@ -1,6 +1,11 @@
 from typing import List, Tuple
+from yanwen_lib.tracking import (
+    Result
+)
 from purplship.core.utils import (
     Serializable,
+    DF,
+    DP,
 )
 from purplship.core.models import (
     TrackingEvent,
@@ -9,33 +14,49 @@ from purplship.core.models import (
     Message,
 )
 from purplship.providers.yanwen.utils import Settings
-from purplship.providers.yanwen.error import parse_error_response
 
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
-    details = []  # retrieve details from `response`
-    tracking_details = [_extract_detail(detail, settings) for detail in details]
+    results = response.get('result', [])
+    details = [_extract_detail(detail, settings) for detail in results if detail['tracking_status'] != 'NOTFOUND']
+    messages = [_extract_error(msg, settings) for msg in results if msg['tracking_status'] == 'NOTFOUND']
 
-    return tracking_details, parse_error_response(response, settings)
-
-
-def _extract_detail(detail: 'CarrierTrackingDetail', settings: Settings) -> TrackingDetails:
-    # return TrackingDetails(
-    #     carrier_name=settings.carrier_name,
-    #     carrier_id=settings.carrier_id,
-    #
-    #     tracking_number=detail.[tracking_number],
-    #     events=[],
-    # )
-    pass
+    return details, messages
 
 
-def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializable['CarrierTrackingRequest']:
-    # request = CarrierTrackingRequest(
-    # )
-    # return Serializable(request, _request_serializer)
-    pass
+def _extract_detail(detail: Result, settings: Settings) -> TrackingDetails:
+    return TrackingDetails(
+        carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
+
+        tracking_number=detail.tracking_number,
+        events=[
+            TrackingEvent(
+                date=DF.fdate(event.time_stamp, '2019-08-15T18:52:19'),
+                description=event.message,
+                location=event.location,
+                code=event.tracking_status,
+                time=DF.ftime(event.time_stamp, '2019-08-15T18:52:19'),
+            )
+            for event in detail.checkpoints
+        ],
+        delivered=(detail.tracking_status == 'LM40')
+    )
 
 
-def _request_serializer(request: 'CarrierTrackingRequest') -> str:
-    pass
+def _extract_error(message: Result, settings: Settings) -> Message:
+    return Message(
+        carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
+
+        code=message.tracking_status,
+        message=f"Not tracking details found for {message.tracking_number}"
+    )
+
+
+def tracking_request(payload: TrackingRequest, _) -> Serializable[dict]:
+    request = dict(
+        nums=payload.tracking_numbers
+    )
+
+    return Serializable(request, DP.to_dict)

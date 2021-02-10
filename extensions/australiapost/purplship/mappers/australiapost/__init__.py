@@ -1,9 +1,9 @@
 from purplship.core.metadata import Metadata
 
-from purplship.mappers.carrier.mapper import Mapper
-from purplship.mappers.carrier.proxy import Proxy
-from purplship.mappers.carrier.settings import Settings
-# import purplship.providers.carrier.units as units
+from purplship.mappers.australiapost.mapper import Mapper
+from purplship.mappers.australiapost.proxy import Proxy
+from purplship.mappers.australiapost.settings import Settings
+# import purplship.providers.australiapost.units as units
 
 
 METADATA = Metadata(

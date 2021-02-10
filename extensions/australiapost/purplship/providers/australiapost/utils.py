@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return (
-            "https://dev-api.carrier.com"
+            "https://dev-api.australiapost.com"
             if self.test
-            else "https://api.carrier.com"
+            else "https://api.australiapost.com"
         )

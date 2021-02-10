@@ -1,21 +1,25 @@
 from typing import List
-from purplship.providers.royalmail import Settings
+from royalmail_lib.error import Error
 from purplship.core.models import Message
+from purplship.providers.royalmail import Settings
 
 
-def parse_error_response(response, settings: Settings) -> List[Message]:
-    carrier_errors = []  # retrieve carrier errors from `response`
-    return [_extract_error(node, settings) for node in carrier_errors]
+def parse_error_response(response: dict, settings: Settings) -> List[Message]:
+    carrier_errors: List[dict] = response.get('errors', [])
+    return [_extract_error(Error(**e), settings) for e in carrier_errors]
 
 
-def _extract_error(carrier_error, settings: Settings) -> Message:
+def _extract_error(carrier_error: Error, settings: Settings) -> Message:
     return Message(
         # context info
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
 
         # carrier error info
-        code=carrier_error.code,
-        message=carrier_error.description,
-        details=carrier_error.details
+        code=carrier_error.errorCode,
+        message=carrier_error.errorDescription,
+        details=dict(
+            errorCause=carrier_error.errorCause,
+            errorResolution=carrier_error.errorResolution
+        )
     )

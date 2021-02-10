@@ -1,21 +1,22 @@
 from typing import List
-from purplship.providers.yunexpress import Settings
+from yunexpress_lib.tracking import Response
+from purplship.core.utils import Element, XP
 from purplship.core.models import Message
+from purplship.providers.yunexpress import Settings
 
 
-def parse_error_response(response, settings: Settings) -> List[Message]:
-    carrier_errors = []  # retrieve carrier errors from `response`
-    return [_extract_error(node, settings) for node in carrier_errors]
+def parse_error_response(response: Element, settings: Settings) -> List[Message]:
+    response = XP.build(Response, response)
 
+    if response.ResultCode == '0000':
+        return []
 
-def _extract_error(carrier_error, settings: Settings) -> Message:
-    return Message(
+    return [Message(
         # context info
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
 
         # carrier error info
-        code=carrier_error.code,
-        message=carrier_error.description,
-        details=carrier_error.details
-    )
+        code=response.ResultCode,
+        message=response.ResultDesc
+    )]
