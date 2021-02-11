@@ -14,6 +14,6 @@ def _extract_error(carrier_error: dict, settings: Settings) -> Message:
         carrier_id=settings.carrier_id,
 
         # carrier error info
-        code=carrier_error.get('code'),
-        message=carrier_error.get('message')
+        code=carrier_error.get('Code'),
+        message=carrier_error.get('Message')
     )

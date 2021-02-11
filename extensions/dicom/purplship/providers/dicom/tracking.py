@@ -31,7 +31,7 @@ def _extract_detail(detail: Tracking, settings: Settings) -> TrackingDetails:
                 description=event.statusDetail,
                 location=event.terminal,
                 code=event.status,
-                time=DF.fdate(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
+                time=DF.ftime(event.activityDate, '%Y-%m-%dT%H:%M:%SZ'),
             )
             for event in detail.activities
         ]
