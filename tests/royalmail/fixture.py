@@ -2,7 +2,7 @@ import purplship
 
 gateway = purplship.gateway["royalmail"].create(
     dict(
-        # username="user_id",
-        # password="password",
+        client_id="x-ibm-client-id",
+        client_secret="x-ibm-client-secret",
     )
 )

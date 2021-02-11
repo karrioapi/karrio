@@ -24,4 +24,4 @@ class Proxy(BaseProxy):
             )
 
         responses: List[dict] = exec_async(_get_tracking, request.serialize())
-        return Deserializable(responses, lambda res: [DP.to_dict(r) for r in res])
+        return Deserializable(responses, lambda res: [DP.to_dict(r) for r in res if any(r.strip())])
