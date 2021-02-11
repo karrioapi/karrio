@@ -2,7 +2,7 @@ import purplship
 
 gateway = purplship.gateway["sf_express"].create(
     dict(
-        # username="user_id",
-        # password="password",
+        partner_id="partner_id",
+        check_word="check_word",
     )
 )

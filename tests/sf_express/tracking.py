@@ -14,11 +14,13 @@ class TestCarrierTracking(unittest.TestCase):
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
 
-        self.assertEqual(request.serialize()[0], TrackingRequestXML)
+        self.assertEqual(
+            DP.to_dict(request.serialize()), DP.to_dict(TrackingRequestJSON)
+        )
 
     def test_get_tracking(self):
         with patch("purplship.mappers.sf_express.proxy.http") as mock:
-            mock.return_value = "<a></a>"
+            mock.return_value = "{}"
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
             self.assertEqual(
@@ -28,26 +30,91 @@ class TestCarrierTracking(unittest.TestCase):
 
     def test_parse_tracking_response(self):
         with patch("purplship.mappers.sf_express.proxy.http") as mock:
-            mock.return_value = TrackingResponseXML
+            mock.return_value = TrackingResponseJSON
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
+            )
 
 
 if __name__ == "__main__":
     unittest.main()
 
-TRACKING_PAYLOAD = ["1Z12345E6205277936"]
+TRACKING_PAYLOAD = ["444003077898"]
 
 ParsedTrackingResponse = [
-    [],
+    [
+        {
+            "carrier_id": "sf_express",
+            "carrier_name": "sf_express",
+            "delivered": None,
+            "events": [
+                {
+                    "code": "50",
+                    "date": "2019-05-09",
+                    "description": "已派件",
+                    "location": "深圳",
+                    "signatory": None,
+                    "time": "10:11",
+                },
+                {
+                    "code": "80",
+                    "date": "2019-05-09",
+                    "description": "已签收",
+                    "location": "深圳",
+                    "signatory": None,
+                    "time": "18:11",
+                },
+            ],
+            "tracking_number": "SF1011603494291",
+        }
+    ],
     [],
 ]
 
-TrackingRequestXML = """
+
+TrackingRequestJSON = """{
+    "msgData": {
+        "checkPhoneNo": null,
+        "language": "1",
+        "methodType": "1",
+        "trackingNumber": [
+            "444003077898"
+        ],
+        "trackingType": "1"
+    },
+    "msgDigest": null,
+    "partnerID": null,
+    "requestID": "EXP_RECE_SEARCH_ROUTES",
+    "serviceCode": null,
+    "timestamp": null
+}
 """
 
-TrackingResponseXML = """
+TrackingResponseJSON = """{
+    "success": true,
+    "errorCode": "S0000",
+    "errorMsg": null,
+    "msgData": {
+        "routeResps": [{
+            "mailNo": "SF1011603494291",
+            "routes": [{
+                    "acceptTime": "2019-05-09 10:11:26",
+                    "acceptAddress": "深圳",
+                    "opCode": "50",
+                    "remark": "已派件"
+                },
+                {
+                    "acceptTime": "2019-05-09 18:11:26",
+                    "acceptAddress": "深圳",
+                    "opCode": "80",
+                    "remark": "已签收"
+                }
+            ]
+        }]
+    }
+}
 """

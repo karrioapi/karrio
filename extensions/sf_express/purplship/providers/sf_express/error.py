@@ -1,10 +1,9 @@
 from typing import List
 from purplship.core.models import Message
-from purplship.core.utils import Element
 from purplship.providers.sf_express import Settings
 
 
-def parse_error_response(response: Element, settings: Settings) -> List[Message]:
+def parse_error_response(response: dict, settings: Settings) -> List[Message]:
     if response.get('success', False) is True:
         return []
 

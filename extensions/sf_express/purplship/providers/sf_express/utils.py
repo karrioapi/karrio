@@ -28,7 +28,7 @@ class Settings(BaseSettings):
             else "https://sfapi.sf-express.com/std/service"
         )
 
-    def parse(self, data: str, service_code: str) -> dict:
+    def parse(self, data: str, service_code: str) -> str:
         timestamp = str(int(time.time()))
         serialized_data = urllib.parse.quote_plus(data + timestamp + self.check_word)
         m = hashlib.md5()
@@ -36,9 +36,9 @@ class Settings(BaseSettings):
         md5_str = m.digest()
         msg_digest = base64.b64encode(md5_str).decode('utf-8')
 
-        return DP.to_dict({
+        return DP.jsonify({
             "partnerID": self.partner_id,
-            "requestID": uuid.uuid1(),
+            "requestID": str(uuid.uuid1()),
             "serviceCode": service_code,
             "timestamp": timestamp,
             "msgDigest": msg_digest,

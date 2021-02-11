@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     # Carrier specific properties
     partner_id: str
-    checkword: str
+    check_word: str
 
     # Base properties
     id: str = None
