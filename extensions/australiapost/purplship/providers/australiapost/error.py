@@ -16,10 +16,10 @@ def _extract_error(error: Error, settings: Settings) -> Message:
         carrier_id=settings.carrier_id,
 
         # carrier error info
-        code=str(error.code or ''),
+        code=(error.error_code or error.code),
         message=error.message,
         details=dict(
-            name=error.name,
+            name=(error.error_name or error.name),
             field=error.field,
             context=error.context
         )

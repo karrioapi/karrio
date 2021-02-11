@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from australiapost_lib.track_item import (
+from australiapost_lib.tracking import (
     TrackingRequest as CarrierTrackingRequest,
     TrackingResult
 )
@@ -19,10 +19,35 @@ from purplship.providers.australiapost.error import parse_error_response
 
 
 def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
-    details: List[TrackingResult] = response.get('tracking_results', [])
-    tracking_details = [_extract_detail(detail, settings) for detail in details]
+    tracking_results = response.get('tracking_results', [])
+    errors = sum([
+        _extract_error(TrackingResult(**result), settings)
+        for result in tracking_results
+        if "errors" in result
+    ], parse_error_response(response, settings))
+    tracking_details = [
+        _extract_detail(TrackingResult(**d), settings)
+        for d in response.get('tracking_results', [])
+        if "trackable_items" in d
+    ]
 
-    return tracking_details, parse_error_response(response, settings)
+    return tracking_details, errors
+
+
+def _extract_error(result: TrackingResult, settings: Settings) -> List[Message]:
+    return [
+        Message(
+            carrier_name=settings.carrier_name,
+            carrier_id=settings.carrier_id,
+
+            code=error.code,
+            message=error.message,
+            details=dict(
+                tracking_number=result.tracking_id
+            )
+        )
+        for error in result.errors
+    ]
 
 
 def _extract_detail(detail: TrackingResult, settings: Settings) -> TrackingDetails:
@@ -47,7 +72,7 @@ def _extract_detail(detail: TrackingResult, settings: Settings) -> TrackingDetai
 
 def tracking_request(payload: TrackingRequest, _) -> Serializable[CarrierTrackingRequest]:
     request = CarrierTrackingRequest(
-        tracking_ids=payload.tracking_numbers
+        tracking_ids=",".join(payload.tracking_numbers)
     )
 
     return Serializable(request, DP.to_dict)
