@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Mon Feb  8 09:49:08 2021 by generateDS.py version 2.37.15.
+# Generated Thu Feb 11 11:43:58 2021 by generateDS.py version 2.37.15.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
@@ -981,7 +981,10 @@ class Response(GeneratedsSuper):
         self.ResultCode_nsprefix_ = None
         self.ResultDesc = ResultDesc
         self.ResultDesc_nsprefix_ = None
-        self.Item = Item
+        if Item is None:
+            self.Item = []
+        else:
+            self.Item = Item
         self.Item_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -1010,11 +1013,17 @@ class Response(GeneratedsSuper):
         return self.Item
     def set_Item(self, Item):
         self.Item = Item
+    def add_Item(self, value):
+        self.Item.append(value)
+    def insert_Item_at(self, index, value):
+        self.Item.insert(index, value)
+    def replace_Item_at(self, index, value):
+        self.Item[index] = value
     def hasContent_(self):
         if (
             self.ResultCode is not None or
             self.ResultDesc is not None or
-            self.Item is not None
+            self.Item
         ):
             return True
         else:
@@ -1057,9 +1066,9 @@ class Response(GeneratedsSuper):
             namespaceprefix_ = self.ResultDesc_nsprefix_ + ':' if (UseCapturedNS_ and self.ResultDesc_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sResultDesc>%s</%sResultDesc>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ResultDesc), input_name='ResultDesc')), namespaceprefix_ , eol_))
-        if self.Item is not None:
+        for Item_ in self.Item:
             namespaceprefix_ = self.Item_nsprefix_ + ':' if (UseCapturedNS_ and self.Item_nsprefix_) else ''
-            self.Item.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Item', pretty_print=pretty_print)
+            Item_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Item', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -1089,7 +1098,7 @@ class Response(GeneratedsSuper):
         elif nodeName_ == 'Item':
             obj_ = ItemType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Item = obj_
+            self.Item.append(obj_)
             obj_.original_tagname_ = 'Item'
 # end class Response
 

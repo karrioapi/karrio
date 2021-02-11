@@ -1,78 +1,114 @@
-<xsd:schema targetNamespace="http://ws.aramex.net/ShippingAPI/v1/" 
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-    <xsd:element name="ShipmentTrackingRequest">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element type="tns:ClientInfo" name="ClientInfo" nillable="true" minOccurs="0"/>
-                <xsd:element type="tns:Transaction" name="Transaction" nillable="true" minOccurs="0"/>
-                <xsd:element type="q1:ArrayOfstring" name="Shipments" nillable="true" minOccurs="0"
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://ws.aramex.net/ShippingAPI/v1/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://ws.aramex.net/ShippingAPI/v1/">
+    <xs:import schemaLocation="https://ws.aramex.net/ShippingAPI.V2/Tracking/Service_1_0.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+    <xs:element name="ShipmentTrackingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Shipments" nillable="true" type="q1:ArrayOfstring"
                     xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
-                <xsd:element type="xsd:boolean" name="GetLastTrackingUpdateOnly" minOccurs="0"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-    <xsd:complexType name="ClientInfo">
-        <xsd:sequence>
-            <xsd:element type="xsd:string" name="UserName" nillable="true"/>
-            <xsd:element type="xsd:string" name="Password" nillable="true"/>
-            <xsd:element type="xsd:string" name="Version" nillable="true"/>
-            <xsd:element type="xsd:string" name="AccountNumber" nillable="true"/>
-            <xsd:element type="xsd:string" name="AccountPin" nillable="true"/>
-            <xsd:element type="xsd:string" name="AccountEntity" nillable="true"/>
-            <xsd:element type="xsd:string" name="AccountCountryCode" nillable="true"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:element type="tns:ClientInfo" name="ClientInfo" nillable="true"/>
-    <xsd:complexType name="Transaction">
-        <xsd:sequence>
-            <xsd:element type="xsd:string" name="Reference1" nillable="true"/>
-            <xsd:element type="xsd:string" name="Reference2" nillable="true"/>
-            <xsd:element type="xsd:string" name="Reference3" nillable="true"/>
-            <xsd:element type="xsd:string" name="Reference4" nillable="true"/>
-            <xsd:element type="xsd:string" name="Reference5" nillable="true"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:element type="tns:Transaction" name="Transaction" nillable="true"/>
-    <xsd:element name="ShipmentTrackingResponse">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element type="tns:Transaction" name="Transaction" nillable="true" minOccurs="0"/>
-                <xsd:element type="tns:ArrayOfNotification" name="Notifications" nillable="true" minOccurs="0"/>
-                <xsd:element type="xsd:boolean" name="HasErrors" minOccurs="0"/>
-                <xsd:element type="q2:ArrayOfKeyValueOfstringArrayOfTrackingResultmFAkxlpY" name="TrackingResults" nillable="true" minOccurs="0"
+                <xs:element minOccurs="0" name="GetLastTrackingUpdateOnly" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ClientInfo">
+        <xs:sequence>
+            <xs:element name="UserName" nillable="true" type="xs:string"/>
+            <xs:element name="Password" nillable="true" type="xs:string"/>
+            <xs:element name="Version" nillable="true" type="xs:string"/>
+            <xs:element name="AccountNumber" nillable="true" type="xs:string"/>
+            <xs:element name="AccountPin" nillable="true" type="xs:string"/>
+            <xs:element name="AccountEntity" nillable="true" type="xs:string"/>
+            <xs:element name="AccountCountryCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Source" type="xs:int"/>
+            <xs:element minOccurs="0" name="PreferredLanguageCode" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+    <xs:complexType name="Transaction">
+        <xs:sequence>
+            <xs:element name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element name="Reference3" nillable="true" type="xs:string"/>
+            <xs:element name="Reference4" nillable="true" type="xs:string"/>
+            <xs:element name="Reference5" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Transaction" nillable="true" type="tns:Transaction"/>
+    <xs:element name="ShipmentTrackingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="TrackingResults" nillable="true" type="q2:ArrayOfKeyValueOfstringArrayOfTrackingResultmFAkxlpY"
                     xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-    <xsd:complexType name="ArrayOfNotification">
-        <xsd:sequence>
-            <xsd:element type="tns:Notification" name="Notification" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:element type="tns:ArrayOfNotification" name="ArrayOfNotification" nillable="true"/>
-    <xsd:complexType name="Notification">
-        <xsd:sequence>
-            <xsd:element type="xsd:string" name="Code" nillable="true"/>
-            <xsd:element type="xsd:string" name="Message" nillable="true"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:element type="tns:Notification" name="Notification" nillable="true"/>
-    <xsd:complexType name="ArrayOfTrackingResult">
-        <xsd:sequence>
-            <xsd:element type="tns:TrackingResult" name="TrackingResult" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:element type="tns:ArrayOfTrackingResult" name="ArrayOfTrackingResult" nillable="true"/>
-    <xsd:complexType name="TrackingResult">
-        <xsd:sequence>
-            <xsd:element type="xsd:string" name="WaybillNumber" nillable="true"/>
-            <xsd:element type="xsd:string" name="UpdateCode" nillable="true"/>
-            <xsd:element type="xsd:string" name="UpdateDescription" nillable="true"/>
-            <xsd:element type="xsd:dateTime" name="UpdateDateTime"/>
-            <xsd:element type="xsd:string" name="UpdateLocation" nillable="true"/>
-            <xsd:element type="xsd:string" name="Comments" nillable="true"/>
-            <xsd:element type="xsd:string" name="ProblemCode" nillable="true"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:element type="tns:TrackingResult" name="TrackingResult" nillable="true"/>
-</xsd:schema>
+                <xs:element minOccurs="0" name="NonExistingWaybills" nillable="true" type="q3:ArrayOfstring"
+                    xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfNotification">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Notification" nillable="true" type="tns:Notification"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfNotification" nillable="true" type="tns:ArrayOfNotification"/>
+    <xs:complexType name="Notification">
+        <xs:sequence>
+            <xs:element name="Code" nillable="true" type="xs:string"/>
+            <xs:element name="Message" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Notification" nillable="true" type="tns:Notification"/>
+    <xs:complexType name="ArrayOfTrackingResult">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="TrackingResult" nillable="true" type="tns:TrackingResult"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfTrackingResult" nillable="true" type="tns:ArrayOfTrackingResult"/>
+    <xs:complexType name="TrackingResult">
+        <xs:sequence>
+            <xs:element name="WaybillNumber" nillable="true" type="xs:string"/>
+            <xs:element name="UpdateCode" nillable="true" type="xs:string"/>
+            <xs:element name="UpdateDescription" nillable="true" type="xs:string"/>
+            <xs:element name="UpdateDateTime" type="xs:dateTime"/>
+            <xs:element name="UpdateLocation" nillable="true" type="xs:string"/>
+            <xs:element name="Comments" nillable="true" type="xs:string"/>
+            <xs:element name="ProblemCode" nillable="true" type="xs:string"/>
+            <xs:element name="GrossWeight" nillable="true" type="xs:string"/>
+            <xs:element name="ChargeableWeight" nillable="true" type="xs:string"/>
+            <xs:element name="WeightUnit" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="TrackingResult" nillable="true" type="tns:TrackingResult"/>
+    <xs:element name="PickupTrackingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PickupTrackingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="Entity" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="CollectionDate" nillable="true" type="xs:dateTime"/>
+                <xs:element minOccurs="0" name="PickupDate" nillable="true" type="xs:dateTime"/>
+                <xs:element minOccurs="0" name="LastStatus" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="LastStatusDescription" nillable="true" type="xs:string"/>
+                <xs:element minOccurs="0" name="CollectedWaybills" nillable="true" type="q4:ArrayOfstring"
+                    xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

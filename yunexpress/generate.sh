@@ -6,3 +6,4 @@ find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
 touch "${LIB_MODULES}/__init__.py"
 
 generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking.py" $SCHEMAS/tracking.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/error.py" $SCHEMAS/error.xsd

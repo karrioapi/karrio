@@ -32,7 +32,7 @@ class Address:
 
 @attr.s(auto_attribs=True)
 class Location:
-    address: Optional[Address] = None
+    address: Optional[Address] = JStruct[Address]
 
 
 @attr.s(auto_attribs=True)

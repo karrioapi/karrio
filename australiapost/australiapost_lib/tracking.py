@@ -7,7 +7,7 @@ from jstruct import JList, JStruct
 
 @attr.s(auto_attribs=True)
 class TrackingRequest:
-    tracking_ids: Optional[List[str]] = None
+    tracking_ids: Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -43,7 +43,7 @@ class TrackingResult:
     tracking_id: Optional[str] = None
     errors: Optional[List[Error]] = JList[Error]
     status: Optional[str] = None
-    trackable_items: Optional[List[TrackableItem]] = JList[Error]
+    trackable_items: Optional[List[TrackableItem]] = JList[TrackableItem]
     consignment: Optional[List[Consignment]] = JList[Consignment]
 
 

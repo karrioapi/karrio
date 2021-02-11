@@ -1,8 +1,6 @@
 {
     "TrackingRequest": {
-        "tracking_ids": [
-            ""
-        ]
+        "tracking_ids": ""
     },
     "TrackingResponse": {
         "tracking_results": [
