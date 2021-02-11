@@ -48,13 +48,23 @@ Additional extensions:
 <details>
 <summary>Available carriers</summary>
 
-```text
-purplship.canadapost
-purplship.dhl_express
-purplship.fedex_express
-purplship.purolator_courier
-purplship.ups_package
-```
+- `purplship.aramex`
+- `purplship.australiapost`
+- `purplship.canadapost`
+- `purplship.canpar`
+- `purplship.dhl-express`
+- `purplship.dhl-universal`
+- `purplship.dicom`
+- `purplship.fedex-express`
+- `purplship.purolator-courier`
+- `purplship.royalmail`
+- `purplship.sendle`
+- `purplship.sf-express`
+- `purplship.ups-package`
+- `purplship.usps`
+- `purplship.yanwen`
+- `purplship.yunexpress`
+
 </details>
 
 ## Usage

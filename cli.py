@@ -20,12 +20,12 @@ MODELS_TEMPLATE = Template('''
 ''')
 
 SETTINGS_TEMPLATE = Template('''
-{% for name, cls in settings.items() %}
-#### {{ name }} Settings
+{% for k, val in settings.items() %}
+#### {{ val['label'] }} Settings `[carrier_name = {{k}}]`
 
 | Name | Type | Description 
 | --- | --- | --- |
-{% for prop in cls.__attrs_attrs__ %}| `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
+{% for prop in val['Settings'].__attrs_attrs__ %}| `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
 {% endfor %}
 {% endfor %}
 ''')
@@ -227,10 +227,14 @@ def generate_models():
 
 @cli.command()
 def generate_settings():
-    settings = {v['label']: v['Settings'] for k, v in PROVIDERS_DATA.items() if v.get('Settings') is not None}
+    settings = {k: v for k, v in PROVIDERS_DATA.items() if v.get('Settings') is not None}
     docstr = SETTINGS_TEMPLATE.render(
         settings=settings,
         str=str
+    ).replace(
+        "<class '", "`"
+    ).replace(
+        "'>", "`"
     )
 
     click.echo(docstr)

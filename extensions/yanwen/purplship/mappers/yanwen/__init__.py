@@ -7,7 +7,7 @@ from purplship.mappers.yanwen.settings import Settings
 
 
 METADATA = Metadata(
-    label="[carrier label]",
+    label="Yanwen",
 
     # Integrations
     Mapper=Mapper,
