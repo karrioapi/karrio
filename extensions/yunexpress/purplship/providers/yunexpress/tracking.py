@@ -16,7 +16,7 @@ from purplship.providers.yunexpress.utils import Settings
 from purplship.providers.yunexpress.error import parse_error_response
 
 
-def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
+def parse_tracking_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     details = response.xpath(".//*[local-name() = $name]", name="OrderInfo")
     tracking_details = [_extract_detail(detail, settings) for detail in details]
 

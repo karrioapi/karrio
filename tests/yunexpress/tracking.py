@@ -14,7 +14,7 @@ class TestCarrierTracking(unittest.TestCase):
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
 
-        self.assertEqual(request.serialize()[0], TrackingRequestXML)
+        self.assertEqual(request.serialize(), TrackingRequestXML)
 
     def test_get_tracking(self):
         with patch("purplship.mappers.yunexpress.proxy.http") as mock:
@@ -23,7 +23,7 @@ class TestCarrierTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/WayBill/GetTrackingNumber?trackingNumber=18888800406",
             )
 
     def test_parse_tracking_response(self):
@@ -33,21 +33,73 @@ class TestCarrierTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
+            )
+
+    def test_parse_error_response(self):
+        with patch("purplship.mappers.yunexpress.proxy.http") as mock:
+            mock.return_value = ErrorResponseXML
+            parsed_response = (
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedErrorResponse)
+            )
 
 
 if __name__ == "__main__":
     unittest.main()
 
-TRACKING_PAYLOAD = ["1Z12345E6205277936"]
+TRACKING_PAYLOAD = ["18888800406"]
 
 ParsedTrackingResponse = [
-    [],
+    [
+        {
+            "carrier_id": "yunexpress",
+            "carrier_name": "yunexpress",
+            "events": [{"date": "2021-02-11"}],
+            "tracking_number": 18888800406,
+        }
+    ],
     [],
 ]
 
-TrackingRequestXML = """
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "yunexpress",
+            "carrier_name": "yunexpress",
+            "code": None,
+            "details": {"MessageDetail": "在控制器“WayBill”上找不到与该请求匹配的操作。"},
+            "message": "Error message",
+        }
+    ],
+]
+
+
+TrackingRequestXML = ["18888800406"]
+
+TrackingResponseXML = """<?xml version="1.0" encoding="utf-8"?>
+<Response xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ResultCode>0000</ResultCode>
+    <ResultDesc>提交成功</ResultDesc>
+    <Item>
+        <OrderInfo>
+            <msg></msg>
+            <OrderNumber>api3111101111q1</OrderNumber>
+            <TrackingNumber>18888800406</TrackingNumber>
+            <WayBillNumber>YT1432418888800049</WayBillNumber>
+        </OrderInfo>
+    </Item>
+</Response>
 """
 
-TrackingResponseXML = """
+ErrorResponseXML = """<Error>
+  <Message>Error message</Message>
+  <MessageDetail>在控制器“WayBill”上找不到与该请求匹配的操作。</MessageDetail>
+</Error>
 """

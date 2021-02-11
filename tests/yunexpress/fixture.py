@@ -2,7 +2,7 @@ import purplship
 
 gateway = purplship.gateway["yunexpress"].create(
     dict(
-        # username="user_id",
-        # password="password",
+        customer_number="customer_number",
+        api_secret="api_secret",
     )
 )
