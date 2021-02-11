@@ -56,7 +56,7 @@ def _extract_error(message: Result, settings: Settings) -> Message:
 
 def tracking_request(payload: TrackingRequest, _) -> Serializable[dict]:
     request = dict(
-        nums=payload.tracking_numbers
+        nums=",".join(payload.tracking_numbers)
     )
 
     return Serializable(request, DP.to_dict)

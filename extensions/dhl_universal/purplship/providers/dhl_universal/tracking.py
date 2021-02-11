@@ -19,11 +19,14 @@ from purplship.providers.dhl_universal.utils import Settings
 from purplship.providers.dhl_universal.error import parse_error_response
 
 
-def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
-    details: List[dict] = response.get('shipments')
-    tracking_details = [_extract_detail(Shipment(**d), settings) for d in details]
+def parse_tracking_response(response: List[dict], settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
+    errors = [e for e in response if 'shipments' not in e]
+    details = [
+        _extract_detail(Shipment(**d['shipments'][0]), settings)
+        for d in response if 'shipments' in d
+    ]
 
-    return tracking_details, parse_error_response(response, settings)
+    return details, parse_error_response(errors, settings)
 
 
 def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
@@ -40,7 +43,7 @@ def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
                     event.location.address.countryCode,
                     event.location.address.postalCode,
                     event.location.address.addressLocality,
-                    join=True
+                    join=True, separator=', '
                 ),
                 code=event.status,
                 time=DF.ftime(event.timestamp, '%Y-%m-%dT%H:%M:%S'),

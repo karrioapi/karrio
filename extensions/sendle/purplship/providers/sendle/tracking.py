@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from sendle_lib.tracking import TrackingResponse
+from sendle_lib.tracking import Tracking
 from purplship.core.utils import (
     Serializable,
     DF,
@@ -14,22 +14,24 @@ from purplship.providers.sendle.utils import Settings
 from purplship.providers.sendle.error import parse_error_response
 
 
-def parse_tracking_response(response: List[dict], settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
-    errors = [e for e in response if 'error' in e]
+def parse_tracking_response(response: List[Tuple[str, dict]], settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
+    errors = [e for ref, e in response if 'error' in e]
     tracking_details = [
-        _extract_detail(TrackingResponse(**d), settings)
-        for d in response if 'tracking_details' in d
+        _extract_detail((ref, Tracking(**d)), settings)
+        for ref, d in response if 'tracking_events' in d
     ]
 
     return tracking_details, parse_error_response(errors, settings)
 
 
-def _extract_detail(detail: TrackingResponse, settings: Settings) -> TrackingDetails:
+def _extract_detail(detail: Tuple[str, Tracking], settings: Settings) -> TrackingDetails:
+    tracking_number, tracking_details = detail
+
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
 
-        tracking_number=detail.tracking_number,
+        tracking_number=tracking_number,
         events=[
             TrackingEvent(
                 date=DF.fdate(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
@@ -38,11 +40,13 @@ def _extract_detail(detail: TrackingResponse, settings: Settings) -> TrackingDet
                 code=event.event_type,
                 time=DF.fdate(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
             )
-            for event in detail.tracking_details.tracking_events
+            for event in tracking_details.tracking_events
         ],
-        delivered=(detail.tracking_details.state == 'Delivered')
+        delivered=(tracking_details.state == 'Delivered')
     )
 
 
 def tracking_request(payload: TrackingRequest, _) -> Serializable[list]:
-    return Serializable(payload.tracking_numbers)
+    request = payload.tracking_numbers
+
+    return Serializable(request)

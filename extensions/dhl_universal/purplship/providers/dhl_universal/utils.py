@@ -16,4 +16,4 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "https://api-eu.dhl.com/track/shipments"
+        return "https://api-eu.dhl.com"

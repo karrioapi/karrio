@@ -1,14 +1,12 @@
 from typing import List, Tuple
-from sf_express_lib.route_response import RouteResponseType, RouteType
-from sf_express_lib.route_request import (
-    Request,
-    BodyType,
-    RouteRequestType,
+from sf_express_lib.request import Request
+from sf_express_lib.tracking import (
+    TrackingRequest as SFTrackingRequest,
+    RouteResp
 )
 from purplship.core.utils import (
     Serializable,
-    Element,
-    XP,
+    DP,
     DF,
 )
 from purplship.core.models import (
@@ -22,48 +20,42 @@ from purplship.providers.sf_express.error import parse_error_response
 
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
-    details = response.xpath(".//*[local-name() = $name]", name="RouteResponse")
-    tracking_details = [_extract_detail(detail, settings) for detail in details]
+    tracking_details = [
+        _extract_detail(RouteResp(**d), settings)
+        for d in response.get('msgData', {}).get('routeResps', [])
+    ]
 
     return tracking_details, parse_error_response(response, settings)
 
 
-def _extract_detail(detail: Element, settings: Settings) -> TrackingDetails:
-    route = XP.build(RouteResponseType, detail)
-    events: List[RouteType] = route.Route
+def _extract_detail(detail: RouteResp, settings: Settings) -> TrackingDetails:
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
 
-        tracking_number=route.mailno,
+        tracking_number=detail.mailNo,
         events=[
             TrackingEvent(
-                date=DF.fdate(event.accept_time, "%Y-%m-%d %H:%M:%S"),
+                date=DF.fdate(event.acceptTime, "%Y-%m-%d %H:%M:%S"),
                 description=event.remark,
-                location=event.accept_address,
-                code=event.opcode,
-                time=DF.ftime(event.accept_time, "%Y-%m-%d %H:%M:%S"),
-            ) for event in events
+                location=event.acceptAddress,
+                code=event.opCode,
+                time=DF.ftime(event.acceptTime, "%Y-%m-%d %H:%M:%S"),
+            ) for event in detail.routes
         ]
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[RouteRequestType]:
+def tracking_request(payload: TrackingRequest, _) -> Serializable[Request]:
     request = Request(
-        service='RouteService',
-        lang='en-US',
-        Head=None,
-        Body=BodyType(
-            RouteRequest=[
-                RouteRequestType(
-                    tracking_type=1,
-                    method_type=1,
-                    tracking_number=number,
-                    check_phoneNo=None,
-                ) for number in payload.tracking_numbers
-            ]
+        requestID="EXP_RECE_SEARCH_ROUTES",
+        msgData=SFTrackingRequest(
+            language="1",
+            trackingType="1",
+            methodType="1",
+            trackingNumber=payload.tracking_numbers
         )
     )
 
-    return Serializable(request, XP.to_xml)
+    return Serializable(request, DP.jsonify)

@@ -13,11 +13,8 @@ from purplship.providers.dicom.utils import Settings
 
 
 def parse_tracking_response(response: dict, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
-    errors = [e for e in response if 'error' in e]
-    details = [
-        _extract_detail(Tracking(**d), settings)
-        for d in response if 'tracking_details' in d
-    ]
+    errors = [e for e in response if 'activities' not in e]
+    details = [_extract_detail(Tracking(**d), settings) for d in response if 'activities' in d]
 
     return details, parse_error_response(errors, settings)
 

@@ -8,6 +8,7 @@ from aramex_lib.tracking import (
 )
 from purplship.core.utils import (
     create_envelope,
+    Envelope,
     Element,
     Serializable,
     XP,
@@ -25,32 +26,32 @@ from purplship.providers.aramex.error import parse_error_response
 
 def parse_tracking_response(response, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
     details = response.xpath(".//*[local-name() = $name]", name="TrackingResult")
-    tracking_details = [_extract_detail(detail, settings) for detail in details]
+    tracking_details = [_extract_detail(node, settings) for node in details]
 
     return tracking_details, parse_error_response(response, settings)
 
 
-def _extract_detail(detail: Element, settings: Settings) -> TrackingDetails:
-    result = XP.build(TrackingResult, detail)
+def _extract_detail(node: Element, settings: Settings) -> TrackingDetails:
+    detail = XP.build(TrackingResult, node)
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
 
-        tracking_number=result.WaybillNumber,
+        tracking_number=detail.WaybillNumber,
         events=[
             TrackingEvent(
-                date=DF.date(result.UpdateDateTime, '%Y-%m-%dT%H:%M:%S'),
-                description=result.UpdateDescription,
-                location=result.UpdateLocation,
-                code=result.UpdateCode,
-                time=DF.ftime(result.UpdateDateTime, '%Y-%m-%dT%H:%M:%S'),
+                date=DF.date(detail.UpdateDateTime, '%Y-%m-%dT%H:%M:%S'),
+                description=detail.UpdateDescription,
+                location=detail.UpdateLocation,
+                code=detail.UpdateCode,
+                time=DF.ftime(detail.UpdateDateTime, '%Y-%m-%dT%H:%M:%S'),
             )
         ],
     )
 
 
-def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializable[ShipmentTrackingRequest]:
+def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializable[Envelope]:
     request = create_envelope(
         body_content=ShipmentTrackingRequest(
             ClientInfo=ClientInfo(
@@ -70,8 +71,4 @@ def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializab
         )
     )
 
-    return Serializable(request, _request_serializer)
-
-
-def _request_serializer(request: ShipmentTrackingRequest) -> str:
-    return XP.export(request)
+    return Serializable(request, settings.standard_request_serializer)

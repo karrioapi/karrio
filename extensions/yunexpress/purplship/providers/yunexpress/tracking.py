@@ -38,9 +38,7 @@ def _extract_detail(detail: Element, settings: Settings) -> TrackingDetails:
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[dict]:
-    request = dict(
-        trackingNumber=payload.tracking_numbers
-    )
+def tracking_request(payload: TrackingRequest, _) -> Serializable[List[str]]:
+    request = payload.tracking_numbers
 
     return Serializable(request)

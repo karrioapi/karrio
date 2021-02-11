@@ -1,5 +1,5 @@
-from typing import Any
-from purplship.core.utils import XP, request as http, Serializable, Deserializable
+from typing import List
+from purplship.core.utils import XP, request as http, Serializable, Deserializable, exec_async
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.mappers.yunexpress.settings import Settings
 
@@ -9,58 +9,19 @@ class Proxy(BaseProxy):
 
     """ Proxy Methods """
 
-    # def validate_address(self, request: Serializable) -> Deserializable[str]:
-    #     response = self._send_request(request)
-    #
-    #     return Deserializable(response, XP.to_xml)
-    #
-    # def get_rates(self, request: Serializable) -> Deserializable[str]:
-    #     response = self._send_request(request)
-    #
-    #     return Deserializable(response, XP.to_xml)
+    def get_tracking(self, request: Serializable) -> Deserializable:
 
-    def get_tracking(
-        self, request: Serializable
-    ) -> Deserializable[str]:
-        response = self._send_request(request)
+        def _get_tracking(tracking_number: str):
+            return http(
+                url=f"{self.settings.server_url}/WayBill/GetTrackingNumber?trackingNumber={tracking_number}",
+                headers={
+                    'Authorization': f"basic {self.settings.authorization}",
+                    'Content-Type': "application/xml; charset=utf8",
+                    'Accept': "application/xml",
+                    'Accept-Language': "en-us"
+                },
+                method="GET",
+            )
 
-        return Deserializable(response, XP.to_xml)
-
-    # def create_shipment(
-    #     self, request: Serializable
-    # ) -> Deserializable[str]:
-    #     response = self._send_request(request)
-    #
-    #     return Deserializable(response, XP.to_xml)
-    #
-    # def schedule_pickup(
-    #     self, request: Serializable
-    # ) -> Deserializable[str]:
-    #     response = self._send_request(request)
-    #
-    #     return Deserializable(response, XP.to_xml)
-    #
-    # def modify_pickup(
-    #     self, request: Serializable
-    # ) -> Deserializable[str]:
-    #     response = self._send_request(request)
-    #
-    #     return Deserializable(response, XP.to_xml)
-    #
-    # def cancel_pickup(
-    #     self, request: Serializable
-    # ) -> Deserializable[str]:
-    #     response = self._send_request(request)
-    #
-    #     return Deserializable(response, XP.to_xml)
-
-    """ Private Methods """
-
-    def _send_request(self, request: Serializable[Any]) -> str:
-        return http(
-            url=self.settings.server_url,
-            data=bytearray(request.serialize(), "utf-8"),
-            headers={"Content-Type": "application/xml"},
-            method="POST",
-        )
-
+        responses: List[str] = exec_async(_get_tracking, request.serialize())
+        return Deserializable(XP.bundle_xml(xml_strings=responses), XP.to_xml)
