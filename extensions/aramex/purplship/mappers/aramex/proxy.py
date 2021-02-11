@@ -10,7 +10,7 @@ class Proxy(BaseProxy):
 
     def get_tracking(self, request: Serializable) -> Deserializable[str]:
         response = http(
-            url=f"{self.settings.server_url}/tracking/service_1_0.svc",
+            url=f"{self.settings.server_url}/ShippingAPI.V2/Tracking/Service_1_0.svc",
             data=bytearray(request.serialize(), "utf-8"),
             headers={
                 "Content-Type": "text/xml; charset=utf-8",
