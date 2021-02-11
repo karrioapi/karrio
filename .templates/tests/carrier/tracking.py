@@ -17,7 +17,7 @@ class TestCarrierTracking(unittest.TestCase):
         self.assertEqual(request.serialize()[0], TrackingRequestXML)
 
     def test_get_tracking(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = "<a></a>"
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -27,7 +27,7 @@ class TestCarrierTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = TrackingResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

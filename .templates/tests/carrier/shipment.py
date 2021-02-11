@@ -25,7 +25,7 @@ class TestCarrierShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), VoidShipmentRequestXML)
 
     def test_create_shipment(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mocks:
+        with patch("purplship.mappers.[carrier].proxy.http") as mocks:
             mocks.side_effect = [
                 ShipmentResponseXML,
             ]
@@ -39,7 +39,7 @@ class TestCarrierShipment(unittest.TestCase):
             )
 
     def test_void_shipment(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = "<a></a>"
             purplship.Shipment.cancel(self.VoidShipmentRequest).from_(gateway)
 
@@ -49,7 +49,7 @@ class TestCarrierShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mocks:
+        with patch("purplship.mappers.[carrier].proxy.http") as mocks:
             mocks.side_effect = [
                 ShipmentResponseXML,
             ]
@@ -60,7 +60,7 @@ class TestCarrierShipment(unittest.TestCase):
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
 
     def test_parse_void_shipment_response(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = VoidShipmentResponseXML
             parsed_response = (
                 purplship.Shipment.cancel(self.VoidShipmentRequest)

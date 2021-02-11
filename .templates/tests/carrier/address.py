@@ -24,7 +24,7 @@ class TestCarrierAddressValidation(unittest.TestCase):
         )
 
     def test_validate_address(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = "<a></a>"
             purplship.Address.validate(self.AddressValidationRequest).from_(gateway)
 
@@ -34,7 +34,7 @@ class TestCarrierAddressValidation(unittest.TestCase):
             )
 
     def test_parse_address_validation_response(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = AddressValidationResponseXML
             parsed_response = (
                 purplship.Address.validate(self.AddressValidationRequest)

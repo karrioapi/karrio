@@ -17,7 +17,7 @@ class TestCarrierRating(unittest.TestCase):
         self.assertEqual(request.serialize(), RateRequestXML)
 
     def test_get_rates(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = "<a></a>"
             Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -27,7 +27,7 @@ class TestCarrierRating(unittest.TestCase):
             )
 
     def test_parse_rate_response(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
