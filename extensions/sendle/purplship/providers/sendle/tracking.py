@@ -38,7 +38,7 @@ def _extract_detail(detail: Tuple[str, Tracking], settings: Settings) -> Trackin
                 description=event.description,
                 location=event.location,
                 code=event.event_type,
-                time=DF.fdate(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
+                time=DF.ftime(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
             )
             for event in tracking_details.tracking_events
         ],

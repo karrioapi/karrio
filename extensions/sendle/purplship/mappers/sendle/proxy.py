@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from purplship.core.utils import DP, request as http, Serializable, Deserializable, exec_async
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.mappers.sendle.settings import Settings
@@ -9,7 +9,7 @@ class Proxy(BaseProxy):
 
     """ Proxy Methods """
 
-    def get_tracking(self, request: Serializable) -> Deserializable[List[dict]]:
+    def get_tracking(self, request: Serializable) -> Deserializable[List[Tuple[str, str]]]:
 
         def _get_tracking(ref: str):
             response = http(
@@ -22,5 +22,8 @@ class Proxy(BaseProxy):
             )
             return ref, response
 
-        responses: List[dict] = exec_async(_get_tracking, request.serialize())
-        return Deserializable(responses, lambda res: [(ref, DP.to_dict(res)) for ref, res in res])
+        responses: List[Tuple[str, str]] = exec_async(_get_tracking, request.serialize())
+        return Deserializable(
+            responses,
+            lambda res: [(num, DP.to_dict(track)) for num, track in res if any(track.strip())]
+        )

@@ -2,7 +2,7 @@ import purplship
 
 gateway = purplship.gateway["sendle"].create(
     dict(
-        # username="user_id",
-        # password="password",
+        sendle_id="sendle_id",
+        api_key="api_key",
     )
 )
