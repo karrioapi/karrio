@@ -31,13 +31,13 @@ def parse_tracking_response(response: List[dict], settings: Settings) -> Tuple[L
 
 def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
     return TrackingDetails(
-        carrier_name=settings.dhl_universal,
-        carrier_id=settings.dhl_universal_id,
+        carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
 
-        tracking_number=detail.id,
+        tracking_number=str(detail.id),
         events=[
             TrackingEvent(
-                date=DF.fdate(event.timestamp, '%Y-%m-%dT%H:%M:%S'),
+                date=DF.fdate(event.timestamp, '%Y-%m-%dT%H:%M:%SZ'),
                 description=event.description,
                 location=SF.concat_str(
                     event.location.address.countryCode,
@@ -46,7 +46,7 @@ def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
                     join=True, separator=', '
                 ),
                 code=event.status,
-                time=DF.ftime(event.timestamp, '%Y-%m-%dT%H:%M:%S'),
+                time=DF.ftime(event.timestamp, '%Y-%m-%dT%H:%M:%SZ'),
             ) for event in detail.events
         ],
         delivered=detail.status.status == "DELIVERED"
