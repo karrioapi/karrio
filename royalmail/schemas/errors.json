@@ -1,6 +1,7 @@
 {
     "httpCode": "400",
     "httpMessage": "Bad Request",
+    "moreInformation": "The rate limit has been exceeded for the plan or operation being used",
     "errors": [
         {
             "errorCode": "E0004",

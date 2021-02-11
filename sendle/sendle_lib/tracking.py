@@ -21,14 +21,8 @@ class TrackingEvent:
 
 
 @attr.s(auto_attribs=True)
-class TrackingDetails:
+class Tracking:
     state: Optional[str] = None
-    tracking_events: Optional[List[TrackingEvent]] = None
+    tracking_events: Optional[List[TrackingEvent]] = JList[TrackingEvent]
     origin: Optional[Location] = JStruct[Location]
     destination: Optional[Location] = JStruct[Location]
-
-
-@attr.s(auto_attribs=True)
-class TrackingResponse:
-    tracking_number: Optional[str] = None
-    tracking_details: Optional[TrackingDetails] = None

@@ -15,4 +15,5 @@ class Error:
 class ErrorResponse:
     httpCode: Optional[int] = None
     httpMessage: Optional[str] = None
+    moreInformation: Optional[str] = None
     errors: Optional[List[Error]] = JList[Error]
