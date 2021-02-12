@@ -10,7 +10,7 @@ from pyfreightcom.quote_request import (
 from pyfreightcom.quote_reply import QuoteType, SurchargeType
 from purplship.core.utils import Element, Serializable, SF, NF, XP
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
-from purplship.core.units import Packages, Options
+from purplship.core.units import Packages, Options, Services
 from purplship.providers.freightcom.utils import (
     Settings,
     standard_request_serializer,
@@ -77,10 +77,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
         if len(packages) == 1 else "small_box"
     )
 
-    options = Options(payload.options)
-    service = next(
-        (Service[s].value for s in payload.services if s in Service.__members__), None
-    )
+    options = Options(payload.options, Option)
+    service = Services(payload.services, Service).first or Service.freightcom_all
     freight_class = next(
         (
             FreightClass[c].value
@@ -89,53 +87,34 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
         ),
         None,
     )
-    special_services = {
-        Option[s]: True for s in payload.options.keys() if s in Option.__members__
-    }
 
     request = Freightcom(
         username=settings.username,
         password=settings.password,
         version="3.1.0",
         QuoteRequest=QuoteRequestType(
-            saturdayPickupRequired=special_services.get(
-                Option.freightcom_saturday_pickup_required
-            ),
-            homelandSecurity=special_services.get(Option.freightcom_homeland_security),
+            saturdayPickupRequired=options['freightcom_saturday_pickup_required'],
+            homelandSecurity=options['freightcom_homeland_security'],
             pierCharge=None,
-            exhibitionConventionSite=special_services.get(
-                Option.freightcom_exhibition_convention_site
-            ),
-            militaryBaseDelivery=special_services.get(
-                Option.freightcom_military_base_delivery
-            ),
-            customsIn_bondFreight=special_services.get(
-                Option.freightcom_customs_in_bond_freight
-            ),
-            limitedAccess=special_services.get(Option.freightcom_limited_access),
-            excessLength=special_services.get(Option.freightcom_excess_length),
-            tailgatePickup=special_services.get(Option.freightcom_tailgate_pickup),
-            residentialPickup=special_services.get(
-                Option.freightcom_residential_pickup
-            ),
+            exhibitionConventionSite=options['freightcom_exhibition_convention_site'],
+            militaryBaseDelivery=options['freightcom_military_base_delivery'],
+            customsIn_bondFreight=options['freightcom_customs_in_bond_freight'],
+            limitedAccess=options['freightcom_limited_access'],
+            excessLength=options['freightcom_excess_length'],
+            tailgatePickup=options['freightcom_tailgate_pickup'],
+            residentialPickup=options['freightcom_residential_pickup'],
             crossBorderFee=None,
-            notifyRecipient=special_services.get(Option.freightcom_notify_recipient),
-            singleShipment=special_services.get(Option.freightcom_single_shipment),
-            tailgateDelivery=special_services.get(Option.freightcom_tailgate_delivery),
-            residentialDelivery=special_services.get(
-                Option.freightcom_residential_delivery
-            ),
+            notifyRecipient=options['freightcom_notify_recipient'],
+            singleShipment=options['freightcom_single_shipment'],
+            tailgateDelivery=options['freightcom_tailgate_delivery'],
+            residentialDelivery=options['freightcom_residential_delivery'],
             insuranceType=options.insurance is not None,
             scheduledShipDate=None,
-            insideDelivery=special_services.get(Option.freightcom_inside_delivery),
-            isSaturdayService=special_services.get(
-                Option.freightcom_is_saturday_service
-            ),
-            dangerousGoodsType=special_services.get(
-                Option.freightcom_dangerous_goods_type
-            ),
-            serviceId=service,
-            stackable=special_services.get(Option.freightcom_stackable),
+            insideDelivery=options['freightcom_inside_delivery'],
+            isSaturdayService=options['freightcom_is_saturday_service'],
+            dangerousGoodsType=options['freightcom_dangerous_goods_type'],
+            serviceId=service.value,
+            stackable=options['freightcom_stackable'],
             From=FromType(
                 id=payload.shipper.id,
                 company=payload.shipper.company_name or " ",

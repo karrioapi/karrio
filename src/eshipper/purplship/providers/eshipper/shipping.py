@@ -119,7 +119,10 @@ def shipping_request(
         "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
     )
     options = Options(payload.options, Option)
-    service = Service[payload.service].value
+    service = next(
+        (Service[payload.service].value for s in Service if s.name == payload.service),
+        payload.service,
+    )
     freight_class = (
         FreightClass[payload.options["freight_class"]].value
         if payload.options.get("freight_class") in FreightClass.__members__
