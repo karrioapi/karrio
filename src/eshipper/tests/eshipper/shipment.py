@@ -27,7 +27,7 @@ class TestEShipperShipment(unittest.TestCase):
     def test_create_shipment(self):
         with patch("purplship.mappers.eshipper.proxy.http") as mock:
             mock.return_value = "<a></a>"
-            Shipment.create(self.ShipmentRequest).with_(gateway)
+            Shipment.create(self.ShipmentRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             self.assertEqual(url, gateway.settings.server_url)
@@ -44,7 +44,7 @@ class TestEShipperShipment(unittest.TestCase):
         with patch("purplship.mappers.eshipper.proxy.http") as mock:
             mock.return_value = ShipmentResponseXML
             parsed_response = (
-                Shipment.create(self.ShipmentRequest).with_(gateway).parse()
+                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
             self.assertEqual(

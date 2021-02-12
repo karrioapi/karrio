@@ -17,7 +17,7 @@ class TestEShipperRating(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RateRequestXML)
 
-    def test_create_rate_request_with_package_preset_missing_weight(self):
+    def test_create_rate_request_from_package_preset_missing_weight(self):
         with self.assertRaises(FieldError):
             gateway.mapper.create_rate_request(
                 RateRequest(**RateWithPresetMissingDimensionPayload)
@@ -81,9 +81,10 @@ RatePayload = {
         }
     ],
     "options": {
+        "eshipper_inside_delivery": True,
         "freight_class": "eshipper_freight_class_70",
-        "cash_on_delivery": {"amount": 10.5},
-        "insurance": {"amount": 70.0},
+        "cash_on_delivery": 10.5,
+        "insurance": 70.0,
     },
 }
 
@@ -179,7 +180,7 @@ ParsedQuoteResponse = [
 ]
 
 RateRequestXML = f"""<EShipper xmlns="http://www.eshipper.net/XMLSchema" username="username" password="password" version="3.0.0">
-    <QuoteRequest serviceId="0" insuranceType="True">
+    <QuoteRequest serviceId="0" insuranceType="True" insideDelivery="True">
         <From id="123" company="Test Company" email="riz@shaw.ca" attention="Riz" phone="9052223333" residential="true" address1="650 CIT Drive" city="Livingston" state="ON" country="CA" zip="L8E5X9"/>
         <To company="Test Company" email="riz@shaw.ca" attention="RizTo" phone="4162223333" residential="False" address1="650 CIT Drive" city="Livingston" state="BC" country="CA" zip="V3N4R3"/>
         <Packages type="Pallet">

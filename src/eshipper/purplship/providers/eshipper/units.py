@@ -1,4 +1,4 @@
-from enum import Enum, Flag
+from purplship.core.utils import Enum, Flag, Spec
 
 
 class PackagingType(Flag):
@@ -39,6 +39,7 @@ class PaymentType(Flag):
 
 
 class Service(Enum):
+    eshipper_all = "0"
     eshipper_fedex_priority = "1"
     eshipper_fedex_first_overnight = "2"
     eshipper_fedex_ground = "3"
@@ -182,25 +183,25 @@ class Service(Enum):
 
 
 class Option(Flag):
-    eshipper_saturday_pickup_required = "saturdayPickupRequired"
-    eshipper_homeland_security = "homelandSecurity"
-    eshipper_exhibition_convention_site = "exhibitionConventionSite"
-    eshipper_military_base_delivery = "militaryBaseDelivery"
-    eshipper_customs_in_bond_freight = "customsIn_bondFreight"
-    eshipper_limited_access = "limitedAccess"
-    eshipper_excess_length = "excessLength"
-    eshipper_tailgate_pickup = "tailgatePickup"
-    eshipper_residential_pickup = "residentialPickup"
-    eshipper_cross_border_fee = "crossBorderFee"
-    eshipper_notify_recipient = "notifyRecipient"
-    eshipper_single_shipment = "singleShipment"
-    eshipper_tailgate_delivery = "tailgateDelivery"
-    eshipper_residential_delivery = "residentialDelivery"
-    eshipper_insurance_type = "insuranceType"
-    eshipper_inside_delivery = "insideDelivery"
-    eshipper_is_saturday_service = "isSaturdayService"
-    eshipper_dangerous_goods_type = "dangerousGoodsType"
-    eshipper_stackable = "stackable"
+    eshipper_saturday_pickup_required = Spec.asFlag("saturdayPickupRequired")
+    eshipper_homeland_security = Spec.asFlag("homelandSecurity")
+    eshipper_exhibition_convention_site = Spec.asFlag("exhibitionConventionSite")
+    eshipper_military_base_delivery = Spec.asFlag("militaryBaseDelivery")
+    eshipper_customs_in_bond_freight = Spec.asFlag("customsIn_bondFreight")
+    eshipper_limited_access = Spec.asFlag("limitedAccess")
+    eshipper_excess_length = Spec.asFlag("excessLength")
+    eshipper_tailgate_pickup = Spec.asFlag("tailgatePickup")
+    eshipper_residential_pickup = Spec.asFlag("residentialPickup")
+    eshipper_cross_border_fee = Spec.asFlag("crossBorderFee")
+    eshipper_notify_recipient = Spec.asFlag("notifyRecipient")
+    eshipper_single_shipment = Spec.asFlag("singleShipment")
+    eshipper_tailgate_delivery = Spec.asFlag("tailgateDelivery")
+    eshipper_residential_delivery = Spec.asFlag("residentialDelivery")
+    eshipper_insurance_type = Spec.asValue("insuranceType", float)
+    eshipper_inside_delivery = Spec.asFlag("insideDelivery")
+    eshipper_is_saturday_service = Spec.asFlag("isSaturdayService")
+    eshipper_dangerous_goods_type = Spec.asFlag("dangerousGoodsType")
+    eshipper_stackable = Spec.asFlag("stackable")
 
 
 class FreightClass(Enum):
