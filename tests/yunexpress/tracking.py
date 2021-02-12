@@ -1,3 +1,4 @@
+import time
 import unittest
 from unittest.mock import patch
 from purplship.core.utils import DP
@@ -59,7 +60,7 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "yunexpress",
             "carrier_name": "yunexpress",
-            "events": [{"date": "2021-02-11"}],
+            "events": [{"date": time.strftime('%Y-%m-%d')}],
             "tracking_number": 18888800406,
         }
     ],
