@@ -47,7 +47,7 @@ SHIPMENT_OPTIONS_TEMPLATE = Template('''
 
 | Code | Identifier | Description
 | --- | --- | ---
-{% for code, spec in value.items() %}| `{{ code }}` | {{ spec.key }} | {{ spec.type }}
+{% for code, spec in value.items() %}| `{{ code }}` | {{ spec.get('key') }} | {{ spec.get('type') }}
 {% endfor %}
 {% endfor %}
 ''')

@@ -1,4 +1,5 @@
-from typing import NamedTuple, Optional, Type, Any, Callable
+import attr
+from typing import Optional, Type, Any, Callable
 from enum import Enum as BaseEnum, Flag as BaseFlag, EnumMeta
 
 
@@ -21,7 +22,8 @@ class Flag(BaseFlag, metaclass=MetaEnum):
     pass
 
 
-class Spec(NamedTuple):
+@attr.s(auto_attribs=True)
+class Spec:
     key: str
     type: Type
     compute: Callable

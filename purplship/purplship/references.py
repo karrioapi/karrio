@@ -66,7 +66,7 @@ def collect_references() -> dict:
             if mapper.get('services') is not None
         },
         "options": {
-            key: {c.name: c.value for c in list(mapper['options'])}  # type: ignore
+            key: {c.name: DP.to_dict(c.value) for c in list(mapper['options'])}  # type: ignore
             for key, mapper in PROVIDERS_DATA.items()
             if mapper.get('options') is not None
         },

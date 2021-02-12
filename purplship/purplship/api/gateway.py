@@ -114,9 +114,9 @@ class GatewayInitializer:
         return GatewayInitializer.__instance
 
 
-logger.info(
-    f"""
+nl = '\n    '
+logger.info(f"""
 Purplship default gateway mapper initialized.
-Registered providers: {','.join(GatewayInitializer.get_instance().providers)}
-"""
-)
+Registered providers:
+    {f"{nl}".join(GatewayInitializer.get_instance().providers.keys())}
+""")
