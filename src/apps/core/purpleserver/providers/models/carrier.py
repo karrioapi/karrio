@@ -1,13 +1,14 @@
 from functools import partial
 
 from django.db import models
+from django.conf import settings
 from django.forms.models import model_to_dict
 
-from purpleserver.core.models import OwnedEntity, uuid
+from purpleserver.core.models import Entity, uuid
 from purpleserver.core.datatypes import CarrierSettings
 
 
-class Carrier(OwnedEntity):
+class Carrier(Entity):
     class Meta:
         unique_together = ['carrier_id', 'user']
 
@@ -18,9 +19,10 @@ class Carrier(OwnedEntity):
     )
     test = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, editable=False)
 
     def __str__(self):
-        return f"{self.carrier_id} - {self.user}"
+        return f"{self.carrier_id} - {self.user or 'system'}"
 
     def _linked_settings(self):
         for field in [f for f in self._meta.get_fields() if isinstance(f, models.OneToOneRel)]:
