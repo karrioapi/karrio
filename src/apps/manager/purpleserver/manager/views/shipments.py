@@ -196,7 +196,7 @@ class ShipmentCustoms(APIView):
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}add_customs",
-        operation_summary="Add shipment customs declaration",
+        operation_summary="Add a customs declaration",
         responses={200: Shipment(), 400: ErrorResponse()},
         request_body=CustomsData()
     )
@@ -226,7 +226,7 @@ class ShipmentParcels(APIView):
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}add_parcel",
-        operation_summary="Add a parcel to a shipment",
+        operation_summary="Add a shipment parcel",
         responses={200: Shipment(), 400: ErrorResponse()},
         request_body=ParcelData()
     )

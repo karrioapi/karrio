@@ -25,7 +25,7 @@ class RateViewAPI(APIView):
 
     @swagger_auto_schema(
         tags=['Proxy'],
-        operation_id=f"{ENDPOINT_ID}fetch",
+        operation_id=f"{ENDPOINT_ID}fetch_rates",
         operation_summary="Fetch shipment rates",
         operation_description=DESCRIPTIONS,
         responses={200: RateResponse(), 400: ErrorResponse()},
