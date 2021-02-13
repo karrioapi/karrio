@@ -19,11 +19,17 @@ const BoardFooter: React.FC<BoardFooterComponent> = () => {
                             <i className="fas fa-external-link-alt"></i>
                         </span>
                     </a>
-                    <a className="button is-white" href="https://docs.purplship.com">
+                    <a className="button is-white" target="_blank" href="https://docs.purplship.com">
                         <span>Docs</span>
+                        <span className="icon is-small">
+                            <i className="fas fa-external-link-alt"></i>
+                        </span>
                     </a>
-                    <a className="button is-white" href="https://github.com/PurplShip">
+                    <a className="button is-white" target="_blank" href="https://github.com/PurplShip">
                         <span>Contribute</span>
+                        <span className="icon is-small">
+                            <i className="fas fa-external-link-alt"></i>
+                        </span>
                     </a>
                 </div>
             </div>
