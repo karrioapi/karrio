@@ -229,7 +229,7 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | `username` | `str` | **required**
 | `password` | `str` | **required**
 | `account_number` | `str` | **required**
-| `user_token` | `str` | 
+| `user_token` | `str` | **required**
 | `language` | `str` | 
 | `id` | `str` | 
 | `test` | `bool` | 
