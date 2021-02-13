@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
 
-from purplship.core.utils import DP
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.gateway import Carriers
@@ -19,7 +18,10 @@ ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make
 
 class CarrierFilters(serializers.Serializer):
     carrier_name = serializers.ChoiceField(choices=CARRIERS, required=False, help_text="Indicates a carrier (type)")
-    test = serializers.NullBooleanField(required=False, default=None, help_text="The test flag filter carrier configured in test mode")
+    test = serializers.NullBooleanField(required=False, default=None,
+            help_text="This flag filter carriers setup in test or prod mode")
+    system_only = serializers.NullBooleanField(required=False,
+           help_text="This flag indicates that only system carriers should be returned")
 
 
 class CarrierList(GenericAPIView):
@@ -35,7 +37,7 @@ class CarrierList(GenericAPIView):
         """
         Returns the list of configured carriers
         """
-        query = DP.to_dict(SerializerDecorator[CarrierFilters](data=request.query_params).data)
+        query = SerializerDecorator[CarrierFilters](data=request.query_params).data
 
         carriers = [carrier.data for carrier in Carriers.list(**{**query, 'user': request.user})]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
