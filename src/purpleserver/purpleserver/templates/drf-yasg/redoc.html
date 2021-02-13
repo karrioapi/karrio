@@ -17,29 +17,45 @@
         .gza-dof {
             background-color: #9504af !important;
         }
-
+        .dashboard-link {
+            position: fixed;
+            bottom: 90px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(149, 4, 175, 70%);
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
+        }
         .admin-link {
             position: fixed;
             bottom: 44px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
             background-color: rgba(50, 50, 159, 70%);
             border-radius: 50%;
             z-index: 2;
-            box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 20px;
+            box-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
         }
         @media screen and (max-width: 50rem) {
+            .dashboard-link {
+                bottom: 158px;
+            }
             .admin-link {
-                bottom: 110px;
+                bottom: 112px;
             }
         }
     </style>
 {% endblock %}
 
 {% block extra_body %}
+<a class="dashboard-link" href="/" title="Dashboard">
+    <img src="{% static 'purpleserver/img/dashboard.svg' %}" width="26" style="margin: 7px;">
+</a>
 <a class="admin-link" href="/admin" title="Admin Console">
-    <img src="{% static 'purpleserver/img/settings.svg' %}" width="40" style="margin: 10px;">
+    <img src="{% static 'purpleserver/img/settings.svg' %}" width="26" style="margin: 7px;">
 </a>
 {% endblock %}
 {% block main_scripts %}
