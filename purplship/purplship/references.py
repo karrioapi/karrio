@@ -59,6 +59,8 @@ def collect_references() -> dict:
         "dimension_units": {c.name: c.value for c in list(units.DimensionUnit)},
         "states": {c.name: {s.name: s.value for s in list(c.value)} for c in list(units.CountryState)},
         "payment_types": {c.name: c.value for c in list(units.PaymentType)},
+        "customs_content_type": {c.name: c.value for c in list(units.CustomsContentType)},
+        "incoterms": {c.name: c.value for c in list(units.Incoterm)},
         "carriers": {carrier_name: metadata.label for carrier_name, metadata in PROVIDERS.items()},
         "services": {
             key: {c.name: c.value for c in list(mapper['services'])}  # type: ignore
