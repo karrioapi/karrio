@@ -1,6 +1,6 @@
 import { state } from '@/library/api';
 import { formatRef, isNone } from '@/library/helper';
-import { NotificationType } from '@/library/types';
+import { APIError, NotificationType, RequestError } from '@/library/types';
 import { Customs, Payment, Shipment } from '@purplship/purplship';
 import { useNavigate } from '@reach/router';
 import React, { useState } from 'react';
@@ -36,6 +36,15 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             const response = await state.fetchRates(shipment);
             if (shipment.id === undefined) navigate('/buy_label/' + response.id);
             update({ ...response }, true);
+            if ((shipment.messages || []).length > 0) {
+                const error: APIError = { error: { 
+                    code: "notes",
+                    details: {messages: shipment.messages} as APIError['error']['details'] 
+                }};
+                const message = new RequestError(error);
+
+                state.setNotification({ type: NotificationType.warning, message });
+            }
         } catch (err) {
             state.setNotification({ type: NotificationType.error, message: err });
         } finally {
