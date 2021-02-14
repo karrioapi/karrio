@@ -278,14 +278,16 @@ class Rates:
         carrier_settings_list = [
             carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user)
         ]
+        gateways = [
+            purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list
+        ]
+        compatible_gateways = [g for g in gateways if 'get_rates' in g.features]
 
-        if len(carrier_settings_list) == 0:
+        if len(compatible_gateways) == 0:
             raise NotFound("No configured and active carriers specified")
 
-        gateways = (purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list)
-
         # The request call is wrapped in identity to simplify mocking in tests
-        rates, messages = identity(lambda: request.from_(*gateways).parse())
+        rates, messages = identity(lambda: request.from_(*compatible_gateways).parse())
 
         if not any(rates) and any(messages):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
