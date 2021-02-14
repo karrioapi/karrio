@@ -94,9 +94,9 @@ class CarrierSettings(Serializer):
 
 
 class TestFilters(FlagsSerializer):
-    test = FlagField(required=False, default=False, help_text="""
-    The test flag indicates whether to use a carrier configured for test. 
-    """)
+    test = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="The test flag indicates whether to use a carrier configured for test.")
 
 
 class Message(Serializer):

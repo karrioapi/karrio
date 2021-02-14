@@ -61,11 +61,12 @@ class Carriers:
         query += (Q(user__isnull=True) | Q(user__in=users),)
 
         if 'carrier_name' in list_filter:
-            if list_filter['carrier_name'] not in models.MODELS.keys():
-                raise NotFound(f"No configurations for the following carrier: '{list_filter['carrier_name']}'")
+            carrier_name = list_filter['carrier_name']
+            if carrier_name not in models.MODELS.keys():
+                raise NotFound(f"No configurations for the following carrier: '{carrier_name}'")
 
             carriers = [
-                setting.carrier_ptr for setting in models.MODELS[list_filter['carrier_name']].objects.filter(*query)
+                setting.carrier_ptr for setting in models.MODELS[carrier_name].objects.filter(*query)
             ]
         else:
             carriers = models.Carrier.objects.filter(*query)
@@ -115,7 +116,7 @@ class Shipments:
         gateway = purplship.gateway[carrier.carrier_name].create(carrier.dict())
 
         # The request is wrapped in identity to simplify mocking in tests
-        shipment, messages = identity(lambda: purplship.Shipment.create(request).with_(gateway).parse())
+        shipment, messages = identity(lambda: purplship.Shipment.create(request).from_(gateway).parse())
 
         if shipment is None:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
@@ -205,7 +206,7 @@ class Pickups:
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
-        pickup, messages = identity(lambda: request.with_(gateway).parse())
+        pickup, messages = identity(lambda: request.from_(gateway).parse())
 
         if pickup is None:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
