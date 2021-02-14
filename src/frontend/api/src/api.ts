@@ -3447,11 +3447,13 @@ export const CarriersApiFetchParamCreator = function (configuration?: Configurat
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [carrier_name] Indicates a carrier (type)
-         * @param {boolean} [test] The test flag filter carrier configured in test mode
+         * @param {boolean} [test] This flag filter out carriers in test or prod mode
+         * @param {boolean} [active] This flag indicates whether to return active carriers only
+         * @param {boolean} [system_only] This flag indicates that only system carriers should be returned
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, offset?: number, carrier_name?: string, test?: boolean, options: any = {}): FetchArgs {
+        list(limit?: number, offset?: number, carrier_name?: string, test?: boolean, active?: boolean, system_only?: boolean, options: any = {}): FetchArgs {
             const localVarPath = `/carriers`;
             const localVarUrlObj = url.parse(localVarPath, true);
             const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
@@ -3482,6 +3484,14 @@ export const CarriersApiFetchParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['test'] = test;
             }
 
+            if (active !== undefined) {
+                localVarQueryParameter['active'] = active;
+            }
+
+            if (system_only !== undefined) {
+                localVarQueryParameter['system_only'] = system_only;
+            }
+
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
             // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
             delete localVarUrlObj.search;
@@ -3507,12 +3517,14 @@ export const CarriersApiFp = function(configuration?: Configuration) {
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [carrier_name] Indicates a carrier (type)
-         * @param {boolean} [test] The test flag filter carrier configured in test mode
+         * @param {boolean} [test] This flag filter out carriers in test or prod mode
+         * @param {boolean} [active] This flag indicates whether to return active carriers only
+         * @param {boolean} [system_only] This flag indicates that only system carriers should be returned
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, offset?: number, carrier_name?: string, test?: boolean, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<CarrierSettings>> {
-            const localVarFetchArgs = CarriersApiFetchParamCreator(configuration).list(limit, offset, carrier_name, test, options);
+        list(limit?: number, offset?: number, carrier_name?: string, test?: boolean, active?: boolean, system_only?: boolean, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<CarrierSettings>> {
+            const localVarFetchArgs = CarriersApiFetchParamCreator(configuration).list(limit, offset, carrier_name, test, active, system_only, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
                 return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                     if (response.status >= 200 && response.status < 300) {
@@ -3538,12 +3550,14 @@ export const CarriersApiFactory = function (configuration?: Configuration, fetch
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [carrier_name] Indicates a carrier (type)
-         * @param {boolean} [test] The test flag filter carrier configured in test mode
+         * @param {boolean} [test] This flag filter out carriers in test or prod mode
+         * @param {boolean} [active] This flag indicates whether to return active carriers only
+         * @param {boolean} [system_only] This flag indicates that only system carriers should be returned
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, offset?: number, carrier_name?: string, test?: boolean, options?: any) {
-            return CarriersApiFp(configuration).list(limit, offset, carrier_name, test, options)(fetch, basePath);
+        list(limit?: number, offset?: number, carrier_name?: string, test?: boolean, active?: boolean, system_only?: boolean, options?: any) {
+            return CarriersApiFp(configuration).list(limit, offset, carrier_name, test, active, system_only, options)(fetch, basePath);
         },
     };
 };
@@ -3561,13 +3575,15 @@ export class CarriersApi extends BaseAPI {
      * @param {number} [limit] Number of results to return per page.
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [carrier_name] Indicates a carrier (type)
-     * @param {boolean} [test] The test flag filter carrier configured in test mode
+     * @param {boolean} [test] This flag filter out carriers in test or prod mode
+     * @param {boolean} [active] This flag indicates whether to return active carriers only
+     * @param {boolean} [system_only] This flag indicates that only system carriers should be returned
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof CarriersApi
      */
-    public list(limit?: number, offset?: number, carrier_name?: string, test?: boolean, options?: any) {
-        return CarriersApiFp(this.configuration).list(limit, offset, carrier_name, test, options)(this.fetch, this.basePath);
+    public list(limit?: number, offset?: number, carrier_name?: string, test?: boolean, active?: boolean, system_only?: boolean, options?: any) {
+        return CarriersApiFp(this.configuration).list(limit, offset, carrier_name, test, active, system_only, options)(this.fetch, this.basePath);
     }
 
 }
@@ -5633,7 +5649,7 @@ export const ShipmentsApiFetchParamCreator = function (configuration?: Configura
     return {
         /**
          * Add the customs declaration for the shipment if non existent.
-         * @summary Add shipment customs declaration
+         * @summary Add a customs declaration
          * @param {CustomsData} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -5679,7 +5695,7 @@ export const ShipmentsApiFetchParamCreator = function (configuration?: Configura
         },
         /**
          * Add a parcel to an existing shipment for a multi-parcel shipment.
-         * @summary Add a parcel to a shipment
+         * @summary Add a shipment parcel
          * @param {ParcelData} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -6018,7 +6034,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
     return {
         /**
          * Add the customs declaration for the shipment if non existent.
-         * @summary Add shipment customs declaration
+         * @summary Add a customs declaration
          * @param {CustomsData} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -6038,7 +6054,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
         },
         /**
          * Add a parcel to an existing shipment for a multi-parcel shipment.
-         * @summary Add a parcel to a shipment
+         * @summary Add a shipment parcel
          * @param {ParcelData} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -6203,7 +6219,7 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, fetc
     return {
         /**
          * Add the customs declaration for the shipment if non existent.
-         * @summary Add shipment customs declaration
+         * @summary Add a customs declaration
          * @param {CustomsData} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -6214,7 +6230,7 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, fetc
         },
         /**
          * Add a parcel to an existing shipment for a multi-parcel shipment.
-         * @summary Add a parcel to a shipment
+         * @summary Add a shipment parcel
          * @param {ParcelData} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -6308,7 +6324,7 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, fetc
 export class ShipmentsApi extends BaseAPI {
     /**
      * Add the customs declaration for the shipment if non existent.
-     * @summary Add shipment customs declaration
+     * @summary Add a customs declaration
      * @param {CustomsData} body 
      * @param {string} id 
      * @param {*} [options] Override http request option.
@@ -6321,7 +6337,7 @@ export class ShipmentsApi extends BaseAPI {
 
     /**
      * Add a parcel to an existing shipment for a multi-parcel shipment.
-     * @summary Add a parcel to a shipment
+     * @summary Add a shipment parcel
      * @param {ParcelData} body 
      * @param {string} id 
      * @param {*} [options] Override http request option.

@@ -1,5 +1,5 @@
 import { ConnectionData, DefaultTemplates, LabelData, Log, PaginatedConnections, PaginatedLogs, PaginatedShipments, PaginatedTemplates, RequestError, Template, UserInfo, Notification } from '@/library/types';
-import { References, Shipment, Purplship, Address, Parcel, Customs } from '@purplship/purplship';
+import { References, Shipment, Purplship, Address, Parcel, Customs, CarrierSettings } from '@purplship/purplship';
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinct } from 'rxjs/operators';
@@ -29,7 +29,8 @@ class AppState {
     private shipments$: Subject<PaginatedShipments> = new Subject<PaginatedShipments>();
     private parcels$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
     private addresses$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
-    private connections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
+    private carriers$: Subject<CarrierSettings[]> = new Subject<CarrierSettings[]>();
+    private userConnections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
     private customsInfos$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
     private references$: Subject<References> = new Subject<References>();
     private logs$: Subject<PaginatedLogs> = new Subject<PaginatedLogs>();
@@ -66,15 +67,21 @@ class AppState {
         return user;
     }
 
+    public get systemConnections() {
+        const [carriers, setValue] = useState<CarrierSettings[]>([]);
+        useEffect(() => { this.carriers$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return carriers;
+    }
+
     public get shipments() {
         const [shipments, setValue] = useState<PaginatedShipments>();
         useEffect(() => { this.shipments$.asObservable().pipe(distinct()).subscribe(setValue); });
         return shipments;
     }
 
-    public get connections() {
-        const [connections, setValue] = useState<PaginatedConnections>();
-        useEffect(() => { this.connections$.asObservable().pipe(distinct()).subscribe(setValue); });
+    public get userConnections() {
+        const [connections, setValue] = useState<PaginatedConnections>(DEFAULT_PAGINATED_RESULT);
+        useEffect(() => { this.userConnections$.asObservable().pipe(distinct()).subscribe(setValue); });
         return connections;
     }
 
@@ -130,6 +137,12 @@ class AppState {
         const references = await this.purplship.utils.references();
         this.references$.next(references);
         return references;
+    }
+
+    public async fetchCarriers() {
+        const carriers = await this.purplship.carriers.list(undefined, undefined, undefined, undefined, true, true);
+        this.carriers$.next(carriers);
+        return carriers;
     }
 
     public async retrieveShipment(shipment_id: string) {
@@ -437,10 +450,10 @@ class AppState {
         const response = await http(url || `/connections?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
-            this.connections$.next({ ...data, fetched: true, url });
+            this.userConnections$.next({ ...data, fetched: true, url });
             return data;
         } else {
-            this.connections$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+            this.userConnections$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Unable fetch connected carriers.");
         }
     }

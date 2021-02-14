@@ -1,5 +1,6 @@
 import { Reference } from '@/library/context';
 import { Collection } from '@/library/types';
+import { CarrierSettings } from '@purplship/purplship';
 import React from 'react';
 
 const THEME: Collection = {
@@ -25,10 +26,11 @@ const THEME: Collection = {
 };
 
 interface CarrierBadgeComponent extends React.AllHTMLAttributes<HTMLSpanElement> {
-    name: string;
+    carrier?: CarrierSettings.CarrierNameEnum | string;
 }
 
-const CarrierBadge: React.FC<CarrierBadgeComponent> = ({ name, className, ...props }) => {
+const CarrierBadge: React.FC<CarrierBadgeComponent> = ({ carrier, className, ...props }) => {
+    const name = carrier || '';
     return (
         <Reference.Consumer>
             {ref => (Object.values(ref || {}).length > 0) && (

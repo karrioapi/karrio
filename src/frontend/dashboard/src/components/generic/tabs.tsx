@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 
 interface TabsComponent extends React.HTMLAttributes<HTMLDivElement> {
     tabs: string[];
-    disabled: string[];
-    eventKey: string;
+    disabled?: string[];
+    eventKey?: string;
     tabClass?: string;
 }
 
@@ -13,7 +13,7 @@ const Tabs: React.FC<TabsComponent> = ({ tabs, disabled, eventKey, tabClass, chi
     const __ = (tab: string) => (_?: any) => {
         setSelected(tab);
     };
-    ref?.current?.addEventListener(eventKey, (e: CustomEvent<any>) => {
+    ref?.current?.addEventListener((eventKey || 'tab-updated'), (e: CustomEvent<any>) => {
         setTimeout(() => __(e.detail.nextTab)(), e.detail.delay || 0);
     });
 
@@ -25,7 +25,7 @@ const Tabs: React.FC<TabsComponent> = ({ tabs, disabled, eventKey, tabClass, chi
 
                     {tabs.map((tab, index) => (
                         <li key={index} className={`${selected === tab ? "is-active" : ""}`}>
-                            <a onClick={__(tab)} data-name={tab} className={`is-capitalized ${disabled.includes(tab) ? "is-disabled" : ""}`}>
+                            <a onClick={__(tab)} data-name={tab} className={`is-capitalized ${(disabled || []).includes(tab) ? "is-disabled" : ""}`}>
                                 {tab}
                             </a>
                         </li>
