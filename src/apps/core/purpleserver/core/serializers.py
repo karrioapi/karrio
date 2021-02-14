@@ -54,6 +54,29 @@ class PlainDictField(DictField):
         }
 
 
+class FlagField(BooleanField):
+    pass
+
+
+class FlagsSerializer(Serializer):
+    def __init__(self, *args, **kwargs):
+        data = kwargs.get('data', {})
+        self.flags = [
+            (label, label in data) for label, field in self.fields.items()
+            if isinstance(field, FlagField)
+        ]
+
+        super().__init__(*args, **kwargs)
+
+    def validate(self, data):
+        validated = super().validate(data)
+        for flag, specified in self.flags:
+            if specified and validated[flag] is None:
+                validated.update({flag: True})
+
+        return validated
+
+
 class EntitySerializer(Serializer):
     id = CharField(required=False, help_text="A unique identifier")
 
@@ -70,8 +93,8 @@ class CarrierSettings(Serializer):
     """)
 
 
-class TestFilters(Serializer):
-    test = NullBooleanField(required=False, default=False, help_text="""
+class TestFilters(FlagsSerializer):
+    test = FlagField(required=False, default=False, help_text="""
     The test flag indicates whether to use a carrier configured for test. 
     """)
 

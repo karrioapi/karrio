@@ -41,11 +41,11 @@ class Carriers:
             query += (Q(test=list_filter['test']), )
 
         # Check if the system_only flag is not specified and there is a provided user, get the users carriers
-        if list_filter.get('system_only') is False and 'user' in list_filter:
+        if not list_filter.get('system_only') and 'user' in list_filter:
             users += [list_filter.get('user')]
 
         # Check if the active flag is specified and return all active carrier is active is not set to false
-        if 'active' in list_filter:
+        if list_filter.get('active') is not None:
             active = False if list_filter['active'] is False else True
             query += (Q(active=active), )
 

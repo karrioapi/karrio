@@ -9,19 +9,26 @@ from drf_yasg.utils import swagger_auto_schema
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.gateway import Carriers
-from purpleserver.core.serializers import CarrierSettings, ErrorResponse, CARRIERS
+from purpleserver.core.serializers import CarrierSettings, ErrorResponse, FlagField, FlagsSerializer, CARRIERS
 from purpleserver.providers.router import router
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-class CarrierFilters(serializers.Serializer):
-    carrier_name = serializers.ChoiceField(choices=CARRIERS, required=False, help_text="Indicates a carrier (type)")
-    test = serializers.NullBooleanField(required=False, default=None,
-            help_text="This flag filter carriers setup in test or prod mode")
-    system_only = serializers.NullBooleanField(required=False,
-           help_text="This flag indicates that only system carriers should be returned")
+class CarrierFilters(FlagsSerializer):
+
+    carrier_name = serializers.ChoiceField(
+        choices=CARRIERS, required=False, help_text="Indicates a carrier (type)")
+    test = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="This flag filter out carriers in test or prod mode")
+    active = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="This flag indicates whether to return active carriers only")
+    system_only = FlagField(
+        required=False, allow_null=True, default=False,
+        help_text="This flag indicates that only system carriers should be returned")
 
 
 class CarrierList(GenericAPIView):

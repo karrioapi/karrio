@@ -9,12 +9,9 @@ from purpleserver.core.datatypes import CarrierSettings
 
 
 class Carrier(Entity):
-    class Meta:
-        unique_together = ['carrier_id', 'user']
-
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='car_'), editable=False)
     carrier_id = models.CharField(
-        max_length=200,
+        max_length=200, unique=True,
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups..."
     )
     test = models.BooleanField(default=True)
