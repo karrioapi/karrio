@@ -21,7 +21,7 @@ from purplship.core.utils import (
     SF,
 )
 from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 
 
 def parse_tracking_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
@@ -81,5 +81,5 @@ def tracking_request(payload: TrackingRequest, _) -> Serializable[List[Envelope]
 
 def _request_serializer(envelopes: List[Envelope]) -> List[str]:
     return [
-        default_request_serializer(envelope) for envelope in envelopes
+        Settings.serialize(envelope) for envelope in envelopes
     ]

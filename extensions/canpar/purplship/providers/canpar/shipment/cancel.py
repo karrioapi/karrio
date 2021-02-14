@@ -15,7 +15,7 @@ from purplship.core.utils import (
     Serializable,
 )
 from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 
 
 def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
@@ -43,4 +43,4 @@ def shipment_cancel_request(payload: ShipmentCancelRequest, settings: Settings) 
         )
     )
 
-    return Serializable(request, default_request_serializer)
+    return Serializable(request, Settings.serialize)

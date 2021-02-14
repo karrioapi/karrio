@@ -1,4 +1,5 @@
 import time
+from functools import partial
 from typing import List, Tuple, Optional
 from canpar_lib.CanparRatingService import (
     rateShipment,
@@ -16,7 +17,7 @@ from purplship.core.models import (
 from purplship.core.units import Packages, Services, Options
 from purplship.core.utils import Serializable, Envelope, create_envelope, Element, NF, XP, DF
 from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service, Charges
 
 
@@ -165,4 +166,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[Envel
         )
     )
 
-    return Serializable(request, default_request_serializer)
+    return Serializable(
+        request, partial(
+            settings.serialize,
+            extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
+            special_prefixes=dict(shipment_children='xsd1')
+        )
+    )

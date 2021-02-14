@@ -183,66 +183,68 @@ ParsedVoidShipmentResponse = [
 ]
 
 
-ShipmentRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
-    <soapenv:Body>
+ShipmentRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
+    <soap:Header/>
+    <soap:Body>
         <ws:processShipment>
             <ws:request>
-                <password>password</password>
-                <shipment>
-                    <delivery_address>
-                        <address_line_1>1 TEST ST</address_line_1>
-                        <address_line_2></address_line_2>
-                        <city>TORONTO</city>
-                        <name>TEST ADDRESS</name>
-                        <phone>4161234567</phone>
-                        <postal_code>M4X1W7</postal_code>
-                        <province>ON</province>
-                        <residential>false</residential>
-                    </delivery_address>
-                    <dimention_unit>I</dimention_unit>
-                    <packages>
-                        <height>7.62</height>
-                        <length>25.399999999999999</length>
-                        <reported_weight>1.</reported_weight>
-                        <width>7.62</width>
-                        <xc>true</xc>
-                    </packages>
-                    <pickup_address>
-                        <address_line_1>502 MAIN ST N</address_line_1>
-                        <address_line_2></address_line_2>
-                        <attention>Bob</attention>
-                        <city>MONTREAL</city>
-                        <country>CA</country>
-                        <name>CGI</name>
-                        <phone>1 (450) 823-8432</phone>
-                        <postal_code>H2B1A0</postal_code>
-                        <province>QC</province>
-                        <residential>false</residential>
-                    </pickup_address>
-                    <reported_weight_unit>L</reported_weight_unit>
-                    <service_type>Service.canpar_ground</service_type>
-                    
-                </shipment>
-                <user_id>user_id</user_id>
+                <xsd:password>password</xsd:password>
+                <xsd:shipment>
+                    <xsd1:delivery_address>
+                        <xsd1:address_line_1>1 TEST ST</xsd1:address_line_1>
+                        <xsd1:address_line_2></xsd1:address_line_2>
+                        <xsd1:city>TORONTO</xsd1:city>
+                        <xsd1:name>TEST ADDRESS</xsd1:name>
+                        <xsd1:phone>4161234567</xsd1:phone>
+                        <xsd1:postal_code>M4X1W7</xsd1:postal_code>
+                        <xsd1:province>ON</xsd1:province>
+                        <xsd1:residential>false</xsd1:residential>
+                    </xsd1:delivery_address>
+                    <xsd1:dimention_unit>I</xsd1:dimention_unit>
+                    <xsd1:packages>
+                        <xsd1:height>7.62</xsd1:height>
+                        <xsd1:length>25.399999999999999</xsd1:length>
+                        <xsd1:reported_weight>1.</xsd1:reported_weight>
+                        <xsd1:width>7.62</xsd1:width>
+                        <xsd1:xc>true</xsd1:xc>
+                    </xsd1:packages>
+                    <xsd1:pickup_address>
+                        <xsd1:address_line_1>502 MAIN ST N</xsd1:address_line_1>
+                        <xsd1:address_line_2></xsd1:address_line_2>
+                        <xsd1:attention>Bob</xsd1:attention>
+                        <xsd1:city>MONTREAL</xsd1:city>
+                        <xsd1:country>CA</xsd1:country>
+                        <xsd1:name>CGI</xsd1:name>
+                        <xsd1:phone>1 (450) 823-8432</xsd1:phone>
+                        <xsd1:postal_code>H2B1A0</xsd1:postal_code>
+                        <xsd1:province>QC</xsd1:province>
+                        <xsd1:residential>false</xsd1:residential>
+                    </xsd1:pickup_address>
+                    <xsd1:reported_weight_unit>L</xsd1:reported_weight_unit>
+                    <xsd1:service_type>Service.canpar_ground</xsd1:service_type>
+                    <xsd1:shipping_date>2021-02-14T00:00:00</xsd1:shipping_date>
+                </xsd:shipment>
+                <xsd:user_id>user_id</xsd:user_id>
             </ws:request>
         </ws:processShipment>
-    </soapenv:Body>
-</soapenv:Envelope>
+    </soap:Body>
+</soap:Envelope>
 """
 
-ShipmentLabelRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
-    <soapenv:Body>
+ShipmentLabelRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" >
+    <soap:Header/>
+    <soap:Body>
         <ws:getLabelsAdvanced>
             <ws:request>
-                <horizontal>false</horizontal>
-                <id>10000696</id>
-                <password>password</password>
-                <thermal>false</thermal>
-                <user_id>user_id</user_id>
+                <xsd:horizontal>false</xsd:horizontal>
+                <xsd:id>10000696</xsd:id>
+                <xsd:password>password</xsd:password>
+                <xsd:thermal>false</xsd:thermal>
+                <xsd:user_id>user_id</xsd:user_id>
             </ws:request>
         </ws:getLabelsAdvanced>
-    </soapenv:Body>
-</soapenv:Envelope>
+    </soap:Body>
+</soap:Envelope>
 """
 
 ShipmentResponseXML = """<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
@@ -386,17 +388,18 @@ ShipmentLabelResponseXML = """<soapenv:Envelope xmlns:soapenv="http://www.w3.org
 </soapenv:Envelope>
 """
 
-VoidShipmentRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
-    <soapenv:Body>
+VoidShipmentRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" >
+    <soap:Header/>
+    <soap:Body>
         <ws:voidShipment>
             <ws:request>
-                <id>10000696</id>
-                <password>password</password>
-                <user_id>user_id</user_id>
+                <xsd:id>10000696</xsd:id>
+                <xsd:password>password</xsd:password>
+                <xsd:user_id>user_id</xsd:user_id>
             </ws:request>
         </ws:voidShipment>
-    </soapenv:Body>
-</soapenv:Envelope>
+    </soap:Body>
+</soap:Envelope>
 """
 
 VoidShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>

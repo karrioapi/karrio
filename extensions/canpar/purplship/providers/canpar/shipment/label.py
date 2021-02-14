@@ -8,7 +8,7 @@ from purplship.core.utils import (
     Serializable,
     Envelope
 )
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 
 
 @struct
@@ -31,4 +31,4 @@ def get_label_request(payload: LabelRequest, settings: Settings) -> Serializable
         )
     )
 
-    return Serializable(request, default_request_serializer)
+    return Serializable(request, Settings.serialize)

@@ -1,7 +1,7 @@
 """Purplship Canpar client settings."""
 
 from purplship.core.settings import Settings as BaseSettings
-from purplship.core.utils import Envelope, apply_namespaceprefix, XP
+from purplship.core.utils import Envelope, apply_namespaceprefix, XP, Header
 
 
 class Settings(BaseSettings):
@@ -24,18 +24,23 @@ class Settings(BaseSettings):
             'https://canship.canpar.com/canshipws/services'
         )
 
+    @staticmethod
+    def serialize(envelope: Envelope, default_prefix: str = "ws", extra_namespace: str = "", special_prefixes: dict = None) -> str:
 
-def default_request_serializer(envelope: Envelope) -> str:
-    namespace_ = (
-        ' xmlns:soap="http://www.w3.org/2003/05/soap-envelope"'
-        ' xmlns:ws="http://ws.onlinerating.canshipws.canpar.com"'
-        ' xmlns="http://ws.dto.canshipws.canpar.com/xsd"'
-        ' xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"'
-    )
-    envelope.ns_prefix_ = 'soapenv'
-    envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    envelope.Body.anytypeobjs_[0].ns_prefix_ = "ws"
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0].request, "")
-    envelope.Body.anytypeobjs_[0].request.ns_prefix_ = "ws"
+        namespacedef_ = (
+            'xmlns:soap="http://www.w3.org/2003/05/soap-envelope" '
+            ' xmlns:ws="http://ws.onlinerating.canshipws.canpar.com"'
+            ' xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd"'
+            f' {extra_namespace}'
+        )
+        envelope.ns_prefix_ = "soap"
+        envelope.Header = Header()
+        envelope.Body.ns_prefix_ = envelope.ns_prefix_
+        envelope.Header.ns_prefix_ = envelope.ns_prefix_
 
-    return XP.export(envelope, namespacedef_=namespace_)
+        prefixes = {**(special_prefixes or {}), 'request_children': 'xsd'}
+
+        for node in (envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_):
+            apply_namespaceprefix(node, default_prefix, prefixes)
+
+        return XP.export(envelope, namespacedef_=namespacedef_)
