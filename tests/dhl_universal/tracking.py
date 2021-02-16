@@ -62,10 +62,10 @@ ParsedTrackingResponse = [
             "delivered": True,
             "events": [
                 {
-                    "code": "DELIVERED",
+                    "code": "pre-transit",
                     "date": "2018-03-02",
                     "description": "JESSICA",
-                    "location": "NL, 1043 AG, Oderweg 2, AMSTERDAM",
+                    "location": "Oderweg 2, AMSTERDAM",
                     "time": "07:53",
                 }
             ],
@@ -246,7 +246,7 @@ TrackingResponseJSON = """{
     },
     "events": [
       {
-        "timestamp": "2018-03-02T07:53:47Z",
+        "timestamp": "2018-03-02T07:53:47",
         "location": {
           "address": {
             "countryCode": "NL",

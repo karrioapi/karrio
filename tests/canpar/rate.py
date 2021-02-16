@@ -1,4 +1,5 @@
 import re
+import time
 import unittest
 import logging
 from unittest.mock import patch
@@ -108,7 +109,7 @@ ParsedQuoteResponse = [
 ]
 
 
-RateRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
+RateRequestXML = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
     <soap:Header/>
     <soap:Body>
         <ws:rateShipment>
@@ -150,7 +151,7 @@ RateRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-en
                     </xsd1:pickup_address>
                     <xsd1:reported_weight_unit>L</xsd1:reported_weight_unit>
                     <xsd1:service_type>1</xsd1:service_type>
-                    <xsd1:shipping_date>2021-02-14T00:00:00</xsd1:shipping_date>
+                    <xsd1:shipping_date>{time.strftime('%Y-%m-%d')}T00:00:00</xsd1:shipping_date>
                 </xsd:shipment>
                 <xsd:user_id>user_id</xsd:user_id>
             </ws:request>

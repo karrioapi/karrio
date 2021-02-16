@@ -40,7 +40,7 @@ def _extract_detail(detail: Tuple[str, Tracking], settings: Settings) -> Trackin
                 code=event.event_type,
                 time=DF.ftime(event.scan_time, '%Y-%m-%dT%H:%M:%SZ'),
             )
-            for event in tracking_details.tracking_events
+            for event in reversed(tracking_details.tracking_events)
         ],
         delivered=(tracking_details.state == 'Delivered')
     )

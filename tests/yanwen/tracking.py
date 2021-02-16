@@ -23,7 +23,7 @@ class TestCarrierTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                "https://trackapi.yanwentech.com/api/tracking?nums=6A16723741816",
+                "http://trackapi.yanwentech.com/api/tracking?nums=6A16723741816",
             )
 
     def test_parse_tracking_response(self):

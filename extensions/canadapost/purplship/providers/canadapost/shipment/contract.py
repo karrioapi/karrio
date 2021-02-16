@@ -86,10 +86,12 @@ def shipment_request(
         if payload.payment is not None else None
     )
     all_options = (
-        [*options] + [(OptionCode.canadapost_return_to_sender.name, OptionCode.canadapost_return_to_sender.value.apply(True))]
+        [*options, (OptionCode.canadapost_return_to_sender.name, OptionCode.canadapost_return_to_sender.value.apply(True))]
         if is_intl and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
         else [*options]
     )
+
+    print(options, all_options)
 
     label_encoding, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
 
@@ -158,7 +160,7 @@ def shipment_request(
                         for code, option in all_options if code in OptionCode
                     ]
                 )
-                if any(options) else None
+                if any(all_options) else None
             ),
             notification=(
                 NotificationType(

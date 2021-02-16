@@ -58,7 +58,9 @@ class TestDHLShipment(unittest.TestCase):
                 Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentResponse)
+            )
 
 
 if __name__ == "__main__":
@@ -105,7 +107,7 @@ shipment_data = {
         "commodities": [{"description": "cn", "sku": "cc"}],
         "incoterm": "DAP",
         "duty": {"account_number": "123456789", "paid_by": "sender", "amount": 200.00},
-    }
+    },
 }
 
 ParsedShipmentMissingArgsError = [

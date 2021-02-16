@@ -21,6 +21,7 @@ class TestUSPSTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
+
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(PARSED_TRACKING_RESPONSE)
             )
@@ -35,24 +36,36 @@ TRACKING_PAYLOAD = ["XXXXXXXXXXXX1"]
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier_name": "usps",
             "carrier_id": "usps",
+            "carrier_name": "usps",
+            "delivered": False,
             "events": [
+                {
+                    "code": "10",
+                    "date": "2016-01-06",
+                    "description": "Arrived at USPS Facility",
+                    "location": "COLUMBUS, OH, 43218",
+                    "time": "10:45",
+                },
                 {
                     "code": "03",
                     "date": "2016-01-06",
+                    "description": "Acceptance",
                     "location": "LAKE CHARLES, IL, 12345",
                     "time": "09:10",
-                }
+                },
             ],
+            "tracking_number": "XXXXXXXXXX1",
         }
     ],
     [],
 ]
 
 
-TRACKING_REQUEST = f"""<TrackFieldRequest USERID="{gateway.settings.username}">
+TRACKING_REQUEST = f"""<TrackFieldRequest USERID="username">
     <Revision>1</Revision>
+    <ClientIp>127.0.0.1</ClientIp>
+    <SourceId>Purplship</SourceId>
     <TrackID ID="XXXXXXXXXXXX1"/>
 </TrackFieldRequest>
 """

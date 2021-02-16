@@ -57,13 +57,17 @@ class TestDHLRating(unittest.TestCase):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedRateResponse)
+            )
 
     def test_parse_rate_parsing_error(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = RateParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateParsingError))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedRateParsingError)
+            )
 
     def test_parse_rate_missing_args_error(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:

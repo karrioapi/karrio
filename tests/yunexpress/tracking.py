@@ -61,7 +61,7 @@ ParsedTrackingResponse = [
             "carrier_id": "yunexpress",
             "carrier_name": "yunexpress",
             "events": [{"date": time.strftime('%Y-%m-%d')}],
-            "tracking_number": 18888800406,
+            "tracking_number": "18888800406",
         }
     ],
     [],
@@ -81,26 +81,23 @@ ParsedErrorResponse = [
 ]
 
 
-TrackingRequestXML = ["18888800406"]
+TrackingRequestXML = "18888800406"
 
-TrackingResponseXML = """<?xml version="1.0" encoding="utf-8"?>
-<Response xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <ResultCode>0000</ResultCode>
-    <ResultDesc>提交成功</ResultDesc>
-    <Item>
-        <OrderInfo>
-            <msg></msg>
-            <OrderNumber>api3111101111q1</OrderNumber>
-            <TrackingNumber>18888800406</TrackingNumber>
-            <WayBillNumber>YT1432418888800049</WayBillNumber>
-        </OrderInfo>
-    </Item>
-</Response>
+TrackingResponseXML = """{
+    "ResultCode": "0000",
+    "ResultDesc": "提交成功",
+     "Items": [
+        {
+            "OrderNumber": "api3111101111q1",
+            "TrackingNumber": "18888800406",
+            "WayBillNumber": "YT1432418888800049"
+        }
+    ]
+}
 """
 
-ErrorResponseXML = """<Error>
-  <Message>Error message</Message>
-  <MessageDetail>在控制器“WayBill”上找不到与该请求匹配的操作。</MessageDetail>
-</Error>
+ErrorResponseXML = """{
+  "Message": "Error message",
+  "MessageDetail": "在控制器“WayBill”上找不到与该请求匹配的操作。"
+}
 """

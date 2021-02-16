@@ -17,18 +17,19 @@ def parse_tracking_response(
 ) -> Tuple[List[TrackingDetails], List[Message]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="Shipment")
     tracking: List[TrackingDetails] = [
-        _extract_tracking(node, settings) for node in track_details
+        _extract_details(node, settings) for node in track_details
     ]
     return tracking, parse_error_response(response, settings)
 
 
-def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDetails:
+def _extract_details(shipment_node: Element, settings: Settings) -> TrackingDetails:
     track_detail = XP.build(ShipmentType, shipment_node)
     activities = [
         XP.build(ActivityType, node)
         for node in
         shipment_node.xpath(".//*[local-name() = $name]", name="Activity")
     ]
+    delivered = any(a.Status.Type == 'D' for a in activities)
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
@@ -49,6 +50,7 @@ def _extract_tracking(shipment_node: Element, settings: Settings) -> TrackingDet
                 activities,
             )
         ),
+        delivered=delivered
     )
 
 

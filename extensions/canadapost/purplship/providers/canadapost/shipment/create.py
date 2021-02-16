@@ -36,9 +36,13 @@ def _create_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
 
 
 def _get_shipment_label(shipement_response: str) -> Job:
-    links = XP.to_xml(shipement_response).xpath(".//*[local-name() = $name]", name="link")
+    response = XP.to_xml(shipement_response)
+    has_errors = len(response.xpath(".//*[local-name() = $name]", name="message")) > 0
+    links = response.xpath(".//*[local-name() = $name]", name="link")
     href, media = next(
         ((link.get("href"), link.get("media-type")) for link in links if link.get("rel") == "label"),
         (None, None),
     )
-    return Job(id="shipment_label", data=dict(href=href, media=media), fallback="")
+    data = None if has_errors else dict(href=href, media=media)
+
+    return Job(id="shipment_label", data=data, fallback="")

@@ -12,7 +12,7 @@ class Proxy(BaseProxy):
     def get_tracking(self, request: Serializable) -> Deserializable[str]:
         query = urllib.parse.urlencode(request.serialize())
         response = http(
-            url=f"https://trackapi.yanwentech.com/api/tracking?{query}",
+            url=f"http://trackapi.yanwentech.com/api/tracking?{query}",
             headers={
                 "Content-Type": "application/json",
                 "Accept": "application/json",

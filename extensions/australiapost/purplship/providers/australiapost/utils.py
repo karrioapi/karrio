@@ -18,7 +18,11 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "https://digitalapi.auspost.com.au"
+        return (
+            "https://digitalapi.auspost.com.au/test"
+            if self.test else
+            "https://digitalapi.auspost.com.au"
+        )
 
     @property
     def authorization(self):

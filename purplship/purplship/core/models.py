@@ -231,7 +231,6 @@ class TrackingEvent:
     location: str = None
     code: str = None
     time: str = None
-    signatory: str = None
 
 
 @attr.s(auto_attribs=True)

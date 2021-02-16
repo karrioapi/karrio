@@ -1,5 +1,4 @@
-from typing import List
-from purplship.core.utils import XP, request as http, Serializable, Deserializable, exec_async
+from purplship.core.utils import DP, request as http, Serializable, Deserializable
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.mappers.yunexpress.settings import Settings
 
@@ -10,18 +9,14 @@ class Proxy(BaseProxy):
     """ Proxy Methods """
 
     def get_tracking(self, request: Serializable) -> Deserializable:
+        response = http(
+            url=f"{self.settings.server_url}/WayBill/GetTrackingNumber?trackingNumber={request.serialize()}",
+            headers={
+                'Authorization': f"basic {self.settings.authorization}",
+                'Accept': "application/json",
+                'Accept-Language': "en-us"
+            },
+            method="GET",
+        )
 
-        def _get_tracking(tracking_number: str):
-            return http(
-                url=f"{self.settings.server_url}/WayBill/GetTrackingNumber?trackingNumber={tracking_number}",
-                headers={
-                    'Authorization': f"basic {self.settings.authorization}",
-                    'Content-Type': "application/xml; charset=utf8",
-                    'Accept': "application/xml",
-                    'Accept-Language': "en-us"
-                },
-                method="GET",
-            )
-
-        responses: List[str] = exec_async(_get_tracking, request.serialize())
-        return Deserializable(XP.bundle_xml(xml_strings=responses), XP.to_xml)
+        return Deserializable(response, DP.to_dict)

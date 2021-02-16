@@ -7,7 +7,6 @@ from purplship.core.utils import (
     Serializable,
     DP,
     DF,
-    SF,
 )
 from purplship.core.models import (
     TrackingEvent,
@@ -37,19 +36,18 @@ def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
         tracking_number=str(detail.id),
         events=[
             TrackingEvent(
-                date=DF.fdate(event.timestamp, '%Y-%m-%dT%H:%M:%SZ'),
+                date=DF.fdate(event.timestamp, '%Y-%m-%dT%H:%M:%S'),
                 description=event.description,
-                location=SF.concat_str(
-                    event.location.address.countryCode,
-                    event.location.address.postalCode,
-                    event.location.address.addressLocality,
-                    join=True, separator=', '
+                location=(
+                    event.location.address.addressLocality
+                    if event.location is not None and event.location.address is not None
+                    else None
                 ),
-                code=event.status,
-                time=DF.ftime(event.timestamp, '%Y-%m-%dT%H:%M:%SZ'),
+                code=event.statusCode,
+                time=DF.ftime(event.timestamp, '%Y-%m-%dT%H:%M:%S'),
             ) for event in detail.events
         ],
-        delivered=detail.status.status == "DELIVERED"
+        delivered=detail.status.status.lower() == "delivered"
     )
 
 
