@@ -23,6 +23,7 @@ class TrackingEvent:
 @attr.s(auto_attribs=True)
 class Tracking:
     state: Optional[str] = None
+    status: Optional[dict] = None
     tracking_events: Optional[List[TrackingEvent]] = JList[TrackingEvent]
     origin: Optional[Location] = JStruct[Location]
     destination: Optional[Location] = JStruct[Location]

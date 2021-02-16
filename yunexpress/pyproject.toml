@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.yunexpress"
-version = "2020.4.1"
+version = "2021.2"
 description = "Purolator Web API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.yunexpress"
@@ -19,8 +19,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-six = "^1.15.0"
-lxml = "^4.6.2"
+jstruct = "^2020.4.0"
 
 [tool.poetry.dev-dependencies]
 

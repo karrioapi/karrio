@@ -2,6 +2,10 @@
   "tracking": [
     {
       "state": "Delivered",
+      "status": {
+          "description": "Parcel in transit from Adelaide",
+          "last_changed_at": "2021-01-29 01:25:57 UTC"
+      },
       "tracking_events": [
         {
           "event_type": "Pickup Attempted",
