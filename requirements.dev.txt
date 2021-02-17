@@ -1,46 +1,69 @@
 wheel
 
-# Production carriers
+# carrier datatype libraries
 
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship&subdirectory=purplship
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_canadapost&subdirectory=extensions/canadapost
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_dhl_express&subdirectory=extensions/dhl_express
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_fedex&subdirectory=extensions/fedex
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_fedex_express&subdirectory=extensions/fedex_express
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_purolator_courier&subdirectory=extensions/purolator_courier
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_ups&subdirectory=extensions/ups
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_ups_package&subdirectory=extensions/ups_package
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.aramex&subdirectory=aramex
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.australiapost&subdirectory=australiapost
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dhl_universal&subdirectory=dhl_universal
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dicom&subdirectory=dicom
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.royalmail&subdirectory=royalmail
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sendle&subdirectory=sendle
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sf_express&subdirectory=sf_express
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.usps&subdirectory=usps
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yanwen&subdirectory=yanwen
+# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yunexpress&subdirectory=yunexpress
 
-# carrier integration in progress
 
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.aramex&subdirectory=aramex
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.australiapost&subdirectory=australiapost
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dhl_universal&subdirectory=dhl_universal
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dicom&subdirectory=dicom
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.royalmail&subdirectory=royalmail
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sendle&subdirectory=sendle
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sf_express&subdirectory=sf_express
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.usps&subdirectory=usps
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yanwen&subdirectory=yanwen
--e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yunexpress&subdirectory=yunexpress
+# purplship sdk carrier extensions
 
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_aramex&subdirectory=extensions/aramex
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_australiapost&subdirectory=extensions/australiapost
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_canpar&subdirectory=extensions/canpar
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_dhl_universal&subdirectory=extensions/dhl_universal
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_dicom&subdirectory=extensions/dicom
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_royalmail&subdirectory=extensions/royalmail
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_sendle&subdirectory=extensions/sendle
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_sf_express&subdirectory=extensions/sf_express
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_usps&subdirectory=extensions/usps
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_yanwen&subdirectory=extensions/yanwen
--e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_yunexpress&subdirectory=extensions/yunexpress
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship&subdirectory=purplship
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_canadapost&subdirectory=extensions/canadapost
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_dhl_express&subdirectory=extensions/dhl_express
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_fedex&subdirectory=extensions/fedex
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_fedex_express&subdirectory=extensions/fedex_express
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_purolator_courier&subdirectory=extensions/purolator_courier
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_ups&subdirectory=extensions/ups
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_ups_package&subdirectory=extensions/ups_package
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_aramex&subdirectory=extensions/aramex
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_australiapost&subdirectory=extensions/australiapost
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_canpar&subdirectory=extensions/canpar
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_dhl_universal&subdirectory=extensions/dhl_universal
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_dicom&subdirectory=extensions/dicom
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_royalmail&subdirectory=extensions/royalmail
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_sendle&subdirectory=extensions/sendle
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_sf_express&subdirectory=extensions/sf_express
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_usps&subdirectory=extensions/usps
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_yanwen&subdirectory=extensions/yanwen
+# -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_yunexpress&subdirectory=extensions/yunexpress
+
 
 
 # Purplship server extentions packages
 
--e git+https://github.com/PurplShip/purplship-extension.git@purplship-2021.2-compatible#egg=eshipper.extension&subdirectory=src/eshipper
--e git+https://github.com/PurplShip/purplship-extension.git@purplship-2021.2-compatible#egg=freightcom.extension&subdirectory=src/freightcom
+# -e git+https://github.com/PurplShip/purplship-extension.git@purplship-2021.2-compatible#egg=eshipper.extension&subdirectory=src/eshipper
+# -e git+https://github.com/PurplShip/purplship-extension.git@purplship-2021.2-compatible#egg=freightcom.extension&subdirectory=src/freightcom
+
+
+# Installed versions
+eshipper.extension
+freightcom.extension
+purplship
+purplship.aramex
+purplship.australiapost
+purplship.canadapost
+purplship.canpar
+purplship.dhl-express
+purplship.dhl-universal
+purplship.dicom
+purplship.fedex-express
+purplship.purolator-courier
+purplship.royalmail
+purplship.sendle
+purplship.sf-express
+purplship.ups-package
+purplship.usps==2021.2a0
+purplship.yanwen
+purplship.yunexpress
 
 
 # Purplship server core packages
