@@ -5,7 +5,6 @@ import { useNavigate } from '@reach/router';
 import { formatAddress, formatDate } from '@/library/helper';
 import CarrierBadge from '@/components/carrier-badge';
 import { state } from '@/library/api';
-import { CarrierSettings } from '@purplship/purplship';
 
 
 interface ShipmentsView extends View {

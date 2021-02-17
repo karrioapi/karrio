@@ -1,4 +1,4 @@
-import { CarrierSettings, References } from '@purplship/purplship';
+import { References } from '@purplship/purplship';
 import React from 'react';
 import { DefaultTemplates, PaginatedConnections, PaginatedLogs, PaginatedTemplates, UserInfo } from '@/library/types';
 
@@ -11,4 +11,4 @@ export const ParcelTemplates = React.createContext<PaginatedTemplates>({} as Pag
 export const AddressTemplates = React.createContext<PaginatedTemplates>({} as PaginatedTemplates);
 
 export const UserConnections = React.createContext<PaginatedConnections>({} as PaginatedConnections);
-export const SystemConnections = React.createContext<CarrierSettings[]>([]);
+export const SystemConnections = React.createContext<PaginatedConnections>({} as PaginatedConnections);

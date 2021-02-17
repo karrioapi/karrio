@@ -6,15 +6,15 @@ import { SystemConnections } from '@/library/context';
 interface SystemConnectionListView { }
 
 const SystemConnectionList: React.FC<SystemConnectionListView> = () => {
-  const connections = useContext(SystemConnections)
+  const connections = useContext(SystemConnections);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if ((connections === undefined || connections?.length === 0) && loading === false) {
+    if ((connections === undefined || connections?.fetched === false) && loading === false) {
       setLoading(true);
-      state.fetchCarriers().catch(_ => _).then(() => setLoading(false));
+      state.fetchSystemConnections().catch(_ => _).then(() => setLoading(false));
     }
-  }, connections);
+  }, [connections.results]);
 
   return (
     <Fragment>
@@ -29,7 +29,7 @@ const SystemConnectionList: React.FC<SystemConnectionListView> = () => {
         </thead>
 
         <tbody className="connections-table">
-          {(connections || []).map((connection) => (
+          {(connections?.results || []).map((connection) => (
 
             <tr key={connection.id}>
               <td className="carrier">
@@ -52,11 +52,10 @@ const SystemConnectionList: React.FC<SystemConnectionListView> = () => {
 
       </table>
 
-      {((connections || []).length == 0) && <div className="card my-6">
+      {((connections.results || []).length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
-          <p>No carriers have been connected yet.</p>
-          <p>Use the <strong>Connect a Carrier</strong> button above to add a new connection</p>
+          <p>The administrators have not provided any system wide carrier connections.</p>
         </div>
 
       </div>}

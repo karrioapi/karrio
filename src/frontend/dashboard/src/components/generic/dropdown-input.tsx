@@ -70,13 +70,13 @@ const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, items, d
                 {required && <span className="icon is-small has-text-danger small-icon"><i className="fas fa-asterisk"></i></span>}
             </label>}
             <div className={`control ${controlClass}`}>
-                <div className={`dropdown select is-fullwidth ${isActive ? 'is-active' : ''} ${dropdownClass}`} key={`dropdown-input-`}>
+                <div className={`dropdown select is-fullwidth ${isActive ? 'is-active' : ''} ${dropdownClass}`} key={`dropdown-input-${key}`}>
                     <input name={name} onChange={onRefChange} defaultValue={value} className="input is-fullwidth" style={{ position: 'absolute', zIndex: -1 }} required={required}/>
                     <a onClick={handleOnClick} aria-haspopup="true" className="dropdown-trigger input is-fullwidth px-2" style={{ justifyContent: 'left' }} aria-controls={`dropdown-input-`} ref={btn}>
                         <span>{value}</span>
                     </a>
 
-                    <div className="dropdown-menu py-0" id={`dropdown-input-`} role="menu" style={{ right: 0, left: 0 }}>
+                    <div className={`dropdown-menu py-0 ${dropdownMenuClass}`} id={`dropdown-input-${key}`} role="menu" style={{ right: 0, left: 0 }}>
                         <div className="dropdown-content py-0">
 
                             <div className="panel-block px-1 py-1">

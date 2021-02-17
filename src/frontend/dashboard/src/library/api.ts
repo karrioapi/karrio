@@ -1,4 +1,4 @@
-import { ConnectionData, DefaultTemplates, LabelData, Log, PaginatedConnections, PaginatedLogs, PaginatedShipments, PaginatedTemplates, RequestError, Template, UserInfo, Notification } from '@/library/types';
+import { ConnectionData, DefaultTemplates, LabelData, Log, PaginatedConnections, PaginatedLogs, PaginatedShipments, PaginatedTemplates, RequestError, Template, UserInfo, Notification, PaginatedTrackers, Connection } from '@/library/types';
 import { References, Shipment, Purplship, Address, Parcel, Customs, CarrierSettings } from '@purplship/purplship';
 import { useEffect, useState } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
@@ -29,7 +29,7 @@ class AppState {
     private shipments$: Subject<PaginatedShipments> = new Subject<PaginatedShipments>();
     private parcels$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
     private addresses$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
-    private carriers$: Subject<CarrierSettings[]> = new Subject<CarrierSettings[]>();
+    private systemConnections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
     private userConnections$: Subject<PaginatedConnections> = new Subject<PaginatedConnections>();
     private customsInfos$: Subject<PaginatedTemplates> = new Subject<PaginatedTemplates>();
     private references$: Subject<References> = new Subject<References>();
@@ -37,6 +37,7 @@ class AppState {
     private notification$: Subject<Notification> = new Subject<Notification>();
     private defaultTemplates$: BehaviorSubject<DefaultTemplates> = new BehaviorSubject<DefaultTemplates>(new DefaultTemplates([]));
     public labelData$: BehaviorSubject<LabelData> = new BehaviorSubject<LabelData>(DEFAULT_LABEL_DATA);
+    private trackers$: Subject<PaginatedTrackers> = new Subject<PaginatedTrackers>();
 
     constructor() {
         this.getUserInfo();
@@ -67,16 +68,22 @@ class AppState {
         return user;
     }
 
-    public get systemConnections() {
-        const [carriers, setValue] = useState<CarrierSettings[]>([]);
-        useEffect(() => { this.carriers$.asObservable().pipe(distinct()).subscribe(setValue); });
-        return carriers;
-    }
-
     public get shipments() {
-        const [shipments, setValue] = useState<PaginatedShipments>();
+        const [shipments, setValue] = useState<PaginatedShipments>(DEFAULT_PAGINATED_RESULT);
         useEffect(() => { this.shipments$.asObservable().pipe(distinct()).subscribe(setValue); });
         return shipments;
+    }
+
+    public get trackers() {
+        const [trackers, setValue] = useState<PaginatedTrackers>(DEFAULT_PAGINATED_RESULT);
+        useEffect(() => { this.trackers$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return trackers;
+    }
+
+    public get systemConnections() {
+        const [systemConnections, setValue] = useState<PaginatedConnections>(DEFAULT_PAGINATED_RESULT);
+        useEffect(() => { this.systemConnections$.asObservable().pipe(distinct()).subscribe(setValue); });
+        return systemConnections;
     }
 
     public get userConnections() {
@@ -137,12 +144,6 @@ class AppState {
         const references = await this.purplship.utils.references();
         this.references$.next(references);
         return references;
-    }
-
-    public async fetchCarriers() {
-        const carriers = await this.purplship.carriers.list(undefined, undefined, undefined, undefined, true, true);
-        this.carriers$.next(carriers);
-        return carriers;
     }
 
     public async retrieveShipment(shipment_id: string) {
@@ -261,6 +262,14 @@ class AppState {
         return response;
     }
 
+    public async createTracker(carrier: Connection, tracking_number: string) {
+        const response = handleFailure(
+            this.purplship.trackers.retrieve(carrier.carrier_name.toString(), tracking_number, carrier.test, { headers: this.headers })
+        );
+        response.then(() => this.fetchTrackers());
+        return response;
+    }
+
     public async getUserInfo() {
         const response = await http("/user_info", { headers: this.headers });
         if (response.ok) {
@@ -322,7 +331,7 @@ class AppState {
         });
         if (response.ok) {
             const data = await response.json();
-            this.fetchConnections();
+            this.fetchUserConnections();
             return data;
         } else {
             throw new Error("Failed to connect the service provider.");
@@ -337,7 +346,7 @@ class AppState {
         });
         if (response.ok) {
             const data = await response.json();
-            this.fetchConnections();
+            this.fetchUserConnections();
             return data;
         } else {
             throw new Error("Failed to update the service provider connection.");
@@ -351,7 +360,7 @@ class AppState {
         });
         if (response.ok) {
             const data = await response.json();
-            this.fetchConnections();
+            this.fetchUserConnections();
             return data;
         } else {
             throw new Error("Failed to disconnect the service provider.");
@@ -446,7 +455,7 @@ class AppState {
         }
     }
 
-    public async fetchConnections(url?: string): Promise<PaginatedConnections> {
+    public async fetchUserConnections(url?: string): Promise<PaginatedConnections> {
         const response = await http(url || `/connections?limit=20&offset=0`, { headers: this.headers });
         if (response.ok) {
             const data = await response.json();
@@ -455,6 +464,18 @@ class AppState {
         } else {
             this.userConnections$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Unable fetch connected carriers.");
+        }
+    }
+
+    public async fetchSystemConnections(url?: string): Promise<PaginatedConnections> {
+        const response = await http(`${url || '/v1/carriers?limit=100&offset=0'}&system_only&active`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.systemConnections$.next({ ...data, fetched: true, url });
+            return data;
+        } else {
+            this.systemConnections$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+            throw new Error("Failed to fetch system carriers.");
         }
     }
 
@@ -478,6 +499,18 @@ class AppState {
             return data;
         } else {
             this.logs$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
+            throw new Error("Failed to fetch logs.");
+        }
+    }
+
+    public async fetchTrackers(url?: string): Promise<PaginatedTrackers> {
+        const response = await http(url || `/v1/trackers?limit=20&offset=0`, { headers: this.headers });
+        if (response.ok) {
+            const data = await response.json();
+            this.trackers$.next({ ...data, fetched: true, url });
+            return data;
+        } else {
+            this.trackers$.next({ ...DEFAULT_PAGINATED_RESULT, fetched: true });
             throw new Error("Failed to fetch logs.");
         }
     }

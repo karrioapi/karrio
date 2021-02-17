@@ -14,7 +14,7 @@ const UserConnectionList: React.FC<UserConnectionListView> = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const update = (url?: string | null) => async (_?: React.MouseEvent) => {
-    await state.fetchConnections(url as string);
+    await state.fetchUserConnections(url as string);
   };
   const toggle = (connection: Connection) => async () => {
     const data = {
@@ -27,7 +27,7 @@ const UserConnectionList: React.FC<UserConnectionListView> = () => {
   useEffect(() => {
     if ((connections === undefined || connections?.fetched === false) && loading === false) {
       setLoading(true);
-      state.fetchConnections().catch(_ => _).then(() => setLoading(false));
+      state.fetchUserConnections().catch(_ => _).then(() => setLoading(false));
     }
   }, connections?.results);
 

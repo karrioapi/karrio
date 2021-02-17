@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { References } from '@purplship/purplship';
 import { Router } from "@reach/router";
 import Shipments from '@/views/shipments';
+import Trackers from '@/views/trackers';
 import Connections from '@/views/connections';
 import Addresses from '@/views/addresses';
 import Parcels from '@/views/parcels';
@@ -35,6 +36,7 @@ const App: React.FC = () => {
     const logs = state.logs;
     const labelData = state.labelData;
     const shipments = state.shipments;
+    const trackers = state.trackers;
     const systemConnections = state.systemConnections;
     const userConnections = state.userConnections;
     const customsInfos = state.customsInfos;
@@ -60,6 +62,7 @@ const App: React.FC = () => {
                         <div className="dashboard-content">
                             <Router>
                                 <Shipments path="/" shipments={shipments} />
+                                <Trackers path="/trackers" trackers={trackers} />
                                 <LabelCreator path="buy_label/:id" data={labelData} />
 
                                 <Connections path="configurations/carriers" />

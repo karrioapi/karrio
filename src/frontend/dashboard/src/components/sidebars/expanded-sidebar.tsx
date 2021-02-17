@@ -23,6 +23,10 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
                     <span>Shipments</span>
                 </NavLink>
 
+                <NavLink to="/trackers">
+                    <span>Trackers</span>
+                </NavLink>
+
                 <NavLink to="configurations/carriers">
                     <span>Carriers</span>
                 </NavLink>

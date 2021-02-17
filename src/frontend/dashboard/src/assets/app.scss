@@ -77,6 +77,25 @@ Purplship custom styling
     }
 }
 
+.trackers-table {
+    .tracking-number {
+        width: 25%;
+        min-width: 25%;
+    }
+    .status {
+        width: 20%;
+        min-width: 20%;
+    }
+    .carrier {
+        width: 15%;
+        min-width: 15%;
+    }
+    .last-event {
+        width: 40%;
+        max-width: 40%;
+    }
+}
+
 hr {
     background-color: #dddddd;
 }
@@ -174,7 +193,6 @@ td > div.dropdown.is-active .dropdown-menu {
 .is-dhl {
     background-color: #fc0 !important;
     color: #c00 !important;
-    font-size: 0.9em !important;
 }
 .is-eshipper {
     background-color: #472F92 !important;
