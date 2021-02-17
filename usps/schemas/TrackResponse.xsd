@@ -102,7 +102,7 @@
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
-                            <xs:element name="TrackDetail" maxOccurs="1">
+                            <xs:element name="TrackDetail" maxOccurs="unbounded" minOccurs="0">
                                 <xs:complexType>
                                     <xs:sequence>
                                         <xs:element type="xs:string" name="EventTime"/>
@@ -123,7 +123,7 @@
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
-                        <xs:attribute type="xs:string" name="TrackInfoID"/>
+                        <xs:attribute type="xs:string" name="ID"/>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>

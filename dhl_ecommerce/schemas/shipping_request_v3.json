@@ -1,0 +1,66 @@
+{
+  "ShippingRequest": {
+    "distributionCenter": "HKHKG1",
+    "pickupAccount": "[place your pickup account number here, without brackets]",
+    "isWorkshare": true,
+    "pickupAddress": {
+      "address1": "Address Line 1",
+      "address2": "Address Line 2",
+      "city": "NY",
+      "companyName": "ABCD",
+      "country": "US",
+      "email": "xyz@abcd.com",
+      "name": "John Phil",
+      "phone": "55-1233-4555",
+      "postalCode": "55555",
+      "state": "US"
+    },
+    "shipperAddress": {
+      "address1": "Address Line 1",
+      "address2": "Address Line 2",
+      "city": "DE",
+      "companyName": "NewCompnay",
+      "state": "US"
+    },
+    "shipments": [
+      {
+        "consigneeAddress": {
+          "address1": "Address line 1",
+          "address2": "Apt 123",
+          "city": "Test City",
+          "companyName": "Test Company",
+          "country": "IE",
+          "email": "test@email.com",
+          "idNumber": "tempor sed lab",
+          "idType": "ma",
+          "name": "Test Name",
+          "phone": "555-555-5555",
+          "postalCode": "99999",
+          "state": "GA"
+        },
+        "shipmentDetails": {
+          "billingRef1": "Billing Ref1",
+          "orderedProduct": "Desc1",
+          "shipmentDesc": "Shipment description",
+          "shipmentId": "12345",
+          "dgCategory": "10",
+          "dutiesPaid": "DAP",
+          "insuranceCharges": 54913.5102,
+          "freightCharges": 70888.3118,
+          "taxCharges": 57515.2394,
+          "weightUom": "kg",
+          "dimensionUom": "m",
+          "currency": "USD",
+          "isCompleteDelivery": true
+        },
+        "pieces": [
+          {
+            "pieceId": "4567",
+            "packingType": "SMALL",
+            "weight": 10.59
+          }
+        ]
+      }
+    ]
+  }
+}

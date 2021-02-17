@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.usps"
-version = "2020.11.1-beta"
+version = "2021.2-beta"
 description = "USPS Web API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.usps"
@@ -26,5 +26,5 @@ lxml = "^4.6.2"
 [tool.poetry.dev-dependencies]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
 build-backend = "poetry.core.masonry.api"

@@ -1,60 +1,56 @@
-"""Sendle Quotes Datatypes definition module."""
-
 import attr
-from typing import List
 from jstruct import JStruct
+from typing import Optional, List
 
 
 @attr.s(auto_attribs=True)
-class DomesticParcelQuote:
-    pickup_suburb: str = None
-    pickup_postcode: str = None
-    delivery_suburb: str = None
-    delivery_postcode: str = None
-    kilogram_weight: str = None
-    cubic_metre_volume: str = None
-    plan_name: str = None
+class DomesticQuoteRequest:
+    pickup_postcode: Optional[int] = None
+    delivery_postcode: Optional[int] = None
+    pickup_suburb: Optional[str] = None
+    pickup_country: Optional[str] = None
+    delivery_suburb: Optional[str] = None
+    delivery_country: Optional[str] = None
+    weight_value: Optional[int] = None
+    weight_units: Optional[str] = None
+    volume_value: Optional[float] = None
+    volume_units: Optional[str] = None
+    first_mile_option: Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
-class InternationalParcelQuote:
-    pickup_suburb: str = None
-    pickup_postcode: str = None
-    delivery_country: str = None
-    kilogram_weight: str = None
-    cubic_metre_volume: str = None
-    plan_name: str = None
-
-
-@attr.s(auto_attribs=True)
-class Pricing:
-    amount: float = None
-    currency: str = None
-
-
-@attr.s(auto_attribs=True)
-class Quote:
-    gross: Pricing = JStruct[Pricing]
-    net: Pricing = JStruct[Pricing]
-    tax: Pricing = JStruct[Pricing]
+class InternationalQuoteRequest:
+    pickup_postcode: Optional[int] = None
+    pickup_suburb: Optional[str] = None
+    delivery_country: Optional[str] = None
+    weight_value: Optional[int] = None
+    weight_units: Optional[str] = None
+    volume_value: Optional[float] = None
+    volume_units: Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class Eta:
-    days_range: List[int] = None
-    date_range: List[str] = None
-    for_pickup_date: str = None
+    days_range: Optional[List[int]] = None
+    date_range: Optional[List[str]] = None
+    for_pickup_date: Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
-class Route:
-    type: str = None
-    description: str = None
+class Price:
+    amount: Optional[float] = None
+    currency: Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
-class ParcelQuoteResponse:
-    quote: Quote = JStruct[Quote]
-    plan_name: str = None
-    eta: Eta = JStruct[Eta]
-    route: Route = JStruct[Route]
+class QuotePrice:
+    gross: Optional[Price] = JStruct[Price]
+    net: Optional[Price] = JStruct[Price]
+    tax: Optional[Price] = JStruct[Price]
+
+
+@attr.s(auto_attribs=True)
+class Quote:
+    quote: Optional[QuotePrice] = JStruct[QuotePrice]
+    plan_name: Optional[str] = None
+    eta: Optional[Eta] = JStruct[Eta]

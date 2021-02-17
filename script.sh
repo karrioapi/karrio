@@ -12,8 +12,6 @@ cross="\xE2\x9D\x8C"
 check="\xE2\x9C\x94"
 
 export wheels=~/Wheels
-export PIP_FIND_LINKS="https://git.io/purplship"
-[[ -d "$wheels" ]] && export PIP_FIND_LINKS="${PIP_FIND_LINKS} file://${wheels}"
 
 activate_env() {
   echo "Activate $BASE_DIR"
@@ -29,12 +27,12 @@ create_env() {
   mkdir -p "${ROOT:?}/$ENV_DIR"
   python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
   activate_env &&
-  pip install --upgrade pip
+  pip install --upgrade pip > /dev/null
 }
 
 init() {
   create_env &&
-  pip install -r requirements.txt
+  pip install -r requirements.txt > /dev/null
 }
 
 

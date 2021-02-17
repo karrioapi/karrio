@@ -2,33 +2,37 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Thu Nov  5 20:52:30 2020 by generateDS.py version 2.35.15.
-# Python 3.8.1 (v3.8.1:1b293b6006, Dec 18 2019, 14:08:53)  [Clang 6.0 (clang-600.0.57)]
+# Generated Wed Feb 17 05:44:56 2021 by generateDS.py version 2.37.15.
+# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './pyusps/track_response.py')
+#   ('-o', 'usps_lib/track_response.py')
 #
 # Command line arguments:
-#   ./schemas/TrackResponse.xsd
+#   schemas/TrackResponse.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pyusps/track_response.py" ./schemas/TrackResponse.xsd
+#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "usps_lib/track_response.py" schemas/TrackResponse.xsd
 #
 # Current working directory (os.getcwd()):
-#   py-usps
+#   usps
 #
 
+import sys
+try:
+    ModulenotfoundExp_ = ModuleNotFoundError
+except NameError:
+    ModulenotfoundExp_ = ImportError
 from six.moves import zip_longest
 import os
-import sys
 import re as re_
 import base64
 import datetime as datetime_
 import decimal as decimal_
 try:
     from lxml import etree as etree_
-except ImportError:
+except ModulenotfoundExp_ :
     from xml.etree import ElementTree as etree_
 
 
@@ -107,11 +111,11 @@ def parsexmlstring_(instring, parser=None, **kwargs):
 
 try:
     from generatedsnamespaces import GenerateDSNamespaceDefs as GenerateDSNamespaceDefs_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceDefs_ = {}
 try:
     from generatedsnamespaces import GenerateDSNamespaceTypePrefixes as GenerateDSNamespaceTypePrefixes_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceTypePrefixes_ = {}
 
 #
@@ -122,7 +126,7 @@ except ImportError:
 #
 try:
     from generatedscollector import GdsCollector as GdsCollector_
-except ImportError:
+except ModulenotfoundExp_ :
 
     class GdsCollector_(object):
 
@@ -156,7 +160,7 @@ except ImportError:
 
 try:
     from enum import Enum
-except ImportError:
+except ModulenotfoundExp_ :
     Enum = object
 
 #
@@ -168,7 +172,7 @@ except ImportError:
 
 try:
     from generatedssuper import GeneratedsSuper
-except ImportError as exp:
+except ModulenotfoundExp_ as exp:
     
     class GeneratedsSuper(object):
         __hash__ = object.__hash__
@@ -211,6 +215,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires integer value')
             return value
         def gds_format_integer_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_integer_list(
                 self, input_data, node=None, input_name=''):
@@ -219,7 +225,7 @@ except ImportError as exp:
                 try:
                     int(value)
                 except (TypeError, ValueError):
-                    raise_parse_error(node, 'Requires sequence of integer valuess')
+                    raise_parse_error(node, 'Requires sequence of integer values')
             return values
         def gds_format_float(self, input_data, input_name=''):
             return ('%.15f' % input_data).rstrip('0')
@@ -236,6 +242,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires float value')
             return value
         def gds_format_float_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_float_list(
                 self, input_data, node=None, input_name=''):
@@ -247,7 +255,12 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of float values')
             return values
         def gds_format_decimal(self, input_data, input_name=''):
-            return ('%s' % input_data).rstrip('0')
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
         def gds_parse_decimal(self, input_data, node=None, input_name=''):
             try:
                 decimal_value = decimal_.Decimal(input_data)
@@ -261,7 +274,9 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
-            return '%s' % ' '.join(input_data)
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -272,7 +287,7 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of decimal values')
             return values
         def gds_format_double(self, input_data, input_name=''):
-            return '%e' % input_data
+            return '%s' % input_data
         def gds_parse_double(self, input_data, node=None, input_name=''):
             try:
                 fval_ = float(input_data)
@@ -286,6 +301,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires double or float value')
             return value
         def gds_format_double_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_double_list(
                 self, input_data, node=None, input_name=''):
@@ -315,6 +332,8 @@ except ImportError as exp:
                     '(one of True, 1, False, 0)')
             return input_data
         def gds_format_boolean_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_boolean_list(
                 self, input_data, node=None, input_name=''):
@@ -766,7 +785,10 @@ def find_attr_value_(attr_name, node):
         value = attrs.get(attr_name)
     elif len(attr_parts) == 2:
         prefix, name = attr_parts
-        namespace = node.nsmap.get(prefix)
+        if prefix == 'xml':
+            namespace = 'http://www.w3.org/XML/1998/namespace'
+        else:
+            namespace = node.nsmap.get(prefix)
         if namespace is not None:
             value = attrs.get('{%s}%s' % (namespace, name, ))
     return value
@@ -847,7 +869,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element):
+    def to_etree(self, element, mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -867,7 +889,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self):
+    def to_etree_simple(self, mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -1051,14 +1073,14 @@ class TrackInfoType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, TrackInfoID=None, AdditionalInfo=None, ADPScripting=None, ARCHDATA=None, ArchiveRestoreInfo=None, AssociatedLabel=None, Class=None, ClassOfMailCode=None, DeliveryNotificationDate=None, DestinationCity=None, DestinationCountryCode=None, DestinationState=None, DestinationZip=None, EditedLabelID=None, EmailEnabled=None, ExpectedDeliveryDate=None, ExpectedDeliveryTime=None, GuaranteedDeliveryDate=None, GuaranteedDeliveryTime=None, GuaranteedDetails=None, KahalaIndicator=None, MailTypeCode=None, MPDATE=None, MPSUFFIX=None, OriginCity=None, OriginCountryCode=None, OriginState=None, OriginZip=None, PodEnabled=None, PredictedDeliveryDate=None, PredictedDeliveryTime=None, PDWStart=None, PDWEnd=None, RelatedRRID=None, RestoreEnabled=None, RRAMenabled=None, RreEnabled=None, Service=None, ServiceTypeCode=None, Status=None, StatusCategory=None, StatusSummary=None, TABLECODE=None, TpodEnabled=None, ValueofArticle=None, EnabledNotificationRequests=None, TrackSummary=None, TrackDetail=None, gds_collector_=None, **kwargs_):
+    def __init__(self, ID=None, AdditionalInfo=None, ADPScripting=None, ARCHDATA=None, ArchiveRestoreInfo=None, AssociatedLabel=None, Class=None, ClassOfMailCode=None, DeliveryNotificationDate=None, DestinationCity=None, DestinationCountryCode=None, DestinationState=None, DestinationZip=None, EditedLabelID=None, EmailEnabled=None, ExpectedDeliveryDate=None, ExpectedDeliveryTime=None, GuaranteedDeliveryDate=None, GuaranteedDeliveryTime=None, GuaranteedDetails=None, KahalaIndicator=None, MailTypeCode=None, MPDATE=None, MPSUFFIX=None, OriginCity=None, OriginCountryCode=None, OriginState=None, OriginZip=None, PodEnabled=None, PredictedDeliveryDate=None, PredictedDeliveryTime=None, PDWStart=None, PDWEnd=None, RelatedRRID=None, RestoreEnabled=None, RRAMenabled=None, RreEnabled=None, Service=None, ServiceTypeCode=None, Status=None, StatusCategory=None, StatusSummary=None, TABLECODE=None, TpodEnabled=None, ValueofArticle=None, EnabledNotificationRequests=None, TrackSummary=None, TrackDetail=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.TrackInfoID = _cast(None, TrackInfoID)
-        self.TrackInfoID_nsprefix_ = None
+        self.ID = _cast(None, ID)
+        self.ID_nsprefix_ = None
         self.AdditionalInfo = AdditionalInfo
         self.AdditionalInfo_nsprefix_ = None
         self.ADPScripting = ADPScripting
@@ -1151,7 +1173,10 @@ class TrackInfoType(GeneratedsSuper):
         self.EnabledNotificationRequests_nsprefix_ = None
         self.TrackSummary = TrackSummary
         self.TrackSummary_nsprefix_ = None
-        self.TrackDetail = TrackDetail
+        if TrackDetail is None:
+            self.TrackDetail = []
+        else:
+            self.TrackDetail = TrackDetail
         self.TrackDetail_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -1356,10 +1381,16 @@ class TrackInfoType(GeneratedsSuper):
         return self.TrackDetail
     def set_TrackDetail(self, TrackDetail):
         self.TrackDetail = TrackDetail
-    def get_TrackInfoID(self):
-        return self.TrackInfoID
-    def set_TrackInfoID(self, TrackInfoID):
-        self.TrackInfoID = TrackInfoID
+    def add_TrackDetail(self, value):
+        self.TrackDetail.append(value)
+    def insert_TrackDetail_at(self, index, value):
+        self.TrackDetail.insert(index, value)
+    def replace_TrackDetail_at(self, index, value):
+        self.TrackDetail[index] = value
+    def get_ID(self):
+        return self.ID
+    def set_ID(self, ID):
+        self.ID = ID
     def hasContent_(self):
         if (
             self.AdditionalInfo is not None or
@@ -1408,7 +1439,7 @@ class TrackInfoType(GeneratedsSuper):
             self.ValueofArticle is not None or
             self.EnabledNotificationRequests is not None or
             self.TrackSummary is not None or
-            self.TrackDetail is not None
+            self.TrackDetail
         ):
             return True
         else:
@@ -1437,9 +1468,9 @@ class TrackInfoType(GeneratedsSuper):
         else:
             outfile.write('/>%s' % (eol_, ))
     def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='TrackInfoType'):
-        if self.TrackInfoID is not None and 'TrackInfoID' not in already_processed:
-            already_processed.add('TrackInfoID')
-            outfile.write(' TrackInfoID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.TrackInfoID), input_name='TrackInfoID')), ))
+        if self.ID is not None and 'ID' not in already_processed:
+            already_processed.add('ID')
+            outfile.write(' ID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.ID), input_name='ID')), ))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TrackInfoType', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1627,9 +1658,9 @@ class TrackInfoType(GeneratedsSuper):
         if self.TrackSummary is not None:
             namespaceprefix_ = self.TrackSummary_nsprefix_ + ':' if (UseCapturedNS_ and self.TrackSummary_nsprefix_) else ''
             self.TrackSummary.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TrackSummary', pretty_print=pretty_print)
-        if self.TrackDetail is not None:
+        for TrackDetail_ in self.TrackDetail:
             namespaceprefix_ = self.TrackDetail_nsprefix_ + ':' if (UseCapturedNS_ and self.TrackDetail_nsprefix_) else ''
-            self.TrackDetail.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TrackDetail', pretty_print=pretty_print)
+            TrackDetail_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='TrackDetail', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -1642,10 +1673,10 @@ class TrackInfoType(GeneratedsSuper):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('TrackInfoID', node)
-        if value is not None and 'TrackInfoID' not in already_processed:
-            already_processed.add('TrackInfoID')
-            self.TrackInfoID = value
+        value = find_attr_value_('ID', node)
+        if value is not None and 'ID' not in already_processed:
+            already_processed.add('ID')
+            self.ID = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'AdditionalInfo':
             value_ = child_.text
@@ -1924,7 +1955,7 @@ class TrackInfoType(GeneratedsSuper):
         elif nodeName_ == 'TrackDetail':
             obj_ = TrackDetailType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.TrackDetail = obj_
+            self.TrackDetail.append(obj_)
             obj_.original_tagname_ = 'TrackDetail'
 # end class TrackInfoType
 
@@ -3134,7 +3165,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     return rootObj
 
 
-def parseEtree(inFileName, silence=False, print_warnings=True):
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -3146,8 +3178,10 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
-    mapping = {}
-    rootElement = rootObj.to_etree(None, name_=rootTag, mapping_=mapping)
+    if mapping is None:
+        mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
     reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
     if not SaveElementTreeNode:
         doc = None
@@ -3248,6 +3282,12 @@ if __name__ == '__main__':
 
 RenameMappings_ = {
 }
+
+#
+# Mapping of namespaces to types defined in them
+# and the file in which each is defined.
+# simpleTypes are marked "ST" and complexTypes "CT".
+NamespaceToDefMappings_ = {}
 
 __all__ = [
     "EMAILType",

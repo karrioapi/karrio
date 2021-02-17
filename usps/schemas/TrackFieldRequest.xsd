@@ -5,7 +5,7 @@
             <xs:sequence>
                 <xs:element type="xs:string" name="Revision" minOccurs="0"/>
                 <xs:element type="xs:string" name="ClientIp" minOccurs="0"/>
-                <xs:element type="xs:string" name="SourceID" minOccurs="0"/>
+                <xs:element type="xs:string" name="SourceId" minOccurs="0"/>
                 <xs:simpleType name="SourceIdZIP" minOccurs="0">
                     <xs:restriction base="xs:string">
                         <xs:pattern value="[0-9]{5}"/>

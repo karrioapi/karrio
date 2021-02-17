@@ -1,0 +1,10 @@
+{
+    "Request": {
+        "partnerID": "partnerID",
+        "requestID": "requestID",
+        "serviceCode": "serviceCode",
+        "timestamp": "timestamp",
+        "msgDigest": "",
+        "msgData": {}
+    }
+}

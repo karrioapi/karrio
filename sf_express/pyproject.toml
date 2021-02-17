@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "carrier.sf_express"
+version = "2021.2-alpha"
+description = "Purolator Web API Schemas Python Data Types library"
+repository="https://github.com/PurplShip/purplship-carriers"
+homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.sf_express"
+authors = ["Dan Kobina <danielkobina@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [
+    { include = "sf_express_lib" }
+]
+classifiers = [
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: MIT License",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+six = "^1.15.0"
+lxml = "^4.6.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+build-backend = "poetry.core.masonry.api"

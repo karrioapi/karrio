@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://ws.aramex.net/ShippingAPI/v1/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://ws.aramex.net/ShippingAPI/v1/">
+    <xs:import schemaLocation="https://ws.aramex.net/ShippingAPI.V2/RateCalculator/Service_1_0.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+    <xs:element name="RateCalculatorRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="OriginAddress" nillable="true" type="tns:Address"/>
+                <xs:element minOccurs="0" name="DestinationAddress" nillable="true" type="tns:Address"/>
+                <xs:element minOccurs="0" name="ShipmentDetails" nillable="true" type="tns:ShipmentDetails"/>
+                <xs:element minOccurs="0" name="PreferredCurrencyCode" nillable="true" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ClientInfo">
+        <xs:sequence>
+            <xs:element name="UserName" nillable="true" type="xs:string"/>
+            <xs:element name="Password" nillable="true" type="xs:string"/>
+            <xs:element name="Version" nillable="true" type="xs:string"/>
+            <xs:element name="AccountNumber" nillable="true" type="xs:string"/>
+            <xs:element name="AccountPin" nillable="true" type="xs:string"/>
+            <xs:element name="AccountEntity" nillable="true" type="xs:string"/>
+            <xs:element name="AccountCountryCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Source" type="xs:int"/>
+            <xs:element minOccurs="0" name="PreferredLanguageCode" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+    <xs:complexType name="Transaction">
+        <xs:sequence>
+            <xs:element name="Reference1" nillable="true" type="xs:string"/>
+            <xs:element name="Reference2" nillable="true" type="xs:string"/>
+            <xs:element name="Reference3" nillable="true" type="xs:string"/>
+            <xs:element name="Reference4" nillable="true" type="xs:string"/>
+            <xs:element name="Reference5" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Transaction" nillable="true" type="tns:Transaction"/>
+    <xs:complexType name="Address">
+        <xs:sequence>
+            <xs:element name="Line1" nillable="true" type="xs:string"/>
+            <xs:element name="Line2" nillable="true" type="xs:string"/>
+            <xs:element name="Line3" nillable="true" type="xs:string"/>
+            <xs:element name="City" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="StateOrProvinceCode" nillable="true" type="xs:string"/>
+            <xs:element name="PostCode" nillable="true" type="xs:string"/>
+            <xs:element name="CountryCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Longitude" type="xs:decimal"/>
+            <xs:element minOccurs="0" name="Latitude" type="xs:decimal"/>
+            <xs:element minOccurs="0" name="BuildingNumber" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="BuildingName" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Floor" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Apartment" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="POBox" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Address" nillable="true" type="tns:Address"/>
+    <xs:complexType name="ShipmentDetails">
+        <xs:sequence>
+            <xs:element name="Dimensions" nillable="true" type="tns:Dimensions"/>
+            <xs:element name="ActualWeight" nillable="true" type="tns:Weight"/>
+            <xs:element name="ChargeableWeight" nillable="true" type="tns:Weight"/>
+            <xs:element name="DescriptionOfGoods" nillable="true" type="xs:string"/>
+            <xs:element name="GoodsOriginCountry" nillable="true" type="xs:string"/>
+            <xs:element name="NumberOfPieces" type="xs:int"/>
+            <xs:element name="ProductGroup" nillable="true" type="xs:string"/>
+            <xs:element name="ProductType" nillable="true" type="xs:string"/>
+            <xs:element name="PaymentType" nillable="true" type="xs:string"/>
+            <xs:element name="PaymentOptions" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CustomsValueAmount" nillable="true" type="tns:Money"/>
+            <xs:element minOccurs="0" name="CashOnDeliveryAmount" nillable="true" type="tns:Money"/>
+            <xs:element minOccurs="0" name="InsuranceAmount" nillable="true" type="tns:Money"/>
+            <xs:element minOccurs="0" name="CashAdditionalAmount" nillable="true" type="tns:Money"/>
+            <xs:element minOccurs="0" name="CashAdditionalAmountDescription" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CollectAmount" nillable="true" type="tns:Money"/>
+            <xs:element minOccurs="0" name="Services" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Items" nillable="true" type="tns:ArrayOfShipmentItem"/>
+            <xs:element minOccurs="0" name="DeliveryInstructions" nillable="true" type="tns:DeliveryInstructions"/>
+            <xs:element minOccurs="0" name="AdditionalProperties" nillable="true" type="tns:ArrayOfAdditionalProperty"/>
+            <xs:element minOccurs="0" name="ContainsDangerousGoods" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ShipmentDetails" nillable="true" type="tns:ShipmentDetails"/>
+    <xs:complexType name="Dimensions">
+        <xs:sequence>
+            <xs:element name="Length" type="xs:double"/>
+            <xs:element name="Width" type="xs:double"/>
+            <xs:element name="Height" type="xs:double"/>
+            <xs:element name="Unit" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Dimensions" nillable="true" type="tns:Dimensions"/>
+    <xs:complexType name="Weight">
+        <xs:sequence>
+            <xs:element name="Unit" nillable="true" type="xs:string"/>
+            <xs:element name="Value" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Weight" nillable="true" type="tns:Weight"/>
+    <xs:complexType name="Money">
+        <xs:sequence>
+            <xs:element name="CurrencyCode" nillable="true" type="xs:string"/>
+            <xs:element name="Value" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Money" nillable="true" type="tns:Money"/>
+    <xs:complexType name="ArrayOfShipmentItem">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipmentItem" nillable="true" type="tns:ShipmentItem"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfShipmentItem" nillable="true" type="tns:ArrayOfShipmentItem"/>
+    <xs:complexType name="ShipmentItem">
+        <xs:sequence>
+            <xs:element name="PackageType" nillable="true" type="xs:string"/>
+            <xs:element name="Quantity" type="xs:int"/>
+            <xs:element name="Weight" nillable="true" type="tns:Weight"/>
+            <xs:element minOccurs="0" name="Comments" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="PiecesDimensions" nillable="true" type="tns:ArrayOfDimensions"/>
+            <xs:element minOccurs="0" name="CommodityCode" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="GoodsDescription" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CountryOfOrigin" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="CustomsValue" nillable="true" type="tns:Money"/>
+            <xs:element minOccurs="0" name="ContainerNumber" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ShipmentItem" nillable="true" type="tns:ShipmentItem"/>
+    <xs:complexType name="ArrayOfDimensions">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Dimensions" nillable="true" type="tns:Dimensions"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfDimensions" nillable="true" type="tns:ArrayOfDimensions"/>
+    <xs:complexType name="DeliveryInstructions">
+        <xs:sequence>
+            <xs:element name="Option" nillable="true" type="xs:string"/>
+            <xs:element name="Reference" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="DeliveryInstructions" nillable="true" type="tns:DeliveryInstructions"/>
+    <xs:complexType name="ArrayOfAdditionalProperty">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="AdditionalProperty" nillable="true" type="tns:AdditionalProperty"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfAdditionalProperty" nillable="true" type="tns:ArrayOfAdditionalProperty"/>
+    <xs:complexType name="AdditionalProperty">
+        <xs:sequence>
+            <xs:element name="CategoryName" nillable="true" type="xs:string"/>
+            <xs:element name="Name" nillable="true" type="xs:string"/>
+            <xs:element name="Value" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="AdditionalProperty" nillable="true" type="tns:AdditionalProperty"/>
+    <xs:element name="RateCalculatorResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="TotalAmount" nillable="true" type="tns:Money"/>
+                <xs:element minOccurs="0" name="RateDetails" nillable="true" type="tns:RateDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfNotification">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Notification" nillable="true" type="tns:Notification"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfNotification" nillable="true" type="tns:ArrayOfNotification"/>
+    <xs:complexType name="Notification">
+        <xs:sequence>
+            <xs:element name="Code" nillable="true" type="xs:string"/>
+            <xs:element name="Message" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Notification" nillable="true" type="tns:Notification"/>
+    <xs:complexType name="RateDetails">
+        <xs:sequence>
+            <xs:element name="Amount" type="xs:double"/>
+            <xs:element name="OtherAmount1" type="xs:double"/>
+            <xs:element name="OtherAmount2" type="xs:double"/>
+            <xs:element name="OtherAmount3" type="xs:double"/>
+            <xs:element name="OtherAmount4" type="xs:double"/>
+            <xs:element name="OtherAmount5" type="xs:double"/>
+            <xs:element name="TotalAmountBeforeTax" type="xs:double"/>
+            <xs:element name="TaxAmount" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RateDetails" nillable="true" type="tns:RateDetails"/>
+    <xs:element name="MultiRateCalculatorRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="ClientInfo" nillable="true" type="tns:ClientInfo"/>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="OriginAddress" nillable="true" type="tns:Address"/>
+                <xs:element minOccurs="0" name="DestinationAddress" nillable="true" type="tns:Address"/>
+                <xs:element minOccurs="0" name="MultiRateDetails" nillable="true" type="tns:MultiRateDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="MultiRateDetails">
+        <xs:sequence>
+            <xs:element name="ProductGroup" nillable="true" type="xs:string"/>
+            <xs:element name="ProductTypes" nillable="true" type="q1:ArrayOfstring"
+                xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+            <xs:element name="PaymentType" nillable="true" type="xs:string"/>
+            <xs:element name="Services" nillable="true" type="xs:string"/>
+            <xs:element name="ActualWeight" nillable="true" type="tns:Weight"/>
+            <xs:element name="CashOnDeliveryAmount" nillable="true" type="tns:Money"/>
+            <xs:element name="InsuranceAmount" nillable="true" type="tns:Money"/>
+            <xs:element name="CustomsValueAmount" nillable="true" type="tns:Money"/>
+            <xs:element name="CollectAmount" nillable="true" type="tns:Money"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="MultiRateDetails" nillable="true" type="tns:MultiRateDetails"/>
+    <xs:element name="MultiRateCalculatorResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Transaction" nillable="true" type="tns:Transaction"/>
+                <xs:element minOccurs="0" name="Notifications" nillable="true" type="tns:ArrayOfNotification"/>
+                <xs:element minOccurs="0" name="HasErrors" type="xs:boolean"/>
+                <xs:element minOccurs="0" name="RateResults" nillable="true" type="tns:ArrayOfProductTypeRateResult"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfProductTypeRateResult">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ProductTypeRateResult" nillable="true" type="tns:ProductTypeRateResult"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfProductTypeRateResult" nillable="true" type="tns:ArrayOfProductTypeRateResult"/>
+    <xs:complexType name="ProductTypeRateResult">
+        <xs:sequence>
+            <xs:element name="ProductGroup" nillable="true" type="xs:string"/>
+            <xs:element name="ProductType" nillable="true" type="xs:string"/>
+            <xs:element name="AccountEntity" nillable="true" type="xs:string"/>
+            <xs:element name="AccountNumber" nillable="true" type="xs:string"/>
+            <xs:element name="Amount" type="xs:double"/>
+            <xs:element name="Currency" nillable="true" type="xs:string"/>
+            <xs:element name="AmountBeforeTax" type="xs:double"/>
+            <xs:element name="TaxAmount" type="xs:double"/>
+            <xs:element name="TaxRate" type="xs:double"/>
+            <xs:element name="AdditionalCharges" nillable="true" type="tns:ArrayOfAdditionalCharge"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ProductTypeRateResult" nillable="true" type="tns:ProductTypeRateResult"/>
+    <xs:complexType name="ArrayOfAdditionalCharge">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="AdditionalCharge" nillable="true" type="tns:AdditionalCharge"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfAdditionalCharge" nillable="true" type="tns:ArrayOfAdditionalCharge"/>
+    <xs:complexType name="AdditionalCharge">
+        <xs:sequence>
+            <xs:element name="Amount" type="xs:double"/>
+            <xs:element name="Code" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="AdditionalCharge" nillable="true" type="tns:AdditionalCharge"/>
+</xs:schema>

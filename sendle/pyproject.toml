@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.sendle"
-version = "2020.4.1"
+version = "2021.2-beta"
 description = "Sendle API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.sendle"
@@ -24,5 +24,5 @@ jstruct = "^2020.4.0"
 [tool.poetry.dev-dependencies]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
 build-backend = "poetry.core.masonry.api"

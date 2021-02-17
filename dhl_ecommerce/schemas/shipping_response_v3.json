@@ -1,0 +1,63 @@
+{
+  "ShippingResponse": {
+    "shipments": [
+      {
+        "id": "1234567",
+        "status": "Successfully retrieved Label V3 Response",
+        "url": "labelv3url",
+        "pieces": [
+          {
+            "title": "Label V3 Response",
+            "status": 200,
+            "code": 200,
+            "pieceId": "4567",
+            "detail": "Label Details",
+            "trackingNumber": "555555",
+            "labels": [
+              "Label1",
+              "Label2"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "Error": {
+    "status": 400,
+    "code": 10,
+    "title": "JSON validation failed.",
+    "detail": "Missing required property.",
+    "instance": "/shipments/0/shipmentDetails/weightUom",
+    "reasons": [
+      {
+        "msg": "Unauthorized Access - Invalid token or Authentication Header parameter"
+      }
+    ],
+    "details": {
+      "msgId": "Id-b587335ada71f6096f322ce9"
+    }
+  },
+  "Label": {
+    "pieces": [
+      {
+        "id": "[PieceId]",
+        "trackingNumber": "55555",
+        "format": "PNG",
+        "labels": [
+          "Label Info1",
+          "Label Info2"
+        ]
+      }
+    ]
+  },
+  "Piece": {
+    "id": "[PieceId sent in the path request]",
+    "trackingNumber": "55555",
+    "format": "PNG",
+    "labels": [
+      "Label1"
+    ],
+    "status": 200,
+    "title": "Label Title"
+  }
+}
