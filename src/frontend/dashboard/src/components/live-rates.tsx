@@ -41,10 +41,12 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             if (shipment.id === undefined) navigate('/buy_label/' + response.id);
             update({ ...response }, true);
             if ((shipment.messages || []).length > 0) {
-                const error: APIError = { error: { 
-                    code: "notes",
-                    details: {messages: shipment.messages} as APIError['error']['details'] 
-                }};
+                const error: APIError = {
+                    error: {
+                        code: "notes",
+                        details: { messages: shipment.messages } as APIError['error']['details']
+                    }
+                };
                 const message = new RequestError(error);
 
                 state.setNotification({ type: NotificationType.warning, message });
@@ -126,7 +128,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
 
                     <h6 className="is-title is-size-6 mt-1 mb-4 has-text-weight-semibold">Live Rates</h6>
 
-                    <ul className="menu-list py-2" style={{ maxHeight: "16em", overflowY: "auto" }}>
+                    <ul className="menu-list py-2" style={{ maxHeight: "16em", overflowY: "auto", overflowX: "hidden" }}>
                         {shipment.rates?.map(rate => (
                             <li key={rate.id}>
                                 <a className={`columns mb-0 ${rate.id === selected_rate_id ? 'has-text-grey-dark' : 'has-text-grey'}`} onClick={() => setSelectedRate(rate.id)}>

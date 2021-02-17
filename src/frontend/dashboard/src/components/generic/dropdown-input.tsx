@@ -76,7 +76,7 @@ const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, items, d
                         <span>{value}</span>
                     </a>
 
-                    <div className={`dropdown-menu py-0 ${dropdownMenuClass}`} id={`dropdown-input-${key}`} role="menu" style={{ right: 0, left: 0 }}>
+                    <div className="dropdown-menu py-0" id={`dropdown-input-${key}`} role="menu" style={{ right: 0, left: 0 }}>
                         <div className="dropdown-content py-0">
 
                             <div className="panel-block px-1 py-1">
