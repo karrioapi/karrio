@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.canpar"
-version = "2020.10.1"
+version = "2021.2"
 description = "Canpar Web API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.canpar"

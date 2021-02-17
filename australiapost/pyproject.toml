@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.australiapost"
-version = "2021.2-alpha"
+version = "2021.2-beta"
 description = "Australia Post API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.australiapost"
