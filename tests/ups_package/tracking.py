@@ -74,6 +74,7 @@ ParsedTrackingResponse = [
         {
             "carrier_name": "ups_package",
             "carrier_id": "ups_package",
+            "delivered": True,
             "events": [
                 {
                     "code": "KB",

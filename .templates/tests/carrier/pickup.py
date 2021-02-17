@@ -36,7 +36,7 @@ class TestCarrierPickup(unittest.TestCase):
         self.assertEqual(request.serialize(), PickupCancelRequestXML)
 
     def test_request_pickup(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = "<a></a>"
             purplship.Pickup.schedule(self.PickupRequest).from_(gateway)
 
@@ -46,7 +46,7 @@ class TestCarrierPickup(unittest.TestCase):
             )
 
     def test_modify_pickup(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mocks:
+        with patch("purplship.mappers.[carrier].proxy.http") as mocks:
             mocks.side_effect = [
                 PickupResponseXML,
             ]
@@ -60,7 +60,7 @@ class TestCarrierPickup(unittest.TestCase):
             )
 
     def test_cancel_pickup(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = "<a></a>"
             purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway)
 
@@ -70,7 +70,7 @@ class TestCarrierPickup(unittest.TestCase):
             )
 
     def test_parse_request_pickup_response(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = PickupResponseXML
             parsed_response = (
                 purplship.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
@@ -79,7 +79,7 @@ class TestCarrierPickup(unittest.TestCase):
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
 
     def test_parse_modify_pickup_response(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mocks:
+        with patch("purplship.mappers.[carrier].proxy.http") as mocks:
             mocks.side_effect = [
                 PickupResponseXML,
             ]
@@ -90,7 +90,7 @@ class TestCarrierPickup(unittest.TestCase):
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
 
     def test_parse_void_shipment_response(self):
-        with patch("purplship.mappers.carrier.proxy.http") as mock:
+        with patch("purplship.mappers.[carrier].proxy.http") as mock:
             mock.return_value = PickupCancelResponseXML
             parsed_response = (
                 purplship.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()

@@ -52,21 +52,27 @@ class TestDHLPickup(unittest.TestCase):
             mock.return_value = PickupResponseXML
             parsed_response = Pickup.schedule(self.BookPURequest).from_(gateway).parse()
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse)
+            )
 
     def test_parse_modify_pickup_response(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = ModifyPURequestXML
             parsed_response = Pickup.update(self.ModifyPURequest).from_(gateway).parse()
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedModifyPUResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedModifyPUResponse)
+            )
 
     def test_parse_cancellation_pickup_response(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = CancelPUResponseXML
             parsed_response = Pickup.cancel(self.CancelPURequest).from_(gateway).parse()
 
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedCancelPUResponse))
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedCancelPUResponse)
+            )
 
     def test_parse_request_pickup_error(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:

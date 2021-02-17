@@ -64,17 +64,23 @@ def clean_namespaces(
     )
 
 
-def apply_namespaceprefix(item, prefix: str):
+def apply_namespaceprefix(item, prefix: str, special_prefixes: dict = None, item_name: str = None):
+    if special_prefixes is None:
+        special_prefixes = {}
+
     if isinstance(item, list):
-        [apply_namespaceprefix(child, prefix) for child in item]
+        [apply_namespaceprefix(child, prefix, special_prefixes, item_name) for child in item]
     elif hasattr(item, "export"):
         item.ns_prefix_ = prefix
+        children_prefix = special_prefixes.get(f'{item_name}_children', prefix)
         children = [
-            (k, v) for k, v in item.__dict__.items() if "_" not in k and v is not None
+            (name, node) for name, node in item.__dict__.items()
+            if name[-1:] != "_" and node is not None
         ]
-        for name, child in children:
-            setattr(item, f"{name}_nsprefix_", prefix)
-            apply_namespaceprefix(child, prefix)
+        for name, node in children:
+            special_prefix = special_prefixes.get(name, children_prefix)
+            setattr(item, f"{name}_nsprefix_", special_prefix)
+            apply_namespaceprefix(node, special_prefix, special_prefixes, name)
 
 
 def extract_fault(response: Element, settings: Settings) -> List[Message]:

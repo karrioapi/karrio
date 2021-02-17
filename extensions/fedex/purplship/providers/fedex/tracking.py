@@ -41,6 +41,9 @@ def _extract_tracking(
     track_detail.build(track_detail_node)
     if track_detail.Notification.Severity == "ERROR":
         return None
+
+    delivered = any(e.EventType == 'DL' for e in track_detail.Events)
+
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -57,6 +60,7 @@ def _extract_tracking(
                 track_detail.Events,
             )
         ),
+        delivered=delivered
     )
 
 

@@ -94,16 +94,17 @@ ParsedTrackingResponse = [
     [],
 ]
 
-TrackingRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
-    <soapenv:Body>
+TrackingRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" >
+    <soap:Header/>
+    <soap:Body>
         <ws:trackByBarcodeV2>
             <ws:request>
-                <barcode>1Z12345E6205277936</barcode>
-                <track_shipment>true</track_shipment>
+                <xsd:barcode>1Z12345E6205277936</xsd:barcode>
+                <xsd:track_shipment>true</xsd:track_shipment>
             </ws:request>
         </ws:trackByBarcodeV2>
-    </soapenv:Body>
-</soapenv:Envelope>
+    </soap:Body>
+</soap:Envelope>
 """
 
 TrackingResponseXML = """<wrapper>

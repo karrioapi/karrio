@@ -63,7 +63,7 @@ def exec_parrallel(function: Callable, sequence: List[S], max_workers: int = Non
         return [response.result() for response in as_completed(requests)]
 
 
-def exec_async(action: Callable[[S], T], sequence: List[S]) -> List[T]:
+def exec_async(action: Callable, sequence: List[S]) -> List[T]:
     async def async_action(args):
         return action(args)
 

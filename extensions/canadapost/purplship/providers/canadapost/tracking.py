@@ -1,7 +1,7 @@
 from typing import Tuple, List
 from canadapost_lib.track import pin_summary
 from purplship.providers.canadapost.utils import Settings
-from purplship.core.utils import Element, Serializable, DF
+from purplship.core.utils import Element, Serializable, DF, XP
 from purplship.core.models import (
     TrackingRequest,
     TrackingDetails,
@@ -22,8 +22,8 @@ def parse_tracking_response(
 
 
 def _extract_tracking(pin_summary_node: Element, settings: Settings) -> TrackingDetails:
-    pin_summary_ = pin_summary()
-    pin_summary_.build(pin_summary_node)
+    pin_summary_ = XP.build(pin_summary, pin_summary_node)
+
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -32,12 +32,12 @@ def _extract_tracking(pin_summary_node: Element, settings: Settings) -> Tracking
             TrackingEvent(
                 date=DF.fdate(pin_summary_.event_date_time, "%Y%m%d:%H%M%S"),
                 time=DF.ftime(pin_summary_.event_date_time, "%Y%m%d:%H%M%S"),
-                signatory=pin_summary_.signatory_name,
                 code=pin_summary_.event_type,
                 location=pin_summary_.event_location,
                 description=pin_summary_.event_description,
             )
         ],
+        delivered=(pin_summary_.event_type == "DELIVERED")
     )
 
 

@@ -19,7 +19,7 @@ from purplship.core.utils import (
     XP,
 )
 from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 
 
 def parse_address_validation_response(response: Element, settings: Settings) -> Tuple[AddressValidationDetails, List[Message]]:
@@ -66,4 +66,4 @@ def address_validation_request(payload: AddressValidationRequest, settings: Sett
         )
     )
 
-    return Serializable(request, default_request_serializer)
+    return Serializable(request, Settings.serialize)

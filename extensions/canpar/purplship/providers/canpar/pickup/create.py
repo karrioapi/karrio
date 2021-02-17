@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Tuple, List
 from canpar_lib.CanparAddonsService import (
     schedulePickupV2,
@@ -20,7 +21,7 @@ from purplship.core.utils import (
 )
 from purplship.core.units import Packages
 from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 from purplship.providers.canpar.units import WeightUnit
 
 
@@ -77,4 +78,10 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[E
         )
     )
 
-    return Serializable(request, default_request_serializer)
+    return Serializable(
+        request, partial(
+            settings.serialize,
+            extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
+            special_prefixes=dict(pickup_children='xsd1')
+        )
+    )

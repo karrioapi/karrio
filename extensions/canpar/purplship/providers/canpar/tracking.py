@@ -3,8 +3,7 @@ from canpar_lib.CanparAddonsService import (
     trackByBarcodeV2,
     TrackByBarcodeV2Rq,
     TrackingResult,
-    TrackingEvent as CanparTrackingEvent,
-    Address
+    TrackingEvent as CanparTrackingEvent
 )
 from purplship.core.models import (
     Message,
@@ -19,9 +18,10 @@ from purplship.core.utils import (
     Envelope,
     DF,
     XP,
+    SF,
 )
 from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 
 
 def parse_tracking_response(response: Element, settings: Settings) -> Tuple[List[TrackingDetails], List[Message]]:
@@ -40,7 +40,14 @@ def _extract_tracking_details(node: Element, settings: Settings) -> TrackingDeta
         TrackingEvent(
             date=DF.fdate(event.local_date_time, '%Y%m%d %H%M%S'),
             description=(event.code_description_en if is_en else event.code_description_fr),
-            location=_format_location(event.address),
+            location=SF.concat_str(
+                event.address.address_line_1,
+                event.address.address_line_2,
+                event.address.city,
+                event.address.province,
+                event.address.country,
+                join=True, separator=", "
+            ),
             code=event.code,
             time=DF.ftime(event.local_date_time, '%Y%m%d %H%M%S'),
         ) for event in cast(List[CanparTrackingEvent], result.events)
@@ -53,17 +60,6 @@ def _extract_tracking_details(node: Element, settings: Settings) -> TrackingDeta
         events=events,
         delivered=any(event.code == 'DEL' for event in events)
     )
-
-
-def _format_location(address: Address) -> str:
-    details = [
-        address.address_line_1,
-        address.address_line_2,
-        address.city,
-        address.province,
-        address.country
-    ]
-    return ", ".join([detail for detail in details if detail is not None and detail != ""])
 
 
 def tracking_request(payload: TrackingRequest, _) -> Serializable[List[Envelope]]:
@@ -85,5 +81,5 @@ def tracking_request(payload: TrackingRequest, _) -> Serializable[List[Envelope]
 
 def _request_serializer(envelopes: List[Envelope]) -> List[str]:
     return [
-        default_request_serializer(envelope) for envelope in envelopes
+        Settings.serialize(envelope) for envelope in envelopes
     ]

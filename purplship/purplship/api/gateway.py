@@ -2,7 +2,7 @@
 
 import attr
 import logging
-from typing import Callable, Union
+from typing import Callable, Union, List
 
 from purplship.core import Settings
 from purplship.api.proxy import Proxy
@@ -11,6 +11,10 @@ from purplship.core.errors import PurplShipError
 from purplship.references import import_extensions
 
 logger = logging.getLogger(__name__)
+FEATURE_SETS = [
+    feature for feature in Proxy.__dict__.keys()
+    if '_' not in feature[0]
+]
 
 
 @attr.s(auto_attribs=True)
@@ -19,6 +23,13 @@ class Gateway:
     mapper: Mapper
     proxy: Proxy
     settings: Settings
+
+    @property
+    def features(self) -> List[str]:
+        return [
+            feature for feature in FEATURE_SETS
+            if feature in self.proxy.__class__.__dict__
+        ]
 
 
 @attr.s(auto_attribs=True)
@@ -103,9 +114,9 @@ class GatewayInitializer:
         return GatewayInitializer.__instance
 
 
-logger.info(
-    f"""
+nl = '\n    '
+logger.info(f"""
 Purplship default gateway mapper initialized.
-Registered providers: {','.join(GatewayInitializer.get_instance().providers)}
-"""
-)
+Registered providers:
+    {f"{nl}".join(GatewayInitializer.get_instance().providers.keys())}
+""")

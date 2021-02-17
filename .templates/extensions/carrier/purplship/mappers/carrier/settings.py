@@ -1,4 +1,4 @@
-"""Purplship [carrier] settings."""
+"""Purplship [Carrier Name] settings."""
 
 import attr
 from purplship.providers.carrier.utils import Settings as BaseSettings
@@ -6,7 +6,7 @@ from purplship.providers.carrier.utils import Settings as BaseSettings
 
 @attr.s(auto_attribs=True)
 class Settings(BaseSettings):
-    """[carrier] connection settings."""
+    """[Carrier Name] connection settings."""
 
     # Carrier specific properties
     # username: str
@@ -16,4 +16,4 @@ class Settings(BaseSettings):
     # Base properties
     id: str = None
     test: bool = False
-    carrier_id: str = "dhl_express"
+    carrier_id: str = "[carrier_name]"

@@ -73,6 +73,7 @@ ParsedTrackingResponse = [
         {
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
+            'delivered': False,
             "events": [
                 {
                     "code": "INDUCTION",

@@ -8,7 +8,7 @@ import purplship
 carrier_gateway = purplship.gateway["carrier_name"].create(...)
 ```
 
-### Carrier Gateways
+### Code sample
     
 === "Plain"
     ```python
@@ -42,9 +42,32 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
     )
     ```
 
+### Carrier Gateway Settings
 
 
-#### USPS Settings
+#### Yunexpress Settings `[carrier_name = yunexpress]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `customer_number` | `str` | **required**
+| `api_secret` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Yanwen Settings `[carrier_name = yanwen]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `customer_number` | `str` | **required**
+| `license_key` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### USPS Settings `[carrier_name = usps]`
 
 | Name | Type | Description 
 | --- | --- | --- |
@@ -55,47 +78,40 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | `carrier_id` | `str` | 
 
 
-#### UPS Package Settings
+#### SF-Express Settings `[carrier_name = sf_express]`
 
 | Name | Type | Description 
 | --- | --- | --- |
-| `username` | `str` | **required**
-| `password` | `str` | **required**
-| `access_license_number` | `str` | **required**
-| `account_number` | `str` | 
+| `partner_id` | `str` | **required**
+| `check_word` | `str` | **required**
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
 
 
-#### Purolator Courier Settings
+#### Sendle Settings `[carrier_name = sendle]`
 
 | Name | Type | Description 
 | --- | --- | --- |
-| `username` | `str` | **required**
-| `password` | `str` | **required**
-| `account_number` | `str` | **required**
-| `user_token` | `str` | 
-| `language` | `str` | 
+| `sendle_id` | `str` | **required**
+| `api_key` | `str` | **required**
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
 
 
-#### FedEx Express Settings
+#### Royal Mail Settings `[carrier_name = royalmail]`
 
 | Name | Type | Description 
 | --- | --- | --- |
-| `user_key` | `str` | **required**
-| `password` | `str` | **required**
-| `meter_number` | `str` | **required**
-| `account_number` | `str` | **required**
+| `client_id` | `str` | **required**
+| `client_secret` | `str` | **required**
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
 
 
-#### Dicom Settings
+#### Dicom Settings `[carrier_name = dicom]`
 
 | Name | Type | Description 
 | --- | --- | --- |
@@ -107,7 +123,56 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | `carrier_id` | `str` | 
 
 
-#### Canada Post Settings
+#### DHL Universal Tracking Settings `[carrier_name = dhl_universal]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `consumer_key` | `str` | **required**
+| `consumer_secret` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Australia Post Settings `[carrier_name = australiapost]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `api_key` | `str` | **required**
+| `password` | `str` | **required**
+| `account_number` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Aramex Settings `[carrier_name = aramex]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `username` | `str` | **required**
+| `password` | `str` | **required**
+| `account_pin` | `str` | **required**
+| `account_entity` | `str` | **required**
+| `account_number` | `str` | **required**
+| `account_country_code` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### BoxKnight Settings `[carrier_name = boxknight]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `username` | `str` | **required**
+| `password` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Canada Post Settings `[carrier_name = canadapost]`
 
 | Name | Type | Description 
 | --- | --- | --- |
@@ -121,7 +186,7 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | `carrier_id` | `str` | 
 
 
-#### Canpar Settings
+#### Canpar Settings `[carrier_name = canpar]`
 
 | Name | Type | Description 
 | --- | --- | --- |
@@ -132,15 +197,57 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | `carrier_id` | `str` | 
 
 
-#### BoxKnight Settings
+#### DHL Express Settings `[carrier_name = dhl_express]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `site_id` | `str` | **required**
+| `password` | `str` | **required**
+| `account_number` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### FedEx Express Settings `[carrier_name = fedex_express]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `user_key` | `str` | **required**
+| `password` | `str` | **required**
+| `meter_number` | `str` | **required**
+| `account_number` | `str` | **required**
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
+
+#### Purolator Courier Settings `[carrier_name = purolator_courier]`
 
 | Name | Type | Description 
 | --- | --- | --- |
 | `username` | `str` | **required**
 | `password` | `str` | **required**
+| `account_number` | `str` | **required**
+| `user_token` | `str` | **required**
+| `language` | `str` | 
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
+
+
+#### UPS Package Settings `[carrier_name = ups_package]`
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `username` | `str` | **required**
+| `password` | `str` | **required**
+| `access_license_number` | `str` | **required**
+| `account_number` | `str` | 
+| `id` | `str` | 
+| `test` | `bool` | 
+| `carrier_id` | `str` | 
+
 
 
 !!! note ""

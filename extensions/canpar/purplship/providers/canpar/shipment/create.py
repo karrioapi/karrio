@@ -25,7 +25,7 @@ from purplship.core.utils import (
 from purplship.core.units import Packages, Options
 from purplship.providers.canpar.shipment.label import get_label_request, LabelRequest
 from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 from purplship.providers.canpar.units import WeightUnit, DimensionUnit, Option, Service
 from purplship.providers.canpar.rate import _extract_rate_details
 
@@ -162,7 +162,14 @@ def _process_shipment(payload: ShipmentRequest, settings: Settings) -> Job:
         )
     )
 
-    return Job(id="process", data=Serializable(request, default_request_serializer))
+    data = Serializable(
+        request, partial(
+            settings.serialize,
+            extra_namespace='xmlns:xsd1="http://dto.canshipws.canpar.com/xsd"',
+            special_prefixes=dict(shipment_children='xsd1')
+        )
+    )
+    return Job(id="process", data=data)
 
 
 def _get_label(shipment_response: str, settings: Settings) -> Job:

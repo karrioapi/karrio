@@ -184,77 +184,80 @@ ParsedPickupCancelResponse = [
 ]
 
 
-PickupRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
-    <soapenv:Body>
+PickupRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
+    <soap:Header/>
+    <soap:Body>
         <ws:schedulePickupV2>
             <ws:request>
-                <password>password</password>
-                <pickup>
-                    <comments>Door at Back</comments>
-                    <created_by>John Doe</created_by>
-                    <pickup_address>
-                        <address_line_1>2271 Herring Cove</address_line_1>
-                        <address_line_2></address_line_2>
-                        <attention>John Doe</attention>
-                        <city>Halifax</city>
-                        <country>CA</country>
-                        <email>john.doe@canpar.ca</email>
-                        <name>Jim Duggan</name>
-                        <phone>1 514 5555555</phone>
-                        <postal_code>B3L2C2</postal_code>
-                        <province>NS</province>
-                        <residential>true</residential>
-                    </pickup_address>
-                    <pickup_date>2015-01-28T15:00:00</pickup_date>
-                    <pickup_phone>1 514 5555555</pickup_phone>
-                    <unit_of_measure>L</unit_of_measure>
-                </pickup>
-                <user_id>user_id</user_id>
+                <xsd:password>password</xsd:password>
+                <xsd:pickup>
+                    <xsd1:comments>Door at Back</xsd1:comments>
+                    <xsd1:created_by>John Doe</xsd1:created_by>
+                    <xsd1:pickup_address>
+                        <xsd1:address_line_1>2271 Herring Cove</xsd1:address_line_1>
+                        <xsd1:address_line_2></xsd1:address_line_2>
+                        <xsd1:attention>John Doe</xsd1:attention>
+                        <xsd1:city>Halifax</xsd1:city>
+                        <xsd1:country>CA</xsd1:country>
+                        <xsd1:email>john.doe@canpar.ca</xsd1:email>
+                        <xsd1:name>Jim Duggan</xsd1:name>
+                        <xsd1:phone>1 514 5555555</xsd1:phone>
+                        <xsd1:postal_code>B3L2C2</xsd1:postal_code>
+                        <xsd1:province>NS</xsd1:province>
+                        <xsd1:residential>true</xsd1:residential>
+                    </xsd1:pickup_address>
+                    <xsd1:pickup_date>2015-01-28T15:00:00</xsd1:pickup_date>
+                    <xsd1:pickup_phone>1 514 5555555</xsd1:pickup_phone>
+                    <xsd1:unit_of_measure>L</xsd1:unit_of_measure>
+                </xsd:pickup>
+                <xsd:user_id>user_id</xsd:user_id>
             </ws:request>
         </ws:schedulePickupV2>
-    </soapenv:Body>
-</soapenv:Envelope>
+    </soap:Body>
+</soap:Envelope>
 """
 
-PickupUpdateRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
-    <soapenv:Body>
+PickupUpdateRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
+    <soap:Header/>
+    <soap:Body>
         <ws:schedulePickupV2>
             <ws:request>
-                <password>password</password>
-                <pickup>
-                    <comments>Door at Back</comments>
-                    <created_by>Jane Doe</created_by>
-                    <pickup_address>
-                        <address_line_1></address_line_1>
-                        <address_line_2></address_line_2>
-                        <attention>Jane Doe</attention>
-                        <email>john.doe@canpar.ca</email>
-                        <phone>1 514 5555555</phone>
-                        <residential>false</residential>
-                    </pickup_address>
-                    <pickup_date>2015-01-28T15:00:00</pickup_date>
-                    <pickup_phone>1 514 5555555</pickup_phone>
-                    <unit_of_measure>L</unit_of_measure>
-                    <weight>8.82</weight>
-                </pickup>
-                <user_id>user_id</user_id>
+                <xsd:password>password</xsd:password>
+                <xsd:pickup>
+                    <xsd1:comments>Door at Back</xsd1:comments>
+                    <xsd1:created_by>Jane Doe</xsd1:created_by>
+                    <xsd1:pickup_address>
+                        <xsd1:address_line_1></xsd1:address_line_1>
+                        <xsd1:address_line_2></xsd1:address_line_2>
+                        <xsd1:attention>Jane Doe</xsd1:attention>
+                        <xsd1:email>john.doe@canpar.ca</xsd1:email>
+                        <xsd1:phone>1 514 5555555</xsd1:phone>
+                        <xsd1:residential>false</xsd1:residential>
+                    </xsd1:pickup_address>
+                    <xsd1:pickup_date>2015-01-28T15:00:00</xsd1:pickup_date>
+                    <xsd1:pickup_phone>1 514 5555555</xsd1:pickup_phone>
+                    <xsd1:unit_of_measure>L</xsd1:unit_of_measure>
+                    <xsd1:weight>8.82</xsd1:weight>
+                </xsd:pickup>
+                <xsd:user_id>user_id</xsd:user_id>
             </ws:request>
         </ws:schedulePickupV2>
-    </soapenv:Body>
-</soapenv:Envelope>
+    </soap:Body>
+</soap:Envelope>
 """
 
-PickupCancelRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
-    <soapenv:Body>
+PickupCancelRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" >
+    <soap:Header/>
+    <soap:Body>
         <ws:cancelPickup>
             <ws:request>
-                <id>10000696</id>
-                <password>password</password>
-                <user_id>user_id</user_id>
+                <xsd:id>10000696</xsd:id>
+                <xsd:password>password</xsd:password>
+                <xsd:user_id>user_id</xsd:user_id>
             </ws:request>
         </ws:cancelPickup>
-    </soapenv:Body>
-</soapenv:Envelope>
+    </soap:Body>
+</soap:Envelope>
 """
 
 PickupCancelResponseXML = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>

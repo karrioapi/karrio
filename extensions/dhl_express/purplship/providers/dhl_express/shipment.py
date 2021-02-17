@@ -27,6 +27,8 @@ from purplship.core.models import (
     ShipmentRequest,
     Message,
     ShipmentDetails,
+    Payment,
+    Customs,
 )
 from purplship.core.units import Options, Packages, Country
 from purplship.providers.dhl_express.units import (
@@ -86,9 +88,9 @@ def shipment_request(
     delivery_type = next(
         (d for d in DeliveryType if d.name in payload.options.keys()), None
     )
-    has_payment_config = payload.payment is not None
-    has_customs_config = payload.customs is not None
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
+    payment = (payload.payment or Payment(paid_by="sender", account_number=settings.account_number))
+    customs = (payload.customs or Customs())
 
     request = DHLShipmentRequest(
         schemaVersion=6.2,
@@ -102,18 +104,10 @@ def shipment_request(
         LatinResponseInd=None,
         Billing=Billing(
             ShipperAccountNumber=settings.account_number,
-            BillingAccountNumber=payload.payment.account_number
-            if has_payment_config
-            else None,
-            ShippingPaymentType=PaymentType[payload.payment.paid_by].value
-            if has_payment_config
-            else None,
-            DutyAccountNumber=payload.customs.duty.account_number
-            if has_customs_config
-            else None,
-            DutyPaymentType=PaymentType[payload.customs.duty.paid_by].value
-            if has_customs_config
-            else None,
+            BillingAccountNumber=payment.account_number,
+            ShippingPaymentType=PaymentType[payment.paid_by].value,
+            DutyAccountNumber=(customs.duty.account_number if customs.duty is not None else None),
+            DutyPaymentType=(PaymentType[customs.duty.paid_by].value if customs.duty is not None else None),
         ),
         Consignee=Consignee(
             CompanyName=payload.recipient.company_name or "  ",
@@ -138,12 +132,13 @@ def shipment_request(
             ),
             Suburb=None,
         ),
-        Commodity=[
-            Commodity(CommodityCode=c.sku, CommodityName=c.description)
-            for c in payload.customs.commodities
-        ]
-        if payload.customs is not None
-        else None,
+        Commodity=(
+            [
+                Commodity(CommodityCode=c.sku, CommodityName=c.description)
+                for c in payload.customs.commodities
+            ]
+            if any(customs.commodities) else None
+        ),
         NewShipper=None,
         Shipper=Shipper(
             ShipperID=settings.account_number or "  ",
@@ -203,13 +198,14 @@ def shipment_request(
             Contents="  ",
         ),
         EProcShip=None,
-        Dutiable=Dutiable(
-            DeclaredCurrency=payload.customs.duty.currency or "USD",
-            DeclaredValue=payload.customs.duty.amount,
-            TermsOfTrade=payload.customs.incoterm,
-        )
-        if payload.customs is not None and payload.customs.duty is not None
-        else None,
+        Dutiable=(
+            Dutiable(
+                DeclaredCurrency=customs.duty.currency or "USD",
+                DeclaredValue=customs.duty.amount,
+                TermsOfTrade=customs.incoterm,
+            )
+            if customs.duty is not None else None
+        ),
         ExportDeclaration=None,
         Reference=[Reference(ReferenceID=payload.reference)],
         SpecialService=[
@@ -217,7 +213,9 @@ def shipment_request(
             for key, svc in options if key in SpecialServiceCode
         ],
         Notification=(
-            Notification(EmailAddress=options.notification_email or payload.recipient.email)
+            Notification(
+                EmailAddress=options.notification_email or payload.recipient.email
+            )
             if options.notification_email is None else None
         ),
         DocImages=None,

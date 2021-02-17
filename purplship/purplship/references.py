@@ -59,6 +59,8 @@ def collect_references() -> dict:
         "dimension_units": {c.name: c.value for c in list(units.DimensionUnit)},
         "states": {c.name: {s.name: s.value for s in list(c.value)} for c in list(units.CountryState)},
         "payment_types": {c.name: c.value for c in list(units.PaymentType)},
+        "customs_content_type": {c.name: c.value for c in list(units.CustomsContentType)},
+        "incoterms": {c.name: c.value for c in list(units.Incoterm)},
         "carriers": {carrier_name: metadata.label for carrier_name, metadata in PROVIDERS.items()},
         "services": {
             key: {c.name: c.value for c in list(mapper['services'])}  # type: ignore
@@ -66,7 +68,7 @@ def collect_references() -> dict:
             if mapper.get('services') is not None
         },
         "options": {
-            key: {c.name: c.value for c in list(mapper['options'])}  # type: ignore
+            key: {c.name: DP.to_dict(c.value) for c in list(mapper['options'])}  # type: ignore
             for key, mapper in PROVIDERS_DATA.items()
             if mapper.get('options') is not None
         },

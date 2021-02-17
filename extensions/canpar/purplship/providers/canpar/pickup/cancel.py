@@ -15,7 +15,7 @@ from purplship.core.utils import (
     Serializable
 )
 from purplship.providers.canpar.error import parse_error_response
-from purplship.providers.canpar.utils import Settings, default_request_serializer
+from purplship.providers.canpar.utils import Settings
 
 
 def parse_pickup_cancel_response(response: Element, settings: Settings) -> Tuple[ConfirmationDetails, List[Message]]:
@@ -43,4 +43,4 @@ def pickup_cancel_request(payload: PickupCancelRequest, settings: Settings) -> S
         )
     )
 
-    return Serializable(request, default_request_serializer)
+    return Serializable(request, Settings.serialize)

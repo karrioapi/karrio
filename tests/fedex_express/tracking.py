@@ -72,6 +72,7 @@ ParsedTrackingResponse = [
         {
             "carrier_name": "fedex_express",
             "carrier_id": "carrier_id",
+            "delivered": False,
             "events": [
                 {
                     "code": "OC",

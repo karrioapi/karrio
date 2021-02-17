@@ -84,24 +84,25 @@ ParsedAddressValidationResponse = [
 ]
 
 
-AddressValidationRequestXML = """<soapenv:Envelope  xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns="http://ws.dto.canshipws.canpar.com/xsd" xmlns:xsd1="http://dto.canshipws.canpar.com/xsd">
-    <soapenv:Body>
+AddressValidationRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" >
+    <soap:Header/>
+    <soap:Body>
         <ws:searchCanadaPost>
             <ws:request>
-                <city>Burnaby</city>
-                <password>password</password>
-                <postal_code>V5E4H9</postal_code>
-                <province>BC</province>
-                <street_direction></street_direction>
-                <street_name>Suit 333 333 Twin</street_name>
-                <street_num></street_num>
-                <street_type></street_type>
-                <user_id>user_id</user_id>
-                <validate_only>true</validate_only>
+                <xsd:city>Burnaby</xsd:city>
+                <xsd:password>password</xsd:password>
+                <xsd:postal_code>V5E4H9</xsd:postal_code>
+                <xsd:province>BC</xsd:province>
+                <xsd:street_direction></xsd:street_direction>
+                <xsd:street_name>Suit 333 333 Twin</xsd:street_name>
+                <xsd:street_num></xsd:street_num>
+                <xsd:street_type></xsd:street_type>
+                <xsd:user_id>user_id</xsd:user_id>
+                <xsd:validate_only>true</xsd:validate_only>
             </ws:request>
         </ws:searchCanadaPost>
-    </soapenv:Body>
-</soapenv:Envelope>
+    </soap:Body>
+</soap:Envelope>
 """
 
 AddressValidationResponseXML = """<?xml version="1.0" encoding="UTF-8"?>

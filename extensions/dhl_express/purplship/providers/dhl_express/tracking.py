@@ -38,6 +38,8 @@ def _extract_tracking(
     if info.ShipmentInfo is None:
         return None
 
+    delivered = any(e.ServiceEvent.EventCode == 'OK' for e in info.ShipmentInfo.ShipmentEvent)
+
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -47,14 +49,14 @@ def _extract_tracking(
                 lambda e: TrackingEvent(
                     date=DF.fdate(e.Date),
                     time=DF.ftime(e.Time),
-                    signatory=e.Signatory,
                     code=e.ServiceEvent.EventCode,
                     location=e.ServiceArea.Description,
                     description=e.ServiceEvent.Description,
                 ),
-                info.ShipmentInfo.ShipmentEvent,
+                reversed(info.ShipmentInfo.ShipmentEvent or []),
             )
         ),
+        delivered=delivered
     )
 
 
