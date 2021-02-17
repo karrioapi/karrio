@@ -2,11 +2,11 @@ import logging
 
 from django.urls import path
 from rest_framework import serializers
-from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.gateway import Carriers
 from purpleserver.core.serializers import CarrierSettings, ErrorResponse, FlagField, FlagsSerializer, CARRIERS
@@ -14,6 +14,7 @@ from purpleserver.providers.router import router
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+CarriersSettingsList = PaginatedResult('CarrierList', CarrierSettings)
 
 
 class CarrierFilters(FlagsSerializer):
@@ -32,12 +33,14 @@ class CarrierFilters(FlagsSerializer):
 
 
 class CarrierList(GenericAPIView):
+    pagination_class = LimitOffsetPagination
+    default_limit = 100
 
     @swagger_auto_schema(
         tags=['Carriers'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all carriers",
-        responses={200: CarrierSettings(many=True), 400: ErrorResponse()},
+        responses={200: CarriersSettingsList(), 400: ErrorResponse()},
         query_serializer=CarrierFilters
     )
     def get(self, request: Request):
@@ -48,7 +51,7 @@ class CarrierList(GenericAPIView):
 
         carriers = [carrier.data for carrier in Carriers.list(**{**query, 'user': request.user})]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
-        return Response(response)
+        return self.get_paginated_response(response)
 
 
 router.urls.append(path('carriers', CarrierList.as_view()))
