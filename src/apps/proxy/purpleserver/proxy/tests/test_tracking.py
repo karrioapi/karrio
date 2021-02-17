@@ -49,13 +49,13 @@ TRACKING_RESPONSE = {
     "id": ANY,
     "carrier_id": "ups_package",
     "carrier_name": "ups_package",
+    'delivered': None,
     "events": [
       {
         "code": "KB",
         "date": "2010-08-30",
         "description": "UPS INTERNAL ACTIVITY CODE",
         "location": "BONN",
-        "signatory": None,
         "time": "10:39"
       }
     ],
