@@ -16,8 +16,8 @@ classifiers=[
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
-"purplship" = "^2021.2"
+python = "^3.7"
+"purplship" = "^2021.2.2"
 "carrier.boxknight" = "^2020.11.1b0"
 
 [tool.poetry.dev-dependencies]

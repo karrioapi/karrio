@@ -91,8 +91,6 @@ def shipment_request(
         else [*options]
     )
 
-    print(options, all_options)
-
     label_encoding, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
 
     request = ShipmentType(

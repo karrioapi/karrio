@@ -16,9 +16,9 @@ classifiers=[
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
-"purplship" = "^2021.2"
-"carrier.canpar" = "^2020.10.1"
+python = "^3.7"
+"purplship" = "^2021.2.2"
+"carrier.canpar" = "^2021.2"
 
 [tool.poetry.dev-dependencies]
 

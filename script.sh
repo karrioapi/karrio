@@ -29,7 +29,8 @@ create_env() {
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
     activate_env &&
     pip install --upgrade pip > /dev/null &&
-    pip install twine poetry > /dev/null
+    pip install twine > /dev/null &&
+    pip install poetry > /dev/null
 }
 
 submodules() {
@@ -39,7 +40,7 @@ submodules() {
 init() {
 	echo "Dev setup..."
     create_env &&
-    poetry install > /dev/null &&
+    poetry install &&
     pip install -r "${ROOT:?}/requirements.dev.txt" > /dev/null
 }
 
@@ -101,6 +102,22 @@ build() {
     backup
 }
 
+update() {
+    packages=("${ROOT}/purplship")
+    packages+=($(submodules))
+	for pkg in ${packages}; do
+		cd ${pkg};
+		output=$(poetry update 2>&1);
+		r=$?;
+		cd - > /dev/null;
+		if [[ ${r} -eq 1 ]]; then
+			echo "> updating "$(basename ${pkg})" ${cross} \n $output";
+		else
+			echo "> updating "$(basename ${pkg})" ${check} ";
+		fi;
+    done
+}
+
 updaterelease() {
     git tag -f -a "$1"
     git push -f --tags
@@ -124,10 +141,6 @@ docs() {
 
 upload() {
 	twine upload "${DIST}/*"
-}
-
-shell() {
-	ipython
 }
 
 

@@ -13,18 +13,6 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
-name = "carrier.canpar"
-version = "2021.2"
-description = "Canpar Web API Schemas Python Data Types library"
-category = "main"
-optional = false
-python-versions = ">=3.6,<4.0"
-
-[package.dependencies]
-lxml = ">=4.6.2,<5.0.0"
-six = ">=1.15.0,<2.0.0"
-
-[[package]]
 name = "jstruct"
 version = "2020.4.0"
 description = "Readable serializable and deserializable Python nested models"
@@ -77,23 +65,6 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
-name = "purplship"
-version = "2021.2.2"
-description = "Multi-carrier shipping API integration with python"
-category = "main"
-optional = false
-python-versions = ">=3.6,<4.0"
-
-[package.dependencies]
-jstruct = ">=2020.4.0,<2021.0.0"
-lxml = ">=4.6.2,<5.0.0"
-lxml-stubs = ">=0.1.1,<0.2.0"
-phonenumbers = ">=8.12.17,<9.0.0"
-Pillow = ">=8.1.0,<9.0.0"
-py-soap = ">=2020.3.2,<2021.0.0"
-xmltodict = ">=0.12.0,<0.13.0"
-
-[[package]]
 name = "py-soap"
 version = "2020.3.2"
 description = "SOAP Schemas Python Data Types library"
@@ -124,15 +95,12 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "5b4f42ce3bcc1c42957f6af2bb3f92ca46515ad0360667085a7c6276d343da78"
+content-hash = "8e86b7c82e9fc4ae7e98444ae9a72333bf71c01ac2f40dcd688dc174578d5f79"
 
 [metadata.files]
 attrs = [
     {file = "attrs-20.3.0-py2.py3-none-any.whl", hash = "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6"},
     {file = "attrs-20.3.0.tar.gz", hash = "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"},
-]
-"carrier.canpar" = [
-    {file = "carrier.canpar-2021.2-py3-none-any.whl", hash = "sha256:51b366a8abf7f02e45b95ee01f4bfc8296a46545c45480c9696819816d5c5927"},
 ]
 jstruct = [
     {file = "jstruct-2020.4.0-py3-none-any.whl", hash = "sha256:86257c1332e1ba6983d78e3199fb3dcadaf742e96c3c1a97f3ba322fa241f89c"},
@@ -217,9 +185,6 @@ pillow = [
     {file = "Pillow-8.1.0-pp37-pypy37_pp73-manylinux2010_x86_64.whl", hash = "sha256:81c3fa9a75d9f1afafdb916d5995633f319db09bd773cb56b8e39f1e98d90820"},
     {file = "Pillow-8.1.0-pp37-pypy37_pp73-win32.whl", hash = "sha256:b6f00ad5ebe846cc91763b1d0c6d30a8042e02b2316e27b05de04fa6ec831ec5"},
     {file = "Pillow-8.1.0.tar.gz", hash = "sha256:887668e792b7edbfb1d3c9d8b5d8c859269a0f0eba4dda562adb95500f60dbba"},
-]
-purplship = [
-    {file = "purplship-2021.2.2-py3-none-any.whl", hash = "sha256:7c04326f69376811d1440553afa9d5d2f3bab0ee250e156f7c45feaa69a96e80"},
 ]
 py-soap = [
     {file = "py_soap-2020.3.2-py3-none-any.whl", hash = "sha256:61e2ec956d349bdd9d4c6248a2ae3c4cc4b0a2a5cf6b439b6de480a3bc2766a1"},

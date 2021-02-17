@@ -13,16 +13,15 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
-name = "carrier.canpar"
+name = "carrier.yunexpress"
 version = "2021.2"
-description = "Canpar Web API Schemas Python Data Types library"
+description = "Purolator Web API Schemas Python Data Types library"
 category = "main"
 optional = false
 python-versions = ">=3.6,<4.0"
 
 [package.dependencies]
-lxml = ">=4.6.2,<5.0.0"
-six = ">=1.15.0,<2.0.0"
+jstruct = ">=2020.4.0,<2021.0.0"
 
 [[package]]
 name = "jstruct"
@@ -124,15 +123,15 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "5b4f42ce3bcc1c42957f6af2bb3f92ca46515ad0360667085a7c6276d343da78"
+content-hash = "a34b1037166deb123d6ba72cc555b2716d78a1cae95c0803320a5065fa5a3aa7"
 
 [metadata.files]
 attrs = [
     {file = "attrs-20.3.0-py2.py3-none-any.whl", hash = "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6"},
     {file = "attrs-20.3.0.tar.gz", hash = "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"},
 ]
-"carrier.canpar" = [
-    {file = "carrier.canpar-2021.2-py3-none-any.whl", hash = "sha256:51b366a8abf7f02e45b95ee01f4bfc8296a46545c45480c9696819816d5c5927"},
+"carrier.yunexpress" = [
+    {file = "carrier.yunexpress-2021.2-py3-none-any.whl", hash = "sha256:8b145e32670593f635b298aacf645140ea02fc7de36df92de2ff86fe1b1724dc"},
 ]
 jstruct = [
     {file = "jstruct-2020.4.0-py3-none-any.whl", hash = "sha256:86257c1332e1ba6983d78e3199fb3dcadaf742e96c3c1a97f3ba322fa241f89c"},
