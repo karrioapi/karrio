@@ -9,7 +9,7 @@ export interface PurplshipAPI {
     pickups: API.PickupsApi;
     proxy: API.ProxyApi;
     shipments: API.ShipmentsApi;
-    tracking: API.TrackingApi;
+    trackers: API.TrackersApi;
     utils: API.UtilsApi;
 }
 
@@ -21,7 +21,7 @@ export class Purplship implements PurplshipAPI {
     pickups: API.PickupsApi;
     proxy: API.ProxyApi;
     shipments: API.ShipmentsApi;
-    tracking: API.TrackingApi;
+    trackers: API.TrackersApi;
     utils: API.UtilsApi;
     
     constructor(apiKey: string, host: string) {
@@ -36,7 +36,7 @@ export class Purplship implements PurplshipAPI {
         this.pickups = new API.PickupsApi(config);
         this.proxy = new API.ProxyApi(config);
         this.shipments = new API.ShipmentsApi(config);
-        this.tracking = new API.TrackingApi(config);
+        this.trackers = new API.TrackersApi(config);
         this.utils = new API.UtilsApi(config);
     }
 }
