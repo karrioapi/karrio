@@ -185,11 +185,11 @@ class Shipments:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
         return TrackingResponse(
-            tracking=Tracking(**{
+            tracking=(Tracking(**{
                 **DP.to_dict(results[0]),
                 'id': f'trk_{uuid.uuid4().hex}',
                 'test_mode': carrier.test,
-            }),
+            }) if any(results) else None),
             messages=messages
         )
 
