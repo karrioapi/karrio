@@ -18,5 +18,4 @@ class EShipperSettings(Carrier):
         return self.CARRIER_NAME
 
 
-def settings():
-    return EShipperSettings
+SETTINGS = EShipperSettings

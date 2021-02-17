@@ -10,7 +10,7 @@ from pyeshipper.quote_request import (
 from pyeshipper.quote_reply import QuoteType, SurchargeType
 from purplship.core.utils import Element, Serializable, SF, NF, XP
 from purplship.core.models import RateRequest, RateDetails, Message, ChargeDetails
-from purplship.core.units import Packages, Options
+from purplship.core.units import Packages, Options, Services
 from purplship.providers.eshipper.utils import (
     Settings,
     standard_request_serializer,
@@ -80,10 +80,8 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
     packaging = (
         "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
     )
-    options = Options(payload.options)
-    service = next(
-        (Service[s].value for s in payload.services if s in Service.__members__), "0"
-    )
+    options = Options(payload.options, Option)
+    service = Services(payload.services, Service).first or Service.eshipper_all
     freight_class = next(
         (
             FreightClass[c].value
@@ -92,49 +90,34 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[EShi
         ),
         None,
     )
-    special_services = {
-        Option[s]: "true" for s in payload.options.keys() if s in Option.__members__
-    }
 
     request = EShipper(
         username=settings.username,
         password=settings.password,
         version="3.0.0",
         QuoteRequest=QuoteRequestType(
-            saturdayPickupRequired=special_services.get(
-                Option.eshipper_saturday_pickup_required
-            ),
-            homelandSecurity=special_services.get(Option.eshipper_homeland_security),
+            saturdayPickupRequired=options['eshipper_saturday_pickup_required'],
+            homelandSecurity=options['eshipper_homeland_security'],
             pierCharge=None,
-            exhibitionConventionSite=special_services.get(
-                Option.eshipper_exhibition_convention_site
-            ),
-            militaryBaseDelivery=special_services.get(
-                Option.eshipper_military_base_delivery
-            ),
-            customsIn_bondFreight=special_services.get(
-                Option.eshipper_customs_in_bond_freight
-            ),
-            limitedAccess=special_services.get(Option.eshipper_limited_access),
-            excessLength=special_services.get(Option.eshipper_excess_length),
-            tailgatePickup=special_services.get(Option.eshipper_tailgate_pickup),
-            residentialPickup=special_services.get(Option.eshipper_residential_pickup),
+            exhibitionConventionSite=options['eshipper_exhibition_convention_site'],
+            militaryBaseDelivery=options['eshipper_military_base_delivery'],
+            customsIn_bondFreight=options['eshipper_customs_in_bond_freight'],
+            limitedAccess=options['eshipper_limited_access'],
+            excessLength=options['eshipper_excess_length'],
+            tailgatePickup=options['eshipper_tailgate_pickup'],
+            residentialPickup=options['eshipper_residential_pickup'],
             crossBorderFee=None,
-            notifyRecipient=special_services.get(Option.eshipper_notify_recipient),
-            singleShipment=special_services.get(Option.eshipper_single_shipment),
-            tailgateDelivery=special_services.get(Option.eshipper_tailgate_delivery),
-            residentialDelivery=special_services.get(
-                Option.eshipper_residential_delivery
-            ),
+            notifyRecipient=options['eshipper_notify_recipient'],
+            singleShipment=options['eshipper_single_shipment'],
+            tailgateDelivery=options['eshipper_tailgate_delivery'],
+            residentialDelivery=options['eshipper_residential_delivery'],
             insuranceType=options.insurance is not None,
             scheduledShipDate=None,
-            insideDelivery=special_services.get(Option.eshipper_inside_delivery),
-            isSaturdayService=special_services.get(Option.eshipper_is_saturday_service),
-            dangerousGoodsType=special_services.get(
-                Option.eshipper_dangerous_goods_type
-            ),
-            serviceId=service,
-            stackable=special_services.get(Option.eshipper_stackable),
+            insideDelivery=options['eshipper_inside_delivery'],
+            isSaturdayService=options['eshipper_is_saturday_service'],
+            dangerousGoodsType=options['eshipper_dangerous_goods_type'],
+            serviceId=service.value,
+            stackable=options['eshipper_stackable'],
             From=FromType(
                 id=payload.shipper.id,
                 company=payload.shipper.company_name or " ",

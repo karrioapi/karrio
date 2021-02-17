@@ -1,4 +1,4 @@
-from enum import Enum, Flag
+from purplship.core.utils import Enum, Flag, Spec
 
 
 class FreightPackagingType(Flag):
@@ -39,6 +39,7 @@ class PaymentType(Flag):  # TODO:: retrieve the complete list of payment types
 
 
 class Service(Enum):
+    freightcom_all = "0"
     freightcom_central_transport = "2029"
     freigthcom_estes = "2107"
     freigthcom_usf_holland = "1911"
@@ -85,27 +86,26 @@ class Service(Enum):
     freightcom_priority = "6302"
 
 
-
 class Option(Flag):
-    freightcom_saturday_pickup_required = "saturdayPickupRequired"
-    freightcom_homeland_security = "homelandSecurity"
-    freightcom_exhibition_convention_site = "exhibitionConventionSite"
-    freightcom_military_base_delivery = "militaryBaseDelivery"
-    freightcom_customs_in_bond_freight = "customsIn_bondFreight"
-    freightcom_limited_access = "limitedAccess"
-    freightcom_excess_length = "excessLength"
-    freightcom_tailgate_pickup = "tailgatePickup"
-    freightcom_residential_pickup = "residentialPickup"
-    freightcom_cross_border_fee = "crossBorderFee"
-    freightcom_notify_recipient = "notifyRecipient"
-    freightcom_single_shipment = "singleShipment"
-    freightcom_tailgate_delivery = "tailgateDelivery"
-    freightcom_residential_delivery = "residentialDelivery"
-    freightcom_insurance_type = "insuranceType"
-    freightcom_inside_delivery = "insideDelivery"
-    freightcom_is_saturday_service = "isSaturdayService"
-    freightcom_dangerous_goods_type = "dangerousGoodsType"
-    freightcom_stackable = "stackable"
+    freightcom_saturday_pickup_required = Spec.asFlag("saturdayPickupRequired")
+    freightcom_homeland_security = Spec.asFlag("homelandSecurity")
+    freightcom_exhibition_convention_site = Spec.asFlag("exhibitionConventionSite")
+    freightcom_military_base_delivery = Spec.asFlag("militaryBaseDelivery")
+    freightcom_customs_in_bond_freight = Spec.asFlag("customsIn_bondFreight")
+    freightcom_limited_access = Spec.asFlag("limitedAccess")
+    freightcom_excess_length = Spec.asFlag("excessLength")
+    freightcom_tailgate_pickup = Spec.asFlag("tailgatePickup")
+    freightcom_residential_pickup = Spec.asFlag("residentialPickup")
+    freightcom_cross_border_fee = Spec.asFlag("crossBorderFee")
+    freightcom_notify_recipient = Spec.asFlag("notifyRecipient")
+    freightcom_single_shipment = Spec.asFlag("singleShipment")
+    freightcom_tailgate_delivery = Spec.asFlag("tailgateDelivery")
+    freightcom_residential_delivery = Spec.asFlag("residentialDelivery")
+    freightcom_insurance_type = Spec.asValue("insuranceType", float)
+    freightcom_inside_delivery = Spec.asFlag("insideDelivery")
+    freightcom_is_saturday_service = Spec.asFlag("isSaturdayService")
+    freightcom_dangerous_goods_type = Spec.asFlag("dangerousGoodsType")
+    freightcom_stackable = Spec.asFlag("stackable")
 
 
 class FreightClass(Enum):

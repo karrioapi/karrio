@@ -18,5 +18,4 @@ class FreightcomSettings(Carrier):
         return self.CARRIER_NAME
 
 
-def settings():
-    return FreightcomSettings
+SETTINGS = FreightcomSettings

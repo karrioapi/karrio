@@ -118,16 +118,16 @@ def shipping_request(
     packaging = (
         "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
     )
-    options = Options(payload.options)
-    service = Service[payload.service].value
+    options = Options(payload.options, Option)
+    service = next(
+        (Service[payload.service].value for s in Service if s.name == payload.service),
+        payload.service,
+    )
     freight_class = (
         FreightClass[payload.options["freight_class"]].value
         if payload.options.get("freight_class") in FreightClass.__members__
         else None
     )
-    special_services = {
-        Option[s]: "true" for s in payload.options.keys() if s in Option.__members__
-    }
     payment_type = (
         PaymentType[payload.payment.paid_by].value if payload.payment else None
     )
@@ -147,40 +147,28 @@ def shipping_request(
         password=settings.password,
         version="3.0.0",
         ShippingRequest=ShippingRequestType(
-            saturdayPickupRequired=special_services.get(
-                Option.eshipper_saturday_pickup_required
-            ),
-            homelandSecurity=special_services.get(Option.eshipper_homeland_security),
+            saturdayPickupRequired=options['eshipper_saturday_pickup_required'],
+            homelandSecurity=options['eshipper_homeland_security'],
             pierCharge=None,
-            exhibitionConventionSite=special_services.get(
-                Option.eshipper_exhibition_convention_site
-            ),
-            militaryBaseDelivery=special_services.get(
-                Option.eshipper_military_base_delivery
-            ),
-            customsIn_bondFreight=special_services.get(
-                Option.eshipper_customs_in_bond_freight
-            ),
-            limitedAccess=special_services.get(Option.eshipper_limited_access),
-            excessLength=special_services.get(Option.eshipper_excess_length),
-            tailgatePickup=special_services.get(Option.eshipper_tailgate_pickup),
-            residentialPickup=special_services.get(Option.eshipper_residential_pickup),
+            exhibitionConventionSite=options['eshipper_exhibition_convention_site'],
+            militaryBaseDelivery=options['eshipper_military_base_delivery'],
+            customsIn_bondFreight=options['eshipper_customs_in_bond_freight'],
+            limitedAccess=options['eshipper_limited_access'],
+            excessLength=options['eshipper_excess_length'],
+            tailgatePickup=options['eshipper_tailgate_pickup'],
+            residentialPickup=options['eshipper_residential_pickup'],
             crossBorderFee=None,
-            notifyRecipient=special_services.get(Option.eshipper_notify_recipient),
-            singleShipment=special_services.get(Option.eshipper_single_shipment),
-            tailgateDelivery=special_services.get(Option.eshipper_tailgate_delivery),
-            residentialDelivery=special_services.get(
-                Option.eshipper_residential_delivery
-            ),
+            notifyRecipient=options['eshipper_notify_recipient'],
+            singleShipment=options['eshipper_single_shipment'],
+            tailgateDelivery=options['eshipper_tailgate_delivery'],
+            residentialDelivery=options['eshipper_residential_delivery'],
             insuranceType=options.insurance is not None,
             scheduledShipDate=None,
-            insideDelivery=special_services.get(Option.eshipper_inside_delivery),
-            isSaturdayService=special_services.get(Option.eshipper_is_saturday_service),
-            dangerousGoodsType=special_services.get(
-                Option.eshipper_dangerous_goods_type
-            ),
+            insideDelivery=options['eshipper_inside_delivery'],
+            isSaturdayService=options['eshipper_is_saturday_service'],
+            dangerousGoodsType=options['eshipper_dangerous_goods_type'],
             serviceId=service,
-            stackable=special_services.get(Option.eshipper_stackable),
+            stackable=options['eshipper_stackable'],
             From=FromType(
                 id=payload.shipper.id,
                 company=payload.shipper.company_name,

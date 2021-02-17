@@ -17,7 +17,7 @@ class TestFreightcomRating(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RateRequestXML)
 
-    def test_create_rate_request_with_package_preset_missing_weight(self):
+    def test_create_rate_request_from_package_preset_missing_weight(self):
         with self.assertRaises(FieldError):
             gateway.mapper.create_rate_request(
                 RateRequest(**RateWithPresetMissingDimensionPayload)
