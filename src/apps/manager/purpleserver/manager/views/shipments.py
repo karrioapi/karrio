@@ -1,4 +1,6 @@
 import logging
+
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -10,7 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from purplship.core.utils import DP
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.exceptions import PurplShipApiException
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.core.serializers import (
     ShipmentStatus,
     ErrorResponse,
@@ -36,16 +38,19 @@ from purpleserver.manager.serializers import (
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+Shipments = PaginatedResult('ShipmentList', Shipment)
 
 
 class ShipmentList(GenericAPIView):
+    pagination_class = LimitOffsetPagination
+    default_limit = 20
     logging_methods = ['POST']
 
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipments",
-        responses={200: Shipment(many=True), 400: ErrorResponse()}
+        responses={200: Shipments(), 400: ErrorResponse()}
     )
     def get(self, request: Request):
         """
@@ -54,7 +59,7 @@ class ShipmentList(GenericAPIView):
         shipments = request.user.shipment_set.all()
 
         response = self.paginate_queryset(Shipment(shipments, many=True).data)
-        return Response(response)
+        return self.get_paginated_response(response)
 
     @swagger_auto_schema(
         tags=['Shipments'],

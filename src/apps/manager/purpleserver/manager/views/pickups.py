@@ -1,6 +1,7 @@
 import logging
 
 from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
@@ -13,21 +14,24 @@ from purpleserver.core.serializers import (
     OperationConfirmation,
     TestFilters,
 )
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import PickupData, PickupUpdateData, PickupCancelData
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+Pickups = PaginatedResult('PickupList', Pickup)
 
 
 class PickupList(GenericAPIView):
+    pagination_class = LimitOffsetPagination
+    default_limit = 20
 
     @swagger_auto_schema(
         tags=['Pickups'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
-        responses={200: Pickup(many=True), 400: ErrorResponse()}
+        responses={200: Pickups(), 400: ErrorResponse()}
     )
     def get(self, request: Request):
         """
@@ -36,7 +40,7 @@ class PickupList(GenericAPIView):
         pickups = request.user.pickup_set.all()
 
         response = self.paginate_queryset(Pickup(pickups, many=True).data)
-        return Response(response)
+        return self.get_paginated_response(response)
 
 
 class PickupRequest(APIView):
