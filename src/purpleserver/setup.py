@@ -6,22 +6,6 @@ with open("README.md", "r") as fh:
 with open("purpleserver/VERSION", "r") as v:
     version = v.read()
 
-dev_requirements = [
-      'wheel',
-
-      'purplship.canadapost',
-      'purplship.dhl-express',
-      'purplship.fedex',
-      'purplship.fedex-express',
-      'purplship.purolator',
-      'purplship.purolator-courier',
-      'purplship.ups',
-      'purplship.ups-package',
-
-      'eshipper.extension',
-      'freightcom.extension',
-]
-
 setup(
       name='purplship-server',
       version=version,
@@ -49,9 +33,6 @@ setup(
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]
-      },
-      extras_require={
-            'dev': dev_requirements,
       },
       dependency_links=[
             'https://git.io/purplship',
