@@ -25,7 +25,7 @@ dev_requirements = [
 
 setup(
     name="freightcom.extension",
-    version="2021.0",
+    version="2021.2",
     description="Freightcom purplship extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -33,9 +33,8 @@ setup(
     license="LGPLv3",
     packages=find_namespace_packages(exclude=["tests*"]),
     install_requires=[
-        "six",
         "purplship>=2021.2",
-        "purplship-server.core>=2020.12",
+        "purplship-server.core",
     ],
     extras_require={"dev": dev_requirements},
     dependency_links=[],
