@@ -29,6 +29,7 @@ class LabelPrintingRequest(Serializer):
 
 
 class Utils(APIView):
+    logging_methods = []
     renderer_classes = [BinaryFileRenderer, JSONOpenAPIRenderer]
 
     @swagger_auto_schema(

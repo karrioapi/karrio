@@ -44,7 +44,6 @@ Shipments = PaginatedResult('ShipmentList', Shipment)
 class ShipmentList(GenericAPIView):
     pagination_class = LimitOffsetPagination
     default_limit = 20
-    logging_methods = ['POST']
 
     @swagger_auto_schema(
         tags=['Shipments'],
@@ -126,6 +125,7 @@ class ShipmentDetail(APIView):
 
 
 class ShipmentRates(APIView):
+    logging_methods = ['GET']
 
     @swagger_auto_schema(
         tags=['Shipments'],

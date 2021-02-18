@@ -39,6 +39,7 @@ class TrackerList(GenericAPIView):
 
 
 class TrackingDetails(APIView):
+    logging_methods = ['GET']
 
     @swagger_auto_schema(
         tags=['Trackers'],
