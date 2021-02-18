@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { References } from '@purplship/purplship';
 import { Router } from "@reach/router";
 import Shipments from '@/views/shipments';
+import Trackers from '@/views/trackers';
 import Connections from '@/views/connections';
 import Addresses from '@/views/addresses';
 import Parcels from '@/views/parcels';
@@ -17,7 +18,7 @@ import Notifier from '@/components/notifier';
 import LocationTitle from '@/components/location-title';
 import { state} from '@/library/api';
 import { DefaultTemplates, PaginatedLogs, PaginatedTemplates, UserInfo } from '@/library/types';
-import { Templates, Logs, Reference, User, ParcelTemplates, AddressTemplates } from '@/library/context';
+import { Templates, Logs, Reference, User, ParcelTemplates, AddressTemplates, UserConnections, SystemConnections } from '@/library/context';
 import 'prismjs';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism.css';
@@ -35,7 +36,9 @@ const App: React.FC = () => {
     const logs = state.logs;
     const labelData = state.labelData;
     const shipments = state.shipments;
-    const connections = state.connections;
+    const trackers = state.trackers;
+    const systemConnections = state.systemConnections;
+    const userConnections = state.userConnections;
     const customsInfos = state.customsInfos;
 
     return (
@@ -46,6 +49,8 @@ const App: React.FC = () => {
             <ParcelTemplates.Provider value={parcelTemplates as PaginatedTemplates}>
             <AddressTemplates.Provider value={addressTemplates as PaginatedTemplates}>
             <Templates.Provider value={defatultTemplates as DefaultTemplates}>
+            <UserConnections.Provider value={userConnections}>
+            <SystemConnections.Provider value={systemConnections}>
 
                 <ExpandedSidebar />
 
@@ -57,9 +62,10 @@ const App: React.FC = () => {
                         <div className="dashboard-content">
                             <Router>
                                 <Shipments path="/" shipments={shipments} />
+                                <Trackers path="/trackers" trackers={trackers} />
                                 <LabelCreator path="buy_label/:id" data={labelData} />
 
-                                <Connections path="configurations/carriers" connections={connections} />
+                                <Connections path="configurations/carriers" />
                                 <Parcels path="configurations/parcels" templates={parcelTemplates} />
                                 <Addresses path="configurations/addresses" templates={addressTemplates} />
                                 <CustomsInfos path="configurations/customs_infos" templates={customsInfos} />
@@ -75,6 +81,8 @@ const App: React.FC = () => {
 
                 <BoardFooter />
 
+            </SystemConnections.Provider>
+            </UserConnections.Provider>
             </Templates.Provider>
             </AddressTemplates.Provider>
             </ParcelTemplates.Provider>

@@ -3,7 +3,7 @@ from drf_yasg import openapi
 from rest_framework.serializers import (
     Serializer, CharField, FloatField,
     BooleanField, IntegerField, ListField,
-    ChoiceField, DictField, URLField, NullBooleanField
+    ChoiceField, DictField, URLField
 )
 from purplship.core.units import (
     Country, WeightUnit, DimensionUnit,
@@ -33,6 +33,7 @@ LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 class ShipmentStatus(Enum):
     created = 'created'
     purchased = 'purchased'
+    shipped = 'shipped'
     transit = 'in-transit'
     delivered = 'delivered'
 
@@ -54,6 +55,30 @@ class PlainDictField(DictField):
         }
 
 
+class FlagField(BooleanField):
+    pass
+
+
+class FlagsSerializer(Serializer):
+    def __init__(self, *args, **kwargs):
+        data = kwargs.get('data', {})
+        self.flags = [
+            (label, label in data)
+            for label, field in self.fields.items()
+            if isinstance(field, FlagField)
+        ]
+
+        super().__init__(*args, **kwargs)
+
+    def validate(self, data):
+        validated = super().validate(data)
+        for flag, specified in self.flags:
+            if specified and validated[flag] is None:
+                validated.update({flag: True})
+
+        return validated
+
+
 class EntitySerializer(Serializer):
     id = CharField(required=False, help_text="A unique identifier")
 
@@ -70,10 +95,10 @@ class CarrierSettings(Serializer):
     """)
 
 
-class TestFilters(Serializer):
-    test = NullBooleanField(required=False, default=False, help_text="""
-    The test flag indicates whether to use a carrier configured for test. 
-    """)
+class TestFilters(FlagsSerializer):
+    test = FlagField(
+        required=False, allow_null=True, default=False,
+        help_text="The test flag indicates whether to use a carrier configured for test.")
 
 
 class Message(Serializer):
@@ -178,7 +203,7 @@ class Parcel(EntitySerializer, ParcelData):
 
 class PaymentData(Serializer):
 
-    paid_by = ChoiceField(required=True, choices=PAYMENT_TYPES, help_text="The payment payer")
+    paid_by = ChoiceField(required=False, choices=PAYMENT_TYPES, default=PAYMENT_TYPES[0][0], help_text="The payment payer")
     amount = FloatField(required=False, allow_null=True, help_text="The payment amount if known")
     currency = ChoiceField(required=True, choices=CURRENCIES, help_text="The payment amount currency")
     account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected rate carrier payer account number")
@@ -375,12 +400,11 @@ class PickupCancelRequest(Serializer):
 
 class TrackingEvent(Serializer):
 
-    date = CharField(required=True, help_text="The tracking event's date")
-    description = CharField(required=True, help_text="The tracking event's description")
-    location = CharField(required=True, help_text="The tracking event's location")
+    date = CharField(required=False, help_text="The tracking event's date")
+    description = CharField(required=False, help_text="The tracking event's description")
+    location = CharField(required=False, help_text="The tracking event's location")
     code = CharField(required=False, allow_blank=True, allow_null=True, help_text="The tracking event's code")
     time = CharField(required=False, allow_blank=True, allow_null=True, help_text="The tracking event's time")
-    signatory = CharField(required=False, allow_blank=True, allow_null=True, help_text="The tracking signature on delivery")
 
 
 class Rate(EntitySerializer):
@@ -413,7 +437,8 @@ class TrackingDetails(Serializer):
     carrier_id = CharField(required=True, help_text="The tracking carrier configured identifier")
     tracking_number = CharField(required=True, help_text="The shipment tracking number")
     events = TrackingEvent(many=True, required=False, allow_null=True, help_text="The tracking details events")
-    test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
+    delivered = BooleanField(required=False, help_text="Specified whether the related shipment was delivered")
+    test_mode = BooleanField(required=True, help_text="Specified whether the object was created with a carrier in test mode")
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):

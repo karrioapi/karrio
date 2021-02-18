@@ -1,4 +1,6 @@
 import logging
+
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -6,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, ParcelData, Parcel, Operation
 from purpleserver.manager.serializers import ParcelSerializer, reset_related_shipment_rates
@@ -14,15 +16,18 @@ from purpleserver.manager.router import router
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+Parcels = PaginatedResult('ParcelList', Parcel)
 
 
 class ParcelList(GenericAPIView):
+    pagination_class = LimitOffsetPagination
+    default_limit = 20
 
     @swagger_auto_schema(
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all parcels",
-        responses={200: Parcel(many=True), 400: ErrorResponse()}
+        responses={200: Parcels(), 400: ErrorResponse()}
     )
     def get(self, request: Request):
         """
@@ -31,7 +36,7 @@ class ParcelList(GenericAPIView):
         parcels = request.user.parcel_set.all()
         serializer = Parcel(parcels, many=True)
         response = self.paginate_queryset(serializer.data)
-        return Response(response)
+        return self.get_paginated_response(response)
 
     @swagger_auto_schema(
         tags=['Parcels'],

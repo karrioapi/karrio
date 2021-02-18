@@ -6,145 +6,11 @@ from rest_framework.serializers import Serializer
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
-from purplship.core.units import Country
 from purpleserver.core.router import router
 from purpleserver.core.serializers import PlainDictField
-from purpleserver.core.dataunits import REFERENCE_MODELS, PACKAGE_MAPPERS
+from purpleserver.core.dataunits import REFERENCE_MODELS
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-
-line = "\n"
-
-MODELS_DOCUMENTATION = f"""
-## Countries
-
-<details>
-
-Code | Name 
---- | --- 
-{f"{line}".join([f"{code} | {name}" for code, name in REFERENCE_MODELS["countries"].items()])}
-
-</details><br/>
-
-
-## States and Provinces
-
-<details>
-
-{f"{line}".join([f'''
-### {Country[key].value}
-
-<details>
-
-Code | Name 
---- | --- 
-{f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
-
-</details><br/>
-'''
-for key, value in REFERENCE_MODELS["states"].items() 
-])}
-
-</details><br/>
-
-## Currencies
-
-<details>
-
-Code | Name 
---- | --- 
-{f"{line}".join([f"{code} | {name}" for code, name in REFERENCE_MODELS["currencies"].items()])}
-
-</details><br/>
-
-
-## Packaging Types
-
-<details>
-
-{f"{line}".join([f'''
-### {PACKAGE_MAPPERS[key]["label"]}
-
-<details>
-
-Code | Identifier
---- | ---
-{f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
-
-</details><br/>
-'''
-for key, value in REFERENCE_MODELS["packaging_types"].items() 
-])}
-
-</details><br/>
-
-
-## Package Preset
-
-<details>
-
-{f"{line}".join([f'''
-### {PACKAGE_MAPPERS[key]["label"]}
-
-<details>
-
-Code | Dimensions | Note
---- | --- | ---
-{f"{line}".join([
-    f"{code} | {f' x '.join([str(d) for d in dim.values() if isinstance(d, float)])} | {f' x '.join([k for k in dim.keys() if isinstance(dim[k], float)])}"
-    for code, dim in value.items()
-])}
-
-</details><br/>
-'''
-for key, value in REFERENCE_MODELS["package_presets"].items() 
-])}
-
-</details><br/>
-
-
-## Shipment Options
-
-<details>
-
-{f"{line}".join([f'''
-### {PACKAGE_MAPPERS[key]["label"]}
-
-<details>
-
-Code | Identifier
---- | ---
-{f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
-
-</details><br/>
-'''
-for key, value in REFERENCE_MODELS["options"].items() 
-])}
-
-</details><br/>
-
-
-## Shipment Services
-
-<details>
-
-{f"{line}".join([f'''
-### {PACKAGE_MAPPERS[key]["label"]}
-
-<details>
-
-Code | Identifier
---- | ---
-{f"{line}".join([f"{code} | {name}" for code, name in value.items()])}
-
-</details><br/>
-'''
-for key, value in REFERENCE_MODELS["services"].items() 
-])}
-
-</details><br/>
-
-"""
 
 
 class References(Serializer):
@@ -166,7 +32,6 @@ class References(Serializer):
     tags=['Utils'],
     operation_id=f"{ENDPOINT_ID}references",
     operation_summary="Data References",
-    operation_description=MODELS_DOCUMENTATION,
     responses={200: References()}
 )
 @api_view(['GET'])

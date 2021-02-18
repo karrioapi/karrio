@@ -1,6 +1,6 @@
 import functools
-from typing import Type, TypeVar, Generic, Optional, Union, Callable, Any, List
-from rest_framework.serializers import Serializer
+from typing import Type, TypeVar, Generic, Optional, Union, Callable, Any, List, cast
+from rest_framework import serializers
 
 T = TypeVar('T')
 
@@ -35,9 +35,17 @@ def post_processing(methods: List[str] = None):
     return class_wrapper
 
 
+def PaginatedResult(serializer_name: str, content_serializer: Type[serializers.Serializer]):
+    return type(serializer_name, (serializers.Serializer,), dict(
+        next=serializers.URLField(required=False),
+        previous=serializers.URLField(required=False),
+        results=content_serializer(many=True)
+    ))
+
+
 class _SerializerDecoratorInitializer(Generic[T]):
 
-    def __getitem__(self, serializer_type: Type[Serializer]):
+    def __getitem__(self, serializer_type: Type[serializers.Serializer]):
         class Decorator:
             def __init__(self, instance=None, data: Union[str, dict] = None):
                 self._instance = instance

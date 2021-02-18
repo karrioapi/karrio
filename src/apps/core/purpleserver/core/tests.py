@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 from rest_framework.authtoken.models import Token
-from purpleserver.providers.models import CanadaPostSettings, UPSSettings
+from purpleserver.providers.extension.models.canadapost import CanadaPostSettings
+from purpleserver.providers.extension.models.ups_package import UPSPackageSettings
 
 
 class APITestCase(BaseAPITestCase):
@@ -18,7 +19,7 @@ class APITestCase(BaseAPITestCase):
             contract_id='42708517',
             password='0bfa9fcb9853d1f51ee57a',
             user=self.user)
-        UPSSettings.objects.create(
+        UPSPackageSettings.objects.create(
             carrier_id='ups_package',
             test=True,
             username='test',

@@ -37,8 +37,8 @@ class BaseGenericAPIView(generics.GenericAPIView, BaseView):
 
 
 class GenericAPIView(PurplshipLoggingMixin, BaseGenericAPIView):
-    pass
+    logging_methods = ['POST', 'PUT', 'PATCH', 'DELETE']
 
 
-class APIView(views.APIView, PurplshipLoggingMixin, BaseView):
-    pass
+class APIView(PurplshipLoggingMixin, views.APIView, BaseView):
+    logging_methods = ['POST', 'PUT', 'PATCH', 'DELETE']

@@ -1,4 +1,6 @@
 import logging
+
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -6,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, CustomsData, Customs, Operation
 from purpleserver.manager.serializers import CustomsSerializer, reset_related_shipment_rates
@@ -14,15 +16,18 @@ from purpleserver.manager.router import router
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+CustomsInfoList = PaginatedResult('CustomsList', Customs)
 
 
 class CustomsList(GenericAPIView):
+    pagination_class = LimitOffsetPagination
+    default_limit = 20
 
     @swagger_auto_schema(
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all customs info",
-        responses={200: Customs(many=True), 400: ErrorResponse()}
+        responses={200: CustomsInfoList(), 400: ErrorResponse()}
     )
     def get(self, request: Request):
         """
@@ -31,7 +36,7 @@ class CustomsList(GenericAPIView):
         customs_info = request.user.customs_set.all()
         serializer = Customs(customs_info, many=True)
         response = self.paginate_queryset(serializer.data)
-        return Response(response)
+        return self.get_paginated_response(response)
 
     @swagger_auto_schema(
         tags=['Customs'],

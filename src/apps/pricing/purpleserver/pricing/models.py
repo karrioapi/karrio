@@ -9,7 +9,7 @@ from django.contrib.postgres.fields import DecimalRangeField
 from purplship.core.models import ChargeDetails
 from purplship.core.utils import DP, NF
 from purpleserver.core.fields import MultiChoiceField
-from purpleserver.core.models import OwnedEntity, uuid
+from purpleserver.core.models import Entity, uuid
 from purpleserver.core.views.references import REFERENCE_MODELS
 from purpleserver.core.datatypes import RateResponse, Rate
 from purpleserver.core.serializers import CARRIERS
@@ -18,20 +18,46 @@ logger = logging.getLogger(__name__)
 SERVICES = [(code, code) for services in REFERENCE_MODELS["services"].values() for code in services]
 
 
-class PricingCharge(OwnedEntity):
+class Surcharge(Entity):
     class Meta:
-        db_table = "pricing-charge"
-        verbose_name = 'Pricing Charge'
-        verbose_name_plural = 'Pricing Charges'
+        db_table = "surcharge"
+        verbose_name = 'Broker Surcharge'
+        verbose_name_plural = 'Broker Surcharges'
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='chrg_'), editable=False)
 
-    amount = models.FloatField()
+    name = models.CharField(max_length=100, unique=True,
+                            help_text="The surcharge name (label) that will appear in the rate (quote)")
 
-    carriers = MultiChoiceField(models.CharField(max_length=50, choices=CARRIERS), null=True, blank=True)
-    services = MultiChoiceField(models.CharField(max_length=75, choices=SERVICES), null=True, blank=True)
-    discount_range = DecimalRangeField(blank=True, null=True)
-    freight_range = DecimalRangeField(blank=True, null=True)
+    amount = models.FloatField(help_text="The surcharge amount to add to the quote")
+
+    carriers = MultiChoiceField(
+        models.CharField(max_length=50, choices=CARRIERS), null=True, blank=True,  help_text="""
+        The list of carriers you want to apply the surcharge to.
+        
+        Note that by default, the surcharge is applied to all carriers
+        """
+    )
+    services = MultiChoiceField(
+        models.CharField(max_length=100, choices=SERVICES), null=True, blank=True, help_text="""
+        The list of services you want to apply the surcharge to.
+        Note that by default, the surcharge is applied to all services
+        """
+    )
+    discount_range = DecimalRangeField(
+        blank=True, null=True, help_text="""
+        Add the surcharge, if the rate discount is within this discount rate range. 
+        
+        By default, the surcharge is applied to all quotes no matter the discount amount.
+        """
+    )
+    freight_range = DecimalRangeField(
+        blank=True, null=True, help_text="""
+        Add the surcharge, if the rate charge is within this freight (quote) price range. 
+        
+        By default, the surcharge is applied to all quotes no matter the amount.
+        """
+    )
 
     def apply_charge(self, response: RateResponse) -> RateResponse:
         def apply(rate: Rate) -> Rate:
@@ -50,12 +76,16 @@ class PricingCharge(OwnedEntity):
                 applicable.append(rate.total_charge in cast(NumericRange, self.freight_range))
 
             if any(applicable) and all(applicable):
-                logger.debug('applying custom charge to returned rate')
+                logger.debug('applying broker surcharge to rates')
                 return Rate(**{
                     **DP.to_dict(rate),
                     'total_charge': NF.decimal(rate.total_charge + cast(float, self.amount)),
                     'extra_charges': (rate.extra_charges + [
-                        ChargeDetails(name="Service charge", amount=cast(float, self.amount), currency=rate.currency)
+                        ChargeDetails(
+                            name=cast(str, self.name),
+                            amount=cast(float, self.amount),
+                            currency=rate.currency
+                        )
                     ])
                 })
 

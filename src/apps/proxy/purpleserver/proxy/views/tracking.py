@@ -17,6 +17,7 @@ ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique ma
 
 
 class TrackingAPIView(APIView):
+    logging_methods = ['GET']
 
     @swagger_auto_schema(
         tags=['Proxy'],

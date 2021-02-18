@@ -11,7 +11,7 @@ class TestShipmentTracking(APITestCase):
 
     def test_shipment_tracking(self):
         url = reverse(
-            'purpleserver.manager:shipment-tracking',
+            'purpleserver.manager:shipment-tracker',
             kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups_package")
         )
 
@@ -25,7 +25,7 @@ class TestShipmentTracking(APITestCase):
 
     def test_shipment_tracking_retry(self):
         url = reverse(
-            'purpleserver.manager:shipment-tracking',
+            'purpleserver.manager:shipment-tracker',
             kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups_package")
         )
 
@@ -48,6 +48,7 @@ RETURNED_VALUE = (
             carrier_id="ups_package",
             carrier_name="ups_package",
             tracking_number="1Z12345E6205277936",
+            delivered=False,
             events=[
                 TrackingEvent(
                     code="KB",
@@ -68,13 +69,13 @@ TRACKING_RESPONSE = {
     "carrier_name": "ups_package",
     "tracking_number": "1Z12345E6205277936",
     "test_mode": True,
+    'delivered': False,
     "events": [
         {
             "code": "KB",
             "date": "2010-08-30",
             "description": "UPS INTERNAL ACTIVITY CODE",
             "location": "BONN",
-            "signatory": None,
             "time": "10:39"
         }
     ]

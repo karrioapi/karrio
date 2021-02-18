@@ -3,11 +3,12 @@ import logging
 from datetime import datetime
 from typing import List, Callable, Dict, Any
 
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 
 import purplship
-from purplship.core.utils import exec_async, DP
+from purplship.core.utils import DP
 
 from purpleserver.providers import models
 from purpleserver.core.exceptions import PurplShipApiException
@@ -32,33 +33,43 @@ class Carriers:
     @staticmethod
     def list(**kwargs) -> List[models.Carrier]:
         list_filter: Dict[str: Any] = kwargs
-        query = {}
+        query = tuple()
+        users = []
 
+        # Check if the test filter is specified then set it otherwise return all carriers prod and test mode
         if list_filter.get('test') is not None:
-            query.update(dict(test=list_filter['test']))
+            query += (Q(test=list_filter['test']), )
 
-        if 'active' in list_filter:
+        # Check if the system_only flag is not specified and there is a provided user, get the users carriers
+        if not list_filter.get('system_only') and 'user' in list_filter:
+            users += [list_filter.get('user')]
+
+        # Check if the active flag is specified and return all active carrier is active is not set to false
+        if list_filter.get('active') is not None:
             active = False if list_filter['active'] is False else True
-            query.update(dict(active=active))
+            query += (Q(active=active), )
 
+        # Check if a specific carrier_id is provide, to add it to the query
         if 'carrier_id' in list_filter:
-            query.update(dict(carrier_id=list_filter['carrier_id']))
+            query += (Q(carrier_id=list_filter['carrier_id']), )
 
-        if 'user' in list_filter:
-            query.update(dict(user=list_filter['user']))
-
+        # Check if a list of carrier_ids are provided, to add the list to the query
         if any(list_filter.get('carrier_ids', [])):
-            query.update(dict(carrier_id__in=list_filter['carrier_ids']))
+            query += (Q(carrier_id__in=list_filter['carrier_ids']), )
+
+        # Always return all system carriers and any additional carrier from the users list
+        query += (Q(user__isnull=True) | Q(user__in=users),)
 
         if 'carrier_name' in list_filter:
-            if list_filter['carrier_name'] not in models.MODELS.keys():
-                raise NotFound(f"No configurations for the following carrier: '{list_filter['carrier_name']}'")
+            carrier_name = list_filter['carrier_name']
+            if carrier_name not in models.MODELS.keys():
+                raise NotFound(f"No configurations for the following carrier: '{carrier_name}'")
 
             carriers = [
-                setting.carrier_ptr for setting in models.MODELS[list_filter['carrier_name']].objects.filter(**query)
+                setting.carrier_ptr for setting in models.MODELS[carrier_name].objects.filter(*query)
             ]
         else:
-            carriers = models.Carrier.objects.filter(**query)
+            carriers = models.Carrier.objects.filter(*query)
 
         return carriers
 
@@ -105,7 +116,7 @@ class Shipments:
         gateway = purplship.gateway[carrier.carrier_name].create(carrier.dict())
 
         # The request is wrapped in identity to simplify mocking in tests
-        shipment, messages = identity(lambda: purplship.Shipment.create(request).with_(gateway).parse())
+        shipment, messages = identity(lambda: purplship.Shipment.create(request).from_(gateway).parse())
 
         if shipment is None:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
@@ -174,11 +185,11 @@ class Shipments:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
         return TrackingResponse(
-            tracking=Tracking(**{
+            tracking=(Tracking(**{
                 **DP.to_dict(results[0]),
                 'id': f'trk_{uuid.uuid4().hex}',
                 'test_mode': carrier.test,
-            }),
+            }) if any(results) else None),
             messages=messages
         )
 
@@ -195,7 +206,7 @@ class Pickups:
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
-        pickup, messages = identity(lambda: request.with_(gateway).parse())
+        pickup, messages = identity(lambda: request.from_(gateway).parse())
 
         if pickup is None:
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
@@ -268,14 +279,16 @@ class Rates:
         carrier_settings_list = [
             carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user)
         ]
+        gateways = [
+            purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list
+        ]
+        compatible_gateways = [g for g in gateways if 'get_rates' in g.features]
 
-        if len(carrier_settings_list) == 0:
+        if len(compatible_gateways) == 0:
             raise NotFound("No configured and active carriers specified")
 
-        gateways = (purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list)
-
         # The request call is wrapped in identity to simplify mocking in tests
-        rates, messages = identity(lambda: request.from_(*gateways).parse())
+        rates, messages = identity(lambda: request.from_(*compatible_gateways).parse())
 
         if not any(rates) and any(messages):
             raise PurplShipApiException(detail=ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)

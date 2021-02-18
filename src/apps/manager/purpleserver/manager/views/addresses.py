@@ -1,4 +1,6 @@
 import logging
+
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -6,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, AddressData, Address
 from purpleserver.manager.serializers import AddressSerializer, reset_related_shipment_rates
@@ -15,15 +17,18 @@ from purpleserver.manager.router import router
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+Addresses = PaginatedResult('AddressList', Address)
 
 
 class AddressList(GenericAPIView):
+    pagination_class = LimitOffsetPagination
+    default_limit = 20
 
     @swagger_auto_schema(
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all addresses",
-        responses={200: Address(many=True), 400: ErrorResponse()}
+        responses={200: Addresses(), 400: ErrorResponse()}
     )
     def get(self, request: Request):
         """
@@ -31,7 +36,7 @@ class AddressList(GenericAPIView):
         """
         addresses = request.user.address_set.all()
         response = self.paginate_queryset(Address(addresses, many=True).data)
-        return Response(response)
+        return self.get_paginated_response(response)
 
     @swagger_auto_schema(
         tags=['Addresses'],

@@ -38,7 +38,7 @@ create_env() {
 
 init() {
     create_env &&
-    pip install -f https://git.io/purplship -r "${ROOT:?}/requirements.dev.txt"
+    pip install -r "${ROOT:?}/requirements.dev.txt"
 }
 
 
@@ -68,15 +68,18 @@ install_released() {
 }
 
 migrate () {
-  purplship makemigrations
+  echo "> update database migrations"
+  purplship makemigrations &> /dev/null
 
+  echo "> migrate database schemas"
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
-    purplship migrate_schemas --shared
+    purplship migrate_schemas --shared &> /dev/null
   else
-    purplship migrate
+    purplship migrate &> /dev/null
   fi
 
+  echo "> setup superuser and initial data"
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
 
@@ -109,10 +112,11 @@ if not any(get_user_model().objects.all()):
 
     (echo "from django.contrib.auth import get_user_model; from rest_framework.authtoken.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
 
-    (echo "from django.contrib.auth import get_user_model; from purpleserver.providers.models import CanadaPostSettings;
-CanadaPostSettings.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a', user=get_user_model().objects.first())" | purplship shell) > /dev/null 2>&1;
+    (echo "from purpleserver.providers.extension.models.canadapost import SETTINGS;
+SETTINGS.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
   fi
 
+  echo "> collect static files"
   purplship collectstatic --noinput
 }
 
@@ -166,6 +170,10 @@ run_mail_server() {
 }
 
 test() {
+  if [[ "$*" == *--rdb* ]]; then
+    rundb
+  fi
+
   purplship test --failfast purpleserver.proxy.tests &&
   purplship test --failfast purpleserver.pricing.tests &&
   purplship test --failfast purpleserver.manager.tests
@@ -178,7 +186,6 @@ test_services() {
 clean_builds() {
     find . -type d -not -path "*$ENV_DIR/*" -name dist -prune -exec rm -r '{}' \; 2>/dev/null || true
     find . -type d -not -path "*$ENV_DIR/*" -name build -prune -exec rm -r '{}' \; 2>/dev/null || true
-    find . -type d -not -path "*$ENV_DIR/*" -name "*.egg-info" -prune -exec rm -r '{}' \; 2>/dev/null || true
 }
 
 backup_wheels() {
@@ -195,6 +202,8 @@ _build() {
 }
 
 build() {
+  build_theme &&
+  build_dashboard &&
   clean_builds
   sm=$(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
@@ -206,14 +215,14 @@ build() {
 }
 
 build_theme() {
-  pushd "${ROOT:?}/src/theme" || false &&
-  yarn && yarn build
+  pushd "${ROOT:?}/src/frontend/theme" || false &&
+  rm -rf node_modules; yarn && yarn build
   popd || true
 }
 
-build_client() {
-  pushd "${ROOT:?}/src/frontend" || false &&
-  yarn && yarn build "$@"
+build_dashboard() {
+  pushd "${ROOT:?}/src/frontend/dashboard" || false &&
+  rm -rf node_modules; yarn && yarn build "$@"
   popd
 }
 

@@ -188,13 +188,14 @@ class Pickup(OwnedEntity):
 class Tracking(OwnedEntity):
     class Meta:
         db_table = "tracking-status"
-        verbose_name = 'Tracking Satus'
+        verbose_name = 'Tracking Status'
         verbose_name_plural = 'Tracking Statuses'
         ordering = ['-created_at']
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
     tracking_number = models.CharField(max_length=50)
     events = JSONField(blank=True, null=True, default=[])
+    delivered = models.BooleanField(null=True)
     test_mode = models.BooleanField(null=False)
 
     # System Reference fields

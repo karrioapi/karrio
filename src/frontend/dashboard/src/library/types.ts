@@ -1,4 +1,4 @@
-import { Address, CarrierSettings, Customs, Message, Parcel, Payment, Shipment } from '@purplship/purplship';
+import { Address, CarrierSettings, Customs, Message, Parcel, Payment, Shipment, TrackingStatus } from '@purplship/purplship';
 
 export interface View {
     path: string
@@ -59,6 +59,7 @@ export interface PaginatedLogs extends PaginatedContent<Log> { }
 export interface PaginatedShipments extends PaginatedContent<Shipment> { }
 export interface PaginatedTemplates extends PaginatedContent<Template> { }
 export interface PaginatedConnections extends PaginatedContent<Connection> { }
+export interface PaginatedTrackers extends PaginatedContent<TrackingStatus> { }
 
 
 export enum NotificationType {

@@ -12,12 +12,12 @@ class TestPricing(APITestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        self.charge: models.PricingCharge = models.PricingCharge.objects.create(**{
+        self.charge: models.Surcharge = models.Surcharge.objects.create(**{
             "amount": 1.0,
+            "name": "brokerage",
             "carriers": ["canadapost"],
             "services": ["canadapost_priority", "canadapost_regular_parcel"],
-            "freight_range": (None, 130.0),
-            "user": self.user
+            "freight_range": (None, 130.0)
         })
 
     def test_apply_charge_to_shipment_rates(self):
@@ -213,7 +213,7 @@ RATING_RESPONSE = {
         {
           "amount": 1.0,
           "currency": "CAD",
-          "name": "Service charge"
+          "name": "brokerage"
         }
       ],
       "id": ANY,

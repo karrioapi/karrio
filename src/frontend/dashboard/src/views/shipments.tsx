@@ -57,7 +57,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
             {shipments?.results.map(shipment => (
               <tr key={shipment.id}>
                 <td className="is-vcentered">
-                  <CarrierBadge name={shipment.carrier_name as string} className="tag" style={{ width: '100%', minWidth: '120px' }} />
+                  <CarrierBadge carrier={shipment.carrier_name} className="tag" style={{ width: '100%', minWidth: '120px' }} />
                 </td>
                 <td className="mode is-vcentered">
                   {shipment.test_mode ? <span className="tag is-warning is-centered">Test</span> : <></>}

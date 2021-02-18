@@ -77,6 +77,25 @@ Purplship custom styling
     }
 }
 
+.trackers-table {
+    .tracking-number {
+        width: 25%;
+        min-width: 25%;
+    }
+    .status {
+        width: 20%;
+        min-width: 20%;
+    }
+    .carrier {
+        width: 15%;
+        min-width: 15%;
+    }
+    .last-event {
+        width: 40%;
+        max-width: 40%;
+    }
+}
+
 hr {
     background-color: #dddddd;
 }
@@ -141,7 +160,20 @@ td > div.dropdown.is-active .dropdown-menu {
     }
 }
 
+.dropped-panel {
+    max-height: 20.5rem;
+    overflow-y: auto;
+}
 
+
+.is-aramex {
+    background-color: #dc291e !important;
+    color: #fff !important;
+}
+.is-australiapost {
+    background-color: #dc1928 !important;
+    color: #fff !important;
+}
 .is-boxknight {
     background-color: #ddd !important;
     color: #1890ff !important;
@@ -155,8 +187,8 @@ td > div.dropdown.is-active .dropdown-menu {
     color: #004890 !important;
 }
 .is-dicom {
-    background-color: #ddd !important;
-    color: #ddd !important;
+    background-color: #F26529 !important;
+    color: #005daa !important;
 }
 .is-dhl {
     background-color: #fc0 !important;
@@ -178,6 +210,18 @@ td > div.dropdown.is-active .dropdown-menu {
     background-color: #001996 !important;
     color: #e00000 !important;
 }
+.is-royalmail {
+    background-color: #DC3232 !important;
+    color: #FDDA24 !important;
+}
+.is-sendle {
+    background-color: #ff6800 !important;
+    color: #fff !important;
+}
+.is-sf_express {
+    background-color: #dc1e32 !important;
+    color: #fff !important;
+}
 .is-ups {
     background-color:#FFD100 !important;
     color:#242424;
@@ -186,8 +230,11 @@ td > div.dropdown.is-active .dropdown-menu {
     background-color:#333366 !important;
     color: #fff !important;
 }
-
-.dropped-panel {
-    max-height: 20.5rem;
-    overflow-y: auto;
+.is-yanwen {
+    background-color: #68b125 !important;
+    color: #fff !important;
+}
+.is-yunexpress {
+    background-color: #ddd !important;
+    color: #388280 !important;
 }

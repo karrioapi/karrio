@@ -107,10 +107,11 @@ class TestShipmentDetails(TestShipmentFixture):
 class TestShipmentPurchase(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
+        carrier = models.Carrier.objects.get(carrier_id="canadapost")
         self.shipment.shipment_rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
-                "carrier_ref": models.Carrier.objects.get(carrier_id="canadapost").pk,
+                "carrier_ref": carrier.pk,
                 "base_charge": 101.83,
                 "carrier_id": "canadapost",
                 "carrier_name": "canadapost",
@@ -164,6 +165,7 @@ class TestShipmentPurchase(TestShipmentFixture):
         url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
         self.shipment.status = "purchased"
         self.shipment.shipment_identifier = "123456789012"
+        self.shipment.selected_rate_carrier = self.carrier
         self.shipment.save()
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -431,7 +433,7 @@ PURCHASED_SHIPMENT = {
     "selected_rate_id": ANY,
     "service": "canadapost_priority",
     "rates": [SELECTED_RATE],
-    "tracking_url": "/v1/tracking_status/canadapost/123456789012?test",
+    "tracking_url": "/v1/trackers/canadapost/123456789012?test",
     "shipper": {
         "id": ANY,
         "postal_code": "E1C4Z8",

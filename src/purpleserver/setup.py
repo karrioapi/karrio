@@ -6,22 +6,6 @@ with open("README.md", "r") as fh:
 with open("purpleserver/VERSION", "r") as v:
     version = v.read()
 
-dev_requirements = [
-      'wheel',
-
-      'purplship.canadapost',
-      'purplship.dhl-express',
-      'purplship.fedex',
-      'purplship.fedex-express',
-      'purplship.purolator',
-      'purplship.purolator-courier',
-      'purplship.ups',
-      'purplship.ups-package',
-
-      'eshipper.extension',
-      'freightcom.extension',
-]
-
 setup(
       name='purplship-server',
       version=version,
@@ -39,7 +23,6 @@ setup(
             'django-constance',
             'django-picklefield',
             'django-email-verification',
-            'dj-database-url',
             'drf-api-tracking',
             'drf-yasg',
             'gunicorn',
@@ -47,13 +30,9 @@ setup(
             'more-itertools',
             'python-decouple',
             'purplship-server.core',
-            'whitenoise'
       ],
       entry_points={
             "console_scripts": ["purplship = purpleserver.__main__:main"]
-      },
-      extras_require={
-            'dev': dev_requirements,
       },
       dependency_links=[
             'https://git.io/purplship',

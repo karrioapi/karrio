@@ -28,19 +28,21 @@ class TrackingSerializer(TrackingDetails):
             tracking_number=tracking_number,
             events=DP.to_dict(response.tracking.events),
             test_mode=response.tracking.test_mode,
+            delivered=response.tracking.delivered,
             tracking_carrier=carrier,
         )
 
     def update(self, instance: models.Tracking, validated_data) -> models.Tracking:
         last_fetch = (timezone.now() - instance.updated_at).seconds / 60  # minutes since last fetch
 
-        if last_fetch >= 30:
+        if last_fetch >= 30 and instance.delivered is not True:
             carrier = next(iter(Carriers.list(**validated_data['carrier_filter'])), None)
             response = Shipments.track(
                 carrier=carrier,
                 payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data
             )
             instance.events = DP.to_dict(response.tracking.events)
+            instance.delivered = response.tracking.delivered
             instance.carrier = carrier
             instance.save()
 
