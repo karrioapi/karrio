@@ -8,7 +8,7 @@ from purplship.core.models import (
     ShipmentDetails,
     ChargeDetails,
 )
-from purplship.providers.carrier.utils import Settings, reformat_time
+from purplship.providers.carrier.utils import Settings
 from purplship.providers.carrier.error import parse_error_response
 
 
