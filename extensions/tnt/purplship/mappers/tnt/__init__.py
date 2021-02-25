@@ -15,8 +15,8 @@ METADATA = Metadata(
     Settings=Settings,
 
     # Data Units
-    # options=units.OptionCode,
-    # package_presets=units.PackagePresets,
-    # packaging_types=units.PackagingType,
-    # services=units.Serives,
+    options=units.ShipmentOption,
+    package_presets=units.PackagePresets,
+    packaging_types=units.PackageType,
+    services=units.ShipmentService,
 )

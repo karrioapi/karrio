@@ -2,25 +2,20 @@ from typing import List, Tuple
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.api.mapper import Mapper as BaseMapper
 from purplship.core.models import (
-    ShipmentCancelRequest,
     ShipmentRequest,
     TrackingRequest,
     RateRequest,
 
-    ConfirmationDetails,
     TrackingDetails,
     ShipmentDetails,
-    PickupDetails,
     RateDetails,
     Message,
 )
 from purplship.providers.tnt import (
-    parse_shipment_cancel_response,
     parse_shipment_response,
     parse_tracking_response,
     parse_rate_response,
 
-    shipment_cancel_request,
     tracking_request,
     shipment_request,
     rate_request,
