@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:annotation>
+        <xsd:documentation>Schema for defining the various entities that will be used 
+            for all ExpressLabel functions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType name="consignmentIdentityType">
+        <xsd:annotation>
+            <xsd:documentation>This element contains a consignment number and optional customer reference. 
+                These values are used to distinguish a consignment from any other consignment. 
+
+                This value appears on a routing label and is used as the key for a consignment.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="consignmentNumber" type="xsd:string" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The TNT consignment number in legacy (Global Link) format.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="customerReference" type="xsd:string" minOccurs="0" nillable="true">
+                <xsd:annotation>
+                    <xsd:documentation>Contains the optional customer reference for the consignment. 
+                        A customer reference is a way for a customer to designate a name 
+                        for the consignment.
+                        
+                        This value can be used to track the consignment at a later date.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="nameAndAddressRequestType">
+        <xsd:annotation>
+            <xsd:documentation>Information relating to name and address for a participant 
+                in the consignment.
+                 
+                Examples of a participant are:
+                 
+                The Sender - the company sending the consignment
+                The Receiver - the company receiving the consignment
+                The Collection Address - the address from which the consignment is picked up
+                The Delivery Address - the address to which the consignment should be delivered</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="name" type="stringMaxLength40" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Either the name of the company as recognised by TNT, or the 
+                        contact name at the address</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="addressLine1" type="stringMaxLength30" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>This address line is the most commonly used of the three 
+                        address lines and is therefore mandatory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="addressLine2" type="stringMaxLength30" minOccurs="0" nillable="true">
+                <xsd:annotation>
+                    <xsd:documentation>This address line may not be used by the supporting system 
+                        and therefore should not contain information essential to the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="addressLine3" type="stringMaxLength30" minOccurs="0" nillable="true">
+                <xsd:annotation>
+                    <xsd:documentation>This address line may not be used by the supporting system 
+                        and therefore should not contain information essential to the address. 
+                        NOTE - this will not appear on any routingLabel produced.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="town" type="stringMaxLength40" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>The town name as recognised by TNT</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="exactMatch" type="booleanEnum" minOccurs="0" default="Y">
+                <xsd:annotation>
+                    <xsd:documentation>Flag stating if an exact match on the town name should be used. 
+                        If this flag is absent then the exact match value is 'Y'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="province" type="stringMaxLength30" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Optional field to contain the province, county, state, or area 
+                        for the given address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="postcode" type="stringMaxLength9" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Postcode or zip code is considered a mandatory field where it is 
+                        used in a given country. If the postcode is not provided, it may 
+                        not be possible to deliver the consignment as indicated by your
+                        chosen service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="country" type="stringMinLength2MaxLength2" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The ISO country code for the country of the given address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="nameAndAddressResponseType">
+        <xsd:annotation>
+            <xsd:documentation>Information relating to name and address for a participant 
+                in the consignment.
+                 
+                Examples of a participant are:
+                 
+                The Sender - the company sending the consignment
+                The Receiver - the company receiving the consignment
+                The Collection Address - the address from which the consignment is picked up
+                The Delivery Address - the address to which the consignment should be delivered</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="name" type="stringMaxLength40" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Either the name of the company as recognised by TNT, or the 
+                        contact name at the address</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="addressLine1" type="stringMaxLength30" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>This address line is the most commonly used of the three 
+                        address lines and is therefore mandatory.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="addressLine2" type="stringMaxLength30" minOccurs="0" nillable="true">
+                <xsd:annotation>
+                    <xsd:documentation>This address line may not be used by the supporting system 
+                        and therefore should not contain information essential to the address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="addressLine3" type="stringMaxLength30" minOccurs="0" nillable="true">
+                <xsd:annotation>
+                    <xsd:documentation>This address line may not be used by the supporting system 
+                        and therefore should not contain information essential to the address. 
+                        NOTE - this will not appear on any routingLabel produced.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="town" type="stringMaxLength40" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The town name as recognised by TNT</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="province" type="stringMaxLength30" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Optional field to contain the province, county, state, or area 
+                        for the given address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="postcode" type="stringMaxLength9" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>Postcode or zip code is considered a mandatory field where it is 
+                        used in a given country. If the postcode is not provided, it may 
+                        not be possible to deliver the consignment as indicated by your
+                        chosen service.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="country" type="stringMinLength2MaxLength2" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The ISO country code for the country of the given address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="optionType">
+        <xsd:annotation>
+            <xsd:documentation>The type of option chosen for this consignment. 
+                Examples include insurance, priority.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="optionId" type="xsd:string" minOccurs="0" maxOccurs="5">
+                <xsd:annotation>
+                    <xsd:documentation>Code that defines options for the consignment e.g. insurance, 
+                        priority.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="measurementsType">
+        <xsd:annotation>
+            <xsd:documentation>The dimensions (height, width, length) and weight of the consignment, 
+                piece or article. Data must be provided in metres for dimensions, 
+                kilograms for weight.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="length" type="doubleMaxExclusive100MinInclusive0.01" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The length in metres. The length is the longest dimension 
+                        of the piece. (A piece is a box, envelope, or parcel - 
+                        i.e. a separate item being shipped.)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="width" type="doubleMaxExclusive100MinInclusive0.01" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The width in metres.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="height" type="doubleMaxExclusive100MinInclusive0.01" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The height in metres.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="weight" type="doubleMaxExclusive100000MinInclusive0.01" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The weight in kilograms.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="pieceLineType">
+        <xsd:annotation>
+            <xsd:documentation>A piece line describes a kind of piece sharing the same physical attributes. 
+                (A piece is a package, box, envelope or shippable unit. All pieces which are 
+                identical are defined for convenience as a piece line with a number of units.)
+
+                For example if there are 5 boxes of 0.1m x 0.2m x 0.3m of weight 0.1kg and 
+                1 box of 0.4m x 0.4m x 0.4 of weight 0.5kg this equates to two piece lines as 
+                follows:
+
+                PieceLine1: 0.1m x 0.2m x 0.3m, weight 0.1kg, number of units=5
+                PieceLine2: 0.4m x 0.4m x 0.4m, weight 0.5kg, number of units=1</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="identifier" type="xsd:int" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Identifier for the pieceLine so that it can be referenced during 
+                        processing.  Each pieceLine type should have a unique number, 
+                        starting at 1 and incrementing for each piece line type required</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="goodsDescription" type="stringMaxLength30" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Full description of goods being shipped (catalogue numbers or 
+                        part numbers will not suffice. The Customs Authorities want to 
+                        know what each item actually is so please carefully describe the 
+                        goods).</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="barcodeForCustomer" type="booleanEnum" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>A flag to state if a barcode for the customer
+                        reference should be created.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="pieceMeasurements" type="measurementsType" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Dimension and weight measurements relating to the pieces defined 
+                        by this type.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="pieces" type="pieceType" minOccurs="1" maxOccurs="99">
+                <xsd:annotation>
+                    <xsd:documentation>At least one of these sections should be provided per consignment 
+                        up to a maximum of one per piece.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="pieceType">
+        <xsd:annotation>
+            <xsd:documentation>This element is used to identify all the pieces that should be grouped 
+                together by the given reference. The list of sequence numbers is included 
+                (one sequenceNumber element per piece) with a single pieceReference element.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="sequenceNumbers" type="xsd:string" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>List of the piece sequence numbers, i.e. 1,2,5,n out of a total of 
+                        n pieces that share the same piece reference.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="pieceReference" type="xsd:string" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Reference for this piece or pieces.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="contactType">
+        <xsd:annotation>
+            <xsd:documentation>Information about the contact person at the relevant address.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="name" type="stringMaxLength30" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Name of the contact person at the relevant address.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="telephoneNumber" type="stringMaxLength30" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The full telephone number for the contact person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="emailAddress" type="xsd:string" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Email address for the contact person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="accountType">
+        <xsd:annotation>
+            <xsd:documentation>Information about a TNT account which includes the account number 
+                and country code.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="accountNumber" type="stringMaxLength10" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>TNT legacy (global link) account number, which is the 9 digit 
+                        number assigned by the TNT sales person.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="accountCountry" type="stringMinLength2MaxLength2" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>ISO country code for the country the TNT account is in.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="depotType">
+        <xsd:annotation>
+            <xsd:documentation>Details relating to a TNT depot which could be the origin,
+                destination or transit depot on the route calculated by TNT to deliver
+                a consignment.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="depotCode" type="stringMinLength3MaxLength3" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The three character TNT code for the depot.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="marketType">
+        <xsd:annotation>
+            <xsd:documentation>This identifies the market type for the consignment comprising the origin 
+                country and whether the consignment is being shipped domestically or 
+                internationally and within which international trading block, e.g. 'EU'.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="originCountryCode" type="stringMinLength2MaxLength2" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The ISO country code for the origin country of the consignment.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="marketSpecification" type="xsd:string" minOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>The market for the consignment - i.e. whether it is being shipped
+                        domestically or internationally, and, if the latter, in which trade
+                        block, e.g. EU, ROW, etc.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="brokenRules">
+        <xsd:annotation>
+            <xsd:documentation>List of business rules that have been breached by the input and that will
+                require the user to correct in order to print labels on resubmission of
+                XML input file.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="errorCode" type="xsd:int" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:documentation>Error code returned by the system to identify the error message.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="errorDescription" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:documentation>Error description returned by the system to signify the data
+                            that needs to be corrected in order to print labels.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="key" type="xsd:string" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>RequestId number to which the error relates.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="fault">
+        <xsd:annotation>
+            <xsd:documentation>List of faults that have occured during teh processign of multiple requests</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="key" type="xsd:string" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>RequestId number to which the fault relates.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:simpleType name="stringMinLength2MaxLength2">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="2"/>
+            <xsd:maxLength value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="stringMinLength3MaxLength3">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="3"/>
+            <xsd:maxLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="stringMaxLength4">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="stringMaxLength9">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="9"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+   <xsd:simpleType name="stringMaxLength10">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="stringMaxLength30">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="stringMaxLength40">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="stringMaxLength100">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="doubleTwoDecimalPlaces">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="doubleMaxExclusive100MinInclusive0.01">
+        <xsd:restriction base="xsd:double">
+            <xsd:maxExclusive value="100"/>
+            <xsd:minInclusive value="0.01"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="doubleMaxExclusive100000MinInclusive0.01">
+        <xsd:restriction base="xsd:double">
+            <xsd:maxExclusive value="100000"/>
+            <xsd:minInclusive value="0.01"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="longMaxLength10">
+        <xsd:restriction base="xsd:long">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxExclusive value="10000000000"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="integerMin0Max9">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="9"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="productTypeEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="N"/>
+            <xsd:enumeration value="D"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="booleanEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="N"/>
+            <xsd:enumeration value="Y"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="senderReceiverEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="S"/>
+            <xsd:enumeration value="R"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="cashTypeEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="0"/>
+            <xsd:enumeration value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>
