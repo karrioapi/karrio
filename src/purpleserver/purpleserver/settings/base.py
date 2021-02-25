@@ -63,6 +63,7 @@ if USE_HTTPS is True:
 PURPLSHIP_CONF = [
     app for app in [
         {'app': 'purpleserver.core', 'module': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},
+        {'app': 'purpleserver.graph', 'module': 'purpleserver.graph', 'urls': 'purpleserver.graph.urls'},
         {'app': 'purpleserver.providers', 'module': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
         {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
         {'app': 'purpleserver.manager', 'module': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},

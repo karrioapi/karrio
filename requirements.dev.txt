@@ -68,6 +68,7 @@ purplship.yunexpress
 
 # Purplship server core packages
 -e ./src/apps/core
+-e ./src/apps/graph
 -e ./src/purpleserver
 -e ./src/apps/proxy
 -e ./src/apps/tenants

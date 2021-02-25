@@ -10,6 +10,9 @@ from purpleserver.settings.tasks import *
 if config('MULTI_TENANT_ENABLE', default=False, cast=bool):
     from purpleserver.settings.tenants import *
 
+if 'purpleserver.graph' in PURPLSHIP_APPS:
+    from purpleserver.settings.graph import *
+
 
 """ Warning:: This section need to be last for settings extensibility """
 if importlib.util.find_spec('purpleserver.settings.main') is not None:
