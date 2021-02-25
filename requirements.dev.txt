@@ -1,23 +1,6 @@
 
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.aramex&subdirectory=aramex
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.australiapost&subdirectory=australiapost
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dhl_universal&subdirectory=dhl_universal
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dicom&subdirectory=dicom
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.royalmail&subdirectory=royalmail
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sendle&subdirectory=sendle
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sf_express&subdirectory=sf_express
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.usps&subdirectory=usps
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yanwen&subdirectory=yanwen
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yunexpress&subdirectory=yunexpress
+
+-e git+https://github.com/PurplShip/purplship-carriers.git@adding-tnt-schemas-lib#egg=carrier.tnt&subdirectory=tnt
 
 
-# -e extensions/aramex
-# -e extensions/australiapost
-# -e extensions/dhl_universal
-# -e extensions/dicom
-# -e extensions/royalmail
-# -e extensions/sendle
-# -e extensions/sf_express
-# -e extensions/usps
-# -e extensions/yanwen
-# -e extensions/yunexpress
+-e extensions/tnt
