@@ -1,6 +1,6 @@
 import time
 from base64 import encodebytes
-from typing import List, Tuple, Optional, cast
+from typing import List, Tuple, Optional
 from dhl_express_lib.ship_val_global_req_6_2 import (
     ShipmentRequest as DHLShipmentRequest,
     Billing,
@@ -149,7 +149,7 @@ def shipment_request(
             AddressLine=SF.concat_str(
                 payload.shipper.address_line1, payload.shipper.address_line2
             ),
-            CompanyName=payload.shipper.company_name or "  ",
+            CompanyName=payload.shipper.company_name or "N/A",
             PostalCode=payload.shipper.postal_code,
             CountryCode=payload.shipper.country_code,
             City=payload.shipper.city,
@@ -182,7 +182,7 @@ def shipment_request(
                         Weight=package.weight.LB,
                         DimWeight=None,
                         PieceContents=(
-                                package.parcel.content or package.parcel.description
+                            package.parcel.content or package.parcel.description
                         ),
                     )
                     for package in packages
