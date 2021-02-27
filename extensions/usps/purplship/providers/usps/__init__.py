@@ -1,11 +1,11 @@
 from purplship.providers.usps.utils import Settings
-# from purplship.providers.usps.rate import parse_rate_response, rate_request
-# from purplship.providers.usps.shipment import (
-#     parse_shipment_cancel_response,
-#     parse_shipment_response,
-#     shipment_cancel_request,
-#     shipment_request,
-# )
+from purplship.providers.usps.rate import parse_rate_response, rate_request
+from purplship.providers.usps.shipment import (
+    parse_shipment_cancel_response,
+    parse_shipment_response,
+    shipment_cancel_request,
+    shipment_request,
+)
 # from purplship.providers.usps.pickup import (
 #     parse_pickup_cancel_response,
 #     parse_pickup_update_response,
