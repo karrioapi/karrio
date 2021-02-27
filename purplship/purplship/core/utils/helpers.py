@@ -1,11 +1,12 @@
 import io
+import re
 import asyncio
 import logging
 import base64
 from PIL import Image
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
-from typing import List, TypeVar, Callable
+from typing import List, TypeVar, Callable, Optional, Any
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ def gif_to_pdf(gif_str: str) -> str:
     image = Image.open(buffer)
     new_buffer = io.BytesIO()
     image.save(new_buffer, format="PDF")
+
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
@@ -71,3 +73,44 @@ def exec_async(action: Callable, sequence: List[S]) -> List[T]:
         return await asyncio.gather(*[async_action(args) for args in sequence])
 
     return asyncio.run(run_tasks())
+
+
+class Location:
+
+    def __init__(self, value: Optional[str], **kwargs):
+        self.value = value
+        self.extra = kwargs
+
+    @property
+    def as_zip4(self) -> Optional[str]:
+        if re.match(r'^\d{5}$', self.value):
+            return self.value
+
+        return None
+
+    @property
+    def as_zip5(self) -> Optional[str]:
+        if not re.match(r'^\d{5}$', self.value):
+            return self.value
+
+        return None
+
+    @property
+    def as_country_name(self) -> str:
+        from purplship.core.units import Country
+        if self.value in Country:
+            return Country[self.value].value
+
+        return self.value
+
+    @property
+    def as_state_name(self) -> str:
+        from purplship.core.units import CountryState
+        try:
+            country: Any = CountryState[self.extra['country']]
+            if self.value in country:
+                return country[self.value].value
+
+            return self.value
+        except KeyError as e:
+            raise Exception('Missing country code. e.g: Location(state_code, country="US").as_state_name') from e

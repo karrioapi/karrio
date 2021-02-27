@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "purplship.usps_international"
+version = "2021.2-alpha"
+homepage="https://sdk.purplship.com"
+repository="https://github.com/PurplShip/purplship"
+description = "Purplship - USPS International Shipping Extension"
+authors = ["Dan Kobina <danielkobina@gmail.com>"]
+license = "LGPLv3"
+readme = "README.md"
+packages = [{ include = "purplship" }]
+classifiers=[
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+"purplship" = "^2021.2.2"
+"carrier.usps_international" = ""
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
+build-backend = "poetry.core.masonry.api"
