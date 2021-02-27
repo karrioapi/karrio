@@ -52,6 +52,7 @@
                 <xs:element type="xs:decimal" name="Width" />
                 <xs:element type="xs:decimal" name="Length" />
                 <xs:element type="xs:decimal" name="Height" />
+                <xs:element type="xs:decimal" name="Girth" />
                 <xs:element type="xs:string" name="Machinable" />
                 <xs:element type="xs:string" name="ProcessingCategory" />
                 <xs:element type="xs:string" name="PriceOptions" />
@@ -127,8 +128,8 @@
                                         <xs:element type="xs:short" name="Quantity" />
                                         <xs:element type="xs:float" name="Value" />
                                         <xs:element type="xs:string" name="NetPounds" />
-                                        <xs:element type="xs:byte" name="NetOunces" />
-                                        <xs:element type="xs:long" name="HSTariffNumber" />
+                                        <xs:element type="xs:float" name="NetOunces" />
+                                        <xs:element type="xs:string" name="HSTariffNumber" />
                                         <xs:element type="xs:string" name="CountryOfOrigin" />
                                     </xs:sequence>
                                 </xs:complexType>
