@@ -8,8 +8,9 @@ from usps_lib.evs_request import (
     ItemDetailType,
     ExtraServicesType,
 )
-from purplship.core.units import Packages, Currency, Options, WeightUnit, Weight
-from purplship.core.utils import Serializable, Element, Location, NF, XP, DF
+from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
+from purplship.core.units import Packages, Currency, Options, WeightUnit, Weight, Country
+from purplship.core.utils import Serializable, Element, Location, NF, XP
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
@@ -69,6 +70,12 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[eVSRequest]:
+    if payload.shipper.country_code is not None and payload.shipper.country_code != Country.US.name:
+        raise OriginNotServicedError(payload.shipper.country_code)
+
+    if payload.recipient.country_code is not None and payload.recipient.country_code != Country.US.name:
+        raise DestinationNotServicedError(payload.recipient.country_code)
+
     service = ServiceType[payload.service].value
     package = Packages(payload.parcels).single
     options = Options(payload.options, ShipmentOption)

@@ -5,3 +5,4 @@
 
 
 -e extensions/tnt
+-e extensions/usps_international

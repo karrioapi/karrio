@@ -8,7 +8,9 @@ from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
 from purplship.core.units import Packages, Country, Weight, WeightUnit, Services, Options, Currency
 
-from purplship.providers.usps_international.units import ShipmentService, ShipmentOption, PackagingType, ServiceAlias
+from purplship.providers.usps_international.units import (
+    ShipmentService, ShipmentOption, PackagingType, ServiceClassID
+)
 from purplship.providers.usps_international.error import parse_error_response
 from purplship.providers.usps_international import Settings
 
@@ -29,12 +31,12 @@ def _extract_details(service_node: Element, settings: Settings) -> RateDetails:
         (delivery_date - datetime.now()).days
         if delivery_date is not None else None
     )
-    rate_service: ServiceAlias = ServiceAlias.find(service.SvcDescription)
 
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        service=rate_service.value,
+
+        service=ServiceClassID(str(service.ID)),
         base_charge=NF.decimal(service.Postage),
         total_charge=NF.decimal(service.Postage),
         currency=Currency.USD.name,
