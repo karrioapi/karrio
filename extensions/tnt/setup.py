@@ -7,6 +7,6 @@ setup(
       version='0.0.0-dev',
       license='LGPLv3',
       packages=find_namespace_packages(),
-      install_requires=['purplship', 'carrier.tnt'],
+      install_requires=['purplship', 'carrier.tnt', 'weasyprint'],
       zip_safe=False,
 )

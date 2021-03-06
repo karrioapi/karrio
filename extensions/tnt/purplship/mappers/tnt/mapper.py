@@ -2,22 +2,22 @@ from typing import List, Tuple
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.api.mapper import Mapper as BaseMapper
 from purplship.core.models import (
-    ShipmentRequest,
+    # ShipmentRequest,
     TrackingRequest,
     RateRequest,
 
     TrackingDetails,
-    ShipmentDetails,
+    # ShipmentDetails,
     RateDetails,
     Message,
 )
 from purplship.providers.tnt import (
-    parse_shipment_response,
+    # parse_shipment_response,
     parse_tracking_response,
     parse_rate_response,
 
     tracking_request,
-    shipment_request,
+    # shipment_request,
     rate_request,
 )
 from purplship.mappers.tnt.settings import Settings
@@ -33,10 +33,10 @@ class Mapper(BaseMapper):
     ) -> Serializable:
         return rate_request(payload, self.settings)
 
-    def create_shipment_request(
-        self, payload: ShipmentRequest
-    ) -> Serializable:
-        return shipment_request(payload, self.settings)
+    # def create_shipment_request(
+    #     self, payload: ShipmentRequest
+    # ) -> Serializable:
+    #     return shipment_request(payload, self.settings)
 
     def create_tracking_request(
         self, payload: TrackingRequest
@@ -50,10 +50,10 @@ class Mapper(BaseMapper):
     ) -> Tuple[List[RateDetails], List[Message]]:
         return parse_rate_response(response.deserialize(), self.settings)
 
-    def parse_shipment_response(
-        self, response: Deserializable[str]
-    ) -> Tuple[ShipmentDetails, List[Message]]:
-        return parse_shipment_response(response.deserialize(), self.settings)
+    # def parse_shipment_response(
+    #     self, response: Deserializable[str]
+    # ) -> Tuple[ShipmentDetails, List[Message]]:
+    #     return parse_shipment_response(response.deserialize(), self.settings)
 
     def parse_tracking_response(
         self, response: Deserializable[str]

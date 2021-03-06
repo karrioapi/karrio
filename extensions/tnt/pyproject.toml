@@ -19,6 +19,7 @@ classifiers=[
 python = "^3.7"
 "purplship" = ""
 "carrier.tnt" = ""
+"weasyprint" = ""
 
 [tool.poetry.dev-dependencies]
 

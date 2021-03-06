@@ -3,7 +3,7 @@
 import io
 from lxml import etree
 from xmltodict import parse
-from typing import List, TypeVar, Type, Optional, cast
+from typing import List, TypeVar, Type, Optional, cast, Union
 from pysoap.envelope import Envelope
 from lxml.etree import _Element
 
@@ -86,3 +86,12 @@ class XMLPARSER:
         :return: Node Element
         """
         return str(cast(bytes, etree.tostring(xml_element)), encoding)
+
+    @staticmethod
+    def find(child_tag: str, element: Element, child_type: Type[T] = None, first: bool = None) -> Union[Element, T, List[Element], List[T]]:
+        children: List[Element] = [*element.xpath(".//*[local-name() = $name]", name=child_tag)]
+
+        if child_type is not None:
+            children: List[child_type] = [XMLPARSER.build(child_type, child) for child in children]
+
+        return children if first is not True else next(children, None)
