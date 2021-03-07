@@ -1,5 +1,7 @@
+from purplship.core import utils
+from purpleserver.core import gateway
 from purpleserver.core.serializers import AddressData
-from purpleserver.manager.models import Address
+from purpleserver.manager import models
 
 
 class AddressSerializer(AddressData):
@@ -7,15 +9,32 @@ class AddressSerializer(AddressData):
     def __init__(self, *args, **kwargs):
         if 'data' in kwargs and isinstance(kwargs['data'], str):
             kwargs.update(
-                data=AddressData(Address.objects.get(pk=kwargs['data'])).data
+                data=AddressData(models.Address.objects.get(pk=kwargs['data'])).data
             )
 
         super().__init__(*args, **kwargs)
 
-    def create(self, validated_data: dict) -> Address:
-        return Address.objects.create(**validated_data)
+    def validate(self, data):
+        validated_data = super().validate(data)
+        should_validate = (
+            validated_data.get('validate_location') is True or
+            (self.instance is not None and self.instance.validate_location)
+        )
 
-    def update(self, instance: Address, validated_data: dict) -> Address:
+        if should_validate:
+            address = {
+                **(AddressData(self.instance).data if self.instance is not None else {}),
+                **validated_data
+            }
+            validation = gateway.Address.validate(address)
+            validated_data.update(dict(validation=utils.DP.to_dict(validation)))
+
+        return validated_data
+
+    def create(self, validated_data: dict) -> models.Address:
+        return models.Address.objects.create(**validated_data)
+
+    def update(self, instance: models.Address, validated_data: dict) -> models.Address:
         for key, val in validated_data.items():
             setattr(instance, key, val)
 

@@ -6,11 +6,9 @@ from purplship.core.utils import DP
 from purplship.core.models import (
     Parcel,
     Message,
-    Address,
+    Address as BaseAddress,
     TrackingRequest,
     ShipmentDetails,
-    AddressValidationRequest,
-    AddressValidationDetails,
     Payment,
     Customs,
     RateRequest as BaseRateRequest,
@@ -54,6 +52,37 @@ class CarrierSettings:
     @classmethod
     def create(cls, data: object):
         return cls(**DP.to_dict(data))
+
+
+@attr.s(auto_attribs=True)
+class AddressValidation:
+    success: bool
+    meta: dict = {}
+
+
+@attr.s(auto_attribs=True)
+class Address(BaseAddress):
+    id: str = None
+    postal_code: str = None
+    city: str = None
+    person_name: str = None
+    company_name: str = None
+    country_code: str = None
+    email: str = None
+    phone_number: str = None
+
+    state_code: str = None
+    suburb: str = None
+    residential: bool = False
+
+    address_line1: str = ""
+    address_line2: str = ""
+
+    federal_tax_id: str = None
+    state_tax_id: str = None
+
+    validate_location: bool = None
+    validation: JStruct[AddressValidation] = None
 
 
 @attr.s(auto_attribs=True)
@@ -173,12 +202,6 @@ class Tracking:
 @attr.s(auto_attribs=True)
 class ErrorResponse:
     messages: List[Message] = JList[Message]
-
-
-@attr.s(auto_attribs=True)
-class AddressValidation:
-    messages: List[Message] = JList[Message]
-    validation: AddressValidationDetails = JStruct[AddressValidationDetails]
 
 
 @attr.s(auto_attribs=True)

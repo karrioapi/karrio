@@ -28,6 +28,7 @@ setup(
             'gunicorn',
             'jsonfield',
             'more-itertools',
+            'requests',
             'python-decouple',
             'purplship-server.core',
       ],

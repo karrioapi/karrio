@@ -1,10 +1,12 @@
 import re
 import logging
+import requests
 import phonenumbers
+from constance import config
 from datetime import datetime
 from rest_framework import serializers
-from purplship.core.units import Country
-from purpleserver.core.dataunits import REFERENCE_MODELS
+from purplship.core import units, utils
+from purpleserver.core import dataunits, datatypes
 
 logger = logging.getLogger(__name__)
 DIMENSIONS = ['width', 'height', 'length', 'dimension_unit']
@@ -56,7 +58,7 @@ class PresetSerializer(serializers.Serializer):
         data = kwargs.get('data')
         if data is not None and 'package_preset' in data:
             preset = next(
-                (presets[data['package_preset']] for carrier, presets in REFERENCE_MODELS["package_presets"].items() if data['package_preset'] in presets),
+                (presets[data['package_preset']] for carrier, presets in dataunits.REFERENCE_MODELS["package_presets"].items() if data['package_preset'] in presets),
                 {}
             )
 
@@ -82,12 +84,12 @@ class AugmentedAddressSerializer(serializers.Serializer):
                 postal_code = data['postal_code']
                 country_code = data['country_code']
 
-                if country_code == Country.CA.name:
+                if country_code == units.Country.CA.name:
                     formatted = ''.join([c for c in postal_code.split() if c not in ['-', '_']]).upper()
                     if not re.match(r'^([A-Za-z]\d[A-Za-z][-]?\d[A-Za-z]\d)', formatted):
                         raise serializers.ValidationError('The Canadian postal code must match Z9Z9Z9')
 
-                elif country_code == Country.US.name:
+                elif country_code == units.Country.US.name:
                     formatted = ''.join(postal_code.split())
                     if not re.match(r'^\d{5}(-\d{4})?$', formatted):
                         raise serializers.ValidationError('The American postal code must match 9999 or 99999')
@@ -110,5 +112,54 @@ class AugmentedAddressSerializer(serializers.Serializer):
                     raise serializers.ValidationError("Invalid phone number format")
 
             kwargs.update(data=data)
+
         super().__init__(*args, **kwargs)
+
+
+class GoogleGeocode:
+    @staticmethod
+    def get_url() -> str:
+        return "https://maps.googleapis.com/maps/api/geocode/json"
+
+    @staticmethod
+    def get_api_key() -> str:
+        key = config.GOOGLE_CLOUD_API_KEY
+
+        if key is None or len(key) == 0:
+            raise Exception("No GOOGLE_CLOUD_API_KEY provided for address validation")
+
+        return key
+
+    @staticmethod
+    def format_address(address: datatypes.Address) -> str:
+        address_string = utils.SF.concat_str(
+            address.address_line1 or "",
+            address.address_line2 or "",
+            address.postal_code or "",
+            address.city or "",
+            address.state_code or "",
+            address.country_code or "",
+            join=True
+        )
+
+        if address_string is None:
+            raise Exception("At least one address location info must be provided (lines, city, postal code or state)")
+
+        return address_string.replace(" ", "+")
+
+    @staticmethod
+    def validate(address: datatypes.Address) -> datatypes.AddressValidation:
+        formatted_address = GoogleGeocode.format_address(address)
+
+        logger.debug(f'sending address validation request to Google Geocode API: {formatted_address}')
+        response = requests.request(
+            "GET",
+            GoogleGeocode.get_url(),
+            params=dict(address=formatted_address, key=GoogleGeocode.get_api_key())
+        )
+        response_data = response.json()
+        success = response_data.get("status") == "OK"
+        meta = dict(results=response_data.get("results"))
+
+        return datatypes.AddressValidation(success=success, meta=meta)
 

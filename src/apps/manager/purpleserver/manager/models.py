@@ -36,6 +36,9 @@ class Address(OwnedEntity):
     address_line1 = models.CharField(max_length=100, null=True, blank=True)
     address_line2 = models.CharField(max_length=100, null=True, blank=True)
 
+    validate_location = models.BooleanField(null=True)
+    validation = JSONField(blank=True, null=True)
+
 
 class Parcel(OwnedEntity):
     class Meta:
