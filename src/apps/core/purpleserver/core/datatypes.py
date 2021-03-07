@@ -15,10 +15,10 @@ from purplship.core.models import (
     ShipmentRequest as BaseShipmentRequest,
     ShipmentCancelRequest,
     ChargeDetails,
-    PickupRequest,
+    PickupRequest as BasePickupRequest,
     PickupDetails,
-    PickupUpdateRequest,
-    PickupCancelRequest,
+    PickupUpdateRequest as BasePickupUpdateRequest,
+    PickupCancelRequest as BasePickupCancelRequest,
     ConfirmationDetails as Confirmation,
     TrackingEvent
 )
@@ -83,6 +83,42 @@ class Address(BaseAddress):
 
     validate_location: bool = None
     validation: JStruct[AddressValidation] = None
+
+
+@attr.s(auto_attribs=True)
+class PickupRequest(BasePickupRequest):
+    pickup_date: str
+    ready_time: str
+    closing_time: str
+    address: Address = JStruct[Address, REQUIRED]
+
+    parcels: List[Parcel] = JList[Parcel]
+    instruction: str = None
+    package_location: str = None
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class PickupUpdateRequest(BasePickupUpdateRequest):
+    confirmation_number: str
+    pickup_date: str
+    ready_time: str
+    closing_time: str
+    address: Address = JStruct[Address, REQUIRED]
+
+    parcels: List[Parcel] = JList[Parcel]
+    instruction: str = None
+    package_location: str = None
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class PickupCancelRequest(BasePickupCancelRequest):
+    confirmation_number: str
+
+    address: Address = JStruct[Address]
+    pickup_date: str = None
+    reason: str = None
 
 
 @attr.s(auto_attribs=True)

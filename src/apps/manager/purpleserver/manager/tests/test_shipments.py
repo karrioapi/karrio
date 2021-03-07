@@ -26,6 +26,8 @@ class TestShipmentFixture(APITestCase):
             "residential": False,
             "address_line1": "125 Church St",
             "address_line2": None,
+            "validate_location": False,
+            "validation": None,
             "user": self.user
         })
         self.recipient: models.Address = models.Address.objects.create(**{
@@ -43,6 +45,8 @@ class TestShipmentFixture(APITestCase):
             "residential": False,
             "address_line1": "5840 Oak St",
             "address_line2": None,
+            "validate_location": False,
+            "validation": None,
             "user": self.user
         })
         self.parcel: models.Parcel = models.Parcel.objects.create(**{
@@ -273,7 +277,9 @@ SHIPMENT_RESPONSE = {
         "suburb": None,
         "residential": False,
         "address_line1": "5840 Oak St",
-        "address_line2": None
+        "address_line2": None,
+        "validate_location": False,
+        "validation": None
     },
     "recipient": {
         "id": ANY,
@@ -290,7 +296,9 @@ SHIPMENT_RESPONSE = {
         "suburb": None,
         "residential": False,
         "address_line1": "125 Church St",
-        "address_line2": None
+        "address_line2": None,
+        "validate_location": False,
+        "validation": None
     },
     "parcels": [{
         "id": ANY,
@@ -449,7 +457,9 @@ PURCHASED_SHIPMENT = {
         "suburb": None,
         "residential": False,
         "address_line1": "125 Church St",
-        "address_line2": None
+        "address_line2": None,
+        "validate_location": False,
+        "validation": None
     },
     "recipient": {
         "id": ANY,
@@ -466,7 +476,9 @@ PURCHASED_SHIPMENT = {
         "suburb": None,
         "residential": False,
         "address_line1": "5840 Oak St",
-        "address_line2": None
+        "address_line2": None,
+        "validate_location": False,
+        "validation": None
     },
     "parcels": [{
         "id": ANY,

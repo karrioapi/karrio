@@ -32,6 +32,8 @@ class TestAddressDetails(APITestCase):
             "residential": True,
             "state_code": "QC",
             "suburb": "Hamilton",
+            "validate_location": False,
+            "validation": None,
             "user": self.user
         })
 
@@ -72,7 +74,9 @@ ADDRESS_RESPONSE = {
     "suburb": None,
     "residential": True,
     "address_line1": "5205 rue riviera",
-    "address_line2": None
+    "address_line2": None,
+    "validate_location": False,
+    "validation": None
 }
 
 ADDRESS_UPDATE_DATA = {
@@ -97,5 +101,7 @@ ADDRESS_UPDATE_RESPONSE = {
     "suburb": None,
     "residential": False,
     "address_line1": "5205 rue riviera",
-    "address_line2": None
+    "address_line2": None,
+    "validate_location": False,
+    "validation": None
 }
