@@ -15,4 +15,9 @@
 
 {% block scripts %}
   <script src="{% static 'client/purpleboard.min.js' %}"></script>
+
+  {% if GOOGLE_CLOUD_API_KEY != "" %}
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_CLOUD_API_KEY }}&libraries=places"></script>
+  {% endif %}
+
 {% endblock %}

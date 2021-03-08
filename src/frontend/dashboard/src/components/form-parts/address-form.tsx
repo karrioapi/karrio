@@ -12,6 +12,7 @@ import NameInput from '@/components/generic/name-input';
 import { Collection, NotificationType } from '@/library/types';
 import { state } from '@/library/api';
 import { Reference, Templates } from '@/library/context';
+import AddressAutocompleteInput from '../generic/address-autocomplete-input';
 
 export const DEFAULT_ADDRESS_CONTENT = {
     residential: false,
@@ -107,7 +108,7 @@ const AddressForm: React.FC<AddressFormComponent> = ({ value, shipment, name, up
             </div>
 
             <div className="columns mb-0">
-                <InputField label="Street (Line 1)" name="address_line1" onChange={handleChange} defaultValue={address.address_line1} fieldClass="column mb-0 px-2 py-2" required />
+                <AddressAutocompleteInput label="Street (Line 1)" name="address_line1" onValueChange={(value) => dispatch({name: "partial", value})} defaultValue={address.address_line1} fieldClass="column mb-0 px-2 py-2" required />
             </div>
 
             <div className="columns is-multiline mb-0">
