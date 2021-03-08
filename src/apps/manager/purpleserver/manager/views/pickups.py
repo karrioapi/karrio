@@ -60,11 +60,11 @@ class PickupRequest(APIView):
         carrier_filter = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
             "carrier_name": carrier_name,
-            "user": request.user
+            "created_by": request.user
         }
 
         pickup = SerializerDecorator[PickupData](
-            data=request.data).save(user=request.user, carrier_filter=carrier_filter).instance
+            data=request.data).save(created_by=request.user, carrier_filter=carrier_filter).instance
 
         return Response(Pickup(pickup).data, status=status.HTTP_201_CREATED)
 
@@ -95,7 +95,7 @@ class PickupDetails(APIView):
         """
         pickup = request.user.pickup_set.get(pk=pk)
         instance = SerializerDecorator[PickupUpdateData](
-            pickup, data=request.data).save(user=request.user).instance
+            pickup, data=request.data).save(created_by=request.user).instance
 
         return Response(Pickup(instance).data, status=status.HTTP_200_OK)
 
@@ -115,7 +115,7 @@ class PickupCancel(APIView):
         """
         pickup = request.user.pickup_set.get(pk=pk)
         confirmation = SerializerDecorator[PickupCancelData](
-            pickup, data=request.data).save(user=request.user).instance
+            pickup, data=request.data).save(created_by=request.user).instance
 
         return Response(OperationConfirmation(confirmation).data, status=status.HTTP_200_OK)
 

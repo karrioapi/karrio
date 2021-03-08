@@ -20,7 +20,7 @@ class APITestCase(BaseAPITestCase):
             customer_number='2004381',
             contract_id='42708517',
             password='0bfa9fcb9853d1f51ee57a',
-            user=self.user)
+            created_by=self.user)
         self.ups_carrier = UPSPackageSettings.objects.create(
             carrier_id='ups_package',
             test=True,
@@ -28,7 +28,7 @@ class APITestCase(BaseAPITestCase):
             account_number='000000',
             access_license_number='000000',
             password='test',
-            user=self.user)
+            created_by=self.user)
         self.fedex_carrier = FedexExpressSettings.objects.create(
             carrier_id='fedex_express',
             test=True,

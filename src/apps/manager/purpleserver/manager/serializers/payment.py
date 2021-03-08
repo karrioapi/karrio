@@ -33,13 +33,13 @@ class PaymentSerializer(PaymentData):
 
         related_data = dict(
             contact=SerializerDecorator[AddressSerializer](
-                data=validated_data.get('contact')).save(user=validated_data['user']).instance,
+                data=validated_data.get('contact')).save(created_by=validated_data['created_by']).instance,
         )
 
         payment = models.Payment.objects.create(**{
             **data,
             **related_data,
-            'user': validated_data['user']
+            'created_by': validated_data['created_by']
         })
         return payment
 
@@ -56,7 +56,7 @@ class PaymentSerializer(PaymentData):
                 instance.contact = None
             else:
                 instance.contact = SerializerDecorator[AddressSerializer](
-                    instance.contact, data=data).save(user=validated_data['user']).instance
+                    instance.contact, data=data).save(created_by=validated_data['created_by']).instance
 
         instance.save()
         return instance

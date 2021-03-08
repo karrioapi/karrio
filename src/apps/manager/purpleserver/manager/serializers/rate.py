@@ -5,5 +5,5 @@ from purpleserver.core.serializers import RateRequest, RateResponse
 class RateSerializer(RateRequest):
 
     def create(self, validated_data: dict) -> RateResponse:
-        user = validated_data['user']
-        return Rates.fetch(RateRequest(validated_data).data, user=user)
+        created_by = validated_data['created_by']
+        return Rates.fetch(RateRequest(validated_data).data, created_by=created_by)

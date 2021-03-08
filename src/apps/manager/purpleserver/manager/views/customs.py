@@ -49,7 +49,7 @@ class CustomsList(GenericAPIView):
         """
         Create a new customs declaration.
         """
-        customs = SerializerDecorator[CustomsSerializer](data=request.data).save(user=request.user).instance
+        customs = SerializerDecorator[CustomsSerializer](data=request.data).save(created_by=request.user).instance
         return Response(Customs(customs).data, status=status.HTTP_201_CREATED)
 
 
@@ -88,7 +88,7 @@ class CustomsDetail(APIView):
                 code='state_error'
             )
 
-        SerializerDecorator[CustomsSerializer](customs, data=request.data).save(user=request.user)
+        SerializerDecorator[CustomsSerializer](customs, data=request.data).save(created_by=request.user)
         reset_related_shipment_rates(shipment)
         return Response(Customs(customs).data)
 

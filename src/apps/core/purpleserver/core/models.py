@@ -23,4 +23,4 @@ class OwnedEntity(Entity):
     class Meta:
         abstract = True
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

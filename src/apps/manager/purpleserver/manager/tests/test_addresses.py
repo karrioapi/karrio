@@ -34,7 +34,7 @@ class TestAddressDetails(APITestCase):
             "suburb": "Hamilton",
             "validate_location": False,
             "validation": None,
-            "user": self.user
+            "created_by": self.user
         })
 
     def test_update_address(self):

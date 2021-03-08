@@ -16,10 +16,10 @@ class Carrier(Entity):
     )
     test = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, editable=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, editable=False)
 
     def __str__(self):
-        return f"{self.carrier_id} - {self.user or 'system'}"
+        return f"{self.carrier_id} - {self.created_by or 'system'}"
 
     def _linked_settings(self):
         for field in [f for f in self._meta.get_fields() if isinstance(f, models.OneToOneRel)]:

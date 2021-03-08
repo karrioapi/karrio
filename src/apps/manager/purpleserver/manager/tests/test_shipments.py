@@ -28,7 +28,7 @@ class TestShipmentFixture(APITestCase):
             "address_line2": None,
             "validate_location": False,
             "validation": None,
-            "user": self.user
+            "created_by": self.user
         })
         self.recipient: models.Address = models.Address.objects.create(**{
             "postal_code": "V6M2V9",
@@ -47,24 +47,24 @@ class TestShipmentFixture(APITestCase):
             "address_line2": None,
             "validate_location": False,
             "validation": None,
-            "user": self.user
+            "created_by": self.user
         })
         self.parcel: models.Parcel = models.Parcel.objects.create(**{
             "weight": 1.0,
             "weight_unit": "KG",
             "package_preset": "canadapost_corrugated_small_box",
-            "user": self.user
+            "created_by": self.user
         })
         self.payment: models.Payment = models.Payment.objects.create(**{
             "currency": "CAD",
             "paid_by": "sender",
-            "user": self.user
+            "created_by": self.user
         })
         self.shipment: models.Shipment = models.Shipment.objects.create(
             shipper=self.shipper,
             recipient=self.recipient,
             payment=self.payment,
-            user=self.user,
+            created_by=self.user,
             test_mode=True,
         )
         self.shipment.shipment_parcels.set([self.parcel])

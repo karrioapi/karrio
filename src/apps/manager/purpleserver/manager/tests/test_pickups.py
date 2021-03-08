@@ -28,7 +28,7 @@ class TestFixture(TestShipmentFixture):
             "address_line2": None,
             "validate_location": False,
             "validation": None,
-            "user": self.user
+            "created_by": self.user
         })
         self.shipment.tracking_number = "123456789012"
         self.shipment.selected_rate_carrier = self.carrier
@@ -58,7 +58,7 @@ class TestPickupDetails(TestFixture):
         self.pickup: models.Pickup = models.Pickup.objects.create(
             address=self.address,
             pickup_carrier=self.carrier,
-            user=self.user,
+            created_by=self.user,
             test_mode=True,
             pickup_date="2020-10-25",
             ready_time="13:00",

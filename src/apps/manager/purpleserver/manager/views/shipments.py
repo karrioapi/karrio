@@ -72,7 +72,7 @@ class ShipmentList(GenericAPIView):
         Create a new shipment instance.
         """
         shipment = SerializerDecorator[ShipmentSerializer](
-            data=request.data).save(user=request.user).instance
+            data=request.data).save(created_by=request.user).instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -140,7 +140,7 @@ class ShipmentRates(APIView):
         shipment = request.user.shipment_set.get(pk=pk)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
-            data=ShipmentData(shipment).data).save(user=shipment.user).instance
+            data=ShipmentData(shipment).data).save(created_by=shipment.created_by).instance
         payload: dict = DP.to_dict(dict(
             rates=Rate(rate_response.rates, many=True).data,
             messages=Message(rate_response.messages, many=True).data,
@@ -246,7 +246,7 @@ class ShipmentParcels(APIView):
                 "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        parcel = SerializerDecorator[ParcelSerializer](data=request.data).save(user=request.user).instance
+        parcel = SerializerDecorator[ParcelSerializer](data=request.data).save(created_by=request.user).instance
         shipment.shipment_parcels.add(parcel)
         reset_related_shipment_rates(shipment)
         return Response(Shipment(shipment).data)
@@ -280,7 +280,7 @@ class ShipmentPurchase(APIView):
 
         # Submit shipment to carriers
         response: Shipment = SerializerDecorator[ShipmentValidationData](
-            data=payload).save(user=request.user).instance
+            data=payload).save(created_by=request.user).instance
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response)).save()

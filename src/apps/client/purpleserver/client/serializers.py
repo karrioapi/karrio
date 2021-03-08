@@ -19,7 +19,7 @@ TEMPLATE_MODELS: Dict[str, Any] = dict(
 class TemplateSerializer(ModelSerializer):
     class Meta:
         model = models.Template
-        exclude = ['created_at', 'updated_at', 'user']
+        exclude = ['created_at', 'updated_at', 'created_by']
 
     address = serializers.AddressSerializer(required=False)
     customs = serializers.CustomsSerializer(required=False)
@@ -27,7 +27,7 @@ class TemplateSerializer(ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Template:
-        user = validated_data.get('user')
+        created_by = validated_data.get('created_by')
         label = validated_data.get('label')
         is_default = validated_data.get('is_default')
         related_data = {}
@@ -35,23 +35,23 @@ class TemplateSerializer(ModelSerializer):
         if 'address' in validated_data:
             related_data = dict(
                 address=SerializerDecorator[serializers.AddressSerializer](
-                    data=validated_data.get('address')).save(user=user).instance)
+                    data=validated_data.get('address')).save(created_by=created_by).instance)
 
         elif 'customs' in validated_data:
             related_data = dict(
                 customs=SerializerDecorator[serializers.CustomsSerializer](
-                    data=validated_data.get('customs')).save(user=user).instance)
+                    data=validated_data.get('customs')).save(created_by=created_by).instance)
 
         elif 'parcel' in validated_data:
             related_data = dict(
                 parcel=SerializerDecorator[serializers.ParcelSerializer](
-                    data=validated_data.get('parcel')).save(user=user).instance)
+                    data=validated_data.get('parcel')).save(created_by=created_by).instance)
 
         if is_default:
             ensure_unique_default_related_data(validated_data)
 
         template = models.Template.objects.create(**{
-            'user': user,
+            'created_by': created_by,
             'label': label,
             'is_default': is_default,
             **related_data,

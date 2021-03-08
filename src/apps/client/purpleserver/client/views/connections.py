@@ -34,7 +34,7 @@ class ConnectionList(GenericAPIView):
         """
         Connect a carrier account.
         """
-        connection = SerializerDecorator[CarrierSerializer](data=request.data).save(user=request.user).instance
+        connection = SerializerDecorator[CarrierSerializer](data=request.data).save(created_by=request.user).instance
         return Response(CarrierSettings(connection).data, status=status.HTTP_201_CREATED)
 
 

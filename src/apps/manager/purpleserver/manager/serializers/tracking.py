@@ -13,7 +13,7 @@ class TrackingSerializer(TrackingDetails):
     test_mode = BooleanField(required=False)
 
     def create(self, validated_data: dict) -> models.Tracking:
-        user = validated_data['user']
+        created_by = validated_data['created_by']
         carrier_filter = validated_data['carrier_filter']
         tracking_number = validated_data['tracking_number']
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
@@ -24,7 +24,7 @@ class TrackingSerializer(TrackingDetails):
         )
 
         return models.Tracking.objects.create(
-            user=user,
+            created_by=created_by,
             tracking_number=tracking_number,
             events=DP.to_dict(response.tracking.events),
             test_mode=response.tracking.test_mode,

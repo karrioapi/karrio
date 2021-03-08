@@ -49,7 +49,7 @@ class ParcelList(GenericAPIView):
         """
         Create a new parcel.
         """
-        parcel = SerializerDecorator[ParcelSerializer](data=request.data).save(user=request.user).instance
+        parcel = SerializerDecorator[ParcelSerializer](data=request.data).save(created_by=request.user).instance
         return Response(Parcel(parcel).data, status=status.HTTP_201_CREATED)
 
 

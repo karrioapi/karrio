@@ -33,8 +33,8 @@ class Carriers:
             query += (Q(test=list_filter['test']), )
 
         # Check if the system_only flag is not specified and there is a provided user, get the users carriers
-        if not list_filter.get('system_only') and 'user' in list_filter:
-            users += [list_filter.get('user')]
+        if not list_filter.get('system_only') and 'created_by' in list_filter:
+            users += [list_filter.get('created_by')]
 
         # Check if the active flag is specified and return all active carrier is active is not set to false
         if list_filter.get('active') is not None:
@@ -50,7 +50,7 @@ class Carriers:
             query += (Q(carrier_id__in=list_filter['carrier_ids']), )
 
         # Always return all system carriers and any additional carrier from the users list
-        query += (Q(user__isnull=True) | Q(user__in=users),)
+        query += (Q(created_by__isnull=True) | Q(created_by__in=users),)
 
         if 'carrier_name' in list_filter:
             carrier_name = list_filter['carrier_name']
@@ -230,7 +230,7 @@ class Pickups:
     @staticmethod
     def cancel(payload: dict, carrier_filter: dict = None, carrier: models.Carrier = None) -> datatypes.ConfirmationResponse:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
-        print(carrier)
+
         if carrier is None:
             raise NotFound('No configured and active carrier found')
 
@@ -254,11 +254,11 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict, user=None) -> datatypes.RateResponse:
+    def fetch(payload: dict, created_by=None) -> datatypes.RateResponse:
         request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
-            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user)
+            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, created_by=created_by)
         ]
         gateways = [
             purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list

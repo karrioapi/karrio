@@ -26,7 +26,7 @@ class TemplateList(GenericAPIView):
         """
         Create a new template.
         """
-        template = SerializerDecorator[TemplateSerializer](data=request.data).save(user=request.user).instance
+        template = SerializerDecorator[TemplateSerializer](data=request.data).save(created_by=request.user).instance
         return Response(TemplateSerializer(template).data, status=status.HTTP_201_CREATED)
 
     def get(self, request: Request):
@@ -44,7 +44,7 @@ class TemplateDetails(TemplateList):
         Update a template.
         """
         template = request.user.template_set.get(pk=pk)
-        SerializerDecorator[TemplateSerializer](template, data=request.data).save(user=request.user)
+        SerializerDecorator[TemplateSerializer](template, data=request.data).save(created_by=request.user)
 
         return Response(TemplateSerializer(template).data, status=status.HTTP_201_CREATED)
 
