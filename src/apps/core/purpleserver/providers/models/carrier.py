@@ -33,7 +33,7 @@ class Carrier(Entity):
     def data(self) -> CarrierSettings:
         settings = self._linked_settings()
         return CarrierSettings.create({
-            'id': settings.pk,
+            'id': settings.id,
             'carrier_name': settings.carrier_name,
             **model_to_dict(settings)
         })

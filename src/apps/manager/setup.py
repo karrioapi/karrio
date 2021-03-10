@@ -10,12 +10,13 @@ setup(
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/PurplShip/purplship-server',
-      author='PurplShip',
+      author='Purplship',
       author_email='danielk.developer@gmail.com',
       license='AGPLv3',
       packages=find_packages("."),
       install_requires=[
-            'purplship-server.core'
+            'purplship-server.core',
+            'schedule',
       ],
       dependency_links=[
             'https://git.io/purplship',
