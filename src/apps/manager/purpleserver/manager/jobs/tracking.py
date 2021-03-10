@@ -95,10 +95,11 @@ def save_updated_trackers(responses: List[BatchResponse], trackers: List[models.
             try:
                 logger.debug(f"update tracking info for {details.tracking_number}")
 
-                tracker = next((t for t in trackers if t.tracking_number == details.tracking_number))
-                tracker.events = DP.to_dict(details.events)
-                tracker.delivered = details.delivered
-                tracker.save()
+                related_trackers = [t for t in trackers if t.tracking_number == details.tracking_number]
+                for tracker in related_trackers:
+                    tracker.events = DP.to_dict(details.events)
+                    tracker.delivered = details.delivered
+                    tracker.save()
 
                 logger.debug(f"tracking info {details.tracking_number} updated successfully")
 
