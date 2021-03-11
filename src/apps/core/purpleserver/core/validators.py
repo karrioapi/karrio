@@ -160,7 +160,7 @@ class GoogleGeocode:
         response = requests.request(
             "GET",
             GoogleGeocode.get_url(),
-            params=dict(address=formatted_address, key=GoogleGeocode.get_api_key())
+            params=dict(address=formatted_address, key=GoogleGeocode.get_api_key(), location_type="ROOFTOP")
         )
         response_data = response.json()
         success = response_data.get("status") == "OK"
