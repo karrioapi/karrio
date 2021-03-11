@@ -137,15 +137,20 @@ class GoogleGeocode:
             address.address_line2 or "",
             address.postal_code or "",
             address.city or "",
+            join=True
+        )
+
+        if address_string is None:
+            raise Exception("At least one address info must be provided (address_line1, city and/or postal_code)")
+
+        enriched_address = utils.SF.concat_str(
+            address_string,
             address.state_code or "",
             address.country_code or "",
             join=True
         )
 
-        if address_string is None:
-            raise Exception("At least one address location info must be provided (lines, city, postal code or state)")
-
-        return address_string.replace(" ", "+")
+        return enriched_address.replace(" ", "+")
 
     @staticmethod
     def validate(address: datatypes.Address) -> datatypes.AddressValidation:

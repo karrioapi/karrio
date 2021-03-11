@@ -5,7 +5,7 @@ from typing import List, Callable, Dict, Any
 
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, ValidationError
 
 import purplship
 from purplship.core.utils import DP
@@ -71,6 +71,9 @@ class Address:
     def validate(payload: dict) -> datatypes.AddressValidation:
         # Currently only support GoogleGeocode validation. Refactor this for other methods
         validation = validators.GoogleGeocode.validate(datatypes.Address(**payload))
+
+        if validation.success is False:
+            raise ValidationError(detail="Invalid Address")
 
         return validation
 
