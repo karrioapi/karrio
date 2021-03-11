@@ -20,7 +20,7 @@ export interface AutocompleteService {
 export function initDebouncedPrediction() {
     const request: Subject<{ params: PredictionInput, callback: PredictionCallback }> = new Subject();
     const service = new (window as any).google.maps.places.AutocompleteService();
-    request.pipe(debounceTime(1000)).subscribe((data) => {
+    request.pipe(debounceTime(600)).subscribe((data) => {
         service.getPlacePredictions(data.params, data.callback);
     });
 
