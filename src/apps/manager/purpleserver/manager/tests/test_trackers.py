@@ -63,7 +63,7 @@ class TestTrackersPostUpdate(APITestCase):
                         "time": "13:58",
                     }
                 ],
-                "user": self.user,
+                "created_by": self.user,
                 "tracking_carrier": self.ups_carrier
             },
             {
@@ -79,7 +79,7 @@ class TestTrackersPostUpdate(APITestCase):
                         "time": "20:34"
                     }
                 ],
-                "user": self.user,
+                "created_by": self.user,
                 "tracking_carrier": self.dhl_carrier
             }
         ]

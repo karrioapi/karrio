@@ -59,7 +59,7 @@ class TrackingDetails(APIView):
             "carrier_name": carrier_name,
             "created_by": request.user
         }
-        tracking = request.user.tracking_set.filter(tracking_number=tracking_number, user=request.user).first()
+        tracking = request.user.tracking_set.filter(tracking_number=tracking_number, created_by=request.user).first()
 
         tracking = SerializerDecorator[TrackingSerializer](
             tracking, data=data).save(created_by=request.user, carrier_filter=carrier_filter).instance
