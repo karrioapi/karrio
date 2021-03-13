@@ -16,7 +16,6 @@ setup(
       packages=find_packages("."),
       install_requires=[
             'purplship-server.core',
-            'schedule',
       ],
       dependency_links=[
             'https://git.io/purplship',
