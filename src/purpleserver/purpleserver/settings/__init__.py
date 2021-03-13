@@ -5,6 +5,7 @@ from decouple import config
 from purpleserver.settings.base import *
 from purpleserver.settings.email import *
 from purpleserver.settings.constance import *
+from purpleserver.settings.tasks import *
 
 if config('MULTI_TENANT_ENABLE', default=False, cast=bool):
     from purpleserver.settings.tenants import *

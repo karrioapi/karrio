@@ -101,6 +101,7 @@ INSTALLED_APPS = [
 
     'drf_yasg',
     'constance.backends.database',
+    'huey.contrib.djhuey',
 ]
 
 MIDDLEWARE = [
@@ -316,7 +317,3 @@ LOGGING = {
         },
     },
 }
-
-# Purplship Server Background jobs interval config
-DEFAULT_SCHEDULER_RUN_INTERVAL = 3600  # value is seconds. so 3600 seconds = 1 Hour
-DEFAULT_TRACKERS_UPDATE_INTERVAL = 10800  # value is seconds. so 10800 seconds = 3 Hours

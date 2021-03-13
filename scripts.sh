@@ -176,7 +176,8 @@ test() {
 
   purplship test --failfast purpleserver.proxy.tests &&
   purplship test --failfast purpleserver.pricing.tests &&
-  purplship test --failfast purpleserver.manager.tests
+  purplship test --failfast purpleserver.manager.tests &&
+  purplship test --failfast purpleserver.events.tests
 }
 
 test_services() {

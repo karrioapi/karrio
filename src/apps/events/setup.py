@@ -15,7 +15,8 @@ setup(
       license='AGPLv3',
       packages=find_packages("."),
       install_requires=[
-            'purplship-server.core'
+            'purplship-server.core',
+            'huey'
       ],
       dependency_links=[
             'https://git.io/purplship',
