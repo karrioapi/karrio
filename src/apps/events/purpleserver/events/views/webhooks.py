@@ -15,7 +15,7 @@ from purpleserver.events.router import router
 
 
 logger = logging.getLogger(__name__)
-ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
+ENDPOINT_ID = "$$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Webhooks = PaginatedResult('WebhookList', Webhook)
 
 
@@ -91,7 +91,7 @@ class WebhookDetail(APIView):
     )
     def delete(self, request: Request, pk: str):
         """
-        Discard a customs declaration.
+        Remove a webhook.
         """
         webhook = request.user.customs_set.get(pk=pk)
 

@@ -14,7 +14,7 @@ def register_signals():
     logger.info("webhooks signals registered...")
 
 
-def shipment_updated(sender, key, old_value, new_value, **kwargs):
+def shipment_updated(sender, *args, **kwargs):
     """Shipment related events:
         - shipment purchased (label purchased)
         - shipment fulfilled (shipped)
@@ -23,7 +23,7 @@ def shipment_updated(sender, key, old_value, new_value, **kwargs):
     pass
 
 
-def tracker_updated(sender, key, old_value, new_value, **kwargs):
+def tracker_updated(sender, *args, **kwargs):
     """Tracking related events:
         - tracker created (in-transit)
         - tracker status changed (delivered or blocked)

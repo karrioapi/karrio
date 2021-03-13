@@ -103,8 +103,8 @@ class TestFilters(FlagsSerializer):
 
 class Message(Serializer):
 
-    carrier_name = CharField(required=True, help_text="The targeted carrier")
-    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
+    carrier_name = CharField(required=False, help_text="The targeted carrier")
+    carrier_id = CharField(required=False, help_text="The targeted carrier name (unique identifier)")
     message = CharField(required=False, help_text="The error or warning message")
     code = CharField(required=False, help_text="The message code")
     details = DictField(required=False, help_text="any additional details")

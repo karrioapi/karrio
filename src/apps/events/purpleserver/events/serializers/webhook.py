@@ -1,5 +1,5 @@
 from purpleserver.events.serializers import WebhookData
-from purpleserver.manager.models import Webhook
+from purpleserver.events.models import Webhook
 
 
 class WebhookSerializer(WebhookData):
