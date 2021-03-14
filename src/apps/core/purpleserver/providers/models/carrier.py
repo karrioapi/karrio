@@ -8,6 +8,12 @@ from purpleserver.core.models import Entity, uuid
 from purpleserver.core.datatypes import CarrierSettings
 
 
+class CarrierManager(models.Manager):
+    def get_queryset(self):
+        from purpleserver.providers.models import MODELS
+        return super().get_queryset().prefetch_related(*[Model.__name__.lower() for Model in MODELS.values()])
+
+
 class Carrier(Entity):
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='car_'), editable=False)
     carrier_id = models.CharField(
@@ -18,16 +24,19 @@ class Carrier(Entity):
     active = models.BooleanField(default=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, editable=False)
 
+    objects = CarrierManager()
+
     def __str__(self):
         return f"{self.carrier_id} - {self.created_by or 'system'}"
 
     def _linked_settings(self):
-        for field in [f for f in self._meta.get_fields() if isinstance(f, models.OneToOneRel)]:
-            try:
-                return getattr(self, field.get_accessor_name())
-            except:
-                pass
-        return None
+        from purpleserver.providers.models import MODELS
+
+        return next((
+            getattr(self, Model.__name__.lower())
+            for Model in MODELS.values()
+            if hasattr(self, Model.__name__.lower())
+        ), None)
 
     @property
     def data(self) -> CarrierSettings:
