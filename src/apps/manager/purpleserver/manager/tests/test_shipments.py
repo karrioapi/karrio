@@ -337,9 +337,7 @@ SHIPMENT_RESPONSE = {
 
 
 SHIPMENT_OPTIONS = {
-    "insurance": {
-        "amount": 54
-    },
+    "insurance": 54,
     "currency": "CAD"
 }
 

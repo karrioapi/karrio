@@ -219,7 +219,7 @@ class Tracking(OwnedEntity):
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
         'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates', 'label_type',
-        'tracking_number', 'doc_images', 'tracking_url', 'shipment_identifier', 'test_mode', 'messages'
+        'tracking_number', 'tracking_url', 'shipment_identifier', 'test_mode', 'messages'
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
 
@@ -249,7 +249,6 @@ class Shipment(OwnedEntity):
 
     options = JSONField(blank=True, null=True, default={})
     services = JSONField(blank=True, null=True, default=[])
-    doc_images = JSONField(blank=True, null=True, default=[])
     meta = JSONField(blank=True, null=True, default={})
     messages = JSONField(blank=True, null=True, default=[])
 

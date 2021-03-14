@@ -189,10 +189,15 @@ class ShipmentOptions(APIView):
                 "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        payload: dict = DP.to_dict(dict(options=request.data))
+        payload: dict = DP.to_dict(dict(
+            options=request.data,
+            selected_rate=None,
+            shipment_rates=[],
+            messages=[]
+        ))
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
-        reset_related_shipment_rates(shipment)
+
         return Response(Shipment(shipment).data)
 
 
@@ -221,8 +226,14 @@ class ShipmentCustoms(APIView):
                 "Shipment customs declaration already defined", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        SerializerDecorator[ShipmentSerializer](shipment, data=dict(customs=request.data)).save()
-        reset_related_shipment_rates(shipment)
+        payload: dict = DP.to_dict(dict(
+            customs=request.data,
+            selected_rate=None,
+            shipment_rates=[],
+            messages=[]
+        ))
+
+        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
         return Response(Shipment(shipment).data)
 
 
