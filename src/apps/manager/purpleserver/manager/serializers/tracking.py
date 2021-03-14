@@ -41,9 +41,23 @@ class TrackingSerializer(TrackingDetails):
                 carrier=carrier,
                 payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data
             )
-            instance.events = DP.to_dict(response.tracking.events)
-            instance.delivered = response.tracking.delivered
-            instance.carrier = carrier
-            instance.save()
+            # update values only if changed; This is important for webhooks notification
+            changes = []
+            events = DP.to_dict(response.tracking.events)
+
+            if events != instance.events:
+                instance.events = events
+                changes.append('events')
+
+            if response.tracking.delivered != instance.delivered:
+                instance.delivered = response.tracking.delivered
+                changes.append('events')
+
+            if carrier.id != instance.tracking_carrier.id:
+                instance.carrier = carrier
+                changes.append('events')
+
+            if any(changes):
+                instance.save(update_fields=changes)
 
         return instance

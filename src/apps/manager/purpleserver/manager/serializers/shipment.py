@@ -138,15 +138,18 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def update(self, instance: models.Shipment, validated_data: dict) -> models.Shipment:
+        changes = []
         data = validated_data.copy()
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS:
                 setattr(instance, key, val)
+                changes.append(key)
                 validated_data.pop(key)
 
             if key in models.Shipment.RELATIONAL_PROPS and val is None:
                 prop = getattr(instance, key)
+                changes.append(key)
                 # Delete related data from database if payload set to null
                 if hasattr(prop, 'delete'):
                     prop.delete()
@@ -154,14 +157,17 @@ class ShipmentSerializer(ShipmentData):
                     validated_data.pop(key)
 
         if validated_data.get('payment') is not None:
+            changes.append('payment')
             instance.payment = SerializerDecorator[PaymentSerializer](
                 instance.payment, data=validated_data['payment']).save(created_by=instance.created_by).instance
 
         if validated_data.get('customs') is not None:
+            changes.append('customs')
             instance.customs = SerializerDecorator[CustomsSerializer](
                 data=validated_data.get('customs')).save(created_by=instance.created_by).instance
 
-        if validated_data.get('rates') is not None:
+        if 'rates' in validated_data:
+            changes.append('shipment_rates')
             instance.shipment_rates = DP.to_dict(validated_data.get('rates', []))
 
         if 'selected_rate' in validated_data:
@@ -170,8 +176,9 @@ class ShipmentSerializer(ShipmentData):
 
             instance.selected_rate = {**selected_rate, **({'carrier_ref': carrier.id} if carrier is not None else {})}
             instance.selected_rate_carrier = carrier
+            changes += ['selected_rate', 'selected_rate_carrier']
 
-        instance.save()
+        instance.save(update_fields=changes)
 
         if 'carrier_ids' in validated_data:
             carrier_ids = validated_data.get('carrier_ids', [])
