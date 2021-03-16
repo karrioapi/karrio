@@ -5,6 +5,7 @@ from purpleserver.core.serializers import EntitySerializer
 
 
 class EventTypes(Enum):
+    all = 'all'
     shipment_purchased = 'shipment.purchased'
     shipment_cancelled = 'shipment.cancelled'
     shipment_fulfilled = 'shipment.fulfilled'

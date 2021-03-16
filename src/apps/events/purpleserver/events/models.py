@@ -1,6 +1,6 @@
 from functools import partial
 from django.db import models
-from jsonfield import JSONField
+from django.contrib.postgres import fields
 
 from purpleserver.core.models import OwnedEntity, uuid
 
@@ -14,9 +14,15 @@ class Webhook(OwnedEntity):
 
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='web_'), editable=False)
 
-    enabled_events = JSONField(default=[])
+    enabled_events = fields.ArrayField(models.CharField(max_length=200), blank=False)
     url = models.URLField(max_length=200)
     test_mode = models.BooleanField(null=False)
     disabled = models.BooleanField(null=True)
-    last_event_at = models.DateTimeField(null=True)
     description = models.CharField(max_length=200, null=True, blank=True)
+    last_event_at = models.DateTimeField(null=True)
+
+    # System Reference fields
+    failure_streak_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.id} + {self.url}'

@@ -45,10 +45,10 @@ class WebhookList(GenericAPIView):
         responses={200: Webhook(), 400: ErrorResponse()}
     )
     def post(self, request: Request):
-        """
-        Create a new webhook.
-        """
-        webhook = SerializerDecorator[WebhookSerializer](data=request.data).save(user=request.user).instance
+        """Create a new webhook."""
+        webhook = SerializerDecorator[WebhookSerializer](
+            data=request.data).save(created_by=request.user).instance
+
         return Response(Webhook(webhook).data, status=status.HTTP_201_CREATED)
 
 
@@ -93,7 +93,7 @@ class WebhookDetail(APIView):
         """
         Remove a webhook.
         """
-        webhook = request.user.customs_set.get(pk=pk)
+        webhook = request.user.webhook_set.get(pk=pk)
 
         webhook.delete(keep_parents=True)
         serializer = Operation(dict(operation="Remove webhook", success=True))
