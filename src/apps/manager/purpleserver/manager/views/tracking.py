@@ -8,7 +8,7 @@ from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
-    TrackingStatus, ErrorResponse, TestFilters
+    TrackingStatus, ErrorResponse, TestFilters, Operation
 )
 from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.manager.router import router
@@ -38,13 +38,13 @@ class TrackerList(GenericAPIView):
         return self.get_paginated_response(response)
 
 
-class TrackingDetails(APIView):
+class TrackersCreate(APIView):
     logging_methods = ['GET']
 
     @swagger_auto_schema(
         tags=['Trackers'],
         operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieves or creates a shipment trackers",
+        operation_summary="Retrieve a shipment tracker",
         query_serializer=TestFilters(),
         responses={200: TrackingStatus(), 404: ErrorResponse()}
     )
@@ -66,5 +66,25 @@ class TrackingDetails(APIView):
         return Response(TrackingStatus(tracking).data)
 
 
+class TrackersDetails(APIView):
+
+    @swagger_auto_schema(
+        tags=['Trackers'],
+        operation_id=f"{ENDPOINT_ID}remove",
+        operation_summary="Remove a shipment tracker",
+        responses={200: Operation(), 400: ErrorResponse()}
+    )
+    def delete(self, request: Request, pk: str):
+        """
+        Remove a shipment tracker.
+        """
+        tracker = request.user.tracking_set.get(pk=pk)
+
+        tracker.delete(keep_parents=True)
+        serializer = Operation(dict(operation="Remove a tracker", success=True))
+        return Response(serializer.data)
+
+
 router.urls.append(path('trackers', TrackerList.as_view(), name="trackers-list"))
-router.urls.append(path('trackers/<carrier_name>/<tracking_number>', TrackingDetails.as_view(), name="shipment-tracker"))
+router.urls.append(path('trackers/<str:pk>', TrackersDetails.as_view(), name="tracker-details"))
+router.urls.append(path('trackers/<carrier_name>/<tracking_number>', TrackersCreate.as_view(), name="shipment-tracker"))
