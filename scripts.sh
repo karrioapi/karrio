@@ -6,6 +6,12 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export DATABASE_PORT=5432
+export DATABASE_NAME=db
+export DATABASE_ENGINE=postgresql_psycopg2
+export DATABASE_USERNAME=postgres
+export DATABASE_PASSWORD=postgres
+
 export SECRET_KEY="n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r"
 export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
@@ -137,12 +143,6 @@ rundb() {
     export DATABASE_HOST="0.0.0.0"
   fi
 
-  export DATABASE_PORT=5432
-  export DATABASE_NAME=db
-  export DATABASE_ENGINE=postgresql_psycopg2
-  export DATABASE_USERNAME=postgres
-  export DATABASE_PASSWORD=postgres
-
   sleep 5
 }
 
@@ -229,6 +229,33 @@ build_dashboard() {
 
 build_image() {
   docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}"
+}
+
+stub_server() {
+echo "
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+
+class S(BaseHTTPRequestHandler):
+    def do_POST(self):
+    	try:
+    		print(self.rfile.read1())
+    	except:
+    		pass
+    	self.send_response(200)
+    	self.send_header('Content-type', 'application/json')
+    	self.end_headers()
+    	self.wfile.write('good'.encode('utf8'))
+
+addr = 'localhost'
+port = 8080
+server_address = (addr, port)
+httpd = HTTPServer(server_address, S)
+
+print(f'Starting httpd server on {addr}:{port}')
+httpd.serve_forever()
+
+" | python
 }
 
 

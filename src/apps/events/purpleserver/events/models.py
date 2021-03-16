@@ -17,7 +17,7 @@ class Webhook(OwnedEntity):
     enabled_events = fields.ArrayField(models.CharField(max_length=200), blank=False)
     url = models.URLField(max_length=200)
     test_mode = models.BooleanField(null=False)
-    disabled = models.BooleanField(default=False)
+    disabled = models.BooleanField(null=True, default=False)
     description = models.CharField(max_length=200, null=True, blank=True)
     last_event_at = models.DateTimeField(null=True)
 

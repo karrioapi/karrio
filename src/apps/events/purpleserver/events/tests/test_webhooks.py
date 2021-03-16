@@ -27,7 +27,7 @@ class TestWebhookDetails(APITestCase):
             "description": "Testing Hook",
             "enabled_events": ["all"],
             "test_mode": True,
-            "disabled": None,
+            "disabled": False,
             "id": ANY,
             "last_event_at": None,
             "created_by": self.user
@@ -58,7 +58,7 @@ WEBHOOK_RESPONSE = {
     "all"
   ],
   "test_mode": True,
-  "disabled": None,
+  "disabled": False,
   "id": ANY,
   "last_event_at": None
 }
@@ -76,7 +76,7 @@ WEBHOOK_UPDATE_RESPONSE = {
     "shipment.cancelled"
   ],
   "test_mode": True,
-  "disabled": None,
+  "disabled": False,
   "id": ANY,
   "last_event_at": None
 }
