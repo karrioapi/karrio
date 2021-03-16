@@ -1,5 +1,6 @@
 import os
 import decouple
+from huey import SqliteHuey
 from purpleserver.settings import base as settings
 
 # Purplship Server Background jobs interval config
@@ -20,19 +21,7 @@ DATABASES = {
 }
 
 
-HUEY = {
-    'name': 'purpleserver',
-    'huey_class': 'huey.SqliteHuey',  # Huey implementation to use.
-    'filename': TASKS_DB_FILE_NAME,
-    'immediate': False,  # If DEBUG=True, run synchronously.
-    'utc': True,  # Use UTC for all times internally.
-    'fsync': True,
-    'consumer': {
-        'blocking': True,  # Use blocking list pop instead of polling Redis.
-        'loglevel': settings.LOG_LEVEL,
-        'workers': 1,
-        'scheduler_interval': 1,
-        'simple_log': True,
-        'periodic': True,  # Enable crontab feature.
-    },
-}
+HUEY = SqliteHuey(
+    name='default',
+    filename=TASKS_DB_FILE_NAME
+)

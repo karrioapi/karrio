@@ -6,7 +6,6 @@ from itertools import groupby
 
 from django.conf import settings
 from django.utils import timezone
-from django.db import transaction
 
 import purplship
 from purplship.core.utils import exec_parrallel, DP
@@ -28,11 +27,15 @@ def update_trackers(delta: datetime.timedelta = datetime.timedelta(seconds=DEFAU
     time_threshold = timezone.now() - delta
 
     active_trackers = models.Tracking.objects.filter(delivered=False, updated_at__lt=time_threshold)
-    trackers_grouped_by_carrier = [list(g) for _, g in groupby(active_trackers, key=lambda t: t.carrier_id)]
-    request_batches = sum([create_request_batches(group) for group in trackers_grouped_by_carrier], [])
 
-    responses = exec_parrallel(fetch_tracking_info, request_batches, 2)
-    save_updated_trackers(responses, active_trackers)
+    if any(active_trackers):
+        trackers_grouped_by_carrier = [list(g) for _, g in groupby(active_trackers, key=lambda t: t.carrier_id)]
+        request_batches = sum([create_request_batches(group) for group in trackers_grouped_by_carrier], [])
+
+        responses = exec_parrallel(fetch_tracking_info, request_batches, 2)
+        save_updated_trackers(responses, active_trackers)
+    else:
+        logger.info("no active trackers found needing update")
 
     logger.info("> ending scheduled trackers update")
 
@@ -85,7 +88,6 @@ def fetch_tracking_info(request_batch: RequestBatches) -> BatchResponse:
     return []
 
 
-@transaction.atomic
 def save_updated_trackers(responses: List[BatchResponse], trackers: List[models.Tracking]):
     logger.info('> saving updated trackers')
 
@@ -97,11 +99,23 @@ def save_updated_trackers(responses: List[BatchResponse], trackers: List[models.
 
                 related_trackers = [t for t in trackers if t.tracking_number == details.tracking_number]
                 for tracker in related_trackers:
-                    tracker.events = DP.to_dict(details.events)
-                    tracker.delivered = details.delivered
-                    tracker.save()
+                    # update values only if changed; This is important for webhooks notification
+                    changes = []
+                    events = DP.to_dict(details.events)
 
-                logger.debug(f"tracking info {details.tracking_number} updated successfully")
+                    if events != tracker.events:
+                        tracker.events = events
+                        changes.append('events')
+
+                    if details.delivered != tracker.delivered:
+                        tracker.delivered = details.delivered
+                        changes.append('delivered')
+
+                    if any(changes):
+                        tracker.save(update_fields=changes)
+                        logger.debug(f"tracking info {details.tracking_number} updated successfully")
+                    else:
+                        logger.debug(f"no changes detect")
 
             except Exception as update_error:
                 logger.warning(f'failed to update tracker with tracking number: {details.tracking_number}')
