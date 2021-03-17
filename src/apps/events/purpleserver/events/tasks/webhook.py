@@ -5,6 +5,7 @@ from datetime import datetime
 from django.db.models import Q
 
 from purplship.core import utils
+from purpleserver.core.utils import identity
 from purpleserver.events import models
 
 logger = logging.getLogger(__name__)
@@ -36,7 +37,11 @@ def notify_webhook_subscribers(event: str, data: dict, event_at: datetime, test_
 def notify_subscribers(webhooks: typing.List[models.Webhook], payload: dict):
 
     def notify_subscriber(webhook: models.Webhook):
-        response = requests.post(webhook.url, json=payload, headers={'Content-type': 'application/json'})
+        response = identity(lambda: requests.post(
+            webhook.url,
+            json=payload,
+            headers={'Content-type': 'application/json'}
+        ))
 
         return webhook.id, response
 
