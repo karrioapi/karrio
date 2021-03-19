@@ -94,7 +94,8 @@ class ShipmentSerializer(ShipmentData):
     def create(self, validated_data: dict) -> models.Shipment:
         created_by = validated_data['created_by']
         carrier_ids = validated_data.get('carrier_ids', [])
-        carriers = Carriers.list(carrier_ids=carrier_ids, user=created_by) if any(carrier_ids) else []
+        carriers = Carriers.list(carrier_ids=carrier_ids, created_by=created_by) if any(carrier_ids) else []
+
         rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save(created_by=created_by).instance
         test_mode = all([r.test_mode for r in rate_response.rates])
 
@@ -182,7 +183,7 @@ class ShipmentSerializer(ShipmentData):
 
         if 'carrier_ids' in validated_data:
             carrier_ids = validated_data.get('carrier_ids', [])
-            carriers = Carriers.list(carrier_ids=carrier_ids) if any(carrier_ids) else instance.carriers
+            carriers = Carriers.list(carrier_ids=carrier_ids, created_by=instance.created_by) if any(carrier_ids) else instance.carriers
             instance.carriers.set(carriers)
 
         return instance
