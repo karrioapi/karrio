@@ -5,7 +5,7 @@ from datetime import datetime
 class DATEFORMAT:
     @staticmethod
     def date(date_str: str = None, current_format: str = "%Y-%m-%d"):
-        if date_str is None:
+        if date_str is None or date_str=='':
             return None
         if isinstance(date_str, datetime):
             return date_str
