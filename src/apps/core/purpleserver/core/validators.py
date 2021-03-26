@@ -52,7 +52,7 @@ def valid_datetime_format(value):
         )
 
 
-class PresetSerializer(serializers.Serializer):
+class PresetSerializer:
 
     def __init__(self, *args, **kwargs):
         data = kwargs.get('data')
@@ -73,7 +73,7 @@ class PresetSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
 
-class AugmentedAddressSerializer(serializers.Serializer):
+class AugmentedAddressSerializer:
 
     def __init__(self, *args, **kwargs):
         data = kwargs.get('data')
