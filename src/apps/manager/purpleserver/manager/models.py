@@ -6,7 +6,7 @@ from jsonfield import JSONField
 from purpleserver.providers.models import Carrier
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.serializers import (
-    WEIGHT_UNIT, DIMENSION_UNIT, PAYMENT_TYPES, CURRENCIES, SHIPMENT_STATUS, COUNTRIES
+    WEIGHT_UNIT, DIMENSION_UNIT, PAYMENT_TYPES, CURRENCIES, SHIPMENT_STATUS, COUNTRIES, INCOTERMS
 )
 
 
@@ -77,8 +77,8 @@ class Commodity(OwnedEntity):
     sku = models.CharField(max_length=100, null=True, blank=True)
     value_amount = models.FloatField(blank=True, null=True)
     weight_unit = models.CharField(max_length=2, choices=WEIGHT_UNIT, null=True, blank=True)
-    value_currency = models.CharField(max_length=3, choices=COUNTRIES, null=True, blank=True)
-    origin_country = models.CharField(max_length=3, choices=CURRENCIES, null=True, blank=True)
+    value_currency = models.CharField(max_length=3, choices=CURRENCIES, null=True, blank=True)
+    origin_country = models.CharField(max_length=3, choices=COUNTRIES, null=True, blank=True)
 
 
 class Payment(OwnedEntity):
@@ -106,7 +106,7 @@ class Customs(OwnedEntity):
         'incoterm', 'commercial_invoice', 'certify',
         'certificate_number', 'signer', 'invoice', 'options'
     ]
-    RELATIONAL_PROPS = ['duty', 'commodities', 'duty']
+    RELATIONAL_PROPS = ['duty', 'commodities']
 
     class Meta:
         db_table = "customs"
@@ -124,7 +124,7 @@ class Customs(OwnedEntity):
     content_type = models.CharField(max_length=50, null=True, blank=True)
     content_description = models.CharField(max_length=250, null=True, blank=True)
     duty = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
-    incoterm = models.CharField(max_length=20)
+    incoterm = models.CharField(max_length=20, choices=INCOTERMS)
     invoice = models.CharField(max_length=50, null=True, blank=True)
     signer = models.CharField(max_length=50, null=True, blank=True)
 
