@@ -20,6 +20,7 @@ from django.urls import include, path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from rest_framework import permissions
+from rest_framework_simplejwt import views as jwt_views
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -53,8 +54,13 @@ urlpatterns = [
 
     path('admin/', admin.site.urls, name='app_admin'),
 
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/', include('rest_framework.urls', namespace='rest_framework')),
 
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='jwt-token-obtain-pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='jwt-token-refresh'),
+    path('api/token/verify/', jwt_views.TokenVerifyView.as_view(), name='jwt-token-verify'),
+
+    path('', include('purpleserver.user.urls')),
     *[path('', include(urls)) for urls in settings.PURPLSHIP_URLS],
 ]
 

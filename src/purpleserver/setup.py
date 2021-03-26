@@ -20,6 +20,7 @@ setup(
       install_requires=[
             'django',
             'djangorestframework',
+            'djangorestframework-simplejwt',
             'django-constance',
             'django-picklefield',
             'django-email-verification',

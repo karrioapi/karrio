@@ -14,6 +14,7 @@ import os
 import importlib
 from pathlib import Path
 from decouple import config
+from datetime import timedelta
 from django.urls import reverse_lazy
 from django.core.management.utils import get_random_secret_key
 
@@ -63,8 +64,8 @@ if USE_HTTPS is True:
 PURPLSHIP_CONF = [
     app for app in [
         {'app': 'purpleserver.core', 'module': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},
-        {'app': 'purpleserver.graph', 'module': 'purpleserver.graph', 'urls': 'purpleserver.graph.urls'},
         {'app': 'purpleserver.providers', 'module': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
+        {'app': 'purpleserver.graph', 'module': 'purpleserver.graph', 'urls': 'purpleserver.graph.urls'},
         {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
         {'app': 'purpleserver.manager', 'module': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
         {'app': 'purpleserver.events', 'module': 'purpleserver.events', 'urls': 'purpleserver.events.urls'},
@@ -119,7 +120,7 @@ ROOT_URLCONF = 'purpleserver.urls'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
-OPEN_API_PATH = 'api/'
+OPEN_API_PATH = 'openapi/'
 
 
 TEMPLATES = [
@@ -218,6 +219,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
     'DEFAULT_THROTTLE_CLASSES': (
@@ -240,6 +242,36 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
+}
+
+
+# JWT config
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
 
