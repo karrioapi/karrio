@@ -112,3 +112,4 @@ node_modules/
 staticfiles/
 !src/purpleserver/purpleserver/staticfiles/
 src/purpleserver/purpleserver/staticfiles/*
+codegen/
