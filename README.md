@@ -27,8 +27,8 @@ any supported shipping carriers (Canada Post, DHL, FedEx, UPS, Purolator...), fr
 ## Screenshots
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/dashboard1.png" width="400">
-  <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/dashboard2.png" width="400">
+  <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/artifacts/dashboard1.png" width="400">
+  <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/artifacts/dashboard2.png" width="400">
 </p>
 
 
