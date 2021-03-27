@@ -66,11 +66,11 @@ PURPLSHIP_CONF = [
         {'app': 'purpleserver.core', 'module': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},
         {'app': 'purpleserver.providers', 'module': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
         {'app': 'purpleserver.graph', 'module': 'purpleserver.graph', 'urls': 'purpleserver.graph.urls'},
-        {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
         {'app': 'purpleserver.manager', 'module': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
         {'app': 'purpleserver.events', 'module': 'purpleserver.events', 'urls': 'purpleserver.events.urls'},
         {'app': 'purpleserver.client', 'module': 'purpleserver.client', 'urls': 'purpleserver.client.urls'},
         {'app': 'purpleserver.pricing', 'module': 'purpleserver.pricing'},
+        {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
     ]
     if importlib.util.find_spec(app['module']) is not None
 ]
@@ -289,8 +289,21 @@ SWAGGER_SETTINGS = {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header',
+            'description': """
+                The Purplship API uses API keys to authenticate requests. You can view and manage your 
+                API keys in the Purplship Dashboard.
+    
+                Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret 
+                API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+                
+                Authentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.
+                To authenticate via bearer auth (e.g., for a cross-origin request), 
+                use `-H "Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660"`.
+                
+                API requests without authentication will also fail.
+            """
         }
-    },
+    }
 }
 
 REDOC_SETTINGS = {
