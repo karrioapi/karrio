@@ -13,6 +13,7 @@ from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, ParcelData, Parcel, Operation
 from purpleserver.manager.serializers import ParcelSerializer, reset_related_shipment_rates
 from purpleserver.manager.router import router
+import purpleserver.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -33,7 +34,7 @@ class ParcelList(GenericAPIView):
         """
         Retrieve all stored parcels.
         """
-        parcels = request.user.parcel_set.all()
+        parcels = models.Parcel.objects.access_with(request.user).all()
         serializer = Parcel(parcels, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)
@@ -65,7 +66,7 @@ class ParcelDetail(APIView):
         """
         Retrieve a parcel.
         """
-        address = request.user.parcel_set.get(pk=pk)
+        address = models.Parcel.objects.access_with(request.user).get(pk=pk)
         return Response(Parcel(address).data)
 
     @swagger_auto_schema(
@@ -79,7 +80,7 @@ class ParcelDetail(APIView):
         """
         modify an existing parcel's details.
         """
-        parcel = request.user.parcel_set.get(pk=pk)
+        parcel = models.Parcel.objects.access_with(request.user).get(pk=pk)
         shipment = parcel.shipment_parcels.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -102,7 +103,7 @@ class ParcelDetail(APIView):
         """
         Remove a parcel.
         """
-        parcel = request.user.parcel_set.get(pk=pk)
+        parcel = models.Parcel.objects.access_with(request.user).get(pk=pk)
         shipment = parcel.shipment_parcels.first()
 
         if shipment is not None and (

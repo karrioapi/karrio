@@ -13,6 +13,7 @@ from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, CustomsData, Customs, Operation
 from purpleserver.manager.serializers import CustomsSerializer, reset_related_shipment_rates
 from purpleserver.manager.router import router
+import purpleserver.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -33,7 +34,7 @@ class CustomsList(GenericAPIView):
         """
         Retrieve all stored customs declarations.
         """
-        customs_info = request.user.customs_set.all()
+        customs_info = models.Customs.objects.access_with(request.user).all()
         serializer = Customs(customs_info, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)
@@ -65,7 +66,7 @@ class CustomsDetail(APIView):
         """
         Retrieve customs declaration.
         """
-        address = request.user.customs_set.get(pk=pk)
+        address = models.Customs.objects.access_with(request.user).get(pk=pk)
         return Response(Customs(address).data)
 
     @swagger_auto_schema(
@@ -79,7 +80,7 @@ class CustomsDetail(APIView):
         """
         modify an existing customs declaration.
         """
-        customs = request.user.customs_set.get(pk=pk)
+        customs = models.Customs.objects.access_with(request.user).get(pk=pk)
         shipment = customs.shipment_set.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -102,7 +103,7 @@ class CustomsDetail(APIView):
         """
         Discard a customs declaration.
         """
-        customs = request.user.customs_set.get(pk=pk)
+        customs = models.Customs.objects.access_with(request.user).get(pk=pk)
         shipment = customs.shipment_set.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(

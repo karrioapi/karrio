@@ -35,6 +35,7 @@ from purpleserver.manager.serializers import (
     RateSerializer,
     ParcelSerializer,
 )
+import purpleserver.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -55,7 +56,7 @@ class ShipmentList(GenericAPIView):
         """
         Retrieve all shipments.
         """
-        shipments = request.user.shipment_set.all()
+        shipments = models.Shipment.objects.access_with(request.user).all()
 
         response = self.paginate_queryset(Shipment(shipments, many=True).data)
         return self.get_paginated_response(response)
@@ -72,7 +73,7 @@ class ShipmentList(GenericAPIView):
         Create a new shipment instance.
         """
         shipment = SerializerDecorator[ShipmentSerializer](
-            data=request.data).save(created_by=request.user).instance
+            data=request.data).save(user=request.user).instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -89,7 +90,7 @@ class ShipmentDetail(APIView):
         """
         Retrieve a shipment.
         """
-        shipment = request.user.shipment_set.get(pk=pk)
+        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         return Response(Shipment(shipment).data)
 
@@ -103,7 +104,7 @@ class ShipmentDetail(APIView):
         """
         Void a shipment with the associated label.
         """
-        shipment = request.user.shipment_set.get(pk=pk)
+        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         if shipment.status not in [ShipmentStatus.purchased.value, ShipmentStatus.created.value]:
             raise PurplShipApiException(
@@ -137,10 +138,10 @@ class ShipmentRates(APIView):
         """
         Refresh the list of the shipment rates
         """
-        shipment = request.user.shipment_set.get(pk=pk)
+        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
-            data=ShipmentData(shipment).data).save(created_by=shipment.created_by).instance
+            data=ShipmentData(shipment).data).save(created_by=request.user).instance
         payload: dict = DP.to_dict(dict(
             rates=Rate(rate_response.rates, many=True).data,
             messages=Message(rate_response.messages, many=True).data,
@@ -182,7 +183,7 @@ class ShipmentOptions(APIView):
 
         And many more, check additional options available in the [reference](#operation/all_references).
         """
-        shipment = request.user.shipment_set.get(pk=pk)
+        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -214,7 +215,7 @@ class ShipmentCustoms(APIView):
         """
         Add the customs declaration for the shipment if non existent.
         """
-        shipment = request.user.shipment_set.get(pk=pk)
+        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -233,7 +234,7 @@ class ShipmentCustoms(APIView):
             messages=[]
         ))
 
-        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
+        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save(created_by=request.user)
         return Response(Shipment(shipment).data)
 
 
@@ -250,7 +251,7 @@ class ShipmentParcels(APIView):
         """
         Add a parcel to an existing shipment for a multi-parcel shipment.
         """
-        shipment = request.user.shipment_set.get(pk=pk)
+        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -276,7 +277,7 @@ class ShipmentPurchase(APIView):
         """
         Select your preferred rates to buy a shipment label.
         """
-        shipment = request.user.shipment_set.get(pk=pk)
+        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(

@@ -35,9 +35,8 @@ class TestTrackers(APITestCase):
             mock.return_value = RETURNED_VALUE
             self.client.get(f"{url}?test")
             sleep(0.1)
-
-        response = self.client.get(f"{url}?test")
-        response_data = json.loads(response.content)
+            response = self.client.get(f"{url}?test")
+            response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data, TRACKING_RESPONSE)

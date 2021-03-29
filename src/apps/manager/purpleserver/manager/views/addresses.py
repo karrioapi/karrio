@@ -13,6 +13,7 @@ from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, AddressData, Address
 from purpleserver.manager.serializers import AddressSerializer, reset_related_shipment_rates
 from purpleserver.manager.router import router
+from purpleserver.manager import models
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ class AddressList(GenericAPIView):
         """
         Retrieve all addresses.
         """
-        addresses = request.user.address_set.all()
+        addresses = models.Address.objects.access_with(request.user).all()
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
 
@@ -65,7 +66,7 @@ class AddressDetail(APIView):
         """
         Retrieve an address.
         """
-        address = request.user.address_set.get(pk=pk)
+        address = models.Address.objects.access_with(request.user).get(pk=pk)
         return Response(Address(address).data)
 
     @swagger_auto_schema(
@@ -79,7 +80,7 @@ class AddressDetail(APIView):
         """
         update an address.
         """
-        address = request.user.address_set.get(pk=pk)
+        address = models.Address.objects.access_with(request.user).get(pk=pk)
         shipment = address.shipper.first() or address.recipient.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(

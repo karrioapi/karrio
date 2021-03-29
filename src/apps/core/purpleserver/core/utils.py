@@ -1,9 +1,11 @@
 import functools
 from typing import Type, TypeVar, Generic, Optional, Union, Callable, Any, List
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from django.db import models
 
 T = TypeVar('T')
+User = get_user_model
 
 
 def identity(value: Union[Any, Callable]) -> T:
@@ -117,3 +119,7 @@ def save_one_to_one_data(
 
     return SerializerDecorator[serializer](instance=instance, data=data, **kwargs).save().instance
 
+
+def Access(model: models.Model, with_user: User, **kwargs):
+
+    return model.objects.filter(created_by_id=with_user.id, **kwargs)

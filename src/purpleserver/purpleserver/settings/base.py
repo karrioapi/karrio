@@ -66,11 +66,11 @@ PURPLSHIP_CONF = [
         {'app': 'purpleserver.core', 'module': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},
         {'app': 'purpleserver.providers', 'module': 'purpleserver.providers', 'urls': 'purpleserver.providers.urls'},
         {'app': 'purpleserver.graph', 'module': 'purpleserver.graph', 'urls': 'purpleserver.graph.urls'},
+        {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
         {'app': 'purpleserver.manager', 'module': 'purpleserver.manager', 'urls': 'purpleserver.manager.urls'},
         {'app': 'purpleserver.events', 'module': 'purpleserver.events', 'urls': 'purpleserver.events.urls'},
         {'app': 'purpleserver.client', 'module': 'purpleserver.client', 'urls': 'purpleserver.client.urls'},
         {'app': 'purpleserver.pricing', 'module': 'purpleserver.pricing'},
-        {'app': 'purpleserver.proxy', 'module': 'purpleserver.proxy', 'urls': 'purpleserver.proxy.urls'},
     ]
     if importlib.util.find_spec(app['module']) is not None
 ]
@@ -143,6 +143,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'purpleserver.wsgi.application'
+
+
+# Purplship Middleware
+# PURPLSHIP_ENTITY_ACCESS_METHOD = 'purpleserver.core.middleware.CreatorAccess'
+# PURPLSHIP_ENTITY_ACCESS_METHOD = 'purpleserver.core.middleware.WideAccess'
 
 
 # Database

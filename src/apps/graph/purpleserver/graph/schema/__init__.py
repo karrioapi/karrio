@@ -5,6 +5,7 @@ from graphene_django.debug import DjangoDebug
 import purpleserver.core.gateway as gateway
 import purpleserver.providers.models as providers
 import purpleserver.manager.models as manager
+import purpleserver.event.models as event
 import purpleserver.graph.models as graph
 import purpleserver.graph.schema.mutations as mutations
 import purpleserver.graph.schema.types as types
@@ -38,23 +39,23 @@ class Query(graphene.ObjectType):
         return user.auth_token
 
     def resolve_user_connections(self, info, **kwargs):
-        connections = info.context.user.carrier_set.filter(**kwargs).order_by('-created_at')
+        connections = providers.Carrier.objects.access_with(info.context.user).all()
         return [connection.settings for connection in connections]
 
     def resolve_system_connections(self, _, **kwargs):
         return gateway.Carriers.list(system_only=True, **kwargs)
 
     def resolve_default_templates(self, info, **kwargs):
-        return info.context.user.template_set.filter(is_default=True)
+        return graph.Template.objects.access_with(info.context.user).filter(is_default=True)
 
     def resolve_address_templates(self, info, **kwargs):
-        return info.context.user.template_set.filter(address__isnull=False, **kwargs)
+        return graph.Template.objects.access_with(info.context.user).filter(address__isnull=False, **kwargs)
 
     def resolve_customs_templates(self, info, **kwargs):
-        return info.context.user.template_set.filter(customs__isnull=False, **kwargs)
+        return graph.Template.objects.access_with(info.context.user).filter(customs__isnull=False, **kwargs)
 
     def resolve_parcel_templates(self, info, **kwargs):
-        return info.context.user.template_set.filter(parcel__isnull=False, **kwargs)
+        return graph.Template.objects.access_with(info.context.user).filter(parcel__isnull=False, **kwargs)
 
     def resolve_log(self, info, **kwargs):
         return info.context.user.apirequestlog_set.filter(**kwargs).first()
@@ -63,13 +64,13 @@ class Query(graphene.ObjectType):
         return info.context.user.apirequestlog_set.filter(**kwargs)
 
     def resolve_shipments(self, info, **kwargs):
-        return info.context.user.shipment_set.filter(**kwargs)
+        return manager.Shipment.objects.access_with(info.context.user).filter(**kwargs)
 
     def resolve_trackers(self, info, **kwargs):
-        return info.context.user.tracking_set.filter(**kwargs)
+        return manager.Tracking.objects.access_with(info.context.user).filter(**kwargs)
 
     def resolve_webhooks(self, info, **kwargs):
-        return info.context.user.webhook_set.filter(**kwargs)
+        return event.Webhook.objects.access_with(info.context.user).filter(**kwargs)
 
 
 class Mutation(graphene.ObjectType):

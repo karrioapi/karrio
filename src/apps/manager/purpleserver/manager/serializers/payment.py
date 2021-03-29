@@ -27,24 +27,26 @@ class PaymentSerializer(PaymentData):
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Payment:
+        created_by = validated_data['created_by']
         data = {
             key: value for key, value in validated_data.items() if key in models.Payment.DIRECT_PROPS
         }
 
         related_data = dict(
             contact=SerializerDecorator[AddressSerializer](
-                data=validated_data.get('contact')).save(created_by=validated_data['created_by']).instance,
+                data=validated_data.get('contact')).save(created_by=created_by).instance,
         )
 
         payment = models.Payment.objects.create(**{
             **data,
             **related_data,
-            'created_by': validated_data['created_by']
+            'created_by': created_by
         })
         return payment
 
     @transaction.atomic
     def update(self, instance: models.Payment, validated_data: dict) -> models.Payment:
+        created_by = validated_data.get('created_by', instance.created_by)
         for key, val in validated_data.items():
             if key in models.Payment.DIRECT_PROPS:
                 setattr(instance, key, val)
@@ -56,7 +58,7 @@ class PaymentSerializer(PaymentData):
                 instance.contact = None
             else:
                 instance.contact = SerializerDecorator[AddressSerializer](
-                    instance.contact, data=data).save(created_by=validated_data['created_by']).instance
+                    instance.contact, data=data).save(created_by=created_by).instance
 
         instance.save()
         return instance
