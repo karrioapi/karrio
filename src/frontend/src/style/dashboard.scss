@@ -10,30 +10,29 @@ Purplship custom styling
     border: 1px solid #e5e5e5;
 }
 
-.isolated-card {
-    margin: 0px auto;
-    width: 100%;
-    max-width: 448px;
-}
-
-@media screen and (min-width: 768px) {
-    .isolated-card {
-        min-width: 448px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .isolated-card {
-        box-shadow: none;
-    }
-    .container {
-        margin: 0;
-    }
-}
-
 .options-item,
 .form-icon {
     color: #a9abac;
+}
+
+.purplship-loader {
+    top: 0;
+    left: 0;
+    animation-duration: 3s !important;
+    position: absolute;
+    z-index: 100;
+    margin: 0 !important;
+    height: 0.25rem !important;
+}
+
+.purplship-notification-loader {
+    top: 0;
+    left: 0;
+    animation-duration: 15s !important;
+    position: absolute;
+    z-index: 100;
+    margin: 0 !important;
+    height: 0.25rem !important;
 }
 
 .shipments-table {
@@ -113,6 +112,20 @@ Purplship custom styling
     .last-event {
         width: 40%;
         max-width: 40%;
+    }
+}
+
+.webhooks-table {
+    .active {
+        width: 6%;
+    }
+    .url {
+    }
+    .mode {
+        width: 6%;
+    }
+    .action {
+        width: 10%;
     }
 }
 

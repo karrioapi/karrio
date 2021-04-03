@@ -21,8 +21,9 @@ Trackers = PaginatedResult('TrackerList', TrackingStatus)
 
 
 class TrackerList(GenericAPIView):
-    pagination_class = LimitOffsetPagination
-    default_limit = 20
+    serializer_class = TrackingStatus
+    queryset = models.Tracking.objects
+    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 
     @swagger_auto_schema(
         tags=['Trackers'],

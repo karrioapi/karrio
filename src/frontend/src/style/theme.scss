@@ -46,4 +46,24 @@ $footer-background-color: $white;
 
 // Import only what you need from Bulma
 @import "../../node_modules/bulma/bulma.sass";
-@import "./app.scss";
+
+.isolated-card {
+    margin: 0px auto;
+    width: 100%;
+    max-width: 448px;
+}
+
+@media screen and (min-width: 768px) {
+    .isolated-card {
+        min-width: 448px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .isolated-card {
+        box-shadow: none;
+    }
+    .container {
+        margin: 0;
+    }
+}

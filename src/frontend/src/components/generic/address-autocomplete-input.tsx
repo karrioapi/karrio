@@ -3,8 +3,8 @@ import InputField, { InputFieldComponent } from '@/components/generic/input-fiel
 import { Address, AddressCountryCodeEnum } from '@/api';
 import { isNone } from '@/library/helper';
 import { initDebouncedPrediction, QueryAutocompletePrediction } from '@/library/autocomplete';
-import { Reference } from '@/library/context';
 import { Collection } from '@/library/types';
+import { APIReference } from '@/components/data/references-query';
 
 interface AddressAutocompleteInputComponent extends InputFieldComponent {
     onValueChange: (value: Partial<Address>) => void;
@@ -13,7 +13,7 @@ interface AddressAutocompleteInputComponent extends InputFieldComponent {
 }
 
 const AddressAutocompleteInput: React.FC<AddressAutocompleteInputComponent> = ({ defaultValue, onValueChange, ...props }) => {
-    const Ref = useContext(Reference);
+    const { countries } = useContext(APIReference);
     const [predictions, setPredictions] = useState<QueryAutocompletePrediction[]>([]);
     const [predictor, initPredictor] = useState<ReturnType<typeof initDebouncedPrediction> | undefined>();
     const onClick = (e: React.MouseEvent<HTMLInputElement>) => e.currentTarget.select();
@@ -48,7 +48,7 @@ const AddressAutocompleteInput: React.FC<AddressAutocompleteInputComponent> = ({
         let address_line1 = prediction.description;
 
         if (content.length >= 3) {
-            const [country, _] = Object.entries(Ref.countries as Collection).find(
+            const [country, _] = Object.entries(countries as Collection).find(
                 ([_, name]) => name.toLowerCase() === content[content.length - 1]
             ) || [];
             if (country !== undefined) extra.country_code = AddressCountryCodeEnum[country as (keyof typeof AddressCountryCodeEnum)];

@@ -1,66 +1,21 @@
-import { Address, CarrierSettings, CarrierSettingsCarrierNameEnum, Customs, Message, Parcel, ParcelDimensionUnitEnum, ParcelWeightUnitEnum, PaymentCurrencyEnum, PaymentPaidByEnum, Shipment, TrackingStatus } from '@/api';
+import { Address, Customs, Message, Parcel, ParcelDimensionUnitEnum, ParcelWeightUnitEnum, PaymentCurrencyEnum, PaymentPaidByEnum, Shipment } from '@/api';
+import { get_address_templates_address_templates_edges_node, get_address_templates_address_templates_edges_node_address, get_customs_info_templates_customs_templates_edges_node, get_customs_info_templates_customs_templates_edges_node_customs, get_logs_logs_edges_node, get_parcel_templates_parcel_templates_edges_node, get_parcel_templates_parcel_templates_edges_node_parcel } from '@/graphql';
+
+
+
+export type LogType = get_logs_logs_edges_node;
+export type AddressType = Address | get_address_templates_address_templates_edges_node_address
+export type ParcelType = Parcel | get_parcel_templates_parcel_templates_edges_node_parcel;
+export type CustomsType = Customs | get_customs_info_templates_customs_templates_edges_node_customs;
+
+export type AddressTemplate = get_address_templates_address_templates_edges_node;
+export type CustomsTemplateType = get_customs_info_templates_customs_templates_edges_node;
+export type ParcelTemplateType = get_parcel_templates_parcel_templates_edges_node;
+export type TemplateType = AddressTemplate & ParcelTemplateType & CustomsTemplateType;
 
 export interface View {
     path: string
 }
-
-export interface UserInfo {
-    full_name: string | null;
-    email: string | null;
-    readonly is_staff: boolean;
-}
-
-export interface Connection extends Omit<CarrierSettings, 'id' | 'carrier_name'> {
-    id: string | null | undefined;
-    carrier_name: CarrierSettingsCarrierNameEnum | 'none';
-    [property: string]: any;
-}
-
-export interface ConnectionData {
-    carrier_name: CarrierSettingsCarrierNameEnum;
-    carrier_config: Partial<Connection>;
-}
-
-export interface Log {
-    id: string;
-    requested_at: string;
-    response_ms: string;
-    path: string;
-    view: string;
-    view_method: string;
-    remote_addr: string;
-    host: string;
-    method: string;
-    query_params: string;
-    data: string;
-    response: string;
-    status_code: string;
-}
-
-export interface Template {
-    id?: string;
-    label?: string;
-    is_default?: boolean;
-    address?: Address;
-    customs?: Customs;
-    parcel?: Parcel;
-}
-
-export interface PaginatedContent<T> {
-    count: Number;
-    url?: string | null;
-    next?: string | null;
-    previous?: string | null;
-    results: T[];
-    fetched?: boolean;
-}
-
-export interface PaginatedLogs extends PaginatedContent<Log> { }
-export interface PaginatedShipments extends PaginatedContent<Shipment> { }
-export interface PaginatedTemplates extends PaginatedContent<Template> { }
-export interface PaginatedConnections extends PaginatedContent<Connection> { }
-export interface PaginatedTrackers extends PaginatedContent<TrackingStatus> { }
-
 
 export enum NotificationType {
     error = "is-danger",
@@ -70,7 +25,7 @@ export enum NotificationType {
 }
 
 export interface Notification {
-    type: NotificationType;
+    type?: NotificationType;
     message: string | Error | RequestError;
 }
 
@@ -132,30 +87,5 @@ export class RequestError extends Error {
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, RequestError)
         }
-    }
-}
-
-export class DefaultTemplates {
-    constructor(private templates: Template[]) { }
-
-    get customs(): Customs | undefined {
-        const template = this.templates.find(
-            template => template.customs !== undefined && template.customs !== null
-        );
-        return (template || {}).customs
-    }
-
-    get address(): Address | undefined {
-        const template = this.templates.find(
-            template => template.address !== undefined && template.address !== null
-        );
-        return (template || {}).address
-    }
-
-    get parcel(): Parcel | undefined {
-        const template = this.templates.find(
-            template => template.parcel !== undefined && template.parcel !== null
-        );
-        return (template || {}).parcel
     }
 }

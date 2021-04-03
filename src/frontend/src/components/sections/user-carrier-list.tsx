@@ -1,35 +1,26 @@
-import React, { Fragment, useContext, useEffect, useState } from 'react';
-import { Connection, ConnectionData } from '@/library/types';
+import React, { Fragment, useContext, useEffect } from 'react';
 import ConnectProviderModal from '@/components/connect-provider-modal';
 import DisconnectProviderButton from '@/components/disconnect-provider-button';
 import CarrierBadge from '@/components/carrier-badge';
-import { state } from '@/library/app';
-import { UserConnections } from '@/library/context';
-import { CarrierSettings } from '@/api';
+import { UserConnections, UserConnectionType } from '@/components/data/user-connections-query';
+import ConnectionMutation from '@/components/data/connection-mutation';
+import { Loading } from '@/components/loader';
 
 interface UserConnectionListView { }
 
-const UserConnectionList: React.FC<UserConnectionListView> = () => {
-  const connections = useContext(UserConnections)
-  const [loading, setLoading] = useState<boolean>(false);
+const UserConnectionList: React.FC<UserConnectionListView> = ConnectionMutation<UserConnectionListView>(({ updateConnection }) => {
+  const { setLoading } = useContext(Loading);
+  const { user_connections, loading, load, refetch } = useContext(UserConnections);
 
-  const update = (url?: string | null) => async (_?: React.MouseEvent) => {
-    await state.fetchUserConnections(url as string);
+  const update = async (_?: React.MouseEvent) => refetch && await refetch();
+  const toggle = ({ __typename, active, id }: UserConnectionType) => async () => {
+    const data = {[__typename.toLowerCase()]: { id, active: !active }};
+    await updateConnection({ id, ...data });
+    update();
   };
-  const toggle = (connection: Connection) => async () => {
-    const data = {
-      carrier_name: connection.carrier_name,
-      carrier_config: { ...connection, active: !connection.active }
-    } as ConnectionData;
-    await state.updateConnection(connection.id as string, data);
-    update(connections?.url)();
-  };
-  useEffect(() => {
-    if (loading === false) {
-      setLoading(true);
-      state.fetchUserConnections().catch(_ => _).then(() => setLoading(false));
-    }
-  }, []);
+  
+  useEffect(() => { !loading && load() }, []);
+  useEffect(() => { setLoading(loading); });
 
   return (
     <Fragment>
@@ -43,9 +34,9 @@ const UserConnectionList: React.FC<UserConnectionListView> = () => {
         </thead>
 
         <tbody className="connections-table">
-          {connections?.results.map((connection) => (
+          {user_connections.map((connection) => (
 
-            <tr key={connection.id}>
+            <tr key={`${connection.id}-${Date.now()}`}>
               <td className="carrier">
                 <CarrierBadge carrier={connection.carrier_name} className="box has-text-weight-bold" />
               </td>
@@ -68,7 +59,7 @@ const UserConnectionList: React.FC<UserConnectionListView> = () => {
               </td>
               <td className="action is-vcentered">
                 <div className="buttons is-centered">
-                  <ConnectProviderModal connection={connection} className="button is-light is-info">
+                  <ConnectProviderModal connection={connection} className="button is-light is-info" onUpdate={update}>
                     <span className="icon is-small">
                       <i className="fas fa-pen"></i>
                     </span>
@@ -87,7 +78,7 @@ const UserConnectionList: React.FC<UserConnectionListView> = () => {
 
       </table>
 
-      {(connections?.count == 0) && <div className="card my-6">
+      {(user_connections.length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
           <p>No carriers have been connected yet.</p>
@@ -98,6 +89,6 @@ const UserConnectionList: React.FC<UserConnectionListView> = () => {
 
     </Fragment>
   );
-}
+});
 
 export default UserConnectionList;

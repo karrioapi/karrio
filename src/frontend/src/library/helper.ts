@@ -1,5 +1,4 @@
-import { Address, Customs, Parcel } from '@/api';
-import { PresetCollection } from "@/library/types";
+import { AddressType, CustomsType, ParcelType, PresetCollection, RequestError } from "@/library/types";
 
 
 export function formatRef(s: string): string {
@@ -21,7 +20,7 @@ export function notEmptyJSON(value?: string | null): boolean {
     return !isNone(value) && value !== JSON.stringify({});
 }
 
-export function formatAddress(address: Address): string {
+export function formatAddress(address: AddressType): string {
     return [
         address.person_name,
         address.city,
@@ -30,7 +29,7 @@ export function formatAddress(address: Address): string {
     ].filter(a => !isNone(a) && a !== "").join(', ');
 }
 
-export function formatFullAddress(address: Address, countries?: { [country_code: string]: string }): string {
+export function formatFullAddress(address: AddressType, countries?: { [country_code: string]: string }): string {
     const country = countries === undefined ? address.country_code : countries[address.country_code];
     return [
         address.address_line1,
@@ -41,14 +40,14 @@ export function formatFullAddress(address: Address, countries?: { [country_code:
     ].filter(a => !isNone(a) && a !== "").join(', ');
 }
 
-export function formatAddressName(address: Address): string {
+export function formatAddressName(address: AddressType): string {
     return [
         address.person_name,
         address.company_name
     ].filter(a => !isNone(a) && a !== "").join(' - ');
 }
 
-export function formatCustomsLabel(customs: Customs): string {
+export function formatCustomsLabel(customs: CustomsType): string {
     return [
         customs.content_type,
         customs.incoterm
@@ -57,7 +56,7 @@ export function formatCustomsLabel(customs: Customs): string {
         .map(c => formatRef('' + c)).join(' - ');
 }
 
-export function findPreset(presets: PresetCollection, package_preset?: string): Partial<Parcel> | undefined {
+export function findPreset(presets: PresetCollection, package_preset?: string): Partial<ParcelType> | undefined {
     const carrier = Object.values(presets).find((carrier) => {
         return Object.keys(carrier).includes(package_preset as string);
     });
@@ -71,7 +70,7 @@ export function formatValues(separator: string, ...args: any[]): string {
     return args.filter(d => d !== undefined).join(separator);
 }
 
-export function formatDimension(parcel?: Partial<Parcel>): string {
+export function formatDimension(parcel?: Partial<ParcelType>): string {
     if (parcel !== undefined) {
 
         const { dimension_unit, height, length, width } = parcel;
@@ -82,7 +81,7 @@ export function formatDimension(parcel?: Partial<Parcel>): string {
     return 'Dimensions: None specified...';
 }
 
-export function formatWeight(parcel?: Partial<Parcel>): string {
+export function formatWeight(parcel?: Partial<ParcelType>): string {
     if (parcel !== undefined) {
 
         const { weight, weight_unit } = parcel;
@@ -105,7 +104,7 @@ export function cleanDict<T = object>(value: object): T {
     return JSON.parse(JSON.stringify(value)) as T;
 }
 
-export function formatParcelLabel(parcel?: Parcel): string {
+export function formatParcelLabel(parcel?: ParcelType): string {
     if (isNone(parcel) || (parcel && isNone(parcel?.package_preset) && isNone(parcel?.packaging_type))) {
         return '';
     }
@@ -121,4 +120,47 @@ export function formatParcelLabel(parcel?: Parcel): string {
 
 export const COUNTRY_WITH_POSTAL_CODE = [
     'CA', 'US', 'UK', 'FR', //TODO:: Add more countries with postal code here.
-]
+];
+
+export function getCookie(name: string): string {
+    var cookieValue = "";
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+export async function handleFailure<T>(request: Promise<T>): Promise<T> {
+    try {
+        const response = await request;
+        return response
+    } catch (err) {
+        if (err.message === 'Failed to fetch') {
+            throw new Error('Oups! Looks like you are offline');
+        } else if (err instanceof Response) {
+            throw new RequestError(await err.json());
+        }
+        throw err
+    }
+}
+
+
+export function getCursorPagination(cursor?: string): { limit?: number; offset?: number; } {
+    const [_, queryString] = (cursor || '').split('?');
+    const params = (queryString || '').split('&');
+  
+    const [_limit, limit] = (params.find(p => p.includes('limit')) || '').split('=');
+    const [_offset, offset] = (params.find(p => p.includes('offset')) || '').split('=');
+  
+    return { 
+      ...(limit === undefined ? {} : { limit: parseInt(limit) }),
+      ...(offset === undefined ? {} : { offset: parseInt(offset) })
+     };
+  }

@@ -25,8 +25,9 @@ Pickups = PaginatedResult('PickupList', Pickup)
 
 
 class PickupList(GenericAPIView):
-    pagination_class = LimitOffsetPagination
-    default_limit = 20
+    serializer_class = Pickup
+    queryset = models.Pickup.objects
+    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 
     @swagger_auto_schema(
         tags=['Pickups'],

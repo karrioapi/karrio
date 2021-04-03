@@ -2,13 +2,13 @@ from django.db import models
 from purpleserver.providers.models.carrier import Carrier
 
 
-class UPSPackageSettings(Carrier):
-    CARRIER_NAME = 'ups_package'
+class UPSSettings(Carrier):
+    CARRIER_NAME = 'ups'
 
     class Meta:
-        db_table = "ups_package-settings"
-        verbose_name = 'UPS Package Settings'
-        verbose_name_plural = 'UPS Package Settings'
+        db_table = "ups-settings"
+        verbose_name = 'UPS Settings'
+        verbose_name_plural = 'UPS Settings'
 
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
@@ -20,4 +20,4 @@ class UPSPackageSettings(Carrier):
         return self.CARRIER_NAME
 
 
-SETTINGS = UPSPackageSettings
+SETTINGS = UPSSettings

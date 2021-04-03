@@ -1,9 +1,8 @@
-import { AddressTemplates } from '@/library/context';
 import React, { ChangeEvent, useContext, useEffect } from 'react';
 import InputField, { InputFieldComponent } from '@/components/generic/input-field';
-import { state } from '@/library/app';
 import { formatAddress, isNone } from '@/library/helper';
 import { Address } from '@/api';
+import { AddressTemplates } from '@/components/data/address-templates-query';
 
 interface NameInputComponent extends InputFieldComponent {
     onValueChange: (value: Partial<Address>, refresh?: boolean) => void;
@@ -13,25 +12,22 @@ interface NameInputComponent extends InputFieldComponent {
 
 const NameInput: React.FC<NameInputComponent> = ({ defaultValue, disableSuggestion, onValueChange, ...props }) => {
     const onClick = (e: React.MouseEvent<HTMLInputElement>) => e.currentTarget.select();
-    const addressTemplates = useContext(AddressTemplates);
+    const { templates, called, loading, load } = useContext(AddressTemplates);
     const onInput = (e: ChangeEvent<any>) => {
         e.preventDefault();
-        const template = addressTemplates.results.find(t => t.address?.person_name === e.target.value);
+        const template = templates.find(t => t.address?.person_name === e.target.value);
         let value = template?.address || { person_name: e.target.value };
         onValueChange(value as Partial<Address>, !isNone(template));
     };
 
-    useEffect(() => {
-        if (!disableSuggestion && addressTemplates.fetched === false) state.fetchAddresses();
-    });
+    useEffect(() => { if (!called && !loading) load(); }, [templates]);
 
     return (
         <InputField onInput={onInput} onClick={onClick} defaultValue={defaultValue} list="address_templates" {...props}>
             {!disableSuggestion && <datalist id="address_templates">
-                {addressTemplates
-                    .results
+                {templates
                     .map(template => (
-                        <option key={template.id} value={template.address?.person_name as string}>{template.label} - {formatAddress(template?.address as Address)}</option>
+                        <option key={template.id} value={template.address?.person_name as string}>{template.label} - {formatAddress(template?.address as any)}</option>
                     ))
                 }
             </datalist>}

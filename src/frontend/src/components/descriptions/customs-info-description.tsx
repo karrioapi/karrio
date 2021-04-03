@@ -1,9 +1,9 @@
 import React from 'react';
-import { Customs } from '@/api';
 import { formatCustomsLabel, formatRef, isNone } from '@/library/helper';
+import { CustomsType } from '@/library/types';
 
 interface CustomsInfoDescriptionComponent {
-    customs: Customs;
+    customs: CustomsType;
 }
 
 const CustomsInfoDescription: React.FC<CustomsInfoDescriptionComponent> = ({ customs }) => {

@@ -43,8 +43,9 @@ Shipments = PaginatedResult('ShipmentList', Shipment)
 
 
 class ShipmentList(GenericAPIView):
-    pagination_class = LimitOffsetPagination
-    default_limit = 20
+    serializer_class = Shipment
+    queryset = models.Shipment.objects
+    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 
     @swagger_auto_schema(
         tags=['Shipments'],

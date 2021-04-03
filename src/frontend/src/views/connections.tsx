@@ -1,20 +1,23 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { View } from '@/library/types';
 import ConnectProviderModal from '@/components/connect-provider-modal';
 import Tabs from '@/components/generic/tabs';
 import UserConnectionList from '@/components/sections/user-carrier-list';
 import SystemConnectionList from '@/components/sections/system-carrier-list';
+import { UserConnections } from '@/components/data/user-connections-query';
 
 interface ConnectionsView extends View {}
 
-const Connections: React.FC<ConnectionsView> = ( ) => {
+const ConnectionsPage: React.FC<ConnectionsView> = ( ) => {
+  const { refetch } = useContext(UserConnections);
+  const update = async (_?: React.MouseEvent) => refetch && await refetch();
 
   return (
     <Fragment>
 
       <header className="px-2 pt-1 pb-6">
         <span className="subtitle is-4">Carriers</span>
-        <ConnectProviderModal className="button is-success is-pulled-right">
+        <ConnectProviderModal className="button is-success is-pulled-right" onUpdate={update}>
           <span>Connect a Carrier</span>
         </ConnectProviderModal>
       </header>
@@ -35,4 +38,4 @@ const Connections: React.FC<ConnectionsView> = ( ) => {
   );
 }
 
-export default Connections;
+export default ConnectionsPage;

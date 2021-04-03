@@ -1,8 +1,8 @@
 import graphene
 from graphene_django.rest_framework.mutation import SerializerMutation
-from django.db import models
 from rest_framework.authtoken.models import Token
 
+from purpleserver.core.utils import save_many_to_many_data
 import purpleserver.graph.serializers as serializers
 import purpleserver.graph.schema.types as types
 
@@ -19,7 +19,7 @@ class _SerializerMutation(SerializerMutation):
             model = cls._meta.model_class
             instance = model.objects.get(id=data.pop('id'), created_by_id=info.context.user.id)
 
-            return {'instance': instance, 'data': data, 'partial': True}
+            return {'instance': instance, 'data': data, 'partial': True, 'created_by': info.context.user}
 
         return {'data': data, 'partial': False, 'created_by': info.context.user}
 
@@ -55,6 +55,23 @@ class UpdateTemplate(_SerializerMutation):
         convert_choices_to_enum = False
         serializer_class = serializers.apply_optional_fields(serializers.TemplateModelSerializer)
 
+    @classmethod
+    def get_serializer_kwargs(cls, root, info, **input):
+        kwargs = super().get_serializer_kwargs(root, info, **input)
+
+        instance = kwargs.get('instance')
+        customs_data = kwargs.get('data', {}).get('customs', {})
+
+        if 'commodities' in customs_data and instance is not None:
+            customs = getattr(instance, 'customs', None)
+            extra = {'partial': True, 'created_by': info.context.user}
+            save_many_to_many_data(
+                'commodities', serializers.CommodityModelSerializer,
+                customs, payload=customs_data,
+                **extra)
+
+        return kwargs
+
 
 class TokenMutation(graphene.relay.ClientIDMutation):
     class Input:
@@ -83,7 +100,7 @@ class UserMutation(SerializerMutation):
 
     @classmethod
     def get_serializer_kwargs(cls, root, info, **data):
-        instance = cls._meta.model_class.objects.get(id=data.pop('id'))
+        instance = cls._meta.model_class.objects.get(id=info.context.user.id)
 
         return {'instance': instance, 'data': data, 'partial': True}
 
@@ -97,7 +114,7 @@ def create_delete_mutation(name: str, model, **filter):
 
         @classmethod
         def mutate_and_get_payload(cls, root, info, id):
-            instance = model.objects.get(id=id, created_by_id=info.context.user.id, **filter)
+            instance = model.objects.access_with(info.context.user).get(id=id, **filter)
             instance.delete()
 
             return cls(id=id)

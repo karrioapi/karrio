@@ -132,11 +132,11 @@ class Customs(OwnedEntity):
 
     # System Reference fields
 
-    shipment_commodities = models.ManyToManyField('Commodity', blank=True)
+    commodities = models.ManyToManyField('Commodity', blank=True)
 
-    @property
-    def commodities(self):
-        return self.shipment_commodities.all()
+    # @property
+    # def commodities(self):
+    #     return self.shipment_commodities.all()
 
 
 class Pickup(OwnedEntity):
@@ -181,7 +181,7 @@ class Pickup(OwnedEntity):
 
     @property
     def parcels(self) -> List[Parcel]:
-        return sum([list(shipment.parcels) for shipment in self.shipments.all()], [])
+        return sum([list(shipment.parcels.all()) for shipment in self.shipments.all()], [])
 
     @property
     def tracking_numbers(self) -> List[str]:
@@ -218,7 +218,7 @@ class Tracking(OwnedEntity):
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates', 'label_type',
+        'label', 'options', 'services', 'status', 'service', 'meta', 'rates', 'label_type',
         'tracking_number', 'tracking_url', 'shipment_identifier', 'test_mode', 'messages'
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
@@ -254,17 +254,17 @@ class Shipment(OwnedEntity):
 
     # System Reference fields
 
-    shipment_rates = JSONField(blank=True, null=True, default=[])
-    shipment_parcels = models.ManyToManyField('Parcel', related_name='shipment_parcels')
+    rates = JSONField(blank=True, null=True, default=[])
+    parcels = models.ManyToManyField('Parcel', related_name='shipment_parcels')
     carriers = models.ManyToManyField(Carrier, blank=True, related_name='rating_carriers')
     selected_rate_carrier = models.ForeignKey(
         Carrier, on_delete=models.CASCADE, related_name='selected_rate_carrier', blank=True, null=True)
 
     # Computed properties
 
-    @property
-    def parcels(self):
-        return self.shipment_parcels.all()
+    # @property
+    # def parcels(self):
+    #     return self.shipment_parcels.all()
 
     @property
     def carrier_id(self) -> str:
@@ -292,14 +292,14 @@ class Shipment(OwnedEntity):
             cast(dict, self.selected_rate).get('service') if self.selected_rate is not None else None
         )
 
-    @property
-    def rates(self) -> List[dict]:
-        rates: List[dict] = []
-        for stored_rate in cast(List[dict], self.shipment_rates):
-            carrier = Carrier.objects.get(id=stored_rate['carrier_ref']).data
-            rates.append({
-                **stored_rate,
-                'carrier_id': carrier.carrier_id,
-                'carrier_name': carrier.carrier_name,
-            })
-        return rates
+    # @property
+    # def rates(self) -> List[dict]:
+    #     rates: List[dict] = []
+    #     for stored_rate in cast(List[dict], self.shipment_rates):
+    #         carrier = Carrier.objects.get(id=stored_rate['carrier_ref']).data
+    #         rates.append({
+    #             **stored_rate,
+    #             'carrier_id': carrier.carrier_id,
+    #             'carrier_name': carrier.carrier_name,
+    #         })
+    #     return rates

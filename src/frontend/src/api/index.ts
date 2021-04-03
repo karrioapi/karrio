@@ -8,12 +8,12 @@ import { ProxyApi } from './apis/ProxyApi';
 import { ShipmentsApi } from './apis/ShipmentsApi';
 import { TrackersApi } from './apis/TrackersApi';
 import { WebhooksApi } from './apis/WebhooksApi';
-import { Configuration } from './runtime';
+import { Configuration, ConfigurationParameters } from './runtime';
 
 export * from './runtime';
 export * from './models';
 
-export interface PurplshipAPI {
+export interface PurplshipClientInterface {
     API: APIApi;
     addresses: AddressesApi;
     carriers: CarriersApi;
@@ -26,7 +26,7 @@ export interface PurplshipAPI {
     webhooks: WebhooksApi;
 }
 
-export class Purplship implements PurplshipAPI {
+export class PurplshipClient implements PurplshipClientInterface {
     API: APIApi;
     addresses: AddressesApi;
     carriers: CarriersApi;
@@ -38,11 +38,8 @@ export class Purplship implements PurplshipAPI {
     trackers: TrackersApi;
     webhooks: WebhooksApi;
     
-    constructor(apiKey: string, host: string) {
-        const config = new Configuration({
-            basePath: host,
-            apiKey: apiKey
-        });
+    constructor(clientConfig: ConfigurationParameters) {
+        const config = new Configuration(clientConfig);
 
         this.API = new APIApi(config);
         this.addresses = new AddressesApi(config);

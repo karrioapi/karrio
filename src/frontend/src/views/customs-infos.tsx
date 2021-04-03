@@ -1,38 +1,34 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Customs } from '@/api';
-import { PaginatedTemplates, Template, View } from '@/library/types';
+import React, { Fragment, useContext, useEffect } from 'react';
+import { CustomsType, View } from '@/library/types';
 import CustomsInfoDescription from '@/components/descriptions/customs-info-description';
 import DeleteItemModal from '@/components/delete-item-modal';
 import CustomsInfoEditModal from '@/components/customs-info-edit-modal';
-import { state } from '@/library/app';
+import TemplateMutation from '@/components/data/template-mutation';
+import { CustomInfoTemplates } from '@/components/data/customs-templates-query';
+import { isNone } from '@/library/helper';
+import { Loading } from '@/components/loader';
 
-interface CustomsInfosView extends View {
-  templates?: PaginatedTemplates;
-}
+interface CustomsInfosView extends View {}
 
-const CustomsInfos: React.FC<CustomsInfosView> = ({ templates }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+const CustomsInfoPage: React.FC<CustomsInfosView> = TemplateMutation<CustomsInfosView>(({ deleteTemplate }) => {
+  const { setLoading } = useContext(Loading);
+  const { loading, templates, next, previous, load, loadMore, refetch} = useContext(CustomInfoTemplates);
 
-  const update = (url?: string | null) => async (_?: React.MouseEvent) => {
-    await state.fetchCustomsInfos(url as string);
+  const refresh = () => refetch && refetch();
+  const remove = (id: string) => async () => {
+    await deleteTemplate(id);
+    refresh();
   };
-  const remove = (customs: Template) => async () => {
-    await state.removeTemplate(customs.id as string);
-    update(templates?.url)();
-  };
-  useEffect(() => {
-    if (loading === false) {
-      setLoading(true);
-      state.fetchCustomsInfos().catch(_ => _).then(() => setLoading(false));
-    }
-  }, []);
+
+  useEffect(() => { !loading && load() }, []);
+  useEffect(() => { setLoading(loading); });
 
   return (
     <Fragment>
 
       <header className="px-2 pt-1 pb-6">
         <span className="subtitle is-4">Customs</span>
-        <CustomsInfoEditModal className="button is-success is-pulled-right" onUpdate={update(templates?.url)}>
+        <CustomsInfoEditModal className="button is-success is-pulled-right" onUpdate={refresh}>
           <span>New Customs Info</span>
         </CustomsInfoEditModal>
       </header>
@@ -48,21 +44,21 @@ const CustomsInfos: React.FC<CustomsInfosView> = ({ templates }) => {
           </thead>
 
           <tbody className="templates-table">
-            {templates?.results.map((template) => (
+            {templates.map((template) => (
 
               <tr key={`${template.id}-${Date.now()}`}>
                 <td className="template">
                   <p className="is-subtitle is-size-6 my-1 has-text-weight-semibold">{template.label}</p>
-                  <CustomsInfoDescription customs={template.customs as Customs} />
+                  <CustomsInfoDescription customs={template.customs as CustomsType} />
                 </td>
                 <td className="action is-vcentered">
                   <div className="buttons is-centered">
-                    <CustomsInfoEditModal className="button is-light" customsTemplate={template} onUpdate={update(templates?.url)}>
+                    <CustomsInfoEditModal className="button is-light" customsTemplate={template} onUpdate={refresh}>
                       <span className="icon is-small">
                         <i className="fas fa-pen"></i>
                       </span>
                     </CustomsInfoEditModal>
-                    <DeleteItemModal label="Customs info Template" identifier={template.id as string} onConfirm={remove(template)}>
+                    <DeleteItemModal label="Customs info Template" identifier={template.id as string} onConfirm={remove(template.id)}>
                       <span className="icon is-small">
                         <i className="fas fa-trash"></i>
                       </span>
@@ -76,7 +72,7 @@ const CustomsInfos: React.FC<CustomsInfosView> = ({ templates }) => {
 
         </table>
 
-        {(templates?.count == 0) && <div className="card my-6">
+        {(templates.length == 0) && <div className="card my-6">
 
           <div className="card-content has-text-centered">
             <p>No customs info template has been added yet.</p>
@@ -88,10 +84,10 @@ const CustomsInfos: React.FC<CustomsInfosView> = ({ templates }) => {
 
       <footer className="px-2 py-2 is-vcentered">
         <div className="buttons has-addons is-centered">
-          <button className="button is-small" onClick={update(templates?.previous)} disabled={templates?.previous === null}>
+          <button className="button is-small" onClick={() => loadMore(previous)} disabled={isNone(previous)}>
             <span>Previous</span>
           </button>
-          <button className="button is-small" onClick={update(templates?.next)} disabled={templates?.next === null}>
+          <button className="button is-small" onClick={() => loadMore(next)} disabled={isNone(next)}>
             <span>Next</span>
           </button>
         </div>
@@ -99,6 +95,6 @@ const CustomsInfos: React.FC<CustomsInfosView> = ({ templates }) => {
 
     </Fragment>
   );
-}
+});
 
-export default CustomsInfos;
+export default CustomsInfoPage;

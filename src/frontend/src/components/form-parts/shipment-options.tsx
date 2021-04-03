@@ -1,16 +1,17 @@
 import { PaymentCurrencyEnum, Shipment } from '@/api';
-import React, { FormEvent, useReducer } from 'react';
+import React, { FormEvent, useContext, useReducer } from 'react';
 import ButtonField from '@/components/generic/button-field';
 import InputField from '@/components/generic/input-field';
 import CheckBoxField from '@/components/generic/checkbox-field';
 import SelectField from '@/components/generic/select-field';
-import { state } from '@/library/app';
 import { cleanDict, deepEqual, isNone } from '@/library/helper';
 import { NotificationType } from '@/library/types';
+import ShipmentMutation from '../data/shipment-mutation';
+import { Notify } from '../notifier';
 
 interface ShipmentOptionsComponent {
     shipment: Shipment;
-    update: (payload: {}, refresh?: boolean) => void;
+    update: (data: { changes?: Partial<Shipment>, refresh?: boolean }) => void;
 }
 
 function reducer(state: any, { name, value }: { name: string, value: string | boolean }) {
@@ -24,8 +25,10 @@ function reducer(state: any, { name, value }: { name: string, value: string | bo
     };
 }
 
-const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update }) => {
+const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ShipmentMutation<ShipmentOptionsComponent>(({ shipment, update, setOptions }) => {
+    const { notify } = useContext(Notify);
     const [options, dispatch] = useReducer(reducer, shipment?.options, () => shipment?.options);
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const target = event.target;
         const name: string = target.name;
@@ -37,14 +40,14 @@ const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update 
         e.preventDefault();
         try {
             if (shipment.id !== undefined) {
-                const updated_shipment = await state.setOptions(shipment.id, options);
-                state.setNotification({ type: NotificationType.success, message: 'Shipment Options successfully updated!' });
-                update({ ...updated_shipment }, true);
+                await setOptions(shipment.id, options);
+                notify({ type: NotificationType.success, message: 'Shipment Options successfully updated!' });
+                update({refresh: true});
             } else {
-                update({ options });
+                update({ changes: {options} });
             }
         } catch (err) {
-            state.setNotification({ type: NotificationType.error, message: err });
+            notify({ type: NotificationType.error, message: err });
         }
     };
 
@@ -119,6 +122,6 @@ const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, update 
 
         </form>
     )
-};
+});
 
 export default ShipmentOptions;

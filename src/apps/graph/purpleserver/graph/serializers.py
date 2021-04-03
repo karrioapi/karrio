@@ -1,9 +1,10 @@
 import typing
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer as BaseModelSerializer
 
 from purpleserver.core.utils import save_one_to_one_data, save_many_to_many_data
+import purpleserver.core.serializers as serializers
 import purpleserver.core.validators as validators
 import purpleserver.providers.models as providers
 import purpleserver.manager.models as manager
@@ -12,7 +13,7 @@ import purpleserver.graph.models as graph
 User = get_user_model()
 
 
-class ModelSerializer(serializers.ModelSerializer):
+class ModelSerializer(BaseModelSerializer):
     class Meta:
         model = None
 
@@ -31,11 +32,11 @@ class ModelSerializer(serializers.ModelSerializer):
         for name, value in data.items():
             setattr(instance, name, value)
 
-        instance.save(**self._extra)
+        instance.save()
         return instance
 
 
-def apply_optional_fields(serializer: typing.Type[serializers.ModelSerializer]):
+def apply_optional_fields(serializer: typing.Type[BaseModelSerializer]):
     _name = f"Partial{serializer.__name__}"
 
     class _Meta(serializer.Meta):
@@ -51,7 +52,8 @@ class AddressModelSerializer(ModelSerializer, validators.AugmentedAddressSeriali
 
     class Meta:
         model = manager.Address
-        exclude = ['created_at', 'updated_at', 'created_by', 'validate_location', 'validation']
+        extra_kwargs = {key: {'read_only': False} for key in ['validate_location', 'validation']}
+        exclude = ['created_at', 'updated_at', 'created_by']
 
 
 class PaymentModelSerializer(ModelSerializer):
@@ -63,20 +65,18 @@ class PaymentModelSerializer(ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data: dict) -> graph.Template:
-        created_by = validated_data['created_by']
         data = {
             **validated_data,
-            'contact': save_one_to_one_data(AddressModelSerializer, data=validated_data.get('contact'), created_by=created_by),
+            'contact': save_one_to_one_data('contact', AddressModelSerializer, payload=validated_data, **self._extra),
         }
 
         return super().create(data)
 
     @transaction.atomic
     def update(self, instance: graph.Template, validated_data: dict) -> graph.Template:
-        data = {
-            **validated_data,
-            'contact': save_one_to_one_data(AddressModelSerializer, instance.contact, data=validated_data.get('contact')),
-        }
+        data = {key: value for key, value in validated_data.items() if key != 'contact'}
+
+        save_one_to_one_data('contact', AddressModelSerializer, instance, payload=validated_data, **self._extra)
 
         return super().create(data)
 
@@ -90,10 +90,10 @@ class CommodityModelSerializer(ModelSerializer):
 
 
 class CustomsModelSerializer(ModelSerializer):
-    NESTED_FIELDS = ['duty', 'shipment_commodities']
+    NESTED_FIELDS = ['duty', 'commodities']
 
-    duty = apply_optional_fields(PaymentModelSerializer)(required=False)
-    shipment_commodities = apply_optional_fields(CommodityModelSerializer)(many=True, required=False)
+    duty = apply_optional_fields(PaymentModelSerializer)(required=False, allow_null=True)
+    commodities = apply_optional_fields(CommodityModelSerializer)(many=True, allow_null=True, required=False)
 
     class Meta:
         model = manager.Customs
@@ -103,28 +103,20 @@ class CustomsModelSerializer(ModelSerializer):
     def create(self, validated_data: dict):
         data = {
             **{name: value for name, value in validated_data.items() if name not in self.NESTED_FIELDS},
-            'duty': save_one_to_one_data(PaymentModelSerializer, validated_data.get('duty'), **self._extra)
+            'duty': save_one_to_one_data('duty', PaymentModelSerializer, payload=validated_data, **self._extra)
         }
         instance = super().create(data)
 
         save_many_to_many_data(
-            CommodityModelSerializer, 'shipment_commodities', instance,
-            data=validated_data.get('shipment_commodities'),
-            **self._extra)
+            'commodities', CommodityModelSerializer, instance, payload=validated_data, **self._extra)
 
         return instance
 
     @transaction.atomic
     def update(self, instance: manager.Customs, validated_data: dict) -> manager.Customs:
-        data = {
-            **{name: value for name, value in validated_data.items() if name not in self.NESTED_FIELDS},
-            'duty': save_one_to_one_data(PaymentModelSerializer, instance.duty, validated_data.get('duty'))
-        }
+        data = {name: value for name, value in validated_data.items() if name not in self.NESTED_FIELDS}
 
-        save_many_to_many_data(
-            CommodityModelSerializer, 'shipment_commodities', instance,
-            data=validated_data.get('shipment_commodities'),
-            **self._extra)
+        save_one_to_one_data('duty', PaymentModelSerializer, instance, payload=validated_data, **self._extra)
 
         return super().update(instance, data)
 
@@ -136,12 +128,14 @@ class ParcelModelSerializer(validators.PresetSerializer, ModelSerializer):
 
 
 class UserModelSerializer(ModelSerializer):
-    id = serializers.IntegerField(required=True)
     email = serializers.CharField(required=False)
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'full_name', 'is_active']
+        extra_kwargs = {
+            field: {'read_only': True} for field in ['is_staff', 'last_login', 'date_joined']
+        }
+        fields = ['email', 'full_name', 'is_active', 'is_staff', 'last_login', 'date_joined']
 
 
 class TemplateModelSerializer(ModelSerializer):
@@ -157,9 +151,9 @@ class TemplateModelSerializer(ModelSerializer):
     def create(self, validated_data: dict) -> graph.Template:
         data = {
             **validated_data,
-            'address': save_one_to_one_data(AddressModelSerializer, data=validated_data.get('address'), **self._extra),
-            'customs': save_one_to_one_data(CustomsModelSerializer, data=validated_data.get('customs'),  **self._extra),
-            'parcel': save_one_to_one_data(ParcelModelSerializer, data=validated_data.get('parcel'), **self._extra)
+            'address': save_one_to_one_data('address', AddressModelSerializer, payload=validated_data, **self._extra),
+            'customs': save_one_to_one_data('customs', CustomsModelSerializer, payload=validated_data, **self._extra),
+            'parcel': save_one_to_one_data('parcel', ParcelModelSerializer, payload=validated_data, **self._extra)
         }
 
         ensure_unique_default_related_data(validated_data)
@@ -168,12 +162,11 @@ class TemplateModelSerializer(ModelSerializer):
 
     @transaction.atomic
     def update(self, instance: graph.Template, validated_data: dict) -> graph.Template:
-        data = {
-            **validated_data,
-            'address': save_one_to_one_data(AddressModelSerializer, instance.address, data=validated_data.get('address'), partial=True),
-            'customs': save_one_to_one_data(CustomsModelSerializer, instance.customs, data=validated_data.get('customs'), partial=True),
-            'parcel': save_one_to_one_data(ParcelModelSerializer, instance.parcel, data=validated_data.get('parcel'), partial=True),
-        }
+        data = {key: value for key, value in validated_data.items() if key not in ['address', 'customs', 'parcel']}
+
+        save_one_to_one_data('address', AddressModelSerializer, instance, payload=validated_data, partial=True)
+        save_one_to_one_data('customs', CustomsModelSerializer, instance, payload=validated_data, partial=True)
+        save_one_to_one_data('parcel', ParcelModelSerializer, instance, payload=validated_data, partial=True)
 
         ensure_unique_default_related_data(validated_data, instance)
 
@@ -198,6 +191,14 @@ def ensure_unique_default_related_data(data: dict = None, instance: typing.Optio
         for template in default_templates:
             template.is_default = False
             template.save()
+
+
+class DefaultTemplateSerializer(serializers.EntitySerializer):
+    label = serializers.CharField()
+    is_default = serializers.BooleanField()
+    address = serializers.AddressData(required=False)
+    customs = serializers.CustomsData(required=False)
+    parcel = serializers.ParcelData(required=False)
 
 
 def create_carrier_model_serializers(partial: bool = False):
@@ -229,17 +230,17 @@ class ConnectionModelSerializerBase(ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data: dict):
-        name, data = next(iter(validated_data.items()), ('', None))
+        name = next(iter(validated_data.keys()), '')
         serializer = CARRIER_MODEL_SERIALIZERS[name]
-        settings = save_one_to_one_data(serializer, data=data, **self._extra)
+        settings = save_one_to_one_data(name, serializer, payload=validated_data, **self._extra)
 
         return getattr(settings, 'carrier_ptr', None)
 
     @transaction.atomic
     def update(self, instance, validated_data: dict):
-        name, data = next(iter(validated_data.items()), ('', None))
+        name = next(iter(validated_data.keys()), '')
         serializer = CARRIER_MODEL_SERIALIZERS[name]
-        settings = save_one_to_one_data(serializer, getattr(instance, name), data=data, partial=True)
+        settings = save_one_to_one_data(name, serializer, instance, payload=validated_data, partial=True)
 
         return getattr(settings, 'carrier_ptr', None)
 

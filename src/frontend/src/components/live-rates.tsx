@@ -1,25 +1,28 @@
-import { state } from '@/library/app';
 import { formatRef, isNone } from '@/library/helper';
 import { APIError, NotificationType, RequestError } from '@/library/types';
 import { Customs, Payment, PaymentCurrencyEnum, PaymentPaidByEnum, Shipment, ShipmentLabelTypeEnum } from '@/api';
 import { useNavigate } from '@reach/router';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import AddressDescription from '@/components/descriptions/address-description';
 import CustomsInfoDescription from '@/components/descriptions/customs-info-description';
 import OptionsDescription from '@/components/descriptions/options-description';
 import ParcelDescription from '@/components/descriptions/parcel-description';
 import ButtonField from '@/components/generic/button-field';
 import InputField from '@/components/generic/input-field';
+import ShipmentMutation from './data/shipment-mutation';
+import { LabelData } from './data/shipment-query';
+import { Notify } from './notifier';
 
 interface LiveRatesComponent {
-    shipment: Shipment;
     update: (payload: {}, refresh?: boolean) => void;
 }
 
 const DEFAULT_PAYMENT: Partial<Payment> = { paid_by: PaymentPaidByEnum.Sender };
 
-const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
+const LiveRates: React.FC<LiveRatesComponent> = ShipmentMutation<LiveRatesComponent>(({ update, fetchRates, buyLabel }) => {
     const navigate = useNavigate();
+    const { notify } = useContext(Notify);
+    const { shipment } = useContext(LabelData);
     const [loading, setLoading] = useState<boolean>(false);
     const [selected_rate_id, setSelectedRate] = useState<string | undefined>(shipment?.selected_rate_id || undefined);
     const [label_type, setLabelType] = useState<ShipmentLabelTypeEnum>(shipment?.label_type || ShipmentLabelTypeEnum.Pdf);
@@ -33,13 +36,14 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
             loading === true
         );
     };
-    const fetchRates = async () => {
+    const updateRates = async () => {
         if (computeDisabled(shipment)) return;
         try {
             setLoading(true);
-            const response = await state.fetchRates(shipment);
-            if (shipment.id === undefined) navigate('/buy_label/' + response.id);
-            update({ ...response }, true);
+            let payload = { ...shipment };
+            const response = await fetchRates(payload);
+            if (payload.id === undefined) navigate('/buy_label/' + response.id);
+            update(shipment, true);
             if ((shipment.messages || []).length > 0) {
                 const error: APIError = {
                     error: {
@@ -49,10 +53,10 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                 };
                 const message = new RequestError(error);
 
-                state.setNotification({ type: NotificationType.warning, message });
+                notify({ type: NotificationType.warning, message });
             }
         } catch (err) {
-            state.setNotification({ type: NotificationType.error, message: err });
+            notify({ type: NotificationType.error, message: err });
         } finally {
             setLoading(false);
         }
@@ -61,17 +65,17 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
         try {
             setLoading(true);
             let currency = (shipment.options || {} as any).currency || PaymentCurrencyEnum.Cad;
-            const response = await state.buyLabel({
+            await buyLabel({
                 ...shipment,
                 label_type: label_type,
                 selected_rate_id: selected_rate_id as string,
                 payment: { ...payment, currency }
             });
-            update(response as Shipment);
-            state.setNotification({ type: NotificationType.success, message: 'Label successfully purchased!' });
+            update(shipment as Shipment);
+            notify({ type: NotificationType.success, message: 'Label successfully purchased!' });
             navigate('/');
         } catch (err) {
-            state.setNotification({ type: NotificationType.error, message: err });
+            notify({ type: NotificationType.error, message: err });
         } finally {
             setLoading(false);
         }
@@ -84,7 +88,7 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
                 <div className="column is-12 pb-2">
                     <span className="title is-5">Shipment Details</span>
 
-                    <button className={`button is-small is-outlined is-info is-pulled-right ${loading ? 'is-loading' : ''}`} onClick={fetchRates} disabled={computeDisabled(shipment)}>
+                    <button className={`button is-small is-outlined is-info is-pulled-right ${loading ? 'is-loading' : ''}`} onClick={updateRates} disabled={computeDisabled(shipment)}>
                         <span>Fetch Rates</span>
                     </button>
                 </div>
@@ -204,6 +208,6 @@ const LiveRates: React.FC<LiveRatesComponent> = ({ shipment, update }) => {
 
         </div>
     )
-};
+});
 
 export default LiveRates;

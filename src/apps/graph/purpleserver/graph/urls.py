@@ -25,5 +25,5 @@ class PurplshipGraphQLView(CustomJWTAuthMixin, GraphQLView):
 
 app_name = 'purpleserver.graph'
 urlpatterns = [
-    path("graphql/", csrf_exempt(PurplshipGraphQLView.as_view(graphiql=True))),
+    path("graphql", csrf_exempt(PurplshipGraphQLView.as_view(graphiql=True))),
 ]

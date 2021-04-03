@@ -20,7 +20,7 @@ class Template(OwnedEntity):
     def delete(self, *args, **kwargs):
         attachment = next(
             (entity for entity in [self.address, self.customs, self.parcel] if entity is not None),
-            self
+            super()
         )
 
         return attachment.delete(*args, **kwargs)

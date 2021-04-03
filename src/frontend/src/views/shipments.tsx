@@ -1,32 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { PaginatedShipments, View } from '@/library/types';
+import React, { useContext, useEffect } from 'react';
+import { View } from '@/library/types';
 import ShipmentMenu from '@/components/shipment-menu';
 import { useNavigate } from '@reach/router';
-import { formatAddress, formatDate } from '@/library/helper';
+import { formatAddress, formatDate, isNone } from '@/library/helper';
 import CarrierBadge from '@/components/carrier-badge';
-import { state } from '@/library/app';
+import ShipmentMutation from '@/components/data/shipment-mutation';
+import { Shipments } from '@/components/data/shipments-query';
+import { Loading } from '@/components/loader';
+import { Notify } from '@/components/notifier';
 
 
-interface ShipmentsView extends View {
-  shipments?: PaginatedShipments;
-}
+interface ShipmentsView extends View { }
 
-const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
+const ShipmentPage: React.FC<ShipmentsView> = ShipmentMutation<ShipmentsView>(() => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState<boolean>(false);
-  const update = (url?: string | null) => async (_: React.MouseEvent) => {
-    await state.fetchShipments(url as string);
-  };
-  const createLabel = (_: React.MouseEvent) => {
-    navigate('buy_label/new');
-    state.setLabelData();
-  };
-  useEffect(() => {
-    if (loading === false) {
-      setLoading(true);
-      state.fetchShipments().catch(_ => _).then(() => setLoading(false));
-    }
-  }, []);
+  const { setLoading } = useContext(Loading);
+  const { loading, results, load, loadMore, previous, next } = useContext(Shipments);
+
+  const createLabel = (_: React.MouseEvent) => navigate('buy_label/new');
+
+  useEffect(() => { !loading && load(); }, []);
+  useEffect(() => { setLoading(loading); });
+
+  const { notify } = useContext(Notify);
+  (window as any).noti = () => notify({ message: 'Tracker successfully added!' })
 
   return (
     <>
@@ -54,7 +51,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
 
           <tbody>
 
-            {shipments?.results.map(shipment => (
+            {results.map(shipment => (
               <tr key={shipment.id}>
                 <td className="is-vcentered">
                   <CarrierBadge carrier={shipment.carrier_name as string} className="tag" style={{ width: '100%', minWidth: '120px' }} />
@@ -62,8 +59,10 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
                 <td className="mode is-vcentered">
                   {shipment.test_mode ? <span className="tag is-warning is-centered">Test</span> : <></>}
                 </td>
-                <td className="is-vcentered">{formatAddress(shipment.recipient)}</td>
-                <td className="is-vcentered">{formatDate(shipment.created_at)}</td>
+                <td className="is-vcentered">
+                  <p className="is-subtitle is-size-6 my-1 has-text-weight-semibold has-text-grey">{formatAddress(shipment.recipient)}</p>
+                </td>
+                <td className="is-vcentered has-text-centered">{formatDate(shipment.created_at)}</td>
                 <td className="is-vcentered">
                   <span className="tag is-info is-light" style={{ width: '100%' }}>{shipment.status?.toString().toUpperCase()}</span>
                 </td>
@@ -78,7 +77,7 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
         </table>
       </div>
 
-      {(!loading && shipments?.count == 0) && <div className="card my-6">
+      {(!loading && results.length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
           <p>No shipment has been created yet.</p>
@@ -87,22 +86,12 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
 
       </div>}
 
-      {loading && <div className="card my-6">
-
-        <div className="card-content has-text-centered">
-          <span className="icon has-text-info is-large">
-            <i className="fas fa-spinner fa-pulse"></i>
-          </span>
-        </div>
-
-      </div>}
-
       <footer className="px-2 py-2 is-vcentered">
         <div className="buttons has-addons is-centered">
-          <button className="button is-small" onClick={update(shipments?.previous)} disabled={shipments?.previous === null}>
+          <button className="button is-small" onClick={() => loadMore(previous)} disabled={isNone(previous)}>
             <span>Previous</span>
           </button>
-          <button className="button is-small" onClick={update(shipments?.next)} disabled={shipments?.next === null}>
+          <button className="button is-small" onClick={() => loadMore(next)} disabled={isNone(next)}>
             <span>Next</span>
           </button>
         </div>
@@ -110,6 +99,6 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
 
     </>
   );
-};
+});
 
-export default Shipments;
+export default ShipmentPage;

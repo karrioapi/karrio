@@ -1,12 +1,12 @@
-import { state } from '@/library/app';
 import { NotificationType } from '@/library/types';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import UserMutation from '@/components/data/user-mutation';
+import { Notify } from './notifier';
 
-interface CloseAccountActionComponent {
+interface CloseAccountActionComponent extends React.InputHTMLAttributes<HTMLDivElement> {}
 
-}
-
-const CloseAccountAction: React.FC<CloseAccountActionComponent> = ({ children }) => {
+const CloseAccountAction: React.FC<CloseAccountActionComponent> = UserMutation<CloseAccountActionComponent>(({ children, closeAccount }) => {
+    const { notify } = useContext(Notify);
     const [isActive, setIsActive] = useState<boolean>(false);
     const close = (evt: React.MouseEvent) => {
         evt.preventDefault();
@@ -15,9 +15,9 @@ const CloseAccountAction: React.FC<CloseAccountActionComponent> = ({ children })
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
         try {
-            await state.closeAccount();
+            await closeAccount();
         } catch(err) {
-            state.setNotification({ type: NotificationType.error, message: err });
+            notify({ type: NotificationType.error, message: err });
         }
     };
 
@@ -43,6 +43,6 @@ const CloseAccountAction: React.FC<CloseAccountActionComponent> = ({ children })
             </div>
         </>
     )
-};
+});
 
 export default CloseAccountAction;

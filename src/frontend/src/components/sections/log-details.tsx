@@ -1,34 +1,33 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Log, PaginatedLogs, View } from '@/library/types';
-import { state } from '@/library/app';
+import React, { useContext, useEffect, useState } from 'react';
+import { View } from '@/library/types';
 import StatusCode from '@/components/status-code-badge';
 import Prism from 'prismjs';
 import { Link } from '@reach/router';
-import { formatDateTime, notEmptyJSON } from '@/library/helper';
+import { formatDateTime, isNone, notEmptyJSON } from '@/library/helper';
+import { Log } from '@/components/data/log-query';
+import { Loading } from '@/components/loader';
 
 interface LogDetailsView extends View {
     logId?: string;
-    logs?: PaginatedLogs;
-    log?: Log;
-    setLog: Dispatch<SetStateAction<Log | undefined>>;
 }
 
-const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
-    const [query_params, setQueryParams] = useState<string>(JSON.stringify(JSON.parse(log?.query_params || '{}'), null, 2));
-    const [data, setData] = useState<string>(JSON.stringify(JSON.parse(log?.data || '{}'), null, 2));
-    const [response, setResponse] = useState<string>(JSON.stringify(JSON.parse(log?.response || '{}'), null, 2));
+const LogDetails: React.FC<LogDetailsView> = ({ logId }) => {
+    const { setLoading } = useContext(Loading);
+    const { log, loading, loadLog } = useContext(Log);
+    const [query_params, setQueryParams] = useState<string>();
+    const [response, setResponse] = useState<string>();
+    const [data, setData] = useState<string>();
 
+    useEffect(() => { setLoading(loading); });
+    useEffect(() => { if (isNone(log) && !isNone(loadLog) && !loading) loadLog(logId as string); }, []);
     useEffect(() => {
-        if (logs === undefined && logId !== undefined) {
-            state.retrieveLog(logId).then(log => {
-                setLog(log);
-                setQueryParams(JSON.stringify(JSON.parse(log.query_params), null, 2));
-                setData(JSON.stringify(JSON.parse(log.data), null, 2));
-                setResponse(JSON.stringify(JSON.parse(log.response), null, 2));
-            });
+        if (log !== undefined) {
+            setQueryParams(JSON.stringify(JSON.parse(log.query_params || '{}'), null, 2));
+            setResponse(JSON.stringify(JSON.parse(log.response || '{}'), null, 2));
+            setData(JSON.stringify(JSON.parse(log.data || '{}'), null, 2));
         }
     }, []);
-    
+
     return (
         <>
             <nav className="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
@@ -42,7 +41,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
 
                 <div className="log-card-header px-5 pt-5 pb-3">
                     <p className="subtitle is-6">Request</p>
-                    <p className="title is-4">{log.method} {log.path} <StatusCode code={log.status_code} /></p>
+                    <p className="title is-4">{log.method} {log.path} <StatusCode code={log.status_code as number} /></p>
                 </div>
 
                 <div className="card-content py-3">
@@ -73,7 +72,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
                         <code
                             className={`language-json`}
                             dangerouslySetInnerHTML={{
-                                __html: Prism.highlight(query_params, Prism.languages.json, 'json'),
+                                __html: Prism.highlight(query_params as string, Prism.languages.json, 'json'),
                             }}
                         />
                     </pre>
@@ -92,7 +91,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
                         <code
                             className={`language-json`}
                             dangerouslySetInnerHTML={{
-                                __html: Prism.highlight(data, Prism.languages.json, 'json'),
+                                __html: Prism.highlight(data as string, Prism.languages.json, 'json'),
                             }}
                         />
                     </pre>
@@ -111,7 +110,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
                         <code
                             className={`language-json`}
                             dangerouslySetInnerHTML={{
-                                __html: Prism.highlight(response, Prism.languages.json, 'json'),
+                                __html: Prism.highlight(response as string, Prism.languages.json, 'json'),
                             }}
                         />
                     </pre>

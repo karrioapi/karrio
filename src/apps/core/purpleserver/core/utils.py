@@ -85,41 +85,51 @@ SerializerDecorator = _SerializerDecoratorInitializer()
 
 
 def save_many_to_many_data(
-        serializer: Type[serializers.ModelSerializer],
         name: str,
-        instance: models.Model,
-        collection_data: List[dict] = None,
+        serializer: Type[serializers.ModelSerializer],
+        parent: models.Model,
+        payload: dict = None,
         **kwargs):
 
-    current = getattr(instance, name, [])
+    if not any((key in payload for key in [name])):
+        return None
 
-    if not any(collection_data) and any(current):
-        for item in current:
+    collection_data = payload.get(name)
+    collection = getattr(parent, name)
+
+    if collection_data is None and any(collection.all()):
+        for item in collection.all():
             item.delete()
 
     for data in collection_data:
-        item_instance = next((i for i in current if i.id == data.get('id')), None)
-        item = save_one_to_one_data(serializer, item_instance, data=data, **kwargs)
+        item_instance = collection.filter(id=data.get('id')).first()
+        print(item_instance, payload)
+        if item_instance is None:
+            item = SerializerDecorator[serializer](data=data, **kwargs).save().instance
+        else:
+            item = SerializerDecorator[serializer](instance=item_instance, data=data, **kwargs).save().instance
 
-        getattr(instance, name).add(item)
+        getattr(parent, name).add(item)
 
 
 def save_one_to_one_data(
+        name: str,
         serializer: Type[serializers.ModelSerializer],
-        instance: models.Model = None,
-        data: dict = None,
+        parent: models.Model = None,
+        payload: dict = None,
         **kwargs):
+
+    if name not in payload:
+        return None
+
+    data = payload.get(name)
+    instance = getattr(parent, name, None)
 
     if data is None and instance is not None:
         instance.delete()
-        return None
+        setattr(parent, name, None)
 
     if instance is None:
         return SerializerDecorator[serializer](data=data, **kwargs).save().instance
 
     return SerializerDecorator[serializer](instance=instance, data=data, **kwargs).save().instance
-
-
-def Access(model: models.Model, with_user: User, **kwargs):
-
-    return model.objects.filter(created_by_id=with_user.id, **kwargs)

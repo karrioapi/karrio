@@ -1,29 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Log, PaginatedLogs, View } from '@/library/types';
-import { Router, useNavigate } from '@reach/router';
+import React from 'react';
+import { View } from '@/library/types';
+import { Router } from '@reach/router';
 import LogList from '@/components/sections/log-list';
 import LogDetails from '@/components/sections/log-details';
-import { state } from '@/library/app';
+import LogsQuery from '@/components/data/logs-query';
+import LogQuery from '@/components/data/log-query';
 
-interface APILogsView extends View {
-  logs?: PaginatedLogs;
-}
+interface APILogsView extends View { }
 
-const APILogs: React.FC<APILogsView> = ({ logs }) => {
-  useEffect(() => { if(logs === undefined ) state.fetchLogs(); }, []);
-  const [log, setLog] = useState<Log>();
-  const navigate = useNavigate();
-  const handleLogSelection = (log: Log) => (_: any) => {
-    navigate(`api_logs/${log.id}`);
-    setLog(log);
-  };
+const APILogPage: React.FC<APILogsView> = () => {
 
   return (
-    <Router>
-      <LogList path="/" logs={logs} handleLogSelection={handleLogSelection}/>
-      <LogDetails path="/:logId" logs={logs} log={log} setLog={setLog}/>
-    </Router>
+    <LogsQuery>
+      <LogQuery>
+        <Router>
+          <LogList path="/" />
+          <LogDetails path="/:logId" />
+        </Router>
+      </LogQuery>
+    </LogsQuery>
   );
 }
 
-export default APILogs;
+export default APILogPage;

@@ -26,13 +26,21 @@ class CustomNode(graphene.Node):
 class UserType(graphene_django.DjangoObjectType):
     class Meta:
         model = User
-        fields = ('id', 'email', 'full_name', 'is_staff', 'last_login', 'date_joined')
+        fields = ('email', 'full_name', 'is_staff', 'last_login', 'date_joined')
 
 
-class SystemConnectionType(graphene_django.DjangoObjectType):
+class ConnectionType:
+    carrier_name = graphene.String(required=True)
+
+    def resolve_carrier_name(self, info):
+        return getattr(self, 'data', self).carrier_name
+
+
+class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
+
     class Meta:
         model = providers.Carrier
-        fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id')
+        fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id', 'carrier_name')
 
 
 class LogType(graphene_django.DjangoObjectType):
@@ -79,14 +87,19 @@ class PaymentType(graphene_django.DjangoObjectType):
 
 class CustomsType(graphene_django.DjangoObjectType):
     duty = graphene.Field(PaymentType)
+    commodities = graphene.List(CommodityType)
+    options = generic.GenericScalar()
 
     class Meta:
         model = manager.Customs
-        exclude = ('shipment_set', 'template',)
+        exclude = ('shipment_set', 'template')
+
+    def resolve_commodities(self, info):
+        return self.commodities.all()
 
 
 class AddressTemplateType(graphene_django.DjangoObjectType):
-    address = graphene.Field(AddressType)
+    address = graphene.Field(AddressType, required=True)
 
     class Meta:
         model = graph.Template
@@ -99,7 +112,7 @@ class AddressTemplateType(graphene_django.DjangoObjectType):
 
 
 class CustomsTemplateType(graphene_django.DjangoObjectType):
-    customs = graphene.Field(CustomsType)
+    customs = graphene.Field(CustomsType, required=True)
 
     class Meta:
         model = graph.Template
@@ -109,7 +122,7 @@ class CustomsTemplateType(graphene_django.DjangoObjectType):
 
 
 class ParcelTemplateType(graphene_django.DjangoObjectType):
-    parcel = graphene.Field(ParcelType)
+    parcel = graphene.Field(ParcelType, required=True)
 
     class Meta:
         model = graph.Template
@@ -139,26 +152,40 @@ class TrackerType(graphene_django.DjangoObjectType):
 
 
 class ShipmentType(graphene_django.DjangoObjectType):
+    carrier_id = graphene.String()
+    carrier_name = graphene.String()
+
     shipper = graphene.Field(AddressType)
     recipient = graphene.Field(AddressType)
     customs = graphene.Field(CustomsType)
     payment = graphene.Field(PaymentType)
-    shipment_parcels = graphene.List(ParcelType)
-    carriers = graphene.List(SystemConnectionType)
-    selected_rate_carrier = graphene.Field(SystemConnectionType)
+    parcels = graphene.List(ParcelType)
 
-    services = generic.GenericScalar()
+    services = graphene.List(graphene.String)
+    carrier_ids = graphene.List(graphene.String)
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
     messages = generic.GenericScalar()
     selected_rate = generic.GenericScalar()
-    shipment_rates = generic.GenericScalar()
+    rates = generic.GenericScalar()
 
     class Meta:
         model = manager.Shipment
-        exclude = ('pickup_shipments', )
+        exclude = ('pickup_shipments', 'selected_rate_carrier', 'carriers')
         filter_fields = ['status']
         interfaces = (CustomNode,)
+
+    def resolve_carrier_ids(self, info):
+        return [c.carrier_id for c in self.carriers or []]
+
+    def resolve_parcels(self, info):
+        return self.parcels.all()
+
+    def resolve_carrier_id(self, info):
+        return getattr(self.selected_rate_carrier, 'carrier_id', None)
+
+    def resolve_carrier_name(self, info):
+        return getattr(self.selected_rate_carrier, 'carrier_name', None)
 
 
 class WebhookType(graphene_django.DjangoObjectType):
@@ -174,9 +201,10 @@ def setup_carrier_model(model_type):
         model = model_type
         exclude = ('carrier_ptr', )
 
-    return type(model_type.__name__, (graphene_django.DjangoObjectType,), dict(Meta=Meta))
+    return type(model_type.__name__, (graphene_django.DjangoObjectType, ConnectionType), dict(Meta=Meta))
 
 
 class ConnectionType(graphene.Union):
+
     class Meta:
         types = tuple(setup_carrier_model(carrier_model) for carrier_model in providers.MODELS.values())

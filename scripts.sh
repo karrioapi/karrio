@@ -245,12 +245,13 @@ generate_node_client() {
 
 generate_typescript_client() {
 	cd "${ROOT:?}"
-	mkdir -p "${ROOT:?}/codegen"
+	mkdir -p "${ROOT:?}/src/frontend/codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/openapi/latest.json \
 		-g typescript-fetch \
-		-o /local/codegen/typescript \
-		-c /local/artifacts/config.json
+		-o /local/src/frontend/codegen/typescript \
+		-c /local/artifacts/config.json \
+		--additional-properties=typescriptThreePlus=true
 
 	cd -
 }
@@ -277,10 +278,19 @@ generate_python_client() {
 	cd -
 }
 
+generate_graphql_schema() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/src/frontend/codegen"
+	purplship graphql_schema --out "${ROOT:?}/src/frontend/codegen/schema.json"
+
+	cd -
+}
+
 alias gen:js=generate_node_client
 alias gen:ts=generate_typescript_client
 alias gen:php=generate_php_client
 alias gen:python=generate_python_client
+alias gen:graph=generate_graphql_schema
 
 stub_server() {
 echo "

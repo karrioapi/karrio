@@ -1,17 +1,19 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { Shipment, ShipmentStatusEnum } from '@/api';
 import LabelPrinter from './label/label-printer';
 import { useNavigate } from '@reach/router';
-import { state } from '@/library/app';
 import { NotificationType } from '@/library/types';
+import ShipmentMutation from './data/shipment-mutation';
+import { Notify } from './notifier';
 
 
-interface ShipmentMenuComponent extends React.AllHTMLAttributes<HTMLDivElement> {
+interface ShipmentMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
     shipment: Shipment;
 }
 
 
-const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment, ...props }) => {
+const ShipmentMenu: React.FC<ShipmentMenuComponent> = ShipmentMutation<ShipmentMenuComponent>(({ shipment, voidLabel, ...props }) => {
+    const { notify } = useContext(Notify);
     const [isActive, setIsActive] = useState(false);
     const btn = useRef<HTMLButtonElement>(null);
     const navigate = useNavigate();
@@ -28,24 +30,23 @@ const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment, ...props }) =
             document.removeEventListener('click', onBodyClick);
         }
     };
-    const createLabel = (e: React.MouseEvent) => {
+    const createLabel = (_: React.MouseEvent) => {
         navigate('buy_label/' + shipment.id);
-        state.setLabelData({ shipment });
     };
     const cancelShipment = (shipment: Shipment) => async (e: React.MouseEvent) => {
         try {
-            await state.voidLabel(shipment);
-            state.setNotification({ type: NotificationType.success, message: 'Shipment successfully cancelled!' });
+            await voidLabel(shipment);
+            notify({ type: NotificationType.success, message: 'Shipment successfully cancelled!' });
         } catch (err) {
-            state.setNotification({ type: NotificationType.error, message: err });
+            notify({ type: NotificationType.error, message: err });
         }
     };
 
     return (
         <div className={`dropdown is-right buttons has-addons ${isActive ? 'is-active' : ''}`} key={`menu-${shipment.id}`} {...props}>
-            <div className="dropdown-trigger" style={{width: '100%'}}>
-                {shipment.status !== ShipmentStatusEnum.Created && <LabelPrinter shipment={shipment} style={{width: '70%'}} />}
-                {shipment.status === ShipmentStatusEnum.Created && <a className="button is-small" onClick={createLabel} style={{width: '70%'}}>
+            <div className="dropdown-trigger" style={{ width: '100%' }}>
+                {shipment.status !== ShipmentStatusEnum.Created && <LabelPrinter shipment={shipment} style={{ width: '70%' }} />}
+                {shipment.status === ShipmentStatusEnum.Created && <a className="button is-small" onClick={createLabel} style={{ width: '70%' }}>
                     <span>Buy Label</span>
                 </a>}
                 <button
@@ -68,6 +69,6 @@ const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment, ...props }) =
             </div>
         </div>
     );
-}
+});
 
 export default ShipmentMenu;

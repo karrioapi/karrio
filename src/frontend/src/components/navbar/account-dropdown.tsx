@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { Link } from "@reach/router";
-import { UserInfo } from '@/library/types';
+import { UserType } from '@/components/data/user-query';
 
 
 interface AccountDropdownComponent {
-    user: UserInfo;
+    user: UserType;
 }
 
 

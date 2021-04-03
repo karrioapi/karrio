@@ -1,25 +1,40 @@
-import { state } from '@/library/app';
-import { FieldError, NotificationType, RequestError } from '@/library/types';
-import React from 'react';
+import { FieldError, NotificationType, Notification, RequestError } from '@/library/types';
+import React, { useState } from 'react';
 
-interface NotifierComponent { }
+interface LoadingNotifier {
+    notify: (notification: Notification) => void;
+}
 
-const Notifier: React.FC<NotifierComponent> = () => {
-    const notification = state.notification;
-    const dismiss = (evt: React.MouseEvent) => {
-        evt.preventDefault();
-        state.setNotification();
-    }
+export const Notify = React.createContext<LoadingNotifier>({} as LoadingNotifier);
 
-    if (notification === undefined) {
-        return <></>;
-    }
+const Notifier: React.FC = ({ children }) => {
+    const [notification, setNotification] = useState<Notification>();
+    const [timer, setTimer] = useState<NodeJS.Timeout | number>();
+
+    const dismiss = (evt?: React.MouseEvent) => {
+        evt?.preventDefault();
+        setNotification(undefined);
+        timer && clearTimeout(timer as NodeJS.Timeout);
+    };
+    const notify = (notification: Notification) => {
+        dismiss();
+        setNotification(notification);
+        setTimer(setTimeout(dismiss, 15000));
+    };
 
     return (
-        <div className={`notification ${notification?.type || NotificationType.info} purplship-notifier`}>
-            <button className="delete" onClick={dismiss}></button>
-            {formatMessage(notification?.message)}
-        </div>
+        <Notify.Provider value={{ notify }}>
+            {notification !== undefined &&
+                <div className={`notification ${notification?.type || NotificationType.info} purplship-notifier`}>
+                    <progress
+                        className={`progress purplship-notification-loader ${notification?.type || NotificationType.info}`}
+                        max="100">50%</progress>
+                    <button className="delete" onClick={dismiss}></button>
+                    {formatMessage(notification?.message || '')}
+                </div>
+            }
+            {children}
+        </Notify.Provider>
     )
 };
 
@@ -44,9 +59,9 @@ const formatMessage = (msg: string | Error | RequestError) => {
                     });
             }
         }
-    
+
         return msg.message;
-    } catch(e) {
+    } catch (e) {
         return 'Uh Oh! An uncaught error occured...';
     }
 };

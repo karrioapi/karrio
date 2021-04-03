@@ -67,7 +67,7 @@ class TestShipmentFixture(APITestCase):
             created_by=self.user,
             test_mode=True,
         )
-        self.shipment.shipment_parcels.set([self.parcel])
+        self.shipment.parcels.set([self.parcel])
 
 
 class TestShipments(APITestCase):
@@ -112,7 +112,7 @@ class TestShipmentPurchase(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
         carrier = models.Carrier.objects.get(carrier_id="canadapost")
-        self.shipment.shipment_rates = [
+        self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
                 "carrier_ref": carrier.pk,

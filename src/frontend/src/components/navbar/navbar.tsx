@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AccountDropdown from '@/components/navbar/account-dropdown';
-import { UserInfo } from '@/library/types';
+import { UserData, UserType } from '@/components/data/user-query';
 
-interface NavbarComponent {
-    user: UserInfo;
-}
+interface NavbarComponent { }
 
-const Navbar: React.FC<NavbarComponent> = ({ user }) => {
+const Navbar: React.FC<NavbarComponent> = () => {
+    const { user } = useContext(UserData)
     const openSidebar = (e: React.MouseEvent) => {
         e.preventDefault();
         document.querySelector('.plex-sidebar')?.classList.add('is-mobile-active');
@@ -38,7 +37,7 @@ const Navbar: React.FC<NavbarComponent> = ({ user }) => {
                     <i className="fas fa-search"></i>
                 </div>
 
-                <AccountDropdown user={user} />
+                <AccountDropdown user={user || {} as UserType} />
 
             </div>
 

@@ -1,20 +1,16 @@
-import React, { Fragment, useContext, useEffect, useState } from 'react';
+import React, { Fragment, useContext, useEffect } from 'react';
 import CarrierBadge from '@/components/carrier-badge';
-import { state } from '@/library/app';
-import { SystemConnections } from '@/library/context';
+import { SystemConnections } from '@/components/data/system-connections-query';
+import { Loading } from '@/components/loader';
 
 interface SystemConnectionListView { }
 
 const SystemConnectionList: React.FC<SystemConnectionListView> = () => {
-  const connections = useContext(SystemConnections);
-  const [loading, setLoading] = useState<boolean>(false);
+  const { setLoading } = useContext(Loading);
+  const { system_connections, loading, load } = useContext(SystemConnections);
 
-  useEffect(() => {
-    if (loading === false) {
-      setLoading(true);
-      state.fetchSystemConnections().catch(_ => _).then(() => setLoading(false));
-    }
-  }, []);
+  useEffect(() => { !loading && load() }, []);
+  useEffect(() => { setLoading(loading); });
 
   return (
     <Fragment>
@@ -29,7 +25,7 @@ const SystemConnectionList: React.FC<SystemConnectionListView> = () => {
         </thead>
 
         <tbody className="connections-table">
-          {(connections?.results || []).map((connection) => (
+          {(system_connections || []).map((connection) => (
 
             <tr key={connection.id}>
               <td className="carrier">
@@ -52,7 +48,7 @@ const SystemConnectionList: React.FC<SystemConnectionListView> = () => {
 
       </table>
 
-      {((connections.results || []).length == 0) && <div className="card my-6">
+      {((system_connections).length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
           <p>The administrators have not provided any system wide carrier connections.</p>

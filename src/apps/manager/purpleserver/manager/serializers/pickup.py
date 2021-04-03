@@ -93,7 +93,7 @@ class PickupSerializer(PickupRequest):
         request_data = PickupRequest({
             **validated_data,
             "address": self._address.data,
-            "parcels": sum([list(s.parcels) for s in self._shipments], [])
+            "parcels": sum([list(s.parcels.all()) for s in self._shipments], [])
         }).data
 
         response = Pickups.schedule(payload=request_data, carrier=carrier)

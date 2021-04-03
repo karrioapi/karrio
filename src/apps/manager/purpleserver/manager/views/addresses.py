@@ -22,8 +22,9 @@ Addresses = PaginatedResult('AddressList', Address)
 
 
 class AddressList(GenericAPIView):
-    pagination_class = LimitOffsetPagination
-    default_limit = 20
+    serializer_class = Address
+    queryset = models.Address.objects
+    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 
     @swagger_auto_schema(
         tags=['Addresses'],

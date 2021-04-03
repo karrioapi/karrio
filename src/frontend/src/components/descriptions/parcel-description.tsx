@@ -1,9 +1,9 @@
 import React from 'react';
-import { Parcel } from '@/api';
 import { formatParcelLabel, formatDimension, formatWeight } from '@/library/helper';
+import { ParcelType } from '@/library/types';
 
 interface ParcelDescriptionComponent {
-    parcel?: Parcel;
+    parcel?: ParcelType;
 }
 
 const ParcelDescription: React.FC<ParcelDescriptionComponent> = ({ parcel }) => {

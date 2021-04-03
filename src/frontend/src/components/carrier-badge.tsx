@@ -1,7 +1,7 @@
-import { Reference } from '@/library/context';
 import { Collection } from '@/library/types';
 import { CarrierSettingsCarrierNameEnum } from '@/api';
-import React from 'react';
+import React, { useContext } from 'react';
+import { APIReference } from './data/references-query';
 
 const THEME: Collection = {
     'aramex': 'is-aramex',
@@ -30,13 +30,15 @@ interface CarrierBadgeComponent extends React.AllHTMLAttributes<HTMLSpanElement>
 }
 
 const CarrierBadge: React.FC<CarrierBadgeComponent> = ({ carrier, className, ...props }) => {
+    const { carriers } = useContext(APIReference);
     const name = carrier || '';
+    
     return (
-        <Reference.Consumer>
-            {ref => (Object.values(ref || {}).length > 0) && (
-                <span className={`${className} ${THEME[name] || 'is-light'}`} {...props}>{(ref.carriers as Collection)[name] || "Unknown"}</span>
+        <>
+            {carriers && (
+                <span className={`${className} ${THEME[name] || 'is-light'}`} {...props}>{(carriers as Collection)[name] || "Unknown"}</span>
             )}
-        </Reference.Consumer>
+        </>
     );
 };
 

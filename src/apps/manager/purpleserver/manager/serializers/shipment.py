@@ -122,17 +122,17 @@ class ShipmentSerializer(ShipmentData):
             **{k: v for k, v in related_data.items() if v is not None},
             'test_mode': test_mode,
             'created_by': created_by,
-            'shipment_rates': DP.to_dict(rate_response.rates),
+            'rates': DP.to_dict(rate_response.rates),
             'messages': DP.to_dict(rate_response.messages)
         })
         shipment.carriers.set(carriers)
 
         if validated_data.get('parcels') is not None:
-            shipment_parcels = [
+            parcels = [
                 SerializerDecorator[ParcelSerializer](data=data).save(created_by=created_by).instance
                 for data in validated_data.get('parcels', [])
             ]
-            shipment.shipment_parcels.set(shipment_parcels)
+            shipment.parcels.set(parcels)
 
         return shipment
 
@@ -168,8 +168,8 @@ class ShipmentSerializer(ShipmentData):
                 instance.customs, data=validated_data.get('customs')).save(created_by=created_by).instance
 
         if 'rates' in validated_data:
-            changes.append('shipment_rates')
-            instance.shipment_rates = DP.to_dict(validated_data.get('rates', []))
+            changes.append('rates')
+            instance.rates = DP.to_dict(validated_data.get('rates', []))
 
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
@@ -237,6 +237,6 @@ class ShipmentCancelSerializer(Shipment):
 def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
     if shipment is not None:
         shipment.selected_rate = None
-        shipment.shipment_rates = []
+        shipment.rates = []
         shipment.messages = []
         shipment.save()

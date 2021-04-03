@@ -22,7 +22,7 @@ These docs are customized to your version of the API.
 ## Versioning
 
 When backwards-incompatible changes are made to the API, a new, dated version is released. 
-The current version is {settings.VERSION}. 
+The current version is `{settings.VERSION}`. 
 
 Read our API changelog and to learn more about backwards compatibility.
 

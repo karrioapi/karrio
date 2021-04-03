@@ -1,10 +1,13 @@
-import { state } from '@/library/app';
 import { NotificationType } from '@/library/types';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { Notify } from '@/components/notifier';
+import TokenMutation from '@/components/data/token-mutation';
 
 interface GenerateAPIModalComponent {}
 
-const GenerateAPIModal: React.FC<GenerateAPIModalComponent> = ({ children }) => {
+// TODO: Handle password
+const GenerateAPIModal: React.FC<GenerateAPIModalComponent> = TokenMutation<GenerateAPIModalComponent>(({ children, updateToken }) => {
+    const { notify } = useContext(Notify);
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string>("");
     const [isActive, setIsActive] = useState<boolean>(false);
@@ -14,15 +17,12 @@ const GenerateAPIModal: React.FC<GenerateAPIModalComponent> = ({ children }) => 
         evt.preventDefault();
         try {
             setIsDisabled(true);
-            await state.regenerateToken(password);
+            await updateToken({ refresh: true });
             setPassword("");
             setIsDisabled(false);
             setIsActive(false);
             setHasError(false);
-            state.setNotification({ 
-                type: NotificationType.success,
-                message: "New token generated successfully!"
-            });
+            notify({ type: NotificationType.success, message: "New token generated successfully!" });
         } catch(err) {
             setError(err.message);
             setIsDisabled(false);
@@ -67,6 +67,6 @@ const GenerateAPIModal: React.FC<GenerateAPIModalComponent> = ({ children }) => 
             </div>
         </>
     )
-};
+});
 
 export default GenerateAPIModal;

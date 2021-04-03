@@ -1,37 +1,34 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { PaginatedTemplates, Template, View } from '@/library/types';
+import React, { Fragment, useContext, useEffect } from 'react';
+import { View } from '@/library/types';
 import ParcelDescription from '@/components/descriptions/parcel-description';
 import ParcelEditModal from '@/components/parcel-edit-modal';
 import DeleteItemModal from '@/components/delete-item-modal';
-import { state } from '@/library/app';
+import { ParcelTemplates } from '@/components/data/parcel-templates-query';
+import TemplateMutation from '@/components/data/template-mutation';
+import { isNone } from '@/library/helper';
+import { Loading } from '@/components/loader';
 
-interface ParcelsView extends View {
-  templates?: PaginatedTemplates;
-}
+interface ParcelsView extends View {}
 
-const Parcels: React.FC<ParcelsView> = ({ templates }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+const ParcelsPage: React.FC<ParcelsView> = TemplateMutation<ParcelsView>(({ deleteTemplate }) => {
+  const { setLoading } = useContext(Loading);
+  const { loading, templates, previous, next, load, loadMore, refetch } = useContext(ParcelTemplates);
 
-  const update = (url?: string | null) => async (_?: React.MouseEvent) => {
-    await state.fetchParcels(url as string);
+  const refresh = () => refetch && refetch();
+  const remove = (id: string) => async () => {
+    await deleteTemplate(id);
+    refresh();
   };
-  const remove = (parcel: Template) => async () => {
-    await state.removeTemplate(parcel.id as string);
-    update(templates?.url)();
-  };
-  useEffect(() => {
-    if (loading === false) {
-      setLoading(true);
-      state.fetchParcels().catch(_ => _).then(() => setLoading(false));
-    }
-  }, []);
+
+  useEffect(() => { !loading && load() }, []);
+  useEffect(() => { setLoading(loading); });
 
   return (
     <Fragment>
 
       <header className="px-2 pt-1 pb-6">
         <span className="subtitle is-4">Parcels</span>
-        <ParcelEditModal className="button is-success is-pulled-right" onUpdate={update(templates?.url)}>
+        <ParcelEditModal className="button is-success is-pulled-right" onUpdate={refresh}>
           <span>New Parcel</span>
         </ParcelEditModal>
       </header>
@@ -47,7 +44,7 @@ const Parcels: React.FC<ParcelsView> = ({ templates }) => {
           </thead>
 
           <tbody className="templates-table">
-            {templates?.results.map((template) => (
+            {templates.map((template) => (
 
               <tr key={`${template.id}-${Date.now()}`}>
                 <td className="template">
@@ -61,12 +58,12 @@ const Parcels: React.FC<ParcelsView> = ({ templates }) => {
                 </td>
                 <td className="action is-vcentered">
                   <div className="buttons is-centered">
-                    <ParcelEditModal className="button is-light" parcelTemplate={template} onUpdate={update(templates?.url)}>
+                    <ParcelEditModal className="button is-light" parcelTemplate={template} onUpdate={refresh}>
                       <span className="icon is-small">
                         <i className="fas fa-pen"></i>
                       </span>
                     </ParcelEditModal>
-                    <DeleteItemModal label="Parcel Template" identifier={template.id as string} onConfirm={remove(template)}>
+                    <DeleteItemModal label="Parcel Template" identifier={template.id as string} onConfirm={remove(template.id)}>
                       <span className="icon is-small">
                         <i className="fas fa-trash"></i>
                       </span>
@@ -80,7 +77,7 @@ const Parcels: React.FC<ParcelsView> = ({ templates }) => {
 
         </table>
 
-        {(templates?.count == 0) && <div className="card my-6">
+        {(templates?.length == 0) && <div className="card my-6">
 
           <div className="card-content has-text-centered">
             <p>No parcel has been added yet.</p>
@@ -93,10 +90,10 @@ const Parcels: React.FC<ParcelsView> = ({ templates }) => {
 
       <footer className="px-2 py-2 is-vcentered">
         <div className="buttons has-addons is-centered">
-          <button className="button is-small" onClick={update(templates?.previous)} disabled={templates?.previous === null}>
+          <button className="button is-small" onClick={() => loadMore(previous)} disabled={isNone(previous)}>
             <span>Previous</span>
           </button>
-          <button className="button is-small" onClick={update(templates?.next)} disabled={templates?.next === null}>
+          <button className="button is-small" onClick={() => loadMore(next)} disabled={isNone(next)}>
             <span>Next</span>
           </button>
         </div>
@@ -104,6 +101,6 @@ const Parcels: React.FC<ParcelsView> = ({ templates }) => {
 
     </Fragment>
   );
-}
+});
 
-export default Parcels;
+export default ParcelsPage;

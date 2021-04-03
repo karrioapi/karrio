@@ -1,34 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { PaginatedTrackers, View } from '@/library/types';
+import React, { useContext, useEffect } from 'react';
+import { View } from '@/library/types';
 import CarrierBadge from '@/components/carrier-badge';
-import { state } from '@/library/app';
 import { TrackingEvent, TrackingStatus } from '@/api';
 import TrackShipmentModal from '@/components/track-shipment-modal';
 import { isNone } from '@/library/helper';
+import { Trackers } from '@/components/data/trackers-query';
+import TrackerMutation from '@/components/data/tracker-mutation';
+import { Loading } from '@/components/loader';
 
 
-interface ShipmentsView extends View {
-  trackers?: PaginatedTrackers;
-}
+interface TrackersView extends View {}
 
-const Trackers: React.FC<ShipmentsView> = ({ trackers }) => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const update = (url?: string | null) => async (_: React.MouseEvent) => {
-    await state.fetchTrackers(url as string);
+const TrackersPage: React.FC<TrackersView> = TrackerMutation<TrackersView>(({ removeTracker }) => {
+  const { setLoading } = useContext(Loading);
+  const { called, loading, results, load, loadMore, next, previous, refetch } = useContext(Trackers);
+
+  const update = () => refetch && refetch();
+  const remove = (tracker: TrackingStatus) => async () => {
+    await removeTracker(tracker.id as string);
+    update();
   };
-  useEffect(() => {
-    if (loading === false) {
-      setLoading(true);
-      state.fetchTrackers().catch(_ => _).then(() => setLoading(false));
-    }
-  }, []);
+
+  useEffect(() => { !loading && load(); }, []);
+  useEffect(() => { setLoading(loading); });
 
   return (
     <>
 
       <header className="px-2 pt-1 pb-6">
         <span className="subtitle is-4">Trackers</span>
-        {trackers?.fetched && <TrackShipmentModal className="button is-success is-pulled-right">
+        {called && <TrackShipmentModal className="button is-success is-pulled-right" onUpdate={update}>
           <span>Track a Shipment</span>
         </TrackShipmentModal>}
       </header>
@@ -47,7 +48,7 @@ const Trackers: React.FC<ShipmentsView> = ({ trackers }) => {
 
           <tbody>
 
-            {trackers?.results.map(tracker => (
+            {results.map(tracker => (
               <tr key={tracker.id}>
                 <td><span className="is-subtitle is-size-6 has-text-weight-semibold has-text-grey">{tracker.tracking_number}</span></td>
                 <td>
@@ -68,7 +69,7 @@ const Trackers: React.FC<ShipmentsView> = ({ trackers }) => {
         </table>
       </div>
 
-      {(!loading && trackers?.count == 0) && <div className="card my-6">
+      {(!loading && results.length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
           <p>No shipment trackers created yet.</p>
@@ -89,10 +90,10 @@ const Trackers: React.FC<ShipmentsView> = ({ trackers }) => {
 
       <footer className="px-2 py-2 is-vcentered">
         <div className="buttons has-addons is-centered">
-          <button className="button is-small" onClick={update(trackers?.previous)} disabled={trackers?.previous === null}>
+          <button className="button is-small" onClick={() => loadMore(previous)} disabled={isNone(previous)}>
             <span>Previous</span>
           </button>
-          <button className="button is-small" onClick={update(trackers?.next)} disabled={trackers?.next === null}>
+          <button className="button is-small" onClick={() => loadMore(next)} disabled={isNone(next)}>
             <span>Next</span>
           </button>
         </div>
@@ -100,7 +101,7 @@ const Trackers: React.FC<ShipmentsView> = ({ trackers }) => {
 
     </>
   );
-};
+});
 
 function statusColor(tracker: TrackingStatus): string {
   if (tracker.delivered) return 'is-success';
@@ -125,4 +126,4 @@ function formatEventDate(last_event?: TrackingEvent): string {
   ].filter(a => !isNone(a) && a !== "").join(" ");
 }
 
-export default Trackers;
+export default TrackersPage;

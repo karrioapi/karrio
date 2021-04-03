@@ -1,17 +1,20 @@
-import { state } from '@/library/app';
-import { NotificationType, UserInfo } from '@/library/types';
-import React, { useState } from 'react';
+import { NotificationType } from '@/library/types';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserData, UserType } from '@/components/data/user-query';
+import UserMutation from '@/components/data/user-mutation';
+import { Notify } from './notifier';
 
 interface ProfileUpdateInputComponent {
-    user: UserInfo;
     label: string;
     inputType: string;
-    propertyKey: keyof UserInfo;
+    propertyKey: keyof UserType;
 }
 
-const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label, inputType, propertyKey }) => {
+const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = UserMutation<ProfileUpdateInputComponent>(({ label, inputType, propertyKey, updateUser }) => {
+    const { user, refetch } = useContext(UserData);
+    const { notify } = useContext(Notify);
     const [key, setKey] = useState<string>(`${propertyKey}-${Date.now()}`);
-    const [originalValue, _] = useState<string>((user as any)[propertyKey] || "");
+    const [originalValue, _] = useState<string>(((user || {}) as any)[propertyKey] || "");
     const [propertyValue, setPropertyValue] = useState<string>("");
     const [hasChanged, setHasChanged] = useState<boolean>(false);
     const cancel = (e: React.MouseEvent) => {
@@ -23,20 +26,23 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
         try {
-            await state.updateUserInfo({ [propertyKey]: propertyValue } as Partial<UserInfo>);
+            await updateUser({ [propertyKey]: propertyValue });
+            if (refetch !== undefined) refetch();
             setHasChanged(false);
-            state.setNotification({ 
-                type: NotificationType.success,
-                message: `${propertyValue} updated successfully!` 
+            notify({ 
+                type: NotificationType.success, message: `${propertyValue} updated successfully!` 
             });
-        } catch (err) {
-            state.setNotification({ type: NotificationType.error, message: err });
+        } catch(error) {
+            // TODO:: add support for graphql error type
+            notify({ type: NotificationType.error, message: error });
         }
     };
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPropertyValue(e.target.value);
         setHasChanged(e.target.value !== (user as any)[propertyKey]);
     };
+
+    useEffect(() => { }, [user])
 
     return (
         <form className="field" onSubmit={handleSubmit} key={key}>
@@ -45,7 +51,7 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
                 <input
                     className="input is-small mr-1"
                     onChange={handleOnChange}
-                    defaultValue={(user as any)[propertyKey] || ""}
+                    defaultValue={((user || {}) as any)[propertyKey] || ""}
                     type={inputType}
                     style={{ maxWidth: "60%" }} required/>
 
@@ -60,6 +66,6 @@ const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ user, label
             </div>
         </form>
     )
-};
+});
 
 export default ProfileUpdateInput;

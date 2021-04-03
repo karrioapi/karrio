@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface StatusCodeComponent {
-    code: string;
+    code: string | number;
 }
 
 const StatusCode: React.FC<StatusCodeComponent> = ({ code }) => {

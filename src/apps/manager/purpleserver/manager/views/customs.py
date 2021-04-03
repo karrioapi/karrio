@@ -21,8 +21,9 @@ CustomsInfoList = PaginatedResult('CustomsList', Customs)
 
 
 class CustomsList(GenericAPIView):
-    pagination_class = LimitOffsetPagination
-    default_limit = 20
+    serializer_class = Customs
+    queryset = models.Customs.objects
+    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 
     @swagger_auto_schema(
         tags=['Customs'],

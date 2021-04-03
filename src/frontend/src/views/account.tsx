@@ -1,13 +1,11 @@
 import React from 'react';
-import { UserInfo, View } from '@/library/types';
+import { View } from '@/library/types';
 import CloseAccountAction from '@/components/close-account-action';
 import ProfileUpdateInput from '@/components/profile-update-input';
 
-interface AccountView extends View {
-  user: UserInfo;
-}
+interface AccountView extends View { }
 
-const Account: React.FC<AccountView> = ({ user }) => {
+const Account: React.FC<AccountView> = () => {
 
   return (
     <>
@@ -25,8 +23,8 @@ const Account: React.FC<AccountView> = ({ user }) => {
         </div>
 
         <div className="column is-7">
-          <ProfileUpdateInput label="Email Address" propertyKey="email" inputType="email" user={user} />
-          <ProfileUpdateInput label="Name (Optional)" propertyKey="full_name" inputType="text" user={user} />
+          <ProfileUpdateInput label="Email Address" propertyKey="email" inputType="email" />
+          <ProfileUpdateInput label="Name (Optional)" propertyKey="full_name" inputType="text" />
         </div>
       </div>
 

@@ -1,6 +1,6 @@
-import { state } from '@/library/app';
 import { NotificationType } from '@/library/types';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { Notify } from './notifier';
 
 interface DeleteItemModalComponent {
     identifier: string;
@@ -9,6 +9,7 @@ interface DeleteItemModalComponent {
 }
 
 const DeleteItemModal: React.FC<DeleteItemModalComponent> = ({ identifier, label, onConfirm, children }) => {
+    const { notify } = useContext(Notify);
     const [isActive, setIsActive] = useState<boolean>(false);
 
     const close = (evt?: React.MouseEvent) => {
@@ -19,12 +20,12 @@ const DeleteItemModal: React.FC<DeleteItemModalComponent> = ({ identifier, label
         evt.preventDefault();
         try {
             await onConfirm();
-            state.setNotification({ 
+            notify({ 
                 type: NotificationType.success, message: `${label} deteled successfully!...`
             });
             close();
         } catch(message) {
-            state.setNotification({ type: NotificationType.error, message });
+            notify({ type: NotificationType.error, message });
         }
     };
 

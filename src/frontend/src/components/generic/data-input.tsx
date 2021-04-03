@@ -1,7 +1,7 @@
 import React, { ChangeEvent, EventHandler, useRef } from 'react';
 
 interface DataInputComponent<T> extends React.AllHTMLAttributes<HTMLDivElement> {
-    state: T | undefined;
+    state?: T | null;
     onChange: EventHandler<any>;
     name: string;
 }

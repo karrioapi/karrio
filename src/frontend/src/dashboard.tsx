@@ -1,97 +1,107 @@
-import React, { Fragment } from 'react';
-import { References } from '@/api';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { graphClient } from '@/library/graphql';
+import { ApolloProvider } from '@apollo/client';
 import { Router } from "@reach/router";
-import Shipments from '@/views/shipments';
-import Trackers from '@/views/trackers';
-import Connections from '@/views/connections';
-import Addresses from '@/views/addresses';
-import Parcels from '@/views/parcels';
-import APILogs from '@/views/api-logs';
+import ShipmentPage from '@/views/shipments';
+import TrackersPage from '@/views/trackers';
+import ConnectionsPage from '@/views/connections';
+import AddressesPage from '@/views/addresses';
+import ParcelsPage from '@/views/parcels';
+import APILogPage from '@/views/api-logs';
 import Account from '@/views/account';
 import APISettings from '@/views/api-settings';
-import CustomsInfos from '@/views/customs-infos';
+import WebhooksPage from '@/views/webhooks';
+import CustomsInfoPage from '@/views/customs-infos';
+import UserQuery from '@/components/data/user-query';
+import TokenQuery from '@/components/data/token-query';
+import APIReferenceQuery from '@/components/data/references-query';
+import ParcelTemplatesQuery from '@/components/data/parcel-templates-query';
+import AddressTemplatesQuery from '@/components/data/address-templates-query';
+import CustomInfoTemplatesQuery from '@/components/data/customs-templates-query';
+import TemplatesQuery from '@/components/data/default-templates-query';
+import ShipmentsQuery from '@/components/data/shipments-query';
+import TrackersQuery from '@/components/data/trackers-query';
+import UserConnectionsQuery from '@/components/data/user-connections-query';
+import SystemConnectionsQuery from '@/components/data/system-connections-query';
+import LabelDataQuery from '@/components/data/shipment-query';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import LabelCreator from '@/components/label/label-creator';
 import BoardFooter from '@/components/footer/board-footer';
 import Navbar from '@/components/navbar/navbar';
 import Notifier from '@/components/notifier';
 import LocationTitle from '@/components/location-title';
-import { state } from '@/library/app';
-import { DefaultTemplates, PaginatedLogs, PaginatedTemplates, UserInfo } from '@/library/types';
-import { Templates, Logs, Reference, User, ParcelTemplates, AddressTemplates, UserConnections, SystemConnections } from '@/library/context';
+import '@/library/rest';
 import 'prismjs';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism.css';
 import 'prismjs/themes/prism-solarizedlight.css';
-import '@/theme/purpleserver.scss';
-import ReactDOM from 'react-dom';
+import '@/style/dashboard.scss';
+import Loader from './components/loader';
 
-const Dashboard: React.FC = () => {
-    const user = state.user;
-    const token = state.token;
-    const references = state.references;
-    const defatultTemplates = state.defaultTemplates;
-    const parcelTemplates = state.parcels;
-    const addressTemplates = state.addresses;
 
-    const logs = state.logs;
-    const labelData = state.labelData;
-    const shipments = state.shipments;
-    const trackers = state.trackers;
-    const systemConnections = state.systemConnections;
-    const userConnections = state.userConnections;
-    const customsInfos = state.customsInfos;
+const DATA_CONTEXTS = [
+    UserQuery,
+    TokenQuery,
+    AddressTemplatesQuery,
+    CustomInfoTemplatesQuery,
+    ParcelTemplatesQuery,
+    APIReferenceQuery,
+    ShipmentsQuery,
+    LabelDataQuery,
+    TrackersQuery,
+    UserConnectionsQuery,
+    SystemConnectionsQuery,
+    TemplatesQuery,
+    Loader,
+    Notifier,
+];
+
+
+const DashboardContexts: React.FC = ({ children }) => {
+    const NestedContexts = DATA_CONTEXTS.reduce((_, Ctx) => <Ctx>{_}</Ctx>, children);
 
     return (
-        <Fragment>
-            <Reference.Provider value={references as References}>
-                <Logs.Provider value={logs as PaginatedLogs}>
-                    <User.Provider value={user as UserInfo}>
-                        <ParcelTemplates.Provider value={parcelTemplates as PaginatedTemplates}>
-                            <AddressTemplates.Provider value={addressTemplates as PaginatedTemplates}>
-                                <Templates.Provider value={defatultTemplates as DefaultTemplates}>
-                                    <UserConnections.Provider value={userConnections}>
-                                        <SystemConnections.Provider value={systemConnections}>
+        <>
+            <ApolloProvider client={graphClient}>{NestedContexts}</ApolloProvider>
+        </>
+    );
+}
 
-                                            <ExpandedSidebar />
-
-                                            <div className="plex-wrapper">
-                                                <div className="wrapper-inner">
-                                                    <Notifier />
-                                                    <Navbar user={user} />
-
-                                                    <div className="dashboard-content">
-                                                        <Router>
-                                                            <Shipments path="/" shipments={shipments} />
-                                                            <Trackers path="/trackers" trackers={trackers} />
-                                                            <LabelCreator path="buy_label/:id" data={labelData} />
-
-                                                            <Connections path="configurations/carriers" />
-                                                            <Parcels path="configurations/parcels" templates={parcelTemplates} />
-                                                            <Addresses path="configurations/addresses" templates={addressTemplates} />
-                                                            <CustomsInfos path="configurations/customs_infos" templates={customsInfos} />
-
-                                                            <APILogs path="api_logs/*" logs={logs} />
-                                                            <APISettings path="settings/api" token={token} />
-                                                            <Account path="settings/account" user={user} />
-                                                        </Router>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <BoardFooter />
-
-                                        </SystemConnections.Provider>
-                                    </UserConnections.Provider>
-                                </Templates.Provider>
-                            </AddressTemplates.Provider>
-                        </ParcelTemplates.Provider>
-                    </User.Provider>
-                </Logs.Provider>
-            </Reference.Provider>
+const Dashboard: React.FC = () => {
+    return (
+        <DashboardContexts>
             <LocationTitle />
-        </Fragment>
+            <ExpandedSidebar />
+
+            <div className="plex-wrapper">
+                <div className="wrapper-inner">
+                    <Notifier />
+                    <Navbar />
+
+                    <div className="dashboard-content">
+                        <Router>
+                            <ShipmentPage path="/" />
+                            <TrackersPage path="/trackers" />
+
+                            <AddressesPage path="configurations/addresses" />
+                            <ConnectionsPage path="configurations/carriers" />
+                            <ParcelsPage path="configurations/parcels" />
+                            <CustomsInfoPage path="configurations/customs_infos" />
+
+                            <Account path="settings/account" />
+                            <APILogPage path="api_logs/*" />
+                            <APISettings path="settings/api" />
+                            <WebhooksPage path="settings/webhooks" />
+                            <LabelCreator path="buy_label/:id" />
+                        </Router>
+                    </div>
+
+                </div>
+            </div>
+
+            <BoardFooter />
+        </DashboardContexts>
     );
 };
 

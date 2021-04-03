@@ -17,6 +17,7 @@ setup(
       install_requires=[
             'purplship-server.core',
             'graphene-django',
+            'django-filter',
       ],
       dependency_links=['https://git.io/purplship'],
       classifiers=[

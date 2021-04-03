@@ -1,18 +1,19 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { View } from '@/library/types';
 import GenerateAPIModal from '@/components/generate-api-dialog';
+import { TokenData } from '@/components/data/token-query';
 
-interface APISettingsView extends View {
-  token: string;
-}
+interface APISettingsView extends View { }
 
-const APISettings: React.FC<APISettingsView> = ({ token }) => {
+const APISettings: React.FC<APISettingsView> = () => {
+  const { token } = useContext(TokenData)
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
   const tokenInput = useRef<HTMLInputElement>(null);
-  const copy = (e: React.MouseEvent) => {
+
+  const copy = (_: React.MouseEvent) => {
     tokenInput.current?.select();
     document.execCommand("copy");
-  }
+  };
 
   return (
     <>
@@ -36,7 +37,7 @@ const APISettings: React.FC<APISettingsView> = ({ token }) => {
               <input className="input is-small"
                 type="text"
                 title={isRevealed ? "Click to Copy" : ""}
-                value={isRevealed ? token : "......................."}
+                value={isRevealed ? token?.key : "......................."}
                 style={{ maxWidth: "80%" }}
                 ref={tokenInput}
                 readOnly
@@ -46,8 +47,8 @@ const APISettings: React.FC<APISettingsView> = ({ token }) => {
               </button>
               <button className="button is-small is-light" onClick={() => setIsRevealed(!isRevealed)}>
                 {isRevealed ?
-                <span className="icon is-small"><i className="fas fa-eye-slash"></i></span> : 
-                <span className="icon is-small"><i className="fas fa-eye"></i></span>}
+                  <span className="icon is-small"><i className="fas fa-eye-slash"></i></span> :
+                  <span className="icon is-small"><i className="fas fa-eye"></i></span>}
               </button>
             </div>
           </div>

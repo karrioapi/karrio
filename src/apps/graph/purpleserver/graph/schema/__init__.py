@@ -2,10 +2,12 @@ import graphene
 import graphene_django.filter as django_filter
 from graphene_django.debug import DjangoDebug
 
+import rest_framework.authtoken.models as authtoken
 import purpleserver.core.gateway as gateway
 import purpleserver.providers.models as providers
 import purpleserver.manager.models as manager
-import purpleserver.event.models as event
+import purpleserver.events.models as events
+import purpleserver.graph.serializers as serializers
 import purpleserver.graph.models as graph
 import purpleserver.graph.schema.mutations as mutations
 import purpleserver.graph.schema.types as types
@@ -20,7 +22,7 @@ class Query(graphene.ObjectType):
     user_connections = graphene.List(types.ConnectionType)
     system_connections = graphene.List(types.SystemConnectionType)
 
-    default_templates = graphene.List(types.TemplateType)
+    default_templates = types.generic.GenericScalar()
     address_templates = django_filter.DjangoFilterConnectionField(types.AddressTemplateType)
     customs_templates = django_filter.DjangoFilterConnectionField(types.CustomsTemplateType)
     parcel_templates = django_filter.DjangoFilterConnectionField(types.ParcelTemplateType)
@@ -35,18 +37,21 @@ class Query(graphene.ObjectType):
         return types.User.objects.get(id=info.context.user.id)
 
     def resolve_token(self, info):
-        user = self.resolve_user(info)
-        return user.auth_token
+        user = types.User.objects.get(id=info.context.user.id)
+        token, _ = authtoken.Token.objects.get_or_create(user=user)
+        return token
 
     def resolve_user_connections(self, info, **kwargs):
-        connections = providers.Carrier.objects.access_with(info.context.user).all()
+        connections = providers.Carrier.objects.access_with(info.context.user).filter(created_by__isnull=False)
         return [connection.settings for connection in connections]
 
     def resolve_system_connections(self, _, **kwargs):
         return gateway.Carriers.list(system_only=True, **kwargs)
 
     def resolve_default_templates(self, info, **kwargs):
-        return graph.Template.objects.access_with(info.context.user).filter(is_default=True)
+        templates = graph.Template.objects.access_with(info.context.user).filter(is_default=True)
+
+        return [serializers.DefaultTemplateSerializer(template).data for template in templates]
 
     def resolve_address_templates(self, info, **kwargs):
         return graph.Template.objects.access_with(info.context.user).filter(address__isnull=False, **kwargs)
@@ -70,7 +75,7 @@ class Query(graphene.ObjectType):
         return manager.Tracking.objects.access_with(info.context.user).filter(**kwargs)
 
     def resolve_webhooks(self, info, **kwargs):
-        return event.Webhook.objects.access_with(info.context.user).filter(**kwargs)
+        return events.Webhook.objects.access_with(info.context.user).filter(**kwargs)
 
 
 class Mutation(graphene.ObjectType):
