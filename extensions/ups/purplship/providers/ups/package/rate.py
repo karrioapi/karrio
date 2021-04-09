@@ -196,8 +196,7 @@ def rate_request(
                 PackageType(
                     PackagingType=UOMCodeDescriptionType(
                         Code=(
-                            mps_packaging
-                            or RatingPackagingType[
+                            mps_packaging or RatingPackagingType[
                                 package.packaging_type or "small_box"
                             ].value
                         ),

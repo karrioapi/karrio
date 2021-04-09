@@ -731,22 +731,6 @@ type = "directory"
 url = "extensions/fedex"
 
 [[package]]
-name = "purplship.fedex-express"
-version = "2021.2"
-description = "Purplship - FedEx Express Shipping Extension"
-category = "dev"
-optional = false
-python-versions = "^3.7"
-develop = true
-
-[package.dependencies]
-"purplship.fedex" = "^2021.2"
-
-[package.source]
-type = "directory"
-url = "extensions/fedex_express"
-
-[[package]]
 name = "purplship.purolator-courier"
 version = "2021.2"
 description = "Purplship - Purolator Courier Shipping Extension"
@@ -830,22 +814,6 @@ purplship = "^2021.2.2"
 [package.source]
 type = "directory"
 url = "extensions/ups"
-
-[[package]]
-name = "purplship.ups-package"
-version = "2021.2"
-description = "Purplship - UPS Package Shipping Extension"
-category = "dev"
-optional = false
-python-versions = "^3.7"
-develop = true
-
-[package.dependencies]
-"purplship.ups" = "^2021.2"
-
-[package.source]
-type = "directory"
-url = "extensions/ups_package"
 
 [[package]]
 name = "purplship.usps"
@@ -1041,7 +1009,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "e7c6b619ed26b01015451566d2d8d16328c0ea06cff4f07ded756aec0a100b54"
+content-hash = "ac5697a8aab7ff5d954e95cc75ec3f5c8a94b2461f169b37e9745ea0be136650"
 
 [metadata.files]
 appdirs = [
@@ -1387,13 +1355,11 @@ purplship = []
 "purplship.dhl-universal" = []
 "purplship.dicom" = []
 "purplship.fedex" = []
-"purplship.fedex-express" = []
 "purplship.purolator-courier" = []
 "purplship.royalmail" = []
 "purplship.sendle" = []
 "purplship.sf-express" = []
 "purplship.ups" = []
-"purplship.ups-package" = []
 "purplship.usps" = []
 "purplship.yanwen" = []
 "purplship.yunexpress" = []

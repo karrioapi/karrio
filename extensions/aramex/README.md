@@ -4,7 +4,7 @@ This package is a Aramex extension of the [purplship](https://pypi.org/project/p
 
 ## Requirements
 
-`Python 3.6+`
+`Python 3.7+`
 
 ## Installation
 

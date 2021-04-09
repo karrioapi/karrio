@@ -4,7 +4,7 @@ This package is a USPS International Express extension of the [purplship](https:
 
 ## Requirements
 
-`Python 3.6+`
+`Python 3.7+`
 
 ## Installation
 
