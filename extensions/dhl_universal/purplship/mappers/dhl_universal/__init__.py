@@ -6,7 +6,7 @@ from purplship.mappers.dhl_universal.settings import Settings
 
 
 METADATA = Metadata(
-    label="DHL Universal Tracking",
+    label="DHL Universal",
 
     # Integrations
     Mapper=Mapper,
