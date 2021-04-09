@@ -58,7 +58,7 @@ def request(decoder: Callable = decode_bytes, on_error: Callable[[HTTPError], st
         return error
 
 
-def exec_parrallel(function: Callable, sequence: List[S], max_workers: int = None) -> List[T]:
+def exec_parrallel(function: Callable, sequence: List[S], max_workers: int = 2) -> List[T]:
     """Return a list of result for function execution on each element of the sequence."""
     with ThreadPoolExecutor(max_workers=max_workers or len(sequence)) as executor:
         requests = {executor.submit(function, item): item for item in sequence}
