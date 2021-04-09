@@ -1,4 +1,5 @@
 import base64
+import time
 from typing import List
 from canadapost_lib.rating import mailing_scenario
 from purplship.api.proxy import Proxy as BaseProxy
@@ -7,7 +8,7 @@ from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.utils.pipeline import Pipeline, Job
 from purplship.core.utils import (
     request as http,
-    exec_parrallel,
+    exec_async,
     XP,
 )
 from purplship.mappers.canadapost.settings import Settings
@@ -34,8 +35,13 @@ class Proxy(BaseProxy):
         """
         get_tracking make parallel request for each pin
         """
+        _throttle = 0.0
 
         def track(tracking_pin: str) -> str:
+            nonlocal _throttle
+            time.sleep(_throttle)
+            _throttle += 0.025
+
             return http(
                 url=f"{self.settings.server_url}/vis/track/pin/{tracking_pin}/summary",
                 headers={
@@ -46,7 +52,7 @@ class Proxy(BaseProxy):
                 method="GET",
             )
 
-        response: List[str] = exec_parrallel(track, request.serialize())
+        response: List[str] = exec_async(track, request.serialize())
 
         return Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
 
