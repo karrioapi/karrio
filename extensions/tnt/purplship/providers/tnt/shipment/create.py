@@ -25,7 +25,7 @@ def parse_shipment_response(response: Element, settings: Settings) -> Tuple[Ship
 
 
 def _extract_detail(response: Element, settings: Settings) -> Optional[ShipmentDetails]:
-    activity = XP.find("document", response, child_type=document, first=True)
+    activity: document = XP.find("document", response, element_type=document, first=True)
 
     if activity is None or activity.CREATE.SUCCESS != 'Y':
         return None

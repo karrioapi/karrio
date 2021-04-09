@@ -35,6 +35,18 @@ class XMLPARSER:
         return instance
 
     @staticmethod
+    def find(tag: str, in_element: Element, element_type: Type[Union[T, Element]] = Element, first: bool = None):
+        children = [
+            (child if element_type is None else XMLPARSER.build(element_type, child))
+            for child in in_element.xpath(".//*[local-name() = $name]", name=tag)
+        ]
+
+        if first is True:
+            return next((c for c in children), None)
+
+        return children
+
+    @staticmethod
     def export(typed_xml_element: Type[GenerateDSAbstract], **kwds) -> str:
         """Serialize a class instance into XML string.
         => Invoke the export method of generated type to return the subsequent XML represented
@@ -86,12 +98,3 @@ class XMLPARSER:
         :return: Node Element
         """
         return str(cast(bytes, etree.tostring(xml_element)), encoding)
-
-    @staticmethod
-    def find(child_tag: str, element: Element, child_type: Type[T] = None, first: bool = None) -> Union[Element, T, List[Element], List[T]]:
-        children: List[Element] = [*element.xpath(".//*[local-name() = $name]", name=child_tag)]
-
-        if child_type is not None:
-            children: List[child_type] = [XMLPARSER.build(child_type, child) for child in children]
-
-        return children if first is not True else next(children, None)
