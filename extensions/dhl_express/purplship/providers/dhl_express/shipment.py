@@ -18,9 +18,9 @@ from dhl_express_lib.ship_val_global_req_6_2 import (
     SpecialService,
     WeightUnit,
     DimensionUnit,
-    Label,
+    Label
 )
-from dhl_express_lib.ship_val_global_res_6_2 import ShipmentResponse, LabelImage
+from dhl_express_lib.ship_val_global_res_6_2 import LabelImage
 from purplship.core.utils import Serializable, SF, XP
 from purplship.core.utils.xml import Element
 from purplship.core.models import (
@@ -59,16 +59,15 @@ def parse_shipment_response(
 
 
 def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDetails]:
-    shipment = ShipmentResponse()
-    shipment.build(shipment_node)
-    label_image = next(iter(shipment.LabelImage), None)
-    label = encodebytes(cast(LabelImage, label_image).OutputImage).decode("utf-8")
+    tracking_number = shipment_node.xpath(".//*[local-name() = $name]", name="AirwayBillNumber")[0].text
+    label_node = shipment_node.xpath(".//*[local-name() = $name]", name="LabelImage")[0]
+    label = encodebytes(XP.build(LabelImage, label_node).OutputImage).decode("utf-8")
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        tracking_number=shipment.AirwayBillNumber,
-        shipment_identifier=shipment.AirwayBillNumber,
+        tracking_number=tracking_number,
+        shipment_identifier=tracking_number,
         label=label,
     )
 
@@ -78,7 +77,10 @@ def shipment_request(
 ) -> Serializable[DHLShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     options = Options(payload.options, SpecialServiceCode)
-    product = ProductCode[payload.service].value
+    product = next(
+        (p.value for p in ProductCode if payload.service == p.name),
+        payload.service
+    )
 
     insurance = options['dhl_shipment_insurance'].value if 'dhl_shipment_insurance' in options else None
     package_type = (
@@ -91,6 +93,7 @@ def shipment_request(
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
     payment = (payload.payment or Payment(paid_by="sender", account_number=settings.account_number))
     customs = (payload.customs or Customs())
+    content = (packages[0].parcel.content or "N/A")
 
     request = DHLShipmentRequest(
         schemaVersion=6.2,
@@ -110,7 +113,7 @@ def shipment_request(
             DutyPaymentType=(PaymentType[customs.duty.paid_by].value if customs.duty is not None else None),
         ),
         Consignee=Consignee(
-            CompanyName=payload.recipient.company_name or "  ",
+            CompanyName=payload.recipient.company_name or "N/A",
             SuiteDepartmentName=None,
             AddressLine=SF.concat_str(
                 payload.recipient.address_line1, payload.recipient.address_line2
@@ -141,7 +144,7 @@ def shipment_request(
         ),
         NewShipper=None,
         Shipper=Shipper(
-            ShipperID=settings.account_number or "  ",
+            ShipperID=settings.account_number or "N/A",
             RegisteredAccount=settings.account_number,
             AddressLine=SF.concat_str(
                 payload.shipper.address_line1, payload.shipper.address_line2
@@ -166,7 +169,7 @@ def shipment_request(
             Pieces=Pieces(
                 Piece=[
                     Piece(
-                        PieceID=payload.parcels[index].id,
+                        PieceID=package.parcel.id,
                         PackageType=(
                             package_type
                             or PackageType[
@@ -178,9 +181,11 @@ def shipment_request(
                         Height=package.height.IN,
                         Weight=package.weight.LB,
                         DimWeight=None,
-                        PieceContents=payload.parcels[index].description,
+                        PieceContents=(
+                                package.parcel.content or package.parcel.description
+                        ),
                     )
-                    for index, package in enumerate(packages)
+                    for package in packages
                 ]
             ),
             Weight=packages.weight.LB,
@@ -195,13 +200,13 @@ def shipment_request(
             DoorTo=delivery_type,
             GlobalProductCode=product,
             LocalProductCode=product,
-            Contents="  ",
+            Contents=content,
         ),
         EProcShip=None,
         Dutiable=(
             Dutiable(
                 DeclaredCurrency=customs.duty.currency or "USD",
-                DeclaredValue=customs.duty.amount,
+                DeclaredValue=insurance or 1.0,
                 TermsOfTrade=customs.incoterm,
             )
             if customs.duty is not None else None

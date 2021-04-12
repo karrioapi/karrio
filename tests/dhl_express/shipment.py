@@ -106,7 +106,7 @@ shipment_data = {
     "customs": {
         "commodities": [{"description": "cn", "sku": "cc"}],
         "incoterm": "DAP",
-        "duty": {"account_number": "123456789", "paid_by": "sender", "amount": 200.00},
+        "duty": {"account_number": "123456789", "paid_by": "sender"},
     },
 }
 
@@ -236,7 +236,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <CommodityName>cn</CommodityName>
     </Commodity>
     <Dutiable>
-        <DeclaredValue>200.</DeclaredValue>
+        <DeclaredValue>148.</DeclaredValue>
         <DeclaredCurrency>USD</DeclaredCurrency>
         <TermsOfTrade>DAP</TermsOfTrade>
     </Dutiable>
@@ -260,7 +260,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <GlobalProductCode>P</GlobalProductCode>
         <LocalProductCode>P</LocalProductCode>
         
-        <Contents>  </Contents>
+        <Contents>N/A</Contents>
         <DimensionUnit>I</DimensionUnit>
         <InsuredAmount>148.</InsuredAmount>
         <PackageType>EE</PackageType>
