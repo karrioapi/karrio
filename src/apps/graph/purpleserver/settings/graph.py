@@ -10,4 +10,5 @@ INSTALLED_APPS = [
 
 GRAPHENE = {
     "SCHEMA": "purpleserver.graph.schema.schema",
+    "MIDDLEWARE": []
 }

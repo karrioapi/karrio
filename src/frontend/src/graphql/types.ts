@@ -96,7 +96,6 @@ export interface get_customs_info_templates_customs_templates_edges_node_customs
   duty: get_customs_info_templates_customs_templates_edges_node_customs_duty | null;
   invoice: string | null;
   signer: string | null;
-  options: any | null;
   certify: boolean | null;
   commodities: (get_customs_info_templates_customs_templates_edges_node_customs_commodities | null)[] | null;
 }
@@ -2584,7 +2583,7 @@ export interface CreateTemplateInput {
 // null
 export interface PartialAddressModelSerializerInput {
   id?: string | null;
-  country_code: string;
+  country_code?: string | null;
   postal_code?: string | null;
   city?: string | null;
   federal_tax_id?: string | null;
@@ -2617,7 +2616,6 @@ export interface PartialCustomsModelSerializerInput {
   incoterm?: incoterm | null;
   invoice?: string | null;
   signer?: string | null;
-  options?: string | null;
 }
 
 // null
@@ -2633,7 +2631,7 @@ export interface PartialPaymentModelSerializerInput {
 // null
 export interface AddressModelSerializerInput {
   id?: string | null;
-  country_code: string;
+  country_code?: string | null;
   postal_code?: string | null;
   city?: string | null;
   federal_tax_id?: string | null;

@@ -1,7 +1,8 @@
 import typing
+import json
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import ModelSerializer as BaseModelSerializer
+from rest_framework.serializers import ModelSerializer as BaseModelSerializer, JSONField
 
 from purpleserver.core.utils import save_one_to_one_data, save_many_to_many_data
 import purpleserver.core.serializers as serializers
@@ -41,18 +42,22 @@ def apply_optional_fields(serializer: typing.Type[BaseModelSerializer]):
 
     class _Meta(serializer.Meta):
         extra_kwargs = {
-            field.name: {'required': False} for field in serializer.Meta.model._meta.fields
+            **getattr(serializer.Meta, 'extra_kwargs', {}),
+            **{field.name: {'required': False} for field in serializer.Meta.model._meta.fields}
         }
 
     return type(_name, (serializer,), dict(Meta=_Meta))
 
 
 class AddressModelSerializer(ModelSerializer, validators.AugmentedAddressSerializer):
-    country_code = serializers.CharField(required=True)
+    country_code = serializers.CharField(required=False)
 
     class Meta:
         model = manager.Address
-        extra_kwargs = {key: {'read_only': False} for key in ['validate_location', 'validation']}
+        extra_kwargs = {
+            **{key: {'required': True} for key in ['country_code']},
+            **{key: {'read_only': False} for key in ['validate_location', 'validation']},
+        }
         exclude = ['created_at', 'updated_at', 'created_by']
 
 
@@ -90,20 +95,20 @@ class CommodityModelSerializer(ModelSerializer):
 
 
 class CustomsModelSerializer(ModelSerializer):
-    NESTED_FIELDS = ['duty', 'commodities']
+    NESTED_FIELDS = ['duty', 'commodities', 'options']
 
     duty = apply_optional_fields(PaymentModelSerializer)(required=False, allow_null=True)
     commodities = apply_optional_fields(CommodityModelSerializer)(many=True, allow_null=True, required=False)
 
     class Meta:
         model = manager.Customs
-        exclude = ['created_at', 'updated_at', 'created_by']
+        exclude = ['created_at', 'updated_at', 'created_by', 'options']
 
     @transaction.atomic
     def create(self, validated_data: dict):
         data = {
             **{name: value for name, value in validated_data.items() if name not in self.NESTED_FIELDS},
-            'duty': save_one_to_one_data('duty', PaymentModelSerializer, payload=validated_data, **self._extra)
+            'duty': save_one_to_one_data('duty', PaymentModelSerializer, payload=validated_data, **self._extra),
         }
         instance = super().create(data)
 

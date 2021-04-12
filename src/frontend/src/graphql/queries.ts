@@ -67,7 +67,6 @@ query get_customs_info_templates {
           }
           invoice
           signer
-          options
           certify
           commodities {
             id

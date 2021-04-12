@@ -43,14 +43,13 @@ const CustomsInfoEditModal: React.FC<CustomsInfoEditModalComponent> = TemplateMu
             setKey(`customs-${Date.now()}`);
         };
         const update = async ({ changes }: any) => {
-            const { label, is_default, options, ...data } = (changes as { customs: ExtendedCustoms }).customs;
-            const customs = {...data, options: JSON.stringify(options)}
+            const { label, is_default, ...data } = (changes as { customs: ExtendedCustoms }).customs;
             if (isNew) {
-                await createTemplate({ label, is_default, customs: customs as any   });
+                await createTemplate({ label, is_default, customs: data as any   });
                 notify({ type: NotificationType.success, message: 'Customs info successfully added!' });
             }
             else {
-                await updateTemplate({ label, is_default, customs: customs as any, id: customsTemplate?.id as string });
+                await updateTemplate({ label, is_default, customs: data as any, id: customsTemplate?.id as string });
                 notify({ type: NotificationType.success, message: 'Customs info successfully updated!' });
             }
 

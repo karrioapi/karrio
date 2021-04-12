@@ -66,9 +66,7 @@ class UpdateTemplate(_SerializerMutation):
             customs = getattr(instance, 'customs', None)
             extra = {'partial': True, 'created_by': info.context.user}
             save_many_to_many_data(
-                'commodities', serializers.CommodityModelSerializer,
-                customs, payload=customs_data,
-                **extra)
+                'commodities', serializers.CommodityModelSerializer, customs, payload=customs_data, **extra)
 
         return kwargs
 

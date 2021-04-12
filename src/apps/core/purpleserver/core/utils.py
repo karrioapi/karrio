@@ -103,7 +103,7 @@ def save_many_to_many_data(
 
     for data in collection_data:
         item_instance = collection.filter(id=data.get('id')).first()
-        print(item_instance, payload)
+
         if item_instance is None:
             item = SerializerDecorator[serializer](data=data, **kwargs).save().instance
         else:

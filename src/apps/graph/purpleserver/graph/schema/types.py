@@ -88,11 +88,10 @@ class PaymentType(graphene_django.DjangoObjectType):
 class CustomsType(graphene_django.DjangoObjectType):
     duty = graphene.Field(PaymentType)
     commodities = graphene.List(CommodityType)
-    options = generic.GenericScalar()
 
     class Meta:
         model = manager.Customs
-        exclude = ('shipment_set', 'template')
+        exclude = ('shipment_set', 'template', 'options')
 
     def resolve_commodities(self, info):
         return self.commodities.all()
