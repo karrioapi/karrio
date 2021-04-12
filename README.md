@@ -55,12 +55,12 @@ Additional extensions:
 - `purplship.dhl-express`
 - `purplship.dhl-universal`
 - `purplship.dicom`
-- `purplship.fedex-express`
+- `purplship.fedex`
 - `purplship.purolator-courier`
 - `purplship.royalmail`
 - `purplship.sendle`
 - `purplship.sf-express`
-- `purplship.ups-package`
+- `purplship.ups`
 - `purplship.usps`
 - `purplship.yanwen`
 - `purplship.yunexpress`
