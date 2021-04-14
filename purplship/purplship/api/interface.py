@@ -6,7 +6,7 @@ import functools
 from typing import Callable, TypeVar, Union, List, Tuple
 from purplship.api.gateway import Gateway
 from purplship.core.utils import Serializable, Deserializable, DP, exec_async
-from purplship.core.errors import PurplShipDetailedError
+from purplship.core.errors import ShippingSDKDetailedError
 from purplship.core.models import (
     AddressValidationRequest,
     RateRequest,
@@ -25,11 +25,11 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 
-def abort(error: PurplShipDetailedError, gateway: Gateway) -> Tuple[None, List[Message]]:
+def abort(error: ShippingSDKDetailedError, gateway: Gateway) -> Tuple[None, List[Message]]:
     """Process aborting helper
 
     Args:
-        error (PurplShipDetailedError): the purplship error raised during the process
+        error (ShippingSDKDetailedError): the purplship error raised during the process
         gateway (Gateway): the gateway in use during on process
 
     Returns:
@@ -42,7 +42,7 @@ def abort(error: PurplShipDetailedError, gateway: Gateway) -> Tuple[None, List[M
                 code=(
                     error.code
                     if hasattr(error, "code")
-                    else PurplShipDetailedError.code
+                    else ShippingSDKDetailedError.code
                 ),
                 carrier_name=gateway.settings.carrier_name,
                 carrier_id=gateway.settings.carrier_id,

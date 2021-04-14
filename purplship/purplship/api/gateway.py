@@ -7,7 +7,7 @@ from typing import Callable, Union, List
 from purplship.core import Settings
 from purplship.api.proxy import Proxy
 from purplship.api.mapper import Mapper
-from purplship.core.errors import PurplShipError
+from purplship.core.errors import ShippingSDKError
 from purplship.references import import_extensions
 
 logger = logging.getLogger(__name__)
@@ -95,11 +95,11 @@ class GatewayInitializer:
                         mapper=provider.Mapper(settings_value),
                     )
                 except Exception as er:
-                    raise PurplShipError(f"Failed to setup provider '{key}'") from er
+                    raise ShippingSDKError(f"Failed to setup provider '{key}'") from er
 
             return ICreate(initializer)
         except KeyError as e:
-            raise PurplShipError(f"Unknown provider '{key}'") from e
+            raise ShippingSDKError(f"Unknown provider '{key}'") from e
 
     @property
     def providers(self):
