@@ -17,11 +17,11 @@ const Trackers: React.FC<ShipmentsView> = ({ trackers }) => {
     await state.fetchTrackers(url as string);
   };
   useEffect(() => {
-    if ((trackers === undefined || trackers?.fetched === false) && loading === false) {
+    if (loading === false) {
       setLoading(true);
       state.fetchTrackers().catch(_ => _).then(() => setLoading(false));
     }
-  }, trackers?.results);
+  }, []);
 
   return (
     <>

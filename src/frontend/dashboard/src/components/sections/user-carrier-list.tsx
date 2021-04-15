@@ -25,11 +25,11 @@ const UserConnectionList: React.FC<UserConnectionListView> = () => {
     update(connections?.url)();
   };
   useEffect(() => {
-    if ((connections === undefined || connections?.fetched === false) && loading === false) {
+    if (loading === false) {
       setLoading(true);
       state.fetchUserConnections().catch(_ => _).then(() => setLoading(false));
     }
-  }, connections?.results);
+  }, []);
 
   return (
     <Fragment>

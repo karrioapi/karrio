@@ -1,9 +1,12 @@
+import { Reference } from '@/library/context';
 import { Location } from '@reach/router';
-import React from 'react';
+import React, { useContext } from 'react';
 
 interface LocationTitleComponent { }
 
 const LocationTitle: React.FC<LocationTitleComponent> = () => {
+    const References = useContext(Reference);
+    
     return (
         <Location>
             {({location}) => {
@@ -17,7 +20,7 @@ const LocationTitle: React.FC<LocationTitleComponent> = () => {
                     title = '| Parcels';
                 } else if(location.pathname === '/configurations/addresses') {
                     title = '| Addresses';
-                } else if(location.pathname === '/configurations/connections') {
+                } else if(location.pathname === '/configurations/carriers') {
                     title = '| Carrier Connections';
                 } else if(location.pathname === '/configurations/customs_infos') {
                     title = '| Customs Info';
@@ -25,11 +28,13 @@ const LocationTitle: React.FC<LocationTitleComponent> = () => {
                     title = '| User Account';
                 } else if(location.pathname === '/settings/api') {
                     title = '| API Key';
+                }  else if(location.pathname === '/trackers') {
+                    title = '| Shipment Trackers';
                 } else if(location.pathname === '/') {
                     title = '| Shipments';
                 }
 
-                document.title = `Purplship ${title}`;
+                document.title = `${References?.APP_NAME} ${title}`;
                 return <></>;
             }}
         </Location>

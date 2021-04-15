@@ -7,12 +7,14 @@ import ButtonField from '@/components/generic/button-field';
 import { deepEqual, findPreset, formatDimension, formatRef, isNone } from '@/library/helper';
 import { DIMENSION_UNITS, NotificationType, PresetCollection, WEIGHT_UNITS } from '@/library/types';
 import { state } from '@/library/api';
+import CheckBoxField from '../generic/checkbox-field';
 
 type stateValue = string | boolean | Partial<Parcel>;
 export const DEFAULT_PARCEL_CONTENT: Partial<Parcel> = {
     packaging_type: "envelope",
     weight_unit: Parcel.WeightUnitEnum.KG,
-    dimension_unit: Parcel.DimensionUnitEnum.CM
+    dimension_unit: Parcel.DimensionUnitEnum.CM,
+    is_document: false,
 };
 
 interface ParcelFormComponent {
@@ -131,6 +133,14 @@ const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, update, ch
         <form className="px-1 py-2" onSubmit={handleSubmit} key={key} ref={form}>
 
             {React.Children.map(children, (child: any) => React.cloneElement(child, { ...child.props, parcel, onChange: handleChange }))}
+
+            <div className="columns mb-0 px-2">
+
+                <CheckBoxField name="is_document" onChange={handleChange} defaultChecked={parcel.is_document} fieldClass="column mb-0 is-12 px-2 py-2">
+                    <span>Document Only</span>
+                </CheckBoxField>
+
+            </div>
 
             <SelectField name="parcel_type" onChange={handleChange} value={parcel_type} className="is-fullwidth" required>
                 <optgroup label="New">

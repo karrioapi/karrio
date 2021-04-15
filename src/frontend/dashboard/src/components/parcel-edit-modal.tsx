@@ -53,10 +53,10 @@ const ParcelEditModal: React.FC<ParcelEditModalComponent> = ({ parcelTemplate, o
     };
     const Extension: React.FC<{ onChange?: EventHandler<any>; parcel?: ExtendedParcel }> = ({ onChange, parcel }) => (
         <>
-            <div className="columns mb-0">
+            <div className="columns mb-0 px-2">
                 <InputField label="label" name="label" onChange={onChange} defaultValue={parcel?.label} fieldClass="column mb-0 px-2 py-2" required />
             </div>
-            <div className="columns mb-1">
+            <div className="columns mb-1 px-2">
                 <CheckBoxField name="is_default" onChange={onChange} defaultChecked={parcel?.is_default} fieldClass="column mb-0 px-2 py-2">
                     <span>Set as default parcel</span>
                 </CheckBoxField>

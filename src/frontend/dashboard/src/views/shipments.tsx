@@ -22,11 +22,11 @@ const Shipments: React.FC<ShipmentsView> = ({ shipments }) => {
     state.setLabelData();
   };
   useEffect(() => {
-    if ((shipments === undefined || shipments?.fetched === false) && loading === false) {
+    if (loading === false) {
       setLoading(true);
       state.fetchShipments().catch(_ => _).then(() => setLoading(false));
     }
-  }, shipments?.results);
+  }, []);
 
   return (
     <>

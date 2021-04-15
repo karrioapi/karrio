@@ -12,7 +12,6 @@ import APISettings from '@/views/api-settings';
 import CustomsInfos from '@/views/customs-infos';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import LabelCreator from '@/components/label/label-creator';
-import BoardFooter from '@/components/footer/board-footer';
 import Navbar from '@/components/navbar/navbar';
 import Notifier from '@/components/notifier';
 import LocationTitle from '@/components/location-title';
@@ -52,6 +51,7 @@ const App: React.FC = () => {
             <UserConnections.Provider value={userConnections}>
             <SystemConnections.Provider value={systemConnections}>
 
+                <LocationTitle />
                 <ExpandedSidebar />
 
                 <div className="plex-wrapper">
@@ -79,8 +79,6 @@ const App: React.FC = () => {
                     </div>
                 </div>
 
-                <BoardFooter />
-
             </SystemConnections.Provider>
             </UserConnections.Provider>
             </Templates.Provider>
@@ -89,7 +87,6 @@ const App: React.FC = () => {
             </User.Provider>
             </Logs.Provider>
             </Reference.Provider>
-            <LocationTitle />
         </Fragment>
     );
 };

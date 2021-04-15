@@ -13,7 +13,7 @@ const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
     return (
         <div className="plex-sidebar" ref={sidebar}>
             <div className="sidebar-header">
-                <img src="/static/purpleserver/img/logo.svg" alt="Purplship" width="80" />
+                <img src="/static/purpleserver/branding/logo.svg" alt="Purplship" width="80" />
                 <button className="menu-icon v-5 is-open mobile-item is-block mobile-sidebar-trigger" onClick={dismiss}>
                     <span></span>
                 </button>

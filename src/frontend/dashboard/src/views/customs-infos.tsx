@@ -21,11 +21,11 @@ const CustomsInfos: React.FC<CustomsInfosView> = ({ templates }) => {
     update(templates?.url)();
   };
   useEffect(() => {
-    if ((templates === undefined || templates?.fetched === false) && loading === false) {
+    if (loading === false) {
       setLoading(true);
       state.fetchCustomsInfos().catch(_ => _).then(() => setLoading(false));
     }
-  }, templates?.results);
+  }, []);
 
   return (
     <Fragment>

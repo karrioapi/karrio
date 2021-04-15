@@ -21,11 +21,11 @@ const Addresses: React.FC<AddressesView> = ({ templates }) => {
     update(templates?.url)();
   };
   useEffect(() => {
-    if ((templates === undefined || templates?.fetched === false) && loading === false) {
+    if (loading === false) {
       setLoading(true);
       state.fetchAddresses().catch(_ => _).then(() => setLoading(false));
     }
-  }, templates?.results);
+  }, []);
 
   return (
     <Fragment>
