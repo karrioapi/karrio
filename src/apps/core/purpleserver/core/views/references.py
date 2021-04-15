@@ -7,13 +7,16 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.router import router
-from purpleserver.core.serializers import PlainDictField
+from purpleserver.core.serializers import PlainDictField, CharField
 from purpleserver.core.dataunits import REFERENCE_MODELS
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
 class References(Serializer):
+    APP_NAME = CharField()
+    APP_VERSION = CharField()
+
     countries = PlainDictField()
     currencies = PlainDictField()
     carriers = PlainDictField()

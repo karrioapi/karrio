@@ -1,14 +1,15 @@
-{% load i18n static %}<!DOCTYPE html>
+{% load i18n static %}
+<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
     <head>
-        <title>{% block title %}{% endblock %}</title>
+        <title>{{ APP_NAME }}{% block title %}{% endblock %}</title>
 
-        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'purpleserver/favicon-set/apple-touch-icon.png' %}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'purpleserver/favicon-set/favicon-32x32.png' %}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'purpleserver/favicon-set/favicon-16x16.png' %}">
-        <link rel="manifest" href="{% static 'purpleserver/favicon-set/manifest.json' %}">
-        <link rel="mask-icon" href="{% static 'purpleserver/favicon-set/safari-pinned-tab.svg' %}" color="#9504af">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'purpleserver/branding/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'purpleserver/branding/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'purpleserver/branding/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'purpleserver/branding/manifest.json' %}">
+        <link rel="mask-icon" href="{% static 'purpleserver/branding/safari-pinned-tab.svg' %}" color="#9504af">
         <meta name="msapplication-TileColor" content="#9504af">
         <meta name="theme-color" content="#9504af">
 
@@ -27,7 +28,7 @@
         {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
 
         <meta name="theme-color" content="#9504af" />
-        <link rel="manifest" href="{% static 'purpleserver/favicon-set/manifest.json' %}" />
+        <link rel="manifest" href="{% static 'purpleserver/branding/manifest.json' %}" />
     </head>
 
     {% load i18n %}
@@ -44,7 +45,7 @@
                 {% block contenttitle %}
                 <div class="has-text-centered my-6">
                     <a href="/">
-                        <img src="{% static 'purpleserver/img/logo.svg' %}" width="100" alt="PurplShip" />
+                        <img src="{% static 'purpleserver/branding/logo.svg' %}" width="100" alt="{{ APP_NAME }}" />
                     </a>
                 </div>
                 {% endblock %}
@@ -57,7 +58,7 @@
             <div class="{% block footerclass %}hero-footer{% endblock %}">
                 <div class="content has-text-centered">
                     <p>
-                        <a href="https://purplship.com" class="button is-white">&copy; Purplship</a>
+                        <a href="{{ APP_WEBSITE }}" class="button is-white">&copy; {{ APP_NAME }}</a>
                         <a href="http://blog.purplship.com" class="button is-white">Blogs</a>
                         <a href="https://docs.purplship.com" class="button is-white">Documentation</a>
                     </p>
