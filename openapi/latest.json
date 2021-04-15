@@ -3,13 +3,10 @@
   "info": {
     "title": "Purplship Open Source Multi-carrier Shipping API",
     "description": "\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services\n\nThe **proxy** endpoints are stateless and forwards calls to carriers web services.\n",
-    "contact": {
-      "email": "hello@purplship.com"
-    },
     "license": {
-      "name": "AGPLv3+ License"
+      "name": "Apache 2 License"
     },
-    "version": "v1-2021.2"
+    "version": "2021.2.1"
   },
   "servers": [
     {
@@ -254,8 +251,8 @@
                 "usps",
                 "yanwen",
                 "yunexpress",
-                "freightcom",
-                "eshipper"
+                "eshipper",
+                "freightcom"
               ]
             }
           },
@@ -2795,8 +2792,8 @@
               "usps",
               "yanwen",
               "yunexpress",
-              "freightcom",
-              "eshipper"
+              "eshipper",
+              "freightcom"
             ]
           },
           "carrier_id": {
@@ -4624,6 +4621,8 @@
       },
       "References": {
         "required": [
+          "APP_NAME",
+          "APP_VERSION",
           "carriers",
           "countries",
           "currencies",
@@ -4638,6 +4637,16 @@
         ],
         "type": "object",
         "properties": {
+          "APP_NAME": {
+            "title": "App name",
+            "minLength": 1,
+            "type": "string"
+          },
+          "APP_VERSION": {
+            "title": "App version",
+            "minLength": 1,
+            "type": "string"
+          },
           "countries": {
             "title": "Countries",
             "type": "object",
