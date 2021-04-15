@@ -4,7 +4,7 @@ from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
 from purplship.core.utils import DP
-from purpleserver.core.gateway import Shipments
+from purpleserver.core.gateway import Shipments, Carriers
 from purpleserver.core.utils import SerializerDecorator
 import purpleserver.core.datatypes as datatypes
 from purpleserver.providers.models import Carrier
@@ -93,7 +93,8 @@ class ShipmentSerializer(ShipmentData):
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
         user = validated_data['user']
-        carriers = Carrier.objects.filter(carrier_id__in=validated_data.get('carrier_ids', []))
+        carrier_ids = validated_data.get('carrier_ids', [])
+        carriers = Carriers.list(carrier_ids=carrier_ids, user=user) if any(carrier_ids) else []
         rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save(user=user).instance
         test_mode = all([r.test_mode for r in rate_response.rates])
 
@@ -138,7 +139,6 @@ class ShipmentSerializer(ShipmentData):
     @transaction.atomic
     def update(self, instance: models.Shipment, validated_data: dict) -> models.Shipment:
         data = validated_data.copy()
-        carrier_ids = validated_data.get('carrier_ids', [])
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS:
@@ -166,16 +166,18 @@ class ShipmentSerializer(ShipmentData):
 
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
-            carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id'), user=instance.user).first()
+            carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id')).first()
 
-            instance.selected_rate = {
-                **selected_rate,
-                **({'carrier_ref': carrier.id} if carrier is not None else {})
-            }
+            instance.selected_rate = {**selected_rate, **({'carrier_ref': carrier.id} if carrier is not None else {})}
             instance.selected_rate_carrier = carrier
 
         instance.save()
-        instance.carriers.set(Carrier.objects.filter(carrier_id__in=carrier_ids, user=instance.user))
+
+        if 'carrier_ids' in validated_data:
+            carrier_ids = validated_data.get('carrier_ids', [])
+            carriers = Carriers.list(carrier_ids=carrier_ids) if any(carrier_ids) else instance.carriers
+            instance.carriers.set(carriers)
+
         return instance
 
 
