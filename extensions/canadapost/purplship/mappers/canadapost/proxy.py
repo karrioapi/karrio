@@ -2,7 +2,7 @@ import base64
 from typing import List
 from canadapost_lib.rating import mailing_scenario
 from purplship.api.proxy import Proxy as BaseProxy
-from purplship.core.errors import PurplShipError
+from purplship.core.errors import ShippingSDKError
 from purplship.core.utils.serializable import Serializable, Deserializable
 from purplship.core.utils.pipeline import Pipeline, Job
 from purplship.core.utils import (
@@ -99,7 +99,7 @@ class Proxy(BaseProxy):
                 "shipment_label": _get_label,
             }
             if job.id not in subprocess:
-                raise PurplShipError(f"Unknown shipment request job id: {job.id}")
+                raise ShippingSDKError(f"Unknown shipment request job id: {job.id}")
 
             return subprocess[job.id](job)
 
@@ -139,7 +139,7 @@ class Proxy(BaseProxy):
                 ),
             }
             if job.id not in subprocess:
-                raise PurplShipError(f"Unknown shipment cancel request job id: {job.id}")
+                raise ShippingSDKError(f"Unknown shipment cancel request job id: {job.id}")
 
             return subprocess[job.id](job)
 
@@ -181,7 +181,7 @@ class Proxy(BaseProxy):
                 "availability": _availability,
             }
             if job.id not in subprocess:
-                raise PurplShipError(f"Unknown pickup request job id: {job.id}")
+                raise ShippingSDKError(f"Unknown pickup request job id: {job.id}")
 
             return subprocess[job.id](job)
 
@@ -224,7 +224,7 @@ class Proxy(BaseProxy):
                 "get_pickup": _get_pickup,
             }
             if job.id not in subprocess:
-                raise PurplShipError(f"Unknown pickup request job id: {job.id}")
+                raise ShippingSDKError(f"Unknown pickup request job id: {job.id}")
 
             return subprocess[job.id](job)
 
