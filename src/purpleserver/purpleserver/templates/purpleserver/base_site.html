@@ -5,11 +5,11 @@
     <head>
         <title>{{ APP_NAME }}{% block title %}{% endblock %}</title>
 
-        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'purpleserver/branding/apple-touch-icon.png' %}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'purpleserver/branding/favicon-32x32.png' %}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'purpleserver/branding/favicon-16x16.png' %}">
-        <link rel="manifest" href="{% static 'purpleserver/branding/manifest.json' %}">
-        <link rel="mask-icon" href="{% static 'purpleserver/branding/safari-pinned-tab.svg' %}" color="#9504af">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'branding/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'branding/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'branding/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'branding/manifest.json' %}">
+        <link rel="mask-icon" href="{% static 'branding/safari-pinned-tab.svg' %}" color="#9504af">
         <meta name="msapplication-TileColor" content="#9504af">
         <meta name="theme-color" content="#9504af">
 
@@ -17,7 +17,7 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
 
         <!-- Theme CSS -->
-        <link type="text/css" href="{% static 'purpleserver/css/purpleserver.min.css' %}" rel="stylesheet">
+        <link type="text/css" href="{% static 'css/purpleserver.min.css' %}" rel="stylesheet">
 
         {% block extrastyle %}{% endblock %}
         {% block extrahead %}{% endblock %}
@@ -28,7 +28,7 @@
         {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
 
         <meta name="theme-color" content="#9504af" />
-        <link rel="manifest" href="{% static 'purpleserver/branding/manifest.json' %}" />
+        <link rel="manifest" href="{% static 'branding/manifest.json' %}" />
     </head>
 
     {% load i18n %}
@@ -45,7 +45,7 @@
                 {% block contenttitle %}
                 <div class="has-text-centered my-6">
                     <a href="/">
-                        <img src="{% static 'purpleserver/branding/logo.svg' %}" width="100" alt="{{ APP_NAME }}" />
+                        <img src="{% static 'branding/logo.svg' %}" width="100" alt="{{ APP_NAME }}" />
                     </a>
                 </div>
                 {% endblock %}

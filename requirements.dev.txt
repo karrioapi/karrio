@@ -16,11 +16,11 @@ wheel
 
 # purplship sdk carrier extensions
 
--e git+https://github.com/PurplShip/purplship.git@rename-exception-naming#egg=purplship&subdirectory=purplship
--e git+https://github.com/PurplShip/purplship.git@rename-exception-naming#egg=purplship_canadapost&subdirectory=extensions/canadapost
+# -e git+https://github.com/PurplShip/purplship.git@rename-exception-naming#egg=purplship&subdirectory=purplship
+# -e git+https://github.com/PurplShip/purplship.git@rename-exception-naming#egg=purplship_canadapost&subdirectory=extensions/canadapost
 # -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_dhl_express&subdirectory=extensions/dhl_express
 # -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_fedex&subdirectory=extensions/fedex
--e git+https://github.com/PurplShip/purplship.git@patch-dhl-label-creation#egg=purplship_dhl_express&subdirectory=extensions/dhl_express
+# -e git+https://github.com/PurplShip/purplship.git@patch-dhl-label-creation#egg=purplship_dhl_express&subdirectory=extensions/dhl_express
 # -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_purolator_courier&subdirectory=extensions/purolator_courier
 # -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_ups&subdirectory=extensions/ups
 # -e git+https://github.com/PurplShip/purplship.git@carrier-tracking-integration-spree#egg=purplship_ups_package&subdirectory=extensions/ups_package

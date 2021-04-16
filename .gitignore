@@ -110,3 +110,4 @@ node_modules/
 .idea/
 staticfiles/
 !src/purpleserver/purpleserver/staticfiles/
+src/purpleserver/purpleserver/staticfiles/*

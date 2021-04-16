@@ -132,7 +132,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'purpleserver.core.context_processors.settings',
+                'purpleserver.core.context_processors.get_settings',
             ],
         },
     },
@@ -199,7 +199,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'purpleserver' / 'staticfiles'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'purpleserver' / 'static'
+    BASE_DIR / 'purpleserver' / 'static' / 'purpleserver',
+    BASE_DIR / 'purpleserver' / 'static' / 'extra',
 ]
 
 
