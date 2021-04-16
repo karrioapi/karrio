@@ -10,11 +10,11 @@ const SystemConnectionList: React.FC<SystemConnectionListView> = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if ((connections === undefined || connections?.fetched === false) && loading === false) {
+    if (loading === false) {
       setLoading(true);
       state.fetchSystemConnections().catch(_ => _).then(() => setLoading(false));
     }
-  }, [connections.results]);
+  }, []);
 
   return (
     <Fragment>

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block favicon %}
-    <link rel="shortcut icon" href="{% static 'purpleserver/favicon-set/favicon.ico' %}">
+    <link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
     <meta name="theme-color" content="#ffffff">
 {% endblock %}
 
@@ -52,10 +52,10 @@
 
 {% block extra_body %}
 <a class="dashboard-link" href="/" title="Dashboard">
-    <img src="{% static 'purpleserver/img/dashboard.svg' %}" width="26" style="margin: 7px;">
+    <img src="{% static 'img/dashboard.svg' %}" width="26" style="margin: 7px;">
 </a>
 <a class="admin-link" href="/admin" title="Admin Console">
-    <img src="{% static 'purpleserver/img/settings.svg' %}" width="26" style="margin: 7px;">
+    <img src="{% static 'img/settings.svg' %}" width="26" style="margin: 7px;">
 </a>
 {% endblock %}
 {% block main_scripts %}

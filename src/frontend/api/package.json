@@ -1,6 +1,6 @@
 {
   "name": "@purplship/purplship",
-  "version": "2021.0.0",
+  "version": "2021.2.1",
   "description": "Multi-carriers Shipping API Typescript/Javascript library (Canada Post, DHL, FedEx, UPS, Purolator and more)",
   "main": "purplship/index.js",
   "types": "purplship/index.d.ts",

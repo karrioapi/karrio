@@ -24,21 +24,23 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 
-admin.site.site_header = "Purplship"
-admin.site.site_title = "Purplphip shipping API"
+APP_VERSION = getattr(settings, 'VERSION', '')
+APP_NAME = getattr(settings, 'APP_NAME', 'Purplship')
+
+admin.site.site_header = APP_NAME
+admin.site.site_title = f"{APP_NAME} shipping API"
 admin.site.index_title = "Administration"
 
 schema_view = get_schema_view(
    openapi.Info(
       title="Purplship Open Source Multi-carrier Shipping API",
-      default_version=f'v1-{settings.VERSION}',
+      default_version=APP_VERSION,
       description=("""
       Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services
 
       The **proxy** endpoints are stateless and forwards calls to carriers web services.
       """),
-      contact=openapi.Contact(email="hello@purplship.com"),
-      license=openapi.License(name="AGPLv3+ License"),
+      license=openapi.License(name="Apache 2 License"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),

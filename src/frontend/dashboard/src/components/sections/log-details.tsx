@@ -28,6 +28,7 @@ const LogDetails: React.FC<LogDetailsView> = ({ logs, logId, log, setLog }) => {
             });
         }
     }, []);
+    
     return (
         <>
             <nav className="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">

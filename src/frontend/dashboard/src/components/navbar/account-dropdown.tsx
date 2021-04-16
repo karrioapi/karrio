@@ -31,7 +31,7 @@ const AccountDropdown: React.FC<AccountDropdownComponent> = ({ user }) => {
 
             <span className="indicator"></span>
             <button className="dropdown-button has-image" onClick={handleOnClick} ref={btn}>
-                <img src="/static/purpleserver/client/profile.svg" alt="Purplship Profile" ref={img} />
+                <img src="/static/client/profile.svg" alt="Purplship Profile" ref={img} />
             </button>
             <div className="drop-menu">
                 <div className="menu-inner">

@@ -2,7 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
-const build_path = '../../apps/client/purpleserver/client/static/purpleserver/client';
+const build_path = '../../apps/client/purpleserver/client/static/client';
 
 module.exports = {
   entry: './src/dashboard.tsx',
