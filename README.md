@@ -20,6 +20,12 @@ Purplship server is an On-prem or cloud Multi-carrier Shipping API.
 The server is in Python, but you can use any programming language to send API requests to 
 any supported shipping carriers (Canada Post, DHL, FedEx, UPS, Purolator...), from your application.
 
+- Book a live demo here [https://calendly.com/purplship-demo/live](https://calendly.com/purplship-demo/live)
+- Join us on [Discord](https://discord.gg/kXEa3UMRHd)
+
+
+## Screenshots
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/dashboard1.png" width="400">
   <img src="https://raw.githubusercontent.com/PurplShip/purplship-server/main/dashboard2.png" width="400">
@@ -86,7 +92,7 @@ Host your own Purplship server for FREE with [One-Click Deploy](https://heroku.c
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/PurplShip/purplship-heroku/tree/main/)
 
 
-## Official Purplship Client Libraries
+## Official Client Libraries
 
 - [Node](https://github.com/PurplShip/purplship-node)
 - [PHP](https://github.com/PurplShip/purplship-php-client)
