@@ -18,5 +18,5 @@ METADATA = Metadata(
     options=units.SpecialServiceCode,
     package_presets=units.PackagePresets,
     packaging_types=units.DCTPackageType,
-    services=units.Product,
+    services=units.ProductCode,
 )

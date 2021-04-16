@@ -21,7 +21,6 @@ from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.units import Packages, Options, Package, WeightUnit, DimensionUnit, Services, CountryCurrency
 from purplship.core.models import RateDetails, Message, ChargeDetails, RateRequest
 from purplship.providers.dhl_express.units import (
-    Product,
     ProductCode,
     DCTPackageType,
     PackagePresets,
@@ -73,15 +72,15 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
         else None
     )
     service_name = next(
-        (p.name for p in Product if p.value in qtdshp.LocalProductName),
-        qtdshp.LocalProductName,
+        (p.name for p in ProductCode if p.value == qtdshp.GlobalProductCode),
+        None,
     )
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         currency=qtdshp.CurrencyCode,
         transit_days=transit,
-        service=service_name,
+        service=(service_name or qtdshp.GlobalProductCode),
         base_charge=NF.decimal(qtdshp.WeightCharge),
         total_charge=NF.decimal(qtdshp.ShippingCharge),
         duties_and_taxes=NF.decimal(DutiesAndTaxes_),
@@ -96,6 +95,10 @@ def _extract_quote(qtdshp_node: Element, settings: Settings) -> RateDetails:
                 qtdshp.QtdShpExChrg,
             )
         ),
+        meta=(dict(
+            service=qtdshp.GlobalProductCode,
+            service_name=qtdshp.ProductShortName
+        ) if service_name is None else None)
     )
 
 
@@ -120,10 +123,12 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
             product = 'dhl_express_worldwide_doc'
         elif is_international:
             product = 'dhl_express_worldwide_nondoc'
+        elif is_document and 'envelope' in packages[0].packaging_type:
+            product = 'dhl_express_envelope_doc'
         elif is_document:
-            product = 'dhl_express_worldwide_doc'
+            product = 'dhl_domestic_express_doc'
         else:
-            product = 'dhl_express_easy_nondoc'
+            product = 'dhl_express_12_00_nondoc'
 
         products = [ProductCode[product]]
 
@@ -194,7 +199,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                     DeclaredValue=insurance or 1.0,
                     DeclaredCurrency=options.currency or CountryCurrency[payload.shipper.country_code].value
                 )
-                if is_international and is_dutiable else None
+                if is_dutiable else None
             ),
         ),
     )
