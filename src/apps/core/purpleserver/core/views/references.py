@@ -32,8 +32,8 @@ class References(Serializer):
 
 @swagger_auto_schema(
     methods=['get'],
-    tags=['Utils'],
-    operation_id=f"{ENDPOINT_ID}references",
+    tags=['API'],
+    operation_id=f"{ENDPOINT_ID}data",
     operation_summary="Data References",
     responses={200: References()}
 )

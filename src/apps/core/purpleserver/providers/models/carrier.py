@@ -4,17 +4,17 @@ from django.db import models
 from django.conf import settings
 from django.forms.models import model_to_dict
 
-from purpleserver.core.models import Entity, uuid
+from purpleserver.core.models import OwnedEntity, OwnedEntityManager, uuid
 from purpleserver.core.datatypes import CarrierSettings
 
 
-class CarrierManager(models.Manager):
+class CarrierManager(OwnedEntityManager):
     def get_queryset(self):
         from purpleserver.providers.models import MODELS
         return super().get_queryset().prefetch_related(*[Model.__name__.lower() for Model in MODELS.values()])
 
 
-class Carrier(Entity):
+class Carrier(OwnedEntity):
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='car_'), editable=False)
     carrier_id = models.CharField(
         max_length=200, unique=True,
@@ -39,8 +39,12 @@ class Carrier(Entity):
         ), None)
 
     @property
+    def settings(self):
+        return self._linked_settings()
+
+    @property
     def data(self) -> CarrierSettings:
-        settings = self._linked_settings()
+        settings = self.settings
         return CarrierSettings.create({
             'id': settings.id,
             'carrier_name': settings.carrier_name,

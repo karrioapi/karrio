@@ -19,8 +19,8 @@ class TrackingSerializer(TrackingDetails):
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
 
         response = Shipments.track(
-            carrier=carrier,
-            payload=TrackingRequest(dict(tracking_numbers=[tracking_number])).data
+            TrackingRequest(dict(tracking_numbers=[tracking_number])).data,
+            carrier_filter=carrier_filter
         )
 
         return models.Tracking.objects.create(
@@ -36,7 +36,8 @@ class TrackingSerializer(TrackingDetails):
         last_fetch = (timezone.now() - instance.updated_at).seconds / 60  # minutes since last fetch
 
         if last_fetch >= 30 and instance.delivered is not True:
-            carrier = next(iter(Carriers.list(**validated_data['carrier_filter'])), None)
+            carrier_filter = validated_data['carrier_filter']
+            carrier = next(iter(Carriers.list(**carrier_filter)), instance.carrier)
             response = Shipments.track(
                 carrier=carrier,
                 payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number])).data

@@ -17,6 +17,7 @@ from purpleserver.core.serializers import (
 from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import PickupData, PickupUpdateData, PickupCancelData
+import purpleserver.manager.models as models
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -24,8 +25,9 @@ Pickups = PaginatedResult('PickupList', Pickup)
 
 
 class PickupList(GenericAPIView):
-    pagination_class = LimitOffsetPagination
-    default_limit = 20
+    serializer_class = Pickup
+    queryset = models.Pickup.objects
+    pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 
     @swagger_auto_schema(
         tags=['Pickups'],
@@ -37,7 +39,7 @@ class PickupList(GenericAPIView):
         """
         Retrieve all scheduled pickups.
         """
-        pickups = request.user.pickup_set.all()
+        pickups = models.Pickup.objects.access_with(request.user).all()
 
         response = self.paginate_queryset(Pickup(pickups, many=True).data)
         return self.get_paginated_response(response)
@@ -60,7 +62,7 @@ class PickupRequest(APIView):
         carrier_filter = {
             **SerializerDecorator[TestFilters](data=request.query_params).data,
             "carrier_name": carrier_name,
-            "created_by": request.user
+            "user": request.user
         }
 
         pickup = SerializerDecorator[PickupData](
@@ -79,7 +81,7 @@ class PickupDetails(APIView):
     )
     def get(self, request: Request, pk: str):
         """Retrieve a scheduled pickup."""
-        pickup = request.user.pickup_set.get(pk=pk)
+        pickup = models.Pickup.objects.access_with(request.user).get(pk=pk)
         return Response(Pickup(pickup).data)
 
     @swagger_auto_schema(
@@ -93,7 +95,7 @@ class PickupDetails(APIView):
         """
         Modify a pickup for one or many shipments with labels already purchased.
         """
-        pickup = request.user.pickup_set.get(pk=pk)
+        pickup = models.Pickup.objects.access_with(request.user).get(pk=pk)
         instance = SerializerDecorator[PickupUpdateData](
             pickup, data=request.data).save(created_by=request.user).instance
 
@@ -113,7 +115,7 @@ class PickupCancel(APIView):
         """
         Cancel a pickup of one or more shipments.
         """
-        pickup = request.user.pickup_set.get(pk=pk)
+        pickup = models.Pickup.objects.access_with(request.user).get(pk=pk)
         confirmation = SerializerDecorator[PickupCancelData](
             pickup, data=request.data).save(created_by=request.user).instance
 

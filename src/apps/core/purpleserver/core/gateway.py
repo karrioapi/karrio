@@ -11,6 +11,7 @@ import purplship
 from purplship.core.utils import DP
 
 from purpleserver.providers import models
+from purpleserver.core.models import get_access_filter
 from purpleserver.core import datatypes, serializers, exceptions, validators
 from purpleserver.core.utils import identity, post_processing
 
@@ -19,22 +20,22 @@ logger = logging.getLogger(__name__)
 
 class Carriers:
     @staticmethod
-    def retrieve(*args, **kwargs) -> models.Carrier:
-        return models.Carrier.objects.get(*args, **kwargs)
-
-    @staticmethod
     def list(**kwargs) -> List[models.Carrier]:
         list_filter: Dict[str: Any] = kwargs
         query = tuple()
-        users = []
+
+        # Check if the system_only flag is not specified and there is a provided user, get the users carriers
+        if not list_filter.get('system_only') and 'user' in list_filter:
+            access = get_access_filter(list_filter.get('user'))
+            if len(access) > 0:
+                query += (Q(created_by__isnull=True) | access,)
+
+        if list_filter.get('system_only') is True:
+            query += (Q(created_by__isnull=True),)
 
         # Check if the test filter is specified then set it otherwise return all carriers prod and test mode
         if list_filter.get('test') is not None:
             query += (Q(test=list_filter['test']), )
-
-        # Check if the system_only flag is not specified and there is a provided user, get the users carriers
-        if not list_filter.get('system_only') and 'created_by' in list_filter:
-            users += [list_filter.get('created_by')]
 
         # Check if the active flag is specified and return all active carrier is active is not set to false
         if list_filter.get('active') is not None:
@@ -48,9 +49,6 @@ class Carriers:
         # Check if a list of carrier_ids are provided, to add the list to the query
         if any(list_filter.get('carrier_ids', [])):
             query += (Q(carrier_id__in=list_filter['carrier_ids']), )
-
-        # Always return all system carriers and any additional carrier from the users list
-        query += (Q(created_by__isnull=True) | Q(created_by__in=users),)
 
         if 'carrier_name' in list_filter:
             carrier_name = list_filter['carrier_name']
@@ -92,7 +90,7 @@ class Shipments:
                 f'Please select one of the following: [ {", ".join([r.get("id") for r in payload.get("rates")])} ]'
             )
 
-        carrier = carrier or Carriers.retrieve(carrier_id=selected_rate.carrier_id).data
+        carrier = carrier or models.Carrier.objects.get(carrier_id=selected_rate.carrier_id).data
         request = datatypes.ShipmentRequest(**{**DP.to_dict(payload), 'service': selected_rate.service})
         gateway = purplship.gateway[carrier.carrier_name].create(carrier.dict())
 
@@ -254,11 +252,11 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict, created_by=None) -> datatypes.RateResponse:
+    def fetch(payload: dict, user=None) -> datatypes.RateResponse:
         request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
-            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, created_by=created_by)
+            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user)
         ]
         gateways = [
             purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list

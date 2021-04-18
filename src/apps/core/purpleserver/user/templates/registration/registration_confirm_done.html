@@ -1,0 +1,23 @@
+{% extends "purpleserver/base_site.html" %}
+{% load i18n static %}
+{% block title %}Purplship | Sign Up Confirmation{% endblock %}
+
+{% block content %}
+
+<div class="card isolated-card">
+    <div class="card-content has-text-centered">
+        {% if success %}
+            <p class="subtitle is-4">{% trans 'Your account is verified!' %}</p>
+        {% else %}
+            <p class="subtitle is-4">{% trans 'Error, invalid account activation token!' %}</p>
+        {% endif %}
+
+    </div>
+</div>
+
+<div class="has-text-centered my-4 is-size-6">
+    <a href="{% url 'login' %}">Sign in</a>
+</div>
+
+
+{% endblock %}

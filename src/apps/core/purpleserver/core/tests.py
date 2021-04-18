@@ -1,10 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 from rest_framework.authtoken.models import Token
-from purpleserver.providers.extension.models.canadapost import CanadaPostSettings
-from purpleserver.providers.extension.models.ups_package import UPSPackageSettings
-from purpleserver.providers.extension.models.fedex_express import FedexExpressSettings
-from purpleserver.providers.extension.models.dhl_universal import DHLUniversalSettings
+from purpleserver.providers.models import MODELS
 
 
 class APITestCase(BaseAPITestCase):
@@ -13,7 +10,7 @@ class APITestCase(BaseAPITestCase):
         self.maxDiff = None
         self.user = get_user_model().objects.create_superuser('admin@example.com', 'test')
         self.token = Token.objects.create(user=self.user)
-        self.carrier = CanadaPostSettings.objects.create(
+        self.carrier = MODELS['canadapost'].objects.create(
             carrier_id='canadapost',
             test=True,
             username='6e93d53968881714',
@@ -21,7 +18,7 @@ class APITestCase(BaseAPITestCase):
             contract_id='42708517',
             password='0bfa9fcb9853d1f51ee57a',
             created_by=self.user)
-        self.ups_carrier = UPSPackageSettings.objects.create(
+        self.ups_carrier = MODELS['ups'].objects.create(
             carrier_id='ups_package',
             test=True,
             username='test',
@@ -29,14 +26,14 @@ class APITestCase(BaseAPITestCase):
             access_license_number='000000',
             password='test',
             created_by=self.user)
-        self.fedex_carrier = FedexExpressSettings.objects.create(
+        self.fedex_carrier = MODELS['fedex'].objects.create(
             carrier_id='fedex_express',
             test=True,
             user_key="test",
             password="password",
             meter_number="000000",
             account_number="000000")
-        self.dhl_carrier = DHLUniversalSettings.objects.create(
+        self.dhl_carrier = MODELS['dhl_universal'].objects.create(
             carrier_id='dhl_universal',
             test=True,
             consumer_key="test",

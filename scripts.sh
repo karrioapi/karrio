@@ -177,7 +177,8 @@ test() {
   purplship test --failfast purpleserver.proxy.tests &&
   purplship test --failfast purpleserver.pricing.tests &&
   purplship test --failfast purpleserver.manager.tests &&
-  purplship test --failfast purpleserver.events.tests
+  purplship test --failfast purpleserver.events.tests &&
+  purplship test --failfast purpleserver.graph.tests
 }
 
 test_services() {
@@ -230,6 +231,67 @@ build_dashboard() {
 build_image() {
   docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}"
 }
+
+generate_node_client() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/codegen"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/openapi/latest.json \
+		-g javascript \
+		-o /local/codegen/node \
+		-c /local/artifacts/config.json
+
+	cd -
+}
+
+generate_typescript_client() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/src/frontend/codegen"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/openapi/latest.json \
+		-g typescript-fetch \
+		-o /local/src/frontend/codegen/typescript \
+		-c /local/artifacts/config.json \
+		--additional-properties=typescriptThreePlus=true
+
+	cd -
+}
+
+generate_php_client() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/codegen"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/openapi/latest.json \
+		-g php \
+		-o /local/codegen/php
+
+	cd -
+}
+
+generate_python_client() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/codegen"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/openapi/latest.json \
+		-g python \
+		-o /local/codegen/python
+
+	cd -
+}
+
+generate_graphql_schema() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/src/frontend/codegen"
+	purplship graphql_schema --out "${ROOT:?}/src/frontend/codegen/schema.json"
+
+	cd -
+}
+
+alias gen:js=generate_node_client
+alias gen:ts=generate_typescript_client
+alias gen:php=generate_php_client
+alias gen:python=generate_python_client
+alias gen:graph=generate_graphql_schema
 
 stub_server() {
 echo "

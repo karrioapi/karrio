@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.urls import path
 from django.views import View
+from django.shortcuts import render
 
 from purplship.core import utils
 from purpleserver.core import dataunits
@@ -27,3 +28,8 @@ class TrackingView(View):
         )
 
         return render(request, self.template_name, context=context)
+
+
+urlpatterns = [
+    path('tracking/<str:tracker_id>', TrackingView.as_view(), name="tracking-page"),
+]

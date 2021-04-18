@@ -49,7 +49,7 @@ class CarrierList(GenericAPIView):
         """
         query = SerializerDecorator[CarrierFilters](data=request.query_params).data
 
-        carriers = [carrier.data for carrier in Carriers.list(**{**query, 'created_by': request.user})]
+        carriers = [carrier.data for carrier in Carriers.list(**{**query, 'user': request.user})]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
         return self.get_paginated_response(response)
 
