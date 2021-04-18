@@ -1,8 +1,5 @@
 
-
--e git+https://github.com/PurplShip/purplship-carriers.git@adding-tnt-schemas-lib#egg=carrier.tnt&subdirectory=tnt
--e git+https://github.com/PurplShip/purplship-carriers.git@adding-tnt-schemas-lib#egg=carrier.usps&subdirectory=usps
+# -e git+https://github.com/PurplShip/purplship-carriers.git@adding-tnt-schemas-lib#egg=carrier.tnt&subdirectory=tnt
 
 
--e extensions/tnt
--e extensions/usps_international
+# -e extensions/tnt

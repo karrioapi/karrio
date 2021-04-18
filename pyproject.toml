@@ -30,8 +30,10 @@ mkdocs-material = "^6.2.6"
 "purplship.royalmail" = {path = "extensions/royalmail", develop = true}
 "purplship.sendle" = {path = "extensions/sendle", develop = true}
 "purplship.sf_express" = {path = "extensions/sf_express", develop = true}
+"purplship.tnt" = {path = "extensions/tnt", develop = true}
 "purplship.ups" = {path = "extensions/ups", develop = true}
 "purplship.usps" = {path = "extensions/usps", develop = true}
+"purplship.usps_international" = {path = "extensions/usps_international", develop = true}
 "purplship.yanwen" = {path = "extensions/yanwen", develop = true}
 "purplship.yunexpress" = {path = "extensions/yunexpress", develop = true}
 

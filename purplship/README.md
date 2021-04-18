@@ -1,7 +1,7 @@
 <p align="center">
   <p align="center">
     <a href="https://purplship.com" target="_blank">
-      <img src="https://github.com/PurplShip/purplship-server/raw/main/src/purpleserver/purpleserver/static/purpleserver/img/icon.png" alt="Purplship" height="100">
+      <img src="https://github.com/PurplShip/purplship-server/raw/main/src/purpleserver/purpleserver/static/extra/branding/icon.png" alt="Purplship" height="100">
     </a>
   </p>
   <h2 align="center">
@@ -55,12 +55,12 @@ Additional extensions:
 - `purplship.dhl-express`
 - `purplship.dhl-universal`
 - `purplship.dicom`
-- `purplship.fedex-express`
+- `purplship.fedex`
 - `purplship.purolator-courier`
 - `purplship.royalmail`
 - `purplship.sendle`
 - `purplship.sf-express`
-- `purplship.ups-package`
+- `purplship.ups`
 - `purplship.usps`
 - `purplship.yanwen`
 - `purplship.yunexpress`
