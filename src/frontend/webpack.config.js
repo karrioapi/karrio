@@ -2,7 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 
-const build_path = '../../apps/client/purpleserver/client/static/client/';
+const build_path = '../apps/client/purpleserver/client/static/client/';
 
 module.exports = {
   entry: {

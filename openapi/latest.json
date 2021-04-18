@@ -1,16 +1,16 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Purplship Open Source Multi-carrier Shipping API",
-    "description": "\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services\n\nThe **proxy** endpoints are stateless and forwards calls to carriers web services.\n",
-    "license": {
-      "name": "Apache 2 License"
+    "title": "Purplship API",
+    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request\nbodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.2.1`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
+    "contact": {
+      "email": "hello@purplship.com"
     },
     "version": "2021.2.1"
   },
   "servers": [
     {
-      "url": "https://app.purplship.com/v1"
+      "url": "https://app.purplship.com"
     }
   ],
   "security": [
@@ -18,8 +18,124 @@
       "Token": []
     }
   ],
+  "tags": [
+    {
+      "name": "API",
+      "description": "\nFor client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.\nThe JWT tokens changes for every new session and have an expiration timestamp.\n\nTo authenticate via JWT access key, use `-H \"Authorization: Bearer eyJ0eXAxxx...xxxaS86FjLH6U\"`.\n"
+    },
+    {
+      "name": "Addresses",
+      "description": "\nThis is an object representing your a Purplship shipping address.\n\nYou can retrieve all addresses related to your Purplship account.\n"
+    },
+    {
+      "name": "Proxy",
+      "description": "\nIn some scenarios, all we need is to send request to a carrier using the Purplship unified API.\n\nThe Proxy API comes handy for that as it turn Purplship into a simple middleware that converts and \nvalidate your request and simply forward it to the shipping carrier server.\n\n> **Note**\n>\n> When using the proxy API, no objects are created in the Purplship system.\n"
+    }
+  ],
   "paths": {
-    "/addresses": {
+    "/api/token": {
+      "post": {
+        "tags": [
+          "API"
+        ],
+        "summary": "Obtain auth token pair",
+        "description": "Authenticate the user and return a token pair",
+        "operationId": "&&authenticate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenObtainPair"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPair"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/api/token/refresh": {
+      "post": {
+        "tags": [
+          "API"
+        ],
+        "summary": "Refresh auth token",
+        "description": "Authenticate the user and return a token pair",
+        "operationId": "&&refresh_token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRefresh"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessToken"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/api/token/verify": {
+      "post": {
+        "tags": [
+          "API"
+        ],
+        "summary": "Verify auth token",
+        "description": "Verify an existent authentication token",
+        "operationId": "&&verify_token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenVerify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/addresses": {
       "get": {
         "tags": [
           "Addresses"
@@ -110,7 +226,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/addresses/{id}": {
+    "/v1/addresses/{id}": {
       "get": {
         "tags": [
           "Addresses"
@@ -203,7 +319,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/carriers": {
+    "/v1/carriers": {
       "get": {
         "tags": [
           "Carriers"
@@ -242,12 +358,12 @@
                 "dhl_express",
                 "dhl_universal",
                 "dicom",
-                "fedex_express",
+                "fedex",
                 "purolator_courier",
                 "royalmail",
                 "sendle",
                 "sf_express",
-                "ups_package",
+                "ups",
                 "usps",
                 "yanwen",
                 "yunexpress",
@@ -309,7 +425,7 @@
         }
       }
     },
-    "/customs_info": {
+    "/v1/customs_info": {
       "get": {
         "tags": [
           "Customs"
@@ -400,7 +516,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/customs_info/{id}": {
+    "/v1/customs_info/{id}": {
       "get": {
         "tags": [
           "Customs"
@@ -533,45 +649,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/labels": {
-      "post": {
-        "tags": [
-          "Utils"
-        ],
-        "summary": "Print a Label",
-        "description": "Returns a label PDF file.",
-        "operationId": "&&print_label",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LabelPrintingRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "400": {
-            "description": "",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/vnd.oai.openapi+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-codegen-request-body-name": "data"
-      }
-    },
-    "/parcels": {
+    "/v1/parcels": {
       "get": {
         "tags": [
           "Parcels"
@@ -662,7 +740,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/parcels/{id}": {
+    "/v1/parcels/{id}": {
       "get": {
         "tags": [
           "Parcels"
@@ -795,7 +873,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/pickups": {
+    "/v1/pickups": {
       "get": {
         "tags": [
           "Pickups"
@@ -845,7 +923,7 @@
         }
       }
     },
-    "/pickups/{carrier_name}/schedule": {
+    "/v1/pickups/{carrier_name}/schedule": {
       "post": {
         "tags": [
           "Pickups"
@@ -908,7 +986,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/pickups/{id}": {
+    "/v1/pickups/{id}": {
       "get": {
         "tags": [
           "Pickups"
@@ -1001,7 +1079,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/pickups/{id}/cancel": {
+    "/v1/pickups/{id}/cancel": {
       "post": {
         "tags": [
           "Pickups"
@@ -1054,7 +1132,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/proxy/pickups/{carrier_name}": {
+    "/v1/proxy/pickups/{carrier_name}": {
       "put": {
         "tags": [
           "Proxy"
@@ -1178,7 +1256,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/proxy/pickups/{carrier_name}/cancel": {
+    "/v1/proxy/pickups/{carrier_name}/cancel": {
       "post": {
         "tags": [
           "Proxy"
@@ -1241,7 +1319,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/proxy/rates": {
+    "/v1/proxy/rates": {
       "post": {
         "tags": [
           "Proxy"
@@ -1284,7 +1362,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/proxy/shipping": {
+    "/v1/proxy/shipping": {
       "post": {
         "tags": [
           "Proxy"
@@ -1327,7 +1405,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/proxy/shipping/{carrier_name}/cancel": {
+    "/v1/proxy/shipping/{carrier_name}/cancel": {
       "post": {
         "tags": [
           "Proxy"
@@ -1390,7 +1468,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/proxy/tracking/{carrier_name}/{tracking_number}": {
+    "/v1/proxy/tracking/{carrier_name}/{tracking_number}": {
       "get": {
         "tags": [
           "Proxy"
@@ -1450,13 +1528,13 @@
         }
       }
     },
-    "/references": {
+    "/v1/references": {
       "get": {
         "tags": [
-          "Utils"
+          "API"
         ],
         "summary": "Data References",
-        "operationId": "&&references",
+        "operationId": "&&data",
         "responses": {
           "200": {
             "description": "",
@@ -1471,7 +1549,7 @@
         }
       }
     },
-    "/shipments": {
+    "/v1/shipments": {
       "get": {
         "tags": [
           "Shipments"
@@ -1562,7 +1640,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/shipments/{id}": {
+    "/v1/shipments/{id}": {
       "get": {
         "tags": [
           "Shipments"
@@ -1644,7 +1722,7 @@
         }
       }
     },
-    "/shipments/{id}/customs": {
+    "/v1/shipments/{id}/customs": {
       "post": {
         "tags": [
           "Shipments"
@@ -1697,7 +1775,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/shipments/{id}/options": {
+    "/v1/shipments/{id}/options": {
       "post": {
         "tags": [
           "Shipments"
@@ -1751,7 +1829,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/shipments/{id}/parcels": {
+    "/v1/shipments/{id}/parcels": {
       "post": {
         "tags": [
           "Shipments"
@@ -1804,7 +1882,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/shipments/{id}/purchase": {
+    "/v1/shipments/{id}/purchase": {
       "post": {
         "tags": [
           "Shipments"
@@ -1857,7 +1935,7 @@
         "x-codegen-request-body-name": "data"
       }
     },
-    "/shipments/{id}/rates": {
+    "/v1/shipments/{id}/rates": {
       "get": {
         "tags": [
           "Shipments"
@@ -1899,7 +1977,7 @@
         }
       }
     },
-    "/trackers": {
+    "/v1/trackers": {
       "get": {
         "tags": [
           "Trackers"
@@ -1949,12 +2027,12 @@
         }
       }
     },
-    "/trackers/{carrier_name}/{tracking_number}": {
+    "/v1/trackers/{carrier_name}/{tracking_number}": {
       "get": {
         "tags": [
           "Trackers"
         ],
-        "summary": "Retrieves or creates a shipment trackers",
+        "summary": "Retrieve a shipment tracker",
         "description": "This API retrieves or creates (if non existent) a tracking status object containing the\ndetails and events of a shipping in progress.",
         "operationId": "$$$$$$retrieve",
         "parameters": [
@@ -2008,10 +2086,376 @@
           }
         }
       }
+    },
+    "/v1/trackers/{id}": {
+      "delete": {
+        "tags": [
+          "Trackers"
+        ],
+        "summary": "Remove a shipment tracker",
+        "description": "Remove a shipment tracker.",
+        "operationId": "$$$$$$remove",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/webhooks": {
+      "get": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "List all webhooks",
+        "description": "Retrieve all webhooks.",
+        "operationId": "$$$$$$$list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The initial index from which to return the results.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Create a webhook",
+        "description": "Create a new webhook.",
+        "operationId": "$$$$$$$create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webhook"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/webhooks/{id}": {
+      "get": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Retrieve a webhook",
+        "description": "Retrieve a webhook.",
+        "operationId": "$$$$$$$retrieve",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webhook"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Remove a webhook",
+        "description": "Remove a webhook.",
+        "operationId": "$$$$$$$remove",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Update a webhook",
+        "description": "update a webhook.",
+        "operationId": "$$$$$$$update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webhook"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
     }
   },
   "components": {
     "schemas": {
+      "TokenObtainPair": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "TokenPair": {
+        "required": [
+          "access",
+          "refresh"
+        ],
+        "type": "object",
+        "properties": {
+          "access": {
+            "title": "Access",
+            "minLength": 1,
+            "type": "string"
+          },
+          "refresh": {
+            "title": "Refresh",
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "TokenRefresh": {
+        "required": [
+          "refresh"
+        ],
+        "type": "object",
+        "properties": {
+          "refresh": {
+            "title": "Refresh",
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "AccessToken": {
+        "required": [
+          "access"
+        ],
+        "type": "object",
+        "properties": {
+          "access": {
+            "title": "Access",
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "TokenVerify": {
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "title": "Token",
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "AddressValidation": {
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "title": "Success",
+            "type": "boolean",
+            "description": "True if the address is valid"
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object",
+            "properties": {},
+            "description": "validation service details",
+            "nullable": true
+          }
+        },
+        "description": "Specify address validation result",
+        "nullable": true,
+        "x-nullable": true
+      },
       "Address": {
         "required": [
           "country_code"
@@ -2343,6 +2787,16 @@
             "type": "string",
             "description": "The address line with suite number",
             "nullable": true
+          },
+          "validate_location": {
+            "title": "Validate location",
+            "type": "boolean",
+            "description": "Indicate if the address should be validated",
+            "nullable": true,
+            "default": false
+          },
+          "validation": {
+            "$ref": "#/components/schemas/AddressValidation"
           }
         }
       },
@@ -2373,10 +2827,6 @@
         }
       },
       "Message": {
-        "required": [
-          "carrier_id",
-          "carrier_name"
-        ],
         "type": "object",
         "properties": {
           "carrier_name": {
@@ -2752,6 +3202,13 @@
             "type": "string",
             "description": "The address line with suite number",
             "nullable": true
+          },
+          "validate_location": {
+            "title": "Validate location",
+            "type": "boolean",
+            "description": "Indicate if the address should be validated",
+            "nullable": true,
+            "default": false
           }
         }
       },
@@ -2783,12 +3240,12 @@
               "dhl_express",
               "dhl_universal",
               "dicom",
-              "fedex_express",
+              "fedex",
               "purolator_courier",
               "royalmail",
               "sendle",
               "sf_express",
-              "ups_package",
+              "ups",
               "usps",
               "yanwen",
               "yunexpress",
@@ -3348,27 +3805,6 @@
             "title": "Success",
             "type": "boolean",
             "description": "Specify whether the operation was successful"
-          }
-        }
-      },
-      "LabelPrintingRequest": {
-        "required": [
-          "label",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "title": "Name",
-            "minLength": 1,
-            "type": "string",
-            "description": "\nPDF file name.\n\neg: shipment-[trackingNumber]\n"
-          },
-          "label": {
-            "title": "Label",
-            "minLength": 1,
-            "type": "string",
-            "description": "Shipment base64 label"
           }
         }
       },
@@ -5039,11 +5475,149 @@
             }
           }
         }
+      },
+      "Webhook": {
+        "required": [
+          "enabled_events",
+          "test_mode",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "url": {
+            "title": "Url",
+            "minLength": 1,
+            "type": "string",
+            "description": "The URL of the webhook endpoint.",
+            "format": "uri"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "An optional description of what the webhook is used for.",
+            "nullable": true
+          },
+          "enabled_events": {
+            "type": "array",
+            "description": "The list of events to enable for this endpoint.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "all",
+                "shipment.purchased",
+                "shipment.cancelled",
+                "shipment.fulfilled",
+                "tracker.created",
+                "tracker.updated"
+              ]
+            }
+          },
+          "test_mode": {
+            "title": "Test mode",
+            "type": "boolean",
+            "description": "Specified whether it was created with a carrier in test mode"
+          },
+          "disabled": {
+            "title": "Disabled",
+            "type": "boolean",
+            "description": "Indicates that the webhook is disabled",
+            "nullable": true
+          },
+          "id": {
+            "title": "Id",
+            "minLength": 1,
+            "type": "string",
+            "description": "A unique identifier"
+          },
+          "last_event_at": {
+            "title": "Last event at",
+            "type": "string",
+            "description": "The datetime of the last event sent.",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "WebhookList": {
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "properties": {
+          "next": {
+            "title": "Next",
+            "minLength": 1,
+            "type": "string",
+            "format": "uri"
+          },
+          "previous": {
+            "title": "Previous",
+            "minLength": 1,
+            "type": "string",
+            "format": "uri"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Webhook"
+            }
+          }
+        }
+      },
+      "WebhookData": {
+        "required": [
+          "enabled_events",
+          "test_mode",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "url": {
+            "title": "Url",
+            "minLength": 1,
+            "type": "string",
+            "description": "The URL of the webhook endpoint.",
+            "format": "uri"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "An optional description of what the webhook is used for.",
+            "nullable": true
+          },
+          "enabled_events": {
+            "type": "array",
+            "description": "The list of events to enable for this endpoint.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "all",
+                "shipment.purchased",
+                "shipment.cancelled",
+                "shipment.fulfilled",
+                "tracker.created",
+                "tracker.updated"
+              ]
+            }
+          },
+          "test_mode": {
+            "title": "Test mode",
+            "type": "boolean",
+            "description": "Specified whether it was created with a carrier in test mode"
+          },
+          "disabled": {
+            "title": "Disabled",
+            "type": "boolean",
+            "description": "Indicates that the webhook is disabled",
+            "nullable": true
+          }
+        }
       }
     },
     "securitySchemes": {
       "Token": {
         "type": "apiKey",
+        "description": "\nThe Purplship API uses API keys to authenticate requests. You can view and manage your \nAPI keys in the Purplship Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret \nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request), \nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"`.\n\nAPI requests without authentication will also fail.\n",
         "name": "Authorization",
         "in": "header"
       }

@@ -27,8 +27,8 @@ import SystemConnectionsQuery from '@/components/data/system-connections-query';
 import LabelDataQuery from '@/components/data/shipment-query';
 import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
 import LabelCreator from '@/components/label/label-creator';
-import BoardFooter from '@/components/footer/board-footer';
 import Navbar from '@/components/navbar/navbar';
+import Loader from '@/components/loader';
 import Notifier from '@/components/notifier';
 import LocationTitle from '@/components/location-title';
 import '@/library/rest';
@@ -37,7 +37,6 @@ import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism.css';
 import 'prismjs/themes/prism-solarizedlight.css';
 import '@/style/dashboard.scss';
-import Loader from './components/loader';
 
 
 const DATA_CONTEXTS = [
@@ -100,7 +99,6 @@ const Dashboard: React.FC = () => {
                 </div>
             </div>
 
-            <BoardFooter />
         </DashboardContexts>
     );
 };

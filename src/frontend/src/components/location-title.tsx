@@ -1,11 +1,11 @@
-import { Reference } from '@/library/context';
 import { Location } from '@reach/router';
 import React, { useContext } from 'react';
+import { APIReference } from '@/components/data/references-query';
 
 interface LocationTitleComponent { }
 
 const LocationTitle: React.FC<LocationTitleComponent> = () => {
-    const References = useContext(Reference);
+    const References = useContext(APIReference);
     
     return (
         <Location>
@@ -34,7 +34,7 @@ const LocationTitle: React.FC<LocationTitleComponent> = () => {
                     title = '| Shipments';
                 }
 
-                document.title = `${References?.APP_NAME} ${title}`;
+                document.title = `${References?.app_name} ${title}`;
                 return <></>;
             }}
         </Location>

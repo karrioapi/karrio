@@ -2,8 +2,8 @@
 {% load i18n static %}
 
 {% block extrastyle %}
-<link href="{% static 'purpleserver/client/fontawesome/all.min.css' %}" type="text/css" rel="stylesheet">
-<link href="{% static 'purpleserver/client/purplship.dashboard.min.css' %}" type="text/css" rel="stylesheet">
+<link href="{% static 'client/fontawesome/all.min.css' %}" type="text/css" rel="stylesheet">
+<link href="{% static 'client/purplship.dashboard.min.css' %}" type="text/css" rel="stylesheet">
 {% endblock %}
 
 {% block root %}
@@ -14,11 +14,11 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'purpleserver/client/purplship.vendor.min.js' %}"></script>
-<script src="{% static 'purpleserver/client/purplship.rest.min.js' %}"></script>
-<script src="{% static 'purpleserver/client/purplship.graph.min.js' %}"></script>
-<script src="{% static 'purpleserver/client/purplship.dashboard.min.js' %}"></script>
-<script src="{% static 'purpleserver/client/purplship.runtime.min.js' %}"></script>
+<script src="{% static 'client/purplship.vendor.min.js' %}"></script>
+<script src="{% static 'client/purplship.rest.min.js' %}"></script>
+<script src="{% static 'client/purplship.graph.min.js' %}"></script>
+<script src="{% static 'client/purplship.dashboard.min.js' %}"></script>
+<script src="{% static 'client/purplship.runtime.min.js' %}"></script>
 
   {% if GOOGLE_CLOUD_API_KEY != "" %}
   <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_CLOUD_API_KEY }}&libraries=places"></script>
