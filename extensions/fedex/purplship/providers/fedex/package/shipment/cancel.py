@@ -38,7 +38,7 @@ def parse_shipment_cancel_response(response: Element, settings: Settings) -> Tup
 def shipment_cancel_request(payload: ShipmentCancelRequest, settings: Settings) -> Serializable[Envelope]:
     tracking_type = next(
         (t for t in list(TrackingIdType) if t.name.lower() in payload.service),
-        TrackingIdType.FEDEX
+        TrackingIdType.EXPRESS
     ).value
     deletion_type = DeletionControlType[
         payload.options.get('deletion_type', 'DELETE_ALL_PACKAGES')

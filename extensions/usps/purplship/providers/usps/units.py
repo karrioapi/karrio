@@ -1,33 +1,21 @@
 """Purplship USPS enumerations module"""
 
-import typing
-from purplship.core.utils import Enum
+from purplship.core.utils import Enum, Flag, Spec
 
 
 class ContentType(Enum):
-    hazmat = "HAZMAT"
     cremated_remains = "CREMATEDREMAINS"
-    fragile = "FRAGILE"
-    perishable = "PERISHABLE"
-    pharmaceuticals = "PHARMACEUTICALS"
-    medical_supplies = "MEDICAL SUPPLIES"
-    lives = "LIVES"
-
-
-class Incoterm(Enum):
-    CPT = "CPT"
-    CIP = "CIP"
-    DAF = "DAF"
-    DDU = "DDU"
-    OTHER = "OTHER"
-
-
-class IntlContentType(Enum):
-    cremated_remains = "CrematedRemains"
-    non_negotiable_document = "NonnegotiableDocument"
-    pharmaceuticals = "Pharmaceuticals"
-    medical_supplies = "MedicalSupplies"
-    documents = "Documents"
+    merchandise = "MERCHANDISE"
+    sample = "SAMPLE"
+    gift = "GIFT"
+    documents = "DOCUMENTS"
+    return_merchandise = "RETURN"
+    humanitarian = "HUMANITARIAN"
+    dangerousgoods = "DANGEROUSGOODS"
+    nonnegotiabledocument = "NONNEGOTIABLEDOCUMENT"
+    pharmacuticals = "PHARMACUTICALS"
+    medicalsupplies = "MEDICALSUPPLIES"
+    other = "OTHER"
 
 
 class LabelFormat(Enum):
@@ -42,13 +30,12 @@ class LabelFormat(Enum):
     usps_4_x_6_zpl_300_dpi = "4X6ZPL300DPI"
     usps_separate_continue_page = "SEPARATECONTINUEPAGE"
 
+    """ Unified Label type mapping """
+    PDF = usps_6_x_4_label
+    ZPL = usps_4_x_6_zpl_203_dpi
 
-class Size(Enum):
-    regular = "REGULAR"
-    large = "LARGE"
 
-
-class Container(Enum):
+class PackagingType(Flag):
     variable = "VARIABLE"
     flat_rate_envelope = "FLAT RATE ENVELOPE"
     padded_flat_rate_envelope = "PADDED FLAT RATE ENVELOPE"
@@ -74,79 +61,99 @@ class Container(Enum):
     your_packaging = variable
 
 
-class FirstClassMailType(Enum):
+class FirstClassMailType(Flag):
     flat = "FLAT"
     letter = "LETTER"
-    package_service_retail = "PACKAGE SERVICE RETAIL"
-    package_service = "PACKAGE SERVICE"
     postcard = "POSTCARD"
+    package_service = "PACKAGE SERVICE"
+    package_service_retail = "PACKAGE SERVICE RETAIL"
 
-    """ Unified Packaging type mapping """
-    envelope = letter
-    medium_box = package_service
-    pak = flat
-    pallet = package_service_retail
-    small_box = package_service
-    tube = package_service
-    your_packaging = package_service
+    """ Packaging type correspondence """
+    variable = package_service
+    flat_rate_envelope = flat
+    padded_flat_rate_envelope = flat
+    legal_flat_rate_envelope = flat
+    sm_flat_rate_envelope = flat
+    window_flat_rate_envelope = flat
+    gift_card_flat_rate_envelope = postcard
+    sm_flat_rate_box = package_service
+    md_flat_rate_box = package_service
+    lg_flat_rate_box = package_service
+    cubic_parcels = package_service
+    cubic_soft_pack = package_service
+    regional_rate_box_a = package_service_retail
+    regional_rate_box_b = package_service_retail
 
 
-class IntlPackageType(Enum):
-    all = "ALL"
-    package = "PACKAGE"
-    postcards = "POSTCARDS"
-    envelope = "ENVELOPE"
+class SortLevelType(Flag):
     letter = "LETTER"
     large_envelope = "LARGEENVELOPE"
+    package = "PACKAGE"
     flat_rate = "FLATRATE"
 
-    """ Unified Packaging type mapping """
-    pak = large_envelope
-    tube = package
-    pallet = package
-    small_box = package
-    medium_box = package
-    your_packaging = package
+    """ Packaging type correspondence """
+    variable = package
+    sm_flat_rate_box = flat_rate
+    md_flat_rate_box = flat_rate
+    lg_flat_rate_box = flat_rate
+    flat_rate_envelope = flat_rate
+    sm_flat_rate_envelope = flat_rate
+    legal_flat_rate_envelope = flat_rate
+    gift_card_flat_rate_envelope = flat_rate
+    padded_flat_rate_envelope = large_envelope
+    window_flat_rate_envelope = large_envelope
+    cubic_parcels = package
+    cubic_soft_pack = package
+    regional_rate_box_a = package
+    regional_rate_box_b = package
 
 
-class SortationLevel(Enum):
-    digit_3 = "3D"
-    digit_5 = "5D"
-    basic = "BAS"
-    carrier_route = "CR"
-    mixed_ndc = "MIX"
-    ndc = "NDC"
-    presort = "PST"
-    scg = "SCF"
-    emm_tray_box = "TBE"
-    full_tray_box = "TBF"
-    half_tray_box = "TBH"
-    full_tub_tray_box = "TBT"
+class ShipmentOption(Enum):
+    usps_insurance = Spec.asValue("100", float)
+    usps_insurance_priority_mail_express = Spec.asValue("101", float)
+    usps_return_receipt = Spec.asKey("102")
+    usps_collect_on_delivery = Spec.asKey("103")
+    usps_certificate_of_mailing_form_3665 = Spec.asKey("104")
+    usps_certified_mail = Spec.asKey("105")
+    usps_tracking = Spec.asKey("106")
+    usps_signature_confirmation = Spec.asKey("108")
+    usps_registered_mail = Spec.asKey("109")
+    usps_return_receipt_electronic = Spec.asKey("110")
+    usps_registered_mail_cod_collection_charge = Spec.asKey("112")
+    usps_return_receipt_priority_mail_express = Spec.asKey("118")
+    usps_adult_signature_required = Spec.asKey("119")
+    usps_adult_signature_restricted_delivery = Spec.asKey("120")
+    usps_insurance_priority_mail = Spec.asValue("125", float)
+    usps_tracking_electronic = Spec.asKey("155")
+    usps_signature_confirmation_electronic = Spec.asKey("156")
+    usps_certificate_of_mailing_form_3817 = Spec.asKey("160")
+    usps_priority_mail_express_10_30_am_delivery = Spec.asKey("161")
+    usps_certified_mail_restricted_delivery = Spec.asKey("170")
+    usps_certified_mail_adult_signature_required = Spec.asKey("171")
+    usps_certified_mail_adult_signature_restricted_delivery = Spec.asKey("172")
+    usps_signature_confirm_restrict_delivery = Spec.asKey("173")
+    usps_signature_confirmation_electronic_restricted_delivery = Spec.asKey("174")
+    usps_collect_on_delivery_restricted_delivery = Spec.asKey("175")
+    usps_registered_mail_restricted_delivery = Spec.asKey("176")
+    usps_insurance_restricted_delivery = Spec.asValue("177", float)
+    usps_insurance_restrict_delivery_priority_mail = Spec.asValue("179", float)
+    usps_insurance_restrict_delivery_priority_mail_express = Spec.asValue("178", float)
+    usps_insurance_restrict_delivery_bulk_only = Spec.asValue("180", float)
+    usps_scan_retention = Spec.asKey("181")
+    usps_scan_signature_retention = Spec.asKey("182")
+    usps_special_handling_fragile = Spec.asKey("190")
+
+    """ Non official options """
+    usps_option_machinable_item = Spec.asFlag("usps_option_machinable_item")
+    usps_option_ground_only = Spec.asFlag("usps_option_ground_only")
+    usps_option_return_service_info = Spec.asFlag("usps_option_return_service_info")
+    usps_option_ship_info = Spec.asFlag("usps_option_ship_info")
+
+    """ Unified Shipment Option type mapping """
+    insurance = usps_insurance
 
 
-class Service(Enum):
-    usps_gxg = "GXG"
-    usps_airmail_m_bags = "Airmail M-Bags"
-    usps_usps_retail_ground = "USPS Retail Ground"
-    usps_media_mail = "Media Mail"
-    usps_priority_mail = "Priority Mail"
-    usps_priority_mail_express = "Priority Mail Express"
-    usps_first_class_mail = "First-Class Mail"
-    usps_priority_mail_international = "Priority Mail International"
-    usps_priority_mail_express_international = "Priority Mail Express International"
-    usps_first_class_package_service = "First-Class Package Service"
-    usps_first_class_mail_international = "First-Class Mail International"
-    usps_first_class_package_international_service = "First-Class Package International Service"
-
-    @staticmethod
-    def find(service: str) -> 'Service':
-        return next(reversed(sorted(
-            [s for s in list(typing.cast(Enum, Service)) if s.value in service],
-            key=lambda s: len(s.value)
-        )))
-
-
-class RateService(Enum):
+class ShipmentService(Enum):
     usps_first_class = "First Class"
     usps_first_class_commercial = "First Class Commercial"
     usps_first_class_hfp_commercial = "First Class HFPCommercial"
@@ -173,51 +180,119 @@ class RateService(Enum):
     usps_bpm = "BPM"
 
 
-class ExtraService(Enum):
-    usps_registered_mail = "103"
-    usps_insurance_global_express_guaranteed = "106"
-    usps_insurance_express_mail_international = "107"
-    usps_insurance_priority_mail_international = "108"
-    usps_return_receipt = "105"
-    usps_certificate_of_mailing = "100"
-    usps_electronic_usps_delivery_confirmation_international = "109"
+class ServiceClassID(Enum):
+    usps_first_class = "0"
+    usps_first_class_mail_large_envelope = usps_first_class
+    usps_first_class_mail_lt_letter = usps_first_class
+    usps_first_class_mail_lt_parcel = usps_first_class
+    usps_first_class_mail_postcards = usps_first_class
+    usps_priority_mail = "1"
+    usps_priority_mail_express_hold_for_pickup = "2"
+    usps_priority_mail_express = "3"
+    usps_standard_post = "4"
+    usps_media_mail = "6"
+    usps_library_mail = "7"
+    usps_priority_mail_express_flat_rate_envelope = "13"
+    usps_first_class_mail_large_postcards = "15"
+    usps_priority_mail_flat_rate_envelope = "16"
+    usps_priority_mail_medium_flat_rate_box = "17"
+    usps_priority_mail_large_flat_rate_box = "22"
+    usps_priority_mail_express_sunday_holiday_delivery = "23"
+    usps_priority_mail_express_sunday_holiday_delivery_flat_rate_envelope = "25"
+    usps_priority_mail_express_flat_rate_envelope_hold_for_pickup = "27"
+    usps_priority_mail_small_flat_rate_box = "28"
+    usps_priority_mail_padded_flat_rate_envelope = "29"
+    usps_priority_mail_express_legal_flat_rate_envelope = "30"
+    usps_priority_mail_express_legal_flat_rate_envelope_hold_for_pickup = "31"
+    usps_priority_mail_express_sunday_holiday_delivery_legal_flat_rate_envelope = "32"
+    usps_priority_mail_hold_for_pickup = "33"
+    usps_priority_mail_large_flat_rate_box_hold_for_pickup = "34"
+    usps_priority_mail_medium_flat_rate_box_hold_for_pickup = "35"
+    usps_priority_mail_small_flat_rate_box_hold_for_pickup = "36"
+    usps_priority_mail_flat_rate_envelope_hold_for_pickup = "37"
+    usps_priority_mail_gift_card_flat_rate_envelope = "38"
+    usps_priority_mail_gift_card_flat_rate_envelope_hold_for_pickup = "39"
+    usps_priority_mail_window_flat_rate_envelope = "40"
+    usps_priority_mail_window_flat_rate_envelope_hold_for_pickup = "41"
+    usps_priority_mail_small_flat_rate_envelope = "42"
+    usps_priority_mail_small_flat_rate_envelope_hold_for_pickup = "43"
+    usps_priority_mail_legal_flat_rate_envelope = "44"
+    usps_priority_mail_legal_flat_rate_envelope_hold_for_pickup = "45"
+    usps_priority_mail_padded_flat_rate_envelope_hold_for_pickup = "46"
+    usps_priority_mail_regional_rate_box_a = "47"
+    usps_priority_mail_regional_rate_box_a_hold_for_pickup = "48"
+    usps_priority_mail_regional_rate_box_b = "49"
+    usps_priority_mail_regional_rate_box_b_hold_for_pickup = "50"
+    usps_first_class_package_service_hold_for_pickup = "53"
+    usps_priority_mail_express_flat_rate_boxes = "55"
+    usps_priority_mail_express_flat_rate_boxes_hold_for_pickup = "56"
+    usps_priority_mail_express_sunday_holiday_delivery_flat_rate_boxes = "57"
+    usps_priority_mail_regional_rate_box_c = "58"
+    usps_priority_mail_regional_rate_box_c_hold_for_pickup = "59"
+    usps_first_class_package_service = "61"
+    usps_priority_mail_express_padded_flat_rate_envelope = "62"
+    usps_priority_mail_express_padded_flat_rate_envelope_hold_for_pickup = "63"
+    usps_priority_mail_express_sunday_holiday_delivery_padded_flat_rate_envelope = "64"
 
-    usps_machinable = "001"
 
+class ServiceType(Enum):
+    usps_bpm = "BPM"
+    usps_media = "MEDIA"
+    usps_library = "LIBRARY"
+    usps_priority = "PRIORITY"
+    usps_first_class = "FIRST CLASS"
+    usps_priority_mail_express = "PRIORITY EXPRESS"
+    usps_priority_mail_cubic = "PRIORITY MAIL CUBIC"
+    usps_parcel_select_ground = "PARCEL SELECT GROUND"
 
-class SpecialService(Enum):
-    usps_insurance = "100"
-    usps_insurance_priority_mail_express = "101"
-    usps_return_receipt = "102"
-    usps_collect_on_delivery = "103"
-    usps_certificate_of_mailing_form_3665 = "104"
-    usps_certified_mail = "105"
-    usps_tracking = "106"
-    usps_signature_confirmation = "108"
-    usps_registered_mail = "109"
-    usps_return_receipt_electronic = "110"
-    usps_registered_mail_cod_collection_charge = "112"
-    usps_return_receipt_priority_mail_express = "118"
-    usps_adult_signature_required = "119"
-    usps_adult_signature_restricted_delivery = "120"
-    usps_insurance_priority_mail = "125"
-    usps_tracking_electronic = "155"
-    usps_signature_confirmation_electronic = "156"
-    usps_certificate_of_mailing_form_3817 = "160"
-    usps_priority_mail_express_1030_am_delivery = "161"
-    usps_certified_mail_restricted_delivery = "170"
-    usps_certified_mail_adult_signature_required = "171"
-    usps_certified_mail_adult_signature_restricted_delivery = "172"
-    usps_signature_confirm_restrict_delivery = "173"
-    usps_signature_confirmation_electronic_restricted_delivery = "174"
-    usps_collect_on_delivery_restricted_delivery = "175"
-    usps_registered_mail_restricted_delivery = "176"
-    usps_insurance_restricted_delivery = "177"
-    usps_insurance_restrict_delivery_priority_mail = "179"
-    usps_insurance_restrict_delivery_priority_mail_express = "178"
-    usps_insurance_restrict_delivery_bulk_only = "180"
-    usps_scan_retention = "181"
-    usps_scan_signature_retention = "182"
-    usps_special_handling_fragile = "190"
-
-    usps_machinable = "001"
+    """ ShipmentService type correspondence """
+    usps_first_class_mail_large_envelope = usps_first_class
+    usps_first_class_mail_lt_letter = usps_first_class
+    usps_first_class_mail_lt_parcel = usps_first_class
+    usps_first_class_mail_postcards = usps_first_class
+    usps_first_class_mail_large_postcards = usps_first_class
+    usps_priority_mail = usps_priority
+    usps_priority_mail_express_hold_for_pickup = usps_priority_mail_express
+    usps_standard_post = usps_parcel_select_ground
+    usps_media_mail = usps_media
+    usps_library_mail = usps_library
+    usps_priority_mail_express_flat_rate_envelope = usps_priority_mail_express
+    usps_priority_mail_flat_rate_envelope = usps_priority
+    usps_priority_mail_medium_flat_rate_box = usps_priority_mail_cubic
+    usps_priority_mail_large_flat_rate_box = usps_priority_mail_cubic
+    usps_priority_mail_express_sunday_holiday_delivery = usps_priority_mail_express
+    usps_priority_mail_express_sunday_holiday_delivery_flat_rate_envelope = usps_priority_mail_express
+    usps_priority_mail_express_flat_rate_envelope_hold_for_pickup = usps_priority_mail_express
+    usps_priority_mail_small_flat_rate_box = usps_priority
+    usps_priority_mail_padded_flat_rate_envelope = usps_priority
+    usps_priority_mail_express_legal_flat_rate_envelope = usps_priority_mail_express
+    usps_priority_mail_express_legal_flat_rate_envelope_hold_for_pickup = usps_priority_mail_express
+    usps_priority_mail_express_sunday_holiday_delivery_legal_flat_rate_envelope = usps_priority_mail_express
+    usps_priority_mail_hold_for_pickup = usps_priority_mail_cubic
+    usps_priority_mail_large_flat_rate_box_hold_for_pickup = usps_priority_mail_cubic
+    usps_priority_mail_medium_flat_rate_box_hold_for_pickup = usps_priority_mail_cubic
+    usps_priority_mail_small_flat_rate_box_hold_for_pickup = usps_priority_mail_cubic
+    usps_priority_mail_flat_rate_envelope_hold_for_pickup = usps_priority
+    usps_priority_mail_gift_card_flat_rate_envelope = usps_priority
+    usps_priority_mail_gift_card_flat_rate_envelope_hold_for_pickup = usps_priority
+    usps_priority_mail_window_flat_rate_envelope = usps_priority
+    usps_priority_mail_window_flat_rate_envelope_hold_for_pickup = usps_priority
+    usps_priority_mail_small_flat_rate_envelope = usps_priority
+    usps_priority_mail_small_flat_rate_envelope_hold_for_pickup = usps_priority
+    usps_priority_mail_legal_flat_rate_envelope = usps_priority
+    usps_priority_mail_legal_flat_rate_envelope_hold_for_pickup = usps_priority
+    usps_priority_mail_padded_flat_rate_envelope_hold_for_pickup = usps_priority
+    usps_priority_mail_regional_rate_box_a = usps_priority_mail_cubic
+    usps_priority_mail_regional_rate_box_a_hold_for_pickup = usps_priority_mail_cubic
+    usps_priority_mail_regional_rate_box_b = usps_priority_mail_cubic
+    usps_priority_mail_regional_rate_box_b_hold_for_pickup = usps_priority_mail_cubic
+    usps_first_class_package_service_hold_for_pickup = usps_first_class
+    usps_priority_mail_express_flat_rate_boxes = usps_priority_mail_express
+    usps_priority_mail_express_flat_rate_boxes_hold_for_pickup = usps_priority_mail_express
+    usps_priority_mail_express_sunday_holiday_delivery_flat_rate_boxes = usps_priority_mail_express
+    usps_priority_mail_regional_rate_box_c = usps_priority_mail_cubic
+    usps_priority_mail_regional_rate_box_c_hold_for_pickup = usps_priority_mail_cubic
+    usps_first_class_package_service = usps_first_class
+    usps_priority_mail_express_padded_flat_rate_envelope = usps_priority_mail_express
+    usps_priority_mail_express_padded_flat_rate_envelope_hold_for_pickup = usps_priority_mail_express
+    usps_priority_mail_express_sunday_holiday_delivery_padded_flat_rate_envelope = usps_priority_mail_express

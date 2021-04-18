@@ -107,7 +107,7 @@ def rate_request(
                     for code, option in options if code in OptionCode
                 ]
             )
-            if any(options) else None
+            if any([c in OptionCode for c, _ in options]) else None
         ),
         parcel_characteristics=parcel_characteristicsType(
             weight=package.weight.map(MeasurementOptions).KG,

@@ -39,7 +39,7 @@
 | `carrier_id` | `str` | 
 
 
-#### UPS Package Settings
+#### UPS Settings
 
 | Name | Type | Description 
 | --- | --- | --- |
@@ -66,7 +66,7 @@
 | `carrier_id` | `str` | 
 
 
-#### FedEx Express Settings
+#### FedEx Settings
 
 | Name | Type | Description 
 | --- | --- | --- |
@@ -446,7 +446,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `your_packaging` | Your Packaging
 
 
-#### UPS Package
+#### UPS
 
 | Code | Identifier
 --- | ---
@@ -474,7 +474,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `purolator_customer_packaging` | Customer Packaging
 
 
-#### FedEx Express
+#### FedEx
 
 | Code | Identifier
 --- | ---
@@ -504,7 +504,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 ## Package Presets
 
 
-#### UPS Package
+#### UPS
 
 | Code | Dimensions | Note
 --- | --- | ---
@@ -525,7 +525,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `purolator_express_box` | 3.5 x 7.0 | length x weight
 
 
-#### FedEx Express
+#### FedEx
 | Code | Dimensions | Note
 --- | --- | ---
 | `fedex_envelope_legal_size` | 15.5 x 1.0 x 9.5 | height x weight x width
@@ -582,7 +582,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 ## Shipping Services
 
 
-#### UPS Package
+#### UPS
 
 | Code | Identifier
 --- | ---
@@ -678,7 +678,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `purolator_express_international_box_12_00` | PurolatorExpressInternationalBox12:00
 
 
-#### FedEx Express
+#### FedEx
 
 | Code | Identifier
 --- | ---
@@ -1076,7 +1076,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `dhl_e_com_discount` | ZE | `bool`
 
 
-#### FedEx Express
+#### FedEx
 
 | Code | Identifier | Description
 | --- | --- | ---
@@ -1177,7 +1177,7 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `purolator_show_alternative_services` | Show Alternate Services | `bool`
 
 
-#### UPS Package
+#### UPS
 
 | Code | Identifier | Description
 | --- | --- | ---

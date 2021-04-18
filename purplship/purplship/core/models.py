@@ -85,6 +85,7 @@ class Customs:
     content_description: str = None
     incoterm: str = None
     invoice: str = None
+    license_number: str = None
     certificate_number: str = None
     commodities: List[Commodity] = JList[Commodity]
     duty: Payment = JStruct[Payment]
