@@ -14,11 +14,11 @@ from purplship.core.models import (
 from purplship.providers.tnt import (
     # parse_shipment_response,
     parse_tracking_response,
-    parse_rate_response,
+    # parse_rate_response,
 
     tracking_request,
     # shipment_request,
-    rate_request,
+    # rate_request,
 )
 from purplship.mappers.tnt.settings import Settings
 
@@ -28,10 +28,10 @@ class Mapper(BaseMapper):
 
     """Request Mappers"""
 
-    def create_rate_request(
-        self, payload: RateRequest
-    ) -> Serializable:
-        return rate_request(payload, self.settings)
+    # def create_rate_request(
+    #     self, payload: RateRequest
+    # ) -> Serializable:
+    #     return rate_request(payload, self.settings)
 
     # def create_shipment_request(
     #     self, payload: ShipmentRequest
@@ -45,10 +45,10 @@ class Mapper(BaseMapper):
 
     """Response Parsers"""
 
-    def parse_rate_response(
-        self, response: Deserializable[str]
-    ) -> Tuple[List[RateDetails], List[Message]]:
-        return parse_rate_response(response.deserialize(), self.settings)
+    # def parse_rate_response(
+    #     self, response: Deserializable[str]
+    # ) -> Tuple[List[RateDetails], List[Message]]:
+    #     return parse_rate_response(response.deserialize(), self.settings)
 
     # def parse_shipment_response(
     #     self, response: Deserializable[str]

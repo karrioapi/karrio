@@ -40,11 +40,11 @@ def _extract_detail(node: Element, settings: Settings) -> TrackingDetails:
         tracking_number=detail.ConsignmentNumber,
         events=[
             TrackingEvent(
-                date=DF.fdate(status.LocalEventDate, 'YYYYMMDD'),
+                date=DF.fdate(status.LocalEventDate.valueOf_, '%Y%m%d'),
                 description=status.StatusDescription,
                 location=SF.concat_str(status.Depot, status.DepotName, join=True, separator='-'),
                 code=status.StatusCode,
-                time=DF.ftime(status.LocalEventTime, 'HHMM')
+                time=DF.ftime(status.LocalEventTime.valueOf_, '%H%M')
             )
             for status in cast(List[StatusStructure], detail.StatusData)
         ],
@@ -57,7 +57,12 @@ def tracking_request(payload: TrackingRequest, _) -> Serializable[TrackRequest]:
         locale="en_US",
         version="3.1",
         SearchCriteria=SearchCriteriaType(ConsignmentNumber=payload.tracking_numbers),
-        LevelOfDetail=LevelOfDetailType(Complete=CompleteType())
+        LevelOfDetail=LevelOfDetailType(
+            Complete=CompleteType(
+                originAddress=True,
+                destinationAddress=True,
+            )
+        )
     )
 
-    return Serializable(request, XP.to_xml)
+    return Serializable(request, XP.export)
