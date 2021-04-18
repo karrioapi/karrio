@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "carrier.usps"
+name = "carrier.tnt"
 version = "2021.3"
-description = "USPS Web API Schemas Python Data Types library"
+description = "TNT Web API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
-homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.usps"
+homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.tnt"
 authors = ["Dan Kobina <danielkobina@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [
-    { include = "usps_lib" }
+    { include = "tnt_lib" }
 ]
 classifiers = [
 	"Intended Audience :: Developers",
@@ -21,7 +21,6 @@ classifiers = [
 python = "^3.6"
 six = "^1.15.0"
 lxml = "^4.6.2"
-
 
 [tool.poetry.dev-dependencies]
 
