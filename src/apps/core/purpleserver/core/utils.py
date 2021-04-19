@@ -130,6 +130,8 @@ def save_one_to_one_data(
         setattr(parent, name, None)
 
     if instance is None:
-        return SerializerDecorator[serializer](data=data, **kwargs).save().instance
+        new_instance = SerializerDecorator[serializer](data=data, **kwargs).save().instance
+        parent and setattr(parent, name, new_instance)
+        return new_instance
 
     return SerializerDecorator[serializer](instance=instance, data=data, **kwargs).save().instance

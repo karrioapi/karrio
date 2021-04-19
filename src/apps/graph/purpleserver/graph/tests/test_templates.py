@@ -155,7 +155,44 @@ class TestParcelTemplate(GraphTestCase):
         self.assertDictEqual(response_data, PARCEL_TEMPLATE_RESPONSE)
 
     def test_update_parcel_template(self):
-        pass
+        template = json.loads(self._create_parcel_template().content)
+        response = self.query(
+            '''
+            mutation update_template($data: UpdateTemplateInput!) {
+              update_template(input: $data) {
+                id
+                is_default
+                label
+                parcel {
+                  width
+                  height
+                  length
+                  dimension_unit
+                  weight
+                  weight_unit
+                  packaging_type
+                  package_preset
+                }
+                errors {
+                  field
+                  messages
+                }
+              }
+            }
+            ''',
+            op_name='update_template',
+            variables={
+                **PARCEL_TEMPLATE_UPDATE_DATA,
+                "data": {
+                    "id": template['data']['create_template']['id'],
+                    **PARCEL_TEMPLATE_UPDATE_DATA['data']
+                }
+            }
+        )
+        response_data = json.loads(response.content)
+
+        self.assertResponseNoErrors(response)
+        self.assertDictEqual(response_data, PARCEL_TEMPLATE_UPDATE_RESPONSE)
 
     def test_delete_parcel_template(self):
         template = json.loads(self._create_parcel_template().content)
@@ -237,13 +274,62 @@ class TestCustomsTemplate(GraphTestCase):
         self.assertDictEqual(response_data, CUSTOMS_TEMPLATE_RESPONSE)
 
     def test_update_customs_info_template(self):
-        pass
+        template = json.loads(self._create_customs_info_template().content)
+        CUSTOMS_TEMPLATE_UPDATE_DATA["data"]["id"] = template['data']['create_template']['id']
+        CUSTOMS_TEMPLATE_UPDATE_DATA["data"]["customs"]["commodities"][0]["id"] = next(
+            c['id'] for c in template['data']['create_template']['customs']['commodities']
+            if c['sku'] == template["data"]["create_template"]["customs"]["commodities"][0]["sku"]
+        )
 
-    def test_delete_customs_info_commodity(self):
-        pass
+        response = self.query(
+            '''
+            mutation update_template($data: UpdateTemplateInput!) {
+              update_template(input: $data) {
+                id
+                is_default
+                label
+                customs {
+                  aes
+                  eel_pfc
+                  incoterm
+                  content_type
+                  commercial_invoice
+                  certificate_number
+                  content_description
+                  duty {
+                    paid_by
+                    currency
+                    account_number
+                  }
+                  invoice
+                  signer
+                  certify
+                  commodities {
+                    id
+                    sku
+                    weight
+                    quantity
+                    weight_unit
+                    description
+                    value_amount
+                    value_currency
+                    origin_country
+                  }
+                }
+                errors {
+                  field
+                  messages
+                }
+              }
+            }
+            ''',
+            op_name='update_template',
+            variables=CUSTOMS_TEMPLATE_UPDATE_DATA
+        )
+        response_data = json.loads(response.content)
 
-    def test_delete_customs_info_duty(self):
-        pass
+        self.assertResponseNoErrors(response)
+        self.assertDictEqual(response_data, CUSTOMS_TEMPLATE_UPDATE_RESPONSE)
 
     def test_delete_customs_info(self):
         template = json.loads(self._create_customs_info_template().content)
@@ -380,6 +466,36 @@ PARCEL_TEMPLATE_RESPONSE = {
     }
 }
 
+PARCEL_TEMPLATE_UPDATE_DATA = {
+    "data": {
+        "parcel": {
+            "weight": 0.45,
+            "weight_unit": "LB",
+        }
+    }
+}
+
+PARCEL_TEMPLATE_UPDATE_RESPONSE = {
+    'data': {
+        'update_template': {
+            'errors': None,
+            'id': ANY,
+            'is_default': None,
+            'label': 'Purple Pack',
+            'parcel': {
+                'dimension_unit': 'CM',
+                'height': 32.0,
+                'length': 32.0,
+                'package_preset': 'canadapost_corrugated_small_box',
+                'packaging_type': None,
+                'weight': 0.45,
+                'weight_unit': 'LB',
+                'width': 42.0
+            }
+        }
+    }
+}
+
 CUSTOMS_TEMPLATE_DATA = {
     "data": {
         "label": "Customs info template",
@@ -447,6 +563,74 @@ CUSTOMS_TEMPLATE_RESPONSE = {
             'is_default': None,
             'label': 'Customs info template',
             'errors': None,
+        }
+    }
+}
+
+CUSTOMS_TEMPLATE_UPDATE_DATA = {
+    "data": {
+        "customs": {
+            "commodities": [
+                {
+                    "weight": 1,
+                    "weight_unit": "LB",
+                }
+            ],
+            "duty": {
+                "paid_by": "SENDER",
+            }
+        }
+    }
+}
+
+CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
+    "data": {
+        "update_template": {
+            "id": ANY,
+            "is_default": None,
+            "label": "Customs info template",
+            "customs": {
+                "aes": None,
+                "eel_pfc": None,
+                "incoterm": "DDU",
+                "content_type": "documents",
+                "commercial_invoice": None,
+                "certificate_number": None,
+                "content_description": None,
+                "duty": {
+                    "paid_by": "SENDER",
+                    "currency": None,
+                    "account_number": None
+                },
+                "invoice": None,
+                "signer": None,
+                "certify": None,
+                "commodities": [
+                    {
+                        "id": ANY,
+                        "sku": "3PO4I5J4PO5I4HI5OH4O5IH4IO5",
+                        "weight": 1.0,
+                        "quantity": 4,
+                        "weight_unit": "LB",
+                        "description": None,
+                        "value_amount": None,
+                        "value_currency": None,
+                        "origin_country": None
+                    },
+                    {
+                        "id": ANY,
+                        "sku": "6787L8K7J8L7J8L7K8",
+                        "weight": 1.15,
+                        "quantity": None,
+                        "weight_unit": "KG",
+                        "description": None,
+                        "value_amount": None,
+                        "value_currency": None,
+                        "origin_country": None
+                    }
+                ]
+            },
+            "errors": None
         }
     }
 }

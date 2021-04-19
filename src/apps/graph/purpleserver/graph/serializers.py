@@ -1,8 +1,7 @@
 import typing
-import json
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import ModelSerializer as BaseModelSerializer, JSONField
+from rest_framework.serializers import ModelSerializer as BaseModelSerializer
 
 from purpleserver.core.utils import save_one_to_one_data, save_many_to_many_data
 import purpleserver.core.serializers as serializers
@@ -71,7 +70,7 @@ class PaymentModelSerializer(ModelSerializer):
     @transaction.atomic
     def create(self, validated_data: dict) -> graph.Template:
         data = {
-            **validated_data,
+            **{key: value for key, value in validated_data.items() if key != 'contact'},
             'contact': save_one_to_one_data('contact', AddressModelSerializer, payload=validated_data, **self._extra),
         }
 
@@ -83,7 +82,7 @@ class PaymentModelSerializer(ModelSerializer):
 
         save_one_to_one_data('contact', AddressModelSerializer, instance, payload=validated_data, **self._extra)
 
-        return super().create(data)
+        return super().update(instance, data)
 
 
 class CommodityModelSerializer(ModelSerializer):
@@ -169,9 +168,12 @@ class TemplateModelSerializer(ModelSerializer):
     def update(self, instance: graph.Template, validated_data: dict) -> graph.Template:
         data = {key: value for key, value in validated_data.items() if key not in ['address', 'customs', 'parcel']}
 
-        save_one_to_one_data('address', AddressModelSerializer, instance, payload=validated_data, partial=True)
-        save_one_to_one_data('customs', CustomsModelSerializer, instance, payload=validated_data, partial=True)
-        save_one_to_one_data('parcel', ParcelModelSerializer, instance, payload=validated_data, partial=True)
+        save_one_to_one_data(
+            'address', AddressModelSerializer, instance, payload=validated_data, partial=True, **self._extra)
+        save_one_to_one_data(
+            'customs', CustomsModelSerializer, instance, payload=validated_data, partial=True, **self._extra)
+        save_one_to_one_data(
+            'parcel', ParcelModelSerializer, instance, payload=validated_data, partial=True, **self._extra)
 
         ensure_unique_default_related_data(validated_data, instance)
 
