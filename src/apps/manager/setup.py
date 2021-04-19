@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.manager',
-      version='2021.2.1',
+      version='2021.3',
       description='Multi-carrier shipping API Shipments manager module',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/PurplShip/purplship-server',
       author='Purplship',
       author_email='danielk.developer@gmail.com',
-      license='AGPLv3',
+      license='Apache License Version 2.0',
       packages=find_packages("."),
       install_requires=[
             'purplship-server.core',
@@ -22,7 +22,7 @@ setup(
       ],
       classifiers=[
             "Programming Language :: Python :: 3",
-            "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+            "License :: OSI Approved :: Apache Software License",
       ],
       zip_safe=False
 )

@@ -4,6 +4,8 @@ purplship
 purplship-server
 purplship-server.client
 purplship-server.core
+purplship-server.events
+purplship-server.graph
 purplship-server.manager
 purplship-server.pricing
 purplship-server.proxy

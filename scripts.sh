@@ -166,10 +166,6 @@ runserver() {
 		migrate
 	fi
 
-	set -m
-
-	trap kill_server SIGINT
-
 	purplship runserver &
 	sleep 3
 	purplship run_huey -w 2
@@ -230,13 +226,13 @@ build() {
 }
 
 build_theme() {
-  pushd "${ROOT:?}/src/frontend/theme" || false &&
-  rm -rf node_modules; yarn && yarn build
+  pushd "${ROOT:?}/src/frontend" || false &&
+  rm -rf node_modules; yarn && yarn build:theme
   popd || true
 }
 
 build_dashboard() {
-  pushd "${ROOT:?}/src/frontend/dashboard" || false &&
+  pushd "${ROOT:?}/src/frontend" || false &&
   rm -rf node_modules; yarn && yarn build "$@"
   popd
 }

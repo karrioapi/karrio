@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://app.purplship.com"
+      "url": "https://app.purplship.com/"
     }
   ],
   "security": [

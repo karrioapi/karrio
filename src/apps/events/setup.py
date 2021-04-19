@@ -12,7 +12,7 @@ setup(
       url='https://github.com/PurplShip/purplship-server',
       author='Purplship',
       author_email='danielk.developer@gmail.com',
-      license='AGPLv3',
+      license='Apache License Version 2.0',
       packages=find_packages("."),
       install_requires=[
             'purplship-server.core',
@@ -23,7 +23,7 @@ setup(
       ],
       classifiers=[
             "Programming Language :: Python :: 3",
-            "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+            "License :: OSI Approved :: Apache Software License",
       ],
       zip_safe=False
 )
