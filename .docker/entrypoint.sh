@@ -37,4 +37,4 @@ if not any(User.objects.all()):
 " | purplship shell) > /dev/null 2>&1;
 fi
 
-gunicorn --chdir /usr/local/lib/python3.8/site-packages/ --config gunicorn-cfg.py purpleserver.wsgi
+./go.sh

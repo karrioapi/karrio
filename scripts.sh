@@ -146,23 +146,36 @@ rundb() {
   sleep 5
 }
 
+kill_server() {
+	lsof -i tcp:8000 | tail -n +2 | awk '{print $2}' | xargs kill -9
+}
+
 runserver() {
-  if [[ "$*" = *--tenants* ]];
-  then
-    export MULTI_TENANT_ENABLE=True
-  else
-    export MULTI_TENANT_ENABLE=False
-  fi
+	if [[ "$*" = *--tenants* ]];
+	then
+		export MULTI_TENANT_ENABLE=True
+	else
+		export MULTI_TENANT_ENABLE=False
+	fi
 
-  if [[ "$*" == *--rdb* ]]; then
-    rundb
-  fi
+	if [[ "$*" == *--rdb* ]]; then
+		rundb
+	fi
 
-  if [[ "$*" == *--rdata* ]]; then
-    migrate
-  fi
+	if [[ "$*" == *--rdata* ]]; then
+		migrate
+	fi
 
-  purplship runserver
+	set -m
+
+	trap kill_server SIGINT
+
+	purplship runserver &
+	sleep 3
+	purplship run_huey -w 2
+
+	kill_server
+	sleep 1
 }
 
 run_mail_server() {
@@ -325,5 +338,6 @@ alias run:db=rundb
 alias run:server=runserver
 alias run:micro=runservices
 alias run:mail=run_mail_server
+alias ks=kill_server
 
 activate_env
