@@ -109,7 +109,7 @@ node_modules/
 # PurplShip stuff:
 *.DS_Store
 .idea/
-staticfiles/
-!src/purpleserver/purpleserver/staticfiles/
+staticfiles/*
 src/purpleserver/purpleserver/staticfiles/*
+!src/purpleserver/purpleserver/staticfiles/.gitkeep
 codegen/
