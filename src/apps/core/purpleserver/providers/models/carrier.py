@@ -4,11 +4,17 @@ from django.db import models
 from django.conf import settings
 from django.forms.models import model_to_dict
 
-from purpleserver.core.models import Entity, uuid
+from purpleserver.core.models import OwnedEntity, OwnedEntityManager, uuid
 from purpleserver.core.datatypes import CarrierSettings
 
 
-class Carrier(Entity):
+class CarrierManager(OwnedEntityManager):
+    def get_queryset(self):
+        from purpleserver.providers.models import MODELS
+        return super().get_queryset().prefetch_related(*[Model.__name__.lower() for Model in MODELS.values()])
+
+
+class Carrier(OwnedEntity):
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='car_'), editable=False)
     carrier_id = models.CharField(
         max_length=200, unique=True,
@@ -16,24 +22,31 @@ class Carrier(Entity):
     )
     test = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, editable=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, editable=False)
+
+    objects = CarrierManager()
 
     def __str__(self):
-        return f"{self.carrier_id} - {self.user or 'system'}"
+        return f"{self.carrier_id} - {self.created_by or 'system'}"
 
     def _linked_settings(self):
-        for field in [f for f in self._meta.get_fields() if isinstance(f, models.OneToOneRel)]:
-            try:
-                return getattr(self, field.get_accessor_name())
-            except:
-                pass
-        return None
+        from purpleserver.providers.models import MODELS
+
+        return next((
+            getattr(self, Model.__name__.lower())
+            for Model in MODELS.values()
+            if hasattr(self, Model.__name__.lower())
+        ), None)
+
+    @property
+    def settings(self):
+        return self._linked_settings()
 
     @property
     def data(self) -> CarrierSettings:
-        settings = self._linked_settings()
+        settings = self.settings
         return CarrierSettings.create({
-            'id': settings.pk,
+            'id': settings.id,
             'carrier_name': settings.carrier_name,
             **model_to_dict(settings)
         })

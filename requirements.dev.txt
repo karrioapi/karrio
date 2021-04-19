@@ -9,7 +9,7 @@ wheel
 # -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.royalmail&subdirectory=royalmail
 # -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sendle&subdirectory=sendle
 # -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sf_express&subdirectory=sf_express
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.usps&subdirectory=usps
+# -e git+https://github.com/PurplShip/purplship-carriers.git@adding-tnt-schemas-lib#egg=carrier.usps&subdirectory=usps
 # -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yanwen&subdirectory=yanwen
 # -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yunexpress&subdirectory=yunexpress
 
@@ -55,22 +55,24 @@ purplship.canpar
 purplship.dhl-express
 purplship.dhl-universal
 purplship.dicom
-purplship.fedex-express
+purplship.fedex
 purplship.purolator-courier
 purplship.royalmail
 purplship.sendle
 purplship.sf-express
-purplship.ups-package
-purplship.usps==2021.2a0
+purplship.ups
+purplship.usps
 purplship.yanwen
 purplship.yunexpress
 
 
 # Purplship server core packages
 -e ./src/apps/core
+-e ./src/apps/graph
 -e ./src/purpleserver
--e ./src/apps/client
 -e ./src/apps/proxy
 -e ./src/apps/tenants
 -e ./src/apps/manager
 -e ./src/apps/pricing
+-e ./src/apps/events
+-e ./src/apps/client

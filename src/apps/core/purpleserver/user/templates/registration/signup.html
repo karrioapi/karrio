@@ -1,0 +1,82 @@
+{% extends "purpleserver/base_site.html" %}
+{% load i18n static %}
+{% block title %}Purplship | Sign Up{% endblock %}
+
+{% block content %}
+
+<div class="card isolated-card">
+    <div class="card-content">
+        <p class="subtitle has-text-centered">{% trans 'Sign up with credentials' %}</p>
+
+        <form method="post">{% csrf_token %}
+
+            {% if form.errors and not form.non_field_errors %}
+            <p class="has-text-danger">
+            {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+            </p>
+            {% endif %}
+
+            {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+            <p class="has-text-danger">{{ error }}</p>
+            {% endfor %}
+            {% endif %}
+
+            <div class="field mt-6">
+                <label class="label" for="{{ form.email.id_for_label }}">{% trans 'Email' %}</label>
+                <div class="control">
+                    <input class="input" id="{{ form.email.id_for_label }}"
+                       name="{{ form.email.html_name }}" type="email"
+                       placeholder="{% trans 'Email' %}" required>
+                </div>
+                <div class="has-text-danger">{{ form.email.errors }}</div>
+            </div>
+            <div class="field mt-5">
+                <label class="label" for="{{ form.full_name.id_for_label }}">{% trans 'Full name' %}</label>
+                <div class="control">
+                    <input class="input" id="{{ form.full_name.id_for_label }}"
+                       name="{{ form.full_name.html_name }}" type="text"
+                       placeholder="{% trans 'Full name' %}">
+                </div>
+                <div class="has-text-danger">{{ form.full_name.errors }}</div>
+            </div>
+            <div class="field mt-5">
+                <label class="label" for="{{ form.password1.id_for_label }}">
+                   {% trans 'Password' %}
+                </label>
+                <div class="control">
+                    <input class="input" id="{{ form.password1.id_for_label }}"
+                       name="{{ form.password1.html_name }}" type="password"
+                       placeholder="{% trans 'Password' %}" required>
+                </div>
+                <div class="has-text-danger">{{ form.password1.errors }}</div>
+            </div>
+            <div class="field mt-5">
+                <label class="label level" for="{{ form.password2.id_for_label }}">
+                    {% trans 'Password Confirmation' %}
+                </label>
+                <div class="control">
+                    <input class="input" id="{{ form.password2.id_for_label }}"
+                       name="{{ form.password2.html_name }}" type="password"
+                       placeholder="{% trans 'Password Confirmation' %}" required>
+                </div>
+                <div class="has-text-danger">{{ form.password2.errors }}</div>
+            </div>
+
+            <div class="field mt-6">
+                <div class="control">
+                    <input class="button is-primary is-fullwidth" type="submit" value="{% trans 'Create account' %}"/>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<div class="has-text-centered my-4 is-size-6">
+    Have an account? <a href="{% url 'login' %}">Sign in</a>
+</div>
+
+{% endblock %}
+

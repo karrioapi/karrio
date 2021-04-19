@@ -92,10 +92,10 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
-        user = validated_data['user']
+        created_by = validated_data['user']
         carrier_ids = validated_data.get('carrier_ids', [])
-        carriers = Carriers.list(carrier_ids=carrier_ids, user=user) if any(carrier_ids) else []
-        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save(user=user).instance
+        carriers = Carriers.list(carrier_ids=carrier_ids, created_by=created_by) if any(carrier_ids) else []
+        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save(created_by=created_by).instance
         test_mode = all([r.test_mode for r in rate_response.rates])
 
         shipment_data = {
@@ -105,48 +105,52 @@ class ShipmentSerializer(ShipmentData):
 
         related_data = dict(
             shipper=SerializerDecorator[AddressSerializer](
-                data=validated_data.get('shipper')).save(user=user).instance,
+                data=validated_data.get('shipper')).save(created_by=created_by).instance,
 
             recipient=SerializerDecorator[AddressSerializer](
-                data=validated_data.get('recipient')).save(user=user).instance,
+                data=validated_data.get('recipient')).save(created_by=created_by).instance,
 
             customs=SerializerDecorator[CustomsSerializer](
-                data=validated_data.get('customs')).save(user=user).instance,
+                data=validated_data.get('customs')).save(created_by=created_by).instance,
 
             payment=SerializerDecorator[PaymentSerializer](
-                data=validated_data.get('payment')).save(user=user).instance,
+                data=validated_data.get('payment')).save(created_by=created_by).instance,
         )
 
         shipment = models.Shipment.objects.create(**{
             **shipment_data,
             **{k: v for k, v in related_data.items() if v is not None},
-            'user': user,
             'test_mode': test_mode,
-            'shipment_rates': DP.to_dict(rate_response.rates),
+            'created_by': created_by,
+            'rates': DP.to_dict(rate_response.rates),
             'messages': DP.to_dict(rate_response.messages)
         })
         shipment.carriers.set(carriers)
 
         if validated_data.get('parcels') is not None:
-            shipment_parcels = [
-                SerializerDecorator[ParcelSerializer](data=data).save(user=user).instance
+            parcels = [
+                SerializerDecorator[ParcelSerializer](data=data).save(created_by=created_by).instance
                 for data in validated_data.get('parcels', [])
             ]
-            shipment.shipment_parcels.set(shipment_parcels)
+            shipment.parcels.set(parcels)
 
         return shipment
 
     @transaction.atomic
     def update(self, instance: models.Shipment, validated_data: dict) -> models.Shipment:
+        changes = []
         data = validated_data.copy()
+        created_by = validated_data.get('created_by', instance.created_by)
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS:
                 setattr(instance, key, val)
+                changes.append(key)
                 validated_data.pop(key)
 
             if key in models.Shipment.RELATIONAL_PROPS and val is None:
                 prop = getattr(instance, key)
+                changes.append(key)
                 # Delete related data from database if payload set to null
                 if hasattr(prop, 'delete'):
                     prop.delete()
@@ -154,15 +158,18 @@ class ShipmentSerializer(ShipmentData):
                     validated_data.pop(key)
 
         if validated_data.get('payment') is not None:
+            changes.append('payment')
             instance.payment = SerializerDecorator[PaymentSerializer](
-                instance.payment, data=validated_data['payment']).save(user=instance.user).instance
+                instance.payment, data=validated_data['payment']).save(created_by=created_by).instance
 
         if validated_data.get('customs') is not None:
+            changes.append('customs')
             instance.customs = SerializerDecorator[CustomsSerializer](
-                data=validated_data.get('customs')).save(user=instance.user).instance
+                instance.customs, data=validated_data.get('customs')).save(created_by=created_by).instance
 
-        if validated_data.get('rates') is not None:
-            instance.shipment_rates = DP.to_dict(validated_data.get('rates', []))
+        if 'rates' in validated_data:
+            changes.append('rates')
+            instance.rates = DP.to_dict(validated_data.get('rates', []))
 
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
@@ -170,12 +177,13 @@ class ShipmentSerializer(ShipmentData):
 
             instance.selected_rate = {**selected_rate, **({'carrier_ref': carrier.id} if carrier is not None else {})}
             instance.selected_rate_carrier = carrier
+            changes += ['selected_rate', 'selected_rate_carrier']
 
-        instance.save()
+        instance.save(update_fields=changes)
 
         if 'carrier_ids' in validated_data:
             carrier_ids = validated_data.get('carrier_ids', [])
-            carriers = Carriers.list(carrier_ids=carrier_ids) if any(carrier_ids) else instance.carriers
+            carriers = Carriers.list(carrier_ids=carrier_ids, created_by=instance.created_by) if any(carrier_ids) else instance.carriers
             instance.carriers.set(carriers)
 
         return instance
@@ -229,6 +237,6 @@ class ShipmentCancelSerializer(Shipment):
 def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
     if shipment is not None:
         shipment.selected_rate = None
-        shipment.shipment_rates = []
+        shipment.rates = []
         shipment.messages = []
         shipment.save()

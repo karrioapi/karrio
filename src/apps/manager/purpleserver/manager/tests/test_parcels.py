@@ -29,7 +29,7 @@ class TestParcelDetails(APITestCase):
             "length": 29,
             "weight_unit": "KG",
             "dimension_unit": "CM",
-            "user": self.user
+            "created_by": self.user
         })
 
     def test_update_parcel(self):

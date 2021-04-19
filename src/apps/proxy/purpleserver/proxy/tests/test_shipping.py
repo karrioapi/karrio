@@ -57,7 +57,9 @@ SHIPPING_DATA = {
         "country_code": "CA",
         "postal_code": "E1C4Z8",
         "residential": False,
-        "state_code": "NB"
+        "state_code": "NB",
+        "validate_location": False,
+        "validation": None
     },
     "shipper": {
         "address_line1": "5840 Oak St",
@@ -68,7 +70,9 @@ SHIPPING_DATA = {
         "country_code": "CA",
         "postal_code": "V6M2V9",
         "residential": False,
-        "state_code": "BC"
+        "state_code": "BC",
+        "validate_location": False,
+        "validation": None
     },
     "parcels": [{
         "weight": 1,
@@ -282,7 +286,9 @@ SHIPPING_RESPONSE = {
         'suburb': None,
         'residential': False,
         'address_line1': '5840 Oak St',
-        'address_line2': ''
+        'address_line2': '',
+        "validate_location": False,
+        "validation": None
     },
     'recipient': {
         'id': None,
@@ -299,7 +305,9 @@ SHIPPING_RESPONSE = {
         'suburb': None,
         'residential': False,
         'address_line1': '125 Church St',
-        'address_line2': ''
+        'address_line2': '',
+        "validate_location": False,
+        "validation": None
     },
     'parcels': [
         {

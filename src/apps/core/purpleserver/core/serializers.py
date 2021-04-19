@@ -103,14 +103,19 @@ class TestFilters(FlagsSerializer):
 
 class Message(Serializer):
 
-    carrier_name = CharField(required=True, help_text="The targeted carrier")
-    carrier_id = CharField(required=True, help_text="The targeted carrier name (unique identifier)")
+    carrier_name = CharField(required=False, help_text="The targeted carrier")
+    carrier_id = CharField(required=False, help_text="The targeted carrier name (unique identifier)")
     message = CharField(required=False, help_text="The error or warning message")
     code = CharField(required=False, help_text="The message code")
     details = DictField(required=False, help_text="any additional details")
 
 
-class AddressData(AugmentedAddressSerializer):
+class AddressValidation(Serializer):
+    success = BooleanField(help_text="True if the address is valid")
+    meta = PlainDictField(required=False, allow_null=True, help_text="validation service details")
+
+
+class AddressData(AugmentedAddressSerializer, Serializer):
 
     postal_code = CharField(required=False, allow_blank=True, allow_null=True, help_text="""
     The address postal code
@@ -146,10 +151,11 @@ class AddressData(AugmentedAddressSerializer):
     **(required for shipment purchase)**
     """)
     address_line2 = CharField(required=False, allow_blank=True, allow_null=True, help_text="The address line with suite number")
+    validate_location = BooleanField(required=False, allow_null=True, default=False, help_text="Indicate if the address should be validated")
 
 
 class Address(EntitySerializer, AddressData):
-    pass
+    validation = AddressValidation(required=False, allow_null=True, help_text="Specify address validation result")
 
 
 class CommodityData(Serializer):
@@ -168,7 +174,7 @@ class Commodity(EntitySerializer, CommodityData):
     pass
 
 
-class ParcelData(PresetSerializer):
+class ParcelData(PresetSerializer, Serializer):
     class Meta:
         validators = [dimensions_required_together]
 

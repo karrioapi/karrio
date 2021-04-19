@@ -63,7 +63,9 @@ PICKUP_DATA = {
     "postal_code": "E1C4Z8",
     "residential": False,
     "state_code": "NB",
-    "email": "john@a.com"
+    "email": "john@a.com",
+    "validate_location": False,
+    "validation": None
   },
   "parcels": [
     {
@@ -96,7 +98,9 @@ PICKUP_UPDATE_DATA = {
         "postal_code": "E1C4Z8",
         "residential": False,
         "state_code": "NB",
-        "email": "john@a.com"
+        "email": "john@a.com",
+        "validate_location": False,
+        "validation": None
     },
     "parcels": [
         {
@@ -192,7 +196,9 @@ PICKUP_RESPONSE = {
       "suburb": None,
       "residential": False,
       "address_line1": "125 Church St",
-      "address_line2": ""
+      "address_line2": "",
+      "validate_location": False,
+      "validation": None
     },
     "parcels": [
       {
@@ -243,7 +249,9 @@ PICKUP_UPDATE_RESPONSE = {
       "suburb": None,
       "residential": False,
       "address_line1": "125 Church St",
-      "address_line2": ""
+      "address_line2": "",
+      "validate_location": False,
+      "validation": None
     },
     "parcels": [
       {

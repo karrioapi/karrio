@@ -6,6 +6,12 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export DATABASE_PORT=5432
+export DATABASE_NAME=db
+export DATABASE_ENGINE=postgresql_psycopg2
+export DATABASE_USERNAME=postgres
+export DATABASE_PASSWORD=postgres
+
 export SECRET_KEY="n*s-ex6@ex_r1i%bk=3jd)p+lsick5bi*90!mbk7rc3iy_op1r"
 export wheels=~/Wheels
 export PIP_FIND_LINKS="https://git.io/purplship"
@@ -137,32 +143,35 @@ rundb() {
     export DATABASE_HOST="0.0.0.0"
   fi
 
-  export DATABASE_PORT=5432
-  export DATABASE_NAME=db
-  export DATABASE_ENGINE=postgresql_psycopg2
-  export DATABASE_USERNAME=postgres
-  export DATABASE_PASSWORD=postgres
-
   sleep 5
 }
 
+kill_server() {
+	lsof -i tcp:8000 | tail -n +2 | awk '{print $2}' | xargs kill -9
+}
+
 runserver() {
-  if [[ "$*" = *--tenants* ]];
-  then
-    export MULTI_TENANT_ENABLE=True
-  else
-    export MULTI_TENANT_ENABLE=False
-  fi
+	if [[ "$*" = *--tenants* ]];
+	then
+		export MULTI_TENANT_ENABLE=True
+	else
+		export MULTI_TENANT_ENABLE=False
+	fi
 
-  if [[ "$*" == *--rdb* ]]; then
-    rundb
-  fi
+	if [[ "$*" == *--rdb* ]]; then
+		rundb
+	fi
 
-  if [[ "$*" == *--rdata* ]]; then
-    migrate
-  fi
+	if [[ "$*" == *--rdata* ]]; then
+		migrate
+	fi
 
-  purplship runserver
+	purplship runserver &
+	sleep 3
+	purplship run_huey -w 2
+
+	kill_server
+	sleep 1
 }
 
 run_mail_server() {
@@ -176,7 +185,9 @@ test() {
 
   purplship test --failfast purpleserver.proxy.tests &&
   purplship test --failfast purpleserver.pricing.tests &&
-  purplship test --failfast purpleserver.manager.tests
+  purplship test --failfast purpleserver.manager.tests &&
+  purplship test --failfast purpleserver.events.tests &&
+  purplship test --failfast purpleserver.graph.tests
 }
 
 test_services() {
@@ -215,13 +226,13 @@ build() {
 }
 
 build_theme() {
-  pushd "${ROOT:?}/src/frontend/theme" || false &&
-  rm -rf node_modules; yarn && yarn build
+  pushd "${ROOT:?}/src/frontend" || false &&
+  rm -rf node_modules; yarn && yarn build:theme
   popd || true
 }
 
 build_dashboard() {
-  pushd "${ROOT:?}/src/frontend/dashboard" || false &&
+  pushd "${ROOT:?}/src/frontend" || false &&
   rm -rf node_modules; yarn && yarn build "$@"
   popd
 }
@@ -230,10 +241,99 @@ build_image() {
   docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}"
 }
 
+generate_node_client() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/codegen"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/openapi/latest.json \
+		-g javascript \
+		-o /local/codegen/node \
+		-c /local/artifacts/config.json
+
+	cd -
+}
+
+generate_typescript_client() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/src/frontend/codegen"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/openapi/latest.json \
+		-g typescript-fetch \
+		-o /local/src/frontend/codegen/typescript \
+		-c /local/artifacts/config.json \
+		--additional-properties=typescriptThreePlus=true
+
+	cd -
+}
+
+generate_php_client() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/codegen"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/openapi/latest.json \
+		-g php \
+		-o /local/codegen/php
+
+	cd -
+}
+
+generate_python_client() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/codegen"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/openapi/latest.json \
+		-g python \
+		-o /local/codegen/python
+
+	cd -
+}
+
+generate_graphql_schema() {
+	cd "${ROOT:?}"
+	mkdir -p "${ROOT:?}/src/frontend/codegen"
+	purplship graphql_schema --out "${ROOT:?}/src/frontend/codegen/schema.json"
+
+	cd -
+}
+
+alias gen:js=generate_node_client
+alias gen:ts=generate_typescript_client
+alias gen:php=generate_php_client
+alias gen:python=generate_python_client
+alias gen:graph=generate_graphql_schema
+
+stub_server() {
+echo "
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+
+class S(BaseHTTPRequestHandler):
+    def do_POST(self):
+    	try:
+    		print(self.rfile.read1())
+    	except:
+    		pass
+    	self.send_response(200)
+    	self.send_header('Content-type', 'application/json')
+    	self.end_headers()
+    	self.wfile.write('good'.encode('utf8'))
+
+addr = 'localhost'
+port = 8080
+server_address = (addr, port)
+httpd = HTTPServer(server_address, S)
+
+print(f'Starting httpd server on {addr}:{port}')
+httpd.serve_forever()
+
+" | python
+}
+
 
 alias run:db=rundb
 alias run:server=runserver
 alias run:micro=runservices
 alias run:mail=run_mail_server
+alias ks=kill_server
 
 activate_env

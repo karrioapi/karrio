@@ -11,7 +11,7 @@ class TestTracking(APITestCase):
     def test_tracking_shipment(self):
         url = reverse(
             'purpleserver.proxy:shipment-tracking',
-            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups_package")
+            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups")
         )
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -27,7 +27,7 @@ RETURNED_VALUE = (
     [
         TrackingDetails(
             carrier_id="ups_package",
-            carrier_name="ups_package",
+            carrier_name="ups",
             tracking_number="1Z12345E6205277936",
             events=[
                 TrackingEvent(
@@ -48,7 +48,7 @@ TRACKING_RESPONSE = {
   "tracking": {
     "id": ANY,
     "carrier_id": "ups_package",
-    "carrier_name": "ups_package",
+    "carrier_name": "ups",
     'delivered': None,
     "events": [
       {

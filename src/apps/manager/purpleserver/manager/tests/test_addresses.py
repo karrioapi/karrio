@@ -32,7 +32,9 @@ class TestAddressDetails(APITestCase):
             "residential": True,
             "state_code": "QC",
             "suburb": "Hamilton",
-            "user": self.user
+            "validate_location": False,
+            "validation": None,
+            "created_by": self.user
         })
 
     def test_update_address(self):
@@ -72,7 +74,9 @@ ADDRESS_RESPONSE = {
     "suburb": None,
     "residential": True,
     "address_line1": "5205 rue riviera",
-    "address_line2": None
+    "address_line2": None,
+    "validate_location": False,
+    "validation": None
 }
 
 ADDRESS_UPDATE_DATA = {
@@ -97,5 +101,7 @@ ADDRESS_UPDATE_RESPONSE = {
     "suburb": None,
     "residential": False,
     "address_line1": "5205 rue riviera",
-    "address_line2": None
+    "address_line2": None,
+    "validate_location": False,
+    "validation": None
 }

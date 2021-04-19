@@ -22,15 +22,15 @@ RUN mkdir /app /log
 WORKDIR /app
 
 COPY requirements.txt /temp/
-COPY gunicorn-cfg.py .docker/docker-entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
+COPY gunicorn-cfg.py .docker/go.sh .docker/entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
 
 RUN pip install --upgrade pip \
     pip install -r /temp/requirements.txt
 
-RUN chmod +x docker-entrypoint.sh
+RUN chmod +x entrypoint.sh
 
-ENTRYPOINT ["/bin/bash", "./docker-entrypoint.sh"]
-CMD ["gunicorn", "--config", "gunicorn-cfg.py", "purpleserver.wsgi"]
+ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
+CMD ["/bin/bash", "./go.sh"]
 
 
 LABEL maintainer=hello@purplship.com

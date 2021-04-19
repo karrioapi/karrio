@@ -26,7 +26,9 @@ class TestFixture(TestShipmentFixture):
             "residential": False,
             "address_line1": "125 Church St",
             "address_line2": None,
-            "user": self.user
+            "validate_location": False,
+            "validation": None,
+            "created_by": self.user
         })
         self.shipment.tracking_number = "123456789012"
         self.shipment.selected_rate_carrier = self.carrier
@@ -56,7 +58,7 @@ class TestPickupDetails(TestFixture):
         self.pickup: models.Pickup = models.Pickup.objects.create(
             address=self.address,
             pickup_carrier=self.carrier,
-            user=self.user,
+            created_by=self.user,
             test_mode=True,
             pickup_date="2020-10-25",
             ready_time="13:00",
@@ -117,7 +119,9 @@ PICKUP_DATA = {
         "postal_code": "E1C4Z8",
         "residential": False,
         "state_code": "NB",
-        "email": "john@a.com"
+        "email": "john@a.com",
+        "validate_location": False,
+        "validation": None
     },
     "tracking_numbers": [
         "123456789012"
@@ -204,7 +208,9 @@ PICKUP_RESPONSE = {
     "suburb": None,
     "residential": False,
     "address_line1": "125 Church St",
-    "address_line2": None
+    "address_line2": None,
+    "validate_location": False,
+    "validation": None
   },
   "parcels": [
     {
@@ -256,7 +262,9 @@ PICKUP_UPDATE_RESPONSE = {
     "suburb": None,
     "residential": False,
     "address_line1": "125 Church St",
-    "address_line2": None
+    "address_line2": None,
+    "validate_location": False,
+    "validation": None
   },
   "parcels": [
     {

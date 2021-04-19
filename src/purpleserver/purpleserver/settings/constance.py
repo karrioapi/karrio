@@ -21,6 +21,8 @@ CONSTANCE_CONFIG = {
     'EMAIL_PORT': (EMAIL_PORT, 'The mail server port. e.g: 465 (SSL required) or 587 (TLS required)', int),
     'EMAIL_PAGE_DOMAIN': (EMAIL_PAGE_DOMAIN, 'The domain attached to links sent in emails. e.g: https://app.purplship.com', str),
     'EMAIL_FROM_ADDRESS': (EMAIL_FROM_ADDRESS, 'Email sent from. e.g: noreply@purplship.com', str),
+
+    'GOOGLE_CLOUD_API_KEY': ("", 'A Google GeoCoding API key', str),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -33,4 +35,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'EMAIL_PAGE_DOMAIN',
         'EMAIL_FROM_ADDRESS',
     ),
+    'Address Validation Service': (
+        'GOOGLE_CLOUD_API_KEY',
+    )
 }

@@ -6,21 +6,19 @@ from purplship.core.utils import DP
 from purplship.core.models import (
     Parcel,
     Message,
-    Address,
+    Address as BaseAddress,
     TrackingRequest,
     ShipmentDetails,
-    AddressValidationRequest,
-    AddressValidationDetails,
     Payment,
     Customs,
     RateRequest as BaseRateRequest,
     ShipmentRequest as BaseShipmentRequest,
     ShipmentCancelRequest,
     ChargeDetails,
-    PickupRequest,
+    PickupRequest as BasePickupRequest,
     PickupDetails,
-    PickupUpdateRequest,
-    PickupCancelRequest,
+    PickupUpdateRequest as BasePickupUpdateRequest,
+    PickupCancelRequest as BasePickupCancelRequest,
     ConfirmationDetails as Confirmation,
     TrackingEvent
 )
@@ -41,19 +39,86 @@ class CarrierSettings:
         self.id = id
 
         for name, value in kwargs.items():
-            if name not in ['carrier_ptr', 'user']:
+            if name not in ['carrier_ptr', 'created_by']:
                 self.__setattr__(name, value)
 
     # TODO: rename this to avoid confusion
     def dict(self):
         return {
             name: value for name, value in self.__dict__.items()
-            if name not in ['carrier_name', 'user', 'active']
+            if name not in ['carrier_name', 'created_by', 'active']
         }
 
     @classmethod
     def create(cls, data: object):
         return cls(**DP.to_dict(data))
+
+
+@attr.s(auto_attribs=True)
+class AddressValidation:
+    success: bool
+    meta: dict = {}
+
+
+@attr.s(auto_attribs=True)
+class Address(BaseAddress):
+    id: str = None
+    postal_code: str = None
+    city: str = None
+    person_name: str = None
+    company_name: str = None
+    country_code: str = None
+    email: str = None
+    phone_number: str = None
+
+    state_code: str = None
+    suburb: str = None
+    residential: bool = False
+
+    address_line1: str = ""
+    address_line2: str = ""
+
+    federal_tax_id: str = None
+    state_tax_id: str = None
+
+    validate_location: bool = None
+    validation: JStruct[AddressValidation] = None
+
+
+@attr.s(auto_attribs=True)
+class PickupRequest(BasePickupRequest):
+    pickup_date: str
+    ready_time: str
+    closing_time: str
+    address: Address = JStruct[Address, REQUIRED]
+
+    parcels: List[Parcel] = JList[Parcel]
+    instruction: str = None
+    package_location: str = None
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class PickupUpdateRequest(BasePickupUpdateRequest):
+    confirmation_number: str
+    pickup_date: str
+    ready_time: str
+    closing_time: str
+    address: Address = JStruct[Address, REQUIRED]
+
+    parcels: List[Parcel] = JList[Parcel]
+    instruction: str = None
+    package_location: str = None
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class PickupCancelRequest(BasePickupCancelRequest):
+    confirmation_number: str
+
+    address: Address = JStruct[Address]
+    pickup_date: str = None
+    reason: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -173,12 +238,6 @@ class Tracking:
 @attr.s(auto_attribs=True)
 class ErrorResponse:
     messages: List[Message] = JList[Message]
-
-
-@attr.s(auto_attribs=True)
-class AddressValidation:
-    messages: List[Message] = JList[Message]
-    validation: AddressValidationDetails = JStruct[AddressValidationDetails]
 
 
 @attr.s(auto_attribs=True)

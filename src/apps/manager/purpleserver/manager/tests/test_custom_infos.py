@@ -23,7 +23,7 @@ class TestCustomsInfoDetails(APITestCase):
     def setUp(self) -> None:
         super().setUp()
         self.customs: Customs = Customs.objects.create(**{
-            "user": self.user
+            "created_by": self.user
         })
 
     def test_update_customs(self):

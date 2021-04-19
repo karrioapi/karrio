@@ -26,7 +26,9 @@ class TestShipmentFixture(APITestCase):
             "residential": False,
             "address_line1": "125 Church St",
             "address_line2": None,
-            "user": self.user
+            "validate_location": False,
+            "validation": None,
+            "created_by": self.user
         })
         self.recipient: models.Address = models.Address.objects.create(**{
             "postal_code": "V6M2V9",
@@ -43,27 +45,29 @@ class TestShipmentFixture(APITestCase):
             "residential": False,
             "address_line1": "5840 Oak St",
             "address_line2": None,
-            "user": self.user
+            "validate_location": False,
+            "validation": None,
+            "created_by": self.user
         })
         self.parcel: models.Parcel = models.Parcel.objects.create(**{
             "weight": 1.0,
             "weight_unit": "KG",
             "package_preset": "canadapost_corrugated_small_box",
-            "user": self.user
+            "created_by": self.user
         })
         self.payment: models.Payment = models.Payment.objects.create(**{
             "currency": "CAD",
             "paid_by": "sender",
-            "user": self.user
+            "created_by": self.user
         })
         self.shipment: models.Shipment = models.Shipment.objects.create(
             shipper=self.shipper,
             recipient=self.recipient,
             payment=self.payment,
-            user=self.user,
+            created_by=self.user,
             test_mode=True,
         )
-        self.shipment.shipment_parcels.set([self.parcel])
+        self.shipment.parcels.set([self.parcel])
 
 
 class TestShipments(APITestCase):
@@ -108,7 +112,7 @@ class TestShipmentPurchase(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
         carrier = models.Carrier.objects.get(carrier_id="canadapost")
-        self.shipment.shipment_rates = [
+        self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
                 "carrier_ref": carrier.pk,
@@ -273,7 +277,9 @@ SHIPMENT_RESPONSE = {
         "suburb": None,
         "residential": False,
         "address_line1": "5840 Oak St",
-        "address_line2": None
+        "address_line2": None,
+        "validate_location": False,
+        "validation": None
     },
     "recipient": {
         "id": ANY,
@@ -290,7 +296,9 @@ SHIPMENT_RESPONSE = {
         "suburb": None,
         "residential": False,
         "address_line1": "125 Church St",
-        "address_line2": None
+        "address_line2": None,
+        "validate_location": False,
+        "validation": None
     },
     "parcels": [{
         "id": ANY,
@@ -329,9 +337,7 @@ SHIPMENT_RESPONSE = {
 
 
 SHIPMENT_OPTIONS = {
-    "insurance": {
-        "amount": 54
-    },
+    "insurance": 54,
     "currency": "CAD"
 }
 
@@ -449,7 +455,9 @@ PURCHASED_SHIPMENT = {
         "suburb": None,
         "residential": False,
         "address_line1": "125 Church St",
-        "address_line2": None
+        "address_line2": None,
+        "validate_location": False,
+        "validation": None
     },
     "recipient": {
         "id": ANY,
@@ -466,7 +474,9 @@ PURCHASED_SHIPMENT = {
         "suburb": None,
         "residential": False,
         "address_line1": "5840 Oak St",
-        "address_line2": None
+        "address_line2": None,
+        "validate_location": False,
+        "validation": None
     },
     "parcels": [{
         "id": ANY,

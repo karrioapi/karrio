@@ -15,11 +15,12 @@ setup(
       url='https://github.com/PurplShip/purplship-server',
       author='Purplship Team',
       author_email='danielk.developer@gmail.com',
-      license='AGPLv3',
+      license='Apache License Version 2.0',
       packages=find_packages("."),
       install_requires=[
             'django',
             'djangorestframework',
+            'djangorestframework-simplejwt',
             'django-constance',
             'django-picklefield',
             'django-email-verification',
@@ -28,6 +29,7 @@ setup(
             'gunicorn',
             'jsonfield',
             'more-itertools',
+            'requests',
             'python-decouple',
             'purplship-server.core',
       ],
@@ -39,7 +41,7 @@ setup(
       ],
       classifiers=[
             "Programming Language :: Python :: 3",
-            "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+            "License :: OSI Approved :: Apache Software License",
       ],
       zip_safe=False,
       include_package_data=True

@@ -17,7 +17,7 @@ def generate_provider_serializer() -> Dict[CarrierName, CarrierSerializer]:
         class _CarrierSerializer(ModelSerializer):
             class Meta:
                 model = MODELS[name]
-                exclude = ['id', 'created_at', 'updated_at', 'user']
+                exclude = ['id', 'created_at', 'updated_at', 'created_by']
 
         return _CarrierSerializer
 
@@ -52,11 +52,11 @@ class CarrierSerializer(Serializer):
         super().__init__(*args, **kwargs)
 
     def create(self, validated_data: dict) -> Carrier:
-        user = validated_data["user"]
+        created_by = validated_data["created_by"]
         carrier_name = validated_data['carrier_name']
         carrier_config = {
             **validated_data['carrier_config'],
-            "user": user
+            "created_by": created_by
         }
 
         return MODELS[carrier_name].objects.create(**carrier_config)

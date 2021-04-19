@@ -6,7 +6,7 @@ from jsonfield import JSONField
 from purpleserver.providers.models import Carrier
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.serializers import (
-    WEIGHT_UNIT, DIMENSION_UNIT, PAYMENT_TYPES, CURRENCIES, SHIPMENT_STATUS, COUNTRIES
+    WEIGHT_UNIT, DIMENSION_UNIT, PAYMENT_TYPES, CURRENCIES, SHIPMENT_STATUS, COUNTRIES, INCOTERMS
 )
 
 
@@ -35,6 +35,9 @@ class Address(OwnedEntity):
 
     address_line1 = models.CharField(max_length=100, null=True, blank=True)
     address_line2 = models.CharField(max_length=100, null=True, blank=True)
+
+    validate_location = models.BooleanField(null=True)
+    validation = JSONField(blank=True, null=True)
 
 
 class Parcel(OwnedEntity):
@@ -74,8 +77,8 @@ class Commodity(OwnedEntity):
     sku = models.CharField(max_length=100, null=True, blank=True)
     value_amount = models.FloatField(blank=True, null=True)
     weight_unit = models.CharField(max_length=2, choices=WEIGHT_UNIT, null=True, blank=True)
-    value_currency = models.CharField(max_length=3, choices=COUNTRIES, null=True, blank=True)
-    origin_country = models.CharField(max_length=3, choices=CURRENCIES, null=True, blank=True)
+    value_currency = models.CharField(max_length=3, choices=CURRENCIES, null=True, blank=True)
+    origin_country = models.CharField(max_length=3, choices=COUNTRIES, null=True, blank=True)
 
 
 class Payment(OwnedEntity):
@@ -103,7 +106,7 @@ class Customs(OwnedEntity):
         'incoterm', 'commercial_invoice', 'certify',
         'certificate_number', 'signer', 'invoice', 'options'
     ]
-    RELATIONAL_PROPS = ['duty', 'commodities', 'duty']
+    RELATIONAL_PROPS = ['duty', 'commodities']
 
     class Meta:
         db_table = "customs"
@@ -121,7 +124,7 @@ class Customs(OwnedEntity):
     content_type = models.CharField(max_length=50, null=True, blank=True)
     content_description = models.CharField(max_length=250, null=True, blank=True)
     duty = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
-    incoterm = models.CharField(max_length=20)
+    incoterm = models.CharField(max_length=20, choices=INCOTERMS)
     invoice = models.CharField(max_length=50, null=True, blank=True)
     signer = models.CharField(max_length=50, null=True, blank=True)
 
@@ -129,11 +132,11 @@ class Customs(OwnedEntity):
 
     # System Reference fields
 
-    shipment_commodities = models.ManyToManyField('Commodity', blank=True)
+    commodities = models.ManyToManyField('Commodity', blank=True)
 
-    @property
-    def commodities(self):
-        return self.shipment_commodities.all()
+    # @property
+    # def commodities(self):
+    #     return self.shipment_commodities.all()
 
 
 class Pickup(OwnedEntity):
@@ -178,7 +181,7 @@ class Pickup(OwnedEntity):
 
     @property
     def parcels(self) -> List[Parcel]:
-        return sum([list(shipment.parcels) for shipment in self.shipments.all()], [])
+        return sum([list(shipment.parcels.all()) for shipment in self.shipments.all()], [])
 
     @property
     def tracking_numbers(self) -> List[str]:
@@ -215,8 +218,8 @@ class Tracking(OwnedEntity):
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        'label', 'options', 'services', 'status', 'service', 'meta', 'shipment_rates', 'label_type',
-        'tracking_number', 'doc_images', 'tracking_url', 'shipment_identifier', 'test_mode', 'messages'
+        'label', 'options', 'services', 'status', 'service', 'meta', 'rates', 'label_type',
+        'tracking_number', 'tracking_url', 'shipment_identifier', 'test_mode', 'messages'
     ]
     RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
 
@@ -246,23 +249,22 @@ class Shipment(OwnedEntity):
 
     options = JSONField(blank=True, null=True, default={})
     services = JSONField(blank=True, null=True, default=[])
-    doc_images = JSONField(blank=True, null=True, default=[])
     meta = JSONField(blank=True, null=True, default={})
     messages = JSONField(blank=True, null=True, default=[])
 
     # System Reference fields
 
-    shipment_rates = JSONField(blank=True, null=True, default=[])
-    shipment_parcels = models.ManyToManyField('Parcel', related_name='shipment_parcels')
+    rates = JSONField(blank=True, null=True, default=[])
+    parcels = models.ManyToManyField('Parcel', related_name='shipment_parcels')
     carriers = models.ManyToManyField(Carrier, blank=True, related_name='rating_carriers')
     selected_rate_carrier = models.ForeignKey(
         Carrier, on_delete=models.CASCADE, related_name='selected_rate_carrier', blank=True, null=True)
 
     # Computed properties
 
-    @property
-    def parcels(self):
-        return self.shipment_parcels.all()
+    # @property
+    # def parcels(self):
+    #     return self.shipment_parcels.all()
 
     @property
     def carrier_id(self) -> str:
@@ -290,14 +292,14 @@ class Shipment(OwnedEntity):
             cast(dict, self.selected_rate).get('service') if self.selected_rate is not None else None
         )
 
-    @property
-    def rates(self) -> List[dict]:
-        rates: List[dict] = []
-        for stored_rate in cast(List[dict], self.shipment_rates):
-            carrier = Carrier.objects.get(id=stored_rate['carrier_ref']).data
-            rates.append({
-                **stored_rate,
-                'carrier_id': carrier.carrier_id,
-                'carrier_name': carrier.carrier_name,
-            })
-        return rates
+    # @property
+    # def rates(self) -> List[dict]:
+    #     rates: List[dict] = []
+    #     for stored_rate in cast(List[dict], self.shipment_rates):
+    #         carrier = Carrier.objects.get(id=stored_rate['carrier_ref']).data
+    #         rates.append({
+    #             **stored_rate,
+    #             'carrier_id': carrier.carrier_id,
+    #             'carrier_name': carrier.carrier_name,
+    #         })
+    #     return rates

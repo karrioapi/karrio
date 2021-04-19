@@ -87,13 +87,13 @@ class PickupSerializer(PickupRequest):
         return validated_data
 
     def create(self, validated_data: dict) -> models.Pickup:
-        user = validated_data["user"]
+        created_by = validated_data["created_by"]
         carrier_filter = validated_data["carrier_filter"]
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
         request_data = PickupRequest({
             **validated_data,
             "address": self._address.data,
-            "parcels": sum([list(s.parcels) for s in self._shipments], [])
+            "parcels": sum([list(s.parcels.all()) for s in self._shipments], [])
         }).data
 
         response = Pickups.schedule(payload=request_data, carrier=carrier)
@@ -101,12 +101,12 @@ class PickupSerializer(PickupRequest):
             key: value for key, value in Pickup(response.pickup).data.items()
             if key in models.Pickup.DIRECT_PROPS
         }
-        address = self._address.save(user=validated_data["user"]).instance
+        address = self._address.save(created_by=validated_data["created_by"]).instance
 
         pickup = models.Pickup.objects.create(**{
             **payload,
-            "user": user,
             "address": address,
+            "created_by": created_by,
             "pickup_carrier": carrier,
             "test_mode": response.pickup.test_mode,
             "confirmation_number": response.pickup.confirmation_number,
