@@ -60,7 +60,6 @@ if USE_HTTPS is True:
 
 
 # Application definition
-
 PURPLSHIP_CONF = [
     app for app in [
         {'app': 'purpleserver.core', 'module': 'purpleserver.core', 'urls': 'purpleserver.core.urls'},

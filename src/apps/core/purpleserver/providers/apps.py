@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class CarriersConfig(AppConfig):
-    name = 'carriers'
+class ProvidersConfig(AppConfig):
+    name = 'purpleserver.providers'

@@ -9,12 +9,12 @@ info:
     \ differs for every account as we release new versions.\nThese docs are customized\
     \ to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible\
     \ changes are made to the API, a new, dated version is released. \nThe current\
-    \ version is `2021.2.1`. \n\nRead our API changelog and to learn more about backwards\
+    \ version is `2021.3`. \n\nRead our API changelog and to learn more about backwards\
     \ compatibility.\n\nAs a precaution, use API versioning to check a new API version\
     \ before committing to an upgrade.\n"
   contact:
     email: hello@purplship.com
-  version: 2021.2.1
+  version: "2021.3"
 servers:
 - url: https://app.purplship.com/
 security:
