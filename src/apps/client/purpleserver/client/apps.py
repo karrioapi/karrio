@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class ClientConfig(AppConfig):
-    name = 'client'
+    name = 'purpleserver.client'

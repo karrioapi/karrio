@@ -238,7 +238,7 @@ build_dashboard() {
 }
 
 build_image() {
-  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}"
+  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}" --no-cache
 }
 
 generate_node_client() {
