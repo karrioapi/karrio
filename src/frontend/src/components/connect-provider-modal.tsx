@@ -35,7 +35,8 @@ const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = Connection
             try {
                 setIsDisabled(true);
                 const { carrier_name, __typename, ...content } = payload;
-                const data = { [`${carrier_name}settings`]: content };
+                const settingsName = `${carrier_name}settings`.replace('_', '');
+                const data = { [settingsName]: content };
                 if (isNew) {
                     await createConnection(data);
                 } else {
