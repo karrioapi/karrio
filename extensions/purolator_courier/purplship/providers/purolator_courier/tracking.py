@@ -45,7 +45,7 @@ def _extract_tracking(node: Element, settings: Settings) -> TrackingDetails:
         events=[
             TrackingEvent(
                 date=DF.fdate(cast(Scan, scan).ScanDate),
-                time=DF.ftimestamp(cast(Scan, scan).ScanTime),
+                time=DF.ftime(cast(Scan, scan).ScanTime, '%H%M%S'),
                 description=cast(Scan, scan).Description,
                 location=cast(Depot, cast(Scan, scan).Depot).Name,
                 code=cast(Scan, scan).ScanType,
