@@ -45,23 +45,23 @@ export type PresetCollection = {
 
 export const PAYOR_OPTIONS = Array.from(new Set(
     Object
-        .keys(PaymentPaidByEnum)
+        .values(PaymentPaidByEnum)
         .filter(key => key.toLowerCase() === key)
 ));
 
 export const CURRENCY_OPTIONS = Array.from(new Set(
     Object
-        .keys(PaymentCurrencyEnum)
+        .values(PaymentCurrencyEnum)
 ));
 
 export const DIMENSION_UNITS = Array.from(new Set(
     Object
-        .keys(ParcelDimensionUnitEnum)
+        .values(ParcelDimensionUnitEnum)
 ));
 
 export const WEIGHT_UNITS = Array.from(new Set(
     Object
-        .keys(ParcelWeightUnitEnum)
+        .values(ParcelWeightUnitEnum)
 ));
 
 export type ErrorMessage = Message & {
