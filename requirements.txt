@@ -55,7 +55,7 @@ Pillow==8.2.0
 promise==2.3
 psycopg2-binary==2.8.6
 purplship==2021.3
-purplship-server==2021.3
+purplship-server==2021.3.1
 purplship-server.client==2021.3.2
 purplship-server.core==2021.3
 purplship-server.events==2021.3
@@ -71,7 +71,7 @@ purplship.dhl-express==2021.3
 purplship.dhl-universal==2021.3
 purplship.dicom==2021.3
 purplship.fedex==2021.3
-purplship.purolator-courier==2021.3
+purplship.purolator-courier==2021.3.1
 purplship.royalmail==2021.3
 purplship.sendle==2021.3
 purplship.sf-express==2021.3

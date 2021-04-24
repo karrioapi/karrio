@@ -82,7 +82,7 @@ docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres 
 </details>
 
 ```bash
-docker run --name purplship --link=db:db -p5002:5002 purplship/purplship-server:[version]
+docker run --rm --name purplship --link=db:db -p5002:5002 purplship/purplship-server:[version]
 ```
 
 ### `Heroku`

@@ -37,4 +37,11 @@ if not any(User.objects.all()):
 " | purplship shell) > /dev/null 2>&1;
 fi
 
-./go.sh
+
+set -m # turn on bash's job control
+
+gunicorn --config gunicorn-cfg.py purpleserver.wsgi &
+
+purplship run_huey -w 2
+
+pkill -f gunicorn
