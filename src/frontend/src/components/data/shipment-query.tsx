@@ -34,6 +34,7 @@ const LabelDataQuery: React.FC = ({ children }) => {
     return new Promise<Shipment>(async (resolve) => {
       if (id === 'new') {
         setValue(DEFAULT_SHIPMENT_DATA);
+        setLoading(false);
         return resolve(DEFAULT_SHIPMENT_DATA);
       }
   
@@ -42,7 +43,7 @@ const LabelDataQuery: React.FC = ({ children }) => {
       )
         .then(r => { setValue(r); resolve(r); })
         .catch(setError)
-        .then(() => setLoading(true));
+        .then(() => setLoading(false));
     });
   };
   const updateShipment = (data: Partial<Shipment>) => {

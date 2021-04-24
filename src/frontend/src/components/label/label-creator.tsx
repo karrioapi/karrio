@@ -46,7 +46,7 @@ const LabelCreator: React.FC<LabelCreatorComponent> = ({ id }) => {
                     }
                 });
         }
-    }, [shipment?.id === id]);
+    }, []);
     useEffect(() => { if (!isNone(countries)) setReady(true); }, [countries, default_address !== undefined]);
     useEffect(() => { if (!template.loading) template.load(); }, []);
 
