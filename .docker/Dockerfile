@@ -1,6 +1,6 @@
 FROM python:3.8
 
-ENV DEBUG_MODE False
+ENV DEBUG_MODE True
 ENV USE_HTTPS False
 ENV ALLOWED_HOSTS *
 ENV ADMIN_EMAIL admin@domain.com
@@ -22,7 +22,7 @@ RUN mkdir /app /log
 WORKDIR /app
 
 COPY requirements.txt /temp/
-COPY gunicorn-cfg.py .docker/go.sh .docker/entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
+COPY gunicorn-cfg.py .docker/entrypoint.sh licenses/APACHE-LICENSE-2.0 /app/
 
 RUN pip install --upgrade pip \
     pip install -r /temp/requirements.txt
@@ -30,7 +30,6 @@ RUN pip install --upgrade pip \
 RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
-CMD ["/bin/bash", "./go.sh"]
 
 
 LABEL maintainer=hello@purplship.com
