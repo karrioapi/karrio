@@ -1,7 +1,7 @@
 <p align="center">
   <p align="center">
     <a href="https://purplship.com" target="_blank">
-      <img src="https://github.com/Purplship/purplship-server/raw/main/src/purpleserver/purpleserver/static/extra/branding/icon.png" alt="Purplship" height="100">
+      <img src="https://github.com/Purplship/purplship-server/raw/main/purpleserver/purpleserver/static/extra/branding/icon.png" alt="Purplship" height="100">
     </a>
   </p>
   <h2 align="center">
