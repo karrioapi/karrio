@@ -226,15 +226,17 @@ build() {
 }
 
 build_theme() {
-  pushd "${ROOT:?}/src/frontend" || false &&
-  rm -rf node_modules; yarn && yarn build:theme
+  pushd "${ROOT:?}/webapp" || false &&
+  rm -rf node_modules; yarn && yarn build:theme "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/css/purplship.theme.min.css"
   popd || true
+  purplship collectstatic --noinput
 }
 
 build_dashboard() {
-  pushd "${ROOT:?}/src/frontend" || false &&
-  rm -rf node_modules; yarn && yarn build "$@"
+  pushd "${ROOT:?}/webapp" || false &&
+  rm -rf node_modules; yarn && yarn build --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
   popd
+  purplship collectstatic --noinput
 }
 
 build_image() {
@@ -255,11 +257,10 @@ generate_node_client() {
 
 generate_typescript_client() {
 	cd "${ROOT:?}"
-	mkdir -p "${ROOT:?}/src/frontend/codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i /local/openapi/latest.json \
 		-g typescript-fetch \
-		-o /local/src/frontend/codegen/typescript \
+		-o /local/webapp/api \
 		-c /local/artifacts/config.json \
 		--additional-properties=typescriptThreePlus=true
 
@@ -290,9 +291,11 @@ generate_python_client() {
 
 generate_graphql_schema() {
 	cd "${ROOT:?}"
-	mkdir -p "${ROOT:?}/src/frontend/codegen"
-	purplship graphql_schema --out "${ROOT:?}/src/frontend/codegen/schema.json"
-
+	purplship graphql_schema --out "${ROOT:?}/graphql/schema.json"
+	apollo-codegen generate "${ROOT:?}/webapp/graphql/queries.ts" \
+		--schema "${ROOT:?}/graphql/schema.json" \
+		--target typescript \
+		--output "${ROOT:?}/webapp/graphql/types.ts"
 	cd -
 }
 

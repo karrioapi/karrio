@@ -110,6 +110,6 @@ node_modules/
 *.DS_Store
 .idea/
 staticfiles/*
-src/purpleserver/purpleserver/staticfiles/*
-!src/purpleserver/purpleserver/staticfiles/.gitkeep
+purpleserver/purpleserver/staticfiles/*
+!purpleserver/purpleserver/staticfiles/.gitkeep
 codegen/
