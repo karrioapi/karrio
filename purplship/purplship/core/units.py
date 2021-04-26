@@ -397,6 +397,7 @@ class Option(Enum):
     label_format = Spec.asValue("label_format")
     shipment_date = Spec.asValue("shipment_date")
     label_printing = Spec.asValue("label_printing")
+    declared_value = Spec.asValue("declared_value", float)
     notification_emails = Spec.asValue("notification_emails")
     signature_confirmation = Spec.asFlag("signature_confirmation")
 
@@ -448,6 +449,10 @@ class Options:
     @property
     def label_printing(self) -> str:
         return self[Option.label_printing.name]
+
+    @property
+    def declared_value(self) -> float:
+        return self[Option.declared_value.name]
 
     @property
     def notification_emails(self) -> str:

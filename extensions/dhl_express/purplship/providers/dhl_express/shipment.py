@@ -29,6 +29,7 @@ from purplship.core.models import (
     ShipmentDetails,
     Payment,
     Customs,
+    Duty
 )
 from purplship.core.units import Options, Packages, Country
 from purplship.providers.dhl_express.units import (
@@ -77,22 +78,19 @@ def shipment_request(
 ) -> Serializable[DHLShipmentRequest]:
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     options = Options(payload.options, SpecialServiceCode)
-    product = next(
-        (p.value for p in ProductCode if payload.service == p.name),
-        payload.service
-    )
+    product = next((p.value for p in ProductCode if payload.service == p.name), payload.service)
 
     insurance = options['dhl_shipment_insurance'].value if 'dhl_shipment_insurance' in options else None
+    is_document = all(p.parcel.is_document for p in packages)
     package_type = (
-        PackageType[packages[0].packaging_type or "your_packaging"].value
-        if len(packages) == 1 else None
+        PackageType[packages[0].packaging_type or "your_packaging"].value if len(packages) == 1 else None
     )
-    delivery_type = next(
-        (d for d in DeliveryType if d.name in payload.options.keys()), None
-    )
+    delivery_type = next((d for d in DeliveryType if d.name in payload.options.keys()), None)
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
     payment = (payload.payment or Payment(paid_by="sender", account_number=settings.account_number))
     customs = (payload.customs or Customs())
+    is_dutiable = (is_document is False and customs.duty is not None)
+    duty = (customs.duty or Duty(paid_by="sender"))
     content = (packages[0].parcel.content or "N/A")
 
     request = DHLShipmentRequest(
@@ -109,8 +107,8 @@ def shipment_request(
             ShipperAccountNumber=settings.account_number,
             BillingAccountNumber=payment.account_number,
             ShippingPaymentType=PaymentType[payment.paid_by].value,
-            DutyAccountNumber=(customs.duty.account_number if customs.duty is not None else None),
-            DutyPaymentType=(PaymentType[customs.duty.paid_by].value if customs.duty is not None else None),
+            DutyAccountNumber=duty.account_number,
+            DutyPaymentType=(PaymentType[duty.paid_by].value if customs.duty is not None else None),
         ),
         Consignee=Consignee(
             CompanyName=payload.recipient.company_name or "N/A",
@@ -205,11 +203,11 @@ def shipment_request(
         EProcShip=None,
         Dutiable=(
             Dutiable(
-                DeclaredCurrency=customs.duty.currency or "USD",
-                DeclaredValue=insurance or 1.0,
+                DeclaredCurrency=duty.currency or "USD",
+                DeclaredValue=duty.declared_value or 1.0,
                 TermsOfTrade=customs.incoterm,
             )
-            if customs.duty is not None else None
+            if is_dutiable else None
         ),
         ExportDeclaration=None,
         Reference=[Reference(ReferenceID=payload.reference)],

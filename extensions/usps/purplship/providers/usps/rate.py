@@ -73,10 +73,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[RateV
     options = Options(payload.options, ShipmentOption)
     service = (Services(payload.services, ShipmentService).first or ShipmentService.usps_all).value
     special_services = [getattr(option, 'value', option) for key, option in options if 'usps_option' not in key]
-    insurance = next(
-        (option.value for key, option in options if 'usps_insurance' in key),
-        options.insurance
-    )
+    insurance = next((option.value for key, option in options if 'usps_insurance' in key), options.insurance)
 
     container = PackagingType[package.packaging_type or "your_packaging"]
     sort_level = SortLevelType[container.name]
