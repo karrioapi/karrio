@@ -2,11 +2,11 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Purplship API",
-    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request\nbodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.3`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
+    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request\nbodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.3.1`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
     "contact": {
       "email": "hello@purplship.com"
     },
-    "version": "2021.3"
+    "version": "2021.3.1"
   },
   "servers": [
     {
@@ -3365,39 +3365,25 @@
         "nullable": true,
         "x-nullable": true
       },
-      "Payment": {
-        "required": [
-          "currency"
-        ],
+      "Duty": {
         "type": "object",
         "properties": {
-          "id": {
-            "title": "Id",
-            "minLength": 1,
-            "type": "string",
-            "description": "A unique identifier"
-          },
           "paid_by": {
             "title": "Paid by",
             "type": "string",
-            "description": "The payment payer",
-            "default": "sender",
+            "description": "The duty payer",
+            "nullable": true,
             "enum": [
               "sender",
               "recipient",
               "third_party"
             ]
           },
-          "amount": {
-            "title": "Amount",
-            "type": "number",
-            "description": "The payment amount if known",
-            "nullable": true
-          },
           "currency": {
             "title": "Currency",
             "type": "string",
-            "description": "The payment amount currency",
+            "description": "The declared value currency",
+            "nullable": true,
             "enum": [
               "EUR",
               "AED",
@@ -3544,14 +3530,17 @@
               "ZAR"
             ]
           },
+          "declared_value": {
+            "title": "Declared value",
+            "type": "number",
+            "description": "The package declared value",
+            "nullable": true
+          },
           "account_number": {
             "title": "Account number",
             "type": "string",
-            "description": "The selected rate carrier payer account number",
+            "description": "The duty payor account number",
             "nullable": true
-          },
-          "contact": {
-            "$ref": "#/components/schemas/Address"
           }
         },
         "description": "\nThe payment details.<br/>\nNote that this is required for a Dutiable parcel shipped internationally.\n",
@@ -3625,7 +3614,7 @@
             }
           },
           "duty": {
-            "$ref": "#/components/schemas/Payment"
+            "$ref": "#/components/schemas/Duty"
           },
           "invoice": {
             "title": "Invoice",
@@ -3750,7 +3739,7 @@
             }
           },
           "duty": {
-            "$ref": "#/components/schemas/Payment"
+            "$ref": "#/components/schemas/Duty"
           },
           "invoice": {
             "title": "Invoice",
@@ -4677,6 +4666,182 @@
           }
         }
       },
+      "Payment": {
+        "required": [
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "paid_by": {
+            "title": "Paid by",
+            "type": "string",
+            "description": "The payor type",
+            "default": "sender",
+            "enum": [
+              "sender",
+              "recipient",
+              "third_party"
+            ]
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string",
+            "description": "The payment amount currency",
+            "enum": [
+              "EUR",
+              "AED",
+              "USD",
+              "XCD",
+              "AMD",
+              "ANG",
+              "AOA",
+              "ARS",
+              "AUD",
+              "AWG",
+              "AZN",
+              "BAM",
+              "BBD",
+              "BDT",
+              "XOF",
+              "BGN",
+              "BHD",
+              "BIF",
+              "BMD",
+              "BND",
+              "BOB",
+              "BRL",
+              "BSD",
+              "BTN",
+              "BWP",
+              "BYN",
+              "BZD",
+              "CAD",
+              "CDF",
+              "XAF",
+              "CHF",
+              "NZD",
+              "CLP",
+              "CNY",
+              "COP",
+              "CRC",
+              "CUC",
+              "CVE",
+              "CZK",
+              "DJF",
+              "DKK",
+              "DOP",
+              "DZD",
+              "EGP",
+              "ERN",
+              "ETB",
+              "FJD",
+              "GBP",
+              "GEL",
+              "GHS",
+              "GMD",
+              "GNF",
+              "GTQ",
+              "GYD",
+              "HKD",
+              "HNL",
+              "HRK",
+              "HTG",
+              "HUF",
+              "IDR",
+              "ILS",
+              "INR",
+              "IRR",
+              "ISK",
+              "JMD",
+              "JOD",
+              "JPY",
+              "KES",
+              "KGS",
+              "KHR",
+              "KMF",
+              "KPW",
+              "KRW",
+              "KWD",
+              "KYD",
+              "KZT",
+              "LAK",
+              "LKR",
+              "LRD",
+              "LSL",
+              "LYD",
+              "MAD",
+              "MDL",
+              "MGA",
+              "MKD",
+              "MMK",
+              "MNT",
+              "MOP",
+              "MRO",
+              "MUR",
+              "MVR",
+              "MWK",
+              "MXN",
+              "MYR",
+              "MZN",
+              "NAD",
+              "XPF",
+              "NGN",
+              "NIO",
+              "NOK",
+              "NPR",
+              "OMR",
+              "PEN",
+              "PGK",
+              "PHP",
+              "PKR",
+              "PLN",
+              "PYG",
+              "QAR",
+              "RSD",
+              "RUB",
+              "RWF",
+              "SAR",
+              "SBD",
+              "SCR",
+              "SDG",
+              "SEK",
+              "SGD",
+              "SHP",
+              "SLL",
+              "SOS",
+              "SRD",
+              "SSP",
+              "STD",
+              "SYP",
+              "SZL",
+              "THB",
+              "TJS",
+              "TND",
+              "TOP",
+              "TRY",
+              "TTD",
+              "TWD",
+              "TZS",
+              "UAH",
+              "UYU",
+              "UZS",
+              "VEF",
+              "VND",
+              "VUV",
+              "WST",
+              "YER",
+              "ZAR"
+            ]
+          },
+          "account_number": {
+            "title": "Account number",
+            "type": "string",
+            "description": "The payor account number",
+            "nullable": true
+          }
+        },
+        "description": "The payment details"
+      },
       "ShippingRequest": {
         "required": [
           "parcels",
@@ -5166,193 +5331,6 @@
           }
         }
       },
-      "PaymentData": {
-        "required": [
-          "currency"
-        ],
-        "type": "object",
-        "properties": {
-          "paid_by": {
-            "title": "Paid by",
-            "type": "string",
-            "description": "The payment payer",
-            "default": "sender",
-            "enum": [
-              "sender",
-              "recipient",
-              "third_party"
-            ]
-          },
-          "amount": {
-            "title": "Amount",
-            "type": "number",
-            "description": "The payment amount if known",
-            "nullable": true
-          },
-          "currency": {
-            "title": "Currency",
-            "type": "string",
-            "description": "The payment amount currency",
-            "enum": [
-              "EUR",
-              "AED",
-              "USD",
-              "XCD",
-              "AMD",
-              "ANG",
-              "AOA",
-              "ARS",
-              "AUD",
-              "AWG",
-              "AZN",
-              "BAM",
-              "BBD",
-              "BDT",
-              "XOF",
-              "BGN",
-              "BHD",
-              "BIF",
-              "BMD",
-              "BND",
-              "BOB",
-              "BRL",
-              "BSD",
-              "BTN",
-              "BWP",
-              "BYN",
-              "BZD",
-              "CAD",
-              "CDF",
-              "XAF",
-              "CHF",
-              "NZD",
-              "CLP",
-              "CNY",
-              "COP",
-              "CRC",
-              "CUC",
-              "CVE",
-              "CZK",
-              "DJF",
-              "DKK",
-              "DOP",
-              "DZD",
-              "EGP",
-              "ERN",
-              "ETB",
-              "FJD",
-              "GBP",
-              "GEL",
-              "GHS",
-              "GMD",
-              "GNF",
-              "GTQ",
-              "GYD",
-              "HKD",
-              "HNL",
-              "HRK",
-              "HTG",
-              "HUF",
-              "IDR",
-              "ILS",
-              "INR",
-              "IRR",
-              "ISK",
-              "JMD",
-              "JOD",
-              "JPY",
-              "KES",
-              "KGS",
-              "KHR",
-              "KMF",
-              "KPW",
-              "KRW",
-              "KWD",
-              "KYD",
-              "KZT",
-              "LAK",
-              "LKR",
-              "LRD",
-              "LSL",
-              "LYD",
-              "MAD",
-              "MDL",
-              "MGA",
-              "MKD",
-              "MMK",
-              "MNT",
-              "MOP",
-              "MRO",
-              "MUR",
-              "MVR",
-              "MWK",
-              "MXN",
-              "MYR",
-              "MZN",
-              "NAD",
-              "XPF",
-              "NGN",
-              "NIO",
-              "NOK",
-              "NPR",
-              "OMR",
-              "PEN",
-              "PGK",
-              "PHP",
-              "PKR",
-              "PLN",
-              "PYG",
-              "QAR",
-              "RSD",
-              "RUB",
-              "RWF",
-              "SAR",
-              "SBD",
-              "SCR",
-              "SDG",
-              "SEK",
-              "SGD",
-              "SHP",
-              "SLL",
-              "SOS",
-              "SRD",
-              "SSP",
-              "STD",
-              "SYP",
-              "SZL",
-              "THB",
-              "TJS",
-              "TND",
-              "TOP",
-              "TRY",
-              "TTD",
-              "TWD",
-              "TZS",
-              "UAH",
-              "UYU",
-              "UZS",
-              "VEF",
-              "VND",
-              "VUV",
-              "WST",
-              "YER",
-              "ZAR"
-            ]
-          },
-          "account_number": {
-            "title": "Account number",
-            "type": "string",
-            "description": "The selected rate carrier payer account number",
-            "nullable": true
-          },
-          "contact": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        "description": "The payment details",
-        "nullable": true,
-        "x-nullable": true
-      },
       "ShipmentData": {
         "required": [
           "parcels",
@@ -5382,7 +5360,7 @@
             "nullable": true
           },
           "payment": {
-            "$ref": "#/components/schemas/PaymentData"
+            "$ref": "#/components/schemas/Payment"
           },
           "customs": {
             "$ref": "#/components/schemas/CustomsData"

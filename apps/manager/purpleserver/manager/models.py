@@ -81,32 +81,13 @@ class Commodity(OwnedEntity):
     origin_country = models.CharField(max_length=3, choices=COUNTRIES, null=True, blank=True)
 
 
-class Payment(OwnedEntity):
-    DIRECT_PROPS = ['amount', 'paid_by', 'currency', 'account_number']
-    RELATIONAL_PROPS = ['contact']
-
-    class Meta:
-        db_table = "payment"
-        verbose_name = 'Payment'
-        verbose_name_plural = 'Payments'
-        ordering = ['-created_at']
-
-    id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='pyt_'), editable=False)
-
-    amount = models.FloatField(blank=True, null=True)
-    paid_by = models.CharField(max_length=20, choices=PAYMENT_TYPES, null=True, blank=True)
-    currency = models.CharField(max_length=3, choices=CURRENCIES, null=True, blank=True)
-    account_number = models.CharField(max_length=50, null=True, blank=True)
-    contact = models.ForeignKey('Address', on_delete=models.CASCADE, blank=True, null=True)
-
-
 class Customs(OwnedEntity):
     DIRECT_PROPS = [
         'eel_pfc', 'aes', 'content_description', 'content_type',
-        'incoterm', 'commercial_invoice', 'certify',
+        'incoterm', 'commercial_invoice', 'certify', 'duty',
         'certificate_number', 'signer', 'invoice', 'options'
     ]
-    RELATIONAL_PROPS = ['duty', 'commodities']
+    RELATIONAL_PROPS = ['commodities']
 
     class Meta:
         db_table = "customs"
@@ -123,11 +104,11 @@ class Customs(OwnedEntity):
     certificate_number = models.CharField(max_length=50, null=True, blank=True)
     content_type = models.CharField(max_length=50, null=True, blank=True)
     content_description = models.CharField(max_length=250, null=True, blank=True)
-    duty = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
     incoterm = models.CharField(max_length=20, choices=INCOTERMS)
     invoice = models.CharField(max_length=50, null=True, blank=True)
     signer = models.CharField(max_length=50, null=True, blank=True)
 
+    duty = JSONField(blank=True, null=True, default=None)
     options = JSONField(blank=True, null=True, default={})
 
     # System Reference fields
@@ -242,15 +223,15 @@ class Shipment(OwnedEntity):
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
 
-    payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, blank=True, null=True)
     customs = models.ForeignKey('Customs', on_delete=models.SET_NULL, blank=True, null=True)
 
     selected_rate = JSONField(blank=True, null=True)
 
+    payment = JSONField(blank=True, null=True, default=None)
     options = JSONField(blank=True, null=True, default={})
     services = JSONField(blank=True, null=True, default=[])
-    meta = JSONField(blank=True, null=True, default={})
     messages = JSONField(blank=True, null=True, default=[])
+    meta = JSONField(blank=True, null=True, default={})
 
     # System Reference fields
 

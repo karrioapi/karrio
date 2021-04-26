@@ -207,17 +207,19 @@ class Parcel(EntitySerializer, ParcelData):
     pass
 
 
-class PaymentData(Serializer):
+class Payment(Serializer):
 
-    paid_by = ChoiceField(required=False, choices=PAYMENT_TYPES, default=PAYMENT_TYPES[0][0], help_text="The payment payer")
-    amount = FloatField(required=False, allow_null=True, help_text="The payment amount if known")
+    paid_by = ChoiceField(required=False, choices=PAYMENT_TYPES, default=PAYMENT_TYPES[0][0], help_text="The payor type")
     currency = ChoiceField(required=True, choices=CURRENCIES, help_text="The payment amount currency")
-    account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected rate carrier payer account number")
-    contact = Address(required=False, allow_null=True, help_text="The billing address")
+    account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The payor account number")
 
 
-class Payment(EntitySerializer, PaymentData):
-    pass
+class Duty(Serializer):
+
+    paid_by = ChoiceField(required=False, choices=PAYMENT_TYPES, allow_blank=True, allow_null=True, help_text="The duty payer")
+    currency = ChoiceField(required=False, choices=CURRENCIES, allow_blank=True, allow_null=True, help_text="The declared value currency")
+    declared_value = FloatField(required=False, allow_null=True, help_text="The package declared value")
+    account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The duty payor account number")
 
 
 class CustomsData(Serializer):
@@ -228,7 +230,7 @@ class CustomsData(Serializer):
     content_description = CharField(required=False, allow_blank=True, allow_null=True)
     incoterm = ChoiceField(required=False, allow_null=True, choices=INCOTERMS, help_text="The customs 'term of trade' also known as 'incoterm'")
     commodities = Commodity(many=True, required=False, allow_null=True, help_text="The parcel content items")
-    duty = Payment(required=False, allow_null=True, help_text="""
+    duty = Duty(required=False, allow_null=True, help_text="""
     The payment details.<br/>
     Note that this is required for a Dutiable parcel shipped internationally.
     """)
@@ -469,7 +471,7 @@ class ShippingData(Serializer):
     The options available for the shipment.<br/>
     Please consult [the reference](#operation/references) for additional specific carriers options.
     """)
-    payment = PaymentData(required=False, allow_null=True, help_text="The payment details")
+    payment = Payment(required=False, allow_null=True, help_text="The payment details")
     customs = CustomsData(required=False, allow_null=True, help_text="""
     The customs details.<br/>
     Note that this is required for the shipment of an international Dutiable parcel.

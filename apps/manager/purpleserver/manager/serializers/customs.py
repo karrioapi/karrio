@@ -3,7 +3,6 @@ from django.db import transaction
 from purpleserver.core.utils import SerializerDecorator
 from purpleserver.core.serializers import CustomsData
 
-from purpleserver.manager.serializers.payment import PaymentSerializer
 from purpleserver.manager.serializers.commodity import CommoditySerializer
 import purpleserver.manager.models as models
 
@@ -17,12 +16,6 @@ class CustomsSerializer(CustomsData):
 
             else:
                 payload = kwargs['data'].copy()
-                if payload.get('duty') is not None:
-                    payload.update(
-                        payment=SerializerDecorator[PaymentSerializer](
-                            data=payload['duty']
-                        ).data
-                    )
 
                 if payload.get('commodities') is not None:
                     payload.update(
@@ -44,11 +37,6 @@ class CustomsSerializer(CustomsData):
             key: value for key, value in validated_data.items() if key in models.Customs.DIRECT_PROPS
         }
 
-        if validated_data.get('duty') is not None:
-            related_data = dict(
-                duty=SerializerDecorator[PaymentSerializer](
-                    data=validated_data.get('duty')).save(created_by=created_by).instance)
-
         customs = models.Customs.objects.create(**{
             **data,
             **related_data,
@@ -66,19 +54,10 @@ class CustomsSerializer(CustomsData):
 
     @transaction.atomic
     def update(self, instance: models.Customs, validated_data: dict) -> models.Customs:
-        created_by = validated_data.get('created_by', instance.created_by)
+
         for key, val in validated_data.items():
             if key in models.Customs.DIRECT_PROPS:
                 setattr(instance, key, val)
-
-        if 'duty' in validated_data:
-            data = validated_data.get('duty')
-            if instance.duty is not None and data is None:
-                instance.duty.delete()
-                instance.duty = None
-            else:
-                instance.duty = SerializerDecorator[PaymentSerializer](
-                    instance.duty, data=data).save(created_by=created_by).instance
 
         instance.save()
         return instance

@@ -327,14 +327,7 @@ SHIPPING_RESPONSE = {
     ],
     'services': [],
     'options': {},
-    'payment': {
-        'id': None,
-        'paid_by': 'sender',
-        'amount': None,
-        'currency': 'CAD',
-        'account_number': None,
-        'contact': None
-    },
+    'payment': {'account_number': None, 'currency': 'CAD', 'paid_by': 'sender'},
     'customs': None,
     'reference': '',
     'carrier_ids': [],

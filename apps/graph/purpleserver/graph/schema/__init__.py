@@ -86,8 +86,6 @@ class Mutation(graphene.ObjectType):
     update_template = mutations.UpdateTemplate.Field()
     delete_template = mutations.create_delete_mutation('DeleteTemplate', graph.Template).Field()
 
-    delete_payment = mutations.create_delete_mutation(
-        'DeletePayment', manager.Payment, customs__template__isnull=False).Field()
     discard_commodity = mutations.create_delete_mutation(
         'DiscardCommodity', manager.Commodity, customs__template__isnull=False).Field()
 

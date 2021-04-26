@@ -3,6 +3,7 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import ModelSerializer as BaseModelSerializer
 
+from purplship.core.utils import DP
 from purpleserver.core.utils import save_one_to_one_data, save_many_to_many_data
 import purpleserver.core.serializers as serializers
 import purpleserver.core.validators as validators
@@ -60,31 +61,6 @@ class AddressModelSerializer(ModelSerializer, validators.AugmentedAddressSeriali
         exclude = ['created_at', 'updated_at', 'created_by']
 
 
-class PaymentModelSerializer(ModelSerializer):
-    contact = AddressModelSerializer(required=False)
-
-    class Meta:
-        model = manager.Payment
-        exclude = ['created_at', 'updated_at', 'created_by']
-
-    @transaction.atomic
-    def create(self, validated_data: dict) -> graph.Template:
-        data = {
-            **{key: value for key, value in validated_data.items() if key != 'contact'},
-            'contact': save_one_to_one_data('contact', AddressModelSerializer, payload=validated_data, **self._extra),
-        }
-
-        return super().create(data)
-
-    @transaction.atomic
-    def update(self, instance: graph.Template, validated_data: dict) -> graph.Template:
-        data = {key: value for key, value in validated_data.items() if key != 'contact'}
-
-        save_one_to_one_data('contact', AddressModelSerializer, instance, payload=validated_data, **self._extra)
-
-        return super().update(instance, data)
-
-
 class CommodityModelSerializer(ModelSerializer):
     weight_unit = serializers.CharField()
 
@@ -94,9 +70,8 @@ class CommodityModelSerializer(ModelSerializer):
 
 
 class CustomsModelSerializer(ModelSerializer):
-    NESTED_FIELDS = ['duty', 'commodities', 'options']
+    NESTED_FIELDS = ['commodities']
 
-    duty = apply_optional_fields(PaymentModelSerializer)(required=False, allow_null=True)
     commodities = apply_optional_fields(CommodityModelSerializer)(many=True, allow_null=True, required=False)
 
     class Meta:
@@ -107,8 +82,10 @@ class CustomsModelSerializer(ModelSerializer):
     def create(self, validated_data: dict):
         data = {
             **{name: value for name, value in validated_data.items() if name not in self.NESTED_FIELDS},
-            'duty': save_one_to_one_data('duty', PaymentModelSerializer, payload=validated_data, **self._extra),
+            'options': DP.to_dict(validated_data['options']) if 'options' in validated_data else None,
+            'duty': DP.to_dict(validated_data['duty']) if 'duty' in validated_data else None
         }
+
         instance = super().create(data)
 
         save_many_to_many_data(
@@ -118,9 +95,11 @@ class CustomsModelSerializer(ModelSerializer):
 
     @transaction.atomic
     def update(self, instance: manager.Customs, validated_data: dict) -> manager.Customs:
-        data = {name: value for name, value in validated_data.items() if name not in self.NESTED_FIELDS}
-
-        save_one_to_one_data('duty', PaymentModelSerializer, instance, payload=validated_data, **self._extra)
+        data = {
+            **{name: value for name, value in validated_data.items() if name not in self.NESTED_FIELDS},
+            'options': DP.to_dict(validated_data['options']) if 'options' in validated_data else instance.options,
+            'duty': DP.to_dict(validated_data['duty']) if 'duty' in validated_data else instance.duty
+        }
 
         return super().update(instance, data)
 

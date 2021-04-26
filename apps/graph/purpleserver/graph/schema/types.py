@@ -68,7 +68,7 @@ class AddressType(graphene_django.DjangoObjectType):
 
     class Meta:
         model = manager.Address
-        exclude = ('payment_set', 'pickup_set', 'recipient', 'shipper', 'template')
+        exclude = ('pickup_set', 'recipient', 'shipper', 'template')
 
 
 class ParcelType(graphene_django.DjangoObjectType):
@@ -77,17 +77,9 @@ class ParcelType(graphene_django.DjangoObjectType):
         exclude = ('shipment_parcels', 'template', )
 
 
-class PaymentType(graphene_django.DjangoObjectType):
-    contact = graphene.Field(AddressType)
-
-    class Meta:
-        model = manager.Payment
-        exclude = ('shipment_set', 'customs_set', )
-
-
 class CustomsType(graphene_django.DjangoObjectType):
-    duty = graphene.Field(PaymentType)
     commodities = graphene.List(CommodityType)
+    duty = generic.GenericScalar()
 
     class Meta:
         model = manager.Customs
@@ -157,11 +149,11 @@ class ShipmentType(graphene_django.DjangoObjectType):
     shipper = graphene.Field(AddressType)
     recipient = graphene.Field(AddressType)
     customs = graphene.Field(CustomsType)
-    payment = graphene.Field(PaymentType)
     parcels = graphene.List(ParcelType)
 
     services = graphene.List(graphene.String)
     carrier_ids = graphene.List(graphene.String)
+    payment = generic.GenericScalar()
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
     messages = generic.GenericScalar()
