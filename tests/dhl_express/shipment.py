@@ -96,7 +96,7 @@ shipment_data = {
             "length": 10,
             "width": 3,
             "weight": 4.0,
-            "packaging_type": "dhl_express_envelope",
+            "packaging_type": "dhl_parcel",
             "is_document": False,
         }
     ],
@@ -106,7 +106,7 @@ shipment_data = {
     "customs": {
         "commodities": [{"description": "cn", "sku": "cc"}],
         "incoterm": "DAP",
-        "duty": {"account_number": "123456789", "paid_by": "sender"},
+        "duty": {"account_number": "123456789", "paid_by": "sender", "declared_value": 200.},
     },
 }
 
@@ -236,7 +236,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <CommodityName>cn</CommodityName>
     </Commodity>
     <Dutiable>
-        <DeclaredValue>148.</DeclaredValue>
+        <DeclaredValue>200.</DeclaredValue>
         <DeclaredCurrency>USD</DeclaredCurrency>
         <TermsOfTrade>DAP</TermsOfTrade>
     </Dutiable>
@@ -248,7 +248,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <Pieces>
             <Piece>
                 <PieceID>1</PieceID>
-                <PackageType>EE</PackageType>
+                <PackageType>PA</PackageType>
                 <Weight>4.</Weight>
                 <Width>3</Width>
                 <Height>3</Height>
@@ -263,7 +263,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <Contents>N/A</Contents>
         <DimensionUnit>I</DimensionUnit>
         <InsuredAmount>148.</InsuredAmount>
-        <PackageType>EE</PackageType>
+        <PackageType>PA</PackageType>
         <IsDutiable>Y</IsDutiable>
         <CurrencyCode>USD</CurrencyCode>
     </ShipmentDetails>

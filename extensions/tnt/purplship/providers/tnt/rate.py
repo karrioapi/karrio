@@ -119,7 +119,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[price
             insurance=(
                 insurance(
                     insuranceValue=options.insurance,
-                    goodsValue=options.insurance
+                    goodsValue=options.declared_value
                 )
                 if options.insurance is not None
                 else None

@@ -83,10 +83,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     customs = payload.customs or Customs(commodities=[])
     extra_services = [getattr(option, 'value', option) for key, option in options if 'usps_option' not in key]
     label_format = LabelFormat[payload.label_type or 'usps_6_x_4_label'].value
-    insurance = next(
-        (option.value for key, option in options if 'usps_insurance' in key),
-        options.insurance
-    )
+    insurance = next((option.value for key, option in options if 'usps_insurance' in key), options.insurance)
     # Gets the first provided non delivery option or default to "RETURN"
     non_delivery = next((option.value for name, option in options if 'non_delivery' in name), "RETURN")
     redirect_address = Address(**(options['usps_option_redirect_non_delivery'] or {}))
