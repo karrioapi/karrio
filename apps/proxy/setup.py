@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.proxy',
-      version='2021.3',
+      version='2021.3.1',
       description='Multi-carrier shipping API Proxy module',
       long_description=long_description,
       long_description_content_type="text/markdown",
-      url='https://github.com/PurplShip/purplship-server',
-      author='PurplShip',
+      url='https://github.com/Purplship/purplship-server',
+      author='Purplship',
       author_email='danielk.developer@gmail.com',
       license='Apache License Version 2.0',
       packages=find_packages("."),
