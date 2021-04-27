@@ -1,15 +1,15 @@
 <p align="center">
   <p align="center">
     <a href="https://purplship.com" target="_blank">
-      <img src="https://github.com/PurplShip/purplship-server/raw/main/src/purpleserver/purpleserver/static/extra/branding/icon.png" alt="Purplship" height="100">
+      <img src="https://github.com/PurplShip/purplship/raw/main/docs/images/icon.png" alt="Purplship" height="100">
     </a>
   </p>
   <h2 align="center">
     Purplship - The Open Source multi-carrier shipping SDK
   </h2>
   <p align="center">
-    <a href="https://github.com/Purplship/Purplship/actions"><img src="https://github.com/Purplship/Purplship/workflows/PuprlShip/badge.svg" alt="CI" style="max-width:100%;"></a>
-    <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: AGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
+    <a href="https://github.com/Purplship/Purplship/actions"><img src="https://github.com/Purplship/Purplship/workflows/puprlship-sdk/badge.svg" alt="CI" style="max-width:100%;"></a>
+    <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
     <a href="https://github.com/python/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" style="max-width:100%;"></a>
     <a href="https://codecov.io/gh/PurplShip/purplship"><img src="https://codecov.io/gh/PurplShip/purplship/branch/main/graph/badge.svg?token=D07fio4Dn6"/></a>
     <a href="https://app.codacy.com/manual/DanH91/Purplship?utm_source=github.com&utm_medium=referral&utm_content=Purplship/Purplship&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/a57baa23a1ca4403a37a8b7134609709" alt="Codacy Badge" style="max-width:100%;"></a>

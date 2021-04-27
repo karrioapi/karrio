@@ -192,7 +192,7 @@ def shipment_request(
             DimensionUnit=DimensionUnit.I.value,
             Date=(options.shipment_date or time.strftime("%Y-%m-%d")),
             PackageType=package_type,
-            IsDutiable=("Y" if payload.customs is not None else "N"),
+            IsDutiable=("Y" if is_dutiable else "N"),
             InsuredAmount=insurance,
             ShipmentCharges=(options.cash_on_delivery if options.cash_on_delivery else None),
             DoorTo=delivery_type,
