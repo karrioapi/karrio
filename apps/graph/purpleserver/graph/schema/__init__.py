@@ -63,7 +63,7 @@ class Query(graphene.ObjectType):
         return graph.Template.objects.access_with(info.context.user).filter(parcel__isnull=False, **kwargs)
 
     def resolve_log(self, info, **kwargs):
-        return info.context.user.apirequestlog_set.filter(**kwargs).first()
+        return info.context.user.apirequestlog_set.filter(**kwargs).order_by('-requested_at').first()
 
     def resolve_logs(self, info, **kwargs):
         return info.context.user.apirequestlog_set.filter(**kwargs)
@@ -86,8 +86,6 @@ class Mutation(graphene.ObjectType):
     update_template = mutations.UpdateTemplate.Field()
     delete_template = mutations.create_delete_mutation('DeleteTemplate', graph.Template).Field()
 
-    delete_payment = mutations.create_delete_mutation(
-        'DeletePayment', manager.Payment, customs__template__isnull=False).Field()
     discard_commodity = mutations.create_delete_mutation(
         'DiscardCommodity', manager.Commodity, customs__template__isnull=False).Field()
 

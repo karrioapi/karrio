@@ -48,30 +48,7 @@ init() {
 }
 
 
-alias env:new=create_env
-alias env:on=activate_env
-alias env:off=deactivate_env
-alias env:reset=init
-
-
 # Project helpers
-
-install_released() {
-  pip install -f https://git.io/purplship \
-  	purplship-server \
-    purplship-server.core \
-    purplship-server.proxy \
-    purplship-server.client \
-    purplship-server.manager \
-    purplship-server.pricing \
-    purplship.canadapost \
-    purplship.dhl_express \
-    purplship.fedex_express \
-    purplship.purolator_courier \
-    purplship.ups_package \
-    freightcom.extension \
-    eshipper.extension
-}
 
 migrate () {
   echo "> update database migrations"
@@ -239,6 +216,15 @@ build_dashboard() {
   purplship collectstatic --noinput
 }
 
+dev_webapp() {
+  pushd "${ROOT:?}/webapp" || false &&
+  rm -rf node_modules;
+  yarn && yarn build -w \
+    --env postbuild="purplship collectstatic --noinput" \
+    --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
+  popd
+}
+
 build_image() {
   docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}" --no-cache
 }
@@ -299,17 +285,9 @@ generate_graphql_schema() {
 	cd -
 }
 
-alias gen:js=generate_node_client
-alias gen:ts=generate_typescript_client
-alias gen:php=generate_php_client
-alias gen:python=generate_python_client
-alias gen:graph=generate_graphql_schema
-
 stub_server() {
 echo "
 from http.server import HTTPServer, BaseHTTPRequestHandler
-
-
 class S(BaseHTTPRequestHandler):
     def do_POST(self):
     	try:
@@ -320,17 +298,20 @@ class S(BaseHTTPRequestHandler):
     	self.send_header('Content-type', 'application/json')
     	self.end_headers()
     	self.wfile.write('good'.encode('utf8'))
-
 addr = 'localhost'
 port = 8080
 server_address = (addr, port)
 httpd = HTTPServer(server_address, S)
-
 print(f'Starting httpd server on {addr}:{port}')
 httpd.serve_forever()
-
 " | python
 }
+
+
+alias env:new=create_env
+alias env:on=activate_env
+alias env:off=deactivate_env
+alias env:reset=init
 
 
 alias run:db=rundb
@@ -338,5 +319,15 @@ alias run:server=runserver
 alias run:micro=runservices
 alias run:mail=run_mail_server
 alias ks=kill_server
+
+
+alias gen:js=generate_node_client
+alias gen:ts=generate_typescript_client
+alias gen:php=generate_php_client
+alias gen:python=generate_python_client
+alias gen:graph=generate_graphql_schema
+
+
+alias dev:webapp=dev_webapp
 
 activate_env

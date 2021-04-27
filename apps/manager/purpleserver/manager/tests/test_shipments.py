@@ -55,17 +55,15 @@ class TestShipmentFixture(APITestCase):
             "package_preset": "canadapost_corrugated_small_box",
             "created_by": self.user
         })
-        self.payment: models.Payment = models.Payment.objects.create(**{
-            "currency": "CAD",
-            "paid_by": "sender",
-            "created_by": self.user
-        })
         self.shipment: models.Shipment = models.Shipment.objects.create(
             shipper=self.shipper,
             recipient=self.recipient,
-            payment=self.payment,
             created_by=self.user,
             test_mode=True,
+            payment={
+                "currency": "CAD",
+                "paid_by": "sender"
+            },
         )
         self.shipment.parcels.set([self.parcel])
 
@@ -316,14 +314,7 @@ SHIPMENT_RESPONSE = {
     }],
     "services": [],
     "options": {},
-    "payment": {
-        "id": ANY,
-        "paid_by": "sender",
-        "amount": None,
-        "currency": "CAD",
-        "account_number": None,
-        "contact": None
-    },
+    "payment": None,
     "customs": None,
     "reference": None,
     "carrier_ids": [
@@ -494,14 +485,7 @@ PURCHASED_SHIPMENT = {
     }],
     "services": [],
     "options": {},
-    "payment": {
-        "id": ANY,
-        "paid_by": "sender",
-        "amount": None,
-        "currency": "CAD",
-        "account_number": None,
-        "contact": None
-    },
+    "payment": {'account_number': None, 'currency': 'CAD', 'paid_by': 'sender'},
     "customs": None,
     "reference": None,
     "carrier_ids": [],

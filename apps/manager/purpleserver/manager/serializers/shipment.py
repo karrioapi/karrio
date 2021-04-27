@@ -21,7 +21,6 @@ from purpleserver.core.serializers import (
     LabelType
 )
 from purpleserver.manager.serializers.address import AddressSerializer
-from purpleserver.manager.serializers.payment import PaymentSerializer
 from purpleserver.manager.serializers.customs import CustomsSerializer
 from purpleserver.manager.serializers.parcel import ParcelSerializer
 from purpleserver.manager.serializers.rate import RateSerializer
@@ -78,14 +77,6 @@ class ShipmentSerializer(ShipmentData):
                         ).data
                     )
 
-                if payload.get('payment') is not None:
-                    payload.update(
-                        payment=SerializerDecorator[PaymentSerializer](
-                            (instance.payment if instance is not None else None),
-                            data=payload['payment']
-                        ).data
-                    )
-
             kwargs.update(data=payload)
 
         super().__init__(instance, **kwargs)
@@ -112,9 +103,6 @@ class ShipmentSerializer(ShipmentData):
 
             customs=SerializerDecorator[CustomsSerializer](
                 data=validated_data.get('customs')).save(created_by=created_by).instance,
-
-            payment=SerializerDecorator[PaymentSerializer](
-                data=validated_data.get('payment')).save(created_by=created_by).instance,
         )
 
         shipment = models.Shipment.objects.create(**{
@@ -156,11 +144,6 @@ class ShipmentSerializer(ShipmentData):
                     prop.delete()
                     setattr(instance, key, None)
                     validated_data.pop(key)
-
-        if validated_data.get('payment') is not None:
-            changes.append('payment')
-            instance.payment = SerializerDecorator[PaymentSerializer](
-                instance.payment, data=validated_data['payment']).save(created_by=created_by).instance
 
         if validated_data.get('customs') is not None:
             changes.append('customs')

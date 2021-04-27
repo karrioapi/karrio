@@ -235,11 +235,7 @@ class TestCustomsTemplate(GraphTestCase):
                   commercial_invoice
                   certificate_number
                   content_description
-                  duty {
-                    paid_by
-                    currency
-                    account_number
-                  }
+                  duty
                   invoice
                   signer
                   certify
@@ -296,11 +292,7 @@ class TestCustomsTemplate(GraphTestCase):
                   commercial_invoice
                   certificate_number
                   content_description
-                  duty {
-                    paid_by
-                    currency
-                    account_number
-                  }
+                  duty 
                   invoice
                   signer
                   certify
@@ -576,9 +568,7 @@ CUSTOMS_TEMPLATE_UPDATE_DATA = {
                     "weight_unit": "LB",
                 }
             ],
-            "duty": {
-                "paid_by": "SENDER",
-            }
+            "duty": '{"paid_by": "SENDER"}'
         }
     }
 }
@@ -597,11 +587,7 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
                 "commercial_invoice": None,
                 "certificate_number": None,
                 "content_description": None,
-                "duty": {
-                    "paid_by": "SENDER",
-                    "currency": None,
-                    "account_number": None
-                },
+                "duty": {"paid_by": "SENDER"},
                 "invoice": None,
                 "signer": None,
                 "certify": None,
