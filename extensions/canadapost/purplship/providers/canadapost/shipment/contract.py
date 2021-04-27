@@ -22,7 +22,7 @@ from canadapost_lib.shipment import (
     groupIdOrTransmitShipment,
 )
 from purplship.core.units import Currency, WeightUnit, Options, Packages
-from purplship.core.utils import Serializable, Element, XP, SF, NF
+from purplship.core.utils import Serializable, Element, XP, SF
 from purplship.core.models import (
     Message,
     ShipmentDetails,
@@ -183,12 +183,12 @@ def shipment_request(
                 CustomsType(
                     currency=options.currency or Currency.CAD.value,
                     conversion_from_cad=None,
-                    reason_for_export=payload.customs.content_type,
-                    other_reason=payload.customs.content_description,
+                    reason_for_export="OTH",
+                    other_reason=payload.customs.content_type,
                     duties_and_taxes_prepaid=payload.customs.duty.account_number,
                     certificate_number=payload.customs.certificate_number,
                     licence_number=None,
-                    invoice_number=payload.customs.invoice,
+                    invoice_number=None,
                     sku_list=(
                         sku_listType(
                             item=[
@@ -205,8 +205,8 @@ def shipment_request(
                                 )
                                 for item in payload.customs.commodities
                             ]
-                        ),
-                    )
+                        )
+                    ) if any(payload.customs.commodities) else None
                 )
                 if payload.customs is not None else None
             ),
