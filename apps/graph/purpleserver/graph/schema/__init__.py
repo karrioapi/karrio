@@ -63,10 +63,10 @@ class Query(graphene.ObjectType):
         return graph.Template.objects.access_with(info.context.user).filter(parcel__isnull=False, **kwargs)
 
     def resolve_log(self, info, **kwargs):
-        return info.context.user.apirequestlog_set.filter(**kwargs).order_by('-requested_at').first()
+        return info.context.user.apirequestlog_set.filter(**kwargs).first()
 
     def resolve_logs(self, info, **kwargs):
-        return info.context.user.apirequestlog_set.filter(**kwargs)
+        return info.context.user.apirequestlog_set.filter(**kwargs).order_by('-requested_at')
 
     def resolve_shipments(self, info, **kwargs):
         return manager.Shipment.objects.access_with(info.context.user).filter(**kwargs)
