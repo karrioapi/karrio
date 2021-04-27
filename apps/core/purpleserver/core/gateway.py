@@ -137,7 +137,19 @@ class Shipments:
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
 
         # The request call is wrapped in identity to simplify mocking in tests
-        confirmation, messages = identity(lambda: request.from_(gateway).parse())
+        confirmation, messages = (
+            identity(lambda: request.from_(gateway).parse())
+            if 'cancel_shipment' in gateway.features else
+            (
+                datatypes.Confirmation(
+                    carrier_name=gateway.settings.carrier_name,
+                    carrier_id=gateway.settings.carrier_id,
+                    success=True,
+                    operation="Safe cancellation allowed"
+                ),
+                []
+            )
+        )
 
         if confirmation is None:
             raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
