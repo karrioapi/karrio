@@ -31,7 +31,8 @@ class ModelSerializer(BaseModelSerializer):
 
     def update(self, instance, data: dict):
         for name, value in data.items():
-            setattr(instance, name, value)
+            if name != 'created_by':
+                setattr(instance, name, value)
 
         instance.save()
         return instance
