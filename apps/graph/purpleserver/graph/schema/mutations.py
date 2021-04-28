@@ -16,8 +16,7 @@ class _SerializerMutation(SerializerMutation):
         data = input.copy()
 
         if 'id' in input:
-            model = cls._meta.model_class
-            instance = model.objects.get(id=data.pop('id'), created_by_id=info.context.user.id)
+            instance = cls._meta.model_class.objects.access_with(info.context.user).get(id=data.pop('id'))
 
             return {'instance': instance, 'data': data, 'partial': True, 'created_by': info.context.user}
 
