@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Apr 30 05:39:53 2021 by generateDS.py version 2.38.6.
+# Generated Fri Apr 30 05:39:44 2021 by generateDS.py version 2.38.6.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './dhl_express_lib/track_err_res.py')
+#   ('-o', './dhl_express_lib/datatypes.py')
 #
 # Command line arguments:
-#   /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/track-err-res.xsd
+#   /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./dhl_express_lib/track_err_res.py" /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/track-err-res.xsd
+#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./dhl_express_lib/datatypes.py" /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes.xsd
 #
 # Current working directory (os.getcwd()):
 #   dhl_express
@@ -1596,100 +1596,6 @@ class YesNo(str, Enum):
     """Boolean flag"""
     Y='Y'
     N='N'
-
-
-class ShipmentTrackingErrorResponse(GeneratedsSuper):
-    """Shipment tracking error response root element"""
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, Response=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.Response = Response
-        self.Response_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ShipmentTrackingErrorResponse)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if ShipmentTrackingErrorResponse.subclass:
-            return ShipmentTrackingErrorResponse.subclass(*args_, **kwargs_)
-        else:
-            return ShipmentTrackingErrorResponse(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_Response(self):
-        return self.Response
-    def set_Response(self, Response):
-        self.Response = Response
-    def hasContent_(self):
-        if (
-            self.Response is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentTrackingErrorResponse', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentTrackingErrorResponse')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ShipmentTrackingErrorResponse':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentTrackingErrorResponse')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentTrackingErrorResponse', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentTrackingErrorResponse'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentTrackingErrorResponse', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.Response is not None:
-            namespaceprefix_ = self.Response_nsprefix_ + ':' if (UseCapturedNS_ and self.Response_nsprefix_) else ''
-            self.Response.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Response', pretty_print=pretty_print)
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Response':
-            obj_ = ErrorResponse.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.Response = obj_
-            obj_.original_tagname_ = 'Response'
-# end class ShipmentTrackingErrorResponse
 
 
 class DataTypes(GeneratedsSuper):
@@ -13121,82 +13027,6 @@ class ShipmentInfo(GeneratedsSuper):
 # end class ShipmentInfo
 
 
-class Pieces(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, Pieces)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if Pieces.subclass:
-            return Pieces.subclass(*args_, **kwargs_)
-        else:
-            return Pieces(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def hasContent_(self):
-        if (
-
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Pieces', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Pieces')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'Pieces':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Pieces')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Pieces', pretty_print=pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Pieces'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Pieces', fromsubclass_=False, pretty_print=True):
-        pass
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        pass
-# end class Pieces
-
-
 class ErrorResponse(GeneratedsSuper):
     """Generic response header"""
     __hash__ = GeneratedsSuper.__hash__
@@ -19053,8 +18883,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'ShipmentTrackingErrorResponse'
-        rootClass = ShipmentTrackingErrorResponse
+        rootTag = 'DataTypes'
+        rootClass = DataTypes
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -19085,8 +18915,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'ShipmentTrackingErrorResponse'
-        rootClass = ShipmentTrackingErrorResponse
+        rootTag = 'DataTypes'
+        rootClass = DataTypes
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -19128,8 +18958,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'ShipmentTrackingErrorResponse'
-        rootClass = ShipmentTrackingErrorResponse
+        rootTag = 'DataTypes'
+        rootClass = DataTypes
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -19156,8 +18986,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'ShipmentTrackingErrorResponse'
-        rootClass = ShipmentTrackingErrorResponse
+        rootTag = 'DataTypes'
+        rootClass = DataTypes
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -19165,8 +18995,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from track_err_res import *\n\n')
-        sys.stdout.write('import track_err_res as model_\n\n')
+        sys.stdout.write('#from datatypes import *\n\n')
+        sys.stdout.write('import datatypes as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')
@@ -19199,8 +19029,7 @@ RenameMappings_ = {
 # Mapping of namespaces to types defined in them
 # and the file in which each is defined.
 # simpleTypes are marked "ST" and complexTypes "CT".
-NamespaceToDefMappings_ = {'http://www.dhl.com': [],
- 'http://www.dhl.com/datatypes': [('AccountNumber',
+NamespaceToDefMappings_ = {'http://www.dhl.com/datatypes': [('AccountNumber',
                                    '../../../Carriers '
                                    'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes.xsd',
                                    'ST'),
@@ -20131,7 +19960,6 @@ __all__ = [
     "ShipmentDetails",
     "ShipmentEvent",
     "ShipmentInfo",
-    "ShipmentTrackingErrorResponse",
     "Shipper",
     "SpecialService",
     "Status",
