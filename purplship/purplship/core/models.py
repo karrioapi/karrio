@@ -5,6 +5,15 @@ from jstruct import JList, JStruct, REQUIRED
 
 
 @attr.s(auto_attribs=True)
+class AddressExtra:
+    street_name: str = None
+    street_number: str = None
+    street_type: str = None
+    suburb: str = None
+    suite: str = None
+
+
+@attr.s(auto_attribs=True)
 class Address:
     """shipping party (contact and address) data type."""
 
@@ -18,7 +27,6 @@ class Address:
     phone_number: str = None
 
     state_code: str = None
-    suburb: str = None
     residential: bool = False
 
     address_line1: str = ""
@@ -27,17 +35,19 @@ class Address:
     federal_tax_id: str = None
     state_tax_id: str = None
 
+    extra: AddressExtra = JStruct[AddressExtra]
+
 
 @attr.s(auto_attribs=True)
 class Commodity:
     """commodity or product unified data type."""
 
     id: str = None
+    sku: str = None
+    quantity: int = 1
     weight: float = None
     weight_unit: str = None
     description: str = None
-    quantity: int = 1
-    sku: str = None
     value_amount: float = None
     value_currency: str = None
     origin_country: str = None
@@ -79,6 +89,7 @@ class Duty:
     currency: str = None
     account_number: str = None
     declared_value: float = None
+    bill_to: Address = JStruct[Address]
     id: str = None
 
 
@@ -94,6 +105,7 @@ class Customs:
     content_description: str = None
     incoterm: str = None
     invoice: str = None
+    invoice_date: str = None
     license_number: str = None
     certificate_number: str = None
     commodities: List[Commodity] = JList[Commodity]

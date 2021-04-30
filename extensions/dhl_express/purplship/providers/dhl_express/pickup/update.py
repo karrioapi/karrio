@@ -131,7 +131,7 @@ def _request_serializer(request: ModifyPURequest) -> str:
         request,
         name_="req:ModifyPURequest",
         namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd"',
-    ).replace("dhlPickup:", "")
+    ).replace("dhlPickup:", "").replace('schemaVersion="3"', 'schemaVersion="3.0"')
 
     xml_str = reformat_time("CloseTime", reformat_time("ReadyByTime", xml_str))
     return xml_str

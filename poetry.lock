@@ -117,7 +117,7 @@ six = ">=1.15.0,<2.0.0"
 
 [[package]]
 name = "carrier.dhl-express"
-version = "2020.4.1"
+version = "2021.4"
 description = "DHL Express Web API Schemas Python Data Types library"
 category = "dev"
 optional = false
@@ -313,18 +313,19 @@ smmap = ">=3.0.1,<5"
 
 [[package]]
 name = "gitpython"
-version = "3.1.14"
+version = "3.1.15"
 description = "Python Git Library"
 category = "dev"
 optional = false
-python-versions = ">=3.4"
+python-versions = ">=3.5"
 
 [package.dependencies]
 gitdb = ">=4.0.1,<5"
+typing-extensions = ">=3.7.4.0"
 
 [[package]]
 name = "importlib-metadata"
-version = "3.10.1"
+version = "4.0.1"
 description = "Read metadata from Python packages"
 category = "dev"
 optional = false
@@ -515,7 +516,7 @@ python-versions = "*"
 
 [[package]]
 name = "nltk"
-version = "3.6.1"
+version = "3.6.2"
 description = "Natural Language Toolkit"
 category = "dev"
 optional = false
@@ -528,7 +529,7 @@ regex = "*"
 tqdm = "*"
 
 [package.extras]
-all = ["requests", "pyparsing", "numpy", "twython", "gensim (<4.0.0)", "scikit-learn", "scipy", "python-crfsuite", "matplotlib"]
+all = ["matplotlib", "twython", "scipy", "numpy", "gensim (<4.0.0)", "python-crfsuite", "pyparsing", "scikit-learn", "requests"]
 corenlp = ["requests"]
 machine_learning = ["gensim (<4.0.0)", "numpy", "python-crfsuite", "scikit-learn", "scipy"]
 plot = ["matplotlib"]
@@ -545,7 +546,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pbr"
-version = "5.5.1"
+version = "5.6.0"
 description = "Python Build Reasonableness"
 category = "dev"
 optional = false
@@ -553,7 +554,7 @@ python-versions = ">=2.6"
 
 [[package]]
 name = "phonenumbers"
-version = "8.12.21"
+version = "8.12.22"
 description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
 category = "dev"
 optional = false
@@ -569,7 +570,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "purplship"
-version = "2021.3"
+version = "2021.3.1"
 description = "Multi-carrier shipping API integration with python"
 category = "dev"
 optional = false
@@ -642,7 +643,7 @@ url = "extensions/boxknight"
 
 [[package]]
 name = "purplship.canadapost"
-version = "2021.3"
+version = "2021.3.1"
 description = "Purplship - Canada Post Shipping Extension"
 category = "dev"
 optional = false
@@ -676,7 +677,7 @@ url = "extensions/canpar"
 
 [[package]]
 name = "purplship.dhl-express"
-version = "2021.3"
+version = "2021.3.1"
 description = "Purplship - DHL Express Shipping Extension"
 category = "dev"
 optional = false
@@ -684,7 +685,7 @@ python-versions = "^3.7"
 develop = true
 
 [package.dependencies]
-"carrier.dhl_express" = "^2020.4.1"
+"carrier.dhl_express" = "^2021.4"
 purplship = "^2021.2.2"
 
 [package.source]
@@ -744,7 +745,7 @@ url = "extensions/fedex"
 
 [[package]]
 name = "purplship.purolator-courier"
-version = "2021.3"
+version = "2021.3.1"
 description = "Purplship - Purolator Courier Shipping Extension"
 category = "dev"
 optional = false
@@ -1089,7 +1090,7 @@ black = [
     {file = "carrier.canpar-2021.2-py3-none-any.whl", hash = "sha256:51b366a8abf7f02e45b95ee01f4bfc8296a46545c45480c9696819816d5c5927"},
 ]
 "carrier.dhl-express" = [
-    {file = "carrier.dhl_express-2020.4.1-py3-none-any.whl", hash = "sha256:cd7f1c5ec55723abfcafe1b9bbc43df6a33a6975d7150312f81bddf1f0a14db7"},
+    {file = "carrier.dhl_express-2021.4-py3-none-any.whl", hash = "sha256:23fd7cd2e6658e2a77f49ddf8887624b3b6fc97fbe48d8bfce3139760d5fa36a"},
 ]
 "carrier.dhl-universal" = [
     {file = "carrier.dhl_universal-2021.2-py3-none-any.whl", hash = "sha256:c19350922bfdb430d90a257da9a362db74e3fe3cd22bf85f247e944bdc3d6d1f"},
@@ -1197,12 +1198,12 @@ gitdb = [
     {file = "gitdb-4.0.7.tar.gz", hash = "sha256:96bf5c08b157a666fec41129e6d327235284cca4c81e92109260f353ba138005"},
 ]
 gitpython = [
-    {file = "GitPython-3.1.14-py3-none-any.whl", hash = "sha256:3283ae2fba31c913d857e12e5ba5f9a7772bbc064ae2bb09efafa71b0dd4939b"},
-    {file = "GitPython-3.1.14.tar.gz", hash = "sha256:be27633e7509e58391f10207cd32b2a6cf5b908f92d9cd30da2e514e1137af61"},
+    {file = "GitPython-3.1.15-py3-none-any.whl", hash = "sha256:a77824e516d3298b04fb36ec7845e92747df8fcfee9cacc32dd6239f9652f867"},
+    {file = "GitPython-3.1.15.tar.gz", hash = "sha256:05af150f47a5cca3f4b0af289b73aef8cf3c4fe2385015b06220cbcdee48bb6e"},
 ]
 importlib-metadata = [
-    {file = "importlib_metadata-3.10.1-py3-none-any.whl", hash = "sha256:2ec0faae539743ae6aaa84b49a169670a465f7f5d64e6add98388cc29fd1f2f6"},
-    {file = "importlib_metadata-3.10.1.tar.gz", hash = "sha256:c9356b657de65c53744046fa8f7358afe0714a1af7d570c00c3835c2d724a7c1"},
+    {file = "importlib_metadata-4.0.1-py3-none-any.whl", hash = "sha256:d7eb1dea6d6a6086f8be21784cc9e3bcfa55872b52309bc5fad53a8ea444465d"},
+    {file = "importlib_metadata-4.0.1.tar.gz", hash = "sha256:8c501196e49fb9df5df43833bdb1e4328f64847763ec8a50703148b73784d581"},
 ]
 jinja2 = [
     {file = "Jinja2-2.11.3-py2.py3-none-any.whl", hash = "sha256:03e47ad063331dd6a3f04a43eddca8a966a26ba0c5b7207a9a9e4e08f1b29419"},
@@ -1344,20 +1345,20 @@ mypy-extensions = [
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
 ]
 nltk = [
-    {file = "nltk-3.6.1-py3-none-any.whl", hash = "sha256:1235660f52ab10fda34d5277096724747f767b2903e1c0c4e14bde013552c9ba"},
-    {file = "nltk-3.6.1.zip", hash = "sha256:cbc2ed576998fcf7cd181eeb3ca029e5f0025b264074b4beb57ce780673f8b86"},
+    {file = "nltk-3.6.2-py3-none-any.whl", hash = "sha256:240e23ab1ab159ef9940777d30c7c72d7e76d91877099218a7585370c11f6b9e"},
+    {file = "nltk-3.6.2.zip", hash = "sha256:57d556abed621ab9be225cc6d2df1edce17572efb67a3d754630c9f8381503eb"},
 ]
 pathspec = [
     {file = "pathspec-0.8.1-py2.py3-none-any.whl", hash = "sha256:aa0cb481c4041bf52ffa7b0d8fa6cd3e88a2ca4879c533c9153882ee2556790d"},
     {file = "pathspec-0.8.1.tar.gz", hash = "sha256:86379d6b86d75816baba717e64b1a3a3469deb93bb76d613c9ce79edc5cb68fd"},
 ]
 pbr = [
-    {file = "pbr-5.5.1-py2.py3-none-any.whl", hash = "sha256:b236cde0ac9a6aedd5e3c34517b423cd4fd97ef723849da6b0d2231142d89c00"},
-    {file = "pbr-5.5.1.tar.gz", hash = "sha256:5fad80b613c402d5b7df7bd84812548b2a61e9977387a80a5fc5c396492b13c9"},
+    {file = "pbr-5.6.0-py2.py3-none-any.whl", hash = "sha256:c68c661ac5cc81058ac94247278eeda6d2e6aecb3e227b0387c30d277e7ef8d4"},
+    {file = "pbr-5.6.0.tar.gz", hash = "sha256:42df03e7797b796625b1029c0400279c7c34fd7df24a7d7818a1abb5b38710dd"},
 ]
 phonenumbers = [
-    {file = "phonenumbers-8.12.21-py2.py3-none-any.whl", hash = "sha256:7d66d6f09541568941e51fe2275de0f2d519b3234c80c8c166c56d01d098d3fc"},
-    {file = "phonenumbers-8.12.21.tar.gz", hash = "sha256:271f26271338616460eef8b878e5879401299adfc0cd0891c48b4744afbb45b2"},
+    {file = "phonenumbers-8.12.22-py2.py3-none-any.whl", hash = "sha256:f9cb4882e5c7daeaa183af7b0390c44a02604731c7aab561d9456e1df4582207"},
+    {file = "phonenumbers-8.12.22.tar.gz", hash = "sha256:b20765cb9d1392308071a3462c06edcaa953cb383e3565f5fc0a6fb93f240150"},
 ]
 pillow = [
     {file = "Pillow-8.2.0-cp36-cp36m-macosx_10_10_x86_64.whl", hash = "sha256:dc38f57d8f20f06dd7c3161c59ca2c86893632623f33a42d592f097b00f720a9"},

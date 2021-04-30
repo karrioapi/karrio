@@ -95,13 +95,35 @@ class Incoterm(Enum):
     FOB = "FOB Free On Board"
 
 
+class ExportReasonCode(Enum):
+    permanent = 'P'
+    temporary = 'T'
+    return_for_repair = 'R'
+    used_exhibition_goods_to_origin = 'M'
+    intercompany_use = 'I'
+    commercial_purpose_or_sale = 'C'
+    personal_belongings_or_personal_use = 'E'
+    sample = 'S'
+    gift = 'G'
+    return_to_origin = 'U'
+    warranty_replacement = 'W'
+    diplmatic_goods = 'D'
+    defenece_material = 'F'
+
+    """ Unified Customs Content type mapping """
+    other = None
+    documents = other
+    merchandise = commercial_purpose_or_sale
+    return_merchandise = return_to_origin
+
+
 class PaymentType(Enum):
     sender = "S"
     recipient = "R"
     third_party = "T"
 
 
-class Dimension(Enum):
+class DimensionUnit(Enum):
     CM = "C"
     IN = "I"
 
@@ -293,7 +315,7 @@ class SpecialServiceCode(Enum):
     dhl_performance_reporting = Spec.asKey("JE")
     dhl_prealert_notification = Spec.asKey("JY")
     dhl_change_of_billing = Spec.asKey("KA")
-    dhl_cash_on_delivery = Spec.asKey("KB")
+    dhl_cash_on_delivery = Spec.asValue("KB", float)
     dhl_printed_invoice = Spec.asKey("KD")
     dhl_waybill_copy = Spec.asKey("KE")
     dhl_import_paperwork = Spec.asKey("KF")
@@ -439,6 +461,7 @@ class SpecialServiceCode(Enum):
 
     """ Unified Option type mapping """
     insurance = dhl_shipment_insurance
+    cash_on_delivery = dhl_cash_on_delivery
 
 
 class CountryRegion(Enum):

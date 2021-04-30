@@ -104,8 +104,8 @@ shipment_data = {
     "options": {"dhl_paperless_trade": True, "insurance": 148.0},
     "payment": {"paid_by": "sender", "account_number": "123456789"},
     "customs": {
-        "commodities": [{"description": "cn", "sku": "cc"}],
         "incoterm": "DAP",
+        "commodities": [{"description": "cn", "weight": 4.0, "sku": "cc"}],
         "duty": {"account_number": "123456789", "paid_by": "sender", "declared_value": 200.},
     },
 }
@@ -194,7 +194,7 @@ ShipmentMissingArgsError = """<?xml version="1.0" encoding="UTF-8"?>
 <!-- ServiceInvocationId:20180831211951_7837_4526a967-d468-4741-a69e-88be23f892dc -->
 """
 
-ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" schemaVersion="6.2">
+ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="10.0">
     <Request>
         <ServiceHeader>
             
@@ -204,23 +204,21 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         </ServiceHeader>
         <MetaData>
             <SoftwareName>3PV</SoftwareName>
-            <SoftwareVersion>6.2</SoftwareVersion>
+            <SoftwareVersion>10.0</SoftwareVersion>
         </MetaData>
     </Request>
     <RegionCode>AM</RegionCode>
-    <RequestedPickupTime>Y</RequestedPickupTime>
     <LanguageCode>en</LanguageCode>
-    <PiecesEnabled>Y</PiecesEnabled>
     <Billing>
         <ShipperAccountNumber>123456789</ShipperAccountNumber>
         <ShippingPaymentType>S</ShippingPaymentType>
         <BillingAccountNumber>123456789</BillingAccountNumber>
-        <DutyPaymentType>S</DutyPaymentType>
         <DutyAccountNumber>123456789</DutyAccountNumber>
     </Billing>
     <Consignee>
         <CompanyName>IBM Bruse Pte Ltd</CompanyName>
-        <AddressLine>9 Business Park Central 13th Floor The IBM Place</AddressLine>
+        <AddressLine1>9 Business Park Central 13th Floor The IBM Place</AddressLine1>
+        <AddressLine2></AddressLine2>
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
@@ -236,33 +234,54 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <CommodityName>cn</CommodityName>
     </Commodity>
     <Dutiable>
-        <DeclaredValue>200.</DeclaredValue>
+        <DeclaredValue>200</DeclaredValue>
         <DeclaredCurrency>USD</DeclaredCurrency>
         <TermsOfTrade>DAP</TermsOfTrade>
     </Dutiable>
+    <UseDHLInvoice>Y</UseDHLInvoice>
+    <DHLInvoiceLanguageCode></DHLInvoiceLanguageCode>
+    <DHLInvoiceType>PFI</DHLInvoiceType>
+    <ExportDeclaration>
+        <ExportLineItem>
+            <LineNumber>1</LineNumber>
+            <Quantity>1</Quantity>
+            <QuantityUnit>PCS</QuantityUnit>
+            <Description>cn</Description>
+            <Value>0</Value>
+            <CommodityCode>cc</CommodityCode>
+            <Weight>
+                <WeightUnit>L</WeightUnit>
+            </Weight>
+            <GrossWeight>
+                <WeightUnit>L</WeightUnit>
+            </GrossWeight>
+        </ExportLineItem>
+        <PlaceOfIncoterm>DAP</PlaceOfIncoterm>
+        <ShipmentPurpose>PERSONAL</ShipmentPurpose>
+    </ExportDeclaration>
     <Reference>
         <ReferenceID></ReferenceID>
     </Reference>
     <ShipmentDetails>
-        <NumberOfPieces>1</NumberOfPieces>
         <Pieces>
             <Piece>
                 <PieceID>1</PieceID>
                 <PackageType>PA</PackageType>
-                <Weight>4.</Weight>
+                <Weight>4</Weight>
                 <Width>3</Width>
                 <Height>3</Height>
                 <Depth>10</Depth>
+                <PieceReference>
+                    <ReferenceID>1</ReferenceID>
+                </PieceReference>
             </Piece>
         </Pieces>
-        <Weight>4.</Weight>
         <WeightUnit>L</WeightUnit>
         <GlobalProductCode>P</GlobalProductCode>
         <LocalProductCode>P</LocalProductCode>
         
         <Contents>N/A</Contents>
         <DimensionUnit>I</DimensionUnit>
-        <InsuredAmount>148.</InsuredAmount>
         <PackageType>PA</PackageType>
         <IsDutiable>Y</IsDutiable>
         <CurrencyCode>USD</CurrencyCode>
@@ -271,7 +290,8 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
         <ShipperID>123456789</ShipperID>
         <CompanyName>shipper company privated limited 12</CompanyName>
         <RegisteredAccount>123456789</RegisteredAccount>
-        <AddressLine>238 850925434 Drive</AddressLine>
+        <AddressLine1>238 850925434 Drive</AddressLine1>
+        <AddressLine2></AddressLine2>
         <City>Scottsdale</City>
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
@@ -288,6 +308,8 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     </SpecialService>
     <SpecialService>
         <SpecialServiceType>II</SpecialServiceType>
+        <ChargeValue>148</ChargeValue>
+        <CurrencyCode>USD</CurrencyCode>
     </SpecialService>
     <Notification>
         <EmailAddress>c_orlander@gc.ca</EmailAddress>
@@ -296,6 +318,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xmlns:req="http://www.dhl.com" xml
     <Label>
         <LabelTemplate>6X4_PDF</LabelTemplate>
     </Label>
+    <UseOwnShipmentIdentificationNumber></UseOwnShipmentIdentificationNumber>
 </req:ShipmentRequest>
 """
 

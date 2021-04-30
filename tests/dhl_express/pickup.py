@@ -203,7 +203,7 @@ PickupErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </res:PickupErrorResponse>
 """
 
-CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="3.">
+CancelPURequestXML = """<req:CancelPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd" schemaVersion="3.0">
     <Request>
         <ServiceHeader>
             
@@ -244,7 +244,7 @@ CancelPUResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </res:CancelPUResponse>
 """
 
-ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="3.">
+ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com modify-pickup-Global-req.xsd" schemaVersion="3.0">
     <Request>
         <ServiceHeader>
             
@@ -279,7 +279,7 @@ ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmln
         <Pieces>1</Pieces>
         <RemotePickupFlag>Y</RemotePickupFlag>
         <weight>
-            <Weight>20.</Weight>
+            <Weight>20</Weight>
             <WeightUnit>L</WeightUnit>
         </weight>
         <SpecialInstructions></SpecialInstructions>
@@ -337,7 +337,7 @@ PickupResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
 </res:BookPUResponse>
 """
 
-PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req_EA.xsd" schemaVersion="3.">
+PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req_EA.xsd" schemaVersion="3.0">
     <Request>
         <ServiceHeader>
             
@@ -371,7 +371,7 @@ PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xs
         <Pieces>1</Pieces>
         <RemotePickupFlag>Y</RemotePickupFlag>
         <weight>
-            <Weight>20.</Weight>
+            <Weight>20</Weight>
             <WeightUnit>L</WeightUnit>
         </weight>
         <SpecialInstructions>behind the front desk</SpecialInstructions>

@@ -219,4 +219,4 @@ def _request_serializer(request: DCTRequest) -> str:
         request,
         name_="p:DCTRequest",
         namespacedef_=namespacedef_,
-    ).replace('schemaVersion="2."', 'schemaVersion="2.0"')
+    ).replace('schemaVersion="2"', 'schemaVersion="2.0"')
