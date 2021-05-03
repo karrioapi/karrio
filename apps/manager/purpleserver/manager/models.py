@@ -6,7 +6,7 @@ from jsonfield import JSONField
 from purpleserver.providers.models import Carrier
 from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.serializers import (
-    WEIGHT_UNIT, DIMENSION_UNIT, PAYMENT_TYPES, CURRENCIES, SHIPMENT_STATUS, COUNTRIES, INCOTERMS
+    WEIGHT_UNIT, DIMENSION_UNIT, CURRENCIES, SHIPMENT_STATUS, COUNTRIES, INCOTERMS
 )
 
 
@@ -116,9 +116,9 @@ class Customs(OwnedEntity):
 
     commodities = models.ManyToManyField('Commodity', blank=True)
 
-    # @property
-    # def commodities(self):
-    #     return self.shipment_commodities.all()
+    def delete(self, *args, **kwargs):
+        self.commodities.all().delete()
+        return super().delete(*args, **kwargs)
 
 
 class Pickup(OwnedEntity):
@@ -150,6 +150,10 @@ class Pickup(OwnedEntity):
 
     pickup_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
     shipments = models.ManyToManyField('Shipment', related_name='pickup_shipments')
+
+    def delete(self, *args, **kwargs):
+        handle = self.address or super()
+        return handle.delete(*args, **kwargs)
 
     # Computed properties
 
@@ -242,11 +246,12 @@ class Shipment(OwnedEntity):
     selected_rate_carrier = models.ForeignKey(
         Carrier, on_delete=models.CASCADE, related_name='selected_rate_carrier', blank=True, null=True)
 
-    # Computed properties
+    def delete(self, *args, **kwargs):
+        self.parcels.all().delete()
+        self.customs and self.customs.delete()
+        return super().delete(*args, **kwargs)
 
-    # @property
-    # def parcels(self):
-    #     return self.shipment_parcels.all()
+    # Computed properties
 
     @property
     def carrier_id(self) -> str:
@@ -273,15 +278,3 @@ class Shipment(OwnedEntity):
         return (
             cast(dict, self.selected_rate).get('service') if self.selected_rate is not None else None
         )
-
-    # @property
-    # def rates(self) -> List[dict]:
-    #     rates: List[dict] = []
-    #     for stored_rate in cast(List[dict], self.shipment_rates):
-    #         carrier = Carrier.objects.get(id=stored_rate['carrier_ref']).data
-    #         rates.append({
-    #             **stored_rate,
-    #             'carrier_id': carrier.carrier_id,
-    #             'carrier_name': carrier.carrier_name,
-    #         })
-    #     return rates
