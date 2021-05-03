@@ -65,7 +65,7 @@ purplship-server.pricing==2021.3
 purplship-server.proxy==2021.3.1
 purplship.aramex==2021.3
 purplship.australiapost==2021.3
-purplship.canadapost==2021.3.1
+purplship.canadapost==2021.3
 purplship.canpar==2021.3
 purplship.dhl-express==2021.4rc0
 purplship.dhl-universal==2021.3
