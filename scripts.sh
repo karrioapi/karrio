@@ -125,6 +125,7 @@ rundb() {
 
 kill_server() {
 	lsof -i tcp:8000 | tail -n +2 | awk '{print $2}' | xargs kill -9
+	pkill purplship
 }
 
 runserver() {

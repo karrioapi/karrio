@@ -2,11 +2,11 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Purplship API",
-    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request\nbodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.3.1`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
+    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request\nbodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.4`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
     "contact": {
       "email": "hello@purplship.com"
     },
-    "version": "2021.3.1"
+    "version": "2021.4"
   },
   "servers": [
     {
@@ -647,6 +647,109 @@
           }
         },
         "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/customs_info/{id}/commodities": {
+      "post": {
+        "tags": [
+          "Customs"
+        ],
+        "summary": "Add a commodity",
+        "description": "Add a customs commodity.",
+        "operationId": "$$add_commodity",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommodityData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customs"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/customs_info/{id}/commodities/{ck}": {
+      "delete": {
+        "tags": [
+          "Customs"
+        ],
+        "summary": "Discard a commodity",
+        "description": "Discard a customs commodity.",
+        "operationId": "$$discard_commodity",
+        "parameters": [
+          {
+            "name": "ck",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/parcels": {
@@ -3539,8 +3642,11 @@
           "account_number": {
             "title": "Account number",
             "type": "string",
-            "description": "The duty payor account number",
+            "description": "The duty payment account number",
             "nullable": true
+          },
+          "bill_to": {
+            "$ref": "#/components/schemas/Address"
           }
         },
         "description": "\nThe payment details.<br/>\nNote that this is required for a Dutiable parcel shipped internationally.\n",
@@ -3620,6 +3726,12 @@
             "title": "Invoice",
             "type": "string",
             "description": "The invoice reference number",
+            "nullable": true
+          },
+          "invoice_date": {
+            "title": "Invoice date",
+            "type": "string",
+            "description": "The invoice date",
             "nullable": true
           },
           "commercial_invoice": {
@@ -3747,6 +3859,12 @@
             "description": "The invoice reference number",
             "nullable": true
           },
+          "invoice_date": {
+            "title": "Invoice date",
+            "type": "string",
+            "description": "The invoice date",
+            "nullable": true
+          },
           "commercial_invoice": {
             "title": "Commercial invoice",
             "type": "boolean",
@@ -3794,6 +3912,65 @@
             "title": "Success",
             "type": "boolean",
             "description": "Specify whether the operation was successful"
+          }
+        }
+      },
+      "CommodityData": {
+        "required": [
+          "weight",
+          "weight_unit"
+        ],
+        "type": "object",
+        "properties": {
+          "weight": {
+            "title": "Weight",
+            "type": "number",
+            "description": "The commodity's weight"
+          },
+          "weight_unit": {
+            "title": "Weight unit",
+            "type": "string",
+            "description": "The commodity's weight unit",
+            "enum": [
+              "KG",
+              "LB"
+            ]
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "A description of the commodity",
+            "nullable": true
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "integer",
+            "description": "The commodity's quantity (number or item)",
+            "nullable": true
+          },
+          "sku": {
+            "title": "Sku",
+            "type": "string",
+            "description": "The commodity's sku number",
+            "nullable": true
+          },
+          "value_amount": {
+            "title": "Value amount",
+            "type": "number",
+            "description": "The monetary value of the commodity",
+            "nullable": true
+          },
+          "value_currency": {
+            "title": "Value currency",
+            "type": "string",
+            "description": "The currency of the commodity value amount",
+            "nullable": true
+          },
+          "origin_country": {
+            "title": "Origin country",
+            "type": "string",
+            "description": "The origin or manufacture country",
+            "nullable": true
           }
         }
       },
