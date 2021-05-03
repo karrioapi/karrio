@@ -1,56 +1,38 @@
 from django.db import transaction
 
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import save_many_to_many_data, owned_model_serializer
 from purpleserver.core.serializers import CustomsData
 
 from purpleserver.manager.serializers.commodity import CommoditySerializer
 import purpleserver.manager.models as models
 
 
+@owned_model_serializer
 class CustomsSerializer(CustomsData):
 
     def __init__(self, instance: models.Customs = None, **kwargs):
-        if kwargs.get('data') is not None:
-            if isinstance(kwargs['data'], str):
-                payload = CustomsData(models.Customs.objects.get(pk=kwargs['data'])).data
+        data = kwargs.get('data')
 
-            else:
-                payload = kwargs['data'].copy()
+        if data is not None:
+            if isinstance(data, str):
+                kwargs.update(data=CustomsData(models.Customs.objects.get(pk=kwargs['data'])).data)
 
-                if payload.get('commodities') is not None:
-                    payload.update(
-                        commodities=[
-                            SerializerDecorator[CommoditySerializer](data=commodity).data
-                            for commodity in payload.get('commodities', [])
-                        ]
-                    )
-
-            kwargs.update(data=payload)
+            if 'commodities' in data and instance is not None:
+                extra = {'partial': True, 'context_user': self._context_user}
+                save_many_to_many_data('commodities', CommoditySerializer, instance, payload=data, **extra)
 
         super().__init__(instance, **kwargs)
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Customs:
-        created_by = validated_data['created_by']
-        related_data = {}
-        data = {
-            key: value for key, value in validated_data.items() if key in models.Customs.DIRECT_PROPS
-        }
+        data = {key: value for key, value in validated_data.items() if key in models.Customs.DIRECT_PROPS}
 
-        customs = models.Customs.objects.create(**{
-            **data,
-            **related_data,
-            'created_by': created_by
-        })
+        instance = models.Customs.objects.create(**{**data, 'created_by': self._context_user})
 
-        if validated_data.get('commodities') is not None:
-            shipment_commodities = [
-                SerializerDecorator[CommoditySerializer](data=data).save(created_by=created_by).instance
-                for data in validated_data.get('commodities', [])
-            ]
-            customs.shipment_commodities.set(shipment_commodities)
+        save_many_to_many_data(
+            'commodities', CommoditySerializer, instance, payload=validated_data, context_user=self._context_user)
 
-        return customs
+        return instance
 
     @transaction.atomic
     def update(self, instance: models.Customs, validated_data: dict) -> models.Customs:

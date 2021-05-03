@@ -74,7 +74,7 @@ class ShipmentList(GenericAPIView):
         Create a new shipment instance.
         """
         shipment = SerializerDecorator[ShipmentSerializer](
-            data=request.data).save(user=request.user).instance
+            data=request.data, context_user=request.user).save().instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -142,7 +142,7 @@ class ShipmentRates(APIView):
         shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
-            data=ShipmentData(shipment).data).save(created_by=request.user).instance
+            data=ShipmentData(shipment).data, context_user=request.user).save().instance
 
         payload: dict = DP.to_dict(dict(
             rates=Rate(rate_response.rates, many=True).data,
@@ -236,7 +236,7 @@ class ShipmentCustoms(APIView):
             messages=[]
         ))
 
-        SerializerDecorator[ShipmentSerializer](shipment, data=payload).save(created_by=request.user)
+        SerializerDecorator[ShipmentSerializer](shipment, data=payload, context_user=request.user).save()
         return Response(Shipment(shipment).data)
 
 
@@ -260,7 +260,7 @@ class ShipmentParcels(APIView):
                 "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        parcel = SerializerDecorator[ParcelSerializer](data=request.data).save(created_by=request.user).instance
+        parcel = SerializerDecorator[ParcelSerializer](data=request.data, context_user=request.user).save().instance
         shipment.shipment_parcels.add(parcel)
         reset_related_shipment_rates(shipment)
         return Response(Shipment(shipment).data)
@@ -294,10 +294,10 @@ class ShipmentPurchase(APIView):
 
         # Submit shipment to carriers
         response: Shipment = SerializerDecorator[ShipmentValidationData](
-            data=payload).save(created_by=request.user).instance
+            data=payload, context_user=request.user).save().instance
 
         # Update shipment state
-        SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response)).save()
+        SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response), context_user=request.user).save()
 
         return Response(Shipment(shipment).data)
 

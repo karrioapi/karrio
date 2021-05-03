@@ -5,7 +5,8 @@ from rest_framework.serializers import Serializer, CharField, ChoiceField, Boole
 
 from purplship.core.utils import DP
 from purpleserver.core.gateway import Shipments, Carriers
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import SerializerDecorator, owned_model_serializer, save_one_to_one_data, \
+    save_many_to_many_data
 import purpleserver.core.datatypes as datatypes
 from purpleserver.providers.models import Carrier
 from purpleserver.core.serializers import (
@@ -27,6 +28,7 @@ from purpleserver.manager.serializers.rate import RateSerializer
 import purpleserver.manager.models as models
 
 
+@owned_model_serializer
 class ShipmentSerializer(ShipmentData):
     status = ChoiceField(required=False, choices=SHIPMENT_STATUS)
     selected_rate_id = CharField(required=False)
@@ -39,54 +41,20 @@ class ShipmentSerializer(ShipmentData):
     test_mode = BooleanField(required=False)
 
     def __init__(self, instance: models.Shipment = None, **kwargs):
-        if kwargs.get('data') is not None:
-            if isinstance(kwargs['data'], str):
-                payload = ShipmentData(models.Shipment.objects.get(pk=kwargs['data'])).data
+        data = kwargs.get('data')
 
-            else:
-                payload = kwargs['data'].copy()
-                if payload.get('shipper') is not None:
-                    payload.update(
-                        shipper=SerializerDecorator[AddressSerializer](
-                            (instance.shipper if instance is not None else None),
-                            data=payload['shipper']
-                        ).data
-                    )
-
-                if payload.get('recipient') is not None:
-                    payload.update(
-                        recipient=SerializerDecorator[AddressSerializer](
-                            (instance.recipient if instance is not None else None),
-                            data=payload['recipient']
-                        ).data
-                    )
-
-                if payload.get('parcels') is not None:
-                    payload.update(
-                        parcels=[
-                            SerializerDecorator[ParcelSerializer](data=parcel).data
-                            for parcel in payload.get('parcels', [])
-                        ]
-                    )
-
-                if payload.get('customs') is not None:
-                    payload.update(
-                        customs=SerializerDecorator[CustomsSerializer](
-                            (instance.customs if instance is not None else None),
-                            data=payload['customs']
-                        ).data
-                    )
-
-            kwargs.update(data=payload)
+        if data is not None and isinstance(data, str):
+            kwargs.update(data=ShipmentData(models.Shipment.objects.get(pk=data)).data)
 
         super().__init__(instance, **kwargs)
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
-        created_by = validated_data['user']
+        context_user = self._context_user
         carrier_ids = validated_data.get('carrier_ids', [])
-        carriers = Carriers.list(carrier_ids=carrier_ids, created_by=created_by) if any(carrier_ids) else []
-        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](data=validated_data).save(created_by=created_by).instance
+        carriers = Carriers.list(carrier_ids=carrier_ids, created_by=context_user) if any(carrier_ids) else []
+        rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](
+            data=validated_data, context_user=context_user).save().instance
         test_mode = all([r.test_mode for r in rate_response.rates])
 
         shipment_data = {
@@ -94,33 +62,28 @@ class ShipmentSerializer(ShipmentData):
             if key in models.Shipment.DIRECT_PROPS and value is not None
         }
 
-        related_data = dict(
-            shipper=SerializerDecorator[AddressSerializer](
-                data=validated_data.get('shipper')).save(created_by=created_by).instance,
+        shipment_data.update(
+            shipper=save_one_to_one_data(
+                'shipper', AddressSerializer, payload=validated_data, context_user=context_user),
 
-            recipient=SerializerDecorator[AddressSerializer](
-                data=validated_data.get('recipient')).save(created_by=created_by).instance,
+            recipient=save_one_to_one_data(
+                'recipient', AddressSerializer, payload=validated_data, context_user=context_user),
 
-            customs=SerializerDecorator[CustomsSerializer](
-                data=validated_data.get('customs')).save(created_by=created_by).instance,
+            customs=save_one_to_one_data(
+                'customs', CustomsSerializer, payload=validated_data, context_user=context_user),
         )
 
         shipment = models.Shipment.objects.create(**{
             **shipment_data,
-            **{k: v for k, v in related_data.items() if v is not None},
             'test_mode': test_mode,
-            'created_by': created_by,
+            'created_by': context_user,
             'rates': DP.to_dict(rate_response.rates),
             'messages': DP.to_dict(rate_response.messages)
         })
         shipment.carriers.set(carriers)
 
-        if validated_data.get('parcels') is not None:
-            parcels = [
-                SerializerDecorator[ParcelSerializer](data=data).save(created_by=created_by).instance
-                for data in validated_data.get('parcels', [])
-            ]
-            shipment.parcels.set(parcels)
+        save_many_to_many_data(
+            'parcels', ParcelSerializer, shipment, payload=validated_data, context_user=self._context_user)
 
         return shipment
 
@@ -128,7 +91,7 @@ class ShipmentSerializer(ShipmentData):
     def update(self, instance: models.Shipment, validated_data: dict) -> models.Shipment:
         changes = []
         data = validated_data.copy()
-        created_by = validated_data.get('created_by', instance.created_by)
+        context_user = self._context_user or instance.created_by
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS:
@@ -147,8 +110,7 @@ class ShipmentSerializer(ShipmentData):
 
         if validated_data.get('customs') is not None:
             changes.append('customs')
-            instance.customs = SerializerDecorator[CustomsSerializer](
-                instance.customs, data=validated_data.get('customs')).save(created_by=created_by).instance
+            save_one_to_one_data('customs', CustomsSerializer, instance, payload=validated_data, context_user=context_user)
 
         if 'rates' in validated_data:
             changes.append('rates')
@@ -157,6 +119,7 @@ class ShipmentSerializer(ShipmentData):
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
             carrier = Carrier.objects.filter(carrier_id=selected_rate.get('carrier_id')).first()
+            instance.test_mode = selected_rate.get('test_mode', instance.test_mode)
 
             instance.selected_rate = {**selected_rate, **({'carrier_ref': carrier.id} if carrier is not None else {})}
             instance.selected_rate_carrier = carrier
@@ -172,12 +135,14 @@ class ShipmentSerializer(ShipmentData):
         return instance
 
 
+@owned_model_serializer
 class ShipmentPurchaseData(Serializer):
     selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
     label_type = ChoiceField(required=False, choices=LABEL_TYPES, default=LabelType.PDF.name, help_text="The shipment label file type.")
     payment = Payment(required=False, help_text="The payment details")
 
 
+@owned_model_serializer
 class ShipmentValidationData(Shipment):
     rates = Rate(many=True, required=True)
     payment = Payment(required=True)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.core.utils import SerializerDecorator, owned_model_serializer, save_one_to_one_data
 from purpleserver.core.gateway import Pickups, Carriers
 from purpleserver.core.datatypes import Confirmation
 from purpleserver.core.serializers import (
@@ -43,16 +43,12 @@ def address_exists(value):
         raise serializers.ValidationError(f"Address with id {value} not found: {value}", code="invalid")
 
 
+@owned_model_serializer
 class PickupSerializer(PickupRequest):
     parcels = None
-    address = AddressData(
-        required=False,
-        validators=[address_exists],
-        help_text="The pickup address")
+    address = AddressData(required=False, validators=[address_exists], help_text="The pickup address")
     tracking_numbers = StringListField(
-        required=True,
-        validators=[shipment_exists],
-        help_text="The list of shipments to be picked up")
+        required=True, validators=[shipment_exists], help_text="The list of shipments to be picked up")
 
     def __init__(self, instance: models.Pickup = None, **kwargs):
         if 'data' in kwargs:
@@ -70,16 +66,14 @@ class PickupSerializer(PickupRequest):
                 address = data.get('address')
 
             if address is not None:
-                self._address = SerializerDecorator[AddressSerializer](
-                    (None if instance is None else instance.address), data=address)
-                data.update(address=self._address.data)
+                data.update(address=address)
 
             kwargs.update(data=data)
 
         super().__init__(instance, **kwargs)
 
     def validate(self, data):
-        validated_data = super(PickupSerializer, self).validate(data)
+        validated_data = super(PickupRequest, self).validate(data)
 
         if len(validated_data.get('tracking_numbers', [])) > 1 and validated_data.get('address') is None:
             raise serializers.ValidationError("address must be specified for multi-shipments pickup", code="required")
@@ -87,12 +81,10 @@ class PickupSerializer(PickupRequest):
         return validated_data
 
     def create(self, validated_data: dict) -> models.Pickup:
-        created_by = validated_data["created_by"]
         carrier_filter = validated_data["carrier_filter"]
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
         request_data = PickupRequest({
             **validated_data,
-            "address": self._address.data,
             "parcels": sum([list(s.parcels.all()) for s in self._shipments], [])
         }).data
 
@@ -101,12 +93,13 @@ class PickupSerializer(PickupRequest):
             key: value for key, value in Pickup(response.pickup).data.items()
             if key in models.Pickup.DIRECT_PROPS
         }
-        address = self._address.save(created_by=validated_data["created_by"]).instance
+        address = save_one_to_one_data(
+                'address', AddressSerializer, payload=validated_data, context_user=self._context_user)
 
         pickup = models.Pickup.objects.create(**{
             **payload,
             "address": address,
-            "created_by": created_by,
+            "created_by": self._context_user,
             "pickup_carrier": carrier,
             "test_mode": response.pickup.test_mode,
             "confirmation_number": response.pickup.confirmation_number,
@@ -133,7 +126,9 @@ class PickupSerializer(PickupRequest):
                 setattr(instance, key, val)
                 validated_data.pop(key)
 
-        self._address.save()
+        save_one_to_one_data(
+            'address', AddressSerializer, instance, payload=validated_data, context_user=self._context_user)
+
         instance.save()
         return instance
 
@@ -167,6 +162,7 @@ class PickupUpdateData(PickupData):
         help_text="The list of shipments to be picked up")
 
 
+@owned_model_serializer
 class PickupCancelData(serializers.Serializer):
     reason = serializers.CharField(required=False, help_text="The reason of the pickup cancellation")
 

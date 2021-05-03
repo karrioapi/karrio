@@ -11,7 +11,12 @@ from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, CustomsData, Customs, Operation
-from purpleserver.manager.serializers import CustomsSerializer, reset_related_shipment_rates
+from purpleserver.manager.serializers import (
+    CustomsSerializer,
+    CommodityData,
+    CommoditySerializer,
+    reset_related_shipment_rates
+)
 from purpleserver.manager.router import router
 import purpleserver.manager.models as models
 
@@ -51,7 +56,7 @@ class CustomsList(GenericAPIView):
         """
         Create a new customs declaration.
         """
-        customs = SerializerDecorator[CustomsSerializer](data=request.data).save(created_by=request.user).instance
+        customs = SerializerDecorator[CustomsSerializer](data=request.data, context_user=request.user).save().instance
         return Response(Customs(customs).data, status=status.HTTP_201_CREATED)
 
 
@@ -90,7 +95,7 @@ class CustomsDetail(APIView):
                 code='state_error'
             )
 
-        SerializerDecorator[CustomsSerializer](customs, data=request.data).save(created_by=request.user)
+        SerializerDecorator[CustomsSerializer](customs, data=request.data, context_user=request.user).save()
         reset_related_shipment_rates(shipment)
         return Response(Customs(customs).data)
 
@@ -120,5 +125,61 @@ class CustomsDetail(APIView):
         return Response(serializer.data)
 
 
+class CustomsCommodities(APIView):
+
+    @swagger_auto_schema(
+        tags=['Customs'],
+        operation_id=f"{ENDPOINT_ID}add_commodity",
+        operation_summary="Add a commodity",
+        responses={200: Customs(), 400: ErrorResponse()},
+        request_body=CommodityData()
+    )
+    def post(self, request: Request, pk: str):
+        """
+        Add a customs commodity.
+        """
+        customs = models.Customs.objects.access_with(request.user).get(pk=pk)
+        shipment = customs.shipment_set.first()
+
+        if shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "The associated shipment is already 'purchased'",
+                status_code=status.HTTP_409_CONFLICT, code='state_error'
+            )
+
+        commodity = SerializerDecorator[CommoditySerializer](
+            data=request.data, context_user=request.user).save().instance
+        customs.commodities.add(commodity)
+        return Response(Customs(commodity.customs_set.first()).data)
+
+
+class DiscardCommodities(APIView):
+
+    @swagger_auto_schema(
+        tags=['Customs'],
+        operation_id=f"{ENDPOINT_ID}discard_commodity",
+        operation_summary="Discard a commodity",
+        responses={200: Operation(), 400: ErrorResponse()}
+    )
+    def delete(self, request: Request, pk: str, ck: str):
+        """
+        Discard a customs commodity.
+        """
+        customs = models.Customs.objects.access_with(request.user).get(pk=pk)
+        shipment = customs.shipment_set.first()
+        if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
+            raise PurplShipApiException(
+                "The shipment related to this customs info has been 'purchased' and cannot be modified",
+                status_code=status.HTTP_409_CONFLICT, code='state_error'
+            )
+
+        commodity = customs.commodities.get(pk=ck)
+        commodity.delete(keep_parents=True)
+        serializer = Operation(dict(operation="Discard customs commodity", success=True))
+        return Response(serializer.data)
+
+
 router.urls.append(path('customs_info', CustomsList.as_view(), name="customs-list"))
 router.urls.append(path('customs_info/<str:pk>', CustomsDetail.as_view(), name="customs-details"))
+router.urls.append(path('customs_info/<str:pk>/commodities', CustomsCommodities.as_view(), name="customs-commodities"))
+router.urls.append(path('customs_info/<str:pk>/commodities/<str:ck>', DiscardCommodities.as_view(), name="commodities"))

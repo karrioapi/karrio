@@ -66,7 +66,7 @@ class PickupRequest(APIView):
         }
 
         pickup = SerializerDecorator[PickupData](
-            data=request.data).save(created_by=request.user, carrier_filter=carrier_filter).instance
+            data=request.data, context_user=request.user).save(carrier_filter=carrier_filter).instance
 
         return Response(Pickup(pickup).data, status=status.HTTP_201_CREATED)
 
@@ -97,7 +97,7 @@ class PickupDetails(APIView):
         """
         pickup = models.Pickup.objects.access_with(request.user).get(pk=pk)
         instance = SerializerDecorator[PickupUpdateData](
-            pickup, data=request.data).save(created_by=request.user).instance
+            pickup, data=request.data, context_user=request.user).save().instance
 
         return Response(Pickup(instance).data, status=status.HTTP_200_OK)
 
@@ -117,7 +117,7 @@ class PickupCancel(APIView):
         """
         pickup = models.Pickup.objects.access_with(request.user).get(pk=pk)
         confirmation = SerializerDecorator[PickupCancelData](
-            pickup, data=request.data).save(created_by=request.user).instance
+            pickup, data=request.data, context_user=request.user).save().instance
 
         return Response(OperationConfirmation(confirmation).data, status=status.HTTP_200_OK)
 
