@@ -106,6 +106,7 @@ class Customs(OwnedEntity):
     content_description = models.CharField(max_length=250, null=True, blank=True)
     incoterm = models.CharField(max_length=20, choices=INCOTERMS)
     invoice = models.CharField(max_length=50, null=True, blank=True)
+    invoice_date = models.CharField(max_length=50, null=True, blank=True)
     signer = models.CharField(max_length=50, null=True, blank=True)
 
     duty = JSONField(blank=True, null=True, default=None)
