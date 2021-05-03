@@ -57,6 +57,35 @@ class TokenType(graphene_django.DjangoObjectType):
         exclude = ('user', )
 
 
+class MessageType(graphene.ObjectType):
+    carrier_name = graphene.String()
+    carrier_id = graphene.String()
+    message = graphene.String()
+    code = graphene.String()
+    details = generic.GenericScalar()
+
+
+class ChargeType(graphene.ObjectType):
+    name = graphene.String()
+    amount = graphene.Float()
+    currency = graphene.String()
+
+
+class RateType(graphene.ObjectType):
+    carrier_name = graphene.String()
+    carrier_id = graphene.String()
+    currency = graphene.String()
+    transit_days = graphene.Int()
+    service = graphene.String()
+    discount = graphene.Float()
+    base_charge = graphene.Float()
+    total_charge = graphene.Float()
+    duties_and_taxes = graphene.Float()
+    extra_charges = graphene.List(ChargeType)
+    meta = generic.GenericScalar()
+    id = graphene.String()
+
+
 class CommodityType(graphene_django.DjangoObjectType):
     class Meta:
         model = manager.Commodity
@@ -77,9 +106,18 @@ class ParcelType(graphene_django.DjangoObjectType):
         exclude = ('shipment_parcels', 'template', )
 
 
+class DutyType(graphene.ObjectType):
+    paid_by = graphene.String()
+    currency = graphene.String()
+    account_number = graphene.String()
+    declared_value = graphene.Float()
+    bill_to = graphene.Field(AddressType)
+    id = graphene.String()
+
+
 class CustomsType(graphene_django.DjangoObjectType):
     commodities = graphene.List(CommodityType)
-    duty = generic.GenericScalar()
+    duty = graphene.Field(DutyType)
 
     class Meta:
         model = manager.Customs
@@ -132,14 +170,29 @@ class TemplateType(graphene_django.DjangoObjectType):
         interfaces = (CustomNode,)
 
 
+class TrackingEventType(graphene.ObjectType):
+    description = graphene.String()
+    location = graphene.String()
+    code = graphene.String()
+    date = graphene.String()
+    time = graphene.String()
+
+
 class TrackerType(graphene_django.DjangoObjectType):
     tracking_carrier = graphene.Field(SystemConnectionType)
-    events = generic.GenericScalar()
+    events = graphene.List(TrackingEventType)
 
     class Meta:
         model = manager.Tracking
         filter_fields = ['delivered']
         interfaces = (CustomNode,)
+
+
+class PaymentType(graphene.ObjectType):
+    paid_by = graphene.String()
+    currency = graphene.String()
+    account_number = graphene.String()
+    id = graphene.String()
 
 
 class ShipmentType(graphene_django.DjangoObjectType):
@@ -150,15 +203,16 @@ class ShipmentType(graphene_django.DjangoObjectType):
     recipient = graphene.Field(AddressType)
     customs = graphene.Field(CustomsType)
     parcels = graphene.List(ParcelType)
+    payment = graphene.Field(PaymentType)
 
     services = graphene.List(graphene.String)
     carrier_ids = graphene.List(graphene.String)
-    payment = generic.GenericScalar()
+    messages = graphene.List(MessageType)
+    selected_rate = graphene.Field(RateType)
+    rates = graphene.List(RateType)
+
     options = generic.GenericScalar()
     meta = generic.GenericScalar()
-    messages = generic.GenericScalar()
-    selected_rate = generic.GenericScalar()
-    rates = generic.GenericScalar()
 
     class Meta:
         model = manager.Shipment
