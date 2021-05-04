@@ -85,7 +85,7 @@ class Customs(OwnedEntity):
     DIRECT_PROPS = [
         'eel_pfc', 'aes', 'content_description', 'content_type',
         'incoterm', 'commercial_invoice', 'certify', 'duty',
-        'certificate_number', 'signer', 'invoice', 'options'
+        'certificate_number', 'signer', 'invoice', 'invoice_date', 'options'
     ]
     RELATIONAL_PROPS = ['commodities']
 
@@ -106,7 +106,7 @@ class Customs(OwnedEntity):
     content_description = models.CharField(max_length=250, null=True, blank=True)
     incoterm = models.CharField(max_length=20, choices=INCOTERMS)
     invoice = models.CharField(max_length=50, null=True, blank=True)
-    invoice_date = models.CharField(max_length=50, null=True, blank=True)
+    invoice_date = models.DateField(null=True, blank=True)
     signer = models.CharField(max_length=50, null=True, blank=True)
 
     duty = JSONField(blank=True, null=True, default=None)
