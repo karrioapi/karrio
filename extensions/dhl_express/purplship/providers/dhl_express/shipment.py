@@ -9,8 +9,6 @@ from dhl_express_lib.ship_val_global_req_10_0 import (
     Commodity,
     Shipper,
     ShipmentDetails as DHLShipmentDetails,
-    # Pieces,
-    # Piece,
     Reference,
     Dutiable,
     MetaData,
@@ -24,8 +22,7 @@ from dhl_express_lib.ship_val_global_req_10_0 import (
 )
 from dhl_express_lib.ship_val_global_res_10_0 import LabelImage
 from dhl_express_lib.datatypes_global_v10 import Pieces, Piece
-from purplship.core.utils import Serializable, XP, Location
-from purplship.core.utils.xml import Element
+from purplship.core.utils import Serializable, XP, SF, Location, Element
 from purplship.core.models import (
     ShipmentRequest,
     Message,
@@ -34,7 +31,7 @@ from purplship.core.models import (
     Customs,
     Duty
 )
-from purplship.core.units import Options, Packages, CompleteAddress, Weight
+from purplship.core.units import Options, Packages, CompleteAddress, Weight, WeightUnit
 from purplship.providers.dhl_express.units import (
     PackageType,
     ProductCode,
@@ -45,11 +42,14 @@ from purplship.providers.dhl_express.units import (
     PackagePresets,
     LabelType,
     ExportReasonCode,
-    WeightUnit,
+    WeightUnit as DHLWeightUnit,
     DimensionUnit,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
+
+
+UNSUPPORTED_PAPERLESS_COUNTRIES = ['JM']
 
 
 def parse_shipment_response(
@@ -92,9 +92,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     payment = (payload.payment or Payment(paid_by="sender", account_number=settings.account_number))
     customs = (payload.customs or Customs())
     is_dutiable = (is_document is False and customs.duty is not None)
+    paperless_supported = (is_dutiable and payload.shipper.country_code not in UNSUPPORTED_PAPERLESS_COUNTRIES)
     duty = (customs.duty or Duty(paid_by="sender"))
     bill_to = CompleteAddress.map(duty.bill_to)
-    content = (packages[0].parcel.content or "N/A")
+    content = (packages[0].parcel.content or customs.content_description or "N/A")
+    reference = (payload.reference or getattr(payload, 'id', None))
 
     request = DHLShipmentRequest(
         schemaVersion='10.0',
@@ -114,7 +116,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             CompanyName=recipient.company_name or "N/A",
             SuiteDepartmentName=recipient.suite,
             AddressLine1=recipient.address_line1 or recipient.address_line,
-            AddressLine2=recipient.address_line2,
+            AddressLine2=SF.concat_str(recipient.address_line2, join=True),
             AddressLine3=None,
             City=recipient.city,
             Division=None,
@@ -155,9 +157,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             )
             if is_dutiable else None
         ),
-        UseDHLInvoice=("Y" if is_dutiable else None),
-        DHLInvoiceLanguageCode=("en" if customs.invoice is not None else None),
-        DHLInvoiceType=(("CMI" if customs.commercial_invoice else "PFI") if is_dutiable else None),
+        UseDHLInvoice=("Y" if paperless_supported else None),
+        DHLInvoiceLanguageCode=("en" if paperless_supported else None),
+        DHLInvoiceType=(("CMI" if customs.commercial_invoice else "PFI") if paperless_supported else None),
         ExportDeclaration=(
             ExportDeclaration(
                 InterConsignee=None,
@@ -170,8 +172,8 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 SedNumber=None,
                 SedNumberType=None,
                 MxStateCode=None,
-                InvoiceNumber=customs.invoice,
-                InvoiceDate=customs.invoice_date,
+                InvoiceNumber=(customs.invoice or "N/A"),
+                InvoiceDate=(customs.invoice_date or time.strftime("%Y-%m-%d")),
                 BillToCompanyName=bill_to.company_name,
                 BillToContactName=bill_to.person_name,
                 BillToAddressLine=bill_to.address_line,
@@ -204,11 +206,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         ECCN=None,
                         Weight=WeightType(
                             Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB']).LB,
-                            WeightUnit=WeightUnit.LB.value
+                            WeightUnit=DHLWeightUnit.LB.value
                         ),
                         GrossWeight=WeightType(
                             Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB']).LB,
-                            WeightUnit=WeightUnit.LB.value
+                            WeightUnit=DHLWeightUnit.LB.value
                         ),
                         License=None,
                         LicenseSymbol=None,
@@ -225,7 +227,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 ShipmentDocument=None,
                 InvoiceInstructions=None,
                 CustomerDataTextEntries=None,
-                PlaceOfIncoterm=customs.incoterm or 'DDU',
+                PlaceOfIncoterm="N/A",
                 ShipmentPurpose=("COMMERCIAL" if customs.commercial_invoice else "PERSONAL"),
                 DocumentFunction=None,
                 CustomsDocuments=None,
@@ -233,9 +235,12 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 InvoiceTotalGrossWeight=None,
                 InvoiceReferences=None,
             )
-            if is_dutiable else None
+            if paperless_supported else None
         ),
-        Reference=[Reference(ReferenceID=payload.reference)],
+        Reference=(
+            [Reference(ReferenceID=reference)]
+            if any([reference]) else None
+        ),
         ShipmentDetails=DHLShipmentDetails(
             Pieces=Pieces(
                 Piece=[
@@ -249,7 +254,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         Height=package.height.IN,
                         Weight=package.weight.LB,
                         PieceContents=(package.parcel.content or package.parcel.description),
-                        PieceReference=[Reference(ReferenceID=package.parcel.id)],
+                        PieceReference=(
+                            [Reference(ReferenceID=package.parcel.id)]
+                            if package.parcel.id is not None else None
+                        ),
                         AdditionalInformation=(
                             AdditionalInformation(CustomerDescription=package.parcel.description)
                             if package.parcel.description is not None else None
@@ -258,7 +266,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     for (index, package) in enumerate(packages, start=1)
                 ]
             ),
-            WeightUnit=WeightUnit.LB.value,
+            WeightUnit=DHLWeightUnit.LB.value,
             GlobalProductCode=product,
             LocalProductCode=product,
             Date=(options.shipment_date or time.strftime("%Y-%m-%d")),
@@ -279,7 +287,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             SuiteDepartmentName=shipper.suite,
             RegisteredAccount=settings.account_number,
             AddressLine1=shipper.address_line1 or shipper.address_line,
-            AddressLine2=shipper.address_line2,
+            AddressLine2=SF.concat_str(shipper.address_line2, join=True),
             AddressLine3=None,
             City=shipper.city,
             Division=None,
@@ -312,7 +320,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             ] +
             (  # Add paperless trade if dutiable
                 [SpecialService(SpecialServiceType="WY")]
-                if is_dutiable and 'dhl_paperless_trade' not in options else []
+                if paperless_supported and 'dhl_paperless_trade' not in options else []
             )
         ),
         Notification=(
@@ -334,7 +342,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         GetPriceEstimate='Y',
         SinglePieceImage='N',
         ShipmentIdentificationNumber=None,
-        UseOwnShipmentIdentificationNumber=None,
+        UseOwnShipmentIdentificationNumber='N',
         Importer=None,
     )
 

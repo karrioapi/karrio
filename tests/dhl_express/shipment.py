@@ -218,7 +218,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
     <Consignee>
         <CompanyName>IBM Bruse Pte Ltd</CompanyName>
         <AddressLine1>9 Business Park Central 13th Floor The IBM Place</AddressLine1>
-        <AddressLine2></AddressLine2>
         <City>Brussels</City>
         <PostalCode>1060</PostalCode>
         <CountryCode>BE</CountryCode>
@@ -239,9 +238,10 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
         <TermsOfTrade>DAP</TermsOfTrade>
     </Dutiable>
     <UseDHLInvoice>Y</UseDHLInvoice>
-    <DHLInvoiceLanguageCode></DHLInvoiceLanguageCode>
     <DHLInvoiceType>PFI</DHLInvoiceType>
     <ExportDeclaration>
+        <InvoiceNumber>N/A</InvoiceNumber>
+        <InvoiceDate>2021-05-03</InvoiceDate>
         <ExportLineItem>
             <LineNumber>1</LineNumber>
             <Quantity>1</Quantity>
@@ -250,18 +250,17 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
             <Value>0</Value>
             <CommodityCode>cc</CommodityCode>
             <Weight>
+                <Weight>4</Weight>
                 <WeightUnit>L</WeightUnit>
             </Weight>
             <GrossWeight>
+                <Weight>4</Weight>
                 <WeightUnit>L</WeightUnit>
             </GrossWeight>
         </ExportLineItem>
-        <PlaceOfIncoterm>DAP</PlaceOfIncoterm>
+        <PlaceOfIncoterm>N/A</PlaceOfIncoterm>
         <ShipmentPurpose>PERSONAL</ShipmentPurpose>
     </ExportDeclaration>
-    <Reference>
-        <ReferenceID></ReferenceID>
-    </Reference>
     <ShipmentDetails>
         <Pieces>
             <Piece>
@@ -291,7 +290,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
         <CompanyName>shipper company privated limited 12</CompanyName>
         <RegisteredAccount>123456789</RegisteredAccount>
         <AddressLine1>238 850925434 Drive</AddressLine1>
-        <AddressLine2></AddressLine2>
         <City>Scottsdale</City>
         <DivisionCode>AZ</DivisionCode>
         <PostalCode>85260</PostalCode>
@@ -318,7 +316,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
     <Label>
         <LabelTemplate>6X4_PDF</LabelTemplate>
     </Label>
-    <UseOwnShipmentIdentificationNumber></UseOwnShipmentIdentificationNumber>
 </req:ShipmentRequest>
 """
 
