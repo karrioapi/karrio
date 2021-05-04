@@ -157,9 +157,9 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             )
             if is_dutiable else None
         ),
-        UseDHLInvoice=("Y" if paperless_supported else None),
-        DHLInvoiceLanguageCode=("en" if paperless_supported else None),
-        DHLInvoiceType=(("CMI" if customs.commercial_invoice else "PFI") if paperless_supported else None),
+        UseDHLInvoice=("Y" if is_dutiable else None),
+        DHLInvoiceLanguageCode=("en" if is_dutiable else None),
+        DHLInvoiceType=(("CMI" if customs.commercial_invoice else "PFI") if is_dutiable else None),
         ExportDeclaration=(
             ExportDeclaration(
                 InterConsignee=None,
@@ -235,7 +235,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                 InvoiceTotalGrossWeight=None,
                 InvoiceReferences=None,
             )
-            if paperless_supported else None
+            if is_dutiable else None
         ),
         Reference=(
             [Reference(ReferenceID=reference)]
