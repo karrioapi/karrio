@@ -84,6 +84,17 @@ class _SerializerDecoratorInitializer(Generic[T]):
 SerializerDecorator = _SerializerDecoratorInitializer()
 
 
+def owned_model_serializer(serializer: Type[serializers.Serializer]):
+
+    class MetaSerializer(serializer):
+        def __init__(self, *args, **kwargs):
+            self._context_user = kwargs.pop('context_user') if 'context_user' in kwargs else None
+
+            super().__init__(*args, **kwargs)
+
+    return type(serializer.__name__, (MetaSerializer,), {})
+
+
 def save_many_to_many_data(
         name: str,
         serializer: Type[serializers.ModelSerializer],
@@ -107,7 +118,8 @@ def save_many_to_many_data(
         if item_instance is None:
             item = SerializerDecorator[serializer](data=data, **kwargs).save().instance
         else:
-            item = SerializerDecorator[serializer](instance=item_instance, data=data, **kwargs).save().instance
+            item = SerializerDecorator[serializer](
+                instance=item_instance, data=data, **{**kwargs, 'partial': True}).save().instance
 
         getattr(parent, name).add(item)
 
@@ -134,4 +146,5 @@ def save_one_to_one_data(
         parent and setattr(parent, name, new_instance)
         return new_instance
 
-    return SerializerDecorator[serializer](instance=instance, data=data, **kwargs).save().instance
+    return SerializerDecorator[serializer](
+        instance=instance, data=data, **{**kwargs, 'partial': True}).save().instance

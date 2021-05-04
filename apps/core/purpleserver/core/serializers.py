@@ -219,7 +219,8 @@ class Duty(Serializer):
     paid_by = ChoiceField(required=False, choices=PAYMENT_TYPES, allow_blank=True, allow_null=True, help_text="The duty payer")
     currency = ChoiceField(required=False, choices=CURRENCIES, allow_blank=True, allow_null=True, help_text="The declared value currency")
     declared_value = FloatField(required=False, allow_null=True, help_text="The package declared value")
-    account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The duty payor account number")
+    account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The duty payment account number")
+    bill_to = Address(required=False, allow_null=True, help_text="The duty billing address")
 
 
 class CustomsData(Serializer):
@@ -235,6 +236,7 @@ class CustomsData(Serializer):
     Note that this is required for a Dutiable parcel shipped internationally.
     """)
     invoice = CharField(required=False, allow_null=True, allow_blank=True, help_text="The invoice reference number")
+    invoice_date = CharField(required=False, allow_null=True, allow_blank=True, validators=[valid_date_format], help_text="The invoice date")
     commercial_invoice = BooleanField(required=False, allow_null=True, help_text="Indicates if the shipment is commercial")
     certify = BooleanField(required=False, allow_null=True, help_text="Indicate that signer certified confirmed all")
     signer = CharField(required=False, allow_blank=True, allow_null=True)

@@ -64,7 +64,7 @@ class TrackersCreate(APIView):
         tracking = models.Tracking.objects.access_with(request.user).filter(tracking_number=tracking_number).first()
 
         instance = SerializerDecorator[TrackingSerializer](
-            tracking, data=data).save(created_by=request.user, carrier_filter=carrier_filter).instance
+            tracking, data=data, context_user=request.user).save(carrier_filter=carrier_filter).instance
         return Response(TrackingStatus(instance).data)
 
 

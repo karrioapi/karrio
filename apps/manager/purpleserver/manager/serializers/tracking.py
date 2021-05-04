@@ -1,4 +1,5 @@
 from django.utils import timezone
+from purpleserver.core.utils import owned_model_serializer
 from rest_framework.serializers import CharField, BooleanField
 from purplship.core.utils import DP
 from purpleserver.core.gateway import Shipments, Carriers
@@ -7,13 +8,13 @@ from purpleserver.core.serializers import TrackingDetails, TrackingRequest
 import purpleserver.manager.models as models
 
 
+@owned_model_serializer
 class TrackingSerializer(TrackingDetails):
     carrier_id = CharField(required=False)
     carrier_name = CharField(required=False)
     test_mode = BooleanField(required=False)
 
     def create(self, validated_data: dict) -> models.Tracking:
-        created_by = validated_data['created_by']
         carrier_filter = validated_data['carrier_filter']
         tracking_number = validated_data['tracking_number']
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
@@ -24,7 +25,7 @@ class TrackingSerializer(TrackingDetails):
         )
 
         return models.Tracking.objects.create(
-            created_by=created_by,
+            created_by=self._context_user,
             tracking_number=tracking_number,
             events=DP.to_dict(response.tracking.events),
             test_mode=response.tracking.test_mode,

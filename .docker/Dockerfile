@@ -1,5 +1,14 @@
 FROM python:3.8
 
+LABEL maintainer=hello@purplship.com
+LABEL org.opencontainers.image.title="Purplship Server"
+LABEL org.opencontainers.image.description="Purplship Server runtime image"
+LABEL org.opencontainers.image.url="https://purplship.com"
+LABEL org.opencontainers.image.documentation="https://docs.purplship.com"
+LABEL org.opencontainers.image.source="https://github.com/purplship/purplship-server"
+LABEL org.opencontainers.image.vendor="Purplship Team."
+LABEL org.opencontainers.image.authors="hello@purplship.com"
+
 ENV DEBUG_MODE True
 ENV USE_HTTPS False
 ENV ALLOWED_HOSTS *
@@ -13,6 +22,7 @@ ENV DATABASE_PORT 5432
 ENV DATABASE_NAME postgres
 ENV DATABASE_USERNAME postgres
 ENV DATABASE_PASSWORD postgres
+ENV SECRET_KEY "w;l5kj65lk6j;lj56kl56jk5l656j5k6jl5"
 ENV WORK_DIR /app
 ENV LOG_DIR /log
 
@@ -30,13 +40,3 @@ RUN pip install --upgrade pip \
 RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
-
-
-LABEL maintainer=hello@purplship.com
-LABEL org.opencontainers.image.title="Purplship Server"
-LABEL org.opencontainers.image.description="Purplship Server runtime image"
-LABEL org.opencontainers.image.url="https://purplship.com"
-LABEL org.opencontainers.image.documentation="https://docs.purplship.com"
-LABEL org.opencontainers.image.source="https://github.com/purplship/purplship-server"
-LABEL org.opencontainers.image.vendor="Purplship Team."
-LABEL org.opencontainers.image.authors="hello@purplship.com"

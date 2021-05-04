@@ -51,7 +51,7 @@ class AddressList(GenericAPIView):
         """
         Create a new address.
         """
-        address = SerializerDecorator[AddressSerializer](data=request.data).save(created_by=request.user).instance
+        address = SerializerDecorator[AddressSerializer](data=request.data, context_user=request.user).save().instance
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 

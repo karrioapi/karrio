@@ -54,6 +54,7 @@ CUSTOMS_RESPONSE = {
     'id': ANY,
     'incoterm': 'DDU',
     'invoice': None,
+    'invoice_date': None,
     'options': {},
     'signer': None
 }
@@ -75,6 +76,7 @@ CUSTOMS_UPDATE_RESPONSE = {
     'id': ANY,
     'incoterm': 'DDP',
     'invoice': None,
+    'invoice_date': None,
     'options': {},
     'signer': None
 }

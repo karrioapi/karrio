@@ -235,7 +235,27 @@ class TestCustomsTemplate(GraphTestCase):
                   commercial_invoice
                   certificate_number
                   content_description
-                  duty
+                  duty {
+                    paid_by
+                    currency
+                    account_number
+                    declared_value
+                    bill_to {
+                      company_name
+                      person_name
+                      address_line1
+                      address_line2
+                      postal_code
+                      residential
+                      city
+                      state_code
+                      country_code
+                      email
+                      phone_number
+                      validation
+                      validate_location
+                    }
+                  }
                   invoice
                   signer
                   certify
@@ -292,7 +312,27 @@ class TestCustomsTemplate(GraphTestCase):
                   commercial_invoice
                   certificate_number
                   content_description
-                  duty 
+                  duty {
+                    paid_by
+                    currency
+                    account_number
+                    declared_value
+                    bill_to {
+                      company_name
+                      person_name
+                      address_line1
+                      address_line2
+                      postal_code
+                      residential
+                      city
+                      state_code
+                      country_code
+                      email
+                      phone_number
+                      validation
+                      validate_location
+                    }
+                  }
                   invoice
                   signer
                   certify
@@ -587,7 +627,13 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
                 "commercial_invoice": None,
                 "certificate_number": None,
                 "content_description": None,
-                "duty": {"paid_by": "SENDER"},
+                "duty": {
+                    'account_number': None,
+                    'bill_to': None,
+                    'currency': None,
+                    'declared_value': None,
+                    'paid_by': 'SENDER'
+                },
                 "invoice": None,
                 "signer": None,
                 "certify": None,
