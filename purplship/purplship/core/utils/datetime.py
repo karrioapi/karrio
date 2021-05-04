@@ -4,8 +4,10 @@ from datetime import datetime
 
 class DATEFORMAT:
     @staticmethod
-    def date(date_str: str = None, current_format: str = "%Y-%m-%d"):
+    def date(date_str: Union[str, datetime] = None, current_format: str = "%Y-%m-%d"):
         if date_str is None:
+            return None
+        if isinstance(date_str, str) and not any(date_str.split(" ")):
             return None
         if isinstance(date_str, datetime):
             return date_str
