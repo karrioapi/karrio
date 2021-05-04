@@ -47,12 +47,12 @@ wheel
 # Installed versions
 eshipper.extension
 freightcom.extension
-purplship==2021.4-rc0
+purplship
 purplship.aramex
 purplship.australiapost
 purplship.canadapost
 purplship.canpar
-purplship.dhl-express==2021.4-rc0
+purplship.dhl-express
 purplship.dhl-universal
 purplship.dicom
 purplship.fedex
