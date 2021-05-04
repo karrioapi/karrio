@@ -1,9 +1,9 @@
 """Purplship universal data types and units definitions"""
 import attr
 import phonenumbers
-from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any
-from purplship.core.utils import NF, Enum, Spec
-from purplship.core.models import Parcel
+from typing import List, Type, Optional, Iterator, Iterable, Tuple, Any, Union, cast
+from purplship.core.utils import NF, Enum, Spec, SF
+from purplship.core.models import Parcel, Address, AddressExtra
 from purplship.core.errors import (
     FieldError,
     FieldErrorCode,
@@ -262,8 +262,8 @@ class Weight:
 class Package:
     """The parcel common processing helper"""
     def __init__(self, parcel: Parcel, template: PackagePreset = None):
-        self.parcel = parcel
-        self.preset = template or PackagePreset()
+        self.parcel: Parcel = parcel
+        self.preset: PackagePreset = template or PackagePreset()
 
     @property
     def dimension_unit(self):
@@ -366,6 +366,13 @@ class Packages(Iterable[Package]):
             or None,
         )
 
+    @property
+    def package_type(self) -> str:
+        return (
+            (self._items[0].packaging_type or 'your_packaging')
+            if len(self._items) == 1 else None
+        )
+
     def validate(self, required: List[str] = None, max_weight: Weight = None):
         required = required or self._required
         max_weight = max_weight or self._max_weight
@@ -387,6 +394,15 @@ class Packages(Iterable[Package]):
 
             if any(errors.items()):
                 raise FieldError(errors)
+
+    @staticmethod
+    def map(
+            parcels: List[Parcel],
+            presets: Type[Enum] = None,
+            required: List[str] = None,
+            max_weight: Weight = None) -> Union[List[Package], 'Packages']:
+
+        return cast(Union[List[Package], Packages], Packages(parcels, presets, required, max_weight))
 
 
 class Option(Enum):
@@ -415,6 +431,9 @@ class Options:
         self._options = option_values
 
     def __getitem__(self, item):
+        return self._options.get(item)
+
+    def __getattr__(self, item):
         return self._options.get(item)
 
     def __contains__(self, item) -> bool:
@@ -520,6 +539,52 @@ class Phone:
             return None
 
         return str(self.number.national_number)[3:]
+
+
+class CompleteAddress:
+    def __init__(self, address: Optional[Address]):
+        self._address = address
+
+    def __getattr__(self, item):
+        if hasattr(self._address, item):
+            return getattr(self._address, item)
+
+        return getattr(getattr(self._address, 'extra', None), item, None)
+
+    @property
+    def country_name(self):
+        return Country[self._address.country_code].value
+
+    @property
+    def address_line(self) -> str:
+        return self._compute_address_line()
+
+    @property
+    def address_lines(self) -> str:
+        return self._compute_address_line(join=False)
+
+    def _compute_address_line(self, join: bool = True) -> Optional[str]:
+        if any([self._address.address_line1, self._address.address_line2]):
+            return SF.concat_str(
+                self._address.address_line1,
+                self._address.address_line2,
+                join=join
+            )
+
+        if self._address.extra is not None:
+            return SF.concat_str(
+                self._address.extra.suite,
+                self._address.extra.street_number,
+                self._address.extra.street_name,
+                self._address.extra.street_type,
+                join=True
+            )
+
+        return None
+
+    @staticmethod
+    def map(address: Optional[Address]) -> Union[Address, AddressExtra, 'CompleteAddress']:
+        return cast(Union[Address, AddressExtra, CompleteAddress], CompleteAddress(address))
 
 
 class Currency(Enum):

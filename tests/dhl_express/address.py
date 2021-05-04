@@ -71,7 +71,7 @@ ParsedAddressValidationResponse = [
 ]
 
 
-AddressValidationRequestXML = """<RouteRequest xmlns:ns1="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com routing-global-req.xsd" schemaVersion="2.0">
+AddressValidationRequestXML = """<RouteRequest xmlns:ns1="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com routing-global-req.xsd" schemaVersion="2">
     <Request>
         <ServiceHeader>
             

@@ -43,12 +43,23 @@ shipment, messages = purplship.Shipment.create(request).from_(gateway).parse()
 | `email` | `str` | 
 | `phone_number` | `str` | 
 | `state_code` | `str` | 
-| `suburb` | `str` | 
 | `residential` | `bool` | 
 | `address_line1` | `str` | 
 | `address_line2` | `str` | 
 | `federal_tax_id` | `str` | 
 | `state_tax_id` | `str` | 
+| `extra` | [AddressExtra](#addressextra) | 
+
+
+#### AddressExtra
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `street_name` | `str` | 
+| `street_number` | `str` | 
+| `street_type` | `str` | 
+| `suburb` | `str` | 
+| `suite` | `str` | 
 
 
 #### Parcel
@@ -74,10 +85,8 @@ shipment, messages = purplship.Shipment.create(request).from_(gateway).parse()
 | Name | Type | Description 
 | --- | --- | --- |
 | `paid_by` | `str` | 
-| `amount` | `float` | 
 | `currency` | `str` | 
 | `account_number` | `str` | 
-| `contact` | [Address](#address) | 
 | `id` | `str` | 
 
 
@@ -93,11 +102,25 @@ shipment, messages = purplship.Shipment.create(request).from_(gateway).parse()
 | `content_description` | `str` | 
 | `incoterm` | `str` | 
 | `invoice` | `str` | 
+| `invoice_date` | `str` | 
+| `license_number` | `str` | 
 | `certificate_number` | `str` | 
 | `commodities` | List[[Commodity](#commodity)] | 
-| `duty` | [Payment](#payment) | 
+| `duty` | [Duty](#duty) | 
 | `commercial_invoice` | `bool` | 
 | `options` | `dict` | 
+| `id` | `str` | 
+
+
+#### Duty
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `paid_by` | `str` | 
+| `currency` | `str` | 
+| `account_number` | `str` | 
+| `declared_value` | `float` | 
+| `bill_to` | [Address](#address) | 
 | `id` | `str` | 
 
 

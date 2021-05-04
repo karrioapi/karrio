@@ -29,7 +29,6 @@ create_env() {
     python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" &&
     activate_env &&
     pip install --upgrade pip > /dev/null &&
-    pip install twine > /dev/null &&
     pip install poetry > /dev/null
 }
 
@@ -140,6 +139,7 @@ docs() {
 }
 
 upload() {
+    pip install twine > /dev/null &&
 	twine upload "${DIST}/*"
 }
 

@@ -259,14 +259,14 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
             <DimensionUnit>IN</DimensionUnit>
             <WeightUnit>LB</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>
-            <ShipmentWeight>4.</ShipmentWeight>
+            <ShipmentWeight>4</ShipmentWeight>
             <Pieces>
                 <Piece>
                     <PieceID>1</PieceID>
-                    <Height>3.</Height>
-                    <Depth>10.</Depth>
-                    <Width>3.</Width>
-                    <Weight>4.</Weight>
+                    <Height>3</Height>
+                    <Depth>10</Depth>
+                    <Width>3</Width>
+                    <Weight>4</Weight>
                 </Piece>
             </Pieces>
             <PaymentAccountNumber>123456789</PaymentAccountNumber>
@@ -279,7 +279,7 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
                     <SpecialServiceType>II</SpecialServiceType>
                 </QtdShpExChrg>
             </QtdShp>
-            <InsuredValue>75.</InsuredValue>
+            <InsuredValue>75</InsuredValue>
             <InsuredCurrency>CAD</InsuredCurrency>
         </BkgDetails>
         <To>
@@ -315,15 +315,15 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
             <DimensionUnit>IN</DimensionUnit>
             <WeightUnit>LB</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>
-            <ShipmentWeight>5.</ShipmentWeight>
+            <ShipmentWeight>5</ShipmentWeight>
             <Pieces>
                 <Piece>
                     <PieceID>1</PieceID>
                     <PackageTypeCode>COY</PackageTypeCode>
-                    <Height>15.</Height>
-                    <Depth>15.</Depth>
-                    <Width>96.</Width>
-                    <Weight>5.</Weight>
+                    <Height>15</Height>
+                    <Depth>15</Depth>
+                    <Width>96</Width>
+                    <Weight>5</Weight>
                 </Piece>
             </Pieces>
             <PaymentAccountNumber>123456789</PaymentAccountNumber>

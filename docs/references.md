@@ -127,13 +127,12 @@
 | `carrier_id` | `str` | 
 
 
-*Note that all carrier gateway defined bellow have these additional parameters*
+*Note that all carrier gateway defined above have these additional parameters*
 
 | Name | Type | Description
 | --- | --- | --- |
-| `carrier_name` | `str` | default: carrier name (eg: canadapost, purolator...)
-| `id` | `str` | 
-| `test` | `boolean` |
+| `carrier_name` | `str` | readonly: carrier name (eg: canadapost, purolator...)
+
 
 ---
 
@@ -155,12 +154,23 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `email` | `str` | 
 | `phone_number` | `str` | 
 | `state_code` | `str` | 
-| `suburb` | `str` | 
 | `residential` | `bool` | 
 | `address_line1` | `str` | 
 | `address_line2` | `str` | 
 | `federal_tax_id` | `str` | 
 | `state_tax_id` | `str` | 
+| `extra` | [AddressExtra](#addressextra) | 
+
+
+#### AddressExtra
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `street_name` | `str` | 
+| `street_number` | `str` | 
+| `street_type` | `str` | 
+| `suburb` | `str` | 
+| `suite` | `str` | 
 
 
 #### AddressValidationDetails
@@ -194,11 +204,11 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | Name | Type | Description 
 | --- | --- | --- |
 | `id` | `str` | 
+| `sku` | `str` | 
+| `quantity` | `int` | 
 | `weight` | `float` | 
 | `weight_unit` | `str` | 
 | `description` | `str` | 
-| `quantity` | `int` | 
-| `sku` | `str` | 
 | `value_amount` | `float` | 
 | `value_currency` | `str` | 
 | `origin_country` | `str` | 
@@ -226,11 +236,25 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `content_description` | `str` | 
 | `incoterm` | `str` | 
 | `invoice` | `str` | 
+| `invoice_date` | `str` | 
+| `license_number` | `str` | 
 | `certificate_number` | `str` | 
 | `commodities` | List[[Commodity](#commodity)] | 
-| `duty` | [Payment](#payment) | 
+| `duty` | [Duty](#duty) | 
 | `commercial_invoice` | `bool` | 
 | `options` | `dict` | 
+| `id` | `str` | 
+
+
+#### Duty
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `paid_by` | `str` | 
+| `currency` | `str` | 
+| `account_number` | `str` | 
+| `declared_value` | `float` | 
+| `bill_to` | [Address](#address) | 
 | `id` | `str` | 
 
 
@@ -268,10 +292,8 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | Name | Type | Description 
 | --- | --- | --- |
 | `paid_by` | `str` | 
-| `amount` | `float` | 
 | `currency` | `str` | 
 | `account_number` | `str` | 
-| `contact` | [Address](#address) | 
 | `id` | `str` | 
 
 
@@ -416,7 +438,6 @@ All models can be imported at `from purplship.core.models import [ModelName]`
 | `location` | `str` | 
 | `code` | `str` | 
 | `time` | `str` | 
-| `signatory` | `str` | 
 
 
 #### TrackingRequest

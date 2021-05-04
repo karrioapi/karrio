@@ -60,7 +60,7 @@ def _request_serializer(request: CancelPURequest) -> str:
         request,
         name_="req:CancelPURequest",
         namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd"',
-    )
+    ).replace('schemaVersion="3"', 'schemaVersion="3.0"')
 
     xml_str = reformat_time("CancelTime", xml_str)
     return xml_str

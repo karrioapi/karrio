@@ -125,7 +125,7 @@ def _request_serializer(request: BookPURequest) -> str:
         request,
         name_="req:BookPURequest",
         namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req_EA.xsd"',
-    ).replace("dhlPickup:", "")
+    ).replace("dhlPickup:", "").replace('schemaVersion="3"', 'schemaVersion="3.0"')
 
     xml_str = reformat_time("CloseTime", reformat_time("ReadyByTime", xml_str))
     return xml_str

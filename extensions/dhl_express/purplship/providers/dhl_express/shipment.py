@@ -1,7 +1,7 @@
 import time
 from base64 import encodebytes
 from typing import List, Tuple, Optional
-from dhl_express_lib.ship_val_global_req_6_2 import (
+from dhl_express_lib.ship_val_global_req_10_0 import (
     ShipmentRequest as DHLShipmentRequest,
     Billing,
     Consignee,
@@ -9,20 +9,20 @@ from dhl_express_lib.ship_val_global_req_6_2 import (
     Commodity,
     Shipper,
     ShipmentDetails as DHLShipmentDetails,
-    Pieces,
-    Piece,
     Reference,
     Dutiable,
     MetaData,
     Notification,
     SpecialService,
-    WeightUnit,
-    DimensionUnit,
-    Label
+    WeightType,
+    Label,
+    ExportDeclaration,
+    ExportLineItem,
+    AdditionalInformation,
 )
-from dhl_express_lib.ship_val_global_res_6_2 import LabelImage
-from purplship.core.utils import Serializable, SF, XP
-from purplship.core.utils.xml import Element
+from dhl_express_lib.ship_val_global_res_10_0 import LabelImage
+from dhl_express_lib.datatypes_global_v10 import Pieces, Piece
+from purplship.core.utils import Serializable, XP, SF, Location, Element
 from purplship.core.models import (
     ShipmentRequest,
     Message,
@@ -31,7 +31,7 @@ from purplship.core.models import (
     Customs,
     Duty
 )
-from purplship.core.units import Options, Packages, Country
+from purplship.core.units import Options, Packages, CompleteAddress, Weight, WeightUnit
 from purplship.providers.dhl_express.units import (
     PackageType,
     ProductCode,
@@ -41,13 +41,19 @@ from purplship.providers.dhl_express.units import (
     DeliveryType,
     PackagePresets,
     LabelType,
+    ExportReasonCode,
+    WeightUnit as DHLWeightUnit,
+    DimensionUnit,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
 
 
+UNSUPPORTED_PAPERLESS_COUNTRIES = ['JM']
+
+
 def parse_shipment_response(
-    response: Element, settings: Settings
+        response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
     air_way_bill = next(
         iter(response.xpath(".//*[local-name() = $name]", name="AirwayBillNumber")),
@@ -73,65 +79,62 @@ def _extract_shipment(shipment_node, settings: Settings) -> Optional[ShipmentDet
     )
 
 
-def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[DHLShipmentRequest]:
-    packages = Packages(payload.parcels, PackagePresets, required=["weight"])
+def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable[DHLShipmentRequest]:
+    packages = Packages.map(payload.parcels, PackagePresets, required=["weight"])
     options = Options(payload.options, SpecialServiceCode)
     product = next((p.value for p in ProductCode if payload.service == p.name), payload.service)
+    shipper = CompleteAddress.map(payload.shipper)
+    recipient = CompleteAddress.map(payload.recipient)
 
-    insurance = options['dhl_shipment_insurance'].value if 'dhl_shipment_insurance' in options else None
     is_document = all(p.parcel.is_document for p in packages)
-    package_type = (
-        PackageType[packages[0].packaging_type or "your_packaging"].value if len(packages) == 1 else None
-    )
-    delivery_type = next((d for d in DeliveryType if d.name in payload.options.keys()), None)
+    package_type = PackageType[packages.package_type].value
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
     payment = (payload.payment or Payment(paid_by="sender", account_number=settings.account_number))
     customs = (payload.customs or Customs())
     is_dutiable = (is_document is False and customs.duty is not None)
+    paperless_supported = (is_dutiable and payload.shipper.country_code not in UNSUPPORTED_PAPERLESS_COUNTRIES)
     duty = (customs.duty or Duty(paid_by="sender"))
-    content = (packages[0].parcel.content or "N/A")
+    bill_to = CompleteAddress.map(duty.bill_to)
+    content = (packages[0].parcel.content or customs.content_description or "N/A")
+    reference = (payload.reference or getattr(payload, 'id', None))
 
     request = DHLShipmentRequest(
-        schemaVersion=6.2,
+        schemaVersion='10.0',
         Request=settings.Request(
-            MetaData=MetaData(SoftwareName="3PV", SoftwareVersion=6.2)
+            MetaData=MetaData(SoftwareName="3PV", SoftwareVersion='10.0')
         ),
-        RegionCode=CountryRegion[payload.shipper.country_code].value,
-        RequestedPickupTime="Y",
+        RegionCode=CountryRegion[shipper.country_code].value,
         LanguageCode="en",
-        PiecesEnabled="Y",
         LatinResponseInd=None,
         Billing=Billing(
             ShipperAccountNumber=settings.account_number,
-            BillingAccountNumber=payment.account_number,
             ShippingPaymentType=PaymentType[payment.paid_by].value,
+            BillingAccountNumber=payment.account_number,
             DutyAccountNumber=duty.account_number,
-            DutyPaymentType=(PaymentType[duty.paid_by].value if customs.duty is not None else None),
         ),
         Consignee=Consignee(
-            CompanyName=payload.recipient.company_name or "N/A",
-            SuiteDepartmentName=None,
-            AddressLine=SF.concat_str(
-                payload.recipient.address_line1, payload.recipient.address_line2
-            ),
-            City=payload.recipient.city,
+            CompanyName=recipient.company_name or "N/A",
+            SuiteDepartmentName=recipient.suite,
+            AddressLine1=recipient.address_line1 or recipient.address_line,
+            AddressLine2=SF.concat_str(recipient.address_line2, join=True),
+            AddressLine3=None,
+            City=recipient.city,
             Division=None,
-            DivisionCode=payload.recipient.state_code,
-            PostalCode=payload.recipient.postal_code,
-            CountryCode=payload.recipient.country_code,
-            CountryName=Country[payload.recipient.country_code].value,
-            FederalTaxId=payload.shipper.federal_tax_id,
-            StateTaxId=payload.shipper.state_tax_id,
-            Contact=(
-                Contact(
-                    PersonName=payload.recipient.person_name,
-                    PhoneNumber=payload.recipient.phone_number or "0000",
-                    Email=payload.recipient.email,
-                )
+            DivisionCode=recipient.state_code,
+            PostalCode=recipient.postal_code,
+            CountryCode=recipient.country_code,
+            CountryName=recipient.country_name,
+            Contact=Contact(
+                PersonName=recipient.person_name,
+                PhoneNumber=recipient.phone_number or "0000",
+                Email=recipient.email,
             ),
-            Suburb=None,
+            Suburb=recipient.suburb,
+            StreetName=recipient.street_name,
+            BuildingName=None,
+            StreetNumber=recipient.street_number,
+            RegistrationNumbers=None,
+            BusinessPartyTypeCode=None,
         ),
         Commodity=(
             [
@@ -140,106 +143,217 @@ def shipment_request(
             ]
             if any(customs.commodities) else None
         ),
-        NewShipper=None,
-        Shipper=Shipper(
-            ShipperID=settings.account_number or "N/A",
-            RegisteredAccount=settings.account_number,
-            AddressLine=SF.concat_str(
-                payload.shipper.address_line1, payload.shipper.address_line2
-            ),
-            CompanyName=payload.shipper.company_name or "N/A",
-            PostalCode=payload.shipper.postal_code,
-            CountryCode=payload.shipper.country_code,
-            City=payload.shipper.city,
-            CountryName=Country[payload.shipper.country_code].value,
-            Division=None,
-            DivisionCode=payload.shipper.state_code,
-            Contact=(
-                Contact(
-                    PersonName=payload.shipper.person_name,
-                    PhoneNumber=payload.shipper.phone_number or "0000",
-                    Email=payload.shipper.email,
-                )
-            ),
+        Dutiable=(
+            Dutiable(
+                DeclaredValue=duty.declared_value or options.declared_value or 1.0,
+                DeclaredCurrency=duty.currency or options.currency or "USD",
+                ScheduleB=None,
+                ExportLicense=customs.license_number,
+                ShipperEIN=None,
+                ShipperIDType=None,
+                TermsOfTrade=customs.incoterm,
+                CommerceLicensed=None,
+                Filing=None
+            )
+            if is_dutiable else None
+        ),
+        UseDHLInvoice=("Y" if paperless_supported else None),
+        DHLInvoiceLanguageCode=("en" if paperless_supported else None),
+        DHLInvoiceType=(("CMI" if customs.commercial_invoice else "PFI") if paperless_supported else None),
+        ExportDeclaration=(
+            ExportDeclaration(
+                InterConsignee=None,
+                IsPartiesRelation=None,
+                ECCN=None,
+                SignatureName=customs.signer,
+                SignatureTitle=None,
+                ExportReason=customs.content_type,
+                ExportReasonCode=ExportReasonCode[customs.content_type or 'other'].value,
+                SedNumber=None,
+                SedNumberType=None,
+                MxStateCode=None,
+                InvoiceNumber=(customs.invoice or "N/A"),
+                InvoiceDate=(customs.invoice_date or time.strftime("%Y-%m-%d")),
+                BillToCompanyName=bill_to.company_name,
+                BillToContactName=bill_to.person_name,
+                BillToAddressLine=bill_to.address_line,
+                BillToCity=bill_to.city,
+                BillToPostcode=bill_to.postal_code,
+                BillToSuburb=bill_to.extra,
+                BillToCountryName=bill_to.country_name,
+                BillToPhoneNumber=bill_to.phone_number,
+                BillToPhoneNumberExtn=None,
+                BillToFaxNumber=None,
+                BillToFederalTaxID=bill_to.federal_tax_id,
+                Remarks=customs.content_description,
+                DestinationPort=None,
+                TermsOfPayment=None,
+                PayerGSTVAT=bill_to.state_tax_id,
+                SignatureImage=None,
+                ReceiverReference=None,
+                ExporterId=None,
+                ExporterCode=None,
+                ExportLineItem=[
+                    ExportLineItem(
+                        LineNumber=index,
+                        Quantity=item.quantity,
+                        QuantityUnit='PCS',
+                        Description=item.description or 'N/A',
+                        Value=((item.quantity or 1) * (item.value_amount or 0.0)),
+                        IsDomestic=None,
+                        CommodityCode=item.sku,
+                        ScheduleB=None,
+                        ECCN=None,
+                        Weight=WeightType(
+                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB']).LB,
+                            WeightUnit=DHLWeightUnit.LB.value
+                        ),
+                        GrossWeight=WeightType(
+                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB']).LB,
+                            WeightUnit=DHLWeightUnit.LB.value
+                        ),
+                        License=None,
+                        LicenseSymbol=None,
+                        ManufactureCountryCode=item.origin_country,
+                        ManufactureCountryName=Location(item.origin_country).as_country_name,
+                        ImportTaxManagedOutsideDhlExpress=None,
+                        AdditionalInformation=None,
+                        ImportCommodityCode=None,
+                        ItemReferences=None,
+                        CustomsPaperworks=None,
+                    )
+                    for (index, item) in enumerate(customs.commodities, start=1)
+                ],
+                ShipmentDocument=None,
+                InvoiceInstructions=None,
+                CustomerDataTextEntries=None,
+                PlaceOfIncoterm="N/A",
+                ShipmentPurpose=("COMMERCIAL" if customs.commercial_invoice else "PERSONAL"),
+                DocumentFunction=None,
+                CustomsDocuments=None,
+                InvoiceTotalNetWeight=None,
+                InvoiceTotalGrossWeight=None,
+                InvoiceReferences=None,
+            )
+            if paperless_supported else None
+        ),
+        Reference=(
+            [Reference(ReferenceID=reference)]
+            if any([reference]) else None
         ),
         ShipmentDetails=DHLShipmentDetails(
-            NumberOfPieces=len(packages),
             Pieces=Pieces(
                 Piece=[
                     Piece(
-                        PieceID=package.parcel.id,
+                        PieceID=index,
                         PackageType=(
-                            package_type
-                            or PackageType[
-                                package.packaging_type or "your_packaging"
-                            ].value
+                            package_type or PackageType[package.packaging_type or "your_packaging"].value
                         ),
                         Depth=package.length.IN,
                         Width=package.width.IN,
                         Height=package.height.IN,
                         Weight=package.weight.LB,
-                        DimWeight=None,
-                        PieceContents=(
-                            package.parcel.content or package.parcel.description
+                        PieceContents=(package.parcel.content or package.parcel.description),
+                        PieceReference=(
+                            [Reference(ReferenceID=package.parcel.id)]
+                            if package.parcel.id is not None else None
                         ),
+                        AdditionalInformation=(
+                            AdditionalInformation(CustomerDescription=package.parcel.description)
+                            if package.parcel.description is not None else None
+                        )
                     )
-                    for package in packages
+                    for (index, package) in enumerate(packages, start=1)
                 ]
             ),
-            Weight=packages.weight.LB,
-            CurrencyCode=options.currency or "USD",
-            WeightUnit=WeightUnit.L.value,
-            DimensionUnit=DimensionUnit.I.value,
-            Date=(options.shipment_date or time.strftime("%Y-%m-%d")),
-            PackageType=package_type,
-            IsDutiable=("Y" if payload.customs is not None else "N"),
-            InsuredAmount=insurance,
-            ShipmentCharges=(options.cash_on_delivery if options.cash_on_delivery else None),
-            DoorTo=delivery_type,
+            WeightUnit=DHLWeightUnit.LB.value,
             GlobalProductCode=product,
             LocalProductCode=product,
+            Date=(options.shipment_date or time.strftime("%Y-%m-%d")),
             Contents=content,
+            DimensionUnit=DimensionUnit.IN.value,
+            PackageType=package_type,
+            IsDutiable=("Y" if is_dutiable else "N"),
+            CurrencyCode=options.currency or "USD",
+            CustData=getattr(payload, 'id', None),
+            ShipmentCharges=(options.cash_on_delivery if options.cash_on_delivery else None),
+            ParentShipmentIdentificationNumber=None,
+            ParentShipmentGlobalProductCode=None,
+            ParentShipmentPackagesCount=None,
         ),
-        EProcShip=None,
-        Dutiable=(
-            Dutiable(
-                DeclaredCurrency=duty.currency or "USD",
-                DeclaredValue=duty.declared_value or 1.0,
-                TermsOfTrade=customs.incoterm,
+        Shipper=Shipper(
+            ShipperID=settings.account_number or "N/A",
+            CompanyName=shipper.company_name or "N/A",
+            SuiteDepartmentName=shipper.suite,
+            RegisteredAccount=settings.account_number,
+            AddressLine1=shipper.address_line1 or shipper.address_line,
+            AddressLine2=SF.concat_str(shipper.address_line2, join=True),
+            AddressLine3=None,
+            City=shipper.city,
+            Division=None,
+            DivisionCode=shipper.state_code,
+            PostalCode=shipper.postal_code,
+            OriginServiceAreaCode=None,
+            OriginFacilityCode=None,
+            CountryCode=shipper.country_code,
+            CountryName=shipper.country_name,
+            Contact=Contact(
+                PersonName=shipper.person_name,
+                PhoneNumber=shipper.phone_number or "0000",
+                Email=shipper.email,
+            ),
+            Suburb=shipper.suburb,
+            StreetName=shipper.street_name,
+            BuildingName=None,
+            StreetNumber=shipper.street_number,
+            RegistrationNumbers=None,
+            BusinessPartyTypeCode=None,
+        ),
+        SpecialService=(
+            [
+                SpecialService(
+                    SpecialServiceType=SpecialServiceCode[key].value.key,
+                    ChargeValue=getattr(svc, 'value', None),
+                    CurrencyCode=(options.currency or "USD" if hasattr(svc, 'value') else None)
+                )
+                for key, svc in options if key in SpecialServiceCode
+            ] +
+            (  # Add paperless trade if dutiable
+                [SpecialService(SpecialServiceType="WY")]
+                if paperless_supported and 'dhl_paperless_trade' not in options else []
             )
-            if is_dutiable else None
         ),
-        ExportDeclaration=None,
-        Reference=[Reference(ReferenceID=payload.reference)],
-        SpecialService=[
-            SpecialService(SpecialServiceType=SpecialServiceCode[key].value.key)
-            for key, svc in options if key in SpecialServiceCode
-        ],
         Notification=(
-            Notification(
-                EmailAddress=options.notification_email or payload.recipient.email
-            )
+            Notification(EmailAddress=options.notification_email or recipient.email)
             if options.notification_email is None else None
         ),
+        Place=None,
+        EProcShip=None,
+        Airwaybill=None,
         DocImages=None,
+        LabelImageFormat=label_format,
         RequestArchiveDoc=None,
         NumberOfArchiveDoc=None,
-        LabelImageFormat=label_format,
+        RequestQRCode='N',
+        RequestTransportLabel=None,
         Label=Label(LabelTemplate=label_template),
         ODDLinkReq=None,
         DGs=None,
+        GetPriceEstimate='Y',
+        SinglePieceImage='N',
+        ShipmentIdentificationNumber=None,
+        UseOwnShipmentIdentificationNumber='N',
+        Importer=None,
     )
+
     return Serializable(request, _request_serializer)
 
 
 def _request_serializer(request: DHLShipmentRequest) -> str:
-    xml_str = (
-        XP.export(
-            request,
-            name_="req:ShipmentRequest",
-            namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd"',
-        )
-        .replace("<Image>b'", "<Image>")
-        .replace("'</Image>", "</Image>")
-    )
+    xml_str = XP.export(
+        request,
+        name_="req:ShipmentRequest",
+        namespacedef_='xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+    ).replace('schemaVersion="10"', 'schemaVersion="10.0"')
+
     return xml_str
