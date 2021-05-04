@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.dhl_express"
-version = "2020.4.1"
+version = "2021.4"
 description = "DHL Express Web API Schemas Python Data Types library"
 repository="https://github.com/PurplShip/purplship-carriers"
 homepage="https://github.com/PurplShip/purplship-carriers/tree/master/carrier.dhl_express"

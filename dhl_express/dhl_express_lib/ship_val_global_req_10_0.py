@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Apr 30 05:39:47 2021 by generateDS.py version 2.38.6.
+# Generated Fri Apr 30 05:39:51 2021 by generateDS.py version 2.38.6.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './dhl_express_lib/modify_pickup_global_res_3_0.py')
+#   ('-o', './dhl_express_lib/ship_val_global_req_10_0.py')
 #
 # Command line arguments:
-#   /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/modify-pickup-global-res-3.0.xsd
+#   /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/ship-val-global-req-10.0.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./dhl_express_lib/modify_pickup_global_res_3_0.py" /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/modify-pickup-global-res-3.0.xsd
+#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./dhl_express_lib/ship_val_global_req_10_0.py" /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/ship-val-global-req-10.0.xsd
 #
 # Current working directory (os.getcwd()):
 #   dhl_express
@@ -973,16 +973,6 @@ class AccountType(str, Enum):
     D='D'
 
 
-class AccountTypeType(str, Enum):
-    """Valid values are D. D =DHL"""
-    D='D'
-
-
-class AccountTypeType18(str, Enum):
-    """Valid values are D. D =DHL"""
-    D='D'
-
-
 class BillCode(str, Enum):
     """DHL billing options"""
     DSA='DSA'
@@ -1001,22 +991,10 @@ class BusinessPartyTypeCode(str, Enum):
     RE='RE'
 
 
-class Code(str, Enum):
-    """Code"""
-    AP='AP'
-    NR='NR'
-
-
 class CommunicationType(str, Enum):
     """Communications line type (P: phone, F: fax)"""
     P='P'
     F='F'
-
-
-class ConsigneeIDTypeType(str, Enum):
-    S='S'
-    E='E'
-    D='D'
 
 
 class CurrencyRoleTypeCode(str, Enum):
@@ -1028,7 +1006,7 @@ class CurrencyRoleTypeCode(str, Enum):
 
 
 class CustomsDocumentType(str, Enum):
-    """Export Declaration line's Customs Document Type (CHA:Power of Attorney,
+    """Export Declaration's Customs Document Type (CHA:Power of Attorney,
     POA:Power of Attorney (Customer-based),PPY:Proof Of Payment,ROD:Receipt on
     Delivery,
     T2M:T2M Transport Accompanying Document,TAD:TAD Transport Accompanying
@@ -1079,56 +1057,11 @@ class CustomsDocumentType(str, Enum):
     ROD='ROD'
     EXL='EXL'
     HWB='HWB'
-    _9_72_1='972'
-    AHC_1='AHC'
-    ATA_1='ATA'
-    ATR_1='ATR'
-    CHD_1='CHD'
-    CHP_1='CHP'
-    CIT_1='CIT'
-    COO_1='COO'
-    DEX_1='DEX'
-    EU_1_1='EU1'
-    EU_2_1='EU2'
-    EUS_1='EUS'
-    FMA_1='FMA'
-    PHY_1='PHY'
-    VET_1='VET'
-    VEX_1='VEX'
-    CRL_1='CRL'
-    CSD_1='CSD'
-    PPY_1='PPY'
-    CI_2_1='CI2'
-    CIV_1='CIV'
-    DOV_1='DOV'
-    INV_1='INV'
-    PFI_1='PFI'
-    ALC_1='ALC'
-    HLC_1='HLC'
-    JLC_1='JLC'
-    LIC_1='LIC'
-    LNP_1='LNP'
-    PLI_1='PLI'
-    DLI_1='DLI'
-    NID_1='NID'
-    PAS_1='PAS'
-    CHA_1='CHA'
-    CPA_1='CPA'
-    POA_1='POA'
-    BEX_1='BEX'
-    DGD_1='DGD'
-    IPA_1='IPA'
-    T_2_M_1='T2M'
-    TAD_1='TAD'
-    TCS_1='TCS'
-    ROD_1='ROD'
-    EXL_1='EXL'
-    HWB_1='HWB'
 
 
 class CustomsInvoiceTemplate(str, Enum):
     """DHL Customs Invoice Template"""
-    COMMERCIAL_INVOICE__03='COMMERCIAL_INVOICE_03'
+    COMMERCIAL_INVOICE__04='COMMERCIAL_INVOICE_04'
     COMMERCIAL_INVOICE_P__10='COMMERCIAL_INVOICE_P_10'
     COMMERCIAL_INVOICE_L__10='COMMERCIAL_INVOICE_L_10'
 
@@ -1186,51 +1119,6 @@ class CustomsPaperworkType(str, Enum):
     ROD='ROD'
     EXL='EXL'
     HWB='HWB'
-    _9_72_1='972'
-    AHC_1='AHC'
-    ATA_1='ATA'
-    ATR_1='ATR'
-    CHD_1='CHD'
-    CHP_1='CHP'
-    CIT_1='CIT'
-    COO_1='COO'
-    DEX_1='DEX'
-    EU_1_1='EU1'
-    EU_2_1='EU2'
-    EUS_1='EUS'
-    FMA_1='FMA'
-    PHY_1='PHY'
-    VET_1='VET'
-    VEX_1='VEX'
-    CRL_1='CRL'
-    CSD_1='CSD'
-    PPY_1='PPY'
-    CI_2_1='CI2'
-    CIV_1='CIV'
-    DOV_1='DOV'
-    INV_1='INV'
-    PFI_1='PFI'
-    ALC_1='ALC'
-    HLC_1='HLC'
-    JLC_1='JLC'
-    LIC_1='LIC'
-    LNP_1='LNP'
-    PLI_1='PLI'
-    DLI_1='DLI'
-    NID_1='NID'
-    PAS_1='PAS'
-    CHA_1='CHA'
-    CPA_1='CPA'
-    POA_1='POA'
-    BEX_1='BEX'
-    DGD_1='DGD'
-    IPA_1='IPA'
-    T_2_M_1='T2M'
-    TAD_1='TAD'
-    TCS_1='TCS'
-    ROD_1='ROD'
-    EXL_1='EXL'
-    HWB_1='HWB'
 
 
 class DG_UOM(str, Enum):
@@ -1243,11 +1131,6 @@ class DimensionUnit(str, Enum):
     """Dimension Unit C (centimeter)"""
     C='C'
     I='I'
-
-
-class DocDetach(str, Enum):
-    """DocDetach"""
-    SHP_RCPT='ShpRcpt'
 
 
 class DocumentFunction(str, Enum):
@@ -1263,20 +1146,6 @@ class DoorTo(str, Enum):
     DA='DA'
     AA='AA'
     DC='DC'
-
-
-class DoorTo6(str, Enum):
-    """Defines the type of delivery service that applies to the shipment"""
-    DD='DD'
-    DA='DA'
-    DC='DC'
-
-
-class DutyTaxPaymentType(str, Enum):
-    """Duty and tax charge payment type (R:Recipient)"""
-    S='S'
-    R='R'
-    T='T'
 
 
 class ExportReasonCode(str, Enum):
@@ -1393,9 +1262,22 @@ class InvLanguageCode(str, Enum):
 
 
 class InvoiceReferenceType(str, Enum):
-    """Invoice Reference Type"""
-    CON='CON'
-    CUN='CUN'
+    """Invoice Reference Type (ACL: Parent Shipment ID for BBX,
+    CID: Customer Identifier, CN:Contract Number,CU:Consignor reference number,
+    ITN: US Export declaration reference ID,
+    UCN:Movement Reference number,MRN:Movement Reference number/MAWB Reference
+    number/Outbound center reference number/
+    Original Export Date/Original Export OB Tracking ID/Order ID/Part No/Vendor
+    Reference Number/Purchase Order Number/
+    Pickup request number//RMA Number/Return Leg waybill number/Shipment ID 15
+    Digit CODA/Stock Keeping Unit/Serial number/
+    Sales order No/Shipment Reference number/Seller Reference number/Eurolog
+    ID/Eurolog ID)"""
+    ACL='ACL'
+    CID='CID'
+    CN='CN'
+    CU='CU'
+    ITN='ITN'
     UCN='UCN'
     MRN='MRN'
     OID='OID'
@@ -1410,28 +1292,27 @@ class InvoiceType(str, Enum):
 
 
 class ItemReferenceType(str, Enum):
-    """Export Declaration line items's Reference Type
-    (AFE:ECCN,BRD:Brand,DGC:Dangerous Goods Content Identifier,DO:Delivery
-    Order number,ECN:Export Clearance Number,
-    INB:In Bond shipment,MAK:Make,MDL:Model,PAN:Movement Reference
-    number,PON:Movement Reference number,
-    SKU:Movement Reference number,SNO:Movement Reference number,SON:Movement
-    Reference number)"""
+    """Item Reference Type(AFE:ECCN, BRD:Brand, DGC:Dangerous Goods Content
+    Identifier,
+    AAJ:Delivery Order Number,ECN:Export Clearance Number, INB:In Bond
+    Shipment,
+    MAK:Make, ALX:Model,PAN:Part No, ABW:Stock Keeping Unit, SE:Serial Number,
+    SON:Sales Order No.
+    OID:Order ID"""
+    AAJ='AAJ'
+    ABW='ABW'
     AFE='AFE'
+    ALX='ALX'
     BRD='BRD'
     DGC='DGC'
-    DO='DO'
     ECN='ECN'
     INB='INB'
     MAK='MAK'
-    MDL='MDL'
     PAN='PAN'
     PON='PON'
-    SKU='SKU'
-    SNO='SNO'
+    SE='SE'
     SON='SON'
     OID='OID'
-    CID='CID'
 
 
 class LabelImageFormat(str, Enum):
@@ -1457,19 +1338,14 @@ class LabelTemplate(str, Enum):
     _8_X_4__CUST_BAR_CODE_THERMAL='8X4_CustBarCode_thermal'
     _8_X_4__CUST_BAR_CODE__ADDITIONAL_INFO_PDF='8X4_CustBarCode_AdditionalInfo_PDF'
     _8_X_4__CUST_BAR_CODE__ADDITIONAL_INFO_THERMAL='8X4_CustBarCode_AdditionalInfo_thermal'
+    _8_X_4_LBBX_PDF='8X4_LBBX_PDF'
+    _8_X_4_LBBX_THERMAL='8X4_LBBX_thermal'
 
 
 class LevelOfDetails(str, Enum):
     """Checkpoint details selection flag"""
     LAST_CHECK_POINT_ONLY='LAST_CHECK_POINT_ONLY'
     ALL_CHECK_POINTS='ALL_CHECK_POINTS'
-
-
-class LocationTypeType(str, Enum):
-    """Type Of Location B=Business R=Residence C= Business/Residence"""
-    B='B'
-    R='R'
-    C='C'
 
 
 class LogoImageFormat(str, Enum):
@@ -1487,29 +1363,6 @@ class NumberOfArchiveDoc(str, Enum):
 
 
 class NumberTypeCode(str, Enum):
-    """For Shipper: SDT:IOSS (Import One-Stop-Shop),
-    SDT:LVG (Overseas Registered Supplier),SDT:VOEC (VAT on E-Commerce),
-    VAT:VAT/GST (VAT Registration),FTZ:FTZ (Free Trade Zone ID),DAN:DAN
-    (Deferment Account Duties Only),
-    TAN:TAN (Deferment Account Tax Only),DTF:DTF (Deferment Account Duties,
-    Taxes and Fees Only)"""
-    SDT='SDT'
-    VAT='VAT'
-    FTZ='FTZ'
-    DAN='DAN'
-    TAN='TAN'
-    DTF='DTF'
-    DUN='DUN'
-    SSN='SSN'
-
-
-class NumberTypeCode1(str, Enum):
-    """For Importer and Exporter: SDT:IOSS (Import One-Stop-Shop),
-    SDT:LVG (Overseas Registered Supplier),SDT:VOEC (VAT on E-Commerce),
-    VAT:VAT/GST (VAT Registration),FTZ:FTZ (Free Trade Zone ID),DAN:DAN
-    (Deferment Account Duties Only),
-    TAN:TAN (Deferment Account Tax Only),DTF:DTF (Deferment Account Duties,
-    Taxes and Fees Only)"""
     SDT='SDT'
     VAT='VAT'
     FTZ='FTZ'
@@ -1520,47 +1373,9 @@ class NumberTypeCode1(str, Enum):
     DUN='DUN'
     EIN='EIN'
     EOR='EOR'
+    SSN='SSN'
     FED='FED'
-    SSN='SSN'
-
-
-class NumberTypeCode2(str, Enum):
-    """For Buyer BillTo: SDT:IOSS (Import One-Stop-Shop),
-    SDT:LVG (Overseas Registered Supplier),SDT:VOEC (VAT on E-Commerce),
-    VAT:VAT/GST (VAT Registration),FTZ:FTZ (Free Trade Zone ID),DAN:DAN
-    (Deferment Account Duties Only),
-    TAN:TAN (Deferment Account Tax Only),DTF:DTF (Deferment Account Duties,
-    Taxes and Fees Only)"""
-    SDT='SDT'
-    VAT='VAT'
-    FTZ='FTZ'
-    DAN='DAN'
-    TAN='TAN'
-    DTF='DTF'
-    CNP='CNP'
-    DUN='DUN'
-    EIN='EIN'
-    EOR='EOR'
-    SSN='SSN'
     STA='STA'
-
-
-class NumberTypeCode3(str, Enum):
-    """For Receiver: SDT:IOSS (Import One-Stop-Shop),
-    SDT:LVG (Overseas Registered Supplier),SDT:VOEC (VAT on E-Commerce),
-    VAT:VAT/GST (VAT Registration),FTZ:FTZ (Free Trade Zone ID),DAN:DAN
-    (Deferment Account Duties Only),
-    TAN:TAN (Deferment Account Tax Only),DTF:DTF (Deferment Account Duties,
-    Taxes and Fees Only)"""
-    SDT='SDT'
-    VAT='VAT'
-    FTZ='FTZ'
-    DAN='DAN'
-    TAN='TAN'
-    DTF='DTF'
-    DUN='DUN'
-    EOR='EOR'
-    SSN='SSN'
 
 
 class OtherChargeType(str, Enum):
@@ -1573,7 +1388,8 @@ class OtherChargeType(str, Enum):
     SOTHR:Other Charge/Fee/Cost,SPKGN:Packaging/Packing
     Charge/Fee/Cost,PICUP:Pickup Charge/Fee/Cost,
     HRCRG:Handling Charge/Fee/Cost,VATCR:Charge/Fee/Cost,INSCH:Insurance Cost
-    (Fee)"""
+    (Fee)
+    REVCH:Reverse Charge,"""
     ADMIN='ADMIN'
     DELIV='DELIV'
     DOCUM='DOCUM'
@@ -1588,6 +1404,7 @@ class OtherChargeType(str, Enum):
     HRCRG='HRCRG'
     VATCR='VATCR'
     INSCH='INSCH'
+    REVCH='REVCH'
 
 
 class OutputFormat(str, Enum):
@@ -1631,30 +1448,21 @@ class PackageType(str, Enum):
     YP='YP'
 
 
+class PaymentMethod(str, Enum):
+    """Payment method code"""
+    CSH='CSH'
+    CRC='CRC'
+    CHQ='CHQ'
+    PYP='PYP'
+    MOB='MOB'
+
+
 class PaymentType(str, Enum):
     """payment type (S:Shipper,R:Recipient,T:Third
     Party)"""
     S='S'
     R='R'
     T='T'
-
-
-class PickupType(str, Enum):
-    """Type of pickup (G: Pickup for DHL Ground)"""
-    G='G'
-
-
-class PickupTypeCodeType(str, Enum):
-    """Type of pickup (S = If pickup date is today and A = if pickup date is
-    advance)"""
-    S='S'
-    A='A'
-
-
-class PiecesEnabled(str, Enum):
-    """Pieces Enabling Flag"""
-    Y='Y'
-    N='N'
 
 
 class ProductCode(str, Enum):
@@ -1672,38 +1480,13 @@ class ProductCode(str, Enum):
     I='I'
 
 
+class QRCodeImageFormat(str, Enum):
+    """QRCode Image Format"""
+    PNG='PNG'
+
+
 class QuantityUnit(str, Enum):
-    """UOM Description
-    BOX Boxes
-    2GM Centigram
-    2M Centimeters
-    2M3 Cubic Centimeters
-    3M3 Cubic Feet
-    M3 Cubic Meters
-    DPR Dozen Pairs
-    DOZ Dozen
-    2NO Each
-    PCS Pieces
-    GM Grams
-    GRS Gross
-    KG Kilograms
-    L Liters
-    M Meters
-    3GM Milligrams
-    3L Milliliters
-    X No Unit Required
-    NO Number
-    2KG Ounces
-    PRS Pairs
-    2L Gallons
-    3KG Pounds
-    CM2 Square Centimeters
-    2M2 Square Feet
-    3M2 Square Inches
-    M2 Square Meters
-    4M2 Square Yards
-    3M Yards"""
-    UOM='UOM'
+    """Export Declaration Line Item Quantity Unit of Measurement"""
     BOX='BOX'
     _2_GM='2GM'
     _2_M='2M'
@@ -1791,12 +1574,6 @@ class ShipmentPurpose(str, Enum):
     COMMERCIAL='COMMERCIAL'
 
 
-class ShipperIDTypeType(str, Enum):
-    S='S'
-    E='E'
-    D='D'
-
-
 class TermsOfTrade(str, Enum):
     """ "TermsOfTrade" """
     CFR='CFR'
@@ -1829,6 +1606,18 @@ class Type(str, Enum):
     DCL='DCL'
 
 
+class UseOwnPieceIdentificationNumberType(str, Enum):
+    """Customer able to provide PID if set to Y. The default is N"""
+    Y='Y'
+    N='N'
+
+
+class UseOwnShipmentIdentificationNumberType(str, Enum):
+    """Customer able to provide SID if set to Y. The default is N"""
+    Y='Y'
+    N='N'
+
+
 class WeightUnit(str, Enum):
     """Unit of weight measurement (K:KiloGram)"""
     K='K'
@@ -1847,144 +1636,300 @@ class YesNo(str, Enum):
     N='N'
 
 
-class ModifyPUResponse(GeneratedsSuper):
-    """Root element of Book Pickup Request"""
+class ShipmentRequest(GeneratedsSuper):
+    """Root element of Shipment Validation Global request"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, Response=None, RegionCode=None, Note=None, ConfirmationNumber=None, ReadyByTime=None, SecondReadyByTime=None, NextPickupDate=None, PickupCharge=None, CurrencyCode=None, CallInTime=None, SecondCallInTime=None, OriginSvcArea=None, CountryCode=None, gds_collector_=None, **kwargs_):
+    def __init__(self, schemaVersion=10.0, Request=None, RegionCode=None, RequestedPickupTime=None, LanguageCode='en', LatinResponseInd=None, Billing=None, Consignee=None, Commodity=None, Dutiable=None, UseDHLInvoice='N', DHLInvoiceLanguageCode='en', DHLInvoiceType='CMI', ExportDeclaration=None, Reference=None, ShipmentDetails=None, Shipper=None, SpecialService=None, Notification=None, Place=None, EProcShip=None, Airwaybill=None, DocImages=None, LabelImageFormat=None, RequestArchiveDoc=None, NumberOfArchiveDoc=None, RequestQRCode='N', RequestTransportLabel=None, Label=None, ODDLinkReq=None, DGs=None, GetPriceEstimate='Y', SinglePieceImage='N', ShipmentIdentificationNumber=None, UseOwnShipmentIdentificationNumber='N', Importer=None, Exporter=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.Response = Response
-        self.Response_nsprefix_ = None
+        self.schemaVersion = _cast(float, schemaVersion)
+        self.schemaVersion_nsprefix_ = None
+        self.Request = Request
+        self.Request_nsprefix_ = None
         self.RegionCode = RegionCode
         self.validate_RegionCode(self.RegionCode)
         self.RegionCode_nsprefix_ = None
-        self.Note = Note
-        self.Note_nsprefix_ = None
-        if ConfirmationNumber is None:
-            self.ConfirmationNumber = []
+        self.RequestedPickupTime = RequestedPickupTime
+        self.validate_YesNo(self.RequestedPickupTime)
+        self.RequestedPickupTime_nsprefix_ = None
+        self.LanguageCode = LanguageCode
+        self.validate_LanguageCode(self.LanguageCode)
+        self.LanguageCode_nsprefix_ = None
+        self.LatinResponseInd = LatinResponseInd
+        self.validate_YesNo(self.LatinResponseInd)
+        self.LatinResponseInd_nsprefix_ = None
+        self.Billing = Billing
+        self.Billing_nsprefix_ = None
+        self.Consignee = Consignee
+        self.Consignee_nsprefix_ = None
+        if Commodity is None:
+            self.Commodity = []
         else:
-            self.ConfirmationNumber = ConfirmationNumber
-        self.ConfirmationNumber_nsprefix_ = None
-        if isinstance(ReadyByTime, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(ReadyByTime, '%H:%M:%S').time()
+            self.Commodity = Commodity
+        self.Commodity_nsprefix_ = None
+        self.Dutiable = Dutiable
+        self.Dutiable_nsprefix_ = None
+        self.UseDHLInvoice = UseDHLInvoice
+        self.validate_YesNo(self.UseDHLInvoice)
+        self.UseDHLInvoice_nsprefix_ = None
+        self.DHLInvoiceLanguageCode = DHLInvoiceLanguageCode
+        self.validate_InvLanguageCode(self.DHLInvoiceLanguageCode)
+        self.DHLInvoiceLanguageCode_nsprefix_ = None
+        self.DHLInvoiceType = DHLInvoiceType
+        self.validate_InvoiceType(self.DHLInvoiceType)
+        self.DHLInvoiceType_nsprefix_ = None
+        self.ExportDeclaration = ExportDeclaration
+        self.ExportDeclaration_nsprefix_ = None
+        if Reference is None:
+            self.Reference = []
         else:
-            initvalue_ = ReadyByTime
-        self.ReadyByTime = initvalue_
-        self.ReadyByTime_nsprefix_ = None
-        if isinstance(SecondReadyByTime, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(SecondReadyByTime, '%H:%M:%S').time()
+            self.Reference = Reference
+        self.Reference_nsprefix_ = None
+        self.ShipmentDetails = ShipmentDetails
+        self.ShipmentDetails_nsprefix_ = None
+        self.Shipper = Shipper
+        self.Shipper_nsprefix_ = None
+        if SpecialService is None:
+            self.SpecialService = []
         else:
-            initvalue_ = SecondReadyByTime
-        self.SecondReadyByTime = initvalue_
-        self.SecondReadyByTime_nsprefix_ = None
-        if isinstance(NextPickupDate, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(NextPickupDate, '%Y-%m-%d').date()
-        else:
-            initvalue_ = NextPickupDate
-        self.NextPickupDate = initvalue_
-        self.NextPickupDate_nsprefix_ = None
-        self.PickupCharge = PickupCharge
-        self.validate_Money(self.PickupCharge)
-        self.PickupCharge_nsprefix_ = None
-        self.CurrencyCode = CurrencyCode
-        self.validate_CurrencyCode(self.CurrencyCode)
-        self.CurrencyCode_nsprefix_ = None
-        if isinstance(CallInTime, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(CallInTime, '%H:%M:%S').time()
-        else:
-            initvalue_ = CallInTime
-        self.CallInTime = initvalue_
-        self.CallInTime_nsprefix_ = None
-        if isinstance(SecondCallInTime, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(SecondCallInTime, '%H:%M:%S').time()
-        else:
-            initvalue_ = SecondCallInTime
-        self.SecondCallInTime = initvalue_
-        self.SecondCallInTime_nsprefix_ = None
-        self.OriginSvcArea = OriginSvcArea
-        self.validate_OriginSvcAreaType(self.OriginSvcArea)
-        self.OriginSvcArea_nsprefix_ = None
-        self.CountryCode = CountryCode
-        self.validate_CountryCode(self.CountryCode)
-        self.CountryCode_nsprefix_ = None
+            self.SpecialService = SpecialService
+        self.SpecialService_nsprefix_ = None
+        self.Notification = Notification
+        self.Notification_nsprefix_ = None
+        self.Place = Place
+        self.Place_nsprefix_ = None
+        self.EProcShip = EProcShip
+        self.validate_YesNo(self.EProcShip)
+        self.EProcShip_nsprefix_ = None
+        self.Airwaybill = Airwaybill
+        self.validate_AWBNumber(self.Airwaybill)
+        self.Airwaybill_nsprefix_ = None
+        self.DocImages = DocImages
+        self.DocImages_nsprefix_ = None
+        self.LabelImageFormat = LabelImageFormat
+        self.validate_LabelImageFormat(self.LabelImageFormat)
+        self.LabelImageFormat_nsprefix_ = None
+        self.RequestArchiveDoc = RequestArchiveDoc
+        self.validate_YesNo(self.RequestArchiveDoc)
+        self.RequestArchiveDoc_nsprefix_ = None
+        self.NumberOfArchiveDoc = NumberOfArchiveDoc
+        self.validate_NumberOfArchiveDoc(self.NumberOfArchiveDoc)
+        self.NumberOfArchiveDoc_nsprefix_ = None
+        self.RequestQRCode = RequestQRCode
+        self.validate_YesNo(self.RequestQRCode)
+        self.RequestQRCode_nsprefix_ = None
+        self.RequestTransportLabel = RequestTransportLabel
+        self.validate_YesNo(self.RequestTransportLabel)
+        self.RequestTransportLabel_nsprefix_ = None
+        self.Label = Label
+        self.Label_nsprefix_ = None
+        self.ODDLinkReq = ODDLinkReq
+        self.validate_YesNo(self.ODDLinkReq)
+        self.ODDLinkReq_nsprefix_ = None
+        self.DGs = DGs
+        self.DGs_nsprefix_ = None
+        self.GetPriceEstimate = GetPriceEstimate
+        self.validate_YesNo(self.GetPriceEstimate)
+        self.GetPriceEstimate_nsprefix_ = None
+        self.SinglePieceImage = SinglePieceImage
+        self.validate_YesNo(self.SinglePieceImage)
+        self.SinglePieceImage_nsprefix_ = None
+        self.ShipmentIdentificationNumber = ShipmentIdentificationNumber
+        self.validate_AWBNumber(self.ShipmentIdentificationNumber)
+        self.ShipmentIdentificationNumber_nsprefix_ = None
+        self.UseOwnShipmentIdentificationNumber = UseOwnShipmentIdentificationNumber
+        self.validate_UseOwnShipmentIdentificationNumberType(self.UseOwnShipmentIdentificationNumber)
+        self.UseOwnShipmentIdentificationNumber_nsprefix_ = None
+        self.Importer = Importer
+        self.Importer_nsprefix_ = None
+        self.Exporter = Exporter
+        self.Exporter_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ModifyPUResponse)
+                CurrentSubclassModule_, ShipmentRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if ModifyPUResponse.subclass:
-            return ModifyPUResponse.subclass(*args_, **kwargs_)
+        if ShipmentRequest.subclass:
+            return ShipmentRequest.subclass(*args_, **kwargs_)
         else:
-            return ModifyPUResponse(*args_, **kwargs_)
+            return ShipmentRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_Response(self):
-        return self.Response
-    def set_Response(self, Response):
-        self.Response = Response
+    def get_Request(self):
+        return self.Request
+    def set_Request(self, Request):
+        self.Request = Request
     def get_RegionCode(self):
         return self.RegionCode
     def set_RegionCode(self, RegionCode):
         self.RegionCode = RegionCode
-    def get_Note(self):
-        return self.Note
-    def set_Note(self, Note):
-        self.Note = Note
-    def get_ConfirmationNumber(self):
-        return self.ConfirmationNumber
-    def set_ConfirmationNumber(self, ConfirmationNumber):
-        self.ConfirmationNumber = ConfirmationNumber
-    def add_ConfirmationNumber(self, value):
-        self.ConfirmationNumber.append(value)
-    def insert_ConfirmationNumber_at(self, index, value):
-        self.ConfirmationNumber.insert(index, value)
-    def replace_ConfirmationNumber_at(self, index, value):
-        self.ConfirmationNumber[index] = value
-    def get_ReadyByTime(self):
-        return self.ReadyByTime
-    def set_ReadyByTime(self, ReadyByTime):
-        self.ReadyByTime = ReadyByTime
-    def get_SecondReadyByTime(self):
-        return self.SecondReadyByTime
-    def set_SecondReadyByTime(self, SecondReadyByTime):
-        self.SecondReadyByTime = SecondReadyByTime
-    def get_NextPickupDate(self):
-        return self.NextPickupDate
-    def set_NextPickupDate(self, NextPickupDate):
-        self.NextPickupDate = NextPickupDate
-    def get_PickupCharge(self):
-        return self.PickupCharge
-    def set_PickupCharge(self, PickupCharge):
-        self.PickupCharge = PickupCharge
-    def get_CurrencyCode(self):
-        return self.CurrencyCode
-    def set_CurrencyCode(self, CurrencyCode):
-        self.CurrencyCode = CurrencyCode
-    def get_CallInTime(self):
-        return self.CallInTime
-    def set_CallInTime(self, CallInTime):
-        self.CallInTime = CallInTime
-    def get_SecondCallInTime(self):
-        return self.SecondCallInTime
-    def set_SecondCallInTime(self, SecondCallInTime):
-        self.SecondCallInTime = SecondCallInTime
-    def get_OriginSvcArea(self):
-        return self.OriginSvcArea
-    def set_OriginSvcArea(self, OriginSvcArea):
-        self.OriginSvcArea = OriginSvcArea
-    def get_CountryCode(self):
-        return self.CountryCode
-    def set_CountryCode(self, CountryCode):
-        self.CountryCode = CountryCode
+    def get_RequestedPickupTime(self):
+        return self.RequestedPickupTime
+    def set_RequestedPickupTime(self, RequestedPickupTime):
+        self.RequestedPickupTime = RequestedPickupTime
+    def get_LanguageCode(self):
+        return self.LanguageCode
+    def set_LanguageCode(self, LanguageCode):
+        self.LanguageCode = LanguageCode
+    def get_LatinResponseInd(self):
+        return self.LatinResponseInd
+    def set_LatinResponseInd(self, LatinResponseInd):
+        self.LatinResponseInd = LatinResponseInd
+    def get_Billing(self):
+        return self.Billing
+    def set_Billing(self, Billing):
+        self.Billing = Billing
+    def get_Consignee(self):
+        return self.Consignee
+    def set_Consignee(self, Consignee):
+        self.Consignee = Consignee
+    def get_Commodity(self):
+        return self.Commodity
+    def set_Commodity(self, Commodity):
+        self.Commodity = Commodity
+    def add_Commodity(self, value):
+        self.Commodity.append(value)
+    def insert_Commodity_at(self, index, value):
+        self.Commodity.insert(index, value)
+    def replace_Commodity_at(self, index, value):
+        self.Commodity[index] = value
+    def get_Dutiable(self):
+        return self.Dutiable
+    def set_Dutiable(self, Dutiable):
+        self.Dutiable = Dutiable
+    def get_UseDHLInvoice(self):
+        return self.UseDHLInvoice
+    def set_UseDHLInvoice(self, UseDHLInvoice):
+        self.UseDHLInvoice = UseDHLInvoice
+    def get_DHLInvoiceLanguageCode(self):
+        return self.DHLInvoiceLanguageCode
+    def set_DHLInvoiceLanguageCode(self, DHLInvoiceLanguageCode):
+        self.DHLInvoiceLanguageCode = DHLInvoiceLanguageCode
+    def get_DHLInvoiceType(self):
+        return self.DHLInvoiceType
+    def set_DHLInvoiceType(self, DHLInvoiceType):
+        self.DHLInvoiceType = DHLInvoiceType
+    def get_ExportDeclaration(self):
+        return self.ExportDeclaration
+    def set_ExportDeclaration(self, ExportDeclaration):
+        self.ExportDeclaration = ExportDeclaration
+    def get_Reference(self):
+        return self.Reference
+    def set_Reference(self, Reference):
+        self.Reference = Reference
+    def add_Reference(self, value):
+        self.Reference.append(value)
+    def insert_Reference_at(self, index, value):
+        self.Reference.insert(index, value)
+    def replace_Reference_at(self, index, value):
+        self.Reference[index] = value
+    def get_ShipmentDetails(self):
+        return self.ShipmentDetails
+    def set_ShipmentDetails(self, ShipmentDetails):
+        self.ShipmentDetails = ShipmentDetails
+    def get_Shipper(self):
+        return self.Shipper
+    def set_Shipper(self, Shipper):
+        self.Shipper = Shipper
+    def get_SpecialService(self):
+        return self.SpecialService
+    def set_SpecialService(self, SpecialService):
+        self.SpecialService = SpecialService
+    def add_SpecialService(self, value):
+        self.SpecialService.append(value)
+    def insert_SpecialService_at(self, index, value):
+        self.SpecialService.insert(index, value)
+    def replace_SpecialService_at(self, index, value):
+        self.SpecialService[index] = value
+    def get_Notification(self):
+        return self.Notification
+    def set_Notification(self, Notification):
+        self.Notification = Notification
+    def get_Place(self):
+        return self.Place
+    def set_Place(self, Place):
+        self.Place = Place
+    def get_EProcShip(self):
+        return self.EProcShip
+    def set_EProcShip(self, EProcShip):
+        self.EProcShip = EProcShip
+    def get_Airwaybill(self):
+        return self.Airwaybill
+    def set_Airwaybill(self, Airwaybill):
+        self.Airwaybill = Airwaybill
+    def get_DocImages(self):
+        return self.DocImages
+    def set_DocImages(self, DocImages):
+        self.DocImages = DocImages
+    def get_LabelImageFormat(self):
+        return self.LabelImageFormat
+    def set_LabelImageFormat(self, LabelImageFormat):
+        self.LabelImageFormat = LabelImageFormat
+    def get_RequestArchiveDoc(self):
+        return self.RequestArchiveDoc
+    def set_RequestArchiveDoc(self, RequestArchiveDoc):
+        self.RequestArchiveDoc = RequestArchiveDoc
+    def get_NumberOfArchiveDoc(self):
+        return self.NumberOfArchiveDoc
+    def set_NumberOfArchiveDoc(self, NumberOfArchiveDoc):
+        self.NumberOfArchiveDoc = NumberOfArchiveDoc
+    def get_RequestQRCode(self):
+        return self.RequestQRCode
+    def set_RequestQRCode(self, RequestQRCode):
+        self.RequestQRCode = RequestQRCode
+    def get_RequestTransportLabel(self):
+        return self.RequestTransportLabel
+    def set_RequestTransportLabel(self, RequestTransportLabel):
+        self.RequestTransportLabel = RequestTransportLabel
+    def get_Label(self):
+        return self.Label
+    def set_Label(self, Label):
+        self.Label = Label
+    def get_ODDLinkReq(self):
+        return self.ODDLinkReq
+    def set_ODDLinkReq(self, ODDLinkReq):
+        self.ODDLinkReq = ODDLinkReq
+    def get_DGs(self):
+        return self.DGs
+    def set_DGs(self, DGs):
+        self.DGs = DGs
+    def get_GetPriceEstimate(self):
+        return self.GetPriceEstimate
+    def set_GetPriceEstimate(self, GetPriceEstimate):
+        self.GetPriceEstimate = GetPriceEstimate
+    def get_SinglePieceImage(self):
+        return self.SinglePieceImage
+    def set_SinglePieceImage(self, SinglePieceImage):
+        self.SinglePieceImage = SinglePieceImage
+    def get_ShipmentIdentificationNumber(self):
+        return self.ShipmentIdentificationNumber
+    def set_ShipmentIdentificationNumber(self, ShipmentIdentificationNumber):
+        self.ShipmentIdentificationNumber = ShipmentIdentificationNumber
+    def get_UseOwnShipmentIdentificationNumber(self):
+        return self.UseOwnShipmentIdentificationNumber
+    def set_UseOwnShipmentIdentificationNumber(self, UseOwnShipmentIdentificationNumber):
+        self.UseOwnShipmentIdentificationNumber = UseOwnShipmentIdentificationNumber
+    def get_Importer(self):
+        return self.Importer
+    def set_Importer(self, Importer):
+        self.Importer = Importer
+    def get_Exporter(self):
+        return self.Exporter
+    def set_Exporter(self, Exporter):
+        self.Exporter = Exporter
+    def get_schemaVersion(self):
+        return self.schemaVersion
+    def set_schemaVersion(self, schemaVersion):
+        self.schemaVersion = schemaVersion
     def validate_RegionCode(self, value):
         result = True
         # Validate type RegionCode, a restriction on xsd:string.
@@ -2008,197 +1953,351 @@ class ModifyPUResponse(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on RegionCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_ConfirmationNumberType(self, value):
+    def validate_YesNo(self, value):
         result = True
-        # Validate type ConfirmationNumberType, a restriction on xsd:positiveInteger.
+        # Validate type YesNo, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['Y', 'N']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on YesNo' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) != 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on YesNo' % {"value": encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_LanguageCode(self, value):
+        result = True
+        # Validate type LanguageCode, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on LanguageCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_InvLanguageCode(self, value):
+        result = True
+        # Validate type InvLanguageCode, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['bg', 'br', 'cs', 'da', 'de', 'el', 'en', 'ep', 'et', 'fi', 'fr', 'he', 'hr', 'hu', 'is', 'it', 'lt', 'lv', 'mk', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'si', 'sk', 'sp', 'sq', 'sr', 'sv', 'tr', 'uk']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on InvLanguageCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) > 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on InvLanguageCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_InvoiceType(self, value):
+        result = True
+        # Validate type InvoiceType, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['CMI', 'PFI']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on InvoiceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) > 3:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on InvoiceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_AWBNumber(self, value):
+        result = True
+        # Validate type AWBNumber, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 10:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AWBNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_LabelImageFormat(self, value):
+        result = True
+        # Validate type LabelImageFormat, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['PDF', 'ZPL2', 'EPL2']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on LabelImageFormat' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) > 4:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on LabelImageFormat' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 3:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on LabelImageFormat' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_NumberOfArchiveDoc(self, value):
+        result = True
+        # Validate type NumberOfArchiveDoc, a restriction on xsd:positiveInteger.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, int):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (int)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 1:
+            value = value
+            enumerations = [1, 2]
+            if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on ConfirmationNumberType' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on NumberOfArchiveDoc' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
-            if value > 999999999:
+            if value > 2:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on ConfirmationNumberType' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_TimeHM(self, value):
-        result = True
-        # Validate type TimeHM, a restriction on xsd:time.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, datetime_.time):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (datetime_.time)' % {"value": value, "lineno": lineno, })
-                return False
-            pass
-        return result
-    def validate_Money(self, value):
-        result = True
-        # Validate type Money, a restriction on xsd:float.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, float):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (float)' % {"value": value, "lineno": lineno, })
-                return False
-            if value < 0.00:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Money' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 9999999999.99:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Money' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on NumberOfArchiveDoc' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def validate_CurrencyCode(self, value):
+    def validate_UseOwnShipmentIdentificationNumberType(self, value):
         result = True
-        # Validate type CurrencyCode, a restriction on xsd:string.
+        # Validate type UseOwnShipmentIdentificationNumberType, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) != 3:
+            value = value
+            enumerations = ['Y', 'N']
+            if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CurrencyCode' % {"value": encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on UseOwnShipmentIdentificationNumberType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
-            if not self.gds_validate_simple_patterns(
-                    self.validate_CurrencyCode_patterns_, value):
-                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_CurrencyCode_patterns_, ))
-                result = False
-        return result
-    validate_CurrencyCode_patterns_ = [['^([^ ].*[^ ])$']]
-    def validate_OriginSvcAreaType(self, value):
-        result = True
-        # Validate type OriginSvcAreaType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
+            if len(value) > 1:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on OriginSvcAreaType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on OriginSvcAreaType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_CountryCode(self, value):
-        result = True
-        # Validate type CountryCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) != 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CountryCode' % {"value": encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on UseOwnShipmentIdentificationNumberType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def hasContent_(self):
         if (
-            self.Response is not None or
+            self.Request is not None or
             self.RegionCode is not None or
-            self.Note is not None or
-            self.ConfirmationNumber or
-            self.ReadyByTime is not None or
-            self.SecondReadyByTime is not None or
-            self.NextPickupDate is not None or
-            self.PickupCharge is not None or
-            self.CurrencyCode is not None or
-            self.CallInTime is not None or
-            self.SecondCallInTime is not None or
-            self.OriginSvcArea is not None or
-            self.CountryCode is not None
+            self.RequestedPickupTime is not None or
+            self.LanguageCode != "en" or
+            self.LatinResponseInd is not None or
+            self.Billing is not None or
+            self.Consignee is not None or
+            self.Commodity or
+            self.Dutiable is not None or
+            self.UseDHLInvoice != "N" or
+            self.DHLInvoiceLanguageCode != "en" or
+            self.DHLInvoiceType != "CMI" or
+            self.ExportDeclaration is not None or
+            self.Reference or
+            self.ShipmentDetails is not None or
+            self.Shipper is not None or
+            self.SpecialService or
+            self.Notification is not None or
+            self.Place is not None or
+            self.EProcShip is not None or
+            self.Airwaybill is not None or
+            self.DocImages is not None or
+            self.LabelImageFormat is not None or
+            self.RequestArchiveDoc is not None or
+            self.NumberOfArchiveDoc is not None or
+            self.RequestQRCode != "N" or
+            self.RequestTransportLabel is not None or
+            self.Label is not None or
+            self.ODDLinkReq is not None or
+            self.DGs is not None or
+            self.GetPriceEstimate != "Y" or
+            self.SinglePieceImage != "N" or
+            self.ShipmentIdentificationNumber is not None or
+            self.UseOwnShipmentIdentificationNumber != "N" or
+            self.Importer is not None or
+            self.Exporter is not None
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ModifyPUResponse', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ModifyPUResponse')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ModifyPUResponse':
+        if self.original_tagname_ is not None and name_ == 'ShipmentRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ModifyPUResponse')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentRequest')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ModifyPUResponse', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ModifyPUResponse'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ModifyPUResponse', fromsubclass_=False, pretty_print=True):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ShipmentRequest'):
+        if self.schemaVersion is not None and 'schemaVersion' not in already_processed:
+            already_processed.add('schemaVersion')
+            outfile.write(' schemaVersion="%s"' % self.gds_format_decimal(self.schemaVersion, input_name='schemaVersion'))
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ShipmentRequest', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.Response is not None:
-            namespaceprefix_ = self.Response_nsprefix_ + ':' if (UseCapturedNS_ and self.Response_nsprefix_) else ''
-            self.Response.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Response', pretty_print=pretty_print)
+        if self.Request is not None:
+            namespaceprefix_ = self.Request_nsprefix_ + ':' if (UseCapturedNS_ and self.Request_nsprefix_) else ''
+            self.Request.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Request', pretty_print=pretty_print)
         if self.RegionCode is not None:
             namespaceprefix_ = self.RegionCode_nsprefix_ + ':' if (UseCapturedNS_ and self.RegionCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sRegionCode>%s</%sRegionCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RegionCode), input_name='RegionCode')), namespaceprefix_ , eol_))
-        if self.Note is not None:
-            namespaceprefix_ = self.Note_nsprefix_ + ':' if (UseCapturedNS_ and self.Note_nsprefix_) else ''
-            self.Note.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Note', pretty_print=pretty_print)
-        for ConfirmationNumber_ in self.ConfirmationNumber:
-            namespaceprefix_ = self.ConfirmationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.ConfirmationNumber_nsprefix_) else ''
+        if self.RequestedPickupTime is not None:
+            namespaceprefix_ = self.RequestedPickupTime_nsprefix_ + ':' if (UseCapturedNS_ and self.RequestedPickupTime_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sConfirmationNumber>%s</%sConfirmationNumber>%s' % (namespaceprefix_ , self.gds_format_integer(ConfirmationNumber_, input_name='ConfirmationNumber'), namespaceprefix_ , eol_))
-        if self.ReadyByTime is not None:
-            namespaceprefix_ = self.ReadyByTime_nsprefix_ + ':' if (UseCapturedNS_ and self.ReadyByTime_nsprefix_) else ''
+            outfile.write('<%sRequestedPickupTime>%s</%sRequestedPickupTime>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RequestedPickupTime), input_name='RequestedPickupTime')), namespaceprefix_ , eol_))
+        if self.LanguageCode is not None:
+            namespaceprefix_ = self.LanguageCode_nsprefix_ + ':' if (UseCapturedNS_ and self.LanguageCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sReadyByTime>%s</%sReadyByTime>%s' % (namespaceprefix_ , self.gds_format_time(self.ReadyByTime, input_name='ReadyByTime'), namespaceprefix_ , eol_))
-        if self.SecondReadyByTime is not None:
-            namespaceprefix_ = self.SecondReadyByTime_nsprefix_ + ':' if (UseCapturedNS_ and self.SecondReadyByTime_nsprefix_) else ''
+            outfile.write('<%sLanguageCode>%s</%sLanguageCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LanguageCode), input_name='LanguageCode')), namespaceprefix_ , eol_))
+        if self.LatinResponseInd is not None:
+            namespaceprefix_ = self.LatinResponseInd_nsprefix_ + ':' if (UseCapturedNS_ and self.LatinResponseInd_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSecondReadyByTime>%s</%sSecondReadyByTime>%s' % (namespaceprefix_ , self.gds_format_time(self.SecondReadyByTime, input_name='SecondReadyByTime'), namespaceprefix_ , eol_))
-        if self.NextPickupDate is not None:
-            namespaceprefix_ = self.NextPickupDate_nsprefix_ + ':' if (UseCapturedNS_ and self.NextPickupDate_nsprefix_) else ''
+            outfile.write('<%sLatinResponseInd>%s</%sLatinResponseInd>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LatinResponseInd), input_name='LatinResponseInd')), namespaceprefix_ , eol_))
+        if self.Billing is not None:
+            namespaceprefix_ = self.Billing_nsprefix_ + ':' if (UseCapturedNS_ and self.Billing_nsprefix_) else ''
+            self.Billing.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Billing', pretty_print=pretty_print)
+        if self.Consignee is not None:
+            namespaceprefix_ = self.Consignee_nsprefix_ + ':' if (UseCapturedNS_ and self.Consignee_nsprefix_) else ''
+            self.Consignee.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Consignee', pretty_print=pretty_print)
+        for Commodity_ in self.Commodity:
+            namespaceprefix_ = self.Commodity_nsprefix_ + ':' if (UseCapturedNS_ and self.Commodity_nsprefix_) else ''
+            Commodity_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Commodity', pretty_print=pretty_print)
+        if self.Dutiable is not None:
+            namespaceprefix_ = self.Dutiable_nsprefix_ + ':' if (UseCapturedNS_ and self.Dutiable_nsprefix_) else ''
+            self.Dutiable.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Dutiable', pretty_print=pretty_print)
+        if self.UseDHLInvoice != "N":
+            namespaceprefix_ = self.UseDHLInvoice_nsprefix_ + ':' if (UseCapturedNS_ and self.UseDHLInvoice_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNextPickupDate>%s</%sNextPickupDate>%s' % (namespaceprefix_ , self.gds_format_date(self.NextPickupDate, input_name='NextPickupDate'), namespaceprefix_ , eol_))
-        if self.PickupCharge is not None:
-            namespaceprefix_ = self.PickupCharge_nsprefix_ + ':' if (UseCapturedNS_ and self.PickupCharge_nsprefix_) else ''
+            outfile.write('<%sUseDHLInvoice>%s</%sUseDHLInvoice>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.UseDHLInvoice), input_name='UseDHLInvoice')), namespaceprefix_ , eol_))
+        if self.DHLInvoiceLanguageCode != "en":
+            namespaceprefix_ = self.DHLInvoiceLanguageCode_nsprefix_ + ':' if (UseCapturedNS_ and self.DHLInvoiceLanguageCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPickupCharge>%s</%sPickupCharge>%s' % (namespaceprefix_ , self.gds_format_float(self.PickupCharge, input_name='PickupCharge'), namespaceprefix_ , eol_))
-        if self.CurrencyCode is not None:
-            namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
+            outfile.write('<%sDHLInvoiceLanguageCode>%s</%sDHLInvoiceLanguageCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DHLInvoiceLanguageCode), input_name='DHLInvoiceLanguageCode')), namespaceprefix_ , eol_))
+        if self.DHLInvoiceType != "CMI":
+            namespaceprefix_ = self.DHLInvoiceType_nsprefix_ + ':' if (UseCapturedNS_ and self.DHLInvoiceType_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
-        if self.CallInTime is not None:
-            namespaceprefix_ = self.CallInTime_nsprefix_ + ':' if (UseCapturedNS_ and self.CallInTime_nsprefix_) else ''
+            outfile.write('<%sDHLInvoiceType>%s</%sDHLInvoiceType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DHLInvoiceType), input_name='DHLInvoiceType')), namespaceprefix_ , eol_))
+        if self.ExportDeclaration is not None:
+            namespaceprefix_ = self.ExportDeclaration_nsprefix_ + ':' if (UseCapturedNS_ and self.ExportDeclaration_nsprefix_) else ''
+            self.ExportDeclaration.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ExportDeclaration', pretty_print=pretty_print)
+        for Reference_ in self.Reference:
+            namespaceprefix_ = self.Reference_nsprefix_ + ':' if (UseCapturedNS_ and self.Reference_nsprefix_) else ''
+            Reference_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Reference', pretty_print=pretty_print)
+        if self.ShipmentDetails is not None:
+            namespaceprefix_ = self.ShipmentDetails_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentDetails_nsprefix_) else ''
+            self.ShipmentDetails.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentDetails', pretty_print=pretty_print)
+        if self.Shipper is not None:
+            namespaceprefix_ = self.Shipper_nsprefix_ + ':' if (UseCapturedNS_ and self.Shipper_nsprefix_) else ''
+            self.Shipper.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Shipper', pretty_print=pretty_print)
+        for SpecialService_ in self.SpecialService:
+            namespaceprefix_ = self.SpecialService_nsprefix_ + ':' if (UseCapturedNS_ and self.SpecialService_nsprefix_) else ''
+            SpecialService_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='SpecialService', pretty_print=pretty_print)
+        if self.Notification is not None:
+            namespaceprefix_ = self.Notification_nsprefix_ + ':' if (UseCapturedNS_ and self.Notification_nsprefix_) else ''
+            self.Notification.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Notification', pretty_print=pretty_print)
+        if self.Place is not None:
+            namespaceprefix_ = self.Place_nsprefix_ + ':' if (UseCapturedNS_ and self.Place_nsprefix_) else ''
+            self.Place.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Place', pretty_print=pretty_print)
+        if self.EProcShip is not None:
+            namespaceprefix_ = self.EProcShip_nsprefix_ + ':' if (UseCapturedNS_ and self.EProcShip_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCallInTime>%s</%sCallInTime>%s' % (namespaceprefix_ , self.gds_format_time(self.CallInTime, input_name='CallInTime'), namespaceprefix_ , eol_))
-        if self.SecondCallInTime is not None:
-            namespaceprefix_ = self.SecondCallInTime_nsprefix_ + ':' if (UseCapturedNS_ and self.SecondCallInTime_nsprefix_) else ''
+            outfile.write('<%sEProcShip>%s</%sEProcShip>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.EProcShip), input_name='EProcShip')), namespaceprefix_ , eol_))
+        if self.Airwaybill is not None:
+            namespaceprefix_ = self.Airwaybill_nsprefix_ + ':' if (UseCapturedNS_ and self.Airwaybill_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSecondCallInTime>%s</%sSecondCallInTime>%s' % (namespaceprefix_ , self.gds_format_time(self.SecondCallInTime, input_name='SecondCallInTime'), namespaceprefix_ , eol_))
-        if self.OriginSvcArea is not None:
-            namespaceprefix_ = self.OriginSvcArea_nsprefix_ + ':' if (UseCapturedNS_ and self.OriginSvcArea_nsprefix_) else ''
+            outfile.write('<%sAirwaybill>%s</%sAirwaybill>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Airwaybill), input_name='Airwaybill')), namespaceprefix_ , eol_))
+        if self.DocImages is not None:
+            namespaceprefix_ = self.DocImages_nsprefix_ + ':' if (UseCapturedNS_ and self.DocImages_nsprefix_) else ''
+            self.DocImages.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DocImages', pretty_print=pretty_print)
+        if self.LabelImageFormat is not None:
+            namespaceprefix_ = self.LabelImageFormat_nsprefix_ + ':' if (UseCapturedNS_ and self.LabelImageFormat_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sOriginSvcArea>%s</%sOriginSvcArea>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.OriginSvcArea), input_name='OriginSvcArea')), namespaceprefix_ , eol_))
-        if self.CountryCode is not None:
-            namespaceprefix_ = self.CountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryCode_nsprefix_) else ''
+            outfile.write('<%sLabelImageFormat>%s</%sLabelImageFormat>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LabelImageFormat), input_name='LabelImageFormat')), namespaceprefix_ , eol_))
+        if self.RequestArchiveDoc is not None:
+            namespaceprefix_ = self.RequestArchiveDoc_nsprefix_ + ':' if (UseCapturedNS_ and self.RequestArchiveDoc_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCountryCode>%s</%sCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryCode), input_name='CountryCode')), namespaceprefix_ , eol_))
+            outfile.write('<%sRequestArchiveDoc>%s</%sRequestArchiveDoc>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RequestArchiveDoc), input_name='RequestArchiveDoc')), namespaceprefix_ , eol_))
+        if self.NumberOfArchiveDoc is not None:
+            namespaceprefix_ = self.NumberOfArchiveDoc_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberOfArchiveDoc_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sNumberOfArchiveDoc>%s</%sNumberOfArchiveDoc>%s' % (namespaceprefix_ , self.gds_format_integer(self.NumberOfArchiveDoc, input_name='NumberOfArchiveDoc'), namespaceprefix_ , eol_))
+        if self.RequestQRCode != "N":
+            namespaceprefix_ = self.RequestQRCode_nsprefix_ + ':' if (UseCapturedNS_ and self.RequestQRCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRequestQRCode>%s</%sRequestQRCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RequestQRCode), input_name='RequestQRCode')), namespaceprefix_ , eol_))
+        if self.RequestTransportLabel is not None:
+            namespaceprefix_ = self.RequestTransportLabel_nsprefix_ + ':' if (UseCapturedNS_ and self.RequestTransportLabel_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sRequestTransportLabel>%s</%sRequestTransportLabel>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RequestTransportLabel), input_name='RequestTransportLabel')), namespaceprefix_ , eol_))
+        if self.Label is not None:
+            namespaceprefix_ = self.Label_nsprefix_ + ':' if (UseCapturedNS_ and self.Label_nsprefix_) else ''
+            self.Label.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Label', pretty_print=pretty_print)
+        if self.ODDLinkReq is not None:
+            namespaceprefix_ = self.ODDLinkReq_nsprefix_ + ':' if (UseCapturedNS_ and self.ODDLinkReq_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sODDLinkReq>%s</%sODDLinkReq>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ODDLinkReq), input_name='ODDLinkReq')), namespaceprefix_ , eol_))
+        if self.DGs is not None:
+            namespaceprefix_ = self.DGs_nsprefix_ + ':' if (UseCapturedNS_ and self.DGs_nsprefix_) else ''
+            self.DGs.export(outfile, level, namespaceprefix_, namespacedef_='', name_='DGs', pretty_print=pretty_print)
+        if self.GetPriceEstimate != "Y":
+            namespaceprefix_ = self.GetPriceEstimate_nsprefix_ + ':' if (UseCapturedNS_ and self.GetPriceEstimate_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sGetPriceEstimate>%s</%sGetPriceEstimate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.GetPriceEstimate), input_name='GetPriceEstimate')), namespaceprefix_ , eol_))
+        if self.SinglePieceImage != "N":
+            namespaceprefix_ = self.SinglePieceImage_nsprefix_ + ':' if (UseCapturedNS_ and self.SinglePieceImage_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sSinglePieceImage>%s</%sSinglePieceImage>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SinglePieceImage), input_name='SinglePieceImage')), namespaceprefix_ , eol_))
+        if self.ShipmentIdentificationNumber is not None:
+            namespaceprefix_ = self.ShipmentIdentificationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentIdentificationNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sShipmentIdentificationNumber>%s</%sShipmentIdentificationNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ShipmentIdentificationNumber), input_name='ShipmentIdentificationNumber')), namespaceprefix_ , eol_))
+        if self.UseOwnShipmentIdentificationNumber != "N":
+            namespaceprefix_ = self.UseOwnShipmentIdentificationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.UseOwnShipmentIdentificationNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sUseOwnShipmentIdentificationNumber>%s</%sUseOwnShipmentIdentificationNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.UseOwnShipmentIdentificationNumber), input_name='UseOwnShipmentIdentificationNumber')), namespaceprefix_ , eol_))
+        if self.Importer is not None:
+            namespaceprefix_ = self.Importer_nsprefix_ + ':' if (UseCapturedNS_ and self.Importer_nsprefix_) else ''
+            self.Importer.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Importer', pretty_print=pretty_print)
+        if self.Exporter is not None:
+            namespaceprefix_ = self.Exporter_nsprefix_ + ':' if (UseCapturedNS_ and self.Exporter_nsprefix_) else ''
+            self.Exporter.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Exporter', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -2211,13 +2310,17 @@ class ModifyPUResponse(GeneratedsSuper):
             self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        pass
+        value = find_attr_value_('schemaVersion', node)
+        if value is not None and 'schemaVersion' not in already_processed:
+            already_processed.add('schemaVersion')
+            value = self.gds_parse_decimal(value, node, 'schemaVersion')
+            self.schemaVersion = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Response':
-            obj_ = Response.factory(parent_object_=self)
+        if nodeName_ == 'Request':
+            obj_ = Request.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Response = obj_
-            obj_.original_tagname_ = 'Response'
+            self.Request = obj_
+            obj_.original_tagname_ = 'Request'
         elif nodeName_ == 'RegionCode':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'RegionCode')
@@ -2226,87 +2329,233 @@ class ModifyPUResponse(GeneratedsSuper):
             self.RegionCode_nsprefix_ = child_.prefix
             # validate type RegionCode
             self.validate_RegionCode(self.RegionCode)
-        elif nodeName_ == 'Note':
-            obj_ = Note.factory(parent_object_=self)
+        elif nodeName_ == 'RequestedPickupTime':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RequestedPickupTime')
+            value_ = self.gds_validate_string(value_, node, 'RequestedPickupTime')
+            self.RequestedPickupTime = value_
+            self.RequestedPickupTime_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.RequestedPickupTime)
+        elif nodeName_ == 'LanguageCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'LanguageCode')
+            value_ = self.gds_validate_string(value_, node, 'LanguageCode')
+            self.LanguageCode = value_
+            self.LanguageCode_nsprefix_ = child_.prefix
+            # validate type LanguageCode
+            self.validate_LanguageCode(self.LanguageCode)
+        elif nodeName_ == 'LatinResponseInd':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'LatinResponseInd')
+            value_ = self.gds_validate_string(value_, node, 'LatinResponseInd')
+            self.LatinResponseInd = value_
+            self.LatinResponseInd_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.LatinResponseInd)
+        elif nodeName_ == 'Billing':
+            obj_ = Billing.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Note = obj_
-            obj_.original_tagname_ = 'Note'
-        elif nodeName_ == 'ConfirmationNumber' and child_.text:
+            self.Billing = obj_
+            obj_.original_tagname_ = 'Billing'
+        elif nodeName_ == 'Consignee':
+            obj_ = Consignee.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Consignee = obj_
+            obj_.original_tagname_ = 'Consignee'
+        elif nodeName_ == 'Commodity':
+            obj_ = Commodity.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Commodity.append(obj_)
+            obj_.original_tagname_ = 'Commodity'
+        elif nodeName_ == 'Dutiable':
+            obj_ = Dutiable.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Dutiable = obj_
+            obj_.original_tagname_ = 'Dutiable'
+        elif nodeName_ == 'UseDHLInvoice':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'UseDHLInvoice')
+            value_ = self.gds_validate_string(value_, node, 'UseDHLInvoice')
+            self.UseDHLInvoice = value_
+            self.UseDHLInvoice_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.UseDHLInvoice)
+        elif nodeName_ == 'DHLInvoiceLanguageCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DHLInvoiceLanguageCode')
+            value_ = self.gds_validate_string(value_, node, 'DHLInvoiceLanguageCode')
+            self.DHLInvoiceLanguageCode = value_
+            self.DHLInvoiceLanguageCode_nsprefix_ = child_.prefix
+            # validate type InvLanguageCode
+            self.validate_InvLanguageCode(self.DHLInvoiceLanguageCode)
+        elif nodeName_ == 'DHLInvoiceType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'DHLInvoiceType')
+            value_ = self.gds_validate_string(value_, node, 'DHLInvoiceType')
+            self.DHLInvoiceType = value_
+            self.DHLInvoiceType_nsprefix_ = child_.prefix
+            # validate type InvoiceType
+            self.validate_InvoiceType(self.DHLInvoiceType)
+        elif nodeName_ == 'ExportDeclaration':
+            obj_ = ExportDeclaration.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ExportDeclaration = obj_
+            obj_.original_tagname_ = 'ExportDeclaration'
+        elif nodeName_ == 'Reference':
+            obj_ = Reference.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Reference.append(obj_)
+            obj_.original_tagname_ = 'Reference'
+        elif nodeName_ == 'ShipmentDetails':
+            obj_ = ShipmentDetails.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipmentDetails = obj_
+            obj_.original_tagname_ = 'ShipmentDetails'
+        elif nodeName_ == 'Shipper':
+            obj_ = Shipper.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Shipper = obj_
+            obj_.original_tagname_ = 'Shipper'
+        elif nodeName_ == 'SpecialService':
+            obj_ = SpecialService.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.SpecialService.append(obj_)
+            obj_.original_tagname_ = 'SpecialService'
+        elif nodeName_ == 'Notification':
+            obj_ = Notification.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Notification = obj_
+            obj_.original_tagname_ = 'Notification'
+        elif nodeName_ == 'Place':
+            obj_ = Place.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Place = obj_
+            obj_.original_tagname_ = 'Place'
+        elif nodeName_ == 'EProcShip':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'EProcShip')
+            value_ = self.gds_validate_string(value_, node, 'EProcShip')
+            self.EProcShip = value_
+            self.EProcShip_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.EProcShip)
+        elif nodeName_ == 'Airwaybill':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Airwaybill')
+            value_ = self.gds_validate_string(value_, node, 'Airwaybill')
+            self.Airwaybill = value_
+            self.Airwaybill_nsprefix_ = child_.prefix
+            # validate type AWBNumber
+            self.validate_AWBNumber(self.Airwaybill)
+        elif nodeName_ == 'DocImages':
+            obj_ = DocImages.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DocImages = obj_
+            obj_.original_tagname_ = 'DocImages'
+        elif nodeName_ == 'LabelImageFormat':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'LabelImageFormat')
+            value_ = self.gds_validate_string(value_, node, 'LabelImageFormat')
+            self.LabelImageFormat = value_
+            self.LabelImageFormat_nsprefix_ = child_.prefix
+            # validate type LabelImageFormat
+            self.validate_LabelImageFormat(self.LabelImageFormat)
+        elif nodeName_ == 'RequestArchiveDoc':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'RequestArchiveDoc')
+            value_ = self.gds_validate_string(value_, node, 'RequestArchiveDoc')
+            self.RequestArchiveDoc = value_
+            self.RequestArchiveDoc_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.RequestArchiveDoc)
+        elif nodeName_ == 'NumberOfArchiveDoc' and child_.text:
             sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'ConfirmationNumber')
+            ival_ = self.gds_parse_integer(sval_, node, 'NumberOfArchiveDoc')
             if ival_ <= 0:
                 raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'ConfirmationNumber')
-            self.ConfirmationNumber.append(ival_)
-            self.ConfirmationNumber_nsprefix_ = child_.prefix
-            # validate type ConfirmationNumberType
-            self.validate_ConfirmationNumberType(self.ConfirmationNumber[-1])
-        elif nodeName_ == 'ReadyByTime':
-            sval_ = child_.text
-            dval_ = self.gds_parse_time(sval_)
-            self.ReadyByTime = dval_
-            self.ReadyByTime_nsprefix_ = child_.prefix
-            # validate type TimeHM
-            self.validate_TimeHM(self.ReadyByTime)
-        elif nodeName_ == 'SecondReadyByTime':
-            sval_ = child_.text
-            dval_ = self.gds_parse_time(sval_)
-            self.SecondReadyByTime = dval_
-            self.SecondReadyByTime_nsprefix_ = child_.prefix
-            # validate type TimeHM
-            self.validate_TimeHM(self.SecondReadyByTime)
-        elif nodeName_ == 'NextPickupDate':
-            sval_ = child_.text
-            dval_ = self.gds_parse_date(sval_)
-            self.NextPickupDate = dval_
-            self.NextPickupDate_nsprefix_ = child_.prefix
-        elif nodeName_ == 'PickupCharge' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'PickupCharge')
-            fval_ = self.gds_validate_float(fval_, node, 'PickupCharge')
-            self.PickupCharge = fval_
-            self.PickupCharge_nsprefix_ = child_.prefix
-            # validate type Money
-            self.validate_Money(self.PickupCharge)
-        elif nodeName_ == 'CurrencyCode':
+            ival_ = self.gds_validate_integer(ival_, node, 'NumberOfArchiveDoc')
+            self.NumberOfArchiveDoc = ival_
+            self.NumberOfArchiveDoc_nsprefix_ = child_.prefix
+            # validate type NumberOfArchiveDoc
+            self.validate_NumberOfArchiveDoc(self.NumberOfArchiveDoc)
+        elif nodeName_ == 'RequestQRCode':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
-            value_ = self.gds_validate_string(value_, node, 'CurrencyCode')
-            self.CurrencyCode = value_
-            self.CurrencyCode_nsprefix_ = child_.prefix
-            # validate type CurrencyCode
-            self.validate_CurrencyCode(self.CurrencyCode)
-        elif nodeName_ == 'CallInTime':
-            sval_ = child_.text
-            dval_ = self.gds_parse_time(sval_)
-            self.CallInTime = dval_
-            self.CallInTime_nsprefix_ = child_.prefix
-            # validate type TimeHM
-            self.validate_TimeHM(self.CallInTime)
-        elif nodeName_ == 'SecondCallInTime':
-            sval_ = child_.text
-            dval_ = self.gds_parse_time(sval_)
-            self.SecondCallInTime = dval_
-            self.SecondCallInTime_nsprefix_ = child_.prefix
-            # validate type TimeHM
-            self.validate_TimeHM(self.SecondCallInTime)
-        elif nodeName_ == 'OriginSvcArea':
+            value_ = self.gds_parse_string(value_, node, 'RequestQRCode')
+            value_ = self.gds_validate_string(value_, node, 'RequestQRCode')
+            self.RequestQRCode = value_
+            self.RequestQRCode_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.RequestQRCode)
+        elif nodeName_ == 'RequestTransportLabel':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'OriginSvcArea')
-            value_ = self.gds_validate_string(value_, node, 'OriginSvcArea')
-            self.OriginSvcArea = value_
-            self.OriginSvcArea_nsprefix_ = child_.prefix
-            # validate type OriginSvcAreaType
-            self.validate_OriginSvcAreaType(self.OriginSvcArea)
-        elif nodeName_ == 'CountryCode':
+            value_ = self.gds_parse_string(value_, node, 'RequestTransportLabel')
+            value_ = self.gds_validate_string(value_, node, 'RequestTransportLabel')
+            self.RequestTransportLabel = value_
+            self.RequestTransportLabel_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.RequestTransportLabel)
+        elif nodeName_ == 'Label':
+            obj_ = Label.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Label = obj_
+            obj_.original_tagname_ = 'Label'
+        elif nodeName_ == 'ODDLinkReq':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CountryCode')
-            value_ = self.gds_validate_string(value_, node, 'CountryCode')
-            self.CountryCode = value_
-            self.CountryCode_nsprefix_ = child_.prefix
-            # validate type CountryCode
-            self.validate_CountryCode(self.CountryCode)
-# end class ModifyPUResponse
+            value_ = self.gds_parse_string(value_, node, 'ODDLinkReq')
+            value_ = self.gds_validate_string(value_, node, 'ODDLinkReq')
+            self.ODDLinkReq = value_
+            self.ODDLinkReq_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.ODDLinkReq)
+        elif nodeName_ == 'DGs':
+            obj_ = DGs.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.DGs = obj_
+            obj_.original_tagname_ = 'DGs'
+        elif nodeName_ == 'GetPriceEstimate':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'GetPriceEstimate')
+            value_ = self.gds_validate_string(value_, node, 'GetPriceEstimate')
+            self.GetPriceEstimate = value_
+            self.GetPriceEstimate_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.GetPriceEstimate)
+        elif nodeName_ == 'SinglePieceImage':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'SinglePieceImage')
+            value_ = self.gds_validate_string(value_, node, 'SinglePieceImage')
+            self.SinglePieceImage = value_
+            self.SinglePieceImage_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.SinglePieceImage)
+        elif nodeName_ == 'ShipmentIdentificationNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ShipmentIdentificationNumber')
+            value_ = self.gds_validate_string(value_, node, 'ShipmentIdentificationNumber')
+            self.ShipmentIdentificationNumber = value_
+            self.ShipmentIdentificationNumber_nsprefix_ = child_.prefix
+            # validate type AWBNumber
+            self.validate_AWBNumber(self.ShipmentIdentificationNumber)
+        elif nodeName_ == 'UseOwnShipmentIdentificationNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'UseOwnShipmentIdentificationNumber')
+            value_ = self.gds_validate_string(value_, node, 'UseOwnShipmentIdentificationNumber')
+            self.UseOwnShipmentIdentificationNumber = value_
+            self.UseOwnShipmentIdentificationNumber_nsprefix_ = child_.prefix
+            # validate type UseOwnShipmentIdentificationNumberType
+            self.validate_UseOwnShipmentIdentificationNumberType(self.UseOwnShipmentIdentificationNumber)
+        elif nodeName_ == 'Importer':
+            obj_ = Importer.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Importer = obj_
+            obj_.original_tagname_ = 'Importer'
+        elif nodeName_ == 'Exporter':
+            obj_ = Exporter.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.Exporter = obj_
+            obj_.original_tagname_ = 'Exporter'
+# end class ShipmentRequest
 
 
 class DataTypes(GeneratedsSuper):
@@ -2390,7 +2639,7 @@ class Billing(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, ShipperAccountNumber=None, ShippingPaymentType=None, BillingAccountNumber=None, DutyPaymentType=None, DutyAccountNumber=None, gds_collector_=None, **kwargs_):
+    def __init__(self, ShipperAccountNumber=None, ShippingPaymentType=None, BillingAccountNumber=None, DutyAccountNumber=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -2405,9 +2654,6 @@ class Billing(GeneratedsSuper):
         self.BillingAccountNumber = BillingAccountNumber
         self.validate_AccountNumber(self.BillingAccountNumber)
         self.BillingAccountNumber_nsprefix_ = None
-        self.DutyPaymentType = DutyPaymentType
-        self.validate_DutyTaxPaymentType(self.DutyPaymentType)
-        self.DutyPaymentType_nsprefix_ = None
         self.DutyAccountNumber = DutyAccountNumber
         self.validate_AccountNumber(self.DutyAccountNumber)
         self.DutyAccountNumber_nsprefix_ = None
@@ -2438,10 +2684,6 @@ class Billing(GeneratedsSuper):
         return self.BillingAccountNumber
     def set_BillingAccountNumber(self, BillingAccountNumber):
         self.BillingAccountNumber = BillingAccountNumber
-    def get_DutyPaymentType(self):
-        return self.DutyPaymentType
-    def set_DutyPaymentType(self, DutyPaymentType):
-        self.DutyPaymentType = DutyPaymentType
     def get_DutyAccountNumber(self):
         return self.DutyAccountNumber
     def set_DutyAccountNumber(self, DutyAccountNumber):
@@ -2478,31 +2720,11 @@ class Billing(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on ShipmentPaymentType' % {"value": encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_DutyTaxPaymentType(self, value):
-        result = True
-        # Validate type DutyTaxPaymentType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['S', 'R', 'T']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DutyTaxPaymentType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) != 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on DutyTaxPaymentType' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
     def hasContent_(self):
         if (
             self.ShipperAccountNumber is not None or
             self.ShippingPaymentType is not None or
             self.BillingAccountNumber is not None or
-            self.DutyPaymentType is not None or
             self.DutyAccountNumber is not None
         ):
             return True
@@ -2550,10 +2772,6 @@ class Billing(GeneratedsSuper):
             namespaceprefix_ = self.BillingAccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.BillingAccountNumber_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sBillingAccountNumber>%s</%sBillingAccountNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillingAccountNumber), input_name='BillingAccountNumber')), namespaceprefix_ , eol_))
-        if self.DutyPaymentType is not None:
-            namespaceprefix_ = self.DutyPaymentType_nsprefix_ + ':' if (UseCapturedNS_ and self.DutyPaymentType_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDutyPaymentType>%s</%sDutyPaymentType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DutyPaymentType), input_name='DutyPaymentType')), namespaceprefix_ , eol_))
         if self.DutyAccountNumber is not None:
             namespaceprefix_ = self.DutyAccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.DutyAccountNumber_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -2596,14 +2814,6 @@ class Billing(GeneratedsSuper):
             self.BillingAccountNumber_nsprefix_ = child_.prefix
             # validate type AccountNumber
             self.validate_AccountNumber(self.BillingAccountNumber)
-        elif nodeName_ == 'DutyPaymentType':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DutyPaymentType')
-            value_ = self.gds_validate_string(value_, node, 'DutyPaymentType')
-            self.DutyPaymentType = value_
-            self.DutyPaymentType_nsprefix_ = child_.prefix
-            # validate type DutyTaxPaymentType
-            self.validate_DutyTaxPaymentType(self.DutyPaymentType)
         elif nodeName_ == 'DutyAccountNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'DutyAccountNumber')
@@ -2662,11 +2872,11 @@ class Commodity(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) > 20:
+            if len(value) > 18:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CommodityCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
-            if len(value) < 1:
+            if len(value) < 2:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CommodityCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
@@ -2767,7 +2977,7 @@ class Consignee(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, CompanyName=None, SuiteDepartmentName=None, AddressLine=None, City=None, Division=None, DivisionCode=None, PostalCode=None, CountryCode=None, CountryName=None, FederalTaxId=None, StateTaxId=None, Contact=None, Suburb=None, StreetName=None, BuildingName=None, StreetNumber=None, RegistrationNumbers=None, BusinessPartyTypeCode=None, gds_collector_=None, **kwargs_):
+    def __init__(self, CompanyName=None, SuiteDepartmentName=None, AddressLine1=None, AddressLine2=None, AddressLine3=None, City=None, Division=None, DivisionCode=None, PostalCode=None, CountryCode=None, CountryName=None, Contact=None, Suburb=None, StreetName=None, BuildingName=None, StreetNumber=None, RegistrationNumbers=None, BusinessPartyTypeCode=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -2779,11 +2989,15 @@ class Consignee(GeneratedsSuper):
         self.SuiteDepartmentName = SuiteDepartmentName
         self.validate_SuiteDepartmentName(self.SuiteDepartmentName)
         self.SuiteDepartmentName_nsprefix_ = None
-        if AddressLine is None:
-            self.AddressLine = []
-        else:
-            self.AddressLine = AddressLine
-        self.AddressLine_nsprefix_ = None
+        self.AddressLine1 = AddressLine1
+        self.validate_AddressLine(self.AddressLine1)
+        self.AddressLine1_nsprefix_ = None
+        self.AddressLine2 = AddressLine2
+        self.validate_AddressLine(self.AddressLine2)
+        self.AddressLine2_nsprefix_ = None
+        self.AddressLine3 = AddressLine3
+        self.validate_AddressLine(self.AddressLine3)
+        self.AddressLine3_nsprefix_ = None
         self.City = City
         self.validate_City(self.City)
         self.City_nsprefix_ = None
@@ -2802,12 +3016,6 @@ class Consignee(GeneratedsSuper):
         self.CountryName = CountryName
         self.validate_CountryName(self.CountryName)
         self.CountryName_nsprefix_ = None
-        self.FederalTaxId = FederalTaxId
-        self.validate_FederalTaxIdType(self.FederalTaxId)
-        self.FederalTaxId_nsprefix_ = None
-        self.StateTaxId = StateTaxId
-        self.validate_StateTaxIdType(self.StateTaxId)
-        self.StateTaxId_nsprefix_ = None
         self.Contact = Contact
         self.Contact_nsprefix_ = None
         self.Suburb = Suburb
@@ -2850,16 +3058,18 @@ class Consignee(GeneratedsSuper):
         return self.SuiteDepartmentName
     def set_SuiteDepartmentName(self, SuiteDepartmentName):
         self.SuiteDepartmentName = SuiteDepartmentName
-    def get_AddressLine(self):
-        return self.AddressLine
-    def set_AddressLine(self, AddressLine):
-        self.AddressLine = AddressLine
-    def add_AddressLine(self, value):
-        self.AddressLine.append(value)
-    def insert_AddressLine_at(self, index, value):
-        self.AddressLine.insert(index, value)
-    def replace_AddressLine_at(self, index, value):
-        self.AddressLine[index] = value
+    def get_AddressLine1(self):
+        return self.AddressLine1
+    def set_AddressLine1(self, AddressLine1):
+        self.AddressLine1 = AddressLine1
+    def get_AddressLine2(self):
+        return self.AddressLine2
+    def set_AddressLine2(self, AddressLine2):
+        self.AddressLine2 = AddressLine2
+    def get_AddressLine3(self):
+        return self.AddressLine3
+    def set_AddressLine3(self, AddressLine3):
+        self.AddressLine3 = AddressLine3
     def get_City(self):
         return self.City
     def set_City(self, City):
@@ -2884,14 +3094,6 @@ class Consignee(GeneratedsSuper):
         return self.CountryName
     def set_CountryName(self, CountryName):
         self.CountryName = CountryName
-    def get_FederalTaxId(self):
-        return self.FederalTaxId
-    def set_FederalTaxId(self, FederalTaxId):
-        self.FederalTaxId = FederalTaxId
-    def get_StateTaxId(self):
-        return self.StateTaxId
-    def set_StateTaxId(self, StateTaxId):
-        self.StateTaxId = StateTaxId
     def get_Contact(self):
         return self.Contact
     def set_Contact(self, Contact):
@@ -2961,6 +3163,10 @@ class Consignee(GeneratedsSuper):
             if len(value) > 45:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_City(self, value):
@@ -3039,40 +3245,6 @@ class Consignee(GeneratedsSuper):
             if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CountryName' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_FederalTaxIdType(self, value):
-        result = True
-        # Validate type FederalTaxIdType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 20:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on FederalTaxIdType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on FederalTaxIdType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_StateTaxIdType(self, value):
-        result = True
-        # Validate type StateTaxIdType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 20:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on StateTaxIdType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on StateTaxIdType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_Suburb(self, value):
@@ -3157,20 +3329,24 @@ class Consignee(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
         return result
     def hasContent_(self):
         if (
             self.CompanyName is not None or
             self.SuiteDepartmentName is not None or
-            self.AddressLine or
+            self.AddressLine1 is not None or
+            self.AddressLine2 is not None or
+            self.AddressLine3 is not None or
             self.City is not None or
             self.Division is not None or
             self.DivisionCode is not None or
             self.PostalCode is not None or
             self.CountryCode is not None or
             self.CountryName is not None or
-            self.FederalTaxId is not None or
-            self.StateTaxId is not None or
             self.Contact is not None or
             self.Suburb is not None or
             self.StreetName is not None or
@@ -3220,10 +3396,18 @@ class Consignee(GeneratedsSuper):
             namespaceprefix_ = self.SuiteDepartmentName_nsprefix_ + ':' if (UseCapturedNS_ and self.SuiteDepartmentName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sSuiteDepartmentName>%s</%sSuiteDepartmentName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SuiteDepartmentName), input_name='SuiteDepartmentName')), namespaceprefix_ , eol_))
-        for AddressLine_ in self.AddressLine:
-            namespaceprefix_ = self.AddressLine_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine_nsprefix_) else ''
+        if self.AddressLine1 is not None:
+            namespaceprefix_ = self.AddressLine1_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine1_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddressLine>%s</%sAddressLine>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(AddressLine_), input_name='AddressLine')), namespaceprefix_ , eol_))
+            outfile.write('<%sAddressLine1>%s</%sAddressLine1>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine1), input_name='AddressLine1')), namespaceprefix_ , eol_))
+        if self.AddressLine2 is not None:
+            namespaceprefix_ = self.AddressLine2_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine2_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAddressLine2>%s</%sAddressLine2>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine2), input_name='AddressLine2')), namespaceprefix_ , eol_))
+        if self.AddressLine3 is not None:
+            namespaceprefix_ = self.AddressLine3_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine3_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAddressLine3>%s</%sAddressLine3>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine3), input_name='AddressLine3')), namespaceprefix_ , eol_))
         if self.City is not None:
             namespaceprefix_ = self.City_nsprefix_ + ':' if (UseCapturedNS_ and self.City_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -3248,14 +3432,6 @@ class Consignee(GeneratedsSuper):
             namespaceprefix_ = self.CountryName_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sCountryName>%s</%sCountryName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryName), input_name='CountryName')), namespaceprefix_ , eol_))
-        if self.FederalTaxId is not None:
-            namespaceprefix_ = self.FederalTaxId_nsprefix_ + ':' if (UseCapturedNS_ and self.FederalTaxId_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sFederalTaxId>%s</%sFederalTaxId>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.FederalTaxId), input_name='FederalTaxId')), namespaceprefix_ , eol_))
-        if self.StateTaxId is not None:
-            namespaceprefix_ = self.StateTaxId_nsprefix_ + ':' if (UseCapturedNS_ and self.StateTaxId_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sStateTaxId>%s</%sStateTaxId>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.StateTaxId), input_name='StateTaxId')), namespaceprefix_ , eol_))
         if self.Contact is not None:
             namespaceprefix_ = self.Contact_nsprefix_ + ':' if (UseCapturedNS_ and self.Contact_nsprefix_) else ''
             self.Contact.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Contact', pretty_print=pretty_print)
@@ -3312,14 +3488,30 @@ class Consignee(GeneratedsSuper):
             self.SuiteDepartmentName_nsprefix_ = child_.prefix
             # validate type SuiteDepartmentName
             self.validate_SuiteDepartmentName(self.SuiteDepartmentName)
-        elif nodeName_ == 'AddressLine':
+        elif nodeName_ == 'AddressLine1':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AddressLine')
-            value_ = self.gds_validate_string(value_, node, 'AddressLine')
-            self.AddressLine.append(value_)
-            self.AddressLine_nsprefix_ = child_.prefix
+            value_ = self.gds_parse_string(value_, node, 'AddressLine1')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine1')
+            self.AddressLine1 = value_
+            self.AddressLine1_nsprefix_ = child_.prefix
             # validate type AddressLine
-            self.validate_AddressLine(self.AddressLine[-1])
+            self.validate_AddressLine(self.AddressLine1)
+        elif nodeName_ == 'AddressLine2':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AddressLine2')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine2')
+            self.AddressLine2 = value_
+            self.AddressLine2_nsprefix_ = child_.prefix
+            # validate type AddressLine
+            self.validate_AddressLine(self.AddressLine2)
+        elif nodeName_ == 'AddressLine3':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AddressLine3')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine3')
+            self.AddressLine3 = value_
+            self.AddressLine3_nsprefix_ = child_.prefix
+            # validate type AddressLine
+            self.validate_AddressLine(self.AddressLine3)
         elif nodeName_ == 'City':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'City')
@@ -3368,22 +3560,6 @@ class Consignee(GeneratedsSuper):
             self.CountryName_nsprefix_ = child_.prefix
             # validate type CountryName
             self.validate_CountryName(self.CountryName)
-        elif nodeName_ == 'FederalTaxId':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'FederalTaxId')
-            value_ = self.gds_validate_string(value_, node, 'FederalTaxId')
-            self.FederalTaxId = value_
-            self.FederalTaxId_nsprefix_ = child_.prefix
-            # validate type FederalTaxIdType
-            self.validate_FederalTaxIdType(self.FederalTaxId)
-        elif nodeName_ == 'StateTaxId':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'StateTaxId')
-            value_ = self.gds_validate_string(value_, node, 'StateTaxId')
-            self.StateTaxId = value_
-            self.StateTaxId_nsprefix_ = child_.prefix
-            # validate type StateTaxIdType
-            self.validate_StateTaxIdType(self.StateTaxId)
         elif nodeName_ == 'Contact':
             obj_ = Contact.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -3434,7 +3610,7 @@ class Consignee(GeneratedsSuper):
             # validate type StreetNumber
             self.validate_StreetNumber(self.StreetNumber)
         elif nodeName_ == 'RegistrationNumbers':
-            obj_ = RegistrationNumbers3.factory(parent_object_=self)
+            obj_ = RegistrationNumbers.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.RegistrationNumbers = obj_
             obj_.original_tagname_ = 'RegistrationNumbers'
@@ -3764,14 +3940,14 @@ class Dutiable(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, DeclaredValue=None, DeclaredCurrency=None, ScheduleB=None, ExportLicense=None, ShipperEIN=None, ShipperIDType=None, ConsigneeIDType=None, ImportLicense=None, ConsigneeEIN=None, TermsOfTrade=None, CommerceLicensed=None, Filing=None, SellerEIN=None, SellerIDType=None, SellerIDIssuingCountryCode=None, gds_collector_=None, **kwargs_):
+    def __init__(self, DeclaredValue=None, DeclaredCurrency=None, ScheduleB=None, ExportLicense=None, ImportLicense=None, TermsOfTrade=None, CommerceLicensed=None, Filing=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.DeclaredValue = DeclaredValue
-        self.validate_DeclaredValue(self.DeclaredValue)
+        self.validate_DeclaredValue_Money(self.DeclaredValue)
         self.DeclaredValue_nsprefix_ = None
         self.DeclaredCurrency = DeclaredCurrency
         self.validate_CurrencyCode(self.DeclaredCurrency)
@@ -3782,21 +3958,9 @@ class Dutiable(GeneratedsSuper):
         self.ExportLicense = ExportLicense
         self.validate_ExportLicense(self.ExportLicense)
         self.ExportLicense_nsprefix_ = None
-        self.ShipperEIN = ShipperEIN
-        self.validate_ShipperEINType(self.ShipperEIN)
-        self.ShipperEIN_nsprefix_ = None
-        self.ShipperIDType = ShipperIDType
-        self.validate_ShipperIDTypeType(self.ShipperIDType)
-        self.ShipperIDType_nsprefix_ = None
-        self.ConsigneeIDType = ConsigneeIDType
-        self.validate_ConsigneeIDTypeType(self.ConsigneeIDType)
-        self.ConsigneeIDType_nsprefix_ = None
         self.ImportLicense = ImportLicense
         self.validate_ImportLicense(self.ImportLicense)
         self.ImportLicense_nsprefix_ = None
-        self.ConsigneeEIN = ConsigneeEIN
-        self.validate_ConsigneeEINType(self.ConsigneeEIN)
-        self.ConsigneeEIN_nsprefix_ = None
         self.TermsOfTrade = TermsOfTrade
         self.validate_TermsOfTrade(self.TermsOfTrade)
         self.TermsOfTrade_nsprefix_ = None
@@ -3805,15 +3969,6 @@ class Dutiable(GeneratedsSuper):
         self.CommerceLicensed_nsprefix_ = None
         self.Filing = Filing
         self.Filing_nsprefix_ = None
-        self.SellerEIN = SellerEIN
-        self.validate_SellerEINType(self.SellerEIN)
-        self.SellerEIN_nsprefix_ = None
-        self.SellerIDType = SellerIDType
-        self.validate_SellerIDTypeType(self.SellerIDType)
-        self.SellerIDType_nsprefix_ = None
-        self.SellerIDIssuingCountryCode = SellerIDIssuingCountryCode
-        self.validate_SellerIDIssuingCountryCodeType(self.SellerIDIssuingCountryCode)
-        self.SellerIDIssuingCountryCode_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -3845,26 +4000,10 @@ class Dutiable(GeneratedsSuper):
         return self.ExportLicense
     def set_ExportLicense(self, ExportLicense):
         self.ExportLicense = ExportLicense
-    def get_ShipperEIN(self):
-        return self.ShipperEIN
-    def set_ShipperEIN(self, ShipperEIN):
-        self.ShipperEIN = ShipperEIN
-    def get_ShipperIDType(self):
-        return self.ShipperIDType
-    def set_ShipperIDType(self, ShipperIDType):
-        self.ShipperIDType = ShipperIDType
-    def get_ConsigneeIDType(self):
-        return self.ConsigneeIDType
-    def set_ConsigneeIDType(self, ConsigneeIDType):
-        self.ConsigneeIDType = ConsigneeIDType
     def get_ImportLicense(self):
         return self.ImportLicense
     def set_ImportLicense(self, ImportLicense):
         self.ImportLicense = ImportLicense
-    def get_ConsigneeEIN(self):
-        return self.ConsigneeEIN
-    def set_ConsigneeEIN(self, ConsigneeEIN):
-        self.ConsigneeEIN = ConsigneeEIN
     def get_TermsOfTrade(self):
         return self.TermsOfTrade
     def set_TermsOfTrade(self, TermsOfTrade):
@@ -3877,33 +4016,21 @@ class Dutiable(GeneratedsSuper):
         return self.Filing
     def set_Filing(self, Filing):
         self.Filing = Filing
-    def get_SellerEIN(self):
-        return self.SellerEIN
-    def set_SellerEIN(self, SellerEIN):
-        self.SellerEIN = SellerEIN
-    def get_SellerIDType(self):
-        return self.SellerIDType
-    def set_SellerIDType(self, SellerIDType):
-        self.SellerIDType = SellerIDType
-    def get_SellerIDIssuingCountryCode(self):
-        return self.SellerIDIssuingCountryCode
-    def set_SellerIDIssuingCountryCode(self, SellerIDIssuingCountryCode):
-        self.SellerIDIssuingCountryCode = SellerIDIssuingCountryCode
-    def validate_DeclaredValue(self, value):
+    def validate_DeclaredValue_Money(self, value):
         result = True
-        # Validate type DeclaredValue, a restriction on xsd:float.
+        # Validate type DeclaredValue_Money, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, float):
+            if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (float)' % {"value": value, "lineno": lineno, })
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 0.00:
+            if value < 0.000:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on DeclaredValue' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on DeclaredValue_Money' % {"value": value, "lineno": lineno} )
                 result = False
-            if value > 9999999999.99:
+            if value > 999999999999999.999:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on DeclaredValue' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on DeclaredValue_Money' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def validate_CurrencyCode(self, value):
@@ -3950,53 +4077,6 @@ class Dutiable(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ExportLicense' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_ShipperEINType(self, value):
-        result = True
-        # Validate type ShipperEINType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 20:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ShipperEINType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_ShipperIDTypeType(self, value):
-        result = True
-        # Validate type ShipperIDTypeType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['S', 'E', 'D']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on ShipperIDTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_ConsigneeIDTypeType(self, value):
-        result = True
-        # Validate type ConsigneeIDTypeType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['S', 'E', 'D']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on ConsigneeIDTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) != 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on ConsigneeIDTypeType' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
     def validate_ImportLicense(self, value):
         result = True
         # Validate type ImportLicense, a restriction on xsd:string.
@@ -4008,19 +4088,6 @@ class Dutiable(GeneratedsSuper):
             if len(value) > 16:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ImportLicense' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_ConsigneeEINType(self, value):
-        result = True
-        # Validate type ConsigneeEINType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 20:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ConsigneeEINType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_TermsOfTrade(self, value):
@@ -4061,62 +4128,16 @@ class Dutiable(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on YesNo' % {"value": encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_SellerEINType(self, value):
-        result = True
-        # Validate type SellerEINType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 20:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on SellerEINType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_SellerIDTypeType(self, value):
-        result = True
-        # Validate type SellerIDTypeType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on SellerIDTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_SellerIDIssuingCountryCodeType(self, value):
-        result = True
-        # Validate type SellerIDIssuingCountryCodeType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on SellerIDIssuingCountryCodeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
     def hasContent_(self):
         if (
             self.DeclaredValue is not None or
             self.DeclaredCurrency is not None or
             self.ScheduleB is not None or
             self.ExportLicense is not None or
-            self.ShipperEIN is not None or
-            self.ShipperIDType is not None or
-            self.ConsigneeIDType is not None or
             self.ImportLicense is not None or
-            self.ConsigneeEIN is not None or
             self.TermsOfTrade is not None or
             self.CommerceLicensed is not None or
-            self.Filing is not None or
-            self.SellerEIN is not None or
-            self.SellerIDType is not None or
-            self.SellerIDIssuingCountryCode is not None
+            self.Filing is not None
         ):
             return True
         else:
@@ -4154,7 +4175,7 @@ class Dutiable(GeneratedsSuper):
         if self.DeclaredValue is not None:
             namespaceprefix_ = self.DeclaredValue_nsprefix_ + ':' if (UseCapturedNS_ and self.DeclaredValue_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDeclaredValue>%s</%sDeclaredValue>%s' % (namespaceprefix_ , self.gds_format_float(self.DeclaredValue, input_name='DeclaredValue'), namespaceprefix_ , eol_))
+            outfile.write('<%sDeclaredValue>%s</%sDeclaredValue>%s' % (namespaceprefix_ , self.gds_format_decimal(self.DeclaredValue, input_name='DeclaredValue'), namespaceprefix_ , eol_))
         if self.DeclaredCurrency is not None:
             namespaceprefix_ = self.DeclaredCurrency_nsprefix_ + ':' if (UseCapturedNS_ and self.DeclaredCurrency_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -4167,26 +4188,10 @@ class Dutiable(GeneratedsSuper):
             namespaceprefix_ = self.ExportLicense_nsprefix_ + ':' if (UseCapturedNS_ and self.ExportLicense_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sExportLicense>%s</%sExportLicense>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ExportLicense), input_name='ExportLicense')), namespaceprefix_ , eol_))
-        if self.ShipperEIN is not None:
-            namespaceprefix_ = self.ShipperEIN_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipperEIN_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sShipperEIN>%s</%sShipperEIN>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ShipperEIN), input_name='ShipperEIN')), namespaceprefix_ , eol_))
-        if self.ShipperIDType is not None:
-            namespaceprefix_ = self.ShipperIDType_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipperIDType_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sShipperIDType>%s</%sShipperIDType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ShipperIDType), input_name='ShipperIDType')), namespaceprefix_ , eol_))
-        if self.ConsigneeIDType is not None:
-            namespaceprefix_ = self.ConsigneeIDType_nsprefix_ + ':' if (UseCapturedNS_ and self.ConsigneeIDType_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sConsigneeIDType>%s</%sConsigneeIDType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ConsigneeIDType), input_name='ConsigneeIDType')), namespaceprefix_ , eol_))
         if self.ImportLicense is not None:
             namespaceprefix_ = self.ImportLicense_nsprefix_ + ':' if (UseCapturedNS_ and self.ImportLicense_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sImportLicense>%s</%sImportLicense>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ImportLicense), input_name='ImportLicense')), namespaceprefix_ , eol_))
-        if self.ConsigneeEIN is not None:
-            namespaceprefix_ = self.ConsigneeEIN_nsprefix_ + ':' if (UseCapturedNS_ and self.ConsigneeEIN_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sConsigneeEIN>%s</%sConsigneeEIN>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ConsigneeEIN), input_name='ConsigneeEIN')), namespaceprefix_ , eol_))
         if self.TermsOfTrade is not None:
             namespaceprefix_ = self.TermsOfTrade_nsprefix_ + ':' if (UseCapturedNS_ and self.TermsOfTrade_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -4198,18 +4203,6 @@ class Dutiable(GeneratedsSuper):
         if self.Filing is not None:
             namespaceprefix_ = self.Filing_nsprefix_ + ':' if (UseCapturedNS_ and self.Filing_nsprefix_) else ''
             self.Filing.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Filing', pretty_print=pretty_print)
-        if self.SellerEIN is not None:
-            namespaceprefix_ = self.SellerEIN_nsprefix_ + ':' if (UseCapturedNS_ and self.SellerEIN_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSellerEIN>%s</%sSellerEIN>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SellerEIN), input_name='SellerEIN')), namespaceprefix_ , eol_))
-        if self.SellerIDType is not None:
-            namespaceprefix_ = self.SellerIDType_nsprefix_ + ':' if (UseCapturedNS_ and self.SellerIDType_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSellerIDType>%s</%sSellerIDType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SellerIDType), input_name='SellerIDType')), namespaceprefix_ , eol_))
-        if self.SellerIDIssuingCountryCode is not None:
-            namespaceprefix_ = self.SellerIDIssuingCountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.SellerIDIssuingCountryCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSellerIDIssuingCountryCode>%s</%sSellerIDIssuingCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SellerIDIssuingCountryCode), input_name='SellerIDIssuingCountryCode')), namespaceprefix_ , eol_))
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -4226,12 +4219,12 @@ class Dutiable(GeneratedsSuper):
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'DeclaredValue' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'DeclaredValue')
-            fval_ = self.gds_validate_float(fval_, node, 'DeclaredValue')
+            fval_ = self.gds_parse_decimal(sval_, node, 'DeclaredValue')
+            fval_ = self.gds_validate_decimal(fval_, node, 'DeclaredValue')
             self.DeclaredValue = fval_
             self.DeclaredValue_nsprefix_ = child_.prefix
-            # validate type DeclaredValue
-            self.validate_DeclaredValue(self.DeclaredValue)
+            # validate type DeclaredValue_Money
+            self.validate_DeclaredValue_Money(self.DeclaredValue)
         elif nodeName_ == 'DeclaredCurrency':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'DeclaredCurrency')
@@ -4256,30 +4249,6 @@ class Dutiable(GeneratedsSuper):
             self.ExportLicense_nsprefix_ = child_.prefix
             # validate type ExportLicense
             self.validate_ExportLicense(self.ExportLicense)
-        elif nodeName_ == 'ShipperEIN':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'ShipperEIN')
-            value_ = self.gds_validate_string(value_, node, 'ShipperEIN')
-            self.ShipperEIN = value_
-            self.ShipperEIN_nsprefix_ = child_.prefix
-            # validate type ShipperEINType
-            self.validate_ShipperEINType(self.ShipperEIN)
-        elif nodeName_ == 'ShipperIDType':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'ShipperIDType')
-            value_ = self.gds_validate_string(value_, node, 'ShipperIDType')
-            self.ShipperIDType = value_
-            self.ShipperIDType_nsprefix_ = child_.prefix
-            # validate type ShipperIDTypeType
-            self.validate_ShipperIDTypeType(self.ShipperIDType)
-        elif nodeName_ == 'ConsigneeIDType':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'ConsigneeIDType')
-            value_ = self.gds_validate_string(value_, node, 'ConsigneeIDType')
-            self.ConsigneeIDType = value_
-            self.ConsigneeIDType_nsprefix_ = child_.prefix
-            # validate type ConsigneeIDTypeType
-            self.validate_ConsigneeIDTypeType(self.ConsigneeIDType)
         elif nodeName_ == 'ImportLicense':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'ImportLicense')
@@ -4288,14 +4257,6 @@ class Dutiable(GeneratedsSuper):
             self.ImportLicense_nsprefix_ = child_.prefix
             # validate type ImportLicense
             self.validate_ImportLicense(self.ImportLicense)
-        elif nodeName_ == 'ConsigneeEIN':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'ConsigneeEIN')
-            value_ = self.gds_validate_string(value_, node, 'ConsigneeEIN')
-            self.ConsigneeEIN = value_
-            self.ConsigneeEIN_nsprefix_ = child_.prefix
-            # validate type ConsigneeEINType
-            self.validate_ConsigneeEINType(self.ConsigneeEIN)
         elif nodeName_ == 'TermsOfTrade':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'TermsOfTrade')
@@ -4317,30 +4278,6 @@ class Dutiable(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Filing = obj_
             obj_.original_tagname_ = 'Filing'
-        elif nodeName_ == 'SellerEIN':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'SellerEIN')
-            value_ = self.gds_validate_string(value_, node, 'SellerEIN')
-            self.SellerEIN = value_
-            self.SellerEIN_nsprefix_ = child_.prefix
-            # validate type SellerEINType
-            self.validate_SellerEINType(self.SellerEIN)
-        elif nodeName_ == 'SellerIDType':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'SellerIDType')
-            value_ = self.gds_validate_string(value_, node, 'SellerIDType')
-            self.SellerIDType = value_
-            self.SellerIDType_nsprefix_ = child_.prefix
-            # validate type SellerIDTypeType
-            self.validate_SellerIDTypeType(self.SellerIDType)
-        elif nodeName_ == 'SellerIDIssuingCountryCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'SellerIDIssuingCountryCode')
-            value_ = self.gds_validate_string(value_, node, 'SellerIDIssuingCountryCode')
-            self.SellerIDIssuingCountryCode = value_
-            self.SellerIDIssuingCountryCode_nsprefix_ = child_.prefix
-            # validate type SellerIDIssuingCountryCodeType
-            self.validate_SellerIDIssuingCountryCodeType(self.SellerIDIssuingCountryCode)
 # end class Dutiable
 
 
@@ -4587,7 +4524,7 @@ class ExportDeclaration(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, InterConsignee=None, IsPartiesRelation=None, ECCN=None, SignatureName=None, SignatureTitle=None, ExportReason=None, ExportReasonCode=None, SedNumber=None, SedNumberType=None, MxStateCode=None, InvoiceNumber=None, InvoiceDate=None, BillToCompanyName=None, BillToContanctName=None, BillToAddressLine=None, BillToCity=None, BillToPostcode=None, BillToSuburb=None, BillToState=None, BillToCountryName=None, BillToPhoneNumber=None, BillToPhoneNumberExtn=None, BillToFaxNumber=None, BillToFederalTaxID=None, Remarks=None, OtherCharges1=None, OtherCharges2=None, OtherCharges3=None, DestinationPort=None, TermsOfPayment=None, PayerGSTVAT=None, SignatureImage=None, ReceiverReference=None, ExporterId=None, ExporterCode=None, PackageMarks=None, OtherRemarks2=None, OtherRemarks3=None, RUBankINN=None, RUBankKPP=None, RUBankOKPO=None, RUBankOGRN=None, RUBankSettlementAcctNumUSDEUR=None, RUBankSettlementAcctNumRUR=None, RUBankName=None, AddDeclText1=None, AddDeclText2=None, AddDeclText3=None, ExportLineItem=None, ShipmentDocument=None, OtherCharges=None, BillToStateName=None, BillToCountryCode=None, BillToStreetName=None, BillToBuildingName=None, BillToStreetNumber=None, BillToEmail=None, BillToMobilePhoneNumber=None, BillToRegistrationNumbers=None, BillToBusinessPartyTypeCode=None, ShipmentPurpose=None, DocumentFunction=None, CustomsDocuments=None, InvoiceTotalNetWeight=None, InvoiceTotalGrossWeight=None, InvoiceReferences=None, gds_collector_=None, **kwargs_):
+    def __init__(self, InterConsignee=None, IsPartiesRelation=None, ECCN=None, SignatureName=None, SignatureTitle=None, ExportReason=None, ExportReasonCode=None, SedNumber=None, SedNumberType=None, InvoiceNumber=None, InvoiceDate=None, BillToCompanyName=None, BillToContactName=None, BillToAddressLine1=None, BillToAddressLine2=None, BillToAddressLine3=None, BillToCity=None, BillToPostcode=None, BillToSuburb=None, BillToState=None, BillToStateName=None, BillToCountryCode=None, BillToCountryName=None, BillToPhoneNumber=None, BillToPhoneNumberExtn=None, BillToFaxNumber=None, BillToStreetName=None, BillToBuildingName=None, BillToStreetNumber=None, BillToEmail=None, BillToMobilePhoneNumber=None, BillToRegistrationNumbers=None, BillToBusinessPartyTypeCode=None, Remarks=None, OtherCharges=None, TermsOfPayment=None, SignatureImage=None, ReceiverReference=None, ExporterId=None, ExporterCode=None, PackageMarks=None, OtherRemarks2=None, OtherRemarks3=None, RUBankINN=None, RUBankKPP=None, RUBankOKPO=None, RUBankOGRN=None, RUBankSettlementAcctNumUSDEUR=None, RUBankSettlementAcctNumRUR=None, RUBankName=None, AddDeclText1=None, AddDeclText2=None, AddDeclText3=None, ExportLineItem=None, ShipmentDocument=None, InvoiceInstructions=None, CustomerDataTextEntries=None, PlaceOfIncoterm=None, ShipmentPurpose=None, DocumentFunction=None, CustomsDocuments=None, InvoiceTotalNetWeight=None, InvoiceTotalGrossWeight=None, InvoiceReferences=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -4620,10 +4557,8 @@ class ExportDeclaration(GeneratedsSuper):
         self.SedNumberType = SedNumberType
         self.validate_SEDNumberType(self.SedNumberType)
         self.SedNumberType_nsprefix_ = None
-        self.MxStateCode = MxStateCode
-        self.validate_MxStateCodeType(self.MxStateCode)
-        self.MxStateCode_nsprefix_ = None
         self.InvoiceNumber = InvoiceNumber
+        self.validate_InvoiceNumber(self.InvoiceNumber)
         self.InvoiceNumber_nsprefix_ = None
         if isinstance(InvoiceDate, BaseStrType_):
             initvalue_ = datetime_.datetime.strptime(InvoiceDate, '%Y-%m-%d').date()
@@ -4632,46 +4567,76 @@ class ExportDeclaration(GeneratedsSuper):
         self.InvoiceDate = initvalue_
         self.InvoiceDate_nsprefix_ = None
         self.BillToCompanyName = BillToCompanyName
+        self.validate_CompanyNameValidator(self.BillToCompanyName)
         self.BillToCompanyName_nsprefix_ = None
-        self.BillToContanctName = BillToContanctName
-        self.BillToContanctName_nsprefix_ = None
-        if BillToAddressLine is None:
-            self.BillToAddressLine = []
-        else:
-            self.BillToAddressLine = BillToAddressLine
-        self.BillToAddressLine_nsprefix_ = None
+        self.BillToContactName = BillToContactName
+        self.validate_PersonName(self.BillToContactName)
+        self.BillToContactName_nsprefix_ = None
+        self.BillToAddressLine1 = BillToAddressLine1
+        self.validate_AddressLine(self.BillToAddressLine1)
+        self.BillToAddressLine1_nsprefix_ = None
+        self.BillToAddressLine2 = BillToAddressLine2
+        self.validate_AddressLine(self.BillToAddressLine2)
+        self.BillToAddressLine2_nsprefix_ = None
+        self.BillToAddressLine3 = BillToAddressLine3
+        self.validate_AddressLine(self.BillToAddressLine3)
+        self.BillToAddressLine3_nsprefix_ = None
         self.BillToCity = BillToCity
+        self.validate_City(self.BillToCity)
         self.BillToCity_nsprefix_ = None
         self.BillToPostcode = BillToPostcode
+        self.validate_PostalCode(self.BillToPostcode)
         self.BillToPostcode_nsprefix_ = None
         self.BillToSuburb = BillToSuburb
+        self.validate_Suburb(self.BillToSuburb)
         self.BillToSuburb_nsprefix_ = None
         self.BillToState = BillToState
+        self.validate_DivisionCode(self.BillToState)
         self.BillToState_nsprefix_ = None
+        self.BillToStateName = BillToStateName
+        self.validate_Division(self.BillToStateName)
+        self.BillToStateName_nsprefix_ = None
+        self.BillToCountryCode = BillToCountryCode
+        self.validate_CountryCode(self.BillToCountryCode)
+        self.BillToCountryCode_nsprefix_ = None
         self.BillToCountryName = BillToCountryName
+        self.validate_CountryName(self.BillToCountryName)
         self.BillToCountryName_nsprefix_ = None
         self.BillToPhoneNumber = BillToPhoneNumber
+        self.validate_PhoneNumber(self.BillToPhoneNumber)
         self.BillToPhoneNumber_nsprefix_ = None
         self.BillToPhoneNumberExtn = BillToPhoneNumberExtn
+        self.validate_PhoneExtension(self.BillToPhoneNumberExtn)
         self.BillToPhoneNumberExtn_nsprefix_ = None
         self.BillToFaxNumber = BillToFaxNumber
+        self.validate_PhoneNumber(self.BillToFaxNumber)
         self.BillToFaxNumber_nsprefix_ = None
-        self.BillToFederalTaxID = BillToFederalTaxID
-        self.BillToFederalTaxID_nsprefix_ = None
+        self.BillToStreetName = BillToStreetName
+        self.validate_StreetName(self.BillToStreetName)
+        self.BillToStreetName_nsprefix_ = None
+        self.BillToBuildingName = BillToBuildingName
+        self.validate_BuildingName(self.BillToBuildingName)
+        self.BillToBuildingName_nsprefix_ = None
+        self.BillToStreetNumber = BillToStreetNumber
+        self.validate_StreetNumber(self.BillToStreetNumber)
+        self.BillToStreetNumber_nsprefix_ = None
+        self.BillToEmail = BillToEmail
+        self.validate_EmailAddress(self.BillToEmail)
+        self.BillToEmail_nsprefix_ = None
+        self.BillToMobilePhoneNumber = BillToMobilePhoneNumber
+        self.validate_MobilePhoneNumber(self.BillToMobilePhoneNumber)
+        self.BillToMobilePhoneNumber_nsprefix_ = None
+        self.BillToRegistrationNumbers = BillToRegistrationNumbers
+        self.BillToRegistrationNumbers_nsprefix_ = None
+        self.BillToBusinessPartyTypeCode = BillToBusinessPartyTypeCode
+        self.validate_BusinessPartyTypeCode(self.BillToBusinessPartyTypeCode)
+        self.BillToBusinessPartyTypeCode_nsprefix_ = None
         self.Remarks = Remarks
         self.Remarks_nsprefix_ = None
-        self.OtherCharges1 = OtherCharges1
-        self.OtherCharges1_nsprefix_ = None
-        self.OtherCharges2 = OtherCharges2
-        self.OtherCharges2_nsprefix_ = None
-        self.OtherCharges3 = OtherCharges3
-        self.OtherCharges3_nsprefix_ = None
-        self.DestinationPort = DestinationPort
-        self.DestinationPort_nsprefix_ = None
+        self.OtherCharges = OtherCharges
+        self.OtherCharges_nsprefix_ = None
         self.TermsOfPayment = TermsOfPayment
         self.TermsOfPayment_nsprefix_ = None
-        self.PayerGSTVAT = PayerGSTVAT
-        self.PayerGSTVAT_nsprefix_ = None
         self.SignatureImage = SignatureImage
         self.validate_SignatureImage(self.SignatureImage)
         self.SignatureImage_nsprefix_ = None
@@ -4717,34 +4682,14 @@ class ExportDeclaration(GeneratedsSuper):
         self.ExportLineItem_nsprefix_ = None
         self.ShipmentDocument = ShipmentDocument
         self.ShipmentDocument_nsprefix_ = None
-        self.OtherCharges = OtherCharges
-        self.OtherCharges_nsprefix_ = None
-        self.BillToStateName = BillToStateName
-        self.validate_Division(self.BillToStateName)
-        self.BillToStateName_nsprefix_ = None
-        self.BillToCountryCode = BillToCountryCode
-        self.validate_CountryCode(self.BillToCountryCode)
-        self.BillToCountryCode_nsprefix_ = None
-        self.BillToStreetName = BillToStreetName
-        self.validate_StreetName(self.BillToStreetName)
-        self.BillToStreetName_nsprefix_ = None
-        self.BillToBuildingName = BillToBuildingName
-        self.validate_BuildingName(self.BillToBuildingName)
-        self.BillToBuildingName_nsprefix_ = None
-        self.BillToStreetNumber = BillToStreetNumber
-        self.validate_StreetNumber(self.BillToStreetNumber)
-        self.BillToStreetNumber_nsprefix_ = None
-        self.BillToEmail = BillToEmail
-        self.validate_EmailAddress(self.BillToEmail)
-        self.BillToEmail_nsprefix_ = None
-        self.BillToMobilePhoneNumber = BillToMobilePhoneNumber
-        self.validate_MobilePhoneNumber(self.BillToMobilePhoneNumber)
-        self.BillToMobilePhoneNumber_nsprefix_ = None
-        self.BillToRegistrationNumbers = BillToRegistrationNumbers
-        self.BillToRegistrationNumbers_nsprefix_ = None
-        self.BillToBusinessPartyTypeCode = BillToBusinessPartyTypeCode
-        self.validate_BusinessPartyTypeCode(self.BillToBusinessPartyTypeCode)
-        self.BillToBusinessPartyTypeCode_nsprefix_ = None
+        self.InvoiceInstructions = InvoiceInstructions
+        self.validate_InvoiceInstructions(self.InvoiceInstructions)
+        self.InvoiceInstructions_nsprefix_ = None
+        self.CustomerDataTextEntries = CustomerDataTextEntries
+        self.CustomerDataTextEntries_nsprefix_ = None
+        self.PlaceOfIncoterm = PlaceOfIncoterm
+        self.validate_PlaceOfIncoterm(self.PlaceOfIncoterm)
+        self.PlaceOfIncoterm_nsprefix_ = None
         self.ShipmentPurpose = ShipmentPurpose
         self.validate_ShipmentPurpose(self.ShipmentPurpose)
         self.ShipmentPurpose_nsprefix_ = None
@@ -4754,10 +4699,10 @@ class ExportDeclaration(GeneratedsSuper):
         self.CustomsDocuments = CustomsDocuments
         self.CustomsDocuments_nsprefix_ = None
         self.InvoiceTotalNetWeight = InvoiceTotalNetWeight
-        self.validate_Weight(self.InvoiceTotalNetWeight)
+        self.validate_Invoice_Weight(self.InvoiceTotalNetWeight)
         self.InvoiceTotalNetWeight_nsprefix_ = None
         self.InvoiceTotalGrossWeight = InvoiceTotalGrossWeight
-        self.validate_Weight(self.InvoiceTotalGrossWeight)
+        self.validate_Invoice_Weight(self.InvoiceTotalGrossWeight)
         self.InvoiceTotalGrossWeight_nsprefix_ = None
         self.InvoiceReferences = InvoiceReferences
         self.InvoiceReferences_nsprefix_ = None
@@ -4812,10 +4757,6 @@ class ExportDeclaration(GeneratedsSuper):
         return self.SedNumberType
     def set_SedNumberType(self, SedNumberType):
         self.SedNumberType = SedNumberType
-    def get_MxStateCode(self):
-        return self.MxStateCode
-    def set_MxStateCode(self, MxStateCode):
-        self.MxStateCode = MxStateCode
     def get_InvoiceNumber(self):
         return self.InvoiceNumber
     def set_InvoiceNumber(self, InvoiceNumber):
@@ -4828,20 +4769,22 @@ class ExportDeclaration(GeneratedsSuper):
         return self.BillToCompanyName
     def set_BillToCompanyName(self, BillToCompanyName):
         self.BillToCompanyName = BillToCompanyName
-    def get_BillToContanctName(self):
-        return self.BillToContanctName
-    def set_BillToContanctName(self, BillToContanctName):
-        self.BillToContanctName = BillToContanctName
-    def get_BillToAddressLine(self):
-        return self.BillToAddressLine
-    def set_BillToAddressLine(self, BillToAddressLine):
-        self.BillToAddressLine = BillToAddressLine
-    def add_BillToAddressLine(self, value):
-        self.BillToAddressLine.append(value)
-    def insert_BillToAddressLine_at(self, index, value):
-        self.BillToAddressLine.insert(index, value)
-    def replace_BillToAddressLine_at(self, index, value):
-        self.BillToAddressLine[index] = value
+    def get_BillToContactName(self):
+        return self.BillToContactName
+    def set_BillToContactName(self, BillToContactName):
+        self.BillToContactName = BillToContactName
+    def get_BillToAddressLine1(self):
+        return self.BillToAddressLine1
+    def set_BillToAddressLine1(self, BillToAddressLine1):
+        self.BillToAddressLine1 = BillToAddressLine1
+    def get_BillToAddressLine2(self):
+        return self.BillToAddressLine2
+    def set_BillToAddressLine2(self, BillToAddressLine2):
+        self.BillToAddressLine2 = BillToAddressLine2
+    def get_BillToAddressLine3(self):
+        return self.BillToAddressLine3
+    def set_BillToAddressLine3(self, BillToAddressLine3):
+        self.BillToAddressLine3 = BillToAddressLine3
     def get_BillToCity(self):
         return self.BillToCity
     def set_BillToCity(self, BillToCity):
@@ -4858,6 +4801,14 @@ class ExportDeclaration(GeneratedsSuper):
         return self.BillToState
     def set_BillToState(self, BillToState):
         self.BillToState = BillToState
+    def get_BillToStateName(self):
+        return self.BillToStateName
+    def set_BillToStateName(self, BillToStateName):
+        self.BillToStateName = BillToStateName
+    def get_BillToCountryCode(self):
+        return self.BillToCountryCode
+    def set_BillToCountryCode(self, BillToCountryCode):
+        self.BillToCountryCode = BillToCountryCode
     def get_BillToCountryName(self):
         return self.BillToCountryName
     def set_BillToCountryName(self, BillToCountryName):
@@ -4874,38 +4825,46 @@ class ExportDeclaration(GeneratedsSuper):
         return self.BillToFaxNumber
     def set_BillToFaxNumber(self, BillToFaxNumber):
         self.BillToFaxNumber = BillToFaxNumber
-    def get_BillToFederalTaxID(self):
-        return self.BillToFederalTaxID
-    def set_BillToFederalTaxID(self, BillToFederalTaxID):
-        self.BillToFederalTaxID = BillToFederalTaxID
+    def get_BillToStreetName(self):
+        return self.BillToStreetName
+    def set_BillToStreetName(self, BillToStreetName):
+        self.BillToStreetName = BillToStreetName
+    def get_BillToBuildingName(self):
+        return self.BillToBuildingName
+    def set_BillToBuildingName(self, BillToBuildingName):
+        self.BillToBuildingName = BillToBuildingName
+    def get_BillToStreetNumber(self):
+        return self.BillToStreetNumber
+    def set_BillToStreetNumber(self, BillToStreetNumber):
+        self.BillToStreetNumber = BillToStreetNumber
+    def get_BillToEmail(self):
+        return self.BillToEmail
+    def set_BillToEmail(self, BillToEmail):
+        self.BillToEmail = BillToEmail
+    def get_BillToMobilePhoneNumber(self):
+        return self.BillToMobilePhoneNumber
+    def set_BillToMobilePhoneNumber(self, BillToMobilePhoneNumber):
+        self.BillToMobilePhoneNumber = BillToMobilePhoneNumber
+    def get_BillToRegistrationNumbers(self):
+        return self.BillToRegistrationNumbers
+    def set_BillToRegistrationNumbers(self, BillToRegistrationNumbers):
+        self.BillToRegistrationNumbers = BillToRegistrationNumbers
+    def get_BillToBusinessPartyTypeCode(self):
+        return self.BillToBusinessPartyTypeCode
+    def set_BillToBusinessPartyTypeCode(self, BillToBusinessPartyTypeCode):
+        self.BillToBusinessPartyTypeCode = BillToBusinessPartyTypeCode
     def get_Remarks(self):
         return self.Remarks
     def set_Remarks(self, Remarks):
         self.Remarks = Remarks
-    def get_OtherCharges1(self):
-        return self.OtherCharges1
-    def set_OtherCharges1(self, OtherCharges1):
-        self.OtherCharges1 = OtherCharges1
-    def get_OtherCharges2(self):
-        return self.OtherCharges2
-    def set_OtherCharges2(self, OtherCharges2):
-        self.OtherCharges2 = OtherCharges2
-    def get_OtherCharges3(self):
-        return self.OtherCharges3
-    def set_OtherCharges3(self, OtherCharges3):
-        self.OtherCharges3 = OtherCharges3
-    def get_DestinationPort(self):
-        return self.DestinationPort
-    def set_DestinationPort(self, DestinationPort):
-        self.DestinationPort = DestinationPort
+    def get_OtherCharges(self):
+        return self.OtherCharges
+    def set_OtherCharges(self, OtherCharges):
+        self.OtherCharges = OtherCharges
     def get_TermsOfPayment(self):
         return self.TermsOfPayment
     def set_TermsOfPayment(self, TermsOfPayment):
         self.TermsOfPayment = TermsOfPayment
-    def get_PayerGSTVAT(self):
-        return self.PayerGSTVAT
-    def set_PayerGSTVAT(self, PayerGSTVAT):
-        self.PayerGSTVAT = PayerGSTVAT
     def get_SignatureImage(self):
         return self.SignatureImage
     def set_SignatureImage(self, SignatureImage):
@@ -4988,46 +4947,18 @@ class ExportDeclaration(GeneratedsSuper):
         return self.ShipmentDocument
     def set_ShipmentDocument(self, ShipmentDocument):
         self.ShipmentDocument = ShipmentDocument
-    def get_OtherCharges(self):
-        return self.OtherCharges
-    def set_OtherCharges(self, OtherCharges):
-        self.OtherCharges = OtherCharges
-    def get_BillToStateName(self):
-        return self.BillToStateName
-    def set_BillToStateName(self, BillToStateName):
-        self.BillToStateName = BillToStateName
-    def get_BillToCountryCode(self):
-        return self.BillToCountryCode
-    def set_BillToCountryCode(self, BillToCountryCode):
-        self.BillToCountryCode = BillToCountryCode
-    def get_BillToStreetName(self):
-        return self.BillToStreetName
-    def set_BillToStreetName(self, BillToStreetName):
-        self.BillToStreetName = BillToStreetName
-    def get_BillToBuildingName(self):
-        return self.BillToBuildingName
-    def set_BillToBuildingName(self, BillToBuildingName):
-        self.BillToBuildingName = BillToBuildingName
-    def get_BillToStreetNumber(self):
-        return self.BillToStreetNumber
-    def set_BillToStreetNumber(self, BillToStreetNumber):
-        self.BillToStreetNumber = BillToStreetNumber
-    def get_BillToEmail(self):
-        return self.BillToEmail
-    def set_BillToEmail(self, BillToEmail):
-        self.BillToEmail = BillToEmail
-    def get_BillToMobilePhoneNumber(self):
-        return self.BillToMobilePhoneNumber
-    def set_BillToMobilePhoneNumber(self, BillToMobilePhoneNumber):
-        self.BillToMobilePhoneNumber = BillToMobilePhoneNumber
-    def get_BillToRegistrationNumbers(self):
-        return self.BillToRegistrationNumbers
-    def set_BillToRegistrationNumbers(self, BillToRegistrationNumbers):
-        self.BillToRegistrationNumbers = BillToRegistrationNumbers
-    def get_BillToBusinessPartyTypeCode(self):
-        return self.BillToBusinessPartyTypeCode
-    def set_BillToBusinessPartyTypeCode(self, BillToBusinessPartyTypeCode):
-        self.BillToBusinessPartyTypeCode = BillToBusinessPartyTypeCode
+    def get_InvoiceInstructions(self):
+        return self.InvoiceInstructions
+    def set_InvoiceInstructions(self, InvoiceInstructions):
+        self.InvoiceInstructions = InvoiceInstructions
+    def get_CustomerDataTextEntries(self):
+        return self.CustomerDataTextEntries
+    def set_CustomerDataTextEntries(self, CustomerDataTextEntries):
+        self.CustomerDataTextEntries = CustomerDataTextEntries
+    def get_PlaceOfIncoterm(self):
+        return self.PlaceOfIncoterm
+    def set_PlaceOfIncoterm(self, PlaceOfIncoterm):
+        self.PlaceOfIncoterm = PlaceOfIncoterm
     def get_ShipmentPurpose(self):
         return self.ShipmentPurpose
     def set_ShipmentPurpose(self, ShipmentPurpose):
@@ -5197,21 +5128,51 @@ class ExportDeclaration(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on SEDNumberType' % {"value": encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_MxStateCodeType(self, value):
+    def validate_InvoiceNumber(self, value):
         result = True
-        # Validate type MxStateCodeType, a restriction on xsd:string.
+        # Validate type InvoiceNumber, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) > 2:
+            if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on MxStateCodeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on InvoiceNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
-            if len(value) < 0:
+        return result
+    def validate_CompanyNameValidator(self, value):
+        result = True
+        # Validate type CompanyNameValidator, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on MxStateCodeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 60:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CompanyNameValidator' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CompanyNameValidator' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_PersonName(self, value):
+        result = True
+        # Validate type PersonName, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 35:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PersonName' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PersonName' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_AddressLine(self, value):
@@ -5226,40 +5187,61 @@ class ExportDeclaration(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
-        return result
-    def validate_SignatureImage(self, value):
-        result = True
-        # Validate type SignatureImage, a restriction on xsd:base64Binary.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if len(value) > 1048576:
+            if len(value) < 1:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on SignatureImage' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_AddDeclText1Type(self, value):
+    def validate_City(self, value):
         result = True
-        # Validate type AddDeclText1Type, a restriction on xsd:string.
+        # Validate type City, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) > 300:
+            if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddDeclText1Type' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on City' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_AddDeclText(self, value):
+    def validate_PostalCode(self, value):
         result = True
-        # Validate type AddDeclText, a restriction on xsd:string.
+        # Validate type PostalCode, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) > 140:
+            if len(value) > 12:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddDeclText' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PostalCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_Suburb(self, value):
+        result = True
+        # Validate type Suburb, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 35:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Suburb' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_DivisionCode(self, value):
+        result = True
+        # Validate type DivisionCode, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 35:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on DivisionCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_Division(self, value):
@@ -5286,6 +5268,54 @@ class ExportDeclaration(GeneratedsSuper):
             if len(value) != 2:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CountryCode' % {"value": encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_CountryName(self, value):
+        result = True
+        # Validate type CountryName, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 35:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CountryName' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_PhoneNumber(self, value):
+        result = True
+        # Validate type PhoneNumber, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 25:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PhoneNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PhoneNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if not self.gds_validate_simple_patterns(
+                    self.validate_PhoneNumber_patterns_, value):
+                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_PhoneNumber_patterns_, ))
+                result = False
+        return result
+    validate_PhoneNumber_patterns_ = [['^(.*[^\\s].*)$']]
+    def validate_PhoneExtension(self, value):
+        result = True
+        # Validate type PhoneExtension, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 5:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PhoneExtension' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_StreetName(self, value):
@@ -5383,10 +5413,75 @@ class ExportDeclaration(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_SignatureImage(self, value):
+        result = True
+        # Validate type SignatureImage, a restriction on xsd:base64Binary.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if len(value) > 1048576:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on SignatureImage' % {"value": value, "lineno": lineno} )
+                result = False
+        return result
+    def validate_AddDeclText1Type(self, value):
+        result = True
+        # Validate type AddDeclText1Type, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 700:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddDeclText1Type' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_AddDeclText(self, value):
+        result = True
+        # Validate type AddDeclText, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 140:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddDeclText' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_InvoiceInstructions(self, value):
+        result = True
+        # Validate type InvoiceInstructions, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 300:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on InvoiceInstructions' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_PlaceOfIncoterm(self, value):
+        result = True
+        # Validate type PlaceOfIncoterm, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 256:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PlaceOfIncoterm' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
         return result
     def validate_ShipmentPurpose(self, value):
         result = True
-        # Validate type ShipmentPurpose, a restriction on xsd:string.
+        # Validate type ShipmentPurpose, a restriction on xsd:token.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
@@ -5414,9 +5509,9 @@ class ExportDeclaration(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DocumentFunction' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_Weight(self, value):
+    def validate_Invoice_Weight(self, value):
         result = True
-        # Validate type Weight, a restriction on xsd:decimal.
+        # Validate type Invoice_Weight, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
@@ -5424,15 +5519,11 @@ class ExportDeclaration(GeneratedsSuper):
                 return False
             if value < 0.000:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Invoice_Weight' % {"value": value, "lineno": lineno} )
                 result = False
-            if value > 999999.999:
+            if value > 999999999999.999:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Invoice_Weight' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def hasContent_(self):
@@ -5446,28 +5537,33 @@ class ExportDeclaration(GeneratedsSuper):
             self.ExportReasonCode is not None or
             self.SedNumber is not None or
             self.SedNumberType is not None or
-            self.MxStateCode is not None or
             self.InvoiceNumber is not None or
             self.InvoiceDate is not None or
             self.BillToCompanyName is not None or
-            self.BillToContanctName is not None or
-            self.BillToAddressLine or
+            self.BillToContactName is not None or
+            self.BillToAddressLine1 is not None or
+            self.BillToAddressLine2 is not None or
+            self.BillToAddressLine3 is not None or
             self.BillToCity is not None or
             self.BillToPostcode is not None or
             self.BillToSuburb is not None or
             self.BillToState is not None or
+            self.BillToStateName is not None or
+            self.BillToCountryCode is not None or
             self.BillToCountryName is not None or
             self.BillToPhoneNumber is not None or
             self.BillToPhoneNumberExtn is not None or
             self.BillToFaxNumber is not None or
-            self.BillToFederalTaxID is not None or
+            self.BillToStreetName is not None or
+            self.BillToBuildingName is not None or
+            self.BillToStreetNumber is not None or
+            self.BillToEmail is not None or
+            self.BillToMobilePhoneNumber is not None or
+            self.BillToRegistrationNumbers is not None or
+            self.BillToBusinessPartyTypeCode is not None or
             self.Remarks is not None or
-            self.OtherCharges1 is not None or
-            self.OtherCharges2 is not None or
-            self.OtherCharges3 is not None or
-            self.DestinationPort is not None or
+            self.OtherCharges is not None or
             self.TermsOfPayment is not None or
-            self.PayerGSTVAT is not None or
             self.SignatureImage is not None or
             self.ReceiverReference is not None or
             self.ExporterId is not None or
@@ -5487,16 +5583,9 @@ class ExportDeclaration(GeneratedsSuper):
             self.AddDeclText3 is not None or
             self.ExportLineItem or
             self.ShipmentDocument is not None or
-            self.OtherCharges is not None or
-            self.BillToStateName is not None or
-            self.BillToCountryCode is not None or
-            self.BillToStreetName is not None or
-            self.BillToBuildingName is not None or
-            self.BillToStreetNumber is not None or
-            self.BillToEmail is not None or
-            self.BillToMobilePhoneNumber is not None or
-            self.BillToRegistrationNumbers is not None or
-            self.BillToBusinessPartyTypeCode is not None or
+            self.InvoiceInstructions is not None or
+            self.CustomerDataTextEntries is not None or
+            self.PlaceOfIncoterm is not None or
             self.ShipmentPurpose is not None or
             self.DocumentFunction is not None or
             self.CustomsDocuments is not None or
@@ -5573,10 +5662,6 @@ class ExportDeclaration(GeneratedsSuper):
             namespaceprefix_ = self.SedNumberType_nsprefix_ + ':' if (UseCapturedNS_ and self.SedNumberType_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sSedNumberType>%s</%sSedNumberType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.SedNumberType), input_name='SedNumberType')), namespaceprefix_ , eol_))
-        if self.MxStateCode is not None:
-            namespaceprefix_ = self.MxStateCode_nsprefix_ + ':' if (UseCapturedNS_ and self.MxStateCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sMxStateCode>%s</%sMxStateCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.MxStateCode), input_name='MxStateCode')), namespaceprefix_ , eol_))
         if self.InvoiceNumber is not None:
             namespaceprefix_ = self.InvoiceNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceNumber_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -5589,14 +5674,22 @@ class ExportDeclaration(GeneratedsSuper):
             namespaceprefix_ = self.BillToCompanyName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToCompanyName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sBillToCompanyName>%s</%sBillToCompanyName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToCompanyName), input_name='BillToCompanyName')), namespaceprefix_ , eol_))
-        if self.BillToContanctName is not None:
-            namespaceprefix_ = self.BillToContanctName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToContanctName_nsprefix_) else ''
+        if self.BillToContactName is not None:
+            namespaceprefix_ = self.BillToContactName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToContactName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToContanctName>%s</%sBillToContanctName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToContanctName), input_name='BillToContanctName')), namespaceprefix_ , eol_))
-        for BillToAddressLine_ in self.BillToAddressLine:
-            namespaceprefix_ = self.BillToAddressLine_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToAddressLine_nsprefix_) else ''
+            outfile.write('<%sBillToContactName>%s</%sBillToContactName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToContactName), input_name='BillToContactName')), namespaceprefix_ , eol_))
+        if self.BillToAddressLine1 is not None:
+            namespaceprefix_ = self.BillToAddressLine1_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToAddressLine1_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToAddressLine>%s</%sBillToAddressLine>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(BillToAddressLine_), input_name='BillToAddressLine')), namespaceprefix_ , eol_))
+            outfile.write('<%sBillToAddressLine1>%s</%sBillToAddressLine1>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToAddressLine1), input_name='BillToAddressLine1')), namespaceprefix_ , eol_))
+        if self.BillToAddressLine2 is not None:
+            namespaceprefix_ = self.BillToAddressLine2_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToAddressLine2_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToAddressLine2>%s</%sBillToAddressLine2>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToAddressLine2), input_name='BillToAddressLine2')), namespaceprefix_ , eol_))
+        if self.BillToAddressLine3 is not None:
+            namespaceprefix_ = self.BillToAddressLine3_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToAddressLine3_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToAddressLine3>%s</%sBillToAddressLine3>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToAddressLine3), input_name='BillToAddressLine3')), namespaceprefix_ , eol_))
         if self.BillToCity is not None:
             namespaceprefix_ = self.BillToCity_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToCity_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -5613,6 +5706,14 @@ class ExportDeclaration(GeneratedsSuper):
             namespaceprefix_ = self.BillToState_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToState_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sBillToState>%s</%sBillToState>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToState), input_name='BillToState')), namespaceprefix_ , eol_))
+        if self.BillToStateName is not None:
+            namespaceprefix_ = self.BillToStateName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToStateName_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToStateName>%s</%sBillToStateName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToStateName), input_name='BillToStateName')), namespaceprefix_ , eol_))
+        if self.BillToCountryCode is not None:
+            namespaceprefix_ = self.BillToCountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToCountryCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToCountryCode>%s</%sBillToCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToCountryCode), input_name='BillToCountryCode')), namespaceprefix_ , eol_))
         if self.BillToCountryName is not None:
             namespaceprefix_ = self.BillToCountryName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToCountryName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -5629,38 +5730,44 @@ class ExportDeclaration(GeneratedsSuper):
             namespaceprefix_ = self.BillToFaxNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToFaxNumber_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sBillToFaxNumber>%s</%sBillToFaxNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToFaxNumber), input_name='BillToFaxNumber')), namespaceprefix_ , eol_))
-        if self.BillToFederalTaxID is not None:
-            namespaceprefix_ = self.BillToFederalTaxID_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToFederalTaxID_nsprefix_) else ''
+        if self.BillToStreetName is not None:
+            namespaceprefix_ = self.BillToStreetName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToStreetName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToFederalTaxID>%s</%sBillToFederalTaxID>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToFederalTaxID), input_name='BillToFederalTaxID')), namespaceprefix_ , eol_))
+            outfile.write('<%sBillToStreetName>%s</%sBillToStreetName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToStreetName), input_name='BillToStreetName')), namespaceprefix_ , eol_))
+        if self.BillToBuildingName is not None:
+            namespaceprefix_ = self.BillToBuildingName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToBuildingName_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToBuildingName>%s</%sBillToBuildingName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToBuildingName), input_name='BillToBuildingName')), namespaceprefix_ , eol_))
+        if self.BillToStreetNumber is not None:
+            namespaceprefix_ = self.BillToStreetNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToStreetNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToStreetNumber>%s</%sBillToStreetNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToStreetNumber), input_name='BillToStreetNumber')), namespaceprefix_ , eol_))
+        if self.BillToEmail is not None:
+            namespaceprefix_ = self.BillToEmail_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToEmail_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToEmail>%s</%sBillToEmail>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToEmail), input_name='BillToEmail')), namespaceprefix_ , eol_))
+        if self.BillToMobilePhoneNumber is not None:
+            namespaceprefix_ = self.BillToMobilePhoneNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToMobilePhoneNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToMobilePhoneNumber>%s</%sBillToMobilePhoneNumber>%s' % (namespaceprefix_ , self.gds_format_integer(self.BillToMobilePhoneNumber, input_name='BillToMobilePhoneNumber'), namespaceprefix_ , eol_))
+        if self.BillToRegistrationNumbers is not None:
+            namespaceprefix_ = self.BillToRegistrationNumbers_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToRegistrationNumbers_nsprefix_) else ''
+            self.BillToRegistrationNumbers.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BillToRegistrationNumbers', pretty_print=pretty_print)
+        if self.BillToBusinessPartyTypeCode is not None:
+            namespaceprefix_ = self.BillToBusinessPartyTypeCode_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToBusinessPartyTypeCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sBillToBusinessPartyTypeCode>%s</%sBillToBusinessPartyTypeCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToBusinessPartyTypeCode), input_name='BillToBusinessPartyTypeCode')), namespaceprefix_ , eol_))
         if self.Remarks is not None:
             namespaceprefix_ = self.Remarks_nsprefix_ + ':' if (UseCapturedNS_ and self.Remarks_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sRemarks>%s</%sRemarks>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Remarks), input_name='Remarks')), namespaceprefix_ , eol_))
-        if self.OtherCharges1 is not None:
-            namespaceprefix_ = self.OtherCharges1_nsprefix_ + ':' if (UseCapturedNS_ and self.OtherCharges1_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sOtherCharges1>%s</%sOtherCharges1>%s' % (namespaceprefix_ , self.gds_format_float(self.OtherCharges1, input_name='OtherCharges1'), namespaceprefix_ , eol_))
-        if self.OtherCharges2 is not None:
-            namespaceprefix_ = self.OtherCharges2_nsprefix_ + ':' if (UseCapturedNS_ and self.OtherCharges2_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sOtherCharges2>%s</%sOtherCharges2>%s' % (namespaceprefix_ , self.gds_format_float(self.OtherCharges2, input_name='OtherCharges2'), namespaceprefix_ , eol_))
-        if self.OtherCharges3 is not None:
-            namespaceprefix_ = self.OtherCharges3_nsprefix_ + ':' if (UseCapturedNS_ and self.OtherCharges3_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sOtherCharges3>%s</%sOtherCharges3>%s' % (namespaceprefix_ , self.gds_format_float(self.OtherCharges3, input_name='OtherCharges3'), namespaceprefix_ , eol_))
-        if self.DestinationPort is not None:
-            namespaceprefix_ = self.DestinationPort_nsprefix_ + ':' if (UseCapturedNS_ and self.DestinationPort_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDestinationPort>%s</%sDestinationPort>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DestinationPort), input_name='DestinationPort')), namespaceprefix_ , eol_))
+        if self.OtherCharges is not None:
+            namespaceprefix_ = self.OtherCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.OtherCharges_nsprefix_) else ''
+            self.OtherCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='OtherCharges', pretty_print=pretty_print)
         if self.TermsOfPayment is not None:
             namespaceprefix_ = self.TermsOfPayment_nsprefix_ + ':' if (UseCapturedNS_ and self.TermsOfPayment_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sTermsOfPayment>%s</%sTermsOfPayment>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.TermsOfPayment), input_name='TermsOfPayment')), namespaceprefix_ , eol_))
-        if self.PayerGSTVAT is not None:
-            namespaceprefix_ = self.PayerGSTVAT_nsprefix_ + ':' if (UseCapturedNS_ and self.PayerGSTVAT_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPayerGSTVAT>%s</%sPayerGSTVAT>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PayerGSTVAT), input_name='PayerGSTVAT')), namespaceprefix_ , eol_))
         if self.SignatureImage is not None:
             namespaceprefix_ = self.SignatureImage_nsprefix_ + ':' if (UseCapturedNS_ and self.SignatureImage_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -5735,44 +5842,17 @@ class ExportDeclaration(GeneratedsSuper):
         if self.ShipmentDocument is not None:
             namespaceprefix_ = self.ShipmentDocument_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentDocument_nsprefix_) else ''
             self.ShipmentDocument.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentDocument', pretty_print=pretty_print)
-        if self.OtherCharges is not None:
-            namespaceprefix_ = self.OtherCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.OtherCharges_nsprefix_) else ''
-            self.OtherCharges.export(outfile, level, namespaceprefix_, namespacedef_='', name_='OtherCharges', pretty_print=pretty_print)
-        if self.BillToStateName is not None:
-            namespaceprefix_ = self.BillToStateName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToStateName_nsprefix_) else ''
+        if self.InvoiceInstructions is not None:
+            namespaceprefix_ = self.InvoiceInstructions_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceInstructions_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToStateName>%s</%sBillToStateName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToStateName), input_name='BillToStateName')), namespaceprefix_ , eol_))
-        if self.BillToCountryCode is not None:
-            namespaceprefix_ = self.BillToCountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToCountryCode_nsprefix_) else ''
+            outfile.write('<%sInvoiceInstructions>%s</%sInvoiceInstructions>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.InvoiceInstructions), input_name='InvoiceInstructions')), namespaceprefix_ , eol_))
+        if self.CustomerDataTextEntries is not None:
+            namespaceprefix_ = self.CustomerDataTextEntries_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerDataTextEntries_nsprefix_) else ''
+            self.CustomerDataTextEntries.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CustomerDataTextEntries', pretty_print=pretty_print)
+        if self.PlaceOfIncoterm is not None:
+            namespaceprefix_ = self.PlaceOfIncoterm_nsprefix_ + ':' if (UseCapturedNS_ and self.PlaceOfIncoterm_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToCountryCode>%s</%sBillToCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToCountryCode), input_name='BillToCountryCode')), namespaceprefix_ , eol_))
-        if self.BillToStreetName is not None:
-            namespaceprefix_ = self.BillToStreetName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToStreetName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToStreetName>%s</%sBillToStreetName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToStreetName), input_name='BillToStreetName')), namespaceprefix_ , eol_))
-        if self.BillToBuildingName is not None:
-            namespaceprefix_ = self.BillToBuildingName_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToBuildingName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToBuildingName>%s</%sBillToBuildingName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToBuildingName), input_name='BillToBuildingName')), namespaceprefix_ , eol_))
-        if self.BillToStreetNumber is not None:
-            namespaceprefix_ = self.BillToStreetNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToStreetNumber_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToStreetNumber>%s</%sBillToStreetNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToStreetNumber), input_name='BillToStreetNumber')), namespaceprefix_ , eol_))
-        if self.BillToEmail is not None:
-            namespaceprefix_ = self.BillToEmail_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToEmail_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToEmail>%s</%sBillToEmail>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToEmail), input_name='BillToEmail')), namespaceprefix_ , eol_))
-        if self.BillToMobilePhoneNumber is not None:
-            namespaceprefix_ = self.BillToMobilePhoneNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToMobilePhoneNumber_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToMobilePhoneNumber>%s</%sBillToMobilePhoneNumber>%s' % (namespaceprefix_ , self.gds_format_integer(self.BillToMobilePhoneNumber, input_name='BillToMobilePhoneNumber'), namespaceprefix_ , eol_))
-        if self.BillToRegistrationNumbers is not None:
-            namespaceprefix_ = self.BillToRegistrationNumbers_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToRegistrationNumbers_nsprefix_) else ''
-            self.BillToRegistrationNumbers.export(outfile, level, namespaceprefix_, namespacedef_='', name_='BillToRegistrationNumbers', pretty_print=pretty_print)
-        if self.BillToBusinessPartyTypeCode is not None:
-            namespaceprefix_ = self.BillToBusinessPartyTypeCode_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToBusinessPartyTypeCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToBusinessPartyTypeCode>%s</%sBillToBusinessPartyTypeCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToBusinessPartyTypeCode), input_name='BillToBusinessPartyTypeCode')), namespaceprefix_ , eol_))
+            outfile.write('<%sPlaceOfIncoterm>%s</%sPlaceOfIncoterm>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PlaceOfIncoterm), input_name='PlaceOfIncoterm')), namespaceprefix_ , eol_))
         if self.ShipmentPurpose is not None:
             namespaceprefix_ = self.ShipmentPurpose_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentPurpose_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -5881,20 +5961,14 @@ class ExportDeclaration(GeneratedsSuper):
             self.SedNumberType_nsprefix_ = child_.prefix
             # validate type SEDNumberType
             self.validate_SEDNumberType(self.SedNumberType)
-        elif nodeName_ == 'MxStateCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'MxStateCode')
-            value_ = self.gds_validate_string(value_, node, 'MxStateCode')
-            self.MxStateCode = value_
-            self.MxStateCode_nsprefix_ = child_.prefix
-            # validate type MxStateCodeType
-            self.validate_MxStateCodeType(self.MxStateCode)
         elif nodeName_ == 'InvoiceNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'InvoiceNumber')
             value_ = self.gds_validate_string(value_, node, 'InvoiceNumber')
             self.InvoiceNumber = value_
             self.InvoiceNumber_nsprefix_ = child_.prefix
+            # validate type InvoiceNumber
+            self.validate_InvoiceNumber(self.InvoiceNumber)
         elif nodeName_ == 'InvoiceDate':
             sval_ = child_.text
             dval_ = self.gds_parse_date(sval_)
@@ -5906,116 +5980,204 @@ class ExportDeclaration(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'BillToCompanyName')
             self.BillToCompanyName = value_
             self.BillToCompanyName_nsprefix_ = child_.prefix
-        elif nodeName_ == 'BillToContanctName':
+            # validate type CompanyNameValidator
+            self.validate_CompanyNameValidator(self.BillToCompanyName)
+        elif nodeName_ == 'BillToContactName':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'BillToContanctName')
-            value_ = self.gds_validate_string(value_, node, 'BillToContanctName')
-            self.BillToContanctName = value_
-            self.BillToContanctName_nsprefix_ = child_.prefix
-        elif nodeName_ == 'BillToAddressLine':
+            value_ = self.gds_parse_string(value_, node, 'BillToContactName')
+            value_ = self.gds_validate_string(value_, node, 'BillToContactName')
+            self.BillToContactName = value_
+            self.BillToContactName_nsprefix_ = child_.prefix
+            # validate type PersonName
+            self.validate_PersonName(self.BillToContactName)
+        elif nodeName_ == 'BillToAddressLine1':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'BillToAddressLine')
-            value_ = self.gds_validate_string(value_, node, 'BillToAddressLine')
-            self.BillToAddressLine.append(value_)
-            self.BillToAddressLine_nsprefix_ = child_.prefix
+            value_ = self.gds_parse_string(value_, node, 'BillToAddressLine1')
+            value_ = self.gds_validate_string(value_, node, 'BillToAddressLine1')
+            self.BillToAddressLine1 = value_
+            self.BillToAddressLine1_nsprefix_ = child_.prefix
             # validate type AddressLine
-            self.validate_AddressLine(self.BillToAddressLine[-1])
+            self.validate_AddressLine(self.BillToAddressLine1)
+        elif nodeName_ == 'BillToAddressLine2':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BillToAddressLine2')
+            value_ = self.gds_validate_string(value_, node, 'BillToAddressLine2')
+            self.BillToAddressLine2 = value_
+            self.BillToAddressLine2_nsprefix_ = child_.prefix
+            # validate type AddressLine
+            self.validate_AddressLine(self.BillToAddressLine2)
+        elif nodeName_ == 'BillToAddressLine3':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BillToAddressLine3')
+            value_ = self.gds_validate_string(value_, node, 'BillToAddressLine3')
+            self.BillToAddressLine3 = value_
+            self.BillToAddressLine3_nsprefix_ = child_.prefix
+            # validate type AddressLine
+            self.validate_AddressLine(self.BillToAddressLine3)
         elif nodeName_ == 'BillToCity':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'BillToCity')
             value_ = self.gds_validate_string(value_, node, 'BillToCity')
             self.BillToCity = value_
             self.BillToCity_nsprefix_ = child_.prefix
+            # validate type City
+            self.validate_City(self.BillToCity)
         elif nodeName_ == 'BillToPostcode':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'BillToPostcode')
             value_ = self.gds_validate_string(value_, node, 'BillToPostcode')
             self.BillToPostcode = value_
             self.BillToPostcode_nsprefix_ = child_.prefix
+            # validate type PostalCode
+            self.validate_PostalCode(self.BillToPostcode)
         elif nodeName_ == 'BillToSuburb':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'BillToSuburb')
             value_ = self.gds_validate_string(value_, node, 'BillToSuburb')
             self.BillToSuburb = value_
             self.BillToSuburb_nsprefix_ = child_.prefix
+            # validate type Suburb
+            self.validate_Suburb(self.BillToSuburb)
         elif nodeName_ == 'BillToState':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'BillToState')
             value_ = self.gds_validate_string(value_, node, 'BillToState')
             self.BillToState = value_
             self.BillToState_nsprefix_ = child_.prefix
+            # validate type DivisionCode
+            self.validate_DivisionCode(self.BillToState)
+        elif nodeName_ == 'BillToStateName':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BillToStateName')
+            value_ = self.gds_validate_string(value_, node, 'BillToStateName')
+            self.BillToStateName = value_
+            self.BillToStateName_nsprefix_ = child_.prefix
+            # validate type Division
+            self.validate_Division(self.BillToStateName)
+        elif nodeName_ == 'BillToCountryCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BillToCountryCode')
+            value_ = self.gds_validate_string(value_, node, 'BillToCountryCode')
+            self.BillToCountryCode = value_
+            self.BillToCountryCode_nsprefix_ = child_.prefix
+            # validate type CountryCode
+            self.validate_CountryCode(self.BillToCountryCode)
         elif nodeName_ == 'BillToCountryName':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'BillToCountryName')
             value_ = self.gds_validate_string(value_, node, 'BillToCountryName')
             self.BillToCountryName = value_
             self.BillToCountryName_nsprefix_ = child_.prefix
+            # validate type CountryName
+            self.validate_CountryName(self.BillToCountryName)
         elif nodeName_ == 'BillToPhoneNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'BillToPhoneNumber')
             value_ = self.gds_validate_string(value_, node, 'BillToPhoneNumber')
             self.BillToPhoneNumber = value_
             self.BillToPhoneNumber_nsprefix_ = child_.prefix
+            # validate type PhoneNumber
+            self.validate_PhoneNumber(self.BillToPhoneNumber)
         elif nodeName_ == 'BillToPhoneNumberExtn':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'BillToPhoneNumberExtn')
             value_ = self.gds_validate_string(value_, node, 'BillToPhoneNumberExtn')
             self.BillToPhoneNumberExtn = value_
             self.BillToPhoneNumberExtn_nsprefix_ = child_.prefix
+            # validate type PhoneExtension
+            self.validate_PhoneExtension(self.BillToPhoneNumberExtn)
         elif nodeName_ == 'BillToFaxNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'BillToFaxNumber')
             value_ = self.gds_validate_string(value_, node, 'BillToFaxNumber')
             self.BillToFaxNumber = value_
             self.BillToFaxNumber_nsprefix_ = child_.prefix
-        elif nodeName_ == 'BillToFederalTaxID':
+            # validate type PhoneNumber
+            self.validate_PhoneNumber(self.BillToFaxNumber)
+        elif nodeName_ == 'BillToStreetName':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'BillToFederalTaxID')
-            value_ = self.gds_validate_string(value_, node, 'BillToFederalTaxID')
-            self.BillToFederalTaxID = value_
-            self.BillToFederalTaxID_nsprefix_ = child_.prefix
+            if value_:
+                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
+            else:
+                value_ = ""
+            value_ = self.gds_parse_string(value_, node, 'BillToStreetName')
+            value_ = self.gds_validate_string(value_, node, 'BillToStreetName')
+            self.BillToStreetName = value_
+            self.BillToStreetName_nsprefix_ = child_.prefix
+            # validate type StreetName
+            self.validate_StreetName(self.BillToStreetName)
+        elif nodeName_ == 'BillToBuildingName':
+            value_ = child_.text
+            if value_:
+                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
+            else:
+                value_ = ""
+            value_ = self.gds_parse_string(value_, node, 'BillToBuildingName')
+            value_ = self.gds_validate_string(value_, node, 'BillToBuildingName')
+            self.BillToBuildingName = value_
+            self.BillToBuildingName_nsprefix_ = child_.prefix
+            # validate type BuildingName
+            self.validate_BuildingName(self.BillToBuildingName)
+        elif nodeName_ == 'BillToStreetNumber':
+            value_ = child_.text
+            if value_:
+                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
+            else:
+                value_ = ""
+            value_ = self.gds_parse_string(value_, node, 'BillToStreetNumber')
+            value_ = self.gds_validate_string(value_, node, 'BillToStreetNumber')
+            self.BillToStreetNumber = value_
+            self.BillToStreetNumber_nsprefix_ = child_.prefix
+            # validate type StreetNumber
+            self.validate_StreetNumber(self.BillToStreetNumber)
+        elif nodeName_ == 'BillToEmail':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BillToEmail')
+            value_ = self.gds_validate_string(value_, node, 'BillToEmail')
+            self.BillToEmail = value_
+            self.BillToEmail_nsprefix_ = child_.prefix
+            # validate type EmailAddress
+            self.validate_EmailAddress(self.BillToEmail)
+        elif nodeName_ == 'BillToMobilePhoneNumber' and child_.text:
+            sval_ = child_.text
+            ival_ = self.gds_parse_integer(sval_, node, 'BillToMobilePhoneNumber')
+            if ival_ <= 0:
+                raise_parse_error(child_, 'requires positiveInteger')
+            ival_ = self.gds_validate_integer(ival_, node, 'BillToMobilePhoneNumber')
+            self.BillToMobilePhoneNumber = ival_
+            self.BillToMobilePhoneNumber_nsprefix_ = child_.prefix
+            # validate type MobilePhoneNumber
+            self.validate_MobilePhoneNumber(self.BillToMobilePhoneNumber)
+        elif nodeName_ == 'BillToRegistrationNumbers':
+            obj_ = RegistrationNumbers.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.BillToRegistrationNumbers = obj_
+            obj_.original_tagname_ = 'BillToRegistrationNumbers'
+        elif nodeName_ == 'BillToBusinessPartyTypeCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'BillToBusinessPartyTypeCode')
+            value_ = self.gds_validate_string(value_, node, 'BillToBusinessPartyTypeCode')
+            self.BillToBusinessPartyTypeCode = value_
+            self.BillToBusinessPartyTypeCode_nsprefix_ = child_.prefix
+            # validate type BusinessPartyTypeCode
+            self.validate_BusinessPartyTypeCode(self.BillToBusinessPartyTypeCode)
         elif nodeName_ == 'Remarks':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'Remarks')
             value_ = self.gds_validate_string(value_, node, 'Remarks')
             self.Remarks = value_
             self.Remarks_nsprefix_ = child_.prefix
-        elif nodeName_ == 'OtherCharges1' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'OtherCharges1')
-            fval_ = self.gds_validate_float(fval_, node, 'OtherCharges1')
-            self.OtherCharges1 = fval_
-            self.OtherCharges1_nsprefix_ = child_.prefix
-        elif nodeName_ == 'OtherCharges2' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'OtherCharges2')
-            fval_ = self.gds_validate_float(fval_, node, 'OtherCharges2')
-            self.OtherCharges2 = fval_
-            self.OtherCharges2_nsprefix_ = child_.prefix
-        elif nodeName_ == 'OtherCharges3' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'OtherCharges3')
-            fval_ = self.gds_validate_float(fval_, node, 'OtherCharges3')
-            self.OtherCharges3 = fval_
-            self.OtherCharges3_nsprefix_ = child_.prefix
-        elif nodeName_ == 'DestinationPort':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DestinationPort')
-            value_ = self.gds_validate_string(value_, node, 'DestinationPort')
-            self.DestinationPort = value_
-            self.DestinationPort_nsprefix_ = child_.prefix
+        elif nodeName_ == 'OtherCharges':
+            obj_ = OtherCharges.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.OtherCharges = obj_
+            obj_.original_tagname_ = 'OtherCharges'
         elif nodeName_ == 'TermsOfPayment':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'TermsOfPayment')
             value_ = self.gds_validate_string(value_, node, 'TermsOfPayment')
             self.TermsOfPayment = value_
             self.TermsOfPayment_nsprefix_ = child_.prefix
-        elif nodeName_ == 'PayerGSTVAT':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PayerGSTVAT')
-            value_ = self.gds_validate_string(value_, node, 'PayerGSTVAT')
-            self.PayerGSTVAT = value_
-            self.PayerGSTVAT_nsprefix_ = child_.prefix
         elif nodeName_ == 'SignatureImage':
             sval_ = child_.text
             if sval_ is not None:
@@ -6142,96 +6304,33 @@ class ExportDeclaration(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.ShipmentDocument = obj_
             obj_.original_tagname_ = 'ShipmentDocument'
-        elif nodeName_ == 'OtherCharges':
-            obj_ = OtherCharges.factory(parent_object_=self)
+        elif nodeName_ == 'InvoiceInstructions':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'InvoiceInstructions')
+            value_ = self.gds_validate_string(value_, node, 'InvoiceInstructions')
+            self.InvoiceInstructions = value_
+            self.InvoiceInstructions_nsprefix_ = child_.prefix
+            # validate type InvoiceInstructions
+            self.validate_InvoiceInstructions(self.InvoiceInstructions)
+        elif nodeName_ == 'CustomerDataTextEntries':
+            obj_ = CustomerDataTextEntries.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.OtherCharges = obj_
-            obj_.original_tagname_ = 'OtherCharges'
-        elif nodeName_ == 'BillToStateName':
+            self.CustomerDataTextEntries = obj_
+            obj_.original_tagname_ = 'CustomerDataTextEntries'
+        elif nodeName_ == 'PlaceOfIncoterm':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'BillToStateName')
-            value_ = self.gds_validate_string(value_, node, 'BillToStateName')
-            self.BillToStateName = value_
-            self.BillToStateName_nsprefix_ = child_.prefix
-            # validate type Division
-            self.validate_Division(self.BillToStateName)
-        elif nodeName_ == 'BillToCountryCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'BillToCountryCode')
-            value_ = self.gds_validate_string(value_, node, 'BillToCountryCode')
-            self.BillToCountryCode = value_
-            self.BillToCountryCode_nsprefix_ = child_.prefix
-            # validate type CountryCode
-            self.validate_CountryCode(self.BillToCountryCode)
-        elif nodeName_ == 'BillToStreetName':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'BillToStreetName')
-            value_ = self.gds_validate_string(value_, node, 'BillToStreetName')
-            self.BillToStreetName = value_
-            self.BillToStreetName_nsprefix_ = child_.prefix
-            # validate type StreetName
-            self.validate_StreetName(self.BillToStreetName)
-        elif nodeName_ == 'BillToBuildingName':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'BillToBuildingName')
-            value_ = self.gds_validate_string(value_, node, 'BillToBuildingName')
-            self.BillToBuildingName = value_
-            self.BillToBuildingName_nsprefix_ = child_.prefix
-            # validate type BuildingName
-            self.validate_BuildingName(self.BillToBuildingName)
-        elif nodeName_ == 'BillToStreetNumber':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'BillToStreetNumber')
-            value_ = self.gds_validate_string(value_, node, 'BillToStreetNumber')
-            self.BillToStreetNumber = value_
-            self.BillToStreetNumber_nsprefix_ = child_.prefix
-            # validate type StreetNumber
-            self.validate_StreetNumber(self.BillToStreetNumber)
-        elif nodeName_ == 'BillToEmail':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'BillToEmail')
-            value_ = self.gds_validate_string(value_, node, 'BillToEmail')
-            self.BillToEmail = value_
-            self.BillToEmail_nsprefix_ = child_.prefix
-            # validate type EmailAddress
-            self.validate_EmailAddress(self.BillToEmail)
-        elif nodeName_ == 'BillToMobilePhoneNumber' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'BillToMobilePhoneNumber')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'BillToMobilePhoneNumber')
-            self.BillToMobilePhoneNumber = ival_
-            self.BillToMobilePhoneNumber_nsprefix_ = child_.prefix
-            # validate type MobilePhoneNumber
-            self.validate_MobilePhoneNumber(self.BillToMobilePhoneNumber)
-        elif nodeName_ == 'BillToRegistrationNumbers':
-            obj_ = RegistrationNumbers2.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.BillToRegistrationNumbers = obj_
-            obj_.original_tagname_ = 'BillToRegistrationNumbers'
-        elif nodeName_ == 'BillToBusinessPartyTypeCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'BillToBusinessPartyTypeCode')
-            value_ = self.gds_validate_string(value_, node, 'BillToBusinessPartyTypeCode')
-            self.BillToBusinessPartyTypeCode = value_
-            self.BillToBusinessPartyTypeCode_nsprefix_ = child_.prefix
-            # validate type BusinessPartyTypeCode
-            self.validate_BusinessPartyTypeCode(self.BillToBusinessPartyTypeCode)
+            value_ = self.gds_parse_string(value_, node, 'PlaceOfIncoterm')
+            value_ = self.gds_validate_string(value_, node, 'PlaceOfIncoterm')
+            self.PlaceOfIncoterm = value_
+            self.PlaceOfIncoterm_nsprefix_ = child_.prefix
+            # validate type PlaceOfIncoterm
+            self.validate_PlaceOfIncoterm(self.PlaceOfIncoterm)
         elif nodeName_ == 'ShipmentPurpose':
             value_ = child_.text
+            if value_:
+                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
+            else:
+                value_ = ""
             value_ = self.gds_parse_string(value_, node, 'ShipmentPurpose')
             value_ = self.gds_validate_string(value_, node, 'ShipmentPurpose')
             self.ShipmentPurpose = value_
@@ -6261,16 +6360,16 @@ class ExportDeclaration(GeneratedsSuper):
             fval_ = self.gds_validate_decimal(fval_, node, 'InvoiceTotalNetWeight')
             self.InvoiceTotalNetWeight = fval_
             self.InvoiceTotalNetWeight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.InvoiceTotalNetWeight)
+            # validate type Invoice_Weight
+            self.validate_Invoice_Weight(self.InvoiceTotalNetWeight)
         elif nodeName_ == 'InvoiceTotalGrossWeight' and child_.text:
             sval_ = child_.text
             fval_ = self.gds_parse_decimal(sval_, node, 'InvoiceTotalGrossWeight')
             fval_ = self.gds_validate_decimal(fval_, node, 'InvoiceTotalGrossWeight')
             self.InvoiceTotalGrossWeight = fval_
             self.InvoiceTotalGrossWeight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.InvoiceTotalGrossWeight)
+            # validate type Invoice_Weight
+            self.validate_Invoice_Weight(self.InvoiceTotalGrossWeight)
         elif nodeName_ == 'InvoiceReferences':
             obj_ = InvoiceReferences.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -6461,7 +6560,7 @@ class OtherCharge(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['ADMIN', 'DELIV', 'DOCUM', 'EXPED', 'EXCHA', 'FRCST', 'SSRGE', 'LOGST', 'SOTHR', 'SPKGN', 'PICUP', 'HRCRG', 'VATCR', 'INSCH']
+            enumerations = ['ADMIN', 'DELIV', 'DOCUM', 'EXPED', 'EXCHA', 'FRCST', 'SSRGE', 'LOGST', 'SOTHR', 'SPKGN', 'PICUP', 'HRCRG', 'VATCR', 'INSCH', 'REVCH']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on OtherChargeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
@@ -6469,6 +6568,10 @@ class OtherCharge(GeneratedsSuper):
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on OtherChargeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 5:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on OtherChargeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def hasContent_(self):
@@ -6563,519 +6666,11 @@ class OtherCharge(GeneratedsSuper):
 # end class OtherCharge
 
 
-class CustomsDocuments(GeneratedsSuper):
-    """Export Declaration's level Customs Document details"""
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, CustomsDocument=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        if CustomsDocument is None:
-            self.CustomsDocument = []
-        else:
-            self.CustomsDocument = CustomsDocument
-        self.CustomsDocument_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, CustomsDocuments)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if CustomsDocuments.subclass:
-            return CustomsDocuments.subclass(*args_, **kwargs_)
-        else:
-            return CustomsDocuments(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_CustomsDocument(self):
-        return self.CustomsDocument
-    def set_CustomsDocument(self, CustomsDocument):
-        self.CustomsDocument = CustomsDocument
-    def add_CustomsDocument(self, value):
-        self.CustomsDocument.append(value)
-    def insert_CustomsDocument_at(self, index, value):
-        self.CustomsDocument.insert(index, value)
-    def replace_CustomsDocument_at(self, index, value):
-        self.CustomsDocument[index] = value
-    def hasContent_(self):
-        if (
-            self.CustomsDocument
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsDocuments', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CustomsDocuments')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'CustomsDocuments':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CustomsDocuments')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CustomsDocuments', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CustomsDocuments'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsDocuments', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        for CustomsDocument_ in self.CustomsDocument:
-            namespaceprefix_ = self.CustomsDocument_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsDocument_nsprefix_) else ''
-            CustomsDocument_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CustomsDocument', pretty_print=pretty_print)
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'CustomsDocument':
-            obj_ = CustomsDocument.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.CustomsDocument.append(obj_)
-            obj_.original_tagname_ = 'CustomsDocument'
-# end class CustomsDocuments
-
-
-class CustomsDocument(GeneratedsSuper):
-    """Export Declaration's level Customs Document entry"""
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, CustomsDocumentType=None, CustomsDocumentID=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.CustomsDocumentType = CustomsDocumentType
-        self.validate_CustomsDocumentType(self.CustomsDocumentType)
-        self.CustomsDocumentType_nsprefix_ = None
-        self.CustomsDocumentID = CustomsDocumentID
-        self.validate_CustomsDocumentID(self.CustomsDocumentID)
-        self.CustomsDocumentID_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, CustomsDocument)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if CustomsDocument.subclass:
-            return CustomsDocument.subclass(*args_, **kwargs_)
-        else:
-            return CustomsDocument(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_CustomsDocumentType(self):
-        return self.CustomsDocumentType
-    def set_CustomsDocumentType(self, CustomsDocumentType):
-        self.CustomsDocumentType = CustomsDocumentType
-    def get_CustomsDocumentID(self):
-        return self.CustomsDocumentID
-    def set_CustomsDocumentID(self, CustomsDocumentID):
-        self.CustomsDocumentID = CustomsDocumentID
-    def validate_CustomsDocumentType(self, value):
-        result = True
-        # Validate type CustomsDocumentType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['972', 'AHC', 'ATA', 'ATR', 'CHD', 'CHP', 'CIT', 'COO', 'DEX', 'EU1', 'EU2', 'EUS', 'FMA', 'PHY', 'VET', 'VEX', 'CRL', 'CSD', 'PPY', 'CI2', 'CIV', 'DOV', 'INV', 'PFI', 'ALC', 'HLC', 'JLC', 'LIC', 'LNP', 'PLI', 'DLI', 'NID', 'PAS', 'CHA', 'CPA', 'POA', 'BEX', 'DGD', 'IPA', 'T2M', 'TAD', 'TCS', 'ROD', 'EXL', 'HWB', '972', 'AHC', 'ATA', 'ATR', 'CHD', 'CHP', 'CIT', 'COO', 'DEX', 'EU1', 'EU2', 'EUS', 'FMA', 'PHY', 'VET', 'VEX', 'CRL', 'CSD', 'PPY', 'CI2', 'CIV', 'DOV', 'INV', 'PFI', 'ALC', 'HLC', 'JLC', 'LIC', 'LNP', 'PLI', 'DLI', 'NID', 'PAS', 'CHA', 'CPA', 'POA', 'BEX', 'DGD', 'IPA', 'T2M', 'TAD', 'TCS', 'ROD', 'EXL', 'HWB']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on CustomsDocumentType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CustomsDocumentType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_CustomsDocumentID(self, value):
-        result = True
-        # Validate type CustomsDocumentID, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CustomsDocumentID' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.CustomsDocumentType is not None or
-            self.CustomsDocumentID is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsDocument', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CustomsDocument')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'CustomsDocument':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CustomsDocument')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CustomsDocument', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CustomsDocument'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsDocument', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.CustomsDocumentType is not None:
-            namespaceprefix_ = self.CustomsDocumentType_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsDocumentType_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCustomsDocumentType>%s</%sCustomsDocumentType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomsDocumentType), input_name='CustomsDocumentType')), namespaceprefix_ , eol_))
-        if self.CustomsDocumentID is not None:
-            namespaceprefix_ = self.CustomsDocumentID_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsDocumentID_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCustomsDocumentID>%s</%sCustomsDocumentID>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomsDocumentID), input_name='CustomsDocumentID')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'CustomsDocumentType':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CustomsDocumentType')
-            value_ = self.gds_validate_string(value_, node, 'CustomsDocumentType')
-            self.CustomsDocumentType = value_
-            self.CustomsDocumentType_nsprefix_ = child_.prefix
-            # validate type CustomsDocumentType
-            self.validate_CustomsDocumentType(self.CustomsDocumentType)
-        elif nodeName_ == 'CustomsDocumentID':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CustomsDocumentID')
-            value_ = self.gds_validate_string(value_, node, 'CustomsDocumentID')
-            self.CustomsDocumentID = value_
-            self.CustomsDocumentID_nsprefix_ = child_.prefix
-            # validate type CustomsDocumentID
-            self.validate_CustomsDocumentID(self.CustomsDocumentID)
-# end class CustomsDocument
-
-
-class InvoiceReferences(GeneratedsSuper):
-    """Customs Invoice References"""
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, InvoiceReference=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        if InvoiceReference is None:
-            self.InvoiceReference = []
-        else:
-            self.InvoiceReference = InvoiceReference
-        self.InvoiceReference_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, InvoiceReferences)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if InvoiceReferences.subclass:
-            return InvoiceReferences.subclass(*args_, **kwargs_)
-        else:
-            return InvoiceReferences(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_InvoiceReference(self):
-        return self.InvoiceReference
-    def set_InvoiceReference(self, InvoiceReference):
-        self.InvoiceReference = InvoiceReference
-    def add_InvoiceReference(self, value):
-        self.InvoiceReference.append(value)
-    def insert_InvoiceReference_at(self, index, value):
-        self.InvoiceReference.insert(index, value)
-    def replace_InvoiceReference_at(self, index, value):
-        self.InvoiceReference[index] = value
-    def hasContent_(self):
-        if (
-            self.InvoiceReference
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceReferences', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InvoiceReferences')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'InvoiceReferences':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InvoiceReferences')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InvoiceReferences', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InvoiceReferences'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceReferences', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        for InvoiceReference_ in self.InvoiceReference:
-            namespaceprefix_ = self.InvoiceReference_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceReference_nsprefix_) else ''
-            InvoiceReference_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='InvoiceReference', pretty_print=pretty_print)
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'InvoiceReference':
-            obj_ = InvoiceReference.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.InvoiceReference.append(obj_)
-            obj_.original_tagname_ = 'InvoiceReference'
-# end class InvoiceReferences
-
-
-class InvoiceReference(GeneratedsSuper):
-    """Customs Invoice Reference entry"""
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, InvoiceReferenceType=None, InvoiceReferenceNumber=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.InvoiceReferenceType = InvoiceReferenceType
-        self.validate_InvoiceReferenceType(self.InvoiceReferenceType)
-        self.InvoiceReferenceType_nsprefix_ = None
-        self.InvoiceReferenceNumber = InvoiceReferenceNumber
-        self.validate_InvoiceReferenceNumber(self.InvoiceReferenceNumber)
-        self.InvoiceReferenceNumber_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, InvoiceReference)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if InvoiceReference.subclass:
-            return InvoiceReference.subclass(*args_, **kwargs_)
-        else:
-            return InvoiceReference(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_InvoiceReferenceType(self):
-        return self.InvoiceReferenceType
-    def set_InvoiceReferenceType(self, InvoiceReferenceType):
-        self.InvoiceReferenceType = InvoiceReferenceType
-    def get_InvoiceReferenceNumber(self):
-        return self.InvoiceReferenceNumber
-    def set_InvoiceReferenceNumber(self, InvoiceReferenceNumber):
-        self.InvoiceReferenceNumber = InvoiceReferenceNumber
-    def validate_InvoiceReferenceType(self, value):
-        result = True
-        # Validate type InvoiceReferenceType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['CON', 'CUN', 'UCN', 'MRN', 'OID', 'PON']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on InvoiceReferenceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on InvoiceReferenceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_InvoiceReferenceNumber(self, value):
-        result = True
-        # Validate type InvoiceReferenceNumber, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on InvoiceReferenceNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.InvoiceReferenceType is not None or
-            self.InvoiceReferenceNumber is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceReference', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InvoiceReference')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'InvoiceReference':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InvoiceReference')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InvoiceReference', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InvoiceReference'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceReference', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.InvoiceReferenceType is not None:
-            namespaceprefix_ = self.InvoiceReferenceType_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceReferenceType_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sInvoiceReferenceType>%s</%sInvoiceReferenceType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.InvoiceReferenceType), input_name='InvoiceReferenceType')), namespaceprefix_ , eol_))
-        if self.InvoiceReferenceNumber is not None:
-            namespaceprefix_ = self.InvoiceReferenceNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceReferenceNumber_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sInvoiceReferenceNumber>%s</%sInvoiceReferenceNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.InvoiceReferenceNumber), input_name='InvoiceReferenceNumber')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'InvoiceReferenceType':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'InvoiceReferenceType')
-            value_ = self.gds_validate_string(value_, node, 'InvoiceReferenceType')
-            self.InvoiceReferenceType = value_
-            self.InvoiceReferenceType_nsprefix_ = child_.prefix
-            # validate type InvoiceReferenceType
-            self.validate_InvoiceReferenceType(self.InvoiceReferenceType)
-        elif nodeName_ == 'InvoiceReferenceNumber':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'InvoiceReferenceNumber')
-            value_ = self.gds_validate_string(value_, node, 'InvoiceReferenceNumber')
-            self.InvoiceReferenceNumber = value_
-            self.InvoiceReferenceNumber_nsprefix_ = child_.prefix
-            # validate type InvoiceReferenceNumber
-            self.validate_InvoiceReferenceNumber(self.InvoiceReferenceNumber)
-# end class InvoiceReference
-
-
 class ExportLineItem(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, LineNumber=None, Quantity=None, QuantityUnit=None, Description=None, Value=None, IsDomestic=None, CommodityCode=None, ScheduleB=None, ECCN=None, Weight=None, GrossWeight=None, License=None, LicenseSymbol=None, ManufactureCountryCode=None, ManufactureCountryName=None, ImportTaxManagedOutsideDhlExpress=None, ImportCommodityCode=None, ItemReferences=None, CustomsPaperworks=None, gds_collector_=None, **kwargs_):
+    def __init__(self, LineNumber=None, Quantity=None, QuantityUnit=None, Description=None, Value=None, IsDomestic=None, CommodityCode=None, ScheduleB=None, ECCN=None, Weight=None, GrossWeight=None, License=None, LicenseSymbol=None, ManufactureCountryCode=None, ManufactureCountryName=None, ImportTaxManagedOutsideDhlExpress=None, AdditionalInformation=None, ImportCommodityCode=None, ItemReferences=None, CustomsPaperworks=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -7106,7 +6701,7 @@ class ExportLineItem(GeneratedsSuper):
         self.validate_ScheduleB(self.ScheduleB)
         self.ScheduleB_nsprefix_ = None
         self.ECCN = ECCN
-        self.validate_ECCNType8(self.ECCN)
+        self.validate_ECCNType1(self.ECCN)
         self.ECCN_nsprefix_ = None
         self.Weight = Weight
         self.Weight_nsprefix_ = None
@@ -7126,6 +6721,8 @@ class ExportLineItem(GeneratedsSuper):
         self.ImportTaxManagedOutsideDhlExpress = ImportTaxManagedOutsideDhlExpress
         self.validate_ImportTaxManagedOutsideDhlExpress(self.ImportTaxManagedOutsideDhlExpress)
         self.ImportTaxManagedOutsideDhlExpress_nsprefix_ = None
+        self.AdditionalInformation = AdditionalInformation
+        self.AdditionalInformation_nsprefix_ = None
         self.ImportCommodityCode = ImportCommodityCode
         self.validate_CommodityCode(self.ImportCommodityCode)
         self.ImportCommodityCode_nsprefix_ = None
@@ -7212,6 +6809,10 @@ class ExportLineItem(GeneratedsSuper):
         return self.ImportTaxManagedOutsideDhlExpress
     def set_ImportTaxManagedOutsideDhlExpress(self, ImportTaxManagedOutsideDhlExpress):
         self.ImportTaxManagedOutsideDhlExpress = ImportTaxManagedOutsideDhlExpress
+    def get_AdditionalInformation(self):
+        return self.AdditionalInformation
+    def set_AdditionalInformation(self, AdditionalInformation):
+        self.AdditionalInformation = AdditionalInformation
     def get_ImportCommodityCode(self):
         return self.ImportCommodityCode
     def set_ImportCommodityCode(self, ImportCommodityCode):
@@ -7260,7 +6861,7 @@ class ExportLineItem(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['UOM', 'BOX', '2GM', '2M', '2M3', '3M3', 'M3', 'DPR', 'DOZ', '2NO', 'PCS', 'GM', 'GRS', 'KG', 'L', 'M', '3GM', '3L', 'X', 'NO', '2KG', 'PRS', '2L', '3KG', 'CM2', '2M2', '3M2', 'M2', '4M2', '3M', 'CM', 'CONE', 'CT', 'EA', 'LBS', 'RILL', 'ROLL', 'SET', 'TU', 'YDS']
+            enumerations = ['BOX', '2GM', '2M', '2M3', '3M3', 'M3', 'DPR', 'DOZ', '2NO', 'PCS', 'GM', 'GRS', 'KG', 'L', 'M', '3GM', '3L', 'X', 'NO', '2KG', 'PRS', '2L', '3KG', 'CM2', '2M2', '3M2', 'M2', '4M2', '3M', 'CM', 'CONE', 'CT', 'EA', 'LBS', 'RILL', 'ROLL', 'SET', 'TU', 'YDS']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on QuantityUnit' % {"value" : encode_str_2_3(value), "lineno": lineno} )
@@ -7285,17 +6886,17 @@ class ExportLineItem(GeneratedsSuper):
         return result
     def validate_ValueType(self, value):
         result = True
-        # Validate type ValueType, a restriction on xsd:float.
+        # Validate type ValueType, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, float):
+            if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (float)' % {"value": value, "lineno": lineno, })
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 0.00:
+            if value < 0.000:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on ValueType' % {"value": value, "lineno": lineno} )
                 result = False
-            if value > 9999999999.99:
+            if value > 999999999999999.999:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on ValueType' % {"value": value, "lineno": lineno} )
                 result = False
@@ -7327,11 +6928,11 @@ class ExportLineItem(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) > 20:
+            if len(value) > 18:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CommodityCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
-            if len(value) < 1:
+            if len(value) < 2:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CommodityCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
@@ -7349,9 +6950,9 @@ class ExportLineItem(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ScheduleB' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_ECCNType8(self, value):
+    def validate_ECCNType1(self, value):
         result = True
-        # Validate type ECCNType8, a restriction on xsd:string.
+        # Validate type ECCNType1, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
@@ -7359,11 +6960,11 @@ class ExportLineItem(GeneratedsSuper):
                 return False
             if len(value) > 30:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ECCNType8' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ECCNType1' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 0:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ECCNType8' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ECCNType1' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_LicenseNumber(self, value):
@@ -7438,6 +7039,7 @@ class ExportLineItem(GeneratedsSuper):
             self.ManufactureCountryCode is not None or
             self.ManufactureCountryName is not None or
             self.ImportTaxManagedOutsideDhlExpress is not None or
+            self.AdditionalInformation is not None or
             self.ImportCommodityCode is not None or
             self.ItemReferences is not None or
             self.CustomsPaperworks is not None
@@ -7494,7 +7096,7 @@ class ExportLineItem(GeneratedsSuper):
         if self.Value is not None:
             namespaceprefix_ = self.Value_nsprefix_ + ':' if (UseCapturedNS_ and self.Value_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sValue>%s</%sValue>%s' % (namespaceprefix_ , self.gds_format_float(self.Value, input_name='Value'), namespaceprefix_ , eol_))
+            outfile.write('<%sValue>%s</%sValue>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Value, input_name='Value'), namespaceprefix_ , eol_))
         if self.IsDomestic is not None:
             namespaceprefix_ = self.IsDomestic_nsprefix_ + ':' if (UseCapturedNS_ and self.IsDomestic_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -7536,6 +7138,9 @@ class ExportLineItem(GeneratedsSuper):
             namespaceprefix_ = self.ImportTaxManagedOutsideDhlExpress_nsprefix_ + ':' if (UseCapturedNS_ and self.ImportTaxManagedOutsideDhlExpress_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sImportTaxManagedOutsideDhlExpress>%s</%sImportTaxManagedOutsideDhlExpress>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ImportTaxManagedOutsideDhlExpress), input_name='ImportTaxManagedOutsideDhlExpress')), namespaceprefix_ , eol_))
+        if self.AdditionalInformation is not None:
+            namespaceprefix_ = self.AdditionalInformation_nsprefix_ + ':' if (UseCapturedNS_ and self.AdditionalInformation_nsprefix_) else ''
+            self.AdditionalInformation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AdditionalInformation', pretty_print=pretty_print)
         if self.ImportCommodityCode is not None:
             namespaceprefix_ = self.ImportCommodityCode_nsprefix_ + ':' if (UseCapturedNS_ and self.ImportCommodityCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -7598,8 +7203,8 @@ class ExportLineItem(GeneratedsSuper):
             self.validate_DescriptionType(self.Description)
         elif nodeName_ == 'Value' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'Value')
-            fval_ = self.gds_validate_float(fval_, node, 'Value')
+            fval_ = self.gds_parse_decimal(sval_, node, 'Value')
+            fval_ = self.gds_validate_decimal(fval_, node, 'Value')
             self.Value = fval_
             self.Value_nsprefix_ = child_.prefix
             # validate type ValueType
@@ -7634,8 +7239,8 @@ class ExportLineItem(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'ECCN')
             self.ECCN = value_
             self.ECCN_nsprefix_ = child_.prefix
-            # validate type ECCNType8
-            self.validate_ECCNType8(self.ECCN)
+            # validate type ECCNType1
+            self.validate_ECCNType1(self.ECCN)
         elif nodeName_ == 'Weight':
             obj_ = WeightType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -7683,6 +7288,11 @@ class ExportLineItem(GeneratedsSuper):
             self.ImportTaxManagedOutsideDhlExpress_nsprefix_ = child_.prefix
             # validate type ImportTaxManagedOutsideDhlExpress
             self.validate_ImportTaxManagedOutsideDhlExpress(self.ImportTaxManagedOutsideDhlExpress)
+        elif nodeName_ == 'AdditionalInformation':
+            obj_ = AdditionalInformationType.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.AdditionalInformation = obj_
+            obj_.original_tagname_ = 'AdditionalInformation'
         elif nodeName_ == 'ImportCommodityCode':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'ImportCommodityCode')
@@ -7702,6 +7312,125 @@ class ExportLineItem(GeneratedsSuper):
             self.CustomsPaperworks = obj_
             obj_.original_tagname_ = 'CustomsPaperworks'
 # end class ExportLineItem
+
+
+class AdditionalInformationType(GeneratedsSuper):
+    """Additional Informations for export line item. Printed only when using
+    Customs Invoice templates COMMERCIAL_INVOICE_04 or
+    COMMERCIAL_INVOICE_P_10 or COMMERCIAL_INVOICE_L_10"""
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, AdditionalInformationText=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if AdditionalInformationText is None:
+            self.AdditionalInformationText = []
+        else:
+            self.AdditionalInformationText = AdditionalInformationText
+        self.AdditionalInformationText_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, AdditionalInformationType)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if AdditionalInformationType.subclass:
+            return AdditionalInformationType.subclass(*args_, **kwargs_)
+        else:
+            return AdditionalInformationType(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_AdditionalInformationText(self):
+        return self.AdditionalInformationText
+    def set_AdditionalInformationText(self, AdditionalInformationText):
+        self.AdditionalInformationText = AdditionalInformationText
+    def add_AdditionalInformationText(self, value):
+        self.AdditionalInformationText.append(value)
+    def insert_AdditionalInformationText_at(self, index, value):
+        self.AdditionalInformationText.insert(index, value)
+    def replace_AdditionalInformationText_at(self, index, value):
+        self.AdditionalInformationText[index] = value
+    def validate_AdditionalInformationText(self, value):
+        result = True
+        # Validate type AdditionalInformationText, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            pass
+        return result
+    def hasContent_(self):
+        if (
+            self.AdditionalInformationText
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AdditionalInformationType', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AdditionalInformationType')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'AdditionalInformationType':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AdditionalInformationType')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AdditionalInformationType', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AdditionalInformationType'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AdditionalInformationType', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for AdditionalInformationText_ in self.AdditionalInformationText:
+            namespaceprefix_ = self.AdditionalInformationText_nsprefix_ + ':' if (UseCapturedNS_ and self.AdditionalInformationText_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAdditionalInformationText>%s</%sAdditionalInformationText>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(AdditionalInformationText_), input_name='AdditionalInformationText')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'AdditionalInformationText':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AdditionalInformationText')
+            value_ = self.gds_validate_string(value_, node, 'AdditionalInformationText')
+            self.AdditionalInformationText.append(value_)
+            self.AdditionalInformationText_nsprefix_ = child_.prefix
+            # validate type AdditionalInformationText
+            self.validate_AdditionalInformationText(self.AdditionalInformationText[-1])
+# end class AdditionalInformationType
 
 
 class ItemReferences(GeneratedsSuper):
@@ -7856,7 +7585,7 @@ class ItemReference(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['AFE', 'BRD', 'DGC', 'DO', 'ECN', 'INB', 'MAK', 'MDL', 'PAN', 'PON', 'SKU', 'SNO', 'SON', 'OID', 'CID']
+            enumerations = ['AAJ', 'ABW', 'AFE', 'ALX', 'BRD', 'DGC', 'ECN', 'INB', 'MAK', 'PAN', 'PON', 'SE', 'SON', 'OID']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on ItemReferenceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
@@ -7864,6 +7593,10 @@ class ItemReference(GeneratedsSuper):
             if len(value) > 3:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ItemReferenceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ItemReferenceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_ItemReferenceNumber(self, value):
@@ -8110,7 +7843,7 @@ class CustomsPaperwork(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['972', 'AHC', 'ATA', 'ATR', 'CHD', 'CHP', 'CIT', 'COO', 'DEX', 'EU1', 'EU2', 'EUS', 'FMA', 'PHY', 'VET', 'VEX', 'CRL', 'CSD', 'PPY', 'CI2', 'CIV', 'DOV', 'INV', 'PFI', 'ALC', 'HLC', 'JLC', 'LIC', 'LNP', 'PLI', 'DLI', 'NID', 'PAS', 'CHA', 'CPA', 'POA', 'BEX', 'DGD', 'IPA', 'T2M', 'TAD', 'TCS', 'ROD', 'EXL', 'HWB', '972', 'AHC', 'ATA', 'ATR', 'CHD', 'CHP', 'CIT', 'COO', 'DEX', 'EU1', 'EU2', 'EUS', 'FMA', 'PHY', 'VET', 'VEX', 'CRL', 'CSD', 'PPY', 'CI2', 'CIV', 'DOV', 'INV', 'PFI', 'ALC', 'HLC', 'JLC', 'LIC', 'LNP', 'PLI', 'DLI', 'NID', 'PAS', 'CHA', 'CPA', 'POA', 'BEX', 'DGD', 'IPA', 'T2M', 'TAD', 'TCS', 'ROD', 'EXL', 'HWB']
+            enumerations = ['972', 'AHC', 'ATA', 'ATR', 'CHD', 'CHP', 'CIT', 'COO', 'DEX', 'EU1', 'EU2', 'EUS', 'FMA', 'PHY', 'VET', 'VEX', 'CRL', 'CSD', 'PPY', 'CI2', 'CIV', 'DOV', 'INV', 'PFI', 'ALC', 'HLC', 'JLC', 'LIC', 'LNP', 'PLI', 'DLI', 'NID', 'PAS', 'CHA', 'CPA', 'POA', 'BEX', 'DGD', 'IPA', 'T2M', 'TAD', 'TCS', 'ROD', 'EXL', 'HWB']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on CustomsPaperworkType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
@@ -8118,6 +7851,10 @@ class CustomsPaperwork(GeneratedsSuper):
             if len(value) > 3:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CustomsPaperworkType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CustomsPaperworkType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_CustomsPaperworkID(self, value):
@@ -8216,7 +7953,7 @@ class Piece(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, PieceID=None, PackageType=None, Weight=None, DimWeight=None, Width=None, Height=None, Depth=None, PieceContents=None, PieceReference=None, AdditionalInformation=None, gds_collector_=None, **kwargs_):
+    def __init__(self, PieceID=None, PackageType=None, Weight=None, Width=None, Height=None, Depth=None, PieceContents=None, PieceReference=None, AdditionalInformation=None, ParentPieceIdentificationNumber=None, PieceIdentificationNumber=None, UseOwnPieceIdentificationNumber='N', gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -8229,11 +7966,8 @@ class Piece(GeneratedsSuper):
         self.validate_PackageType(self.PackageType)
         self.PackageType_nsprefix_ = None
         self.Weight = Weight
-        self.validate_Weight(self.Weight)
+        self.validate_Piece_Weight(self.Weight)
         self.Weight_nsprefix_ = None
-        self.DimWeight = DimWeight
-        self.validate_Weight(self.DimWeight)
-        self.DimWeight_nsprefix_ = None
         self.Width = Width
         self.Width_nsprefix_ = None
         self.Height = Height
@@ -8250,6 +7984,15 @@ class Piece(GeneratedsSuper):
         self.PieceReference_nsprefix_ = None
         self.AdditionalInformation = AdditionalInformation
         self.AdditionalInformation_nsprefix_ = None
+        self.ParentPieceIdentificationNumber = ParentPieceIdentificationNumber
+        self.validate_PieceID(self.ParentPieceIdentificationNumber)
+        self.ParentPieceIdentificationNumber_nsprefix_ = None
+        self.PieceIdentificationNumber = PieceIdentificationNumber
+        self.validate_PieceID(self.PieceIdentificationNumber)
+        self.PieceIdentificationNumber_nsprefix_ = None
+        self.UseOwnPieceIdentificationNumber = UseOwnPieceIdentificationNumber
+        self.validate_UseOwnPieceIdentificationNumberType(self.UseOwnPieceIdentificationNumber)
+        self.UseOwnPieceIdentificationNumber_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -8277,10 +8020,6 @@ class Piece(GeneratedsSuper):
         return self.Weight
     def set_Weight(self, Weight):
         self.Weight = Weight
-    def get_DimWeight(self):
-        return self.DimWeight
-    def set_DimWeight(self, DimWeight):
-        self.DimWeight = DimWeight
     def get_Width(self):
         return self.Width
     def set_Width(self, Width):
@@ -8311,6 +8050,18 @@ class Piece(GeneratedsSuper):
         return self.AdditionalInformation
     def set_AdditionalInformation(self, AdditionalInformation):
         self.AdditionalInformation = AdditionalInformation
+    def get_ParentPieceIdentificationNumber(self):
+        return self.ParentPieceIdentificationNumber
+    def set_ParentPieceIdentificationNumber(self, ParentPieceIdentificationNumber):
+        self.ParentPieceIdentificationNumber = ParentPieceIdentificationNumber
+    def get_PieceIdentificationNumber(self):
+        return self.PieceIdentificationNumber
+    def set_PieceIdentificationNumber(self, PieceIdentificationNumber):
+        self.PieceIdentificationNumber = PieceIdentificationNumber
+    def get_UseOwnPieceIdentificationNumber(self):
+        return self.UseOwnPieceIdentificationNumber
+    def set_UseOwnPieceIdentificationNumber(self, UseOwnPieceIdentificationNumber):
+        self.UseOwnPieceIdentificationNumber = UseOwnPieceIdentificationNumber
     def validate_PieceID(self, value):
         result = True
         # Validate type PieceID, a restriction on xsd:string.
@@ -8343,9 +8094,9 @@ class Piece(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on PackageType' % {"value": encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_Weight(self, value):
+    def validate_Piece_Weight(self, value):
         result = True
-        # Validate type Weight, a restriction on xsd:decimal.
+        # Validate type Piece_Weight, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
@@ -8353,15 +8104,11 @@ class Piece(GeneratedsSuper):
                 return False
             if value < 0.000:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Piece_Weight' % {"value": value, "lineno": lineno} )
                 result = False
-            if value > 999999.999:
+            if value > 99999999999.999:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Piece_Weight' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def validate_PieceContents(self, value):
@@ -8377,18 +8124,39 @@ class Piece(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PieceContents' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
+    def validate_UseOwnPieceIdentificationNumberType(self, value):
+        result = True
+        # Validate type UseOwnPieceIdentificationNumberType, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['Y', 'N']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on UseOwnPieceIdentificationNumberType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) > 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on UseOwnPieceIdentificationNumberType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
     def hasContent_(self):
         if (
             self.PieceID is not None or
             self.PackageType is not None or
             self.Weight is not None or
-            self.DimWeight is not None or
             self.Width is not None or
             self.Height is not None or
             self.Depth is not None or
             self.PieceContents is not None or
             self.PieceReference or
-            self.AdditionalInformation is not None
+            self.AdditionalInformation is not None or
+            self.ParentPieceIdentificationNumber is not None or
+            self.PieceIdentificationNumber is not None or
+            self.UseOwnPieceIdentificationNumber != "N"
         ):
             return True
         else:
@@ -8435,10 +8203,6 @@ class Piece(GeneratedsSuper):
             namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Weight, input_name='Weight'), namespaceprefix_ , eol_))
-        if self.DimWeight is not None:
-            namespaceprefix_ = self.DimWeight_nsprefix_ + ':' if (UseCapturedNS_ and self.DimWeight_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDimWeight>%s</%sDimWeight>%s' % (namespaceprefix_ , self.gds_format_decimal(self.DimWeight, input_name='DimWeight'), namespaceprefix_ , eol_))
         if self.Width is not None:
             namespaceprefix_ = self.Width_nsprefix_ + ':' if (UseCapturedNS_ and self.Width_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -8461,6 +8225,18 @@ class Piece(GeneratedsSuper):
         if self.AdditionalInformation is not None:
             namespaceprefix_ = self.AdditionalInformation_nsprefix_ + ':' if (UseCapturedNS_ and self.AdditionalInformation_nsprefix_) else ''
             self.AdditionalInformation.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AdditionalInformation', pretty_print=pretty_print)
+        if self.ParentPieceIdentificationNumber is not None:
+            namespaceprefix_ = self.ParentPieceIdentificationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.ParentPieceIdentificationNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sParentPieceIdentificationNumber>%s</%sParentPieceIdentificationNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ParentPieceIdentificationNumber), input_name='ParentPieceIdentificationNumber')), namespaceprefix_ , eol_))
+        if self.PieceIdentificationNumber is not None:
+            namespaceprefix_ = self.PieceIdentificationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.PieceIdentificationNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPieceIdentificationNumber>%s</%sPieceIdentificationNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PieceIdentificationNumber), input_name='PieceIdentificationNumber')), namespaceprefix_ , eol_))
+        if self.UseOwnPieceIdentificationNumber != "N":
+            namespaceprefix_ = self.UseOwnPieceIdentificationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.UseOwnPieceIdentificationNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sUseOwnPieceIdentificationNumber>%s</%sUseOwnPieceIdentificationNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.UseOwnPieceIdentificationNumber), input_name='UseOwnPieceIdentificationNumber')), namespaceprefix_ , eol_))
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -8497,16 +8273,8 @@ class Piece(GeneratedsSuper):
             fval_ = self.gds_validate_decimal(fval_, node, 'Weight')
             self.Weight = fval_
             self.Weight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.Weight)
-        elif nodeName_ == 'DimWeight' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_decimal(sval_, node, 'DimWeight')
-            fval_ = self.gds_validate_decimal(fval_, node, 'DimWeight')
-            self.DimWeight = fval_
-            self.DimWeight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.DimWeight)
+            # validate type Piece_Weight
+            self.validate_Piece_Weight(self.Weight)
         elif nodeName_ == 'Width' and child_.text:
             sval_ = child_.text
             ival_ = self.gds_parse_integer(sval_, node, 'Width')
@@ -8549,6 +8317,30 @@ class Piece(GeneratedsSuper):
             obj_.build(child_, gds_collector_=gds_collector_)
             self.AdditionalInformation = obj_
             obj_.original_tagname_ = 'AdditionalInformation'
+        elif nodeName_ == 'ParentPieceIdentificationNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ParentPieceIdentificationNumber')
+            value_ = self.gds_validate_string(value_, node, 'ParentPieceIdentificationNumber')
+            self.ParentPieceIdentificationNumber = value_
+            self.ParentPieceIdentificationNumber_nsprefix_ = child_.prefix
+            # validate type PieceID
+            self.validate_PieceID(self.ParentPieceIdentificationNumber)
+        elif nodeName_ == 'PieceIdentificationNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PieceIdentificationNumber')
+            value_ = self.gds_validate_string(value_, node, 'PieceIdentificationNumber')
+            self.PieceIdentificationNumber = value_
+            self.PieceIdentificationNumber_nsprefix_ = child_.prefix
+            # validate type PieceID
+            self.validate_PieceID(self.PieceIdentificationNumber)
+        elif nodeName_ == 'UseOwnPieceIdentificationNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'UseOwnPieceIdentificationNumber')
+            value_ = self.gds_validate_string(value_, node, 'UseOwnPieceIdentificationNumber')
+            self.UseOwnPieceIdentificationNumber = value_
+            self.UseOwnPieceIdentificationNumber_nsprefix_ = child_.prefix
+            # validate type UseOwnPieceIdentificationNumberType
+            self.validate_UseOwnPieceIdentificationNumberType(self.UseOwnPieceIdentificationNumber)
 # end class Piece
 
 
@@ -9091,7 +8883,7 @@ class ShipValResponsePiece(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, PieceNumber=None, Depth=None, Width=None, Height=None, Weight=None, PackageType=None, DimWeight=None, PieceContents=None, PieceReference=None, DataIdentifier=None, LicensePlate=None, LicensePlateBarCode=None, gds_collector_=None, **kwargs_):
+    def __init__(self, PieceNumber=None, Depth=None, Width=None, Height=None, Weight=None, PackageType=None, DimWeight=None, PieceContents=None, PieceReference=None, DataIdentifier=None, LicensePlate=None, LicensePlateBarCode=None, QRCode=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -9131,6 +8923,8 @@ class ShipValResponsePiece(GeneratedsSuper):
         self.LicensePlateBarCode = LicensePlateBarCode
         self.validate_BarCode(self.LicensePlateBarCode)
         self.LicensePlateBarCode_nsprefix_ = None
+        self.QRCode = QRCode
+        self.QRCode_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -9200,6 +8994,10 @@ class ShipValResponsePiece(GeneratedsSuper):
         return self.LicensePlateBarCode
     def set_LicensePlateBarCode(self, LicensePlateBarCode):
         self.LicensePlateBarCode = LicensePlateBarCode
+    def get_QRCode(self):
+        return self.QRCode
+    def set_QRCode(self, QRCode):
+        self.QRCode = QRCode
     def validate_PieceNumber(self, value):
         result = True
         # Validate type PieceNumber, a restriction on xsd:positiveInteger.
@@ -9218,15 +9016,7 @@ class ShipValResponsePiece(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 0.000:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999999.999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
+            if len(str(value)) >= 15:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
                 result = False
@@ -9295,7 +9085,8 @@ class ShipValResponsePiece(GeneratedsSuper):
             self.PieceReference or
             self.DataIdentifier is not None or
             self.LicensePlate is not None or
-            self.LicensePlateBarCode is not None
+            self.LicensePlateBarCode is not None or
+            self.QRCode is not None
         ):
             return True
         else:
@@ -9377,6 +9168,9 @@ class ShipValResponsePiece(GeneratedsSuper):
             namespaceprefix_ = self.LicensePlateBarCode_nsprefix_ + ':' if (UseCapturedNS_ and self.LicensePlateBarCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sLicensePlateBarCode>%s</%sLicensePlateBarCode>%s' % (namespaceprefix_ , self.gds_format_base64(self.LicensePlateBarCode, input_name='LicensePlateBarCode'), namespaceprefix_ , eol_))
+        if self.QRCode is not None:
+            namespaceprefix_ = self.QRCode_nsprefix_ + ':' if (UseCapturedNS_ and self.QRCode_nsprefix_) else ''
+            self.QRCode.export(outfile, level, namespaceprefix_, namespacedef_='', name_='QRCode', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -9484,6 +9278,11 @@ class ShipValResponsePiece(GeneratedsSuper):
             self.LicensePlateBarCode_nsprefix_ = child_.prefix
             # validate type BarCode
             self.validate_BarCode(self.LicensePlateBarCode)
+        elif nodeName_ == 'QRCode':
+            obj_ = Response_QRCode.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.QRCode = obj_
+            obj_.original_tagname_ = 'QRCode'
 # end class ShipValResponsePiece
 
 
@@ -9590,11 +9389,147 @@ class ShipValResponsePieces(GeneratedsSuper):
 # end class ShipValResponsePieces
 
 
+class Response_QRCode(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, ImageFormat=None, Image=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.ImageFormat = ImageFormat
+        self.validate_QRCodeImageFormat(self.ImageFormat)
+        self.ImageFormat_nsprefix_ = None
+        self.Image = Image
+        self.Image_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, Response_QRCode)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if Response_QRCode.subclass:
+            return Response_QRCode.subclass(*args_, **kwargs_)
+        else:
+            return Response_QRCode(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_ImageFormat(self):
+        return self.ImageFormat
+    def set_ImageFormat(self, ImageFormat):
+        self.ImageFormat = ImageFormat
+    def get_Image(self):
+        return self.Image
+    def set_Image(self, Image):
+        self.Image = Image
+    def validate_QRCodeImageFormat(self, value):
+        result = True
+        # Validate type QRCodeImageFormat, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['PNG']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on QRCodeImageFormat' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def hasContent_(self):
+        if (
+            self.ImageFormat is not None or
+            self.Image is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response_QRCode', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Response_QRCode')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'Response_QRCode':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Response_QRCode')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Response_QRCode', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Response_QRCode'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response_QRCode', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.ImageFormat is not None:
+            namespaceprefix_ = self.ImageFormat_nsprefix_ + ':' if (UseCapturedNS_ and self.ImageFormat_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sImageFormat>%s</%sImageFormat>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ImageFormat), input_name='ImageFormat')), namespaceprefix_ , eol_))
+        if self.Image is not None:
+            namespaceprefix_ = self.Image_nsprefix_ + ':' if (UseCapturedNS_ and self.Image_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sImage>%s</%sImage>%s' % (namespaceprefix_ , self.gds_format_base64(self.Image, input_name='Image'), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'ImageFormat':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ImageFormat')
+            value_ = self.gds_validate_string(value_, node, 'ImageFormat')
+            self.ImageFormat = value_
+            self.ImageFormat_nsprefix_ = child_.prefix
+            # validate type QRCodeImageFormat
+            self.validate_QRCodeImageFormat(self.ImageFormat)
+        elif nodeName_ == 'Image':
+            sval_ = child_.text
+            if sval_ is not None:
+                try:
+                    bval_ = base64.b64decode(sval_)
+                except (TypeError, ValueError) as exp:
+                    raise_parse_error(child_, 'requires base64 encoded string: %s' % exp)
+                bval_ = self.gds_validate_base64(bval_, node, 'Image')
+            else:
+                bval_ = None
+            self.Image = bval_
+            self.Image_nsprefix_ = child_.prefix
+# end class Response_QRCode
+
+
 class Place(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, ResidenceOrBusiness=None, CompanyName=None, AddressLine=None, City=None, CountryCode=None, DivisionCode=None, Division=None, PostalCode=None, PackageLocation=None, Suburb=None, gds_collector_=None, **kwargs_):
+    def __init__(self, ResidenceOrBusiness=None, CompanyName=None, AddressLine1=None, AddressLine2=None, AddressLine3=None, City=None, CountryCode=None, DivisionCode=None, Division=None, PostalCode=None, PackageLocation=None, Suburb=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -9606,11 +9541,15 @@ class Place(GeneratedsSuper):
         self.CompanyName = CompanyName
         self.validate_CompanyNameValidator(self.CompanyName)
         self.CompanyName_nsprefix_ = None
-        if AddressLine is None:
-            self.AddressLine = []
-        else:
-            self.AddressLine = AddressLine
-        self.AddressLine_nsprefix_ = None
+        self.AddressLine1 = AddressLine1
+        self.validate_AddressLine(self.AddressLine1)
+        self.AddressLine1_nsprefix_ = None
+        self.AddressLine2 = AddressLine2
+        self.validate_AddressLine(self.AddressLine2)
+        self.AddressLine2_nsprefix_ = None
+        self.AddressLine3 = AddressLine3
+        self.validate_AddressLine(self.AddressLine3)
+        self.AddressLine3_nsprefix_ = None
         self.City = City
         self.validate_City(self.City)
         self.City_nsprefix_ = None
@@ -9655,16 +9594,18 @@ class Place(GeneratedsSuper):
         return self.CompanyName
     def set_CompanyName(self, CompanyName):
         self.CompanyName = CompanyName
-    def get_AddressLine(self):
-        return self.AddressLine
-    def set_AddressLine(self, AddressLine):
-        self.AddressLine = AddressLine
-    def add_AddressLine(self, value):
-        self.AddressLine.append(value)
-    def insert_AddressLine_at(self, index, value):
-        self.AddressLine.insert(index, value)
-    def replace_AddressLine_at(self, index, value):
-        self.AddressLine[index] = value
+    def get_AddressLine1(self):
+        return self.AddressLine1
+    def set_AddressLine1(self, AddressLine1):
+        self.AddressLine1 = AddressLine1
+    def get_AddressLine2(self):
+        return self.AddressLine2
+    def set_AddressLine2(self, AddressLine2):
+        self.AddressLine2 = AddressLine2
+    def get_AddressLine3(self):
+        return self.AddressLine3
+    def set_AddressLine3(self, AddressLine3):
+        self.AddressLine3 = AddressLine3
     def get_City(self):
         return self.City
     def set_City(self, City):
@@ -9740,6 +9681,10 @@ class Place(GeneratedsSuper):
             if len(value) > 45:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_City(self, value):
@@ -9837,7 +9782,9 @@ class Place(GeneratedsSuper):
         if (
             self.ResidenceOrBusiness is not None or
             self.CompanyName is not None or
-            self.AddressLine or
+            self.AddressLine1 is not None or
+            self.AddressLine2 is not None or
+            self.AddressLine3 is not None or
             self.City is not None or
             self.CountryCode is not None or
             self.DivisionCode is not None or
@@ -9887,10 +9834,18 @@ class Place(GeneratedsSuper):
             namespaceprefix_ = self.CompanyName_nsprefix_ + ':' if (UseCapturedNS_ and self.CompanyName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sCompanyName>%s</%sCompanyName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CompanyName), input_name='CompanyName')), namespaceprefix_ , eol_))
-        for AddressLine_ in self.AddressLine:
-            namespaceprefix_ = self.AddressLine_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine_nsprefix_) else ''
+        if self.AddressLine1 is not None:
+            namespaceprefix_ = self.AddressLine1_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine1_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddressLine>%s</%sAddressLine>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(AddressLine_), input_name='AddressLine')), namespaceprefix_ , eol_))
+            outfile.write('<%sAddressLine1>%s</%sAddressLine1>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine1), input_name='AddressLine1')), namespaceprefix_ , eol_))
+        if self.AddressLine2 is not None:
+            namespaceprefix_ = self.AddressLine2_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine2_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAddressLine2>%s</%sAddressLine2>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine2), input_name='AddressLine2')), namespaceprefix_ , eol_))
+        if self.AddressLine3 is not None:
+            namespaceprefix_ = self.AddressLine3_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine3_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAddressLine3>%s</%sAddressLine3>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine3), input_name='AddressLine3')), namespaceprefix_ , eol_))
         if self.City is not None:
             namespaceprefix_ = self.City_nsprefix_ + ':' if (UseCapturedNS_ and self.City_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -9949,14 +9904,30 @@ class Place(GeneratedsSuper):
             self.CompanyName_nsprefix_ = child_.prefix
             # validate type CompanyNameValidator
             self.validate_CompanyNameValidator(self.CompanyName)
-        elif nodeName_ == 'AddressLine':
+        elif nodeName_ == 'AddressLine1':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AddressLine')
-            value_ = self.gds_validate_string(value_, node, 'AddressLine')
-            self.AddressLine.append(value_)
-            self.AddressLine_nsprefix_ = child_.prefix
+            value_ = self.gds_parse_string(value_, node, 'AddressLine1')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine1')
+            self.AddressLine1 = value_
+            self.AddressLine1_nsprefix_ = child_.prefix
             # validate type AddressLine
-            self.validate_AddressLine(self.AddressLine[-1])
+            self.validate_AddressLine(self.AddressLine1)
+        elif nodeName_ == 'AddressLine2':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AddressLine2')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine2')
+            self.AddressLine2 = value_
+            self.AddressLine2_nsprefix_ = child_.prefix
+            # validate type AddressLine
+            self.validate_AddressLine(self.AddressLine2)
+        elif nodeName_ == 'AddressLine3':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AddressLine3')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine3')
+            self.AddressLine3 = value_
+            self.AddressLine3_nsprefix_ = child_.prefix
+            # validate type AddressLine
+            self.validate_AddressLine(self.AddressLine3)
         elif nodeName_ == 'City':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'City')
@@ -10168,20 +10139,14 @@ class ShipmentDetails(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, NumberOfPieces=None, Pieces=None, Weight=None, WeightUnit=None, GlobalProductCode=None, LocalProductCode=None, Date=None, Contents=None, DoorTo=None, DimensionUnit=None, InsuredAmount=None, PackageType=None, IsDutiable=None, CurrencyCode=None, AdditionalProtection=None, DOSFlag=None, CustData=None, ShipmentCharges=None, gds_collector_=None, **kwargs_):
+    def __init__(self, Pieces=None, WeightUnit=None, GlobalProductCode=None, LocalProductCode=None, Date=None, Contents=None, DimensionUnit=None, PackageType=None, IsDutiable=None, CurrencyCode=None, CustData=None, ShipmentCharges=None, ParentShipmentIdentificationNumber=None, ParentShipmentGlobalProductCode=None, ParentShipmentPackagesCount=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.NumberOfPieces = NumberOfPieces
-        self.validate_NumberOfPiecesType(self.NumberOfPieces)
-        self.NumberOfPieces_nsprefix_ = None
         self.Pieces = Pieces
         self.Pieces_nsprefix_ = None
-        self.Weight = Weight
-        self.validate_Weight(self.Weight)
-        self.Weight_nsprefix_ = None
         self.WeightUnit = WeightUnit
         self.validate_WeightUnit(self.WeightUnit)
         self.WeightUnit_nsprefix_ = None
@@ -10200,15 +10165,9 @@ class ShipmentDetails(GeneratedsSuper):
         self.Contents = Contents
         self.validate_ShipmentContents(self.Contents)
         self.Contents_nsprefix_ = None
-        self.DoorTo = DoorTo
-        self.validate_DoorTo(self.DoorTo)
-        self.DoorTo_nsprefix_ = None
         self.DimensionUnit = DimensionUnit
         self.validate_DimensionUnit(self.DimensionUnit)
         self.DimensionUnit_nsprefix_ = None
-        self.InsuredAmount = InsuredAmount
-        self.validate_Money(self.InsuredAmount)
-        self.InsuredAmount_nsprefix_ = None
         self.PackageType = PackageType
         self.validate_PackageType(self.PackageType)
         self.PackageType_nsprefix_ = None
@@ -10218,17 +10177,21 @@ class ShipmentDetails(GeneratedsSuper):
         self.CurrencyCode = CurrencyCode
         self.validate_CurrencyCode(self.CurrencyCode)
         self.CurrencyCode_nsprefix_ = None
-        self.AdditionalProtection = AdditionalProtection
-        self.AdditionalProtection_nsprefix_ = None
-        self.DOSFlag = DOSFlag
-        self.validate_YesNo(self.DOSFlag)
-        self.DOSFlag_nsprefix_ = None
         self.CustData = CustData
         self.validate_CustData(self.CustData)
         self.CustData_nsprefix_ = None
         self.ShipmentCharges = ShipmentCharges
         self.validate_ShipmentCharges(self.ShipmentCharges)
         self.ShipmentCharges_nsprefix_ = None
+        self.ParentShipmentIdentificationNumber = ParentShipmentIdentificationNumber
+        self.validate_AWBNumber(self.ParentShipmentIdentificationNumber)
+        self.ParentShipmentIdentificationNumber_nsprefix_ = None
+        self.ParentShipmentGlobalProductCode = ParentShipmentGlobalProductCode
+        self.validate_GlobalProductCode(self.ParentShipmentGlobalProductCode)
+        self.ParentShipmentGlobalProductCode_nsprefix_ = None
+        self.ParentShipmentPackagesCount = ParentShipmentPackagesCount
+        self.validate_ParentShipmentPackagesCount(self.ParentShipmentPackagesCount)
+        self.ParentShipmentPackagesCount_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -10244,18 +10207,10 @@ class ShipmentDetails(GeneratedsSuper):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_NumberOfPieces(self):
-        return self.NumberOfPieces
-    def set_NumberOfPieces(self, NumberOfPieces):
-        self.NumberOfPieces = NumberOfPieces
     def get_Pieces(self):
         return self.Pieces
     def set_Pieces(self, Pieces):
         self.Pieces = Pieces
-    def get_Weight(self):
-        return self.Weight
-    def set_Weight(self, Weight):
-        self.Weight = Weight
     def get_WeightUnit(self):
         return self.WeightUnit
     def set_WeightUnit(self, WeightUnit):
@@ -10276,18 +10231,10 @@ class ShipmentDetails(GeneratedsSuper):
         return self.Contents
     def set_Contents(self, Contents):
         self.Contents = Contents
-    def get_DoorTo(self):
-        return self.DoorTo
-    def set_DoorTo(self, DoorTo):
-        self.DoorTo = DoorTo
     def get_DimensionUnit(self):
         return self.DimensionUnit
     def set_DimensionUnit(self, DimensionUnit):
         self.DimensionUnit = DimensionUnit
-    def get_InsuredAmount(self):
-        return self.InsuredAmount
-    def set_InsuredAmount(self, InsuredAmount):
-        self.InsuredAmount = InsuredAmount
     def get_PackageType(self):
         return self.PackageType
     def set_PackageType(self, PackageType):
@@ -10300,14 +10247,6 @@ class ShipmentDetails(GeneratedsSuper):
         return self.CurrencyCode
     def set_CurrencyCode(self, CurrencyCode):
         self.CurrencyCode = CurrencyCode
-    def get_AdditionalProtection(self):
-        return self.AdditionalProtection
-    def set_AdditionalProtection(self, AdditionalProtection):
-        self.AdditionalProtection = AdditionalProtection
-    def get_DOSFlag(self):
-        return self.DOSFlag
-    def set_DOSFlag(self, DOSFlag):
-        self.DOSFlag = DOSFlag
     def get_CustData(self):
         return self.CustData
     def set_CustData(self, CustData):
@@ -10316,44 +10255,18 @@ class ShipmentDetails(GeneratedsSuper):
         return self.ShipmentCharges
     def set_ShipmentCharges(self, ShipmentCharges):
         self.ShipmentCharges = ShipmentCharges
-    def validate_NumberOfPiecesType(self, value):
-        result = True
-        # Validate type NumberOfPiecesType, a restriction on xsd:positiveInteger.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, int):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (int)' % {"value": value, "lineno": lineno, })
-                return False
-            if value < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on NumberOfPiecesType' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on NumberOfPiecesType' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_Weight(self, value):
-        result = True
-        # Validate type Weight, a restriction on xsd:decimal.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, decimal_.Decimal):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
-                return False
-            if value < 0.000:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999999.999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
+    def get_ParentShipmentIdentificationNumber(self):
+        return self.ParentShipmentIdentificationNumber
+    def set_ParentShipmentIdentificationNumber(self, ParentShipmentIdentificationNumber):
+        self.ParentShipmentIdentificationNumber = ParentShipmentIdentificationNumber
+    def get_ParentShipmentGlobalProductCode(self):
+        return self.ParentShipmentGlobalProductCode
+    def set_ParentShipmentGlobalProductCode(self, ParentShipmentGlobalProductCode):
+        self.ParentShipmentGlobalProductCode = ParentShipmentGlobalProductCode
+    def get_ParentShipmentPackagesCount(self):
+        return self.ParentShipmentPackagesCount
+    def set_ParentShipmentPackagesCount(self, ParentShipmentPackagesCount):
+        self.ParentShipmentPackagesCount = ParentShipmentPackagesCount
     def validate_WeightUnit(self, value):
         result = True
         # Validate type WeightUnit, a restriction on xsd:string.
@@ -10447,24 +10360,9 @@ class ShipmentDetails(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ShipmentContents' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
-        return result
-    def validate_DoorTo(self, value):
-        result = True
-        # Validate type DoorTo, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
+            if len(value) < 1:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['DD', 'DA', 'AA', 'DC']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DoorTo' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) != 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on DoorTo' % {"value": encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ShipmentContents' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_DimensionUnit(self, value):
@@ -10484,23 +10382,6 @@ class ShipmentDetails(GeneratedsSuper):
             if len(value) != 1:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on DimensionUnit' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Money(self, value):
-        result = True
-        # Validate type Money, a restriction on xsd:float.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, float):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (float)' % {"value": value, "lineno": lineno, })
-                return False
-            if value < 0.00:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Money' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 9999999999.99:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Money' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def validate_PackageType(self, value):
@@ -10593,26 +10474,49 @@ class ShipmentDetails(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on ShipmentCharges' % {"value": value, "lineno": lineno} )
                 result = False
         return result
+    def validate_AWBNumber(self, value):
+        result = True
+        # Validate type AWBNumber, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 10:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AWBNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_ParentShipmentPackagesCount(self, value):
+        result = True
+        # Validate type ParentShipmentPackagesCount, a restriction on xsd:positiveInteger.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, int):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (int)' % {"value": value, "lineno": lineno, })
+                return False
+            if value < 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on ParentShipmentPackagesCount' % {"value": value, "lineno": lineno} )
+                result = False
+        return result
     def hasContent_(self):
         if (
-            self.NumberOfPieces is not None or
             self.Pieces is not None or
-            self.Weight is not None or
             self.WeightUnit is not None or
             self.GlobalProductCode is not None or
             self.LocalProductCode is not None or
             self.Date is not None or
             self.Contents is not None or
-            self.DoorTo is not None or
             self.DimensionUnit is not None or
-            self.InsuredAmount is not None or
             self.PackageType is not None or
             self.IsDutiable is not None or
             self.CurrencyCode is not None or
-            self.AdditionalProtection is not None or
-            self.DOSFlag is not None or
             self.CustData is not None or
-            self.ShipmentCharges is not None
+            self.ShipmentCharges is not None or
+            self.ParentShipmentIdentificationNumber is not None or
+            self.ParentShipmentGlobalProductCode is not None or
+            self.ParentShipmentPackagesCount is not None
         ):
             return True
         else:
@@ -10647,17 +10551,9 @@ class ShipmentDetails(GeneratedsSuper):
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.NumberOfPieces is not None:
-            namespaceprefix_ = self.NumberOfPieces_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberOfPieces_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumberOfPieces>%s</%sNumberOfPieces>%s' % (namespaceprefix_ , self.gds_format_integer(self.NumberOfPieces, input_name='NumberOfPieces'), namespaceprefix_ , eol_))
         if self.Pieces is not None:
             namespaceprefix_ = self.Pieces_nsprefix_ + ':' if (UseCapturedNS_ and self.Pieces_nsprefix_) else ''
             self.Pieces.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Pieces', pretty_print=pretty_print)
-        if self.Weight is not None:
-            namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Weight, input_name='Weight'), namespaceprefix_ , eol_))
         if self.WeightUnit is not None:
             namespaceprefix_ = self.WeightUnit_nsprefix_ + ':' if (UseCapturedNS_ and self.WeightUnit_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -10678,18 +10574,10 @@ class ShipmentDetails(GeneratedsSuper):
             namespaceprefix_ = self.Contents_nsprefix_ + ':' if (UseCapturedNS_ and self.Contents_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sContents>%s</%sContents>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Contents), input_name='Contents')), namespaceprefix_ , eol_))
-        if self.DoorTo is not None:
-            namespaceprefix_ = self.DoorTo_nsprefix_ + ':' if (UseCapturedNS_ and self.DoorTo_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDoorTo>%s</%sDoorTo>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DoorTo), input_name='DoorTo')), namespaceprefix_ , eol_))
         if self.DimensionUnit is not None:
             namespaceprefix_ = self.DimensionUnit_nsprefix_ + ':' if (UseCapturedNS_ and self.DimensionUnit_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sDimensionUnit>%s</%sDimensionUnit>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DimensionUnit), input_name='DimensionUnit')), namespaceprefix_ , eol_))
-        if self.InsuredAmount is not None:
-            namespaceprefix_ = self.InsuredAmount_nsprefix_ + ':' if (UseCapturedNS_ and self.InsuredAmount_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sInsuredAmount>%s</%sInsuredAmount>%s' % (namespaceprefix_ , self.gds_format_float(self.InsuredAmount, input_name='InsuredAmount'), namespaceprefix_ , eol_))
         if self.PackageType is not None:
             namespaceprefix_ = self.PackageType_nsprefix_ + ':' if (UseCapturedNS_ and self.PackageType_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -10702,13 +10590,6 @@ class ShipmentDetails(GeneratedsSuper):
             namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sCurrencyCode>%s</%sCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CurrencyCode), input_name='CurrencyCode')), namespaceprefix_ , eol_))
-        if self.AdditionalProtection is not None:
-            namespaceprefix_ = self.AdditionalProtection_nsprefix_ + ':' if (UseCapturedNS_ and self.AdditionalProtection_nsprefix_) else ''
-            self.AdditionalProtection.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AdditionalProtection', pretty_print=pretty_print)
-        if self.DOSFlag is not None:
-            namespaceprefix_ = self.DOSFlag_nsprefix_ + ':' if (UseCapturedNS_ and self.DOSFlag_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDOSFlag>%s</%sDOSFlag>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DOSFlag), input_name='DOSFlag')), namespaceprefix_ , eol_))
         if self.CustData is not None:
             namespaceprefix_ = self.CustData_nsprefix_ + ':' if (UseCapturedNS_ and self.CustData_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -10717,6 +10598,18 @@ class ShipmentDetails(GeneratedsSuper):
             namespaceprefix_ = self.ShipmentCharges_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentCharges_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sShipmentCharges>%s</%sShipmentCharges>%s' % (namespaceprefix_ , self.gds_format_float(self.ShipmentCharges, input_name='ShipmentCharges'), namespaceprefix_ , eol_))
+        if self.ParentShipmentIdentificationNumber is not None:
+            namespaceprefix_ = self.ParentShipmentIdentificationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.ParentShipmentIdentificationNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sParentShipmentIdentificationNumber>%s</%sParentShipmentIdentificationNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ParentShipmentIdentificationNumber), input_name='ParentShipmentIdentificationNumber')), namespaceprefix_ , eol_))
+        if self.ParentShipmentGlobalProductCode is not None:
+            namespaceprefix_ = self.ParentShipmentGlobalProductCode_nsprefix_ + ':' if (UseCapturedNS_ and self.ParentShipmentGlobalProductCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sParentShipmentGlobalProductCode>%s</%sParentShipmentGlobalProductCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ParentShipmentGlobalProductCode), input_name='ParentShipmentGlobalProductCode')), namespaceprefix_ , eol_))
+        if self.ParentShipmentPackagesCount is not None:
+            namespaceprefix_ = self.ParentShipmentPackagesCount_nsprefix_ + ':' if (UseCapturedNS_ and self.ParentShipmentPackagesCount_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sParentShipmentPackagesCount>%s</%sParentShipmentPackagesCount>%s' % (namespaceprefix_ , self.gds_format_integer(self.ParentShipmentPackagesCount, input_name='ParentShipmentPackagesCount'), namespaceprefix_ , eol_))
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -10731,29 +10624,11 @@ class ShipmentDetails(GeneratedsSuper):
     def buildAttributes(self, node, attrs, already_processed):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'NumberOfPieces' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'NumberOfPieces')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'NumberOfPieces')
-            self.NumberOfPieces = ival_
-            self.NumberOfPieces_nsprefix_ = child_.prefix
-            # validate type NumberOfPiecesType
-            self.validate_NumberOfPiecesType(self.NumberOfPieces)
-        elif nodeName_ == 'Pieces':
+        if nodeName_ == 'Pieces':
             obj_ = Pieces.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Pieces = obj_
             obj_.original_tagname_ = 'Pieces'
-        elif nodeName_ == 'Weight' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_decimal(sval_, node, 'Weight')
-            fval_ = self.gds_validate_decimal(fval_, node, 'Weight')
-            self.Weight = fval_
-            self.Weight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.Weight)
         elif nodeName_ == 'WeightUnit':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'WeightUnit')
@@ -10793,14 +10668,6 @@ class ShipmentDetails(GeneratedsSuper):
             self.Contents_nsprefix_ = child_.prefix
             # validate type ShipmentContents
             self.validate_ShipmentContents(self.Contents)
-        elif nodeName_ == 'DoorTo':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DoorTo')
-            value_ = self.gds_validate_string(value_, node, 'DoorTo')
-            self.DoorTo = value_
-            self.DoorTo_nsprefix_ = child_.prefix
-            # validate type DoorTo
-            self.validate_DoorTo(self.DoorTo)
         elif nodeName_ == 'DimensionUnit':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'DimensionUnit')
@@ -10809,14 +10676,6 @@ class ShipmentDetails(GeneratedsSuper):
             self.DimensionUnit_nsprefix_ = child_.prefix
             # validate type DimensionUnit
             self.validate_DimensionUnit(self.DimensionUnit)
-        elif nodeName_ == 'InsuredAmount' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'InsuredAmount')
-            fval_ = self.gds_validate_float(fval_, node, 'InsuredAmount')
-            self.InsuredAmount = fval_
-            self.InsuredAmount_nsprefix_ = child_.prefix
-            # validate type Money
-            self.validate_Money(self.InsuredAmount)
         elif nodeName_ == 'PackageType':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'PackageType')
@@ -10841,19 +10700,6 @@ class ShipmentDetails(GeneratedsSuper):
             self.CurrencyCode_nsprefix_ = child_.prefix
             # validate type CurrencyCode
             self.validate_CurrencyCode(self.CurrencyCode)
-        elif nodeName_ == 'AdditionalProtection':
-            obj_ = AdditionalProtection.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.AdditionalProtection = obj_
-            obj_.original_tagname_ = 'AdditionalProtection'
-        elif nodeName_ == 'DOSFlag':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DOSFlag')
-            value_ = self.gds_validate_string(value_, node, 'DOSFlag')
-            self.DOSFlag = value_
-            self.DOSFlag_nsprefix_ = child_.prefix
-            # validate type YesNo
-            self.validate_YesNo(self.DOSFlag)
         elif nodeName_ == 'CustData':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'CustData')
@@ -10870,157 +10716,33 @@ class ShipmentDetails(GeneratedsSuper):
             self.ShipmentCharges_nsprefix_ = child_.prefix
             # validate type ShipmentCharges
             self.validate_ShipmentCharges(self.ShipmentCharges)
-# end class ShipmentDetails
-
-
-class AdditionalProtection(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, Code=None, Value=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.Code = Code
-        self.validate_Code(self.Code)
-        self.Code_nsprefix_ = None
-        self.Value = Value
-        self.validate_Value(self.Value)
-        self.Value_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, AdditionalProtection)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if AdditionalProtection.subclass:
-            return AdditionalProtection.subclass(*args_, **kwargs_)
-        else:
-            return AdditionalProtection(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_Code(self):
-        return self.Code
-    def set_Code(self, Code):
-        self.Code = Code
-    def get_Value(self):
-        return self.Value
-    def set_Value(self, Value):
-        self.Value = Value
-    def validate_Code(self, value):
-        result = True
-        # Validate type Code, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['AP', 'NR']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on Code' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) != 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on Code' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Value(self, value):
-        result = True
-        # Validate type Value, a restriction on xsd:float.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, float):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (float)' % {"value": value, "lineno": lineno, })
-                return False
-            if value > 9999999.99:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Value' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.Code is not None or
-            self.Value is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AdditionalProtection', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('AdditionalProtection')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'AdditionalProtection':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AdditionalProtection')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AdditionalProtection', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='AdditionalProtection'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='AdditionalProtection', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.Code is not None:
-            namespaceprefix_ = self.Code_nsprefix_ + ':' if (UseCapturedNS_ and self.Code_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCode>%s</%sCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Code), input_name='Code')), namespaceprefix_ , eol_))
-        if self.Value is not None:
-            namespaceprefix_ = self.Value_nsprefix_ + ':' if (UseCapturedNS_ and self.Value_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sValue>%s</%sValue>%s' % (namespaceprefix_ , self.gds_format_float(self.Value, input_name='Value'), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Code':
+        elif nodeName_ == 'ParentShipmentIdentificationNumber':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Code')
-            value_ = self.gds_validate_string(value_, node, 'Code')
-            self.Code = value_
-            self.Code_nsprefix_ = child_.prefix
-            # validate type Code
-            self.validate_Code(self.Code)
-        elif nodeName_ == 'Value' and child_.text:
+            value_ = self.gds_parse_string(value_, node, 'ParentShipmentIdentificationNumber')
+            value_ = self.gds_validate_string(value_, node, 'ParentShipmentIdentificationNumber')
+            self.ParentShipmentIdentificationNumber = value_
+            self.ParentShipmentIdentificationNumber_nsprefix_ = child_.prefix
+            # validate type AWBNumber
+            self.validate_AWBNumber(self.ParentShipmentIdentificationNumber)
+        elif nodeName_ == 'ParentShipmentGlobalProductCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'ParentShipmentGlobalProductCode')
+            value_ = self.gds_validate_string(value_, node, 'ParentShipmentGlobalProductCode')
+            self.ParentShipmentGlobalProductCode = value_
+            self.ParentShipmentGlobalProductCode_nsprefix_ = child_.prefix
+            # validate type GlobalProductCode
+            self.validate_GlobalProductCode(self.ParentShipmentGlobalProductCode)
+        elif nodeName_ == 'ParentShipmentPackagesCount' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'Value')
-            fval_ = self.gds_validate_float(fval_, node, 'Value')
-            self.Value = fval_
-            self.Value_nsprefix_ = child_.prefix
-            # validate type Value
-            self.validate_Value(self.Value)
-# end class AdditionalProtection
+            ival_ = self.gds_parse_integer(sval_, node, 'ParentShipmentPackagesCount')
+            if ival_ <= 0:
+                raise_parse_error(child_, 'requires positiveInteger')
+            ival_ = self.gds_validate_integer(ival_, node, 'ParentShipmentPackagesCount')
+            self.ParentShipmentPackagesCount = ival_
+            self.ParentShipmentPackagesCount_nsprefix_ = child_.prefix
+            # validate type ParentShipmentPackagesCount
+            self.validate_ParentShipmentPackagesCount(self.ParentShipmentPackagesCount)
+# end class ShipmentDetails
 
 
 class Shipment(GeneratedsSuper):
@@ -11163,15 +10885,7 @@ class Shipment(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 0.000:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999999.999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
+            if len(str(value)) >= 15:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
                 result = False
@@ -11248,19 +10962,15 @@ class Shipment(GeneratedsSuper):
         return result
     def validate_Money(self, value):
         result = True
-        # Validate type Money, a restriction on xsd:float.
+        # Validate type Money, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, float):
+            if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (float)' % {"value": value, "lineno": lineno, })
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 0.00:
+            if len(str(value)) >= 18:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Money' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 9999999999.99:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Money' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Money' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def validate_CurrencyCode(self, value):
@@ -11374,7 +11084,7 @@ class Shipment(GeneratedsSuper):
         if self.DeclaredValue is not None:
             namespaceprefix_ = self.DeclaredValue_nsprefix_ + ':' if (UseCapturedNS_ and self.DeclaredValue_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDeclaredValue>%s</%sDeclaredValue>%s' % (namespaceprefix_ , self.gds_format_float(self.DeclaredValue, input_name='DeclaredValue'), namespaceprefix_ , eol_))
+            outfile.write('<%sDeclaredValue>%s</%sDeclaredValue>%s' % (namespaceprefix_ , self.gds_format_decimal(self.DeclaredValue, input_name='DeclaredValue'), namespaceprefix_ , eol_))
         if self.DeclaredCurrency is not None:
             namespaceprefix_ = self.DeclaredCurrency_nsprefix_ + ':' if (UseCapturedNS_ and self.DeclaredCurrency_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -11382,7 +11092,7 @@ class Shipment(GeneratedsSuper):
         if self.InsuredValue is not None:
             namespaceprefix_ = self.InsuredValue_nsprefix_ + ':' if (UseCapturedNS_ and self.InsuredValue_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sInsuredValue>%s</%sInsuredValue>%s' % (namespaceprefix_ , self.gds_format_float(self.InsuredValue, input_name='InsuredValue'), namespaceprefix_ , eol_))
+            outfile.write('<%sInsuredValue>%s</%sInsuredValue>%s' % (namespaceprefix_ , self.gds_format_decimal(self.InsuredValue, input_name='InsuredValue'), namespaceprefix_ , eol_))
         if self.InsuredCurrency is not None:
             namespaceprefix_ = self.InsuredCurrency_nsprefix_ + ':' if (UseCapturedNS_ and self.InsuredCurrency_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -11479,8 +11189,8 @@ class Shipment(GeneratedsSuper):
             obj_.original_tagname_ = 'Commodity'
         elif nodeName_ == 'DeclaredValue' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'DeclaredValue')
-            fval_ = self.gds_validate_float(fval_, node, 'DeclaredValue')
+            fval_ = self.gds_parse_decimal(sval_, node, 'DeclaredValue')
+            fval_ = self.gds_validate_decimal(fval_, node, 'DeclaredValue')
             self.DeclaredValue = fval_
             self.DeclaredValue_nsprefix_ = child_.prefix
             # validate type Money
@@ -11495,8 +11205,8 @@ class Shipment(GeneratedsSuper):
             self.validate_CurrencyCode(self.DeclaredCurrency)
         elif nodeName_ == 'InsuredValue' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'InsuredValue')
-            fval_ = self.gds_validate_float(fval_, node, 'InsuredValue')
+            fval_ = self.gds_parse_decimal(sval_, node, 'InsuredValue')
+            fval_ = self.gds_validate_decimal(fval_, node, 'InsuredValue')
             self.InsuredValue = fval_
             self.InsuredValue_nsprefix_ = child_.prefix
             # validate type Money
@@ -11532,7 +11242,7 @@ class Shipper(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, ShipperID=None, CompanyName=None, SuiteDepartmentName=None, RegisteredAccount=None, AddressLine=None, City=None, Division=None, DivisionCode=None, PostalCode=None, OriginServiceAreaCode=None, OriginFacilityCode=None, CountryCode=None, CountryName=None, FederalTaxId=None, StateTaxId=None, EORI_No=None, Contact=None, Suburb=None, StreetName=None, BuildingName=None, StreetNumber=None, RegistrationNumbers=None, BusinessPartyTypeCode=None, gds_collector_=None, **kwargs_):
+    def __init__(self, ShipperID=None, CompanyName=None, SuiteDepartmentName=None, RegisteredAccount=None, AddressLine1=None, AddressLine2=None, AddressLine3=None, City=None, Division=None, DivisionCode=None, PostalCode=None, OriginServiceAreaCode=None, OriginFacilityCode=None, CountryCode=None, CountryName=None, Contact=None, Suburb=None, StreetName=None, BuildingName=None, StreetNumber=None, RegistrationNumbers=None, BusinessPartyTypeCode=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -11550,11 +11260,15 @@ class Shipper(GeneratedsSuper):
         self.RegisteredAccount = RegisteredAccount
         self.validate_AccountNumber(self.RegisteredAccount)
         self.RegisteredAccount_nsprefix_ = None
-        if AddressLine is None:
-            self.AddressLine = []
-        else:
-            self.AddressLine = AddressLine
-        self.AddressLine_nsprefix_ = None
+        self.AddressLine1 = AddressLine1
+        self.validate_AddressLine(self.AddressLine1)
+        self.AddressLine1_nsprefix_ = None
+        self.AddressLine2 = AddressLine2
+        self.validate_AddressLine(self.AddressLine2)
+        self.AddressLine2_nsprefix_ = None
+        self.AddressLine3 = AddressLine3
+        self.validate_AddressLine(self.AddressLine3)
+        self.AddressLine3_nsprefix_ = None
         self.City = City
         self.validate_City(self.City)
         self.City_nsprefix_ = None
@@ -11579,15 +11293,6 @@ class Shipper(GeneratedsSuper):
         self.CountryName = CountryName
         self.validate_CountryName(self.CountryName)
         self.CountryName_nsprefix_ = None
-        self.FederalTaxId = FederalTaxId
-        self.validate_FederalTaxIdType9(self.FederalTaxId)
-        self.FederalTaxId_nsprefix_ = None
-        self.StateTaxId = StateTaxId
-        self.validate_StateTaxIdType10(self.StateTaxId)
-        self.StateTaxId_nsprefix_ = None
-        self.EORI_No = EORI_No
-        self.validate_EORI_NoType(self.EORI_No)
-        self.EORI_No_nsprefix_ = None
         self.Contact = Contact
         self.Contact_nsprefix_ = None
         self.Suburb = Suburb
@@ -11638,16 +11343,18 @@ class Shipper(GeneratedsSuper):
         return self.RegisteredAccount
     def set_RegisteredAccount(self, RegisteredAccount):
         self.RegisteredAccount = RegisteredAccount
-    def get_AddressLine(self):
-        return self.AddressLine
-    def set_AddressLine(self, AddressLine):
-        self.AddressLine = AddressLine
-    def add_AddressLine(self, value):
-        self.AddressLine.append(value)
-    def insert_AddressLine_at(self, index, value):
-        self.AddressLine.insert(index, value)
-    def replace_AddressLine_at(self, index, value):
-        self.AddressLine[index] = value
+    def get_AddressLine1(self):
+        return self.AddressLine1
+    def set_AddressLine1(self, AddressLine1):
+        self.AddressLine1 = AddressLine1
+    def get_AddressLine2(self):
+        return self.AddressLine2
+    def set_AddressLine2(self, AddressLine2):
+        self.AddressLine2 = AddressLine2
+    def get_AddressLine3(self):
+        return self.AddressLine3
+    def set_AddressLine3(self, AddressLine3):
+        self.AddressLine3 = AddressLine3
     def get_City(self):
         return self.City
     def set_City(self, City):
@@ -11680,18 +11387,6 @@ class Shipper(GeneratedsSuper):
         return self.CountryName
     def set_CountryName(self, CountryName):
         self.CountryName = CountryName
-    def get_FederalTaxId(self):
-        return self.FederalTaxId
-    def set_FederalTaxId(self, FederalTaxId):
-        self.FederalTaxId = FederalTaxId
-    def get_StateTaxId(self):
-        return self.StateTaxId
-    def set_StateTaxId(self, StateTaxId):
-        self.StateTaxId = StateTaxId
-    def get_EORI_No(self):
-        return self.EORI_No
-    def set_EORI_No(self, EORI_No):
-        self.EORI_No = EORI_No
     def get_Contact(self):
         return self.Contact
     def set_Contact(self, Contact):
@@ -11787,6 +11482,10 @@ class Shipper(GeneratedsSuper):
             if len(value) > 45:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_City(self, value):
@@ -11893,57 +11592,6 @@ class Shipper(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CountryName' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_FederalTaxIdType9(self, value):
-        result = True
-        # Validate type FederalTaxIdType9, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 20:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on FederalTaxIdType9' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on FederalTaxIdType9' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_StateTaxIdType10(self, value):
-        result = True
-        # Validate type StateTaxIdType10, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 20:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on StateTaxIdType10' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on StateTaxIdType10' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_EORI_NoType(self, value):
-        result = True
-        # Validate type EORI_NoType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 20:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on EORI_NoType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on EORI_NoType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
     def validate_Suburb(self, value):
         result = True
         # Validate type Suburb, a restriction on xsd:string.
@@ -12026,6 +11674,10 @@ class Shipper(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
         return result
     def hasContent_(self):
         if (
@@ -12033,7 +11685,9 @@ class Shipper(GeneratedsSuper):
             self.CompanyName is not None or
             self.SuiteDepartmentName is not None or
             self.RegisteredAccount is not None or
-            self.AddressLine or
+            self.AddressLine1 is not None or
+            self.AddressLine2 is not None or
+            self.AddressLine3 is not None or
             self.City is not None or
             self.Division is not None or
             self.DivisionCode is not None or
@@ -12042,9 +11696,6 @@ class Shipper(GeneratedsSuper):
             self.OriginFacilityCode is not None or
             self.CountryCode is not None or
             self.CountryName is not None or
-            self.FederalTaxId is not None or
-            self.StateTaxId is not None or
-            self.EORI_No is not None or
             self.Contact is not None or
             self.Suburb is not None or
             self.StreetName is not None or
@@ -12102,10 +11753,18 @@ class Shipper(GeneratedsSuper):
             namespaceprefix_ = self.RegisteredAccount_nsprefix_ + ':' if (UseCapturedNS_ and self.RegisteredAccount_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sRegisteredAccount>%s</%sRegisteredAccount>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RegisteredAccount), input_name='RegisteredAccount')), namespaceprefix_ , eol_))
-        for AddressLine_ in self.AddressLine:
-            namespaceprefix_ = self.AddressLine_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine_nsprefix_) else ''
+        if self.AddressLine1 is not None:
+            namespaceprefix_ = self.AddressLine1_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine1_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddressLine>%s</%sAddressLine>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(AddressLine_), input_name='AddressLine')), namespaceprefix_ , eol_))
+            outfile.write('<%sAddressLine1>%s</%sAddressLine1>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine1), input_name='AddressLine1')), namespaceprefix_ , eol_))
+        if self.AddressLine2 is not None:
+            namespaceprefix_ = self.AddressLine2_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine2_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAddressLine2>%s</%sAddressLine2>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine2), input_name='AddressLine2')), namespaceprefix_ , eol_))
+        if self.AddressLine3 is not None:
+            namespaceprefix_ = self.AddressLine3_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine3_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAddressLine3>%s</%sAddressLine3>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AddressLine3), input_name='AddressLine3')), namespaceprefix_ , eol_))
         if self.City is not None:
             namespaceprefix_ = self.City_nsprefix_ + ':' if (UseCapturedNS_ and self.City_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -12138,18 +11797,6 @@ class Shipper(GeneratedsSuper):
             namespaceprefix_ = self.CountryName_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sCountryName>%s</%sCountryName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryName), input_name='CountryName')), namespaceprefix_ , eol_))
-        if self.FederalTaxId is not None:
-            namespaceprefix_ = self.FederalTaxId_nsprefix_ + ':' if (UseCapturedNS_ and self.FederalTaxId_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sFederalTaxId>%s</%sFederalTaxId>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.FederalTaxId), input_name='FederalTaxId')), namespaceprefix_ , eol_))
-        if self.StateTaxId is not None:
-            namespaceprefix_ = self.StateTaxId_nsprefix_ + ':' if (UseCapturedNS_ and self.StateTaxId_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sStateTaxId>%s</%sStateTaxId>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.StateTaxId), input_name='StateTaxId')), namespaceprefix_ , eol_))
-        if self.EORI_No is not None:
-            namespaceprefix_ = self.EORI_No_nsprefix_ + ':' if (UseCapturedNS_ and self.EORI_No_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sEORI_No>%s</%sEORI_No>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.EORI_No), input_name='EORI_No')), namespaceprefix_ , eol_))
         if self.Contact is not None:
             namespaceprefix_ = self.Contact_nsprefix_ + ':' if (UseCapturedNS_ and self.Contact_nsprefix_) else ''
             self.Contact.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Contact', pretty_print=pretty_print)
@@ -12222,14 +11869,30 @@ class Shipper(GeneratedsSuper):
             self.RegisteredAccount_nsprefix_ = child_.prefix
             # validate type AccountNumber
             self.validate_AccountNumber(self.RegisteredAccount)
-        elif nodeName_ == 'AddressLine':
+        elif nodeName_ == 'AddressLine1':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AddressLine')
-            value_ = self.gds_validate_string(value_, node, 'AddressLine')
-            self.AddressLine.append(value_)
-            self.AddressLine_nsprefix_ = child_.prefix
+            value_ = self.gds_parse_string(value_, node, 'AddressLine1')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine1')
+            self.AddressLine1 = value_
+            self.AddressLine1_nsprefix_ = child_.prefix
             # validate type AddressLine
-            self.validate_AddressLine(self.AddressLine[-1])
+            self.validate_AddressLine(self.AddressLine1)
+        elif nodeName_ == 'AddressLine2':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AddressLine2')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine2')
+            self.AddressLine2 = value_
+            self.AddressLine2_nsprefix_ = child_.prefix
+            # validate type AddressLine
+            self.validate_AddressLine(self.AddressLine2)
+        elif nodeName_ == 'AddressLine3':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'AddressLine3')
+            value_ = self.gds_validate_string(value_, node, 'AddressLine3')
+            self.AddressLine3 = value_
+            self.AddressLine3_nsprefix_ = child_.prefix
+            # validate type AddressLine
+            self.validate_AddressLine(self.AddressLine3)
         elif nodeName_ == 'City':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'City')
@@ -12294,30 +11957,6 @@ class Shipper(GeneratedsSuper):
             self.CountryName_nsprefix_ = child_.prefix
             # validate type CountryName
             self.validate_CountryName(self.CountryName)
-        elif nodeName_ == 'FederalTaxId':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'FederalTaxId')
-            value_ = self.gds_validate_string(value_, node, 'FederalTaxId')
-            self.FederalTaxId = value_
-            self.FederalTaxId_nsprefix_ = child_.prefix
-            # validate type FederalTaxIdType9
-            self.validate_FederalTaxIdType9(self.FederalTaxId)
-        elif nodeName_ == 'StateTaxId':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'StateTaxId')
-            value_ = self.gds_validate_string(value_, node, 'StateTaxId')
-            self.StateTaxId = value_
-            self.StateTaxId_nsprefix_ = child_.prefix
-            # validate type StateTaxIdType10
-            self.validate_StateTaxIdType10(self.StateTaxId)
-        elif nodeName_ == 'EORI_No':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'EORI_No')
-            value_ = self.gds_validate_string(value_, node, 'EORI_No')
-            self.EORI_No = value_
-            self.EORI_No_nsprefix_ = child_.prefix
-            # validate type EORI_NoType
-            self.validate_EORI_NoType(self.EORI_No)
         elif nodeName_ == 'Contact':
             obj_ = Contact.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -12387,7 +12026,7 @@ class SpecialService(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, SpecialServiceType=None, SpecialServiceDesc=None, CommunicationAddress=None, CommunicationType=None, ChargeValue=None, CurrencyCode=None, IsWaived=None, gds_collector_=None, **kwargs_):
+    def __init__(self, SpecialServiceType=None, SpecialServiceDesc=None, CommunicationAddress=None, CommunicationType=None, ChargeValue=None, CurrencyCode=None, IsWaived=None, PaymentMethods=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -12405,7 +12044,7 @@ class SpecialService(GeneratedsSuper):
         self.validate_CommunicationType(self.CommunicationType)
         self.CommunicationType_nsprefix_ = None
         self.ChargeValue = ChargeValue
-        self.validate_Money(self.ChargeValue)
+        self.validate_ChargeValue_Money(self.ChargeValue)
         self.ChargeValue_nsprefix_ = None
         self.CurrencyCode = CurrencyCode
         self.validate_CurrencyCode(self.CurrencyCode)
@@ -12413,6 +12052,8 @@ class SpecialService(GeneratedsSuper):
         self.IsWaived = IsWaived
         self.validate_YesNo(self.IsWaived)
         self.IsWaived_nsprefix_ = None
+        self.PaymentMethods = PaymentMethods
+        self.PaymentMethods_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -12456,6 +12097,10 @@ class SpecialService(GeneratedsSuper):
         return self.IsWaived
     def set_IsWaived(self, IsWaived):
         self.IsWaived = IsWaived
+    def get_PaymentMethods(self):
+        return self.PaymentMethods
+    def set_PaymentMethods(self, PaymentMethods):
+        self.PaymentMethods = PaymentMethods
     def validate_SpecialServiceType(self, value):
         result = True
         # Validate type SpecialServiceType, a restriction on xsd:string.
@@ -12501,21 +12146,21 @@ class SpecialService(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CommunicationType' % {"value": encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_Money(self, value):
+    def validate_ChargeValue_Money(self, value):
         result = True
-        # Validate type Money, a restriction on xsd:float.
+        # Validate type ChargeValue_Money, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, float):
+            if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (float)' % {"value": value, "lineno": lineno, })
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
                 return False
             if value < 0.00:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Money' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on ChargeValue_Money' % {"value": value, "lineno": lineno} )
                 result = False
             if value > 9999999999.99:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Money' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on ChargeValue_Money' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def validate_CurrencyCode(self, value):
@@ -12563,7 +12208,8 @@ class SpecialService(GeneratedsSuper):
             self.CommunicationType is not None or
             self.ChargeValue is not None or
             self.CurrencyCode is not None or
-            self.IsWaived is not None
+            self.IsWaived is not None or
+            self.PaymentMethods is not None
         ):
             return True
         else:
@@ -12617,7 +12263,7 @@ class SpecialService(GeneratedsSuper):
         if self.ChargeValue is not None:
             namespaceprefix_ = self.ChargeValue_nsprefix_ + ':' if (UseCapturedNS_ and self.ChargeValue_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sChargeValue>%s</%sChargeValue>%s' % (namespaceprefix_ , self.gds_format_float(self.ChargeValue, input_name='ChargeValue'), namespaceprefix_ , eol_))
+            outfile.write('<%sChargeValue>%s</%sChargeValue>%s' % (namespaceprefix_ , self.gds_format_decimal(self.ChargeValue, input_name='ChargeValue'), namespaceprefix_ , eol_))
         if self.CurrencyCode is not None:
             namespaceprefix_ = self.CurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CurrencyCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -12626,6 +12272,9 @@ class SpecialService(GeneratedsSuper):
             namespaceprefix_ = self.IsWaived_nsprefix_ + ':' if (UseCapturedNS_ and self.IsWaived_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sIsWaived>%s</%sIsWaived>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.IsWaived), input_name='IsWaived')), namespaceprefix_ , eol_))
+        if self.PaymentMethods is not None:
+            namespaceprefix_ = self.PaymentMethods_nsprefix_ + ':' if (UseCapturedNS_ and self.PaymentMethods_nsprefix_) else ''
+            self.PaymentMethods.export(outfile, level, namespaceprefix_, namespacedef_='', name_='PaymentMethods', pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -12672,12 +12321,12 @@ class SpecialService(GeneratedsSuper):
             self.validate_CommunicationType(self.CommunicationType)
         elif nodeName_ == 'ChargeValue' and child_.text:
             sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'ChargeValue')
-            fval_ = self.gds_validate_float(fval_, node, 'ChargeValue')
+            fval_ = self.gds_parse_decimal(sval_, node, 'ChargeValue')
+            fval_ = self.gds_validate_decimal(fval_, node, 'ChargeValue')
             self.ChargeValue = fval_
             self.ChargeValue_nsprefix_ = child_.prefix
-            # validate type Money
-            self.validate_Money(self.ChargeValue)
+            # validate type ChargeValue_Money
+            self.validate_ChargeValue_Money(self.ChargeValue)
         elif nodeName_ == 'CurrencyCode':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'CurrencyCode')
@@ -12694,7 +12343,134 @@ class SpecialService(GeneratedsSuper):
             self.IsWaived_nsprefix_ = child_.prefix
             # validate type YesNo
             self.validate_YesNo(self.IsWaived)
+        elif nodeName_ == 'PaymentMethods':
+            obj_ = PaymentMethods.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.PaymentMethods = obj_
+            obj_.original_tagname_ = 'PaymentMethods'
 # end class SpecialService
+
+
+class PaymentMethods(GeneratedsSuper):
+    """Payment methods"""
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, PaymentMethod=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.PaymentMethod = PaymentMethod
+        self.validate_PaymentMethod(self.PaymentMethod)
+        self.PaymentMethod_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, PaymentMethods)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if PaymentMethods.subclass:
+            return PaymentMethods.subclass(*args_, **kwargs_)
+        else:
+            return PaymentMethods(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_PaymentMethod(self):
+        return self.PaymentMethod
+    def set_PaymentMethod(self, PaymentMethod):
+        self.PaymentMethod = PaymentMethod
+    def validate_PaymentMethod(self, value):
+        result = True
+        # Validate type PaymentMethod, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['CSH', 'CRC', 'CHQ', 'PYP', 'MOB']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on PaymentMethod' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) > 3:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PaymentMethod' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 3:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PaymentMethod' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def hasContent_(self):
+        if (
+            self.PaymentMethod is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PaymentMethods', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('PaymentMethods')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'PaymentMethods':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PaymentMethods')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PaymentMethods', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PaymentMethods'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PaymentMethods', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.PaymentMethod is not None:
+            namespaceprefix_ = self.PaymentMethod_nsprefix_ + ':' if (UseCapturedNS_ and self.PaymentMethod_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sPaymentMethod>%s</%sPaymentMethod>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PaymentMethod), input_name='PaymentMethod')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'PaymentMethod':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'PaymentMethod')
+            value_ = self.gds_validate_string(value_, node, 'PaymentMethod')
+            self.PaymentMethod = value_
+            self.PaymentMethod_nsprefix_ = child_.prefix
+            # validate type PaymentMethod
+            self.validate_PaymentMethod(self.PaymentMethod)
+# end class PaymentMethods
 
 
 class WeightSeg(GeneratedsSuper):
@@ -12744,15 +12520,7 @@ class WeightSeg(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 0.000:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999999.999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
+            if len(str(value)) >= 15:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
                 result = False
@@ -15996,7 +15764,7 @@ class PieceEvent(GeneratedsSuper):
         self.ServiceEvent = ServiceEvent
         self.ServiceEvent_nsprefix_ = None
         self.Signatory = Signatory
-        self.validate_SignatoryType11(self.Signatory)
+        self.validate_SignatoryType2(self.Signatory)
         self.Signatory_nsprefix_ = None
         self.ServiceArea = ServiceArea
         self.ServiceArea_nsprefix_ = None
@@ -16035,9 +15803,9 @@ class PieceEvent(GeneratedsSuper):
         return self.ServiceArea
     def set_ServiceArea(self, ServiceArea):
         self.ServiceArea = ServiceArea
-    def validate_SignatoryType11(self, value):
+    def validate_SignatoryType2(self, value):
         result = True
-        # Validate type SignatoryType11, a restriction on xsd:string.
+        # Validate type SignatoryType2, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
@@ -16139,8 +15907,8 @@ class PieceEvent(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'Signatory')
             self.Signatory = value_
             self.Signatory_nsprefix_ = child_.prefix
-            # validate type SignatoryType11
-            self.validate_SignatoryType11(self.Signatory)
+            # validate type SignatoryType2
+            self.validate_SignatoryType2(self.Signatory)
         elif nodeName_ == 'ServiceArea':
             obj_ = ServiceArea.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -16166,7 +15934,7 @@ class PieceDetails(GeneratedsSuper):
         self.validate_PackageType(self.PackageType)
         self.PackageType_nsprefix_ = None
         self.Weight = Weight
-        self.validate_Weight(self.Weight)
+        self.validate_Piece_Weight(self.Weight)
         self.Weight_nsprefix_ = None
         self.DimWeight = DimWeight
         self.DimWeight_nsprefix_ = None
@@ -16255,9 +16023,9 @@ class PieceDetails(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on PackageType' % {"value": encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_Weight(self, value):
+    def validate_Piece_Weight(self, value):
         result = True
-        # Validate type Weight, a restriction on xsd:decimal.
+        # Validate type Piece_Weight, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
@@ -16265,15 +16033,11 @@ class PieceDetails(GeneratedsSuper):
                 return False
             if value < 0.000:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Piece_Weight' % {"value": value, "lineno": lineno} )
                 result = False
-            if value > 999999.999:
+            if value > 99999999999.999:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Piece_Weight' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def hasContent_(self):
@@ -16383,8 +16147,8 @@ class PieceDetails(GeneratedsSuper):
             fval_ = self.gds_validate_decimal(fval_, node, 'Weight')
             self.Weight = fval_
             self.Weight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.Weight)
+            # validate type Piece_Weight
+            self.validate_Piece_Weight(self.Weight)
         elif nodeName_ == 'DimWeight':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'DimWeight')
@@ -17686,7 +17450,7 @@ class Label(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, HideAccount=None, LabelTemplate=None, ReceiptTemplate=None, DocDetach=None, Logo=None, CustomerLogo=None, Resolution=None, CustomerBarcodeType=None, CustomerBarcodeCode=None, CustomerBarcodeText=None, CustomsInvoiceTemplate=None, gds_collector_=None, **kwargs_):
+    def __init__(self, HideAccount=None, LabelTemplate=None, ReceiptTemplate=None, ShipmentReceiptWithLabels=None, CustomsInvoiceTemplate=None, Logo=None, CustomerLogo=None, Resolution=None, CustomerBarcodeType=None, CustomerBarcodeCode=None, CustomerBarcodeText=None, QRCodeTemplate=None, QRCodeImageFormat=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -17701,9 +17465,12 @@ class Label(GeneratedsSuper):
         self.ReceiptTemplate = ReceiptTemplate
         self.validate_ReceiptTemplate(self.ReceiptTemplate)
         self.ReceiptTemplate_nsprefix_ = None
-        self.DocDetach = DocDetach
-        self.validate_DocDetach(self.DocDetach)
-        self.DocDetach_nsprefix_ = None
+        self.ShipmentReceiptWithLabels = ShipmentReceiptWithLabels
+        self.validate_YesNo(self.ShipmentReceiptWithLabels)
+        self.ShipmentReceiptWithLabels_nsprefix_ = None
+        self.CustomsInvoiceTemplate = CustomsInvoiceTemplate
+        self.validate_CustomsInvoiceTemplate(self.CustomsInvoiceTemplate)
+        self.CustomsInvoiceTemplate_nsprefix_ = None
         self.Logo = Logo
         self.validate_YesNo(self.Logo)
         self.Logo_nsprefix_ = None
@@ -17718,9 +17485,12 @@ class Label(GeneratedsSuper):
         self.CustomerBarcodeCode_nsprefix_ = None
         self.CustomerBarcodeText = CustomerBarcodeText
         self.CustomerBarcodeText_nsprefix_ = None
-        self.CustomsInvoiceTemplate = CustomsInvoiceTemplate
-        self.validate_CustomsInvoiceTemplate(self.CustomsInvoiceTemplate)
-        self.CustomsInvoiceTemplate_nsprefix_ = None
+        self.QRCodeTemplate = QRCodeTemplate
+        self.validate_QRCodeTemplate(self.QRCodeTemplate)
+        self.QRCodeTemplate_nsprefix_ = None
+        self.QRCodeImageFormat = QRCodeImageFormat
+        self.validate_QRCodeImageFormat(self.QRCodeImageFormat)
+        self.QRCodeImageFormat_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
@@ -17748,10 +17518,14 @@ class Label(GeneratedsSuper):
         return self.ReceiptTemplate
     def set_ReceiptTemplate(self, ReceiptTemplate):
         self.ReceiptTemplate = ReceiptTemplate
-    def get_DocDetach(self):
-        return self.DocDetach
-    def set_DocDetach(self, DocDetach):
-        self.DocDetach = DocDetach
+    def get_ShipmentReceiptWithLabels(self):
+        return self.ShipmentReceiptWithLabels
+    def set_ShipmentReceiptWithLabels(self, ShipmentReceiptWithLabels):
+        self.ShipmentReceiptWithLabels = ShipmentReceiptWithLabels
+    def get_CustomsInvoiceTemplate(self):
+        return self.CustomsInvoiceTemplate
+    def set_CustomsInvoiceTemplate(self, CustomsInvoiceTemplate):
+        self.CustomsInvoiceTemplate = CustomsInvoiceTemplate
     def get_Logo(self):
         return self.Logo
     def set_Logo(self, Logo):
@@ -17776,10 +17550,14 @@ class Label(GeneratedsSuper):
         return self.CustomerBarcodeText
     def set_CustomerBarcodeText(self, CustomerBarcodeText):
         self.CustomerBarcodeText = CustomerBarcodeText
-    def get_CustomsInvoiceTemplate(self):
-        return self.CustomsInvoiceTemplate
-    def set_CustomsInvoiceTemplate(self, CustomsInvoiceTemplate):
-        self.CustomsInvoiceTemplate = CustomsInvoiceTemplate
+    def get_QRCodeTemplate(self):
+        return self.QRCodeTemplate
+    def set_QRCodeTemplate(self, QRCodeTemplate):
+        self.QRCodeTemplate = QRCodeTemplate
+    def get_QRCodeImageFormat(self):
+        return self.QRCodeImageFormat
+    def set_QRCodeImageFormat(self, QRCodeImageFormat):
+        self.QRCodeImageFormat = QRCodeImageFormat
     def validate_YesNo(self, value):
         result = True
         # Validate type YesNo, a restriction on xsd:string.
@@ -17808,7 +17586,7 @@ class Label(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['8X4_A4_PDF', '8X4_thermal', '8X4_A4_TC_PDF', '6X4_thermal', '6X4_A4_PDF', '8X4_CI_PDF', '8X4_CI_thermal', '8X4_RU_A4_PDF', '6X4_PDF', '8X4_PDF', '8X4_CustBarCode_PDF', '8X4_CustBarCode_thermal', '8X4_CustBarCode_AdditionalInfo_PDF', '8X4_CustBarCode_AdditionalInfo_thermal']
+            enumerations = ['8X4_A4_PDF', '8X4_thermal', '8X4_A4_TC_PDF', '6X4_thermal', '6X4_A4_PDF', '8X4_CI_PDF', '8X4_CI_thermal', '8X4_RU_A4_PDF', '6X4_PDF', '8X4_PDF', '8X4_CustBarCode_PDF', '8X4_CustBarCode_thermal', '8X4_CustBarCode_AdditionalInfo_PDF', '8X4_CustBarCode_AdditionalInfo_thermal', '8X4_LBBX_PDF', '8X4_LBBX_thermal']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on LabelTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
@@ -17833,23 +17611,19 @@ class Label(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ReceiptTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_DocDetach(self, value):
+    def validate_CustomsInvoiceTemplate(self, value):
         result = True
-        # Validate type DocDetach, a restriction on xsd:string.
+        # Validate type CustomsInvoiceTemplate, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['ShpRcpt']
+            enumerations = ['COMMERCIAL_INVOICE_04', 'COMMERCIAL_INVOICE_P_10', 'COMMERCIAL_INVOICE_L_10']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DocDetach' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 30:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on DocDetach' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on CustomsInvoiceTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_Resolution(self, value):
@@ -17869,19 +17643,32 @@ class Label(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Resolution' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def validate_CustomsInvoiceTemplate(self, value):
+    def validate_QRCodeTemplate(self, value):
         result = True
-        # Validate type CustomsInvoiceTemplate, a restriction on xsd:string.
+        # Validate type QRCodeTemplate, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 20:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on QRCodeTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_QRCodeImageFormat(self, value):
+        result = True
+        # Validate type QRCodeImageFormat, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['COMMERCIAL_INVOICE_03', 'COMMERCIAL_INVOICE_P_10', 'COMMERCIAL_INVOICE_L_10']
+            enumerations = ['PNG']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on CustomsInvoiceTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on QRCodeImageFormat' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def hasContent_(self):
@@ -17889,14 +17676,16 @@ class Label(GeneratedsSuper):
             self.HideAccount is not None or
             self.LabelTemplate is not None or
             self.ReceiptTemplate is not None or
-            self.DocDetach is not None or
+            self.ShipmentReceiptWithLabels is not None or
+            self.CustomsInvoiceTemplate is not None or
             self.Logo is not None or
             self.CustomerLogo is not None or
             self.Resolution is not None or
             self.CustomerBarcodeType is not None or
             self.CustomerBarcodeCode is not None or
             self.CustomerBarcodeText is not None or
-            self.CustomsInvoiceTemplate is not None
+            self.QRCodeTemplate is not None or
+            self.QRCodeImageFormat is not None
         ):
             return True
         else:
@@ -17943,10 +17732,14 @@ class Label(GeneratedsSuper):
             namespaceprefix_ = self.ReceiptTemplate_nsprefix_ + ':' if (UseCapturedNS_ and self.ReceiptTemplate_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sReceiptTemplate>%s</%sReceiptTemplate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ReceiptTemplate), input_name='ReceiptTemplate')), namespaceprefix_ , eol_))
-        if self.DocDetach is not None:
-            namespaceprefix_ = self.DocDetach_nsprefix_ + ':' if (UseCapturedNS_ and self.DocDetach_nsprefix_) else ''
+        if self.ShipmentReceiptWithLabels is not None:
+            namespaceprefix_ = self.ShipmentReceiptWithLabels_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentReceiptWithLabels_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDocDetach>%s</%sDocDetach>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DocDetach), input_name='DocDetach')), namespaceprefix_ , eol_))
+            outfile.write('<%sShipmentReceiptWithLabels>%s</%sShipmentReceiptWithLabels>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ShipmentReceiptWithLabels), input_name='ShipmentReceiptWithLabels')), namespaceprefix_ , eol_))
+        if self.CustomsInvoiceTemplate is not None:
+            namespaceprefix_ = self.CustomsInvoiceTemplate_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsInvoiceTemplate_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCustomsInvoiceTemplate>%s</%sCustomsInvoiceTemplate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomsInvoiceTemplate), input_name='CustomsInvoiceTemplate')), namespaceprefix_ , eol_))
         if self.Logo is not None:
             namespaceprefix_ = self.Logo_nsprefix_ + ':' if (UseCapturedNS_ and self.Logo_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -17970,10 +17763,14 @@ class Label(GeneratedsSuper):
             namespaceprefix_ = self.CustomerBarcodeText_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerBarcodeText_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sCustomerBarcodeText>%s</%sCustomerBarcodeText>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomerBarcodeText), input_name='CustomerBarcodeText')), namespaceprefix_ , eol_))
-        if self.CustomsInvoiceTemplate is not None:
-            namespaceprefix_ = self.CustomsInvoiceTemplate_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsInvoiceTemplate_nsprefix_) else ''
+        if self.QRCodeTemplate is not None:
+            namespaceprefix_ = self.QRCodeTemplate_nsprefix_ + ':' if (UseCapturedNS_ and self.QRCodeTemplate_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCustomsInvoiceTemplate>%s</%sCustomsInvoiceTemplate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomsInvoiceTemplate), input_name='CustomsInvoiceTemplate')), namespaceprefix_ , eol_))
+            outfile.write('<%sQRCodeTemplate>%s</%sQRCodeTemplate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.QRCodeTemplate), input_name='QRCodeTemplate')), namespaceprefix_ , eol_))
+        if self.QRCodeImageFormat is not None:
+            namespaceprefix_ = self.QRCodeImageFormat_nsprefix_ + ':' if (UseCapturedNS_ and self.QRCodeImageFormat_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sQRCodeImageFormat>%s</%sQRCodeImageFormat>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.QRCodeImageFormat), input_name='QRCodeImageFormat')), namespaceprefix_ , eol_))
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -18012,14 +17809,22 @@ class Label(GeneratedsSuper):
             self.ReceiptTemplate_nsprefix_ = child_.prefix
             # validate type ReceiptTemplate
             self.validate_ReceiptTemplate(self.ReceiptTemplate)
-        elif nodeName_ == 'DocDetach':
+        elif nodeName_ == 'ShipmentReceiptWithLabels':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DocDetach')
-            value_ = self.gds_validate_string(value_, node, 'DocDetach')
-            self.DocDetach = value_
-            self.DocDetach_nsprefix_ = child_.prefix
-            # validate type DocDetach
-            self.validate_DocDetach(self.DocDetach)
+            value_ = self.gds_parse_string(value_, node, 'ShipmentReceiptWithLabels')
+            value_ = self.gds_validate_string(value_, node, 'ShipmentReceiptWithLabels')
+            self.ShipmentReceiptWithLabels = value_
+            self.ShipmentReceiptWithLabels_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.ShipmentReceiptWithLabels)
+        elif nodeName_ == 'CustomsInvoiceTemplate':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CustomsInvoiceTemplate')
+            value_ = self.gds_validate_string(value_, node, 'CustomsInvoiceTemplate')
+            self.CustomsInvoiceTemplate = value_
+            self.CustomsInvoiceTemplate_nsprefix_ = child_.prefix
+            # validate type CustomsInvoiceTemplate
+            self.validate_CustomsInvoiceTemplate(self.CustomsInvoiceTemplate)
         elif nodeName_ == 'Logo':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'Logo')
@@ -18061,14 +17866,22 @@ class Label(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'CustomerBarcodeText')
             self.CustomerBarcodeText = value_
             self.CustomerBarcodeText_nsprefix_ = child_.prefix
-        elif nodeName_ == 'CustomsInvoiceTemplate':
+        elif nodeName_ == 'QRCodeTemplate':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CustomsInvoiceTemplate')
-            value_ = self.gds_validate_string(value_, node, 'CustomsInvoiceTemplate')
-            self.CustomsInvoiceTemplate = value_
-            self.CustomsInvoiceTemplate_nsprefix_ = child_.prefix
-            # validate type CustomsInvoiceTemplate
-            self.validate_CustomsInvoiceTemplate(self.CustomsInvoiceTemplate)
+            value_ = self.gds_parse_string(value_, node, 'QRCodeTemplate')
+            value_ = self.gds_validate_string(value_, node, 'QRCodeTemplate')
+            self.QRCodeTemplate = value_
+            self.QRCodeTemplate_nsprefix_ = child_.prefix
+            # validate type QRCodeTemplate
+            self.validate_QRCodeTemplate(self.QRCodeTemplate)
+        elif nodeName_ == 'QRCodeImageFormat':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'QRCodeImageFormat')
+            value_ = self.gds_validate_string(value_, node, 'QRCodeImageFormat')
+            self.QRCodeImageFormat = value_
+            self.QRCodeImageFormat_nsprefix_ = child_.prefix
+            # validate type QRCodeImageFormat
+            self.validate_QRCodeImageFormat(self.QRCodeImageFormat)
 # end class Label
 
 
@@ -18390,15 +18203,7 @@ class DG(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 0.000:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999999.999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
+            if len(str(value)) >= 15:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
                 result = False
@@ -18683,6 +18488,785 @@ class ShipmentDocument(GeneratedsSuper):
 # end class ShipmentDocument
 
 
+class CustomerDataTextEntries(GeneratedsSuper):
+    """Customer Data Texts that would like to be printed in
+    COMMERCIAL_INVOICE_04 template"""
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CustomerDataTextEntry=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if CustomerDataTextEntry is None:
+            self.CustomerDataTextEntry = []
+        else:
+            self.CustomerDataTextEntry = CustomerDataTextEntry
+        self.CustomerDataTextEntry_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CustomerDataTextEntries)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CustomerDataTextEntries.subclass:
+            return CustomerDataTextEntries.subclass(*args_, **kwargs_)
+        else:
+            return CustomerDataTextEntries(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CustomerDataTextEntry(self):
+        return self.CustomerDataTextEntry
+    def set_CustomerDataTextEntry(self, CustomerDataTextEntry):
+        self.CustomerDataTextEntry = CustomerDataTextEntry
+    def add_CustomerDataTextEntry(self, value):
+        self.CustomerDataTextEntry.append(value)
+    def insert_CustomerDataTextEntry_at(self, index, value):
+        self.CustomerDataTextEntry.insert(index, value)
+    def replace_CustomerDataTextEntry_at(self, index, value):
+        self.CustomerDataTextEntry[index] = value
+    def hasContent_(self):
+        if (
+            self.CustomerDataTextEntry
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomerDataTextEntries', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CustomerDataTextEntries')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CustomerDataTextEntries':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CustomerDataTextEntries')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CustomerDataTextEntries', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CustomerDataTextEntries'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomerDataTextEntries', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for CustomerDataTextEntry_ in self.CustomerDataTextEntry:
+            namespaceprefix_ = self.CustomerDataTextEntry_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerDataTextEntry_nsprefix_) else ''
+            CustomerDataTextEntry_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CustomerDataTextEntry', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CustomerDataTextEntry':
+            obj_ = CustomerDataTextEntry.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.CustomerDataTextEntry.append(obj_)
+            obj_.original_tagname_ = 'CustomerDataTextEntry'
+# end class CustomerDataTextEntries
+
+
+class CustomerDataTextEntry(GeneratedsSuper):
+    """Customer Data Texts that would like to be printed in
+    COMMERCIAL_INVOICE_04 template"""
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CustomerDataTextNumber=None, CustomerDataText=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CustomerDataTextNumber = CustomerDataTextNumber
+        self.validate_CustomerDataTextNumber(self.CustomerDataTextNumber)
+        self.CustomerDataTextNumber_nsprefix_ = None
+        self.CustomerDataText = CustomerDataText
+        self.validate_CustomerDataText(self.CustomerDataText)
+        self.CustomerDataText_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CustomerDataTextEntry)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CustomerDataTextEntry.subclass:
+            return CustomerDataTextEntry.subclass(*args_, **kwargs_)
+        else:
+            return CustomerDataTextEntry(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CustomerDataTextNumber(self):
+        return self.CustomerDataTextNumber
+    def set_CustomerDataTextNumber(self, CustomerDataTextNumber):
+        self.CustomerDataTextNumber = CustomerDataTextNumber
+    def get_CustomerDataText(self):
+        return self.CustomerDataText
+    def set_CustomerDataText(self, CustomerDataText):
+        self.CustomerDataText = CustomerDataText
+    def validate_CustomerDataTextNumber(self, value):
+        result = True
+        # Validate type CustomerDataTextNumber, a restriction on xsd:token.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CustomerDataTextNumber' % {"value": value, "lineno": lineno} )
+                result = False
+            if len(value) < 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CustomerDataTextNumber' % {"value" : value, "lineno": lineno} )
+                result = False
+            if not self.gds_validate_simple_patterns(
+                    self.validate_CustomerDataTextNumber_patterns_, value):
+                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_CustomerDataTextNumber_patterns_, ))
+                result = False
+        return result
+    validate_CustomerDataTextNumber_patterns_ = [['^(([1-6])*)$']]
+    def validate_CustomerDataText(self, value):
+        result = True
+        # Validate type CustomerDataText, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 45:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CustomerDataText' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def hasContent_(self):
+        if (
+            self.CustomerDataTextNumber is not None or
+            self.CustomerDataText is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomerDataTextEntry', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CustomerDataTextEntry')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CustomerDataTextEntry':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CustomerDataTextEntry')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CustomerDataTextEntry', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CustomerDataTextEntry'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomerDataTextEntry', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CustomerDataTextNumber is not None:
+            namespaceprefix_ = self.CustomerDataTextNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerDataTextNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCustomerDataTextNumber>%s</%sCustomerDataTextNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomerDataTextNumber), input_name='CustomerDataTextNumber')), namespaceprefix_ , eol_))
+        if self.CustomerDataText is not None:
+            namespaceprefix_ = self.CustomerDataText_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerDataText_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCustomerDataText>%s</%sCustomerDataText>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomerDataText), input_name='CustomerDataText')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CustomerDataTextNumber':
+            value_ = child_.text
+            if value_:
+                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
+            else:
+                value_ = ""
+            value_ = self.gds_parse_string(value_, node, 'CustomerDataTextNumber')
+            value_ = self.gds_validate_string(value_, node, 'CustomerDataTextNumber')
+            self.CustomerDataTextNumber = value_
+            self.CustomerDataTextNumber_nsprefix_ = child_.prefix
+            # validate type CustomerDataTextNumber
+            self.validate_CustomerDataTextNumber(self.CustomerDataTextNumber)
+        elif nodeName_ == 'CustomerDataText':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CustomerDataText')
+            value_ = self.gds_validate_string(value_, node, 'CustomerDataText')
+            self.CustomerDataText = value_
+            self.CustomerDataText_nsprefix_ = child_.prefix
+            # validate type CustomerDataText
+            self.validate_CustomerDataText(self.CustomerDataText)
+# end class CustomerDataTextEntry
+
+
+class CustomsDocuments(GeneratedsSuper):
+    """Export Declaration's level Customs Document details"""
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CustomsDocument=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if CustomsDocument is None:
+            self.CustomsDocument = []
+        else:
+            self.CustomsDocument = CustomsDocument
+        self.CustomsDocument_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CustomsDocuments)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CustomsDocuments.subclass:
+            return CustomsDocuments.subclass(*args_, **kwargs_)
+        else:
+            return CustomsDocuments(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CustomsDocument(self):
+        return self.CustomsDocument
+    def set_CustomsDocument(self, CustomsDocument):
+        self.CustomsDocument = CustomsDocument
+    def add_CustomsDocument(self, value):
+        self.CustomsDocument.append(value)
+    def insert_CustomsDocument_at(self, index, value):
+        self.CustomsDocument.insert(index, value)
+    def replace_CustomsDocument_at(self, index, value):
+        self.CustomsDocument[index] = value
+    def hasContent_(self):
+        if (
+            self.CustomsDocument
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsDocuments', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CustomsDocuments')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CustomsDocuments':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CustomsDocuments')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CustomsDocuments', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CustomsDocuments'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsDocuments', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for CustomsDocument_ in self.CustomsDocument:
+            namespaceprefix_ = self.CustomsDocument_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsDocument_nsprefix_) else ''
+            CustomsDocument_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CustomsDocument', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CustomsDocument':
+            obj_ = CustomsDocument.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.CustomsDocument.append(obj_)
+            obj_.original_tagname_ = 'CustomsDocument'
+# end class CustomsDocuments
+
+
+class CustomsDocument(GeneratedsSuper):
+    """Export Declaration's level Customs Document entry"""
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, CustomsDocumentType=None, CustomsDocumentID=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.CustomsDocumentType = CustomsDocumentType
+        self.validate_CustomsDocumentType(self.CustomsDocumentType)
+        self.CustomsDocumentType_nsprefix_ = None
+        self.CustomsDocumentID = CustomsDocumentID
+        self.validate_CustomsDocumentID(self.CustomsDocumentID)
+        self.CustomsDocumentID_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, CustomsDocument)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if CustomsDocument.subclass:
+            return CustomsDocument.subclass(*args_, **kwargs_)
+        else:
+            return CustomsDocument(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_CustomsDocumentType(self):
+        return self.CustomsDocumentType
+    def set_CustomsDocumentType(self, CustomsDocumentType):
+        self.CustomsDocumentType = CustomsDocumentType
+    def get_CustomsDocumentID(self):
+        return self.CustomsDocumentID
+    def set_CustomsDocumentID(self, CustomsDocumentID):
+        self.CustomsDocumentID = CustomsDocumentID
+    def validate_CustomsDocumentType(self, value):
+        result = True
+        # Validate type CustomsDocumentType, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['972', 'AHC', 'ATA', 'ATR', 'CHD', 'CHP', 'CIT', 'COO', 'DEX', 'EU1', 'EU2', 'EUS', 'FMA', 'PHY', 'VET', 'VEX', 'CRL', 'CSD', 'PPY', 'CI2', 'CIV', 'DOV', 'INV', 'PFI', 'ALC', 'HLC', 'JLC', 'LIC', 'LNP', 'PLI', 'DLI', 'NID', 'PAS', 'CHA', 'CPA', 'POA', 'BEX', 'DGD', 'IPA', 'T2M', 'TAD', 'TCS', 'ROD', 'EXL', 'HWB']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on CustomsDocumentType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) > 3:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CustomsDocumentType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CustomsDocumentType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_CustomsDocumentID(self, value):
+        result = True
+        # Validate type CustomsDocumentID, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 35:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CustomsDocumentID' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def hasContent_(self):
+        if (
+            self.CustomsDocumentType is not None or
+            self.CustomsDocumentID is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsDocument', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('CustomsDocument')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'CustomsDocument':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='CustomsDocument')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='CustomsDocument', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='CustomsDocument'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CustomsDocument', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.CustomsDocumentType is not None:
+            namespaceprefix_ = self.CustomsDocumentType_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsDocumentType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCustomsDocumentType>%s</%sCustomsDocumentType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomsDocumentType), input_name='CustomsDocumentType')), namespaceprefix_ , eol_))
+        if self.CustomsDocumentID is not None:
+            namespaceprefix_ = self.CustomsDocumentID_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsDocumentID_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCustomsDocumentID>%s</%sCustomsDocumentID>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomsDocumentID), input_name='CustomsDocumentID')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'CustomsDocumentType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CustomsDocumentType')
+            value_ = self.gds_validate_string(value_, node, 'CustomsDocumentType')
+            self.CustomsDocumentType = value_
+            self.CustomsDocumentType_nsprefix_ = child_.prefix
+            # validate type CustomsDocumentType
+            self.validate_CustomsDocumentType(self.CustomsDocumentType)
+        elif nodeName_ == 'CustomsDocumentID':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CustomsDocumentID')
+            value_ = self.gds_validate_string(value_, node, 'CustomsDocumentID')
+            self.CustomsDocumentID = value_
+            self.CustomsDocumentID_nsprefix_ = child_.prefix
+            # validate type CustomsDocumentID
+            self.validate_CustomsDocumentID(self.CustomsDocumentID)
+# end class CustomsDocument
+
+
+class InvoiceReferences(GeneratedsSuper):
+    """Customs Invoice References"""
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, InvoiceReference=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        if InvoiceReference is None:
+            self.InvoiceReference = []
+        else:
+            self.InvoiceReference = InvoiceReference
+        self.InvoiceReference_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, InvoiceReferences)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if InvoiceReferences.subclass:
+            return InvoiceReferences.subclass(*args_, **kwargs_)
+        else:
+            return InvoiceReferences(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_InvoiceReference(self):
+        return self.InvoiceReference
+    def set_InvoiceReference(self, InvoiceReference):
+        self.InvoiceReference = InvoiceReference
+    def add_InvoiceReference(self, value):
+        self.InvoiceReference.append(value)
+    def insert_InvoiceReference_at(self, index, value):
+        self.InvoiceReference.insert(index, value)
+    def replace_InvoiceReference_at(self, index, value):
+        self.InvoiceReference[index] = value
+    def hasContent_(self):
+        if (
+            self.InvoiceReference
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceReferences', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InvoiceReferences')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'InvoiceReferences':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InvoiceReferences')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InvoiceReferences', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InvoiceReferences'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceReferences', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for InvoiceReference_ in self.InvoiceReference:
+            namespaceprefix_ = self.InvoiceReference_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceReference_nsprefix_) else ''
+            InvoiceReference_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='InvoiceReference', pretty_print=pretty_print)
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'InvoiceReference':
+            obj_ = InvoiceReference.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.InvoiceReference.append(obj_)
+            obj_.original_tagname_ = 'InvoiceReference'
+# end class InvoiceReferences
+
+
+class InvoiceReference(GeneratedsSuper):
+    """Customs Invoice Reference entry"""
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, InvoiceReferenceType=None, InvoiceReferenceNumber=None, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+        self.InvoiceReferenceType = InvoiceReferenceType
+        self.validate_InvoiceReferenceType(self.InvoiceReferenceType)
+        self.InvoiceReferenceType_nsprefix_ = None
+        self.InvoiceReferenceNumber = InvoiceReferenceNumber
+        self.validate_InvoiceReferenceNumber(self.InvoiceReferenceNumber)
+        self.InvoiceReferenceNumber_nsprefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, InvoiceReference)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if InvoiceReference.subclass:
+            return InvoiceReference.subclass(*args_, **kwargs_)
+        else:
+            return InvoiceReference(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def get_InvoiceReferenceType(self):
+        return self.InvoiceReferenceType
+    def set_InvoiceReferenceType(self, InvoiceReferenceType):
+        self.InvoiceReferenceType = InvoiceReferenceType
+    def get_InvoiceReferenceNumber(self):
+        return self.InvoiceReferenceNumber
+    def set_InvoiceReferenceNumber(self, InvoiceReferenceNumber):
+        self.InvoiceReferenceNumber = InvoiceReferenceNumber
+    def validate_InvoiceReferenceType(self, value):
+        result = True
+        # Validate type InvoiceReferenceType, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            value = value
+            enumerations = ['ACL', 'CID', 'CN', 'CU', 'ITN', 'UCN', 'MRN', 'OID', 'PON']
+            if value not in enumerations:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on InvoiceReferenceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) > 3:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on InvoiceReferenceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on InvoiceReferenceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def validate_InvoiceReferenceNumber(self, value):
+        result = True
+        # Validate type InvoiceReferenceNumber, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) > 35:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on InvoiceReferenceNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
+    def hasContent_(self):
+        if (
+            self.InvoiceReferenceType is not None or
+            self.InvoiceReferenceNumber is not None
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceReference', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('InvoiceReference')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'InvoiceReference':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='InvoiceReference')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='InvoiceReference', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='InvoiceReference'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='InvoiceReference', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.InvoiceReferenceType is not None:
+            namespaceprefix_ = self.InvoiceReferenceType_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceReferenceType_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sInvoiceReferenceType>%s</%sInvoiceReferenceType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.InvoiceReferenceType), input_name='InvoiceReferenceType')), namespaceprefix_ , eol_))
+        if self.InvoiceReferenceNumber is not None:
+            namespaceprefix_ = self.InvoiceReferenceNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.InvoiceReferenceNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sInvoiceReferenceNumber>%s</%sInvoiceReferenceNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.InvoiceReferenceNumber), input_name='InvoiceReferenceNumber')), namespaceprefix_ , eol_))
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        if nodeName_ == 'InvoiceReferenceType':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'InvoiceReferenceType')
+            value_ = self.gds_validate_string(value_, node, 'InvoiceReferenceType')
+            self.InvoiceReferenceType = value_
+            self.InvoiceReferenceType_nsprefix_ = child_.prefix
+            # validate type InvoiceReferenceType
+            self.validate_InvoiceReferenceType(self.InvoiceReferenceType)
+        elif nodeName_ == 'InvoiceReferenceNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'InvoiceReferenceNumber')
+            value_ = self.gds_validate_string(value_, node, 'InvoiceReferenceNumber')
+            self.InvoiceReferenceNumber = value_
+            self.InvoiceReferenceNumber_nsprefix_ = child_.prefix
+            # validate type InvoiceReferenceNumber
+            self.validate_InvoiceReferenceNumber(self.InvoiceReferenceNumber)
+# end class InvoiceReference
+
+
 class Importer(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
@@ -18874,6 +19458,10 @@ class Importer(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
+            if len(value) < 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
         return result
     def validate_City(self, value):
         result = True
@@ -19034,6 +19622,10 @@ class Importer(GeneratedsSuper):
             if len(value) > 2:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def hasContent_(self):
@@ -19312,7 +19904,7 @@ class Importer(GeneratedsSuper):
             # validate type StreetNumber
             self.validate_StreetNumber(self.StreetNumber)
         elif nodeName_ == 'RegistrationNumbers':
-            obj_ = RegistrationNumbers1.factory(parent_object_=self)
+            obj_ = RegistrationNumbers.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.RegistrationNumbers = obj_
             obj_.original_tagname_ = 'RegistrationNumbers'
@@ -19501,7 +20093,7 @@ class RegistrationNumber(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['SDT', 'VAT', 'FTZ', 'DAN', 'TAN', 'DTF', 'DUN', 'SSN']
+            enumerations = ['SDT', 'VAT', 'FTZ', 'DAN', 'TAN', 'DTF', 'CNP', 'DUN', 'EIN', 'EOR', 'SSN', 'FED', 'STA']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on NumberTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
@@ -19634,933 +20226,6 @@ class RegistrationNumber(GeneratedsSuper):
             # validate type NumberIssuerCountryCode
             self.validate_NumberIssuerCountryCode(self.NumberIssuerCountryCode)
 # end class RegistrationNumber
-
-
-class RegistrationNumbers1(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, RegistrationNumber=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        if RegistrationNumber is None:
-            self.RegistrationNumber = []
-        else:
-            self.RegistrationNumber = RegistrationNumber
-        self.RegistrationNumber_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RegistrationNumbers1)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if RegistrationNumbers1.subclass:
-            return RegistrationNumbers1.subclass(*args_, **kwargs_)
-        else:
-            return RegistrationNumbers1(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_RegistrationNumber(self):
-        return self.RegistrationNumber
-    def set_RegistrationNumber(self, RegistrationNumber):
-        self.RegistrationNumber = RegistrationNumber
-    def add_RegistrationNumber(self, value):
-        self.RegistrationNumber.append(value)
-    def insert_RegistrationNumber_at(self, index, value):
-        self.RegistrationNumber.insert(index, value)
-    def replace_RegistrationNumber_at(self, index, value):
-        self.RegistrationNumber[index] = value
-    def hasContent_(self):
-        if (
-            self.RegistrationNumber
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumbers1', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RegistrationNumbers1')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RegistrationNumbers1':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RegistrationNumbers1')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RegistrationNumbers1', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RegistrationNumbers1'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumbers1', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        for RegistrationNumber_ in self.RegistrationNumber:
-            namespaceprefix_ = self.RegistrationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.RegistrationNumber_nsprefix_) else ''
-            RegistrationNumber_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='RegistrationNumber', pretty_print=pretty_print)
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'RegistrationNumber':
-            obj_ = RegistrationNumber1.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.RegistrationNumber.append(obj_)
-            obj_.original_tagname_ = 'RegistrationNumber'
-# end class RegistrationNumbers1
-
-
-class RegistrationNumber1(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, Number=None, NumberTypeCode=None, NumberIssuerCountryCode=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.Number = Number
-        self.validate_Number(self.Number)
-        self.Number_nsprefix_ = None
-        self.NumberTypeCode = NumberTypeCode
-        self.validate_NumberTypeCode1(self.NumberTypeCode)
-        self.NumberTypeCode_nsprefix_ = None
-        self.NumberIssuerCountryCode = NumberIssuerCountryCode
-        self.validate_NumberIssuerCountryCode(self.NumberIssuerCountryCode)
-        self.NumberIssuerCountryCode_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RegistrationNumber1)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if RegistrationNumber1.subclass:
-            return RegistrationNumber1.subclass(*args_, **kwargs_)
-        else:
-            return RegistrationNumber1(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_Number(self):
-        return self.Number
-    def set_Number(self, Number):
-        self.Number = Number
-    def get_NumberTypeCode(self):
-        return self.NumberTypeCode
-    def set_NumberTypeCode(self, NumberTypeCode):
-        self.NumberTypeCode = NumberTypeCode
-    def get_NumberIssuerCountryCode(self):
-        return self.NumberIssuerCountryCode
-    def set_NumberIssuerCountryCode(self, NumberIssuerCountryCode):
-        self.NumberIssuerCountryCode = NumberIssuerCountryCode
-    def validate_Number(self, value):
-        result = True
-        # Validate type Number, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Number' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Number' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_NumberTypeCode1(self, value):
-        result = True
-        # Validate type NumberTypeCode1, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['SDT', 'VAT', 'FTZ', 'DAN', 'TAN', 'DTF', 'CNP', 'DUN', 'EIN', 'EOR', 'FED', 'SSN']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on NumberTypeCode1' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on NumberTypeCode1' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on NumberTypeCode1' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_NumberIssuerCountryCode(self, value):
-        result = True
-        # Validate type NumberIssuerCountryCode, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on NumberIssuerCountryCode' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on NumberIssuerCountryCode' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.Number is not None or
-            self.NumberTypeCode is not None or
-            self.NumberIssuerCountryCode is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumber1', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RegistrationNumber1')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RegistrationNumber1':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RegistrationNumber1')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RegistrationNumber1', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RegistrationNumber1'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumber1', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.Number is not None:
-            namespaceprefix_ = self.Number_nsprefix_ + ':' if (UseCapturedNS_ and self.Number_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumber>%s</%sNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Number), input_name='Number')), namespaceprefix_ , eol_))
-        if self.NumberTypeCode is not None:
-            namespaceprefix_ = self.NumberTypeCode_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberTypeCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumberTypeCode>%s</%sNumberTypeCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.NumberTypeCode), input_name='NumberTypeCode')), namespaceprefix_ , eol_))
-        if self.NumberIssuerCountryCode is not None:
-            namespaceprefix_ = self.NumberIssuerCountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberIssuerCountryCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumberIssuerCountryCode>%s</%sNumberIssuerCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.NumberIssuerCountryCode), input_name='NumberIssuerCountryCode')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Number':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'Number')
-            value_ = self.gds_validate_string(value_, node, 'Number')
-            self.Number = value_
-            self.Number_nsprefix_ = child_.prefix
-            # validate type Number
-            self.validate_Number(self.Number)
-        elif nodeName_ == 'NumberTypeCode':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'NumberTypeCode')
-            value_ = self.gds_validate_string(value_, node, 'NumberTypeCode')
-            self.NumberTypeCode = value_
-            self.NumberTypeCode_nsprefix_ = child_.prefix
-            # validate type NumberTypeCode1
-            self.validate_NumberTypeCode1(self.NumberTypeCode)
-        elif nodeName_ == 'NumberIssuerCountryCode':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'NumberIssuerCountryCode')
-            value_ = self.gds_validate_string(value_, node, 'NumberIssuerCountryCode')
-            self.NumberIssuerCountryCode = value_
-            self.NumberIssuerCountryCode_nsprefix_ = child_.prefix
-            # validate type NumberIssuerCountryCode
-            self.validate_NumberIssuerCountryCode(self.NumberIssuerCountryCode)
-# end class RegistrationNumber1
-
-
-class RegistrationNumbers2(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, RegistrationNumber=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        if RegistrationNumber is None:
-            self.RegistrationNumber = []
-        else:
-            self.RegistrationNumber = RegistrationNumber
-        self.RegistrationNumber_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RegistrationNumbers2)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if RegistrationNumbers2.subclass:
-            return RegistrationNumbers2.subclass(*args_, **kwargs_)
-        else:
-            return RegistrationNumbers2(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_RegistrationNumber(self):
-        return self.RegistrationNumber
-    def set_RegistrationNumber(self, RegistrationNumber):
-        self.RegistrationNumber = RegistrationNumber
-    def add_RegistrationNumber(self, value):
-        self.RegistrationNumber.append(value)
-    def insert_RegistrationNumber_at(self, index, value):
-        self.RegistrationNumber.insert(index, value)
-    def replace_RegistrationNumber_at(self, index, value):
-        self.RegistrationNumber[index] = value
-    def hasContent_(self):
-        if (
-            self.RegistrationNumber
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumbers2', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RegistrationNumbers2')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RegistrationNumbers2':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RegistrationNumbers2')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RegistrationNumbers2', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RegistrationNumbers2'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumbers2', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        for RegistrationNumber_ in self.RegistrationNumber:
-            namespaceprefix_ = self.RegistrationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.RegistrationNumber_nsprefix_) else ''
-            RegistrationNumber_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='RegistrationNumber', pretty_print=pretty_print)
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'RegistrationNumber':
-            obj_ = RegistrationNumber2.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.RegistrationNumber.append(obj_)
-            obj_.original_tagname_ = 'RegistrationNumber'
-# end class RegistrationNumbers2
-
-
-class RegistrationNumber2(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, Number=None, NumberTypeCode=None, NumberIssuerCountryCode=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.Number = Number
-        self.validate_Number(self.Number)
-        self.Number_nsprefix_ = None
-        self.NumberTypeCode = NumberTypeCode
-        self.validate_NumberTypeCode2(self.NumberTypeCode)
-        self.NumberTypeCode_nsprefix_ = None
-        self.NumberIssuerCountryCode = NumberIssuerCountryCode
-        self.validate_NumberIssuerCountryCode(self.NumberIssuerCountryCode)
-        self.NumberIssuerCountryCode_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RegistrationNumber2)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if RegistrationNumber2.subclass:
-            return RegistrationNumber2.subclass(*args_, **kwargs_)
-        else:
-            return RegistrationNumber2(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_Number(self):
-        return self.Number
-    def set_Number(self, Number):
-        self.Number = Number
-    def get_NumberTypeCode(self):
-        return self.NumberTypeCode
-    def set_NumberTypeCode(self, NumberTypeCode):
-        self.NumberTypeCode = NumberTypeCode
-    def get_NumberIssuerCountryCode(self):
-        return self.NumberIssuerCountryCode
-    def set_NumberIssuerCountryCode(self, NumberIssuerCountryCode):
-        self.NumberIssuerCountryCode = NumberIssuerCountryCode
-    def validate_Number(self, value):
-        result = True
-        # Validate type Number, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Number' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Number' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_NumberTypeCode2(self, value):
-        result = True
-        # Validate type NumberTypeCode2, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['SDT', 'VAT', 'FTZ', 'DAN', 'TAN', 'DTF', 'CNP', 'DUN', 'EIN', 'EOR', 'SSN', 'STA']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on NumberTypeCode2' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on NumberTypeCode2' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on NumberTypeCode2' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_NumberIssuerCountryCode(self, value):
-        result = True
-        # Validate type NumberIssuerCountryCode, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on NumberIssuerCountryCode' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on NumberIssuerCountryCode' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.Number is not None or
-            self.NumberTypeCode is not None or
-            self.NumberIssuerCountryCode is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumber2', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RegistrationNumber2')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RegistrationNumber2':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RegistrationNumber2')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RegistrationNumber2', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RegistrationNumber2'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumber2', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.Number is not None:
-            namespaceprefix_ = self.Number_nsprefix_ + ':' if (UseCapturedNS_ and self.Number_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumber>%s</%sNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Number), input_name='Number')), namespaceprefix_ , eol_))
-        if self.NumberTypeCode is not None:
-            namespaceprefix_ = self.NumberTypeCode_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberTypeCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumberTypeCode>%s</%sNumberTypeCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.NumberTypeCode), input_name='NumberTypeCode')), namespaceprefix_ , eol_))
-        if self.NumberIssuerCountryCode is not None:
-            namespaceprefix_ = self.NumberIssuerCountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberIssuerCountryCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumberIssuerCountryCode>%s</%sNumberIssuerCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.NumberIssuerCountryCode), input_name='NumberIssuerCountryCode')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Number':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'Number')
-            value_ = self.gds_validate_string(value_, node, 'Number')
-            self.Number = value_
-            self.Number_nsprefix_ = child_.prefix
-            # validate type Number
-            self.validate_Number(self.Number)
-        elif nodeName_ == 'NumberTypeCode':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'NumberTypeCode')
-            value_ = self.gds_validate_string(value_, node, 'NumberTypeCode')
-            self.NumberTypeCode = value_
-            self.NumberTypeCode_nsprefix_ = child_.prefix
-            # validate type NumberTypeCode2
-            self.validate_NumberTypeCode2(self.NumberTypeCode)
-        elif nodeName_ == 'NumberIssuerCountryCode':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'NumberIssuerCountryCode')
-            value_ = self.gds_validate_string(value_, node, 'NumberIssuerCountryCode')
-            self.NumberIssuerCountryCode = value_
-            self.NumberIssuerCountryCode_nsprefix_ = child_.prefix
-            # validate type NumberIssuerCountryCode
-            self.validate_NumberIssuerCountryCode(self.NumberIssuerCountryCode)
-# end class RegistrationNumber2
-
-
-class RegistrationNumbers3(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, RegistrationNumber=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        if RegistrationNumber is None:
-            self.RegistrationNumber = []
-        else:
-            self.RegistrationNumber = RegistrationNumber
-        self.RegistrationNumber_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RegistrationNumbers3)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if RegistrationNumbers3.subclass:
-            return RegistrationNumbers3.subclass(*args_, **kwargs_)
-        else:
-            return RegistrationNumbers3(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_RegistrationNumber(self):
-        return self.RegistrationNumber
-    def set_RegistrationNumber(self, RegistrationNumber):
-        self.RegistrationNumber = RegistrationNumber
-    def add_RegistrationNumber(self, value):
-        self.RegistrationNumber.append(value)
-    def insert_RegistrationNumber_at(self, index, value):
-        self.RegistrationNumber.insert(index, value)
-    def replace_RegistrationNumber_at(self, index, value):
-        self.RegistrationNumber[index] = value
-    def hasContent_(self):
-        if (
-            self.RegistrationNumber
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumbers3', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RegistrationNumbers3')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RegistrationNumbers3':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RegistrationNumbers3')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RegistrationNumbers3', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RegistrationNumbers3'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumbers3', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        for RegistrationNumber_ in self.RegistrationNumber:
-            namespaceprefix_ = self.RegistrationNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.RegistrationNumber_nsprefix_) else ''
-            RegistrationNumber_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='RegistrationNumber', pretty_print=pretty_print)
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'RegistrationNumber':
-            obj_ = RegistrationNumber3.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.RegistrationNumber.append(obj_)
-            obj_.original_tagname_ = 'RegistrationNumber'
-# end class RegistrationNumbers3
-
-
-class RegistrationNumber3(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, Number=None, NumberTypeCode=None, NumberIssuerCountryCode=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.Number = Number
-        self.validate_Number(self.Number)
-        self.Number_nsprefix_ = None
-        self.NumberTypeCode = NumberTypeCode
-        self.validate_NumberTypeCode3(self.NumberTypeCode)
-        self.NumberTypeCode_nsprefix_ = None
-        self.NumberIssuerCountryCode = NumberIssuerCountryCode
-        self.validate_NumberIssuerCountryCode(self.NumberIssuerCountryCode)
-        self.NumberIssuerCountryCode_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RegistrationNumber3)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if RegistrationNumber3.subclass:
-            return RegistrationNumber3.subclass(*args_, **kwargs_)
-        else:
-            return RegistrationNumber3(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_Number(self):
-        return self.Number
-    def set_Number(self, Number):
-        self.Number = Number
-    def get_NumberTypeCode(self):
-        return self.NumberTypeCode
-    def set_NumberTypeCode(self, NumberTypeCode):
-        self.NumberTypeCode = NumberTypeCode
-    def get_NumberIssuerCountryCode(self):
-        return self.NumberIssuerCountryCode
-    def set_NumberIssuerCountryCode(self, NumberIssuerCountryCode):
-        self.NumberIssuerCountryCode = NumberIssuerCountryCode
-    def validate_Number(self, value):
-        result = True
-        # Validate type Number, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Number' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Number' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_NumberTypeCode3(self, value):
-        result = True
-        # Validate type NumberTypeCode3, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['SDT', 'VAT', 'FTZ', 'DAN', 'TAN', 'DTF', 'DUN', 'EOR', 'SSN']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on NumberTypeCode3' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on NumberTypeCode3' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on NumberTypeCode3' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_NumberIssuerCountryCode(self, value):
-        result = True
-        # Validate type NumberIssuerCountryCode, a restriction on xsd:token.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on NumberIssuerCountryCode' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(value) < 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on NumberIssuerCountryCode' % {"value" : value, "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.Number is not None or
-            self.NumberTypeCode is not None or
-            self.NumberIssuerCountryCode is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumber3', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RegistrationNumber3')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RegistrationNumber3':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RegistrationNumber3')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RegistrationNumber3', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='RegistrationNumber3'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='RegistrationNumber3', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.Number is not None:
-            namespaceprefix_ = self.Number_nsprefix_ + ':' if (UseCapturedNS_ and self.Number_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumber>%s</%sNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Number), input_name='Number')), namespaceprefix_ , eol_))
-        if self.NumberTypeCode is not None:
-            namespaceprefix_ = self.NumberTypeCode_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberTypeCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumberTypeCode>%s</%sNumberTypeCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.NumberTypeCode), input_name='NumberTypeCode')), namespaceprefix_ , eol_))
-        if self.NumberIssuerCountryCode is not None:
-            namespaceprefix_ = self.NumberIssuerCountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberIssuerCountryCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumberIssuerCountryCode>%s</%sNumberIssuerCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.NumberIssuerCountryCode), input_name='NumberIssuerCountryCode')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Number':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'Number')
-            value_ = self.gds_validate_string(value_, node, 'Number')
-            self.Number = value_
-            self.Number_nsprefix_ = child_.prefix
-            # validate type Number
-            self.validate_Number(self.Number)
-        elif nodeName_ == 'NumberTypeCode':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'NumberTypeCode')
-            value_ = self.gds_validate_string(value_, node, 'NumberTypeCode')
-            self.NumberTypeCode = value_
-            self.NumberTypeCode_nsprefix_ = child_.prefix
-            # validate type NumberTypeCode3
-            self.validate_NumberTypeCode3(self.NumberTypeCode)
-        elif nodeName_ == 'NumberIssuerCountryCode':
-            value_ = child_.text
-            if value_:
-                value_ = re_.sub(String_cleanup_pat_, " ", value_).strip()
-            else:
-                value_ = ""
-            value_ = self.gds_parse_string(value_, node, 'NumberIssuerCountryCode')
-            value_ = self.gds_validate_string(value_, node, 'NumberIssuerCountryCode')
-            self.NumberIssuerCountryCode = value_
-            self.NumberIssuerCountryCode_nsprefix_ = child_.prefix
-            # validate type NumberIssuerCountryCode
-            self.validate_NumberIssuerCountryCode(self.NumberIssuerCountryCode)
-# end class RegistrationNumber3
 
 
 class Exporter(GeneratedsSuper):
@@ -20754,6 +20419,10 @@ class Exporter(GeneratedsSuper):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
+            if len(value) < 1:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
         return result
     def validate_City(self, value):
         result = True
@@ -20914,6 +20583,10 @@ class Exporter(GeneratedsSuper):
             if len(value) > 2:
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) < 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on BusinessPartyTypeCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def hasContent_(self):
@@ -21192,7 +20865,7 @@ class Exporter(GeneratedsSuper):
             # validate type StreetNumber
             self.validate_StreetNumber(self.StreetNumber)
         elif nodeName_ == 'RegistrationNumbers':
-            obj_ = RegistrationNumbers1.factory(parent_object_=self)
+            obj_ = RegistrationNumbers.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.RegistrationNumbers = obj_
             obj_.original_tagname_ = 'RegistrationNumbers'
@@ -21207,1319 +20880,105 @@ class Exporter(GeneratedsSuper):
 # end class Exporter
 
 
-class LargestPiece(GeneratedsSuper):
-    """Lists measurements of largest piece. This element is mandatory if the
-    weight of shipment for ground service exceeds 50 pounds"""
+class Response_Label(GeneratedsSuper):
+    """Label"""
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, Width=None, Height=None, Depth=None, gds_collector_=None, **kwargs_):
+    def __init__(self, HideAccount=None, LabelTemplate=None, ReceiptTemplate=None, ShipmentReceiptWithLabels=None, CustomsInvoiceTemplate=None, Logo=None, CustomerLogo=None, Resolution=None, CustomerBarcodeType=None, CustomerBarcodeCode=None, CustomerBarcodeText=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.Width = Width
-        self.Width_nsprefix_ = None
-        self.Height = Height
-        self.Height_nsprefix_ = None
-        self.Depth = Depth
-        self.Depth_nsprefix_ = None
+        self.HideAccount = HideAccount
+        self.validate_YesNo(self.HideAccount)
+        self.HideAccount_nsprefix_ = None
+        self.LabelTemplate = LabelTemplate
+        self.validate_LabelTemplate(self.LabelTemplate)
+        self.LabelTemplate_nsprefix_ = None
+        self.ReceiptTemplate = ReceiptTemplate
+        self.validate_ReceiptTemplate(self.ReceiptTemplate)
+        self.ReceiptTemplate_nsprefix_ = None
+        self.ShipmentReceiptWithLabels = ShipmentReceiptWithLabels
+        self.validate_YesNo(self.ShipmentReceiptWithLabels)
+        self.ShipmentReceiptWithLabels_nsprefix_ = None
+        self.CustomsInvoiceTemplate = CustomsInvoiceTemplate
+        self.validate_CustomsInvoiceTemplate(self.CustomsInvoiceTemplate)
+        self.CustomsInvoiceTemplate_nsprefix_ = None
+        self.Logo = Logo
+        self.validate_YesNo(self.Logo)
+        self.Logo_nsprefix_ = None
+        self.CustomerLogo = CustomerLogo
+        self.CustomerLogo_nsprefix_ = None
+        self.Resolution = Resolution
+        self.validate_Resolution(self.Resolution)
+        self.Resolution_nsprefix_ = None
+        self.CustomerBarcodeType = CustomerBarcodeType
+        self.CustomerBarcodeType_nsprefix_ = None
+        self.CustomerBarcodeCode = CustomerBarcodeCode
+        self.CustomerBarcodeCode_nsprefix_ = None
+        self.CustomerBarcodeText = CustomerBarcodeText
+        self.CustomerBarcodeText_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, LargestPiece)
+                CurrentSubclassModule_, Response_Label)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if LargestPiece.subclass:
-            return LargestPiece.subclass(*args_, **kwargs_)
+        if Response_Label.subclass:
+            return Response_Label.subclass(*args_, **kwargs_)
         else:
-            return LargestPiece(*args_, **kwargs_)
+            return Response_Label(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_Width(self):
-        return self.Width
-    def set_Width(self, Width):
-        self.Width = Width
-    def get_Height(self):
-        return self.Height
-    def set_Height(self, Height):
-        self.Height = Height
-    def get_Depth(self):
-        return self.Depth
-    def set_Depth(self, Depth):
-        self.Depth = Depth
-    def hasContent_(self):
-        if (
-            self.Width is not None or
-            self.Height is not None or
-            self.Depth is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='LargestPiece', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('LargestPiece')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'LargestPiece':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='LargestPiece')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='LargestPiece', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='LargestPiece'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='LargestPiece', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.Width is not None:
-            namespaceprefix_ = self.Width_nsprefix_ + ':' if (UseCapturedNS_ and self.Width_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sWidth>%s</%sWidth>%s' % (namespaceprefix_ , self.gds_format_integer(self.Width, input_name='Width'), namespaceprefix_ , eol_))
-        if self.Height is not None:
-            namespaceprefix_ = self.Height_nsprefix_ + ':' if (UseCapturedNS_ and self.Height_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sHeight>%s</%sHeight>%s' % (namespaceprefix_ , self.gds_format_integer(self.Height, input_name='Height'), namespaceprefix_ , eol_))
-        if self.Depth is not None:
-            namespaceprefix_ = self.Depth_nsprefix_ + ':' if (UseCapturedNS_ and self.Depth_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDepth>%s</%sDepth>%s' % (namespaceprefix_ , self.gds_format_integer(self.Depth, input_name='Depth'), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Width' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'Width')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'Width')
-            self.Width = ival_
-            self.Width_nsprefix_ = child_.prefix
-        elif nodeName_ == 'Height' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'Height')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'Height')
-            self.Height = ival_
-            self.Height_nsprefix_ = child_.prefix
-        elif nodeName_ == 'Depth' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'Depth')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'Depth')
-            self.Depth = ival_
-            self.Depth_nsprefix_ = child_.prefix
-# end class LargestPiece
-
-
-class Place1(GeneratedsSuper):
-    """Pickup place"""
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, LocationType=None, CompanyName=None, Address1=None, Address2=None, Address3=None, PackageLocation=None, City=None, StateCode=None, DivisionName=None, CountryCode=None, PostalCode=None, RouteCode=None, Suburb=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.LocationType = LocationType
-        self.validate_LocationTypeType(self.LocationType)
-        self.LocationType_nsprefix_ = None
-        self.CompanyName = CompanyName
-        self.validate_CompanyNameType(self.CompanyName)
-        self.CompanyName_nsprefix_ = None
-        self.Address1 = Address1
-        self.validate_Address1Type(self.Address1)
-        self.Address1_nsprefix_ = None
-        self.Address2 = Address2
-        self.validate_Address2Type(self.Address2)
-        self.Address2_nsprefix_ = None
-        self.Address3 = Address3
-        self.validate_Address3Type(self.Address3)
-        self.Address3_nsprefix_ = None
-        self.PackageLocation = PackageLocation
-        self.validate_PackageLocationType(self.PackageLocation)
-        self.PackageLocation_nsprefix_ = None
-        self.City = City
-        self.validate_City(self.City)
-        self.City_nsprefix_ = None
-        self.StateCode = StateCode
-        self.validate_DivisionCode(self.StateCode)
-        self.StateCode_nsprefix_ = None
-        self.DivisionName = DivisionName
-        self.validate_Division(self.DivisionName)
-        self.DivisionName_nsprefix_ = None
-        self.CountryCode = CountryCode
-        self.validate_CountryCode(self.CountryCode)
-        self.CountryCode_nsprefix_ = None
-        self.PostalCode = PostalCode
-        self.validate_PostalCode(self.PostalCode)
-        self.PostalCode_nsprefix_ = None
-        self.RouteCode = RouteCode
-        self.validate_RouteCodeType(self.RouteCode)
-        self.RouteCode_nsprefix_ = None
-        self.Suburb = Suburb
-        self.validate_Suburb(self.Suburb)
-        self.Suburb_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, Place1)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if Place1.subclass:
-            return Place1.subclass(*args_, **kwargs_)
-        else:
-            return Place1(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_LocationType(self):
-        return self.LocationType
-    def set_LocationType(self, LocationType):
-        self.LocationType = LocationType
-    def get_CompanyName(self):
-        return self.CompanyName
-    def set_CompanyName(self, CompanyName):
-        self.CompanyName = CompanyName
-    def get_Address1(self):
-        return self.Address1
-    def set_Address1(self, Address1):
-        self.Address1 = Address1
-    def get_Address2(self):
-        return self.Address2
-    def set_Address2(self, Address2):
-        self.Address2 = Address2
-    def get_Address3(self):
-        return self.Address3
-    def set_Address3(self, Address3):
-        self.Address3 = Address3
-    def get_PackageLocation(self):
-        return self.PackageLocation
-    def set_PackageLocation(self, PackageLocation):
-        self.PackageLocation = PackageLocation
-    def get_City(self):
-        return self.City
-    def set_City(self, City):
-        self.City = City
-    def get_StateCode(self):
-        return self.StateCode
-    def set_StateCode(self, StateCode):
-        self.StateCode = StateCode
-    def get_DivisionName(self):
-        return self.DivisionName
-    def set_DivisionName(self, DivisionName):
-        self.DivisionName = DivisionName
-    def get_CountryCode(self):
-        return self.CountryCode
-    def set_CountryCode(self, CountryCode):
-        self.CountryCode = CountryCode
-    def get_PostalCode(self):
-        return self.PostalCode
-    def set_PostalCode(self, PostalCode):
-        self.PostalCode = PostalCode
-    def get_RouteCode(self):
-        return self.RouteCode
-    def set_RouteCode(self, RouteCode):
-        self.RouteCode = RouteCode
-    def get_Suburb(self):
-        return self.Suburb
-    def set_Suburb(self, Suburb):
-        self.Suburb = Suburb
-    def validate_LocationTypeType(self, value):
-        result = True
-        # Validate type LocationTypeType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['B', 'R', 'C']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on LocationTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on LocationTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on LocationTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_CompanyNameType(self, value):
-        result = True
-        # Validate type CompanyNameType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 60:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CompanyNameType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CompanyNameType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Address1Type(self, value):
-        result = True
-        # Validate type Address1Type, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 45:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Address1Type' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Address1Type' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Address2Type(self, value):
-        result = True
-        # Validate type Address2Type, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 45:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Address2Type' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Address2Type' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Address3Type(self, value):
-        result = True
-        # Validate type Address3Type, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 45:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Address3Type' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Address3Type' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PackageLocationType(self, value):
-        result = True
-        # Validate type PackageLocationType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PackageLocationType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PackageLocationType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_City(self, value):
-        result = True
-        # Validate type City, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on City' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_DivisionCode(self, value):
-        result = True
-        # Validate type DivisionCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on DivisionCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Division(self, value):
-        result = True
-        # Validate type Division, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Division' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_CountryCode(self, value):
-        result = True
-        # Validate type CountryCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) != 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CountryCode' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PostalCode(self, value):
-        result = True
-        # Validate type PostalCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 12:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PostalCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_RouteCodeType(self, value):
-        result = True
-        # Validate type RouteCodeType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 4:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on RouteCodeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on RouteCodeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if not self.gds_validate_simple_patterns(
-                    self.validate_RouteCodeType_patterns_, value):
-                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_RouteCodeType_patterns_, ))
-                result = False
-        return result
-    validate_RouteCodeType_patterns_ = [['^(([A-Z0-9]{4}))$']]
-    def validate_Suburb(self, value):
-        result = True
-        # Validate type Suburb, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Suburb' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.LocationType is not None or
-            self.CompanyName is not None or
-            self.Address1 is not None or
-            self.Address2 is not None or
-            self.Address3 is not None or
-            self.PackageLocation is not None or
-            self.City is not None or
-            self.StateCode is not None or
-            self.DivisionName is not None or
-            self.CountryCode is not None or
-            self.PostalCode is not None or
-            self.RouteCode is not None or
-            self.Suburb is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Place1', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Place1')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'Place1':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Place1')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Place1', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='Place1'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Place1', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.LocationType is not None:
-            namespaceprefix_ = self.LocationType_nsprefix_ + ':' if (UseCapturedNS_ and self.LocationType_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sLocationType>%s</%sLocationType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LocationType), input_name='LocationType')), namespaceprefix_ , eol_))
-        if self.CompanyName is not None:
-            namespaceprefix_ = self.CompanyName_nsprefix_ + ':' if (UseCapturedNS_ and self.CompanyName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCompanyName>%s</%sCompanyName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CompanyName), input_name='CompanyName')), namespaceprefix_ , eol_))
-        if self.Address1 is not None:
-            namespaceprefix_ = self.Address1_nsprefix_ + ':' if (UseCapturedNS_ and self.Address1_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddress1>%s</%sAddress1>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Address1), input_name='Address1')), namespaceprefix_ , eol_))
-        if self.Address2 is not None:
-            namespaceprefix_ = self.Address2_nsprefix_ + ':' if (UseCapturedNS_ and self.Address2_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddress2>%s</%sAddress2>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Address2), input_name='Address2')), namespaceprefix_ , eol_))
-        if self.Address3 is not None:
-            namespaceprefix_ = self.Address3_nsprefix_ + ':' if (UseCapturedNS_ and self.Address3_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddress3>%s</%sAddress3>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Address3), input_name='Address3')), namespaceprefix_ , eol_))
-        if self.PackageLocation is not None:
-            namespaceprefix_ = self.PackageLocation_nsprefix_ + ':' if (UseCapturedNS_ and self.PackageLocation_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPackageLocation>%s</%sPackageLocation>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PackageLocation), input_name='PackageLocation')), namespaceprefix_ , eol_))
-        if self.City is not None:
-            namespaceprefix_ = self.City_nsprefix_ + ':' if (UseCapturedNS_ and self.City_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCity>%s</%sCity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.City), input_name='City')), namespaceprefix_ , eol_))
-        if self.StateCode is not None:
-            namespaceprefix_ = self.StateCode_nsprefix_ + ':' if (UseCapturedNS_ and self.StateCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sStateCode>%s</%sStateCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.StateCode), input_name='StateCode')), namespaceprefix_ , eol_))
-        if self.DivisionName is not None:
-            namespaceprefix_ = self.DivisionName_nsprefix_ + ':' if (UseCapturedNS_ and self.DivisionName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDivisionName>%s</%sDivisionName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DivisionName), input_name='DivisionName')), namespaceprefix_ , eol_))
-        if self.CountryCode is not None:
-            namespaceprefix_ = self.CountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCountryCode>%s</%sCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryCode), input_name='CountryCode')), namespaceprefix_ , eol_))
-        if self.PostalCode is not None:
-            namespaceprefix_ = self.PostalCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PostalCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPostalCode>%s</%sPostalCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PostalCode), input_name='PostalCode')), namespaceprefix_ , eol_))
-        if self.RouteCode is not None:
-            namespaceprefix_ = self.RouteCode_nsprefix_ + ':' if (UseCapturedNS_ and self.RouteCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sRouteCode>%s</%sRouteCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RouteCode), input_name='RouteCode')), namespaceprefix_ , eol_))
-        if self.Suburb is not None:
-            namespaceprefix_ = self.Suburb_nsprefix_ + ':' if (UseCapturedNS_ and self.Suburb_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSuburb>%s</%sSuburb>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Suburb), input_name='Suburb')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'LocationType':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'LocationType')
-            value_ = self.gds_validate_string(value_, node, 'LocationType')
-            self.LocationType = value_
-            self.LocationType_nsprefix_ = child_.prefix
-            # validate type LocationTypeType
-            self.validate_LocationTypeType(self.LocationType)
-        elif nodeName_ == 'CompanyName':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CompanyName')
-            value_ = self.gds_validate_string(value_, node, 'CompanyName')
-            self.CompanyName = value_
-            self.CompanyName_nsprefix_ = child_.prefix
-            # validate type CompanyNameType
-            self.validate_CompanyNameType(self.CompanyName)
-        elif nodeName_ == 'Address1':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Address1')
-            value_ = self.gds_validate_string(value_, node, 'Address1')
-            self.Address1 = value_
-            self.Address1_nsprefix_ = child_.prefix
-            # validate type Address1Type
-            self.validate_Address1Type(self.Address1)
-        elif nodeName_ == 'Address2':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Address2')
-            value_ = self.gds_validate_string(value_, node, 'Address2')
-            self.Address2 = value_
-            self.Address2_nsprefix_ = child_.prefix
-            # validate type Address2Type
-            self.validate_Address2Type(self.Address2)
-        elif nodeName_ == 'Address3':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Address3')
-            value_ = self.gds_validate_string(value_, node, 'Address3')
-            self.Address3 = value_
-            self.Address3_nsprefix_ = child_.prefix
-            # validate type Address3Type
-            self.validate_Address3Type(self.Address3)
-        elif nodeName_ == 'PackageLocation':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PackageLocation')
-            value_ = self.gds_validate_string(value_, node, 'PackageLocation')
-            self.PackageLocation = value_
-            self.PackageLocation_nsprefix_ = child_.prefix
-            # validate type PackageLocationType
-            self.validate_PackageLocationType(self.PackageLocation)
-        elif nodeName_ == 'City':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'City')
-            value_ = self.gds_validate_string(value_, node, 'City')
-            self.City = value_
-            self.City_nsprefix_ = child_.prefix
-            # validate type City
-            self.validate_City(self.City)
-        elif nodeName_ == 'StateCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'StateCode')
-            value_ = self.gds_validate_string(value_, node, 'StateCode')
-            self.StateCode = value_
-            self.StateCode_nsprefix_ = child_.prefix
-            # validate type DivisionCode
-            self.validate_DivisionCode(self.StateCode)
-        elif nodeName_ == 'DivisionName':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DivisionName')
-            value_ = self.gds_validate_string(value_, node, 'DivisionName')
-            self.DivisionName = value_
-            self.DivisionName_nsprefix_ = child_.prefix
-            # validate type Division
-            self.validate_Division(self.DivisionName)
-        elif nodeName_ == 'CountryCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CountryCode')
-            value_ = self.gds_validate_string(value_, node, 'CountryCode')
-            self.CountryCode = value_
-            self.CountryCode_nsprefix_ = child_.prefix
-            # validate type CountryCode
-            self.validate_CountryCode(self.CountryCode)
-        elif nodeName_ == 'PostalCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PostalCode')
-            value_ = self.gds_validate_string(value_, node, 'PostalCode')
-            self.PostalCode = value_
-            self.PostalCode_nsprefix_ = child_.prefix
-            # validate type PostalCode
-            self.validate_PostalCode(self.PostalCode)
-        elif nodeName_ == 'RouteCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'RouteCode')
-            value_ = self.gds_validate_string(value_, node, 'RouteCode')
-            self.RouteCode = value_
-            self.RouteCode_nsprefix_ = child_.prefix
-            # validate type RouteCodeType
-            self.validate_RouteCodeType(self.RouteCode)
-        elif nodeName_ == 'Suburb':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Suburb')
-            value_ = self.gds_validate_string(value_, node, 'Suburb')
-            self.Suburb = value_
-            self.Suburb_nsprefix_ = child_.prefix
-            # validate type Suburb
-            self.validate_Suburb(self.Suburb)
-# end class Place1
-
-
-class Requestor(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, AccountType=None, AccountNumber=None, RequestorContact=None, CompanyName=None, Address1=None, Address2=None, Address3=None, City=None, CountryCode=None, DivisionName=None, PostalCode=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.AccountType = AccountType
-        self.validate_AccountTypeType(self.AccountType)
-        self.AccountType_nsprefix_ = None
-        self.AccountNumber = AccountNumber
-        self.validate_AccountNumber(self.AccountNumber)
-        self.AccountNumber_nsprefix_ = None
-        self.RequestorContact = RequestorContact
-        self.RequestorContact_nsprefix_ = None
-        self.CompanyName = CompanyName
-        self.validate_CompanyNameValidator(self.CompanyName)
-        self.CompanyName_nsprefix_ = None
-        self.Address1 = Address1
-        self.validate_Address1Type12(self.Address1)
-        self.Address1_nsprefix_ = None
-        self.Address2 = Address2
-        self.validate_Address2Type13(self.Address2)
-        self.Address2_nsprefix_ = None
-        self.Address3 = Address3
-        self.validate_Address3Type14(self.Address3)
-        self.Address3_nsprefix_ = None
-        self.City = City
-        self.validate_City(self.City)
-        self.City_nsprefix_ = None
-        self.CountryCode = CountryCode
-        self.validate_CountryCode(self.CountryCode)
-        self.CountryCode_nsprefix_ = None
-        self.DivisionName = DivisionName
-        self.validate_Division(self.DivisionName)
-        self.DivisionName_nsprefix_ = None
-        self.PostalCode = PostalCode
-        self.validate_PostalCode(self.PostalCode)
-        self.PostalCode_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, Requestor)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if Requestor.subclass:
-            return Requestor.subclass(*args_, **kwargs_)
-        else:
-            return Requestor(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_AccountType(self):
-        return self.AccountType
-    def set_AccountType(self, AccountType):
-        self.AccountType = AccountType
-    def get_AccountNumber(self):
-        return self.AccountNumber
-    def set_AccountNumber(self, AccountNumber):
-        self.AccountNumber = AccountNumber
-    def get_RequestorContact(self):
-        return self.RequestorContact
-    def set_RequestorContact(self, RequestorContact):
-        self.RequestorContact = RequestorContact
-    def get_CompanyName(self):
-        return self.CompanyName
-    def set_CompanyName(self, CompanyName):
-        self.CompanyName = CompanyName
-    def get_Address1(self):
-        return self.Address1
-    def set_Address1(self, Address1):
-        self.Address1 = Address1
-    def get_Address2(self):
-        return self.Address2
-    def set_Address2(self, Address2):
-        self.Address2 = Address2
-    def get_Address3(self):
-        return self.Address3
-    def set_Address3(self, Address3):
-        self.Address3 = Address3
-    def get_City(self):
-        return self.City
-    def set_City(self, City):
-        self.City = City
-    def get_CountryCode(self):
-        return self.CountryCode
-    def set_CountryCode(self, CountryCode):
-        self.CountryCode = CountryCode
-    def get_DivisionName(self):
-        return self.DivisionName
-    def set_DivisionName(self, DivisionName):
-        self.DivisionName = DivisionName
-    def get_PostalCode(self):
-        return self.PostalCode
-    def set_PostalCode(self, PostalCode):
-        self.PostalCode = PostalCode
-    def validate_AccountTypeType(self, value):
-        result = True
-        # Validate type AccountTypeType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['D']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on AccountTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AccountTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on AccountTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_AccountNumber(self, value):
-        result = True
-        # Validate type AccountNumber, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 9:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AccountNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_CompanyNameValidator(self, value):
-        result = True
-        # Validate type CompanyNameValidator, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 60:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CompanyNameValidator' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CompanyNameValidator' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Address1Type12(self, value):
-        result = True
-        # Validate type Address1Type12, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 45:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Address1Type12' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Address1Type12' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Address2Type13(self, value):
-        result = True
-        # Validate type Address2Type13, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 45:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Address2Type13' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Address2Type13' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Address3Type14(self, value):
-        result = True
-        # Validate type Address3Type14, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 45:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Address3Type14' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on Address3Type14' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_City(self, value):
-        result = True
-        # Validate type City, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on City' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_CountryCode(self, value):
-        result = True
-        # Validate type CountryCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) != 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CountryCode' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Division(self, value):
-        result = True
-        # Validate type Division, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Division' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PostalCode(self, value):
-        result = True
-        # Validate type PostalCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 12:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PostalCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.AccountType is not None or
-            self.AccountNumber is not None or
-            self.RequestorContact is not None or
-            self.CompanyName is not None or
-            self.Address1 is not None or
-            self.Address2 is not None or
-            self.Address3 is not None or
-            self.City is not None or
-            self.CountryCode is not None or
-            self.DivisionName is not None or
-            self.PostalCode is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Requestor', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Requestor')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'Requestor':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Requestor')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Requestor', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='Requestor'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Requestor', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.AccountType is not None:
-            namespaceprefix_ = self.AccountType_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountType_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAccountType>%s</%sAccountType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AccountType), input_name='AccountType')), namespaceprefix_ , eol_))
-        if self.AccountNumber is not None:
-            namespaceprefix_ = self.AccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountNumber_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAccountNumber>%s</%sAccountNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AccountNumber), input_name='AccountNumber')), namespaceprefix_ , eol_))
-        if self.RequestorContact is not None:
-            namespaceprefix_ = self.RequestorContact_nsprefix_ + ':' if (UseCapturedNS_ and self.RequestorContact_nsprefix_) else ''
-            self.RequestorContact.export(outfile, level, namespaceprefix_, namespacedef_='', name_='RequestorContact', pretty_print=pretty_print)
-        if self.CompanyName is not None:
-            namespaceprefix_ = self.CompanyName_nsprefix_ + ':' if (UseCapturedNS_ and self.CompanyName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCompanyName>%s</%sCompanyName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CompanyName), input_name='CompanyName')), namespaceprefix_ , eol_))
-        if self.Address1 is not None:
-            namespaceprefix_ = self.Address1_nsprefix_ + ':' if (UseCapturedNS_ and self.Address1_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddress1>%s</%sAddress1>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Address1), input_name='Address1')), namespaceprefix_ , eol_))
-        if self.Address2 is not None:
-            namespaceprefix_ = self.Address2_nsprefix_ + ':' if (UseCapturedNS_ and self.Address2_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddress2>%s</%sAddress2>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Address2), input_name='Address2')), namespaceprefix_ , eol_))
-        if self.Address3 is not None:
-            namespaceprefix_ = self.Address3_nsprefix_ + ':' if (UseCapturedNS_ and self.Address3_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddress3>%s</%sAddress3>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Address3), input_name='Address3')), namespaceprefix_ , eol_))
-        if self.City is not None:
-            namespaceprefix_ = self.City_nsprefix_ + ':' if (UseCapturedNS_ and self.City_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCity>%s</%sCity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.City), input_name='City')), namespaceprefix_ , eol_))
-        if self.CountryCode is not None:
-            namespaceprefix_ = self.CountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCountryCode>%s</%sCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryCode), input_name='CountryCode')), namespaceprefix_ , eol_))
-        if self.DivisionName is not None:
-            namespaceprefix_ = self.DivisionName_nsprefix_ + ':' if (UseCapturedNS_ and self.DivisionName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDivisionName>%s</%sDivisionName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DivisionName), input_name='DivisionName')), namespaceprefix_ , eol_))
-        if self.PostalCode is not None:
-            namespaceprefix_ = self.PostalCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PostalCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPostalCode>%s</%sPostalCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PostalCode), input_name='PostalCode')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'AccountType':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AccountType')
-            value_ = self.gds_validate_string(value_, node, 'AccountType')
-            self.AccountType = value_
-            self.AccountType_nsprefix_ = child_.prefix
-            # validate type AccountTypeType
-            self.validate_AccountTypeType(self.AccountType)
-        elif nodeName_ == 'AccountNumber':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AccountNumber')
-            value_ = self.gds_validate_string(value_, node, 'AccountNumber')
-            self.AccountNumber = value_
-            self.AccountNumber_nsprefix_ = child_.prefix
-            # validate type AccountNumber
-            self.validate_AccountNumber(self.AccountNumber)
-        elif nodeName_ == 'RequestorContact':
-            obj_ = RequestorContact.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.RequestorContact = obj_
-            obj_.original_tagname_ = 'RequestorContact'
-        elif nodeName_ == 'CompanyName':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CompanyName')
-            value_ = self.gds_validate_string(value_, node, 'CompanyName')
-            self.CompanyName = value_
-            self.CompanyName_nsprefix_ = child_.prefix
-            # validate type CompanyNameValidator
-            self.validate_CompanyNameValidator(self.CompanyName)
-        elif nodeName_ == 'Address1':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Address1')
-            value_ = self.gds_validate_string(value_, node, 'Address1')
-            self.Address1 = value_
-            self.Address1_nsprefix_ = child_.prefix
-            # validate type Address1Type12
-            self.validate_Address1Type12(self.Address1)
-        elif nodeName_ == 'Address2':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Address2')
-            value_ = self.gds_validate_string(value_, node, 'Address2')
-            self.Address2 = value_
-            self.Address2_nsprefix_ = child_.prefix
-            # validate type Address2Type13
-            self.validate_Address2Type13(self.Address2)
-        elif nodeName_ == 'Address3':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Address3')
-            value_ = self.gds_validate_string(value_, node, 'Address3')
-            self.Address3 = value_
-            self.Address3_nsprefix_ = child_.prefix
-            # validate type Address3Type14
-            self.validate_Address3Type14(self.Address3)
-        elif nodeName_ == 'City':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'City')
-            value_ = self.gds_validate_string(value_, node, 'City')
-            self.City = value_
-            self.City_nsprefix_ = child_.prefix
-            # validate type City
-            self.validate_City(self.City)
-        elif nodeName_ == 'CountryCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CountryCode')
-            value_ = self.gds_validate_string(value_, node, 'CountryCode')
-            self.CountryCode = value_
-            self.CountryCode_nsprefix_ = child_.prefix
-            # validate type CountryCode
-            self.validate_CountryCode(self.CountryCode)
-        elif nodeName_ == 'DivisionName':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DivisionName')
-            value_ = self.gds_validate_string(value_, node, 'DivisionName')
-            self.DivisionName = value_
-            self.DivisionName_nsprefix_ = child_.prefix
-            # validate type Division
-            self.validate_Division(self.DivisionName)
-        elif nodeName_ == 'PostalCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PostalCode')
-            value_ = self.gds_validate_string(value_, node, 'PostalCode')
-            self.PostalCode = value_
-            self.PostalCode_nsprefix_ = child_.prefix
-            # validate type PostalCode
-            self.validate_PostalCode(self.PostalCode)
-# end class Requestor
-
-
-class Pickup(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, PickupDate=None, PickupTypeCode=None, ReadyByTime=None, CloseTime=None, AfterHoursClosingTime=None, AfterHoursLocation=None, Pieces=None, RemotePickupFlag=None, weight=None, SpecialInstructions=None, Remarks=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        if isinstance(PickupDate, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(PickupDate, '%Y-%m-%d').date()
-        else:
-            initvalue_ = PickupDate
-        self.PickupDate = initvalue_
-        self.PickupDate_nsprefix_ = None
-        self.PickupTypeCode = PickupTypeCode
-        self.validate_PickupTypeCodeType(self.PickupTypeCode)
-        self.PickupTypeCode_nsprefix_ = None
-        if isinstance(ReadyByTime, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(ReadyByTime, '%H:%M:%S').time()
-        else:
-            initvalue_ = ReadyByTime
-        self.ReadyByTime = initvalue_
-        self.ReadyByTime_nsprefix_ = None
-        if isinstance(CloseTime, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(CloseTime, '%H:%M:%S').time()
-        else:
-            initvalue_ = CloseTime
-        self.CloseTime = initvalue_
-        self.CloseTime_nsprefix_ = None
-        if isinstance(AfterHoursClosingTime, BaseStrType_):
-            initvalue_ = datetime_.datetime.strptime(AfterHoursClosingTime, '%H:%M:%S').time()
-        else:
-            initvalue_ = AfterHoursClosingTime
-        self.AfterHoursClosingTime = initvalue_
-        self.AfterHoursClosingTime_nsprefix_ = None
-        self.AfterHoursLocation = AfterHoursLocation
-        self.validate_AfterHoursLocationType(self.AfterHoursLocation)
-        self.AfterHoursLocation_nsprefix_ = None
-        self.Pieces = Pieces
-        self.validate_PiecesType(self.Pieces)
-        self.Pieces_nsprefix_ = None
-        self.RemotePickupFlag = RemotePickupFlag
-        self.validate_YesNo(self.RemotePickupFlag)
-        self.RemotePickupFlag_nsprefix_ = None
-        self.weight = weight
-        self.weight_nsprefix_ = None
-        if SpecialInstructions is None:
-            self.SpecialInstructions = []
-        else:
-            self.SpecialInstructions = SpecialInstructions
-        self.SpecialInstructions_nsprefix_ = None
-        self.Remarks = Remarks
-        self.validate_RemarksType(self.Remarks)
-        self.Remarks_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, Pickup)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if Pickup.subclass:
-            return Pickup.subclass(*args_, **kwargs_)
-        else:
-            return Pickup(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_PickupDate(self):
-        return self.PickupDate
-    def set_PickupDate(self, PickupDate):
-        self.PickupDate = PickupDate
-    def get_PickupTypeCode(self):
-        return self.PickupTypeCode
-    def set_PickupTypeCode(self, PickupTypeCode):
-        self.PickupTypeCode = PickupTypeCode
-    def get_ReadyByTime(self):
-        return self.ReadyByTime
-    def set_ReadyByTime(self, ReadyByTime):
-        self.ReadyByTime = ReadyByTime
-    def get_CloseTime(self):
-        return self.CloseTime
-    def set_CloseTime(self, CloseTime):
-        self.CloseTime = CloseTime
-    def get_AfterHoursClosingTime(self):
-        return self.AfterHoursClosingTime
-    def set_AfterHoursClosingTime(self, AfterHoursClosingTime):
-        self.AfterHoursClosingTime = AfterHoursClosingTime
-    def get_AfterHoursLocation(self):
-        return self.AfterHoursLocation
-    def set_AfterHoursLocation(self, AfterHoursLocation):
-        self.AfterHoursLocation = AfterHoursLocation
-    def get_Pieces(self):
-        return self.Pieces
-    def set_Pieces(self, Pieces):
-        self.Pieces = Pieces
-    def get_RemotePickupFlag(self):
-        return self.RemotePickupFlag
-    def set_RemotePickupFlag(self, RemotePickupFlag):
-        self.RemotePickupFlag = RemotePickupFlag
-    def get_weight(self):
-        return self.weight
-    def set_weight(self, weight):
-        self.weight = weight
-    def get_SpecialInstructions(self):
-        return self.SpecialInstructions
-    def set_SpecialInstructions(self, SpecialInstructions):
-        self.SpecialInstructions = SpecialInstructions
-    def add_SpecialInstructions(self, value):
-        self.SpecialInstructions.append(value)
-    def insert_SpecialInstructions_at(self, index, value):
-        self.SpecialInstructions.insert(index, value)
-    def replace_SpecialInstructions_at(self, index, value):
-        self.SpecialInstructions[index] = value
-    def get_Remarks(self):
-        return self.Remarks
-    def set_Remarks(self, Remarks):
-        self.Remarks = Remarks
-    def validate_PickupTypeCodeType(self, value):
-        result = True
-        # Validate type PickupTypeCodeType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['S', 'A']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on PickupTypeCodeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) != 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on PickupTypeCodeType' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_TimeHM(self, value):
-        result = True
-        # Validate type TimeHM, a restriction on xsd:time.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, datetime_.time):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (datetime_.time)' % {"value": value, "lineno": lineno, })
-                return False
-            pass
-        return result
-    def validate_AfterHoursLocationType(self, value):
-        result = True
-        # Validate type AfterHoursLocationType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AfterHoursLocationType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PiecesType(self, value):
-        result = True
-        # Validate type PiecesType, a restriction on xsd:positiveInteger.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, int):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (int)' % {"value": value, "lineno": lineno, })
-                return False
-            if value < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on PiecesType' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on PiecesType' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
+    def get_HideAccount(self):
+        return self.HideAccount
+    def set_HideAccount(self, HideAccount):
+        self.HideAccount = HideAccount
+    def get_LabelTemplate(self):
+        return self.LabelTemplate
+    def set_LabelTemplate(self, LabelTemplate):
+        self.LabelTemplate = LabelTemplate
+    def get_ReceiptTemplate(self):
+        return self.ReceiptTemplate
+    def set_ReceiptTemplate(self, ReceiptTemplate):
+        self.ReceiptTemplate = ReceiptTemplate
+    def get_ShipmentReceiptWithLabels(self):
+        return self.ShipmentReceiptWithLabels
+    def set_ShipmentReceiptWithLabels(self, ShipmentReceiptWithLabels):
+        self.ShipmentReceiptWithLabels = ShipmentReceiptWithLabels
+    def get_CustomsInvoiceTemplate(self):
+        return self.CustomsInvoiceTemplate
+    def set_CustomsInvoiceTemplate(self, CustomsInvoiceTemplate):
+        self.CustomsInvoiceTemplate = CustomsInvoiceTemplate
+    def get_Logo(self):
+        return self.Logo
+    def set_Logo(self, Logo):
+        self.Logo = Logo
+    def get_CustomerLogo(self):
+        return self.CustomerLogo
+    def set_CustomerLogo(self, CustomerLogo):
+        self.CustomerLogo = CustomerLogo
+    def get_Resolution(self):
+        return self.Resolution
+    def set_Resolution(self, Resolution):
+        self.Resolution = Resolution
+    def get_CustomerBarcodeType(self):
+        return self.CustomerBarcodeType
+    def set_CustomerBarcodeType(self, CustomerBarcodeType):
+        self.CustomerBarcodeType = CustomerBarcodeType
+    def get_CustomerBarcodeCode(self):
+        return self.CustomerBarcodeCode
+    def set_CustomerBarcodeCode(self, CustomerBarcodeCode):
+        self.CustomerBarcodeCode = CustomerBarcodeCode
+    def get_CustomerBarcodeText(self):
+        return self.CustomerBarcodeText
+    def set_CustomerBarcodeText(self, CustomerBarcodeText):
+        self.CustomerBarcodeText = CustomerBarcodeText
     def validate_YesNo(self, value):
         result = True
         # Validate type YesNo, a restriction on xsd:string.
@@ -22539,1292 +20998,162 @@ class Pickup(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on YesNo' % {"value": encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_SpecialInstructions(self, value):
+    def validate_LabelTemplate(self, value):
         result = True
-        # Validate type SpecialInstructions, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 80:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on SpecialInstructions' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_RemarksType(self, value):
-        result = True
-        # Validate type RemarksType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 2048:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on RemarksType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.PickupDate is not None or
-            self.PickupTypeCode is not None or
-            self.ReadyByTime is not None or
-            self.CloseTime is not None or
-            self.AfterHoursClosingTime is not None or
-            self.AfterHoursLocation is not None or
-            self.Pieces is not None or
-            self.RemotePickupFlag is not None or
-            self.weight is not None or
-            self.SpecialInstructions or
-            self.Remarks is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Pickup', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Pickup')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'Pickup':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Pickup')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Pickup', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='Pickup'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Pickup', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.PickupDate is not None:
-            namespaceprefix_ = self.PickupDate_nsprefix_ + ':' if (UseCapturedNS_ and self.PickupDate_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPickupDate>%s</%sPickupDate>%s' % (namespaceprefix_ , self.gds_format_date(self.PickupDate, input_name='PickupDate'), namespaceprefix_ , eol_))
-        if self.PickupTypeCode is not None:
-            namespaceprefix_ = self.PickupTypeCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PickupTypeCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPickupTypeCode>%s</%sPickupTypeCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PickupTypeCode), input_name='PickupTypeCode')), namespaceprefix_ , eol_))
-        if self.ReadyByTime is not None:
-            namespaceprefix_ = self.ReadyByTime_nsprefix_ + ':' if (UseCapturedNS_ and self.ReadyByTime_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sReadyByTime>%s</%sReadyByTime>%s' % (namespaceprefix_ , self.gds_format_time(self.ReadyByTime, input_name='ReadyByTime'), namespaceprefix_ , eol_))
-        if self.CloseTime is not None:
-            namespaceprefix_ = self.CloseTime_nsprefix_ + ':' if (UseCapturedNS_ and self.CloseTime_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCloseTime>%s</%sCloseTime>%s' % (namespaceprefix_ , self.gds_format_time(self.CloseTime, input_name='CloseTime'), namespaceprefix_ , eol_))
-        if self.AfterHoursClosingTime is not None:
-            namespaceprefix_ = self.AfterHoursClosingTime_nsprefix_ + ':' if (UseCapturedNS_ and self.AfterHoursClosingTime_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAfterHoursClosingTime>%s</%sAfterHoursClosingTime>%s' % (namespaceprefix_ , self.gds_format_time(self.AfterHoursClosingTime, input_name='AfterHoursClosingTime'), namespaceprefix_ , eol_))
-        if self.AfterHoursLocation is not None:
-            namespaceprefix_ = self.AfterHoursLocation_nsprefix_ + ':' if (UseCapturedNS_ and self.AfterHoursLocation_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAfterHoursLocation>%s</%sAfterHoursLocation>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AfterHoursLocation), input_name='AfterHoursLocation')), namespaceprefix_ , eol_))
-        if self.Pieces is not None:
-            namespaceprefix_ = self.Pieces_nsprefix_ + ':' if (UseCapturedNS_ and self.Pieces_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPieces>%s</%sPieces>%s' % (namespaceprefix_ , self.gds_format_integer(self.Pieces, input_name='Pieces'), namespaceprefix_ , eol_))
-        if self.RemotePickupFlag is not None:
-            namespaceprefix_ = self.RemotePickupFlag_nsprefix_ + ':' if (UseCapturedNS_ and self.RemotePickupFlag_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sRemotePickupFlag>%s</%sRemotePickupFlag>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.RemotePickupFlag), input_name='RemotePickupFlag')), namespaceprefix_ , eol_))
-        if self.weight is not None:
-            namespaceprefix_ = self.weight_nsprefix_ + ':' if (UseCapturedNS_ and self.weight_nsprefix_) else ''
-            self.weight.export(outfile, level, namespaceprefix_, namespacedef_='', name_='weight', pretty_print=pretty_print)
-        for SpecialInstructions_ in self.SpecialInstructions:
-            namespaceprefix_ = self.SpecialInstructions_nsprefix_ + ':' if (UseCapturedNS_ and self.SpecialInstructions_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSpecialInstructions>%s</%sSpecialInstructions>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(SpecialInstructions_), input_name='SpecialInstructions')), namespaceprefix_ , eol_))
-        if self.Remarks is not None:
-            namespaceprefix_ = self.Remarks_nsprefix_ + ':' if (UseCapturedNS_ and self.Remarks_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sRemarks>%s</%sRemarks>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Remarks), input_name='Remarks')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'PickupDate':
-            sval_ = child_.text
-            dval_ = self.gds_parse_date(sval_)
-            self.PickupDate = dval_
-            self.PickupDate_nsprefix_ = child_.prefix
-        elif nodeName_ == 'PickupTypeCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PickupTypeCode')
-            value_ = self.gds_validate_string(value_, node, 'PickupTypeCode')
-            self.PickupTypeCode = value_
-            self.PickupTypeCode_nsprefix_ = child_.prefix
-            # validate type PickupTypeCodeType
-            self.validate_PickupTypeCodeType(self.PickupTypeCode)
-        elif nodeName_ == 'ReadyByTime':
-            sval_ = child_.text
-            dval_ = self.gds_parse_time(sval_)
-            self.ReadyByTime = dval_
-            self.ReadyByTime_nsprefix_ = child_.prefix
-            # validate type TimeHM
-            self.validate_TimeHM(self.ReadyByTime)
-        elif nodeName_ == 'CloseTime':
-            sval_ = child_.text
-            dval_ = self.gds_parse_time(sval_)
-            self.CloseTime = dval_
-            self.CloseTime_nsprefix_ = child_.prefix
-            # validate type TimeHM
-            self.validate_TimeHM(self.CloseTime)
-        elif nodeName_ == 'AfterHoursClosingTime':
-            sval_ = child_.text
-            dval_ = self.gds_parse_time(sval_)
-            self.AfterHoursClosingTime = dval_
-            self.AfterHoursClosingTime_nsprefix_ = child_.prefix
-            # validate type TimeHM
-            self.validate_TimeHM(self.AfterHoursClosingTime)
-        elif nodeName_ == 'AfterHoursLocation':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AfterHoursLocation')
-            value_ = self.gds_validate_string(value_, node, 'AfterHoursLocation')
-            self.AfterHoursLocation = value_
-            self.AfterHoursLocation_nsprefix_ = child_.prefix
-            # validate type AfterHoursLocationType
-            self.validate_AfterHoursLocationType(self.AfterHoursLocation)
-        elif nodeName_ == 'Pieces' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'Pieces')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'Pieces')
-            self.Pieces = ival_
-            self.Pieces_nsprefix_ = child_.prefix
-            # validate type PiecesType
-            self.validate_PiecesType(self.Pieces)
-        elif nodeName_ == 'RemotePickupFlag':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'RemotePickupFlag')
-            value_ = self.gds_validate_string(value_, node, 'RemotePickupFlag')
-            self.RemotePickupFlag = value_
-            self.RemotePickupFlag_nsprefix_ = child_.prefix
-            # validate type YesNo
-            self.validate_YesNo(self.RemotePickupFlag)
-        elif nodeName_ == 'weight':
-            obj_ = WeightSeg.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.weight = obj_
-            obj_.original_tagname_ = 'weight'
-        elif nodeName_ == 'SpecialInstructions':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'SpecialInstructions')
-            value_ = self.gds_validate_string(value_, node, 'SpecialInstructions')
-            self.SpecialInstructions.append(value_)
-            self.SpecialInstructions_nsprefix_ = child_.prefix
-            # validate type SpecialInstructions
-            self.validate_SpecialInstructions(self.SpecialInstructions[-1])
-        elif nodeName_ == 'Remarks':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Remarks')
-            value_ = self.gds_validate_string(value_, node, 'Remarks')
-            self.Remarks = value_
-            self.Remarks_nsprefix_ = child_.prefix
-            # validate type RemarksType
-            self.validate_RemarksType(self.Remarks)
-# end class Pickup
-
-
-class contact(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, PersonName=None, Phone=None, PhoneExtension=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.PersonName = PersonName
-        self.validate_PersonNameType(self.PersonName)
-        self.PersonName_nsprefix_ = None
-        self.Phone = Phone
-        self.validate_PhoneType(self.Phone)
-        self.Phone_nsprefix_ = None
-        self.PhoneExtension = PhoneExtension
-        self.validate_PhoneExtensionType(self.PhoneExtension)
-        self.PhoneExtension_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, contact)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if contact.subclass:
-            return contact.subclass(*args_, **kwargs_)
-        else:
-            return contact(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_PersonName(self):
-        return self.PersonName
-    def set_PersonName(self, PersonName):
-        self.PersonName = PersonName
-    def get_Phone(self):
-        return self.Phone
-    def set_Phone(self, Phone):
-        self.Phone = Phone
-    def get_PhoneExtension(self):
-        return self.PhoneExtension
-    def set_PhoneExtension(self, PhoneExtension):
-        self.PhoneExtension = PhoneExtension
-    def validate_PersonNameType(self, value):
-        result = True
-        # Validate type PersonNameType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PersonNameType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PhoneType(self, value):
-        result = True
-        # Validate type PhoneType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 25:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PhoneType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PhoneExtensionType(self, value):
-        result = True
-        # Validate type PhoneExtensionType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 6:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PhoneExtensionType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.PersonName is not None or
-            self.Phone is not None or
-            self.PhoneExtension is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='contact', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('contact')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'contact':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='contact')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='contact', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='contact'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='contact', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.PersonName is not None:
-            namespaceprefix_ = self.PersonName_nsprefix_ + ':' if (UseCapturedNS_ and self.PersonName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPersonName>%s</%sPersonName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PersonName), input_name='PersonName')), namespaceprefix_ , eol_))
-        if self.Phone is not None:
-            namespaceprefix_ = self.Phone_nsprefix_ + ':' if (UseCapturedNS_ and self.Phone_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPhone>%s</%sPhone>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Phone), input_name='Phone')), namespaceprefix_ , eol_))
-        if self.PhoneExtension is not None:
-            namespaceprefix_ = self.PhoneExtension_nsprefix_ + ':' if (UseCapturedNS_ and self.PhoneExtension_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPhoneExtension>%s</%sPhoneExtension>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PhoneExtension), input_name='PhoneExtension')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'PersonName':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PersonName')
-            value_ = self.gds_validate_string(value_, node, 'PersonName')
-            self.PersonName = value_
-            self.PersonName_nsprefix_ = child_.prefix
-            # validate type PersonNameType
-            self.validate_PersonNameType(self.PersonName)
-        elif nodeName_ == 'Phone':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Phone')
-            value_ = self.gds_validate_string(value_, node, 'Phone')
-            self.Phone = value_
-            self.Phone_nsprefix_ = child_.prefix
-            # validate type PhoneType
-            self.validate_PhoneType(self.Phone)
-        elif nodeName_ == 'PhoneExtension':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PhoneExtension')
-            value_ = self.gds_validate_string(value_, node, 'PhoneExtension')
-            self.PhoneExtension = value_
-            self.PhoneExtension_nsprefix_ = child_.prefix
-            # validate type PhoneExtensionType
-            self.validate_PhoneExtensionType(self.PhoneExtension)
-# end class contact
-
-
-class RequestorContact(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, PersonName=None, Phone=None, PhoneExtension=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.PersonName = PersonName
-        self.validate_PersonNameType15(self.PersonName)
-        self.PersonName_nsprefix_ = None
-        self.Phone = Phone
-        self.validate_PhoneType16(self.Phone)
-        self.Phone_nsprefix_ = None
-        self.PhoneExtension = PhoneExtension
-        self.validate_PhoneExtensionType17(self.PhoneExtension)
-        self.PhoneExtension_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, RequestorContact)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if RequestorContact.subclass:
-            return RequestorContact.subclass(*args_, **kwargs_)
-        else:
-            return RequestorContact(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_PersonName(self):
-        return self.PersonName
-    def set_PersonName(self, PersonName):
-        self.PersonName = PersonName
-    def get_Phone(self):
-        return self.Phone
-    def set_Phone(self, Phone):
-        self.Phone = Phone
-    def get_PhoneExtension(self):
-        return self.PhoneExtension
-    def set_PhoneExtension(self, PhoneExtension):
-        self.PhoneExtension = PhoneExtension
-    def validate_PersonNameType15(self, value):
-        result = True
-        # Validate type PersonNameType15, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PersonNameType15' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PhoneType16(self, value):
-        result = True
-        # Validate type PhoneType16, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 25:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PhoneType16' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PhoneExtensionType17(self, value):
-        result = True
-        # Validate type PhoneExtensionType17, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 5:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PhoneExtensionType17' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.PersonName is not None or
-            self.Phone is not None or
-            self.PhoneExtension is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='RequestorContact', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('RequestorContact')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'RequestorContact':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='RequestorContact')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='RequestorContact', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='RequestorContact'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='RequestorContact', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.PersonName is not None:
-            namespaceprefix_ = self.PersonName_nsprefix_ + ':' if (UseCapturedNS_ and self.PersonName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPersonName>%s</%sPersonName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PersonName), input_name='PersonName')), namespaceprefix_ , eol_))
-        if self.Phone is not None:
-            namespaceprefix_ = self.Phone_nsprefix_ + ':' if (UseCapturedNS_ and self.Phone_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPhone>%s</%sPhone>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Phone), input_name='Phone')), namespaceprefix_ , eol_))
-        if self.PhoneExtension is not None:
-            namespaceprefix_ = self.PhoneExtension_nsprefix_ + ':' if (UseCapturedNS_ and self.PhoneExtension_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPhoneExtension>%s</%sPhoneExtension>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PhoneExtension), input_name='PhoneExtension')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'PersonName':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PersonName')
-            value_ = self.gds_validate_string(value_, node, 'PersonName')
-            self.PersonName = value_
-            self.PersonName_nsprefix_ = child_.prefix
-            # validate type PersonNameType15
-            self.validate_PersonNameType15(self.PersonName)
-        elif nodeName_ == 'Phone':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Phone')
-            value_ = self.gds_validate_string(value_, node, 'Phone')
-            self.Phone = value_
-            self.Phone_nsprefix_ = child_.prefix
-            # validate type PhoneType16
-            self.validate_PhoneType16(self.Phone)
-        elif nodeName_ == 'PhoneExtension':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PhoneExtension')
-            value_ = self.gds_validate_string(value_, node, 'PhoneExtension')
-            self.PhoneExtension = value_
-            self.PhoneExtension_nsprefix_ = child_.prefix
-            # validate type PhoneExtensionType17
-            self.validate_PhoneExtensionType17(self.PhoneExtension)
-# end class RequestorContact
-
-
-class Piece2(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, Weight=None, Width=None, Height=None, Depth=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.Weight = Weight
-        self.validate_Weight(self.Weight)
-        self.Weight_nsprefix_ = None
-        self.Width = Width
-        self.Width_nsprefix_ = None
-        self.Height = Height
-        self.Height_nsprefix_ = None
-        self.Depth = Depth
-        self.Depth_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, Piece2)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if Piece2.subclass:
-            return Piece2.subclass(*args_, **kwargs_)
-        else:
-            return Piece2(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_Weight(self):
-        return self.Weight
-    def set_Weight(self, Weight):
-        self.Weight = Weight
-    def get_Width(self):
-        return self.Width
-    def set_Width(self, Width):
-        self.Width = Width
-    def get_Height(self):
-        return self.Height
-    def set_Height(self, Height):
-        self.Height = Height
-    def get_Depth(self):
-        return self.Depth
-    def set_Depth(self, Depth):
-        self.Depth = Depth
-    def validate_Weight(self, value):
-        result = True
-        # Validate type Weight, a restriction on xsd:decimal.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, decimal_.Decimal):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
-                return False
-            if value < 0.000:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999999.999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.Weight is not None or
-            self.Width is not None or
-            self.Height is not None or
-            self.Depth is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Piece2', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Piece2')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'Piece2':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Piece2')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Piece2', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='Piece2'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Piece2', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.Weight is not None:
-            namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Weight, input_name='Weight'), namespaceprefix_ , eol_))
-        if self.Width is not None:
-            namespaceprefix_ = self.Width_nsprefix_ + ':' if (UseCapturedNS_ and self.Width_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sWidth>%s</%sWidth>%s' % (namespaceprefix_ , self.gds_format_integer(self.Width, input_name='Width'), namespaceprefix_ , eol_))
-        if self.Height is not None:
-            namespaceprefix_ = self.Height_nsprefix_ + ':' if (UseCapturedNS_ and self.Height_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sHeight>%s</%sHeight>%s' % (namespaceprefix_ , self.gds_format_integer(self.Height, input_name='Height'), namespaceprefix_ , eol_))
-        if self.Depth is not None:
-            namespaceprefix_ = self.Depth_nsprefix_ + ':' if (UseCapturedNS_ and self.Depth_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDepth>%s</%sDepth>%s' % (namespaceprefix_ , self.gds_format_integer(self.Depth, input_name='Depth'), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Weight' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_decimal(sval_, node, 'Weight')
-            fval_ = self.gds_validate_decimal(fval_, node, 'Weight')
-            self.Weight = fval_
-            self.Weight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.Weight)
-        elif nodeName_ == 'Width' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'Width')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'Width')
-            self.Width = ival_
-            self.Width_nsprefix_ = child_.prefix
-        elif nodeName_ == 'Height' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'Height')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'Height')
-            self.Height = ival_
-            self.Height_nsprefix_ = child_.prefix
-        elif nodeName_ == 'Depth' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'Depth')
-            if ival_ <= 0:
-                raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'Depth')
-            self.Depth = ival_
-            self.Depth_nsprefix_ = child_.prefix
-# end class Piece2
-
-
-class ShipmentDetails3(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, AccountType=None, AccountNumber=None, BillToAccountNumber=None, AWBNumber=None, NumberOfPieces=None, Weight=None, WeightUnit=None, GlobalProductCode=None, LocalProductCode=None, DoorTo=None, DimensionUnit=None, InsuredAmount=None, InsuredCurrencyCode=None, Pieces=None, SpecialService=None, IsDutiable=None, DeclaredAmount=None, DeclaredValueCurrencyCode=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.AccountType = AccountType
-        self.validate_AccountTypeType18(self.AccountType)
-        self.AccountType_nsprefix_ = None
-        self.AccountNumber = AccountNumber
-        self.validate_AccountNumber(self.AccountNumber)
-        self.AccountNumber_nsprefix_ = None
-        self.BillToAccountNumber = BillToAccountNumber
-        self.validate_AccountNumber(self.BillToAccountNumber)
-        self.BillToAccountNumber_nsprefix_ = None
-        self.AWBNumber = AWBNumber
-        self.validate_AWBNumber(self.AWBNumber)
-        self.AWBNumber_nsprefix_ = None
-        self.NumberOfPieces = NumberOfPieces
-        self.validate_NumberOfPiecesType19(self.NumberOfPieces)
-        self.NumberOfPieces_nsprefix_ = None
-        self.Weight = Weight
-        self.validate_Weight(self.Weight)
-        self.Weight_nsprefix_ = None
-        self.WeightUnit = WeightUnit
-        self.validate_WeightUnit(self.WeightUnit)
-        self.WeightUnit_nsprefix_ = None
-        self.GlobalProductCode = GlobalProductCode
-        self.validate_GlobalProductCode(self.GlobalProductCode)
-        self.GlobalProductCode_nsprefix_ = None
-        self.LocalProductCode = LocalProductCode
-        self.validate_LocalProductCode(self.LocalProductCode)
-        self.LocalProductCode_nsprefix_ = None
-        self.DoorTo = DoorTo
-        self.validate_DoorTo(self.DoorTo)
-        self.DoorTo_nsprefix_ = None
-        self.DimensionUnit = DimensionUnit
-        self.validate_DimensionUnit(self.DimensionUnit)
-        self.DimensionUnit_nsprefix_ = None
-        self.InsuredAmount = InsuredAmount
-        self.validate_Money(self.InsuredAmount)
-        self.InsuredAmount_nsprefix_ = None
-        self.InsuredCurrencyCode = InsuredCurrencyCode
-        self.validate_CurrencyCode(self.InsuredCurrencyCode)
-        self.InsuredCurrencyCode_nsprefix_ = None
-        self.Pieces = Pieces
-        self.Pieces_nsprefix_ = None
-        if SpecialService is None:
-            self.SpecialService = []
-        else:
-            self.SpecialService = SpecialService
-        self.SpecialService_nsprefix_ = None
-        self.IsDutiable = IsDutiable
-        self.validate_YesNo(self.IsDutiable)
-        self.IsDutiable_nsprefix_ = None
-        self.DeclaredAmount = DeclaredAmount
-        self.validate_Money(self.DeclaredAmount)
-        self.DeclaredAmount_nsprefix_ = None
-        self.DeclaredValueCurrencyCode = DeclaredValueCurrencyCode
-        self.validate_CurrencyCode(self.DeclaredValueCurrencyCode)
-        self.DeclaredValueCurrencyCode_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ShipmentDetails3)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if ShipmentDetails3.subclass:
-            return ShipmentDetails3.subclass(*args_, **kwargs_)
-        else:
-            return ShipmentDetails3(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_AccountType(self):
-        return self.AccountType
-    def set_AccountType(self, AccountType):
-        self.AccountType = AccountType
-    def get_AccountNumber(self):
-        return self.AccountNumber
-    def set_AccountNumber(self, AccountNumber):
-        self.AccountNumber = AccountNumber
-    def get_BillToAccountNumber(self):
-        return self.BillToAccountNumber
-    def set_BillToAccountNumber(self, BillToAccountNumber):
-        self.BillToAccountNumber = BillToAccountNumber
-    def get_AWBNumber(self):
-        return self.AWBNumber
-    def set_AWBNumber(self, AWBNumber):
-        self.AWBNumber = AWBNumber
-    def get_NumberOfPieces(self):
-        return self.NumberOfPieces
-    def set_NumberOfPieces(self, NumberOfPieces):
-        self.NumberOfPieces = NumberOfPieces
-    def get_Weight(self):
-        return self.Weight
-    def set_Weight(self, Weight):
-        self.Weight = Weight
-    def get_WeightUnit(self):
-        return self.WeightUnit
-    def set_WeightUnit(self, WeightUnit):
-        self.WeightUnit = WeightUnit
-    def get_GlobalProductCode(self):
-        return self.GlobalProductCode
-    def set_GlobalProductCode(self, GlobalProductCode):
-        self.GlobalProductCode = GlobalProductCode
-    def get_LocalProductCode(self):
-        return self.LocalProductCode
-    def set_LocalProductCode(self, LocalProductCode):
-        self.LocalProductCode = LocalProductCode
-    def get_DoorTo(self):
-        return self.DoorTo
-    def set_DoorTo(self, DoorTo):
-        self.DoorTo = DoorTo
-    def get_DimensionUnit(self):
-        return self.DimensionUnit
-    def set_DimensionUnit(self, DimensionUnit):
-        self.DimensionUnit = DimensionUnit
-    def get_InsuredAmount(self):
-        return self.InsuredAmount
-    def set_InsuredAmount(self, InsuredAmount):
-        self.InsuredAmount = InsuredAmount
-    def get_InsuredCurrencyCode(self):
-        return self.InsuredCurrencyCode
-    def set_InsuredCurrencyCode(self, InsuredCurrencyCode):
-        self.InsuredCurrencyCode = InsuredCurrencyCode
-    def get_Pieces(self):
-        return self.Pieces
-    def set_Pieces(self, Pieces):
-        self.Pieces = Pieces
-    def get_SpecialService(self):
-        return self.SpecialService
-    def set_SpecialService(self, SpecialService):
-        self.SpecialService = SpecialService
-    def add_SpecialService(self, value):
-        self.SpecialService.append(value)
-    def insert_SpecialService_at(self, index, value):
-        self.SpecialService.insert(index, value)
-    def replace_SpecialService_at(self, index, value):
-        self.SpecialService[index] = value
-    def get_IsDutiable(self):
-        return self.IsDutiable
-    def set_IsDutiable(self, IsDutiable):
-        self.IsDutiable = IsDutiable
-    def get_DeclaredAmount(self):
-        return self.DeclaredAmount
-    def set_DeclaredAmount(self, DeclaredAmount):
-        self.DeclaredAmount = DeclaredAmount
-    def get_DeclaredValueCurrencyCode(self):
-        return self.DeclaredValueCurrencyCode
-    def set_DeclaredValueCurrencyCode(self, DeclaredValueCurrencyCode):
-        self.DeclaredValueCurrencyCode = DeclaredValueCurrencyCode
-    def validate_AccountTypeType18(self, value):
-        result = True
-        # Validate type AccountTypeType18, a restriction on xsd:string.
+        # Validate type LabelTemplate, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['D']
+            enumerations = ['8X4_A4_PDF', '8X4_thermal', '8X4_A4_TC_PDF', '6X4_thermal', '6X4_A4_PDF', '8X4_CI_PDF', '8X4_CI_thermal', '8X4_RU_A4_PDF', '6X4_PDF', '8X4_PDF', '8X4_CustBarCode_PDF', '8X4_CustBarCode_thermal', '8X4_CustBarCode_AdditionalInfo_PDF', '8X4_CustBarCode_AdditionalInfo_thermal', '8X4_LBBX_PDF', '8X4_LBBX_thermal']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on AccountTypeType18' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AccountTypeType18' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on AccountTypeType18' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on LabelTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_AccountNumber(self, value):
+    def validate_ReceiptTemplate(self, value):
         result = True
-        # Validate type AccountNumber, a restriction on xsd:string.
+        # Validate type ReceiptTemplate, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) > 9:
+            value = value
+            enumerations = ['SHIP_RECPT_A4_RU_PDF']
+            if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AccountNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on ReceiptTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                result = False
+            if len(value) > 30:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ReceiptTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_AWBNumber(self, value):
+    def validate_CustomsInvoiceTemplate(self, value):
         result = True
-        # Validate type AWBNumber, a restriction on xsd:string.
+        # Validate type CustomsInvoiceTemplate, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) > 10:
+            value = value
+            enumerations = ['COMMERCIAL_INVOICE_04', 'COMMERCIAL_INVOICE_P_10', 'COMMERCIAL_INVOICE_L_10']
+            if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AWBNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on CustomsInvoiceTemplate' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_NumberOfPiecesType19(self, value):
+    def validate_Resolution(self, value):
         result = True
-        # Validate type NumberOfPiecesType19, a restriction on xsd:positiveInteger.
+        # Validate type Resolution, a restriction on xsd:positiveInteger.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, int):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (int)' % {"value": value, "lineno": lineno, })
                 return False
-            if value < 1:
+            if value < 200:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on NumberOfPiecesType19' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Resolution' % {"value": value, "lineno": lineno} )
                 result = False
-            if value > 999:
+            if value > 300:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on NumberOfPiecesType19' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_Weight(self, value):
-        result = True
-        # Validate type Weight, a restriction on xsd:decimal.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, decimal_.Decimal):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (decimal_.Decimal)' % {"value": value, "lineno": lineno, })
-                return False
-            if value < 0.000:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 999999.999:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_WeightUnit(self, value):
-        result = True
-        # Validate type WeightUnit, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['K', 'L']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on WeightUnit' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) > 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on WeightUnit' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 0:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on WeightUnit' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_GlobalProductCode(self, value):
-        result = True
-        # Validate type GlobalProductCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 4:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on GlobalProductCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on GlobalProductCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if not self.gds_validate_simple_patterns(
-                    self.validate_GlobalProductCode_patterns_, value):
-                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_GlobalProductCode_patterns_, ))
-                result = False
-        return result
-    validate_GlobalProductCode_patterns_ = [['^(([A-Z0-9])*)$']]
-    def validate_LocalProductCode(self, value):
-        result = True
-        # Validate type LocalProductCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 4:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on LocalProductCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on LocalProductCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if not self.gds_validate_simple_patterns(
-                    self.validate_LocalProductCode_patterns_, value):
-                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_LocalProductCode_patterns_, ))
-                result = False
-        return result
-    validate_LocalProductCode_patterns_ = [['^(([A-Z0-9])*)$']]
-    def validate_DoorTo(self, value):
-        result = True
-        # Validate type DoorTo, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['DD', 'DA', 'AA', 'DC']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DoorTo' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) != 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on DoorTo' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_DimensionUnit(self, value):
-        result = True
-        # Validate type DimensionUnit, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['C', 'I']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DimensionUnit' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) != 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on DimensionUnit' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Money(self, value):
-        result = True
-        # Validate type Money, a restriction on xsd:float.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, float):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (float)' % {"value": value, "lineno": lineno, })
-                return False
-            if value < 0.00:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Money' % {"value": value, "lineno": lineno} )
-                result = False
-            if value > 9999999999.99:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Money' % {"value": value, "lineno": lineno} )
-                result = False
-        return result
-    def validate_CurrencyCode(self, value):
-        result = True
-        # Validate type CurrencyCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) != 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CurrencyCode' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if not self.gds_validate_simple_patterns(
-                    self.validate_CurrencyCode_patterns_, value):
-                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_CurrencyCode_patterns_, ))
-                result = False
-        return result
-    validate_CurrencyCode_patterns_ = [['^([^ ].*[^ ])$']]
-    def validate_SpecialServiceType(self, value):
-        result = True
-        # Validate type SpecialServiceType, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 3:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on SpecialServiceType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_YesNo(self, value):
-        result = True
-        # Validate type YesNo, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            value = value
-            enumerations = ['Y', 'N']
-            if value not in enumerations:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on YesNo' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) != 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on YesNo' % {"value": encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Resolution' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def hasContent_(self):
         if (
-            self.AccountType is not None or
-            self.AccountNumber is not None or
-            self.BillToAccountNumber is not None or
-            self.AWBNumber is not None or
-            self.NumberOfPieces is not None or
-            self.Weight is not None or
-            self.WeightUnit is not None or
-            self.GlobalProductCode is not None or
-            self.LocalProductCode is not None or
-            self.DoorTo is not None or
-            self.DimensionUnit is not None or
-            self.InsuredAmount is not None or
-            self.InsuredCurrencyCode is not None or
-            self.Pieces is not None or
-            self.SpecialService or
-            self.IsDutiable is not None or
-            self.DeclaredAmount is not None or
-            self.DeclaredValueCurrencyCode is not None
+            self.HideAccount is not None or
+            self.LabelTemplate is not None or
+            self.ReceiptTemplate is not None or
+            self.ShipmentReceiptWithLabels is not None or
+            self.CustomsInvoiceTemplate is not None or
+            self.Logo is not None or
+            self.CustomerLogo is not None or
+            self.Resolution is not None or
+            self.CustomerBarcodeType is not None or
+            self.CustomerBarcodeCode is not None or
+            self.CustomerBarcodeText is not None
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='ShipmentDetails3', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ShipmentDetails3')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response_Label', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Response_Label')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ShipmentDetails3':
+        if self.original_tagname_ is not None and name_ == 'Response_Label':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ShipmentDetails3')
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Response_Label')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ShipmentDetails3', pretty_print=pretty_print)
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Response_Label', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='ShipmentDetails3'):
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Response_Label'):
         pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='ShipmentDetails3', fromsubclass_=False, pretty_print=True):
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Response_Label', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.AccountType is not None:
-            namespaceprefix_ = self.AccountType_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountType_nsprefix_) else ''
+        if self.HideAccount is not None:
+            namespaceprefix_ = self.HideAccount_nsprefix_ + ':' if (UseCapturedNS_ and self.HideAccount_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAccountType>%s</%sAccountType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AccountType), input_name='AccountType')), namespaceprefix_ , eol_))
-        if self.AccountNumber is not None:
-            namespaceprefix_ = self.AccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountNumber_nsprefix_) else ''
+            outfile.write('<%sHideAccount>%s</%sHideAccount>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.HideAccount), input_name='HideAccount')), namespaceprefix_ , eol_))
+        if self.LabelTemplate is not None:
+            namespaceprefix_ = self.LabelTemplate_nsprefix_ + ':' if (UseCapturedNS_ and self.LabelTemplate_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAccountNumber>%s</%sAccountNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AccountNumber), input_name='AccountNumber')), namespaceprefix_ , eol_))
-        if self.BillToAccountNumber is not None:
-            namespaceprefix_ = self.BillToAccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.BillToAccountNumber_nsprefix_) else ''
+            outfile.write('<%sLabelTemplate>%s</%sLabelTemplate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LabelTemplate), input_name='LabelTemplate')), namespaceprefix_ , eol_))
+        if self.ReceiptTemplate is not None:
+            namespaceprefix_ = self.ReceiptTemplate_nsprefix_ + ':' if (UseCapturedNS_ and self.ReceiptTemplate_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sBillToAccountNumber>%s</%sBillToAccountNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.BillToAccountNumber), input_name='BillToAccountNumber')), namespaceprefix_ , eol_))
-        if self.AWBNumber is not None:
-            namespaceprefix_ = self.AWBNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.AWBNumber_nsprefix_) else ''
+            outfile.write('<%sReceiptTemplate>%s</%sReceiptTemplate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ReceiptTemplate), input_name='ReceiptTemplate')), namespaceprefix_ , eol_))
+        if self.ShipmentReceiptWithLabels is not None:
+            namespaceprefix_ = self.ShipmentReceiptWithLabels_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentReceiptWithLabels_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAWBNumber>%s</%sAWBNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AWBNumber), input_name='AWBNumber')), namespaceprefix_ , eol_))
-        if self.NumberOfPieces is not None:
-            namespaceprefix_ = self.NumberOfPieces_nsprefix_ + ':' if (UseCapturedNS_ and self.NumberOfPieces_nsprefix_) else ''
+            outfile.write('<%sShipmentReceiptWithLabels>%s</%sShipmentReceiptWithLabels>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ShipmentReceiptWithLabels), input_name='ShipmentReceiptWithLabels')), namespaceprefix_ , eol_))
+        if self.CustomsInvoiceTemplate is not None:
+            namespaceprefix_ = self.CustomsInvoiceTemplate_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomsInvoiceTemplate_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sNumberOfPieces>%s</%sNumberOfPieces>%s' % (namespaceprefix_ , self.gds_format_integer(self.NumberOfPieces, input_name='NumberOfPieces'), namespaceprefix_ , eol_))
-        if self.Weight is not None:
-            namespaceprefix_ = self.Weight_nsprefix_ + ':' if (UseCapturedNS_ and self.Weight_nsprefix_) else ''
+            outfile.write('<%sCustomsInvoiceTemplate>%s</%sCustomsInvoiceTemplate>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomsInvoiceTemplate), input_name='CustomsInvoiceTemplate')), namespaceprefix_ , eol_))
+        if self.Logo is not None:
+            namespaceprefix_ = self.Logo_nsprefix_ + ':' if (UseCapturedNS_ and self.Logo_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sWeight>%s</%sWeight>%s' % (namespaceprefix_ , self.gds_format_decimal(self.Weight, input_name='Weight'), namespaceprefix_ , eol_))
-        if self.WeightUnit is not None:
-            namespaceprefix_ = self.WeightUnit_nsprefix_ + ':' if (UseCapturedNS_ and self.WeightUnit_nsprefix_) else ''
+            outfile.write('<%sLogo>%s</%sLogo>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Logo), input_name='Logo')), namespaceprefix_ , eol_))
+        if self.CustomerLogo is not None:
+            namespaceprefix_ = self.CustomerLogo_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerLogo_nsprefix_) else ''
+            self.CustomerLogo.export(outfile, level, namespaceprefix_, namespacedef_='', name_='CustomerLogo', pretty_print=pretty_print)
+        if self.Resolution is not None:
+            namespaceprefix_ = self.Resolution_nsprefix_ + ':' if (UseCapturedNS_ and self.Resolution_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sWeightUnit>%s</%sWeightUnit>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.WeightUnit), input_name='WeightUnit')), namespaceprefix_ , eol_))
-        if self.GlobalProductCode is not None:
-            namespaceprefix_ = self.GlobalProductCode_nsprefix_ + ':' if (UseCapturedNS_ and self.GlobalProductCode_nsprefix_) else ''
+            outfile.write('<%sResolution>%s</%sResolution>%s' % (namespaceprefix_ , self.gds_format_integer(self.Resolution, input_name='Resolution'), namespaceprefix_ , eol_))
+        if self.CustomerBarcodeType is not None:
+            namespaceprefix_ = self.CustomerBarcodeType_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerBarcodeType_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sGlobalProductCode>%s</%sGlobalProductCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.GlobalProductCode), input_name='GlobalProductCode')), namespaceprefix_ , eol_))
-        if self.LocalProductCode is not None:
-            namespaceprefix_ = self.LocalProductCode_nsprefix_ + ':' if (UseCapturedNS_ and self.LocalProductCode_nsprefix_) else ''
+            outfile.write('<%sCustomerBarcodeType>%s</%sCustomerBarcodeType>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomerBarcodeType), input_name='CustomerBarcodeType')), namespaceprefix_ , eol_))
+        if self.CustomerBarcodeCode is not None:
+            namespaceprefix_ = self.CustomerBarcodeCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerBarcodeCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sLocalProductCode>%s</%sLocalProductCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LocalProductCode), input_name='LocalProductCode')), namespaceprefix_ , eol_))
-        if self.DoorTo is not None:
-            namespaceprefix_ = self.DoorTo_nsprefix_ + ':' if (UseCapturedNS_ and self.DoorTo_nsprefix_) else ''
+            outfile.write('<%sCustomerBarcodeCode>%s</%sCustomerBarcodeCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomerBarcodeCode), input_name='CustomerBarcodeCode')), namespaceprefix_ , eol_))
+        if self.CustomerBarcodeText is not None:
+            namespaceprefix_ = self.CustomerBarcodeText_nsprefix_ + ':' if (UseCapturedNS_ and self.CustomerBarcodeText_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDoorTo>%s</%sDoorTo>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DoorTo), input_name='DoorTo')), namespaceprefix_ , eol_))
-        if self.DimensionUnit is not None:
-            namespaceprefix_ = self.DimensionUnit_nsprefix_ + ':' if (UseCapturedNS_ and self.DimensionUnit_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDimensionUnit>%s</%sDimensionUnit>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DimensionUnit), input_name='DimensionUnit')), namespaceprefix_ , eol_))
-        if self.InsuredAmount is not None:
-            namespaceprefix_ = self.InsuredAmount_nsprefix_ + ':' if (UseCapturedNS_ and self.InsuredAmount_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sInsuredAmount>%s</%sInsuredAmount>%s' % (namespaceprefix_ , self.gds_format_float(self.InsuredAmount, input_name='InsuredAmount'), namespaceprefix_ , eol_))
-        if self.InsuredCurrencyCode is not None:
-            namespaceprefix_ = self.InsuredCurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.InsuredCurrencyCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sInsuredCurrencyCode>%s</%sInsuredCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.InsuredCurrencyCode), input_name='InsuredCurrencyCode')), namespaceprefix_ , eol_))
-        if self.Pieces is not None:
-            namespaceprefix_ = self.Pieces_nsprefix_ + ':' if (UseCapturedNS_ and self.Pieces_nsprefix_) else ''
-            self.Pieces.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Pieces', pretty_print=pretty_print)
-        for SpecialService_ in self.SpecialService:
-            namespaceprefix_ = self.SpecialService_nsprefix_ + ':' if (UseCapturedNS_ and self.SpecialService_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSpecialService>%s</%sSpecialService>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(SpecialService_), input_name='SpecialService')), namespaceprefix_ , eol_))
-        if self.IsDutiable is not None:
-            namespaceprefix_ = self.IsDutiable_nsprefix_ + ':' if (UseCapturedNS_ and self.IsDutiable_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sIsDutiable>%s</%sIsDutiable>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.IsDutiable), input_name='IsDutiable')), namespaceprefix_ , eol_))
-        if self.DeclaredAmount is not None:
-            namespaceprefix_ = self.DeclaredAmount_nsprefix_ + ':' if (UseCapturedNS_ and self.DeclaredAmount_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDeclaredAmount>%s</%sDeclaredAmount>%s' % (namespaceprefix_ , self.gds_format_float(self.DeclaredAmount, input_name='DeclaredAmount'), namespaceprefix_ , eol_))
-        if self.DeclaredValueCurrencyCode is not None:
-            namespaceprefix_ = self.DeclaredValueCurrencyCode_nsprefix_ + ':' if (UseCapturedNS_ and self.DeclaredValueCurrencyCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sDeclaredValueCurrencyCode>%s</%sDeclaredValueCurrencyCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.DeclaredValueCurrencyCode), input_name='DeclaredValueCurrencyCode')), namespaceprefix_ , eol_))
+            outfile.write('<%sCustomerBarcodeText>%s</%sCustomerBarcodeText>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CustomerBarcodeText), input_name='CustomerBarcodeText')), namespaceprefix_ , eol_))
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -23839,746 +21168,88 @@ class ShipmentDetails3(GeneratedsSuper):
     def buildAttributes(self, node, attrs, already_processed):
         pass
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'AccountType':
+        if nodeName_ == 'HideAccount':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AccountType')
-            value_ = self.gds_validate_string(value_, node, 'AccountType')
-            self.AccountType = value_
-            self.AccountType_nsprefix_ = child_.prefix
-            # validate type AccountTypeType18
-            self.validate_AccountTypeType18(self.AccountType)
-        elif nodeName_ == 'AccountNumber':
+            value_ = self.gds_parse_string(value_, node, 'HideAccount')
+            value_ = self.gds_validate_string(value_, node, 'HideAccount')
+            self.HideAccount = value_
+            self.HideAccount_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.HideAccount)
+        elif nodeName_ == 'LabelTemplate':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AccountNumber')
-            value_ = self.gds_validate_string(value_, node, 'AccountNumber')
-            self.AccountNumber = value_
-            self.AccountNumber_nsprefix_ = child_.prefix
-            # validate type AccountNumber
-            self.validate_AccountNumber(self.AccountNumber)
-        elif nodeName_ == 'BillToAccountNumber':
+            value_ = self.gds_parse_string(value_, node, 'LabelTemplate')
+            value_ = self.gds_validate_string(value_, node, 'LabelTemplate')
+            self.LabelTemplate = value_
+            self.LabelTemplate_nsprefix_ = child_.prefix
+            # validate type LabelTemplate
+            self.validate_LabelTemplate(self.LabelTemplate)
+        elif nodeName_ == 'ReceiptTemplate':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'BillToAccountNumber')
-            value_ = self.gds_validate_string(value_, node, 'BillToAccountNumber')
-            self.BillToAccountNumber = value_
-            self.BillToAccountNumber_nsprefix_ = child_.prefix
-            # validate type AccountNumber
-            self.validate_AccountNumber(self.BillToAccountNumber)
-        elif nodeName_ == 'AWBNumber':
+            value_ = self.gds_parse_string(value_, node, 'ReceiptTemplate')
+            value_ = self.gds_validate_string(value_, node, 'ReceiptTemplate')
+            self.ReceiptTemplate = value_
+            self.ReceiptTemplate_nsprefix_ = child_.prefix
+            # validate type ReceiptTemplate
+            self.validate_ReceiptTemplate(self.ReceiptTemplate)
+        elif nodeName_ == 'ShipmentReceiptWithLabels':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AWBNumber')
-            value_ = self.gds_validate_string(value_, node, 'AWBNumber')
-            self.AWBNumber = value_
-            self.AWBNumber_nsprefix_ = child_.prefix
-            # validate type AWBNumber
-            self.validate_AWBNumber(self.AWBNumber)
-        elif nodeName_ == 'NumberOfPieces' and child_.text:
+            value_ = self.gds_parse_string(value_, node, 'ShipmentReceiptWithLabels')
+            value_ = self.gds_validate_string(value_, node, 'ShipmentReceiptWithLabels')
+            self.ShipmentReceiptWithLabels = value_
+            self.ShipmentReceiptWithLabels_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.ShipmentReceiptWithLabels)
+        elif nodeName_ == 'CustomsInvoiceTemplate':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CustomsInvoiceTemplate')
+            value_ = self.gds_validate_string(value_, node, 'CustomsInvoiceTemplate')
+            self.CustomsInvoiceTemplate = value_
+            self.CustomsInvoiceTemplate_nsprefix_ = child_.prefix
+            # validate type CustomsInvoiceTemplate
+            self.validate_CustomsInvoiceTemplate(self.CustomsInvoiceTemplate)
+        elif nodeName_ == 'Logo':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Logo')
+            value_ = self.gds_validate_string(value_, node, 'Logo')
+            self.Logo = value_
+            self.Logo_nsprefix_ = child_.prefix
+            # validate type YesNo
+            self.validate_YesNo(self.Logo)
+        elif nodeName_ == 'CustomerLogo':
+            obj_ = CustomerLogo.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.CustomerLogo = obj_
+            obj_.original_tagname_ = 'CustomerLogo'
+        elif nodeName_ == 'Resolution' and child_.text:
             sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'NumberOfPieces')
+            ival_ = self.gds_parse_integer(sval_, node, 'Resolution')
             if ival_ <= 0:
                 raise_parse_error(child_, 'requires positiveInteger')
-            ival_ = self.gds_validate_integer(ival_, node, 'NumberOfPieces')
-            self.NumberOfPieces = ival_
-            self.NumberOfPieces_nsprefix_ = child_.prefix
-            # validate type NumberOfPiecesType19
-            self.validate_NumberOfPiecesType19(self.NumberOfPieces)
-        elif nodeName_ == 'Weight' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_decimal(sval_, node, 'Weight')
-            fval_ = self.gds_validate_decimal(fval_, node, 'Weight')
-            self.Weight = fval_
-            self.Weight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.Weight)
-        elif nodeName_ == 'WeightUnit':
+            ival_ = self.gds_validate_integer(ival_, node, 'Resolution')
+            self.Resolution = ival_
+            self.Resolution_nsprefix_ = child_.prefix
+            # validate type Resolution
+            self.validate_Resolution(self.Resolution)
+        elif nodeName_ == 'CustomerBarcodeType':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'WeightUnit')
-            value_ = self.gds_validate_string(value_, node, 'WeightUnit')
-            self.WeightUnit = value_
-            self.WeightUnit_nsprefix_ = child_.prefix
-            # validate type WeightUnit
-            self.validate_WeightUnit(self.WeightUnit)
-        elif nodeName_ == 'GlobalProductCode':
+            value_ = self.gds_parse_string(value_, node, 'CustomerBarcodeType')
+            value_ = self.gds_validate_string(value_, node, 'CustomerBarcodeType')
+            self.CustomerBarcodeType = value_
+            self.CustomerBarcodeType_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CustomerBarcodeCode':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'GlobalProductCode')
-            value_ = self.gds_validate_string(value_, node, 'GlobalProductCode')
-            self.GlobalProductCode = value_
-            self.GlobalProductCode_nsprefix_ = child_.prefix
-            # validate type GlobalProductCode
-            self.validate_GlobalProductCode(self.GlobalProductCode)
-        elif nodeName_ == 'LocalProductCode':
+            value_ = self.gds_parse_string(value_, node, 'CustomerBarcodeCode')
+            value_ = self.gds_validate_string(value_, node, 'CustomerBarcodeCode')
+            self.CustomerBarcodeCode = value_
+            self.CustomerBarcodeCode_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CustomerBarcodeText':
             value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'LocalProductCode')
-            value_ = self.gds_validate_string(value_, node, 'LocalProductCode')
-            self.LocalProductCode = value_
-            self.LocalProductCode_nsprefix_ = child_.prefix
-            # validate type LocalProductCode
-            self.validate_LocalProductCode(self.LocalProductCode)
-        elif nodeName_ == 'DoorTo':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DoorTo')
-            value_ = self.gds_validate_string(value_, node, 'DoorTo')
-            self.DoorTo = value_
-            self.DoorTo_nsprefix_ = child_.prefix
-            # validate type DoorTo
-            self.validate_DoorTo(self.DoorTo)
-        elif nodeName_ == 'DimensionUnit':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DimensionUnit')
-            value_ = self.gds_validate_string(value_, node, 'DimensionUnit')
-            self.DimensionUnit = value_
-            self.DimensionUnit_nsprefix_ = child_.prefix
-            # validate type DimensionUnit
-            self.validate_DimensionUnit(self.DimensionUnit)
-        elif nodeName_ == 'InsuredAmount' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'InsuredAmount')
-            fval_ = self.gds_validate_float(fval_, node, 'InsuredAmount')
-            self.InsuredAmount = fval_
-            self.InsuredAmount_nsprefix_ = child_.prefix
-            # validate type Money
-            self.validate_Money(self.InsuredAmount)
-        elif nodeName_ == 'InsuredCurrencyCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'InsuredCurrencyCode')
-            value_ = self.gds_validate_string(value_, node, 'InsuredCurrencyCode')
-            self.InsuredCurrencyCode = value_
-            self.InsuredCurrencyCode_nsprefix_ = child_.prefix
-            # validate type CurrencyCode
-            self.validate_CurrencyCode(self.InsuredCurrencyCode)
-        elif nodeName_ == 'Pieces':
-            obj_ = Pieces.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.Pieces = obj_
-            obj_.original_tagname_ = 'Pieces'
-        elif nodeName_ == 'SpecialService':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'SpecialService')
-            value_ = self.gds_validate_string(value_, node, 'SpecialService')
-            self.SpecialService.append(value_)
-            self.SpecialService_nsprefix_ = child_.prefix
-            # validate type SpecialServiceType
-            self.validate_SpecialServiceType(self.SpecialService[-1])
-        elif nodeName_ == 'IsDutiable':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'IsDutiable')
-            value_ = self.gds_validate_string(value_, node, 'IsDutiable')
-            self.IsDutiable = value_
-            self.IsDutiable_nsprefix_ = child_.prefix
-            # validate type YesNo
-            self.validate_YesNo(self.IsDutiable)
-        elif nodeName_ == 'DeclaredAmount' and child_.text:
-            sval_ = child_.text
-            fval_ = self.gds_parse_float(sval_, node, 'DeclaredAmount')
-            fval_ = self.gds_validate_float(fval_, node, 'DeclaredAmount')
-            self.DeclaredAmount = fval_
-            self.DeclaredAmount_nsprefix_ = child_.prefix
-            # validate type Money
-            self.validate_Money(self.DeclaredAmount)
-        elif nodeName_ == 'DeclaredValueCurrencyCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'DeclaredValueCurrencyCode')
-            value_ = self.gds_validate_string(value_, node, 'DeclaredValueCurrencyCode')
-            self.DeclaredValueCurrencyCode = value_
-            self.DeclaredValueCurrencyCode_nsprefix_ = child_.prefix
-            # validate type CurrencyCode
-            self.validate_CurrencyCode(self.DeclaredValueCurrencyCode)
-# end class ShipmentDetails3
-
-
-class ConsigneeDetails(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, CompanyName=None, AddressLine=None, City=None, CountryCode=None, PostalCode=None, Contact=None, Suburb=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.CompanyName = CompanyName
-        self.validate_CompanyNameValidator(self.CompanyName)
-        self.CompanyName_nsprefix_ = None
-        if AddressLine is None:
-            self.AddressLine = []
-        else:
-            self.AddressLine = AddressLine
-        self.AddressLine_nsprefix_ = None
-        self.City = City
-        self.validate_City(self.City)
-        self.City_nsprefix_ = None
-        self.CountryCode = CountryCode
-        self.validate_CountryCode(self.CountryCode)
-        self.CountryCode_nsprefix_ = None
-        self.PostalCode = PostalCode
-        self.validate_PostalCode(self.PostalCode)
-        self.PostalCode_nsprefix_ = None
-        self.Contact = Contact
-        self.Contact_nsprefix_ = None
-        self.Suburb = Suburb
-        self.validate_Suburb(self.Suburb)
-        self.Suburb_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, ConsigneeDetails)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if ConsigneeDetails.subclass:
-            return ConsigneeDetails.subclass(*args_, **kwargs_)
-        else:
-            return ConsigneeDetails(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_CompanyName(self):
-        return self.CompanyName
-    def set_CompanyName(self, CompanyName):
-        self.CompanyName = CompanyName
-    def get_AddressLine(self):
-        return self.AddressLine
-    def set_AddressLine(self, AddressLine):
-        self.AddressLine = AddressLine
-    def add_AddressLine(self, value):
-        self.AddressLine.append(value)
-    def insert_AddressLine_at(self, index, value):
-        self.AddressLine.insert(index, value)
-    def replace_AddressLine_at(self, index, value):
-        self.AddressLine[index] = value
-    def get_City(self):
-        return self.City
-    def set_City(self, City):
-        self.City = City
-    def get_CountryCode(self):
-        return self.CountryCode
-    def set_CountryCode(self, CountryCode):
-        self.CountryCode = CountryCode
-    def get_PostalCode(self):
-        return self.PostalCode
-    def set_PostalCode(self, PostalCode):
-        self.PostalCode = PostalCode
-    def get_Contact(self):
-        return self.Contact
-    def set_Contact(self, Contact):
-        self.Contact = Contact
-    def get_Suburb(self):
-        return self.Suburb
-    def set_Suburb(self, Suburb):
-        self.Suburb = Suburb
-    def validate_CompanyNameValidator(self, value):
-        result = True
-        # Validate type CompanyNameValidator, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 60:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on CompanyNameValidator' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CompanyNameValidator' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_AddressLine(self, value):
-        result = True
-        # Validate type AddressLine, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 45:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AddressLine' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_City(self, value):
-        result = True
-        # Validate type City, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on City' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_CountryCode(self, value):
-        result = True
-        # Validate type CountryCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) != 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CountryCode' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PostalCode(self, value):
-        result = True
-        # Validate type PostalCode, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 12:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PostalCode' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_Suburb(self, value):
-        result = True
-        # Validate type Suburb, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on Suburb' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.CompanyName is not None or
-            self.AddressLine or
-            self.City is not None or
-            self.CountryCode is not None or
-            self.PostalCode is not None or
-            self.Contact is not None or
-            self.Suburb is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='ConsigneeDetails', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('ConsigneeDetails')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'ConsigneeDetails':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ConsigneeDetails')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ConsigneeDetails', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='ConsigneeDetails'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='ConsigneeDetails', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.CompanyName is not None:
-            namespaceprefix_ = self.CompanyName_nsprefix_ + ':' if (UseCapturedNS_ and self.CompanyName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCompanyName>%s</%sCompanyName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CompanyName), input_name='CompanyName')), namespaceprefix_ , eol_))
-        for AddressLine_ in self.AddressLine:
-            namespaceprefix_ = self.AddressLine_nsprefix_ + ':' if (UseCapturedNS_ and self.AddressLine_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAddressLine>%s</%sAddressLine>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(AddressLine_), input_name='AddressLine')), namespaceprefix_ , eol_))
-        if self.City is not None:
-            namespaceprefix_ = self.City_nsprefix_ + ':' if (UseCapturedNS_ and self.City_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCity>%s</%sCity>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.City), input_name='City')), namespaceprefix_ , eol_))
-        if self.CountryCode is not None:
-            namespaceprefix_ = self.CountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCountryCode>%s</%sCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryCode), input_name='CountryCode')), namespaceprefix_ , eol_))
-        if self.PostalCode is not None:
-            namespaceprefix_ = self.PostalCode_nsprefix_ + ':' if (UseCapturedNS_ and self.PostalCode_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPostalCode>%s</%sPostalCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PostalCode), input_name='PostalCode')), namespaceprefix_ , eol_))
-        if self.Contact is not None:
-            namespaceprefix_ = self.Contact_nsprefix_ + ':' if (UseCapturedNS_ and self.Contact_nsprefix_) else ''
-            self.Contact.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Contact', pretty_print=pretty_print)
-        if self.Suburb is not None:
-            namespaceprefix_ = self.Suburb_nsprefix_ + ':' if (UseCapturedNS_ and self.Suburb_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sSuburb>%s</%sSuburb>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Suburb), input_name='Suburb')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'CompanyName':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CompanyName')
-            value_ = self.gds_validate_string(value_, node, 'CompanyName')
-            self.CompanyName = value_
-            self.CompanyName_nsprefix_ = child_.prefix
-            # validate type CompanyNameValidator
-            self.validate_CompanyNameValidator(self.CompanyName)
-        elif nodeName_ == 'AddressLine':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AddressLine')
-            value_ = self.gds_validate_string(value_, node, 'AddressLine')
-            self.AddressLine.append(value_)
-            self.AddressLine_nsprefix_ = child_.prefix
-            # validate type AddressLine
-            self.validate_AddressLine(self.AddressLine[-1])
-        elif nodeName_ == 'City':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'City')
-            value_ = self.gds_validate_string(value_, node, 'City')
-            self.City = value_
-            self.City_nsprefix_ = child_.prefix
-            # validate type City
-            self.validate_City(self.City)
-        elif nodeName_ == 'CountryCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CountryCode')
-            value_ = self.gds_validate_string(value_, node, 'CountryCode')
-            self.CountryCode = value_
-            self.CountryCode_nsprefix_ = child_.prefix
-            # validate type CountryCode
-            self.validate_CountryCode(self.CountryCode)
-        elif nodeName_ == 'PostalCode':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PostalCode')
-            value_ = self.gds_validate_string(value_, node, 'PostalCode')
-            self.PostalCode = value_
-            self.PostalCode_nsprefix_ = child_.prefix
-            # validate type PostalCode
-            self.validate_PostalCode(self.PostalCode)
-        elif nodeName_ == 'Contact':
-            obj_ = Contact.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.Contact = obj_
-            obj_.original_tagname_ = 'Contact'
-        elif nodeName_ == 'Suburb':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Suburb')
-            value_ = self.gds_validate_string(value_, node, 'Suburb')
-            self.Suburb = value_
-            self.Suburb_nsprefix_ = child_.prefix
-            # validate type Suburb
-            self.validate_Suburb(self.Suburb)
-# end class ConsigneeDetails
-
-
-class Contact4(GeneratedsSuper):
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, PersonName=None, Phone=None, Email=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        self.PersonName = PersonName
-        self.validate_PersonName(self.PersonName)
-        self.PersonName_nsprefix_ = None
-        self.Phone = Phone
-        self.validate_PhoneNumber(self.Phone)
-        self.Phone_nsprefix_ = None
-        self.Email = Email
-        self.validate_EmailAddress(self.Email)
-        self.Email_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, Contact4)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if Contact4.subclass:
-            return Contact4.subclass(*args_, **kwargs_)
-        else:
-            return Contact4(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_PersonName(self):
-        return self.PersonName
-    def set_PersonName(self, PersonName):
-        self.PersonName = PersonName
-    def get_Phone(self):
-        return self.Phone
-    def set_Phone(self, Phone):
-        self.Phone = Phone
-    def get_Email(self):
-        return self.Email
-    def set_Email(self, Email):
-        self.Email = Email
-    def validate_PersonName(self, value):
-        result = True
-        # Validate type PersonName, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 35:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PersonName' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 2:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PersonName' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def validate_PhoneNumber(self, value):
-        result = True
-        # Validate type PhoneNumber, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 25:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PhoneNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if len(value) < 1:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PhoneNumber' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if not self.gds_validate_simple_patterns(
-                    self.validate_PhoneNumber_patterns_, value):
-                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_PhoneNumber_patterns_, ))
-                result = False
-        return result
-    validate_PhoneNumber_patterns_ = [['^(.*[^\\s].*)$']]
-    def validate_EmailAddress(self, value):
-        result = True
-        # Validate type EmailAddress, a restriction on xsd:string.
-        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
-                return False
-            if len(value) > 50:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on EmailAddress' % {"value" : encode_str_2_3(value), "lineno": lineno} )
-                result = False
-        return result
-    def hasContent_(self):
-        if (
-            self.PersonName is not None or
-            self.Phone is not None or
-            self.Email is not None
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Contact4', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Contact4')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'Contact4':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Contact4')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Contact4', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='Contact4'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Contact4', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.PersonName is not None:
-            namespaceprefix_ = self.PersonName_nsprefix_ + ':' if (UseCapturedNS_ and self.PersonName_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPersonName>%s</%sPersonName>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PersonName), input_name='PersonName')), namespaceprefix_ , eol_))
-        if self.Phone is not None:
-            namespaceprefix_ = self.Phone_nsprefix_ + ':' if (UseCapturedNS_ and self.Phone_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sPhone>%s</%sPhone>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Phone), input_name='Phone')), namespaceprefix_ , eol_))
-        if self.Email is not None:
-            namespaceprefix_ = self.Email_nsprefix_ + ':' if (UseCapturedNS_ and self.Email_nsprefix_) else ''
-            showIndent(outfile, level, pretty_print)
-            outfile.write('<%sEmail>%s</%sEmail>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Email), input_name='Email')), namespaceprefix_ , eol_))
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'PersonName':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'PersonName')
-            value_ = self.gds_validate_string(value_, node, 'PersonName')
-            self.PersonName = value_
-            self.PersonName_nsprefix_ = child_.prefix
-            # validate type PersonName
-            self.validate_PersonName(self.PersonName)
-        elif nodeName_ == 'Phone':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Phone')
-            value_ = self.gds_validate_string(value_, node, 'Phone')
-            self.Phone = value_
-            self.Phone_nsprefix_ = child_.prefix
-            # validate type PhoneNumber
-            self.validate_PhoneNumber(self.Phone)
-        elif nodeName_ == 'Email':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Email')
-            value_ = self.gds_validate_string(value_, node, 'Email')
-            self.Email = value_
-            self.Email_nsprefix_ = child_.prefix
-            # validate type EmailAddress
-            self.validate_EmailAddress(self.Email)
-# end class Contact4
-
-
-class Pieces5(GeneratedsSuper):
-    """Element encapsulating peices information"""
-    __hash__ = GeneratedsSuper.__hash__
-    subclass = None
-    superclass = None
-    def __init__(self, Piece=None, gds_collector_=None, **kwargs_):
-        self.gds_collector_ = gds_collector_
-        self.gds_elementtree_node_ = None
-        self.original_tagname_ = None
-        self.parent_object_ = kwargs_.get('parent_object_')
-        self.ns_prefix_ = None
-        if Piece is None:
-            self.Piece = []
-        else:
-            self.Piece = Piece
-        self.Piece_nsprefix_ = None
-    def factory(*args_, **kwargs_):
-        if CurrentSubclassModule_ is not None:
-            subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, Pieces5)
-            if subclass is not None:
-                return subclass(*args_, **kwargs_)
-        if Pieces5.subclass:
-            return Pieces5.subclass(*args_, **kwargs_)
-        else:
-            return Pieces5(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_ns_prefix_(self):
-        return self.ns_prefix_
-    def set_ns_prefix_(self, ns_prefix):
-        self.ns_prefix_ = ns_prefix
-    def get_Piece(self):
-        return self.Piece
-    def set_Piece(self, Piece):
-        self.Piece = Piece
-    def add_Piece(self, value):
-        self.Piece.append(value)
-    def insert_Piece_at(self, index, value):
-        self.Piece.insert(index, value)
-    def replace_Piece_at(self, index, value):
-        self.Piece[index] = value
-    def hasContent_(self):
-        if (
-            self.Piece
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Pieces5', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Pieces5')
-        if imported_ns_def_ is not None:
-            namespacedef_ = imported_ns_def_
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'Pieces5':
-            name_ = self.original_tagname_
-        if UseCapturedNS_ and self.ns_prefix_:
-            namespaceprefix_ = self.ns_prefix_ + ':'
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Pieces5')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Pieces5', pretty_print=pretty_print)
-            showIndent(outfile, level, pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='dhlPickup:', name_='Pieces5'):
-        pass
-    def exportChildren(self, outfile, level, namespaceprefix_='dhlPickup:', namespacedef_='', name_='Pieces5', fromsubclass_=False, pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        for Piece_ in self.Piece:
-            namespaceprefix_ = self.Piece_nsprefix_ + ':' if (UseCapturedNS_ and self.Piece_nsprefix_) else ''
-            Piece_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Piece', pretty_print=pretty_print)
-    def build(self, node, gds_collector_=None):
-        self.gds_collector_ = gds_collector_
-        if SaveElementTreeNode:
-            self.gds_elementtree_node_ = node
-        already_processed = set()
-        self.ns_prefix_ = node.prefix
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        pass
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Piece':
-            obj_ = Piece.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.Piece.append(obj_)
-            obj_.original_tagname_ = 'Piece'
-# end class Pieces5
+            value_ = self.gds_parse_string(value_, node, 'CustomerBarcodeText')
+            value_ = self.gds_validate_string(value_, node, 'CustomerBarcodeText')
+            self.CustomerBarcodeText = value_
+            self.CustomerBarcodeText_nsprefix_ = child_.prefix
+# end class Response_Label
 
 
 class WeightType(GeneratedsSuper):
@@ -24592,7 +21263,7 @@ class WeightType(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.Weight = Weight
-        self.validate_Weight(self.Weight)
+        self.validate_ExportLineItem_Weight(self.Weight)
         self.Weight_nsprefix_ = None
         self.WeightUnit = WeightUnit
         self.validate_WeightUnit(self.WeightUnit)
@@ -24620,9 +21291,9 @@ class WeightType(GeneratedsSuper):
         return self.WeightUnit
     def set_WeightUnit(self, WeightUnit):
         self.WeightUnit = WeightUnit
-    def validate_Weight(self, value):
+    def validate_ExportLineItem_Weight(self, value):
         result = True
-        # Validate type Weight, a restriction on xsd:decimal.
+        # Validate type ExportLineItem_Weight, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
@@ -24630,15 +21301,11 @@ class WeightType(GeneratedsSuper):
                 return False
             if value < 0.000:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on ExportLineItem_Weight' % {"value": value, "lineno": lineno} )
                 result = False
-            if value > 999999.999:
+            if value > 999999999999.999:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on ExportLineItem_Weight' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def validate_WeightUnit(self, value):
@@ -24730,8 +21397,8 @@ class WeightType(GeneratedsSuper):
             fval_ = self.gds_validate_decimal(fval_, node, 'Weight')
             self.Weight = fval_
             self.Weight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.Weight)
+            # validate type ExportLineItem_Weight
+            self.validate_ExportLineItem_Weight(self.Weight)
         elif nodeName_ == 'WeightUnit':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'WeightUnit')
@@ -24754,7 +21421,7 @@ class GrossWeightType(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.Weight = Weight
-        self.validate_Weight(self.Weight)
+        self.validate_ExportLineItem_Weight(self.Weight)
         self.Weight_nsprefix_ = None
         self.WeightUnit = WeightUnit
         self.validate_WeightUnit(self.WeightUnit)
@@ -24782,9 +21449,9 @@ class GrossWeightType(GeneratedsSuper):
         return self.WeightUnit
     def set_WeightUnit(self, WeightUnit):
         self.WeightUnit = WeightUnit
-    def validate_Weight(self, value):
+    def validate_ExportLineItem_Weight(self, value):
         result = True
-        # Validate type Weight, a restriction on xsd:decimal.
+        # Validate type ExportLineItem_Weight, a restriction on xsd:decimal.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, decimal_.Decimal):
                 lineno = self.gds_get_node_lineno_()
@@ -24792,15 +21459,11 @@ class GrossWeightType(GeneratedsSuper):
                 return False
             if value < 0.000:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on ExportLineItem_Weight' % {"value": value, "lineno": lineno} )
                 result = False
-            if value > 999999.999:
+            if value > 999999999999.999:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on Weight' % {"value": value, "lineno": lineno} )
-                result = False
-            if len(str(value)) >= 10:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd totalDigits restriction on Weight' % {"value": value, "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on ExportLineItem_Weight' % {"value": value, "lineno": lineno} )
                 result = False
         return result
     def validate_WeightUnit(self, value):
@@ -24892,8 +21555,8 @@ class GrossWeightType(GeneratedsSuper):
             fval_ = self.gds_validate_decimal(fval_, node, 'Weight')
             self.Weight = fval_
             self.Weight_nsprefix_ = child_.prefix
-            # validate type Weight
-            self.validate_Weight(self.Weight)
+            # validate type ExportLineItem_Weight
+            self.validate_ExportLineItem_Weight(self.Weight)
         elif nodeName_ == 'WeightUnit':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'WeightUnit')
@@ -25243,8 +21906,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'ModifyPUResponse'
-        rootClass = ModifyPUResponse
+        rootTag = 'ShipmentRequest'
+        rootClass = ShipmentRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -25275,8 +21938,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'ModifyPUResponse'
-        rootClass = ModifyPUResponse
+        rootTag = 'ShipmentRequest'
+        rootClass = ShipmentRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -25318,8 +21981,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'ModifyPUResponse'
-        rootClass = ModifyPUResponse
+        rootTag = 'ShipmentRequest'
+        rootClass = ShipmentRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -25346,8 +22009,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'ModifyPUResponse'
-        rootClass = ModifyPUResponse
+        rootTag = 'ShipmentRequest'
+        rootClass = ShipmentRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -25355,8 +22018,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from modify_pickup_global_res_3_0 import *\n\n')
-        sys.stdout.write('import modify_pickup_global_res_3_0 as model_\n\n')
+        sys.stdout.write('#from ship_val_global_req_10_0 import *\n\n')
+        sys.stdout.write('import ship_val_global_req_10_0 as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')
@@ -25383,13 +22046,6 @@ if __name__ == '__main__':
     main()
 
 RenameMappings_ = {
-    "{http://www.dhl.com/pickupdatatypes_global}Contact": "Contact4",
-    "{http://www.dhl.com/pickupdatatypes_global}DoorTo": "DoorTo6",
-    "{http://www.dhl.com/pickupdatatypes_global}Piece": "Piece2",
-    "{http://www.dhl.com/pickupdatatypes_global}Pieces": "Pieces5",
-    "{http://www.dhl.com/pickupdatatypes_global}Place": "Place1",
-    "{http://www.dhl.com/pickupdatatypes_global}ShipmentDetails": "ShipmentDetails3",
-    "{http://www.dhl.com/pickupdatatypes_global}TimeHM": "TimeHM7",
 }
 
 #
@@ -25399,1008 +22055,972 @@ RenameMappings_ = {
 NamespaceToDefMappings_ = {'http://www.dhl.com': [],
  'http://www.dhl.com/datatypes_global': [('AccountNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('AccountType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('AddressLine',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('AdvanceDaysNotice',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('AWBNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DHLRoutingCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('InternalServiceCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('BillCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('City',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CommodityCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CommodityName',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CommunicationAddress',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CommunicationType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CompanyNameValidator',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SuiteDepartmentName',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('MobilePhoneNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PhoneExtension',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CountryCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CountryName',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Suburb',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('StreetName',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('BuildingName',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('StreetNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CourierMsg',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CurrencyCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CurrencyName',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DateTime',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Date',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DayHour',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DoorTo',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ExportLicense',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ImportLicense',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('TermsOfTrade',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('FilingType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('FTSR',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ITN',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('AES4EIN',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DeclaredValue',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('DutyTaxPaymentType',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DivisionCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Division',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('EmailAddress',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('Invoice_Weight',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('OtherChargeCaption',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('OtherChargeValue',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('OtherChargeType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('BusinessPartyTypeCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('ShipmentPurpose',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('DocumentFunction',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('CustomsDocumentType',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('CustomsDocumentID',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('InvoiceReferenceType',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('InvoiceReferenceNumber',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ImportTaxManagedOutsideDhlExpress',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
-                                         ('ItemReferenceType',
+                                         ('AdditionalInformationText',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('ItemReferenceNumber',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('CustomsPaperworkType',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('CustomsPaperworkID',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SignatureName',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('ItemReferenceType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('ItemReferenceNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('CustomsPaperworkType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('CustomsPaperworkID',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SignatureTitle',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ExportReasonCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('GlobalProductCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('IDType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('PiecesEnabled',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LanguageCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('InvLanguageCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('InvoiceType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LicenseNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LineNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LocalProductCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Money',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('ChargeValue_Money',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('DeclaredValue_Money',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PackageType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PersonName',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PhoneNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PieceID',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Caption',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Description',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CustomerDescription',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PieceNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PieceContents',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PackageLocation',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('StateCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PostalCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ProductCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('QuantityUnit',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Quantity',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ReferenceID',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ReferenceType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ResidenceOrBusiness',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ScheduleB',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SEDDescription',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SEDNumberType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('InvoiceNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SEDNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ShipmentContents',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ShipmentCharges',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CustData',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('Code',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('Value',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DimensionUnit',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ShipmentPaymentType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('ParentShipmentPackagesCount',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ShipperID',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('OriginServiceAreaCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('OriginFacilityCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SpecialServiceType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('PaymentMethod',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ChargeValue',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('State',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ServiceAreaCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('FacilityCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('InboundSortCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('OutboundSortCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Telex',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('TimeHM',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('WeightUnit',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Weight',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('ExportLineItem_Weight',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('Piece_Weight',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('YesNo',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SiteID',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Password',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('MessageReference',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PaymentType',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('QRCodeTemplate',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('QRCodeImageFormat',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('BarCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LevelOfDetails',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('TrackingPieceID',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Type',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Image',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ImageFormat',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LabelImageFormat',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PLTStatus',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CurrencyRoleTypeCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('PackageCharge',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ShippingCharge',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DocFormat',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DocImageVal',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('OutputFormat',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('OutputImage',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Message',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('RegionCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('ReceiptTemplate',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('CustomsInvoiceTemplate',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('DocDetach',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('NumberOfArchiveDoc',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LogoImage',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LogoImageFormat',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LabelTemplate',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Resolution',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('LabelRegText',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('DG_UOM',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('AddDeclText',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('SignatureImage',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('InvoiceInstructions',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('CustomerDataTextNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('CustomerDataText',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('PlaceOfIncoterm',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('ShipmentPurpose',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('DocumentFunction',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('CustomsDocumentType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('CustomsDocumentID',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('InvoiceReferenceType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'ST'),
+                                         ('InvoiceReferenceNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Number',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('NumberTypeCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('NumberIssuerCountryCode',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('NumberTypeCode1',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('NumberTypeCode2',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'ST'),
-                                         ('NumberTypeCode3',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'ST'),
                                          ('Billing',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Commodity',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Consignee',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Contact',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Dutiable',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Filing',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ExportDeclaration',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('OtherCharges',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('OtherCharge',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('CustomsDocuments',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('CustomsDocument',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('InvoiceReferences',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('InvoiceReference',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ExportLineItem',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('AdditionalInformationType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ItemReferences',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ItemReference',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('CustomsPaperworks',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('CustomsPaperwork',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Piece',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('AdditionalInformation',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('CustomerAdditionalInformation',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('CustomerBarcodes',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Pieces',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ShipValResponsePiece',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ShipValResponsePieces',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('Response_QRCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Place',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Reference',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ShipmentDetails',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('AdditionalProtection',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Shipment',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Shipper',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('SpecialService',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('PaymentMethods',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('WeightSeg',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Request',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ServiceHeader',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('MetaData',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Response',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ResponseServiceHeader',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Status',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Note',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Condition',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Customer',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('BarCodes',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('DestinationServiceArea',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('OriginServiceArea',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ServiceArea',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ServiceEvent',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ShipmentDate',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('AWBInfo',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ShipmentInfo',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ErrorResponse',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ShipmentEvent',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('PieceInfo',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('PieceEvent',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('PieceDetails',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('TrackingPieces',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Fault',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('PieceFault',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('DocImages',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('DocImage',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('QtdSInAdCur',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('LabelImage',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('MultiLabels',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Notification',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Label',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('CustomerLogo',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('DGs',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('DG',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('ShipmentDocument',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('CustomerDataTextEntries',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('CustomerDataTextEntry',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('CustomsDocuments',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('CustomsDocument',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('InvoiceReferences',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('InvoiceReference',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Importer',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('RegistrationNumbers',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('RegistrationNumber',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('RegistrationNumbers1',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('RegistrationNumber1',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('RegistrationNumbers2',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('RegistrationNumber2',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('RegistrationNumbers3',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT'),
-                                         ('RegistrationNumber3',
-                                          '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
                                           'CT'),
                                          ('Exporter',
                                           '../../../Carriers '
-                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v62.xsd',
-                                          'CT')],
- 'http://www.dhl.com/pickupdatatypes_global': [('PickupType',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'ST'),
-                                               ('DoorTo',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'ST'),
-                                               ('TimeHM',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'ST'),
-                                               ('SpecialInstructions',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'ST'),
-                                               ('LargestPiece',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('Place',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('Requestor',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('Pickup',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('contact',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('RequestorContact',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('Piece',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('ShipmentDetails',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('ConsigneeDetails',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('Contact',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT'),
-                                               ('Pieces',
-                                                '../../../Carriers '
-                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global-3.0.xsd',
-                                                'CT')]}
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT'),
+                                         ('Response_Label',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global_v10.xsd',
+                                          'CT')]}
 
 __all__ = [
     "AWBInfo",
     "AdditionalInformation",
-    "AdditionalProtection",
+    "AdditionalInformationType",
     "BarCodes",
     "Billing",
     "Commodity",
     "Condition",
     "Consignee",
-    "ConsigneeDetails",
     "Contact",
-    "Contact4",
     "Customer",
     "CustomerAdditionalInformation",
     "CustomerBarcodes",
+    "CustomerDataTextEntries",
+    "CustomerDataTextEntry",
     "CustomerLogo",
     "CustomsDocument",
     "CustomsDocuments",
@@ -26427,10 +23047,8 @@ __all__ = [
     "ItemReferences",
     "Label",
     "LabelImage",
-    "LargestPiece",
     "LicenseType",
     "MetaData",
-    "ModifyPUResponse",
     "MultiLabelType",
     "MultiLabels",
     "Note",
@@ -26438,32 +23056,23 @@ __all__ = [
     "OriginServiceArea",
     "OtherCharge",
     "OtherCharges",
-    "Pickup",
+    "PaymentMethods",
     "Piece",
-    "Piece2",
     "PieceDetails",
     "PieceEvent",
     "PieceFault",
     "PieceInfo",
     "Pieces",
-    "Pieces5",
     "Place",
-    "Place1",
     "QtdSInAdCur",
     "Reference",
     "RegistrationNumber",
-    "RegistrationNumber1",
-    "RegistrationNumber2",
-    "RegistrationNumber3",
     "RegistrationNumbers",
-    "RegistrationNumbers1",
-    "RegistrationNumbers2",
-    "RegistrationNumbers3",
     "Request",
-    "Requestor",
-    "RequestorContact",
     "Response",
     "ResponseServiceHeader",
+    "Response_Label",
+    "Response_QRCode",
     "ServiceArea",
     "ServiceEvent",
     "ServiceHeader",
@@ -26472,15 +23081,14 @@ __all__ = [
     "Shipment",
     "ShipmentDate",
     "ShipmentDetails",
-    "ShipmentDetails3",
     "ShipmentDocument",
     "ShipmentEvent",
     "ShipmentInfo",
+    "ShipmentRequest",
     "Shipper",
     "SpecialService",
     "Status",
     "TrackingPieces",
     "WeightSeg",
-    "WeightType",
-    "contact"
+    "WeightType"
 ]

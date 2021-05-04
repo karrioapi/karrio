@@ -2,33 +2,37 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  1 15:24:39 2020 by generateDS.py version 2.35.15.
-# Python 3.8.2 (v3.8.2:7b3ab5921f, Feb 24 2020, 17:52:18)  [Clang 6.0 (clang-600.0.57)]
+# Generated Fri Apr 30 05:39:43 2021 by generateDS.py version 2.38.6.
+# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './pydhl/cancel_pickup_global_res.py')
+#   ('-o', './dhl_express_lib/cancel_pickup_global_res.py')
 #
 # Command line arguments:
-#   /Users/daniel/Documents/Documentations/DHL/2020-03/schemas/cancel-pickup-global-res.xsd
+#   /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/cancel-pickup-global-res.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pydhl/cancel_pickup_global_res.py" /Users/daniel/Documents/Documentations/DHL/2020-03/schemas/cancel-pickup-global-res.xsd
+#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./dhl_express_lib/cancel_pickup_global_res.py" /Users/danielkobina/Workspace/Carriers Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/cancel-pickup-global-res.xsd
 #
 # Current working directory (os.getcwd()):
-#   py-dhl
+#   dhl_express
 #
 
+import sys
+try:
+    ModulenotfoundExp_ = ModuleNotFoundError
+except NameError:
+    ModulenotfoundExp_ = ImportError
 from six.moves import zip_longest
 import os
-import sys
 import re as re_
 import base64
 import datetime as datetime_
 import decimal as decimal_
 try:
     from lxml import etree as etree_
-except ImportError:
+except ModulenotfoundExp_ :
     from xml.etree import ElementTree as etree_
 
 
@@ -107,11 +111,11 @@ def parsexmlstring_(instring, parser=None, **kwargs):
 
 try:
     from generatedsnamespaces import GenerateDSNamespaceDefs as GenerateDSNamespaceDefs_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceDefs_ = {}
 try:
     from generatedsnamespaces import GenerateDSNamespaceTypePrefixes as GenerateDSNamespaceTypePrefixes_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceTypePrefixes_ = {}
 
 #
@@ -122,7 +126,7 @@ except ImportError:
 #
 try:
     from generatedscollector import GdsCollector as GdsCollector_
-except ImportError:
+except ModulenotfoundExp_ :
 
     class GdsCollector_(object):
 
@@ -156,7 +160,7 @@ except ImportError:
 
 try:
     from enum import Enum
-except ImportError:
+except ModulenotfoundExp_ :
     Enum = object
 
 #
@@ -168,7 +172,7 @@ except ImportError:
 
 try:
     from generatedssuper import GeneratedsSuper
-except ImportError as exp:
+except ModulenotfoundExp_ as exp:
     
     class GeneratedsSuper(object):
         __hash__ = object.__hash__
@@ -211,6 +215,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires integer value')
             return value
         def gds_format_integer_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_integer_list(
                 self, input_data, node=None, input_name=''):
@@ -219,7 +225,7 @@ except ImportError as exp:
                 try:
                     int(value)
                 except (TypeError, ValueError):
-                    raise_parse_error(node, 'Requires sequence of integer valuess')
+                    raise_parse_error(node, 'Requires sequence of integer values')
             return values
         def gds_format_float(self, input_data, input_name=''):
             return ('%.15f' % input_data).rstrip('0')
@@ -236,6 +242,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires float value')
             return value
         def gds_format_float_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_float_list(
                 self, input_data, node=None, input_name=''):
@@ -247,7 +255,12 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of float values')
             return values
         def gds_format_decimal(self, input_data, input_name=''):
-            return ('%s' % input_data).rstrip('0')
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
         def gds_parse_decimal(self, input_data, node=None, input_name=''):
             try:
                 decimal_value = decimal_.Decimal(input_data)
@@ -261,7 +274,9 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
-            return '%s' % ' '.join(input_data)
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -272,7 +287,7 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of decimal values')
             return values
         def gds_format_double(self, input_data, input_name=''):
-            return '%e' % input_data
+            return '%s' % input_data
         def gds_parse_double(self, input_data, node=None, input_name=''):
             try:
                 fval_ = float(input_data)
@@ -286,6 +301,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires double or float value')
             return value
         def gds_format_double_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_double_list(
                 self, input_data, node=None, input_name=''):
@@ -315,11 +332,14 @@ except ImportError as exp:
                     '(one of True, 1, False, 0)')
             return input_data
         def gds_format_boolean_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_boolean_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
             for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
                 if value not in (True, 1, False, 0, ):
                     raise_parse_error(
                         node,
@@ -766,7 +786,10 @@ def find_attr_value_(attr_name, node):
         value = attrs.get(attr_name)
     elif len(attr_parts) == 2:
         prefix, name = attr_parts
-        namespace = node.nsmap.get(prefix)
+        if prefix == 'xml':
+            namespace = 'http://www.w3.org/XML/1998/namespace'
+        else:
+            namespace = node.nsmap.get(prefix)
         if namespace is not None:
             value = attrs.get('{%s}%s' % (namespace, name, ))
     return value
@@ -847,7 +870,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element):
+    def to_etree(self, element, mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -867,7 +890,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self):
+    def to_etree_simple(self, mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -945,22 +968,22 @@ def _cast(typ, value):
 #
 
 
-class AccountType(Enum):
+class AccountType(str, Enum):
     """Account Type by method of payment ( DHL account)"""
     D='D'
 
 
-class AccountTypeType(Enum):
+class AccountTypeType(str, Enum):
     """Valid values are D. D =DHL"""
     D='D'
 
 
-class AccountTypeType13(Enum):
+class AccountTypeType13(str, Enum):
     """Valid values are D or C. D =DHL"""
     D='D'
 
 
-class BillCode(Enum):
+class BillCode(str, Enum):
     """DHL billing options"""
     DSA='DSA'
     DBA='DBA'
@@ -969,25 +992,25 @@ class BillCode(Enum):
     UAN='UAN'
 
 
-class Code(Enum):
+class Code(str, Enum):
     """Code"""
     AP='AP'
     NR='NR'
 
 
-class CommunicationType(Enum):
+class CommunicationType(str, Enum):
     """Communications line type (P: phone, F: fax)"""
     P='P'
     F='F'
 
 
-class ConsigneeIDTypeType(Enum):
+class ConsigneeIDTypeType(str, Enum):
     S='S'
     E='E'
     D='D'
 
 
-class CurrencyRoleTypeCode(Enum):
+class CurrencyRoleTypeCode(str, Enum):
     """CurrencyRoleTypeCode"""
     BILLC='BILLC'
     PULCL='PULCL'
@@ -995,18 +1018,18 @@ class CurrencyRoleTypeCode(Enum):
     BASEC='BASEC'
 
 
-class DimensionUnit(Enum):
+class DimensionUnit(str, Enum):
     """Dimension Unit C (centimeter)"""
     C='C'
     I='I'
 
 
-class DocDetach(Enum):
+class DocDetach(str, Enum):
     """DocDetach"""
     SHP_RCPT='ShpRcpt'
 
 
-class DoorTo(Enum):
+class DoorTo(str, Enum):
     """Defines the type of delivery service that applies
     to the shipment"""
     DD='DD'
@@ -1015,28 +1038,28 @@ class DoorTo(Enum):
     DC='DC'
 
 
-class DoorTo4(Enum):
+class DoorTo4(str, Enum):
     """Defines the type of delivery service that applies to the shipment"""
     DD='DD'
     DA='DA'
     DC='DC'
 
 
-class DutyTaxPaymentType(Enum):
+class DutyTaxPaymentType(str, Enum):
     """Duty and tax charge payment type (R:Recipient)"""
     S='S'
     R='R'
     T='T'
 
 
-class ExportReasonCode(Enum):
+class ExportReasonCode(str, Enum):
     """Export reason code (P:Permanent, T:Temporary, R:Re-Export)"""
     P='P'
     T='T'
     R='R'
 
 
-class FTSR(Enum):
+class FTSR(str, Enum):
     """FTSR"""
     _3_0_2D_2='30.2(d)(2)'
     _3_0_36='30.36'
@@ -1055,21 +1078,21 @@ class FTSR(Enum):
     _3_0_40D='30.40(d)'
 
 
-class FilingType(Enum):
+class FilingType(str, Enum):
     """FilingType"""
     FTR='FTR'
     ITN='ITN'
     AES_4='AES4'
 
 
-class IDType(Enum):
+class IDType(str, Enum):
     """ID Type"""
     SSN='SSN'
     EIN='EIN'
     DUNS='DUNS'
 
 
-class ImageFormat(Enum):
+class ImageFormat(str, Enum):
     """Image Format"""
     PDF='PDF'
     PNG='PNG'
@@ -1078,14 +1101,14 @@ class ImageFormat(Enum):
     JPEG='JPEG'
 
 
-class LabelImageFormat(Enum):
+class LabelImageFormat(str, Enum):
     """LabelImageFormat"""
     PDF='PDF'
     ZPL_2='ZPL2'
     EPL_2='EPL2'
 
 
-class LabelTemplate(Enum):
+class LabelTemplate(str, Enum):
     """LabelTemplate"""
     _8_X_4_A_4_PDF='8X4_A4_PDF'
     _8_X_4_THERMAL='8X4_thermal'
@@ -1099,20 +1122,20 @@ class LabelTemplate(Enum):
     _8_X_4_PDF='8X4_PDF'
 
 
-class LevelOfDetails(Enum):
+class LevelOfDetails(str, Enum):
     """Checkpoint details selection flag"""
     LAST_CHECK_POINT_ONLY='LAST_CHECK_POINT_ONLY'
     ALL_CHECK_POINTS='ALL_CHECK_POINTS'
 
 
-class LocationTypeType(Enum):
+class LocationTypeType(str, Enum):
     """Type Of Location B=Business R=Residence C= Business/Residence"""
     B='B'
     R='R'
     C='C'
 
 
-class LogoImageFormat(Enum):
+class LogoImageFormat(str, Enum):
     """LogoImage Format"""
     PNG='PNG'
     GIF='GIF'
@@ -1120,13 +1143,13 @@ class LogoImageFormat(Enum):
     JPG='JPG'
 
 
-class NumberOfArchiveDoc(Enum):
+class NumberOfArchiveDoc(str, Enum):
     """NumberOfArchiveDoc Value"""
     _1='1'
     _2='2'
 
 
-class OutputFormat(Enum):
+class OutputFormat(str, Enum):
     """OutputFormat"""
     PDF='PDF'
     PL_2='PL2'
@@ -1138,14 +1161,14 @@ class OutputFormat(Enum):
     ZPLN='ZPLN'
 
 
-class PLTStatus(Enum):
+class PLTStatus(str, Enum):
     """PLTStatus"""
     A='A'
     D='D'
     S='S'
 
 
-class PackageType(Enum):
+class PackageType(str, Enum):
     """Package Type (EE: DHL Express Envelope, OD:Other
     DHL Packaging, CP:Customer-provided, JB-Jumbo box, JJ-Junior jumbo
     Box, DF-DHL Flyer, YP-Your packaging)"""
@@ -1167,7 +1190,7 @@ class PackageType(Enum):
     YP='YP'
 
 
-class PaymentType(Enum):
+class PaymentType(str, Enum):
     """payment type (S:Shipper,R:Recipient,T:Third
     Party)"""
     S='S'
@@ -1175,30 +1198,30 @@ class PaymentType(Enum):
     T='T'
 
 
-class PickupType(Enum):
+class PickupType(str, Enum):
     """Type of pickup (G: Pickup for DHL Ground)"""
     G='G'
 
 
-class PiecesEnabled(Enum):
+class PiecesEnabled(str, Enum):
     """Pieces Enabling Flag"""
     Y='Y'
     N='N'
 
 
-class ReceiptTemplate(Enum):
+class ReceiptTemplate(str, Enum):
     """ReceiptTemplate"""
     SHIP_RECPT_A_4_RU_PDF='SHIP_RECPT_A4_RU_PDF'
 
 
-class RegionCode(Enum):
+class RegionCode(str, Enum):
     """RegionCode"""
     AP='AP'
     EU='EU'
     AM='AM'
 
 
-class ResidenceOrBusiness(Enum):
+class ResidenceOrBusiness(str, Enum):
     """Identifies if a location is a business, residence,
     or both (B:Business, R:Residence, C:Business Residence)"""
     B='B'
@@ -1206,34 +1229,34 @@ class ResidenceOrBusiness(Enum):
     C='C'
 
 
-class SEDNumber(Enum):
+class SEDNumber(str, Enum):
     FTSR='FTSR'
     XTN='XTN'
     SAS='SAS'
     ITN='ITN'
 
 
-class SEDNumberType(Enum):
+class SEDNumberType(str, Enum):
     F='F'
     X='X'
     S='S'
     I='I'
 
 
-class ShipmentPaymentType(Enum):
+class ShipmentPaymentType(str, Enum):
     """Shipment payment type (S:Shipper)"""
     S='S'
     R='R'
     T='T'
 
 
-class ShipperIDTypeType(Enum):
+class ShipperIDTypeType(str, Enum):
     S='S'
     E='E'
     D='D'
 
 
-class Type(Enum):
+class Type(str, Enum):
     """Image Type"""
     HWB='HWB'
     INV='INV'
@@ -1244,19 +1267,19 @@ class Type(Enum):
     DCL='DCL'
 
 
-class WeightUnit(Enum):
+class WeightUnit(str, Enum):
     """Unit of weight measurement (K:KiloGram)"""
     K='K'
     L='L'
 
 
-class WeightUnitType(Enum):
+class WeightUnitType(str, Enum):
     L='L'
     K='K'
     G='G'
 
 
-class YesNo(Enum):
+class YesNo(str, Enum):
     """Boolean flag"""
     Y='Y'
     N='N'
@@ -11052,6 +11075,82 @@ class ShipmentInfo(GeneratedsSuper):
 # end class ShipmentInfo
 
 
+class Pieces(GeneratedsSuper):
+    __hash__ = GeneratedsSuper.__hash__
+    subclass = None
+    superclass = None
+    def __init__(self, gds_collector_=None, **kwargs_):
+        self.gds_collector_ = gds_collector_
+        self.gds_elementtree_node_ = None
+        self.original_tagname_ = None
+        self.parent_object_ = kwargs_.get('parent_object_')
+        self.ns_prefix_ = None
+    def factory(*args_, **kwargs_):
+        if CurrentSubclassModule_ is not None:
+            subclass = getSubclassFromModule_(
+                CurrentSubclassModule_, Pieces)
+            if subclass is not None:
+                return subclass(*args_, **kwargs_)
+        if Pieces.subclass:
+            return Pieces.subclass(*args_, **kwargs_)
+        else:
+            return Pieces(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_ns_prefix_(self):
+        return self.ns_prefix_
+    def set_ns_prefix_(self, ns_prefix):
+        self.ns_prefix_ = ns_prefix
+    def hasContent_(self):
+        if (
+
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Pieces', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('Pieces')
+        if imported_ns_def_ is not None:
+            namespacedef_ = imported_ns_def_
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None and name_ == 'Pieces':
+            name_ = self.original_tagname_
+        if UseCapturedNS_ and self.ns_prefix_:
+            namespaceprefix_ = self.ns_prefix_ + ':'
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='Pieces')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='Pieces', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='Pieces'):
+        pass
+    def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='Pieces', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node, gds_collector_=None):
+        self.gds_collector_ = gds_collector_
+        if SaveElementTreeNode:
+            self.gds_elementtree_node_ = node
+        already_processed = set()
+        self.ns_prefix_ = node.prefix
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        pass
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
+        pass
+# end class Pieces
+
+
 class ErrorResponse(GeneratedsSuper):
     """Generic response header"""
     __hash__ = GeneratedsSuper.__hash__
@@ -14470,14 +14569,23 @@ class Pickup(GeneratedsSuper):
             initvalue_ = PickupDate
         self.PickupDate = initvalue_
         self.PickupDate_nsprefix_ = None
-        self.ReadyByTime = ReadyByTime
-        self.validate_TimeHM5(self.ReadyByTime)
+        if isinstance(ReadyByTime, BaseStrType_):
+            initvalue_ = datetime_.datetime.strptime(ReadyByTime, '%H:%M:%S').time()
+        else:
+            initvalue_ = ReadyByTime
+        self.ReadyByTime = initvalue_
         self.ReadyByTime_nsprefix_ = None
-        self.CloseTime = CloseTime
-        self.validate_TimeHM5(self.CloseTime)
+        if isinstance(CloseTime, BaseStrType_):
+            initvalue_ = datetime_.datetime.strptime(CloseTime, '%H:%M:%S').time()
+        else:
+            initvalue_ = CloseTime
+        self.CloseTime = initvalue_
         self.CloseTime_nsprefix_ = None
-        self.AfterHoursClosingTime = AfterHoursClosingTime
-        self.validate_TimeHM5(self.AfterHoursClosingTime)
+        if isinstance(AfterHoursClosingTime, BaseStrType_):
+            initvalue_ = datetime_.datetime.strptime(AfterHoursClosingTime, '%H:%M:%S').time()
+        else:
+            initvalue_ = AfterHoursClosingTime
+        self.AfterHoursClosingTime = initvalue_
         self.AfterHoursClosingTime_nsprefix_ = None
         self.AfterHoursLocation = AfterHoursLocation
         self.validate_AfterHoursLocationType(self.AfterHoursLocation)
@@ -14537,24 +14645,16 @@ class Pickup(GeneratedsSuper):
         return self.SpecialInstructions
     def set_SpecialInstructions(self, SpecialInstructions):
         self.SpecialInstructions = SpecialInstructions
-    def validate_TimeHM5(self, value):
+    def validate_TimeHM(self, value):
         result = True
-        # Validate type TimeHM5, a restriction on xsd:string.
+        # Validate type TimeHM, a restriction on xsd:time.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
-            if not isinstance(value, str):
+            if not isinstance(value, datetime_.time):
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (datetime_.time)' % {"value": value, "lineno": lineno, })
                 return False
-            if len(value) != 5:
-                lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on TimeHM5' % {"value": encode_str_2_3(value), "lineno": lineno} )
-                result = False
-            if not self.gds_validate_simple_patterns(
-                    self.validate_TimeHM5_patterns_, value):
-                self.gds_collector_.add_message('Value "%s" does not match xsd pattern restrictions: %s' % (encode_str_2_3(value), self.validate_TimeHM5_patterns_, ))
-                result = False
+            pass
         return result
-    validate_TimeHM5_patterns_ = [['^(([0-1][0-9]|2[0-3]):([0-5][0-9]))$']]
     def validate_AfterHoursLocationType(self, value):
         result = True
         # Validate type AfterHoursLocationType, a restriction on xsd:string.
@@ -14649,15 +14749,15 @@ class Pickup(GeneratedsSuper):
         if self.ReadyByTime is not None:
             namespaceprefix_ = self.ReadyByTime_nsprefix_ + ':' if (UseCapturedNS_ and self.ReadyByTime_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sReadyByTime>%s</%sReadyByTime>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.ReadyByTime), input_name='ReadyByTime')), namespaceprefix_ , eol_))
+            outfile.write('<%sReadyByTime>%s</%sReadyByTime>%s' % (namespaceprefix_ , self.gds_format_time(self.ReadyByTime, input_name='ReadyByTime'), namespaceprefix_ , eol_))
         if self.CloseTime is not None:
             namespaceprefix_ = self.CloseTime_nsprefix_ + ':' if (UseCapturedNS_ and self.CloseTime_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sCloseTime>%s</%sCloseTime>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CloseTime), input_name='CloseTime')), namespaceprefix_ , eol_))
+            outfile.write('<%sCloseTime>%s</%sCloseTime>%s' % (namespaceprefix_ , self.gds_format_time(self.CloseTime, input_name='CloseTime'), namespaceprefix_ , eol_))
         if self.AfterHoursClosingTime is not None:
             namespaceprefix_ = self.AfterHoursClosingTime_nsprefix_ + ':' if (UseCapturedNS_ and self.AfterHoursClosingTime_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAfterHoursClosingTime>%s</%sAfterHoursClosingTime>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AfterHoursClosingTime), input_name='AfterHoursClosingTime')), namespaceprefix_ , eol_))
+            outfile.write('<%sAfterHoursClosingTime>%s</%sAfterHoursClosingTime>%s' % (namespaceprefix_ , self.gds_format_time(self.AfterHoursClosingTime, input_name='AfterHoursClosingTime'), namespaceprefix_ , eol_))
         if self.AfterHoursLocation is not None:
             namespaceprefix_ = self.AfterHoursLocation_nsprefix_ + ':' if (UseCapturedNS_ and self.AfterHoursLocation_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -14693,29 +14793,26 @@ class Pickup(GeneratedsSuper):
             self.PickupDate = dval_
             self.PickupDate_nsprefix_ = child_.prefix
         elif nodeName_ == 'ReadyByTime':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'ReadyByTime')
-            value_ = self.gds_validate_string(value_, node, 'ReadyByTime')
-            self.ReadyByTime = value_
+            sval_ = child_.text
+            dval_ = self.gds_parse_time(sval_)
+            self.ReadyByTime = dval_
             self.ReadyByTime_nsprefix_ = child_.prefix
-            # validate type TimeHM5
-            self.validate_TimeHM5(self.ReadyByTime)
+            # validate type TimeHM
+            self.validate_TimeHM(self.ReadyByTime)
         elif nodeName_ == 'CloseTime':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'CloseTime')
-            value_ = self.gds_validate_string(value_, node, 'CloseTime')
-            self.CloseTime = value_
+            sval_ = child_.text
+            dval_ = self.gds_parse_time(sval_)
+            self.CloseTime = dval_
             self.CloseTime_nsprefix_ = child_.prefix
-            # validate type TimeHM5
-            self.validate_TimeHM5(self.CloseTime)
+            # validate type TimeHM
+            self.validate_TimeHM(self.CloseTime)
         elif nodeName_ == 'AfterHoursClosingTime':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AfterHoursClosingTime')
-            value_ = self.gds_validate_string(value_, node, 'AfterHoursClosingTime')
-            self.AfterHoursClosingTime = value_
+            sval_ = child_.text
+            dval_ = self.gds_parse_time(sval_)
+            self.AfterHoursClosingTime = dval_
             self.AfterHoursClosingTime_nsprefix_ = child_.prefix
-            # validate type TimeHM5
-            self.validate_TimeHM5(self.AfterHoursClosingTime)
+            # validate type TimeHM
+            self.validate_TimeHM(self.AfterHoursClosingTime)
         elif nodeName_ == 'AfterHoursLocation':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'AfterHoursLocation')
@@ -15314,7 +15411,7 @@ class ShipmentDetails3(GeneratedsSuper):
         self.validate_GlobalProductCode(self.GlobalProductCode)
         self.GlobalProductCode_nsprefix_ = None
         self.DoorTo = DoorTo
-        self.validate_DoorTo4(self.DoorTo)
+        self.validate_DoorTo(self.DoorTo)
         self.DoorTo_nsprefix_ = None
         self.DimensionUnit = DimensionUnit
         self.validate_DimensionUnit(self.DimensionUnit)
@@ -15524,23 +15621,23 @@ class ShipmentDetails3(GeneratedsSuper):
                 result = False
         return result
     validate_GlobalProductCode_patterns_ = [['^(([A-Z0-9])*)$']]
-    def validate_DoorTo4(self, value):
+    def validate_DoorTo(self, value):
         result = True
-        # Validate type DoorTo4, a restriction on xsd:string.
+        # Validate type DoorTo, a restriction on xsd:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if not isinstance(value, str):
                 lineno = self.gds_get_node_lineno_()
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             value = value
-            enumerations = ['DD', 'DA', 'DC']
+            enumerations = ['DD', 'DA', 'AA', 'DC']
             if value not in enumerations:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DoorTo4' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on DoorTo' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) != 2:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on DoorTo4' % {"value": encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on DoorTo' % {"value": encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_DimensionUnit(self, value):
@@ -15794,8 +15891,8 @@ class ShipmentDetails3(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'DoorTo')
             self.DoorTo = value_
             self.DoorTo_nsprefix_ = child_.prefix
-            # validate type DoorTo4
-            self.validate_DoorTo4(self.DoorTo)
+            # validate type DoorTo
+            self.validate_DoorTo(self.DoorTo)
         elif nodeName_ == 'DimensionUnit':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'DimensionUnit')
@@ -15821,7 +15918,7 @@ class ShipmentDetails3(GeneratedsSuper):
             # validate type CurrencyCode
             self.validate_CurrencyCode(self.InsuredCurrencyCode)
         elif nodeName_ == 'Pieces':
-            obj_ = Piece2.factory(parent_object_=self)
+            obj_ = Piece.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
             self.Pieces = obj_
             obj_.original_tagname_ = 'Pieces'
@@ -16360,7 +16457,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     return rootObj
 
 
-def parseEtree(inFileName, silence=False, print_warnings=True):
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -16372,8 +16470,10 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
-    mapping = {}
-    rootElement = rootObj.to_etree(None, name_=rootTag, mapping_=mapping)
+    if mapping is None:
+        mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
     reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
     if not SaveElementTreeNode:
         doc = None
@@ -16479,6 +16579,740 @@ RenameMappings_ = {
     "{http://www.dhl.com/pickupdatatypes_global}ShipmentDetails": "ShipmentDetails3",
     "{http://www.dhl.com/pickupdatatypes_global}TimeHM": "TimeHM5",
 }
+
+#
+# Mapping of namespaces to types defined in them
+# and the file in which each is defined.
+# simpleTypes are marked "ST" and complexTypes "CT".
+NamespaceToDefMappings_ = {'http://www.dhl.com': [],
+ 'http://www.dhl.com/datatypes_global': [('AccountNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('AccountType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('AddressLine',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('AdvanceDaysNotice',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('AWBNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DHLRoutingCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('InternalServiceCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('BillCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('City',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CommodityCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CommodityName',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CommunicationAddress',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CommunicationType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CompanyNameValidator',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('SuiteDepartmentName',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('MobilePhoneNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PhoneExtension',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CountryCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CountryName',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Suburb',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CourierMsg',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CurrencyCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CurrencyName',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DateTime',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Date',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DayHour',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DoorTo',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ExportLicense',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ImportLicense',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('TermsOfTrade',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('FilingType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('FTSR',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ITN',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('AES4EIN',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DeclaredValue',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DutyTaxPaymentType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DivisionCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Division',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('EmailAddress',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('SignatureName',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('SignatureTitle',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ExportReasonCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('GlobalProductCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ExportReason',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('IDType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PiecesEnabled',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LanguageCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LicenseNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LineNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LocalProductCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Money',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PackageType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PersonName',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PhoneNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PieceID',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PieceNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PieceContents',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PackageLocation',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('StateCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PostalCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('QuantityUnit',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Quantity',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ReferenceID',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ReferenceType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ResidenceOrBusiness',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ScheduleB',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('SEDDescription',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('SEDNumberType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('SEDNumber',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ShipmentContents',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ShipmentCharges',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CustData',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Code',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Value',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DimensionUnit',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ShipmentPaymentType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ShipperID',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('OriginServiceAreaCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('OriginFacilityCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('SpecialServiceType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ChargeValue',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('State',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ServiceAreaCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('FacilityCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('InboundSortCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('OutboundSortCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Telex',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('TimeHM',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('WeightUnit',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Weight',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('YesNo',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('SiteID',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Password',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('MessageReference',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PaymentType',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('BarCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LevelOfDetails',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('TrackingPieceID',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Type',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Image',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ImageFormat',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LabelImageFormat',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PLTStatus',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('CurrencyRoleTypeCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('PackageCharge',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ShippingCharge',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DocFormat',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DocImageVal',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('OutputFormat',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('OutputImage',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Message',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('RegionCode',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('ReceiptTemplate',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('DocDetach',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('NumberOfArchiveDoc',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LogoImage',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LogoImageFormat',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('LabelTemplate',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Resolution',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'ST'),
+                                         ('Billing',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Commodity',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Consignee',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Contact',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Dutiable',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Filing',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ExportDeclaration',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ExportLineItem',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Piece',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Pieces',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ShipValResponsePiece',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ShipValResponsePieces',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Place',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Reference',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ShipmentDetails',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('AdditionalProtection',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Shipment',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Shipper',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('SpecialService',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('WeightSeg',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Request',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ServiceHeader',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Response',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ResponseServiceHeader',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Status',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Note',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Condition',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Customer',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('BarCodes',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('DestinationServiceArea',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('OriginServiceArea',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ServiceArea',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ServiceEvent',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ShipmentDate',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('AWBInfo',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ShipmentInfo',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ErrorResponse',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('ShipmentEvent',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('PieceInfo',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('PieceEvent',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('PieceDetails',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('TrackingPieces',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Fault',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('PieceFault',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('DocImages',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('DocImage',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('QtdSInAdCur',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('LabelImage',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('MultiLabels',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Notification',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('Label',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT'),
+                                         ('CustomerLogo',
+                                          '../../../Carriers '
+                                          'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/datatypes_global.xsd',
+                                          'CT')],
+ 'http://www.dhl.com/pickupdatatypes_global': [('PickupType',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'ST'),
+                                               ('DoorTo',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'ST'),
+                                               ('TimeHM',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'ST'),
+                                               ('LargestPiece',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'CT'),
+                                               ('Place',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'CT'),
+                                               ('Requestor',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'CT'),
+                                               ('Pickup',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'CT'),
+                                               ('contact',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'CT'),
+                                               ('RequestorContact',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'CT'),
+                                               ('Piece',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'CT'),
+                                               ('ShipmentDetails',
+                                                '../../../Carriers '
+                                                'Doc/DHL/XMLPI_Toolkit_v10.0.2_05042021/xsd/Global/pickupdatatypes_global.xsd',
+                                                'CT')]}
 
 __all__ = [
     "AWBInfo",
