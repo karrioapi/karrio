@@ -46,12 +46,23 @@ rates, messages = purplship.Rating.fetch(request).from_(carrier_gateway).parse()
 | `email` | `str` | 
 | `phone_number` | `str` | 
 | `state_code` | `str` | 
-| `suburb` | `str` | 
 | `residential` | `bool` | 
 | `address_line1` | `str` | 
 | `address_line2` | `str` | 
 | `federal_tax_id` | `str` | 
 | `state_tax_id` | `str` | 
+| `extra` | [AddressExtra](#addressextra) | 
+
+
+#### AddressExtra
+
+| Name | Type | Description 
+| --- | --- | --- |
+| `street_name` | `str` | 
+| `street_number` | `str` | 
+| `street_type` | `str` | 
+| `suburb` | `str` | 
+| `suite` | `str` | 
 
 
 #### Parcel

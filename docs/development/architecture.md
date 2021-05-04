@@ -93,7 +93,7 @@ canadapost_pickup_response = canadapost_proxy.schedule_pickup(canadapost_pickup_
 # Parse the response into a Purplship unified Pickup response type
 pickup_response = canadapost_mapper.parse_pickup_response(canadapost_pickup_response)
 
-print(pickup_request)
+print(pickup_response)
 ```
 ```shell
 (
