@@ -35,7 +35,7 @@ class XMLPARSER:
         return instance
 
     @staticmethod
-    def find(tag: str, in_element: Element, element_type: Type[Union[T, Element]] = Element, first: bool = None):
+    def find(tag: str, in_element: Element, element_type: Type[Union[T, Element]] = None, first: bool = None):
         children = [
             (child if element_type is None else XMLPARSER.build(element_type, child))
             for child in in_element.xpath(".//*[local-name() = $name]", name=tag)
