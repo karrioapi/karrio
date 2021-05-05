@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple
 from dhl_express_lib.tracking_request_known_1_0 import KnownTrackingRequest
-from dhl_express_lib.tracking_response import AWBInfo
+from dhl_express_lib.tracking_response import AWBInfo, ShipmentEvent
 from purplship.core.utils import (
     Serializable,
     Element,
@@ -21,11 +21,13 @@ def parse_tracking_response(
     response: Element, settings: Settings
 ) -> Tuple[List[TrackingDetails], List[Message]]:
     awb_nodes = response.xpath(".//*[local-name() = $name]", name="AWBInfo")
+
     tracking_details = [
         _extract_tracking(info_node, settings) for info_node in awb_nodes
+        if len(XP.find('ShipmentInfo', info_node)) > 0
     ]
     return (
-        [details for details in tracking_details if details is not None],
+        tracking_details,
         parse_error_response(response, settings),
     )
 
@@ -33,17 +35,14 @@ def parse_tracking_response(
 def _extract_tracking(
     info_node: Element, settings: Settings
 ) -> Optional[TrackingDetails]:
-    info = AWBInfo()
-    info.build(info_node)
-    if info.ShipmentInfo is None:
-        return None
-
-    delivered = any(e.ServiceEvent.EventCode == 'OK' for e in info.ShipmentInfo.ShipmentEvent)
+    tracking_number = XP.find('AWBNumber', info_node, first=True).text
+    events: List[ShipmentEvent] =  XP.find('ShipmentEvent', info_node, ShipmentEvent)
+    delivered = any(e.ServiceEvent.EventCode == 'OK' for e in events)
 
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        tracking_number=info.AWBNumber,
+        tracking_number=tracking_number,
         events=list(
             map(
                 lambda e: TrackingEvent(
@@ -53,7 +52,7 @@ def _extract_tracking(
                     location=e.ServiceArea.Description,
                     description=e.ServiceEvent.Description,
                 ),
-                reversed(info.ShipmentInfo.ShipmentEvent or []),
+                reversed(events or []),
             )
         ),
         delivered=delivered

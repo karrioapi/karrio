@@ -46,6 +46,17 @@ class TestDHLTracking(unittest.TestCase):
                 DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
             )
 
+    def test_parse_in_transit_tracking_response(self):
+        with patch("purplship.mappers.dhl_express.proxy.http") as mock:
+            mock.return_value = IntransitTrackingResponseXML
+            parsed_response = (
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(
+                DP.to_dict(parsed_response), DP.to_dict(ParsedInTransitTrackingResponse)
+            )
+
     def test_tracking_single_not_found_parsing(self):
         with patch("purplship.mappers.dhl_express.proxy.http") as mock:
             mock.return_value = TrackingSingleNotFound
@@ -243,6 +254,27 @@ ParsedTrackingResponse = [
             ],
             "tracking_number": "1815115363",
         },
+    ],
+    [],
+]
+
+ParsedInTransitTrackingResponse = [
+    [
+        {
+            "carrier_id": "carrier_id",
+            "carrier_name": "dhl_express",
+            "delivered": False,
+            "events": [
+                {
+                    "code": "PU",
+                    "date": "2021-05-05",
+                    "description": "Shipment picked up",
+                    "location": "KINGSTON-JAM",
+                    "time": "09:42",
+                }
+            ],
+            "tracking_number": "9053283201",
+        }
     ],
     [],
 ]
@@ -640,4 +672,72 @@ TrackingResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
         </ShipmentInfo>
     </AWBInfo>
 </req:TrackingResponse>
+"""
+
+IntransitTrackingResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<req:TrackingResponse xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingResponse.xsd">
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2021-05-05T16:11:31+00:00</MessageTime>
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID>v62_0jd1ITXeJI</SiteID>
+        </ServiceHeader>
+    </Response>
+    <AWBInfo>
+        <AWBNumber>9053283201</AWBNumber>
+        <Status>
+            <ActionStatus>success</ActionStatus>
+        </Status>
+        <ShipmentInfo>
+            <OriginServiceArea>
+                <ServiceAreaCode>KIN</ServiceAreaCode>
+                <Description>KINGSTON-JAM</Description>
+            </OriginServiceArea>
+            <DestinationServiceArea>
+                <ServiceAreaCode>LGA</ServiceAreaCode>
+                <Description>SPRINGFIELD GARDENS,NY-USA</Description>
+            </DestinationServiceArea>
+            <ShipperName>CARIBSHOPPER JA - KEX</ShipperName>
+            <ShipperAccountNumber>968490657</ShipperAccountNumber>
+            <ConsigneeName>TAMARA SPENCE</ConsigneeName>
+            <ShipmentDate>2021-05-04T16:06:40</ShipmentDate>
+            <Pieces>1</Pieces>
+            <Weight>0.09</Weight>
+            <WeightUnit>K</WeightUnit>
+            <EstDlvyDate>2021-05-07 23:59:00 GMT-04:00</EstDlvyDate>
+            <EstDlvyDateUTC>2021-05-08 03:59:00</EstDlvyDateUTC>
+            <GlobalProductCode>P</GlobalProductCode>
+            <ShipmentDesc>ariSulfur Facial and Body Bar</ShipmentDesc>
+            <DlvyNotificationFlag>Y</DlvyNotificationFlag>
+            <Shipper>
+                <City>Kingston 10</City>
+                <CountryCode>JM</CountryCode>
+            </Shipper>
+            <Consignee>
+                <City>BROOKLYN</City>
+                <DivisionCode>NY</DivisionCode>
+                <PostalCode>11233</PostalCode>
+                <CountryCode>US</CountryCode>
+            </Consignee>
+            <ShipperReference>
+                <ReferenceID>28707</ReferenceID>
+            </ShipperReference>
+            <ShipmentEvent>
+                <Date>2021-05-05</Date>
+                <Time>09:42:00</Time>
+                <ServiceEvent>
+                    <EventCode>PU</EventCode>
+                    <Description>Shipment picked up</Description>
+                </ServiceEvent>
+                <Signatory/>
+                <ServiceArea>
+                    <ServiceAreaCode>KIN</ServiceAreaCode>
+                    <Description>KINGSTON-JAM</Description>
+                </ServiceArea>
+            </ShipmentEvent>
+        </ShipmentInfo>
+    </AWBInfo>
+    <LanguageCode>en</LanguageCode>
+</req:TrackingResponse>
+<!-- ServiceInvocationId:20210505161131_108e_5805c60e-a6f4-49c8-8b1b-05af96e35c97 -->
 """
