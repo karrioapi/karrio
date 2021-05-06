@@ -37,7 +37,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-      - ./src/purpleserver/staticfiles:/static
+      - ./purpleserver/purpleserver/staticfiles:/static
     networks:
       - web_network
     depends_on:
