@@ -7,4 +7,5 @@ from django.urls import include, path
 urlpatterns = [
     path('', include('purpleserver.client.views.app')),
     path('', include('purpleserver.client.views.tracking')),
+    path('test/', include('purpleserver.client.views.app')),
 ]
