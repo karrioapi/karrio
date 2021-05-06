@@ -19,8 +19,8 @@ class Query(graphene.ObjectType):
     user = graphene.Field(types.UserType)
     token = graphene.Field(types.TokenType)
 
-    user_connections = graphene.List(types.ConnectionType)
-    system_connections = graphene.List(types.SystemConnectionType)
+    user_connections = graphene.List(types.ConnectionType, test=graphene.Boolean(required=False))
+    system_connections = graphene.List(types.SystemConnectionType, test=graphene.Boolean(required=False))
 
     default_templates = types.generic.GenericScalar()
     address_templates = django_filter.DjangoFilterConnectionField(types.AddressTemplateType)
@@ -42,7 +42,7 @@ class Query(graphene.ObjectType):
         return token
 
     def resolve_user_connections(self, info, **kwargs):
-        connections = providers.Carrier.objects.access_with(info.context.user).filter(created_by__isnull=False)
+        connections = providers.Carrier.objects.access_with(info.context.user).filter(created_by__isnull=False, **kwargs)
         return [connection.settings for connection in connections]
 
     def resolve_system_connections(self, _, **kwargs):

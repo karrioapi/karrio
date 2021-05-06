@@ -40,7 +40,7 @@ class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
 
     class Meta:
         model = providers.Carrier
-        fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id', 'carrier_name')
+        fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id', 'carrier_name', 'test')
 
 
 class LogType(graphene_django.DjangoObjectType):
