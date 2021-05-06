@@ -317,6 +317,7 @@ REDOC_SETTINGS = {
     'LAZY_RENDERING': False,
     'HIDE_HOSTNAME': True,
     'REQUIRED_PROPS_FIRST': True,
+    'SPEC_URL': 'schema-json'
 }
 
 # Logging configuration

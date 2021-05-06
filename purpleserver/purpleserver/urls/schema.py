@@ -88,6 +88,6 @@ schema_view = views.get_schema_view(
 
 
 urlpatterns = [
-    path('swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('shipping-openapi.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path(settings.OPEN_API_PATH, schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
