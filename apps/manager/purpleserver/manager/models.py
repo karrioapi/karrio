@@ -204,10 +204,11 @@ class Tracking(OwnedEntity):
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        'label', 'options', 'services', 'status', 'service', 'meta', 'rates', 'label_type',
-        'tracking_number', 'tracking_url', 'shipment_identifier', 'test_mode', 'messages'
+        'label', 'options', 'services', 'status', 'service', 'meta', 'label_type',
+        'tracking_number', 'tracking_url', 'shipment_identifier', 'test_mode',
+        'messages', 'rates', 'payment',
     ]
-    RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
+    RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'customs', 'selected_rate']
 
     class Meta:
         db_table = "shipment"

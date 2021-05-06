@@ -312,9 +312,9 @@ SHIPMENT_RESPONSE = {
         "weight_unit": "KG",
         "dimension_unit": "CM"
     }],
+    "payment": {'account_number': None, 'currency': 'CAD', 'paid_by': 'sender'},
     "services": [],
     "options": {},
-    "payment": None,
     "customs": None,
     "reference": None,
     "carrier_ids": [
