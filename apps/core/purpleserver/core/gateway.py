@@ -131,7 +131,7 @@ class Shipments:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Shipment.cancel(datatypes.ShipmentCancelRequest(**payload))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -164,7 +164,7 @@ class Shipments:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Tracking.fetch(datatypes.TrackingRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -191,7 +191,7 @@ class Pickups:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.schedule(datatypes.PickupRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -217,7 +217,7 @@ class Pickups:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.update(datatypes.PickupUpdateRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -242,7 +242,7 @@ class Pickups:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.cancel(datatypes.PickupCancelRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -288,7 +288,7 @@ class Rates:
         compatible_gateways = [g for g in gateways if 'get_rates' in g.features]
 
         if len(compatible_gateways) == 0:
-            raise NotFound("No configured and active carriers specified")
+            raise NotFound("No active carrier connection found to process the request")
 
         # The request call is wrapped in identity to simplify mocking in tests
         rates, messages = identity(lambda: request.from_(*compatible_gateways).parse())
