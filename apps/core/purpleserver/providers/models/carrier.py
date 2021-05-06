@@ -15,6 +15,9 @@ class CarrierManager(OwnedEntityManager):
 
 
 class Carrier(OwnedEntity):
+    class Meta:
+        ordering = ['test', '-created_at']
+
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='car_'), editable=False)
     carrier_id = models.CharField(
         max_length=200, unique=True,
