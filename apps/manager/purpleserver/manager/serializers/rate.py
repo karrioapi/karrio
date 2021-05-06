@@ -7,4 +7,5 @@ from purpleserver.core.utils import owned_model_serializer
 class RateSerializer(RateRequest):
 
     def create(self, validated_data: dict) -> RateResponse:
-        return Rates.fetch(RateRequest(validated_data).data, user=self._context_user)
+        test = validated_data.pop('test') if 'test' in validated_data else None
+        return Rates.fetch(RateRequest(validated_data).data, user=self._context_user, test=test)

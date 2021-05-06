@@ -3,7 +3,7 @@ import logging
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status
+from rest_framework import status, serializers
 
 from drf_yasg import openapi
 from django.urls import path
@@ -14,6 +14,8 @@ from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.core.serializers import (
+    CARRIERS,
+    FlagField,
     ShipmentStatus,
     ErrorResponse,
     Shipment,
@@ -42,6 +44,18 @@ ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique m
 Shipments = PaginatedResult('ShipmentList', Shipment)
 
 
+class ShipmentFilters(serializers.Serializer):
+    test_mode = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="This flag filter out shipment created in test or prod mode")
+
+
+class ShipmentMode(serializers.Serializer):
+    test = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="Create shipment in test or prod mode")
+
+
 class ShipmentList(GenericAPIView):
     serializer_class = Shipment
     queryset = models.Shipment.objects
@@ -51,13 +65,18 @@ class ShipmentList(GenericAPIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipments",
-        responses={200: Shipments(), 400: ErrorResponse()}
+        responses={200: Shipments(), 400: ErrorResponse()},
+        query_serializer=ShipmentFilters
     )
     def get(self, request: Request):
         """
         Retrieve all shipments.
         """
-        shipments = models.Shipment.objects.access_with(request.user).all()
+        query = (
+            SerializerDecorator[ShipmentFilters](data=request.query_params).data
+            if any(request.query_params) else {}
+        )
+        shipments = models.Shipment.objects.access_with(request.user).filter(**query)
 
         response = self.paginate_queryset(Shipment(shipments, many=True).data)
         return self.get_paginated_response(response)
@@ -67,14 +86,16 @@ class ShipmentList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment",
         responses={200: Shipment(), 400: ErrorResponse()},
-        request_body=ShipmentData()
+        request_body=ShipmentData(),
+        query_serializer=ShipmentMode,
     )
     def post(self, request: Request):
         """
         Create a new shipment instance.
         """
+        query = SerializerDecorator[ShipmentMode](data=request.query_params).data
         shipment = SerializerDecorator[ShipmentSerializer](
-            data=request.data, context_user=request.user).save().instance
+            data=request.data, context_user=request.user).save(**query).instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -142,7 +163,7 @@ class ShipmentRates(APIView):
         shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
-            data=ShipmentData(shipment).data, context_user=request.user).save().instance
+            data=ShipmentData(shipment).data, context_user=request.user).save(test=shipment.test_mode).instance
 
         payload: dict = DP.to_dict(dict(
             rates=Rate(rate_response.rates, many=True).data,

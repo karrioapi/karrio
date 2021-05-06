@@ -50,11 +50,12 @@ class ShipmentSerializer(ShipmentData):
 
     @transaction.atomic
     def create(self, validated_data: dict) -> models.Shipment:
+        test = validated_data.get('test')
         context_user = self._context_user
         carrier_ids = validated_data.get('carrier_ids', [])
         carriers = Carriers.list(carrier_ids=carrier_ids, created_by=context_user) if any(carrier_ids) else []
         rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](
-            data=validated_data, context_user=context_user).save().instance
+            data=validated_data, context_user=context_user).save(test=test).instance
         test_mode = all([r.test_mode for r in rate_response.rates])
 
         shipment_data = {

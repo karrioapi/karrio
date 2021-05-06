@@ -276,11 +276,12 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict, user=None) -> datatypes.RateResponse:
+    def fetch(payload: dict, user=None, test: bool = None) -> datatypes.RateResponse:
         request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
-            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user)
+            carrier.data for carrier in
+            Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user, test=test)
         ]
         gateways = [
             purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list
