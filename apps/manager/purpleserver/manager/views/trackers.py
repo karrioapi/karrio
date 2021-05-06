@@ -3,12 +3,13 @@ import logging
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework import serializers
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
-    TrackingStatus, ErrorResponse, TestFilters, Operation
+    FlagField, TrackingStatus, ErrorResponse, TestFilters, Operation
 )
 from purpleserver.core.utils import SerializerDecorator, PaginatedResult
 from purpleserver.manager.router import router
@@ -20,6 +21,12 @@ ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique 
 Trackers = PaginatedResult('TrackerList', TrackingStatus)
 
 
+class TrackerFilters(serializers.Serializer):
+    test_mode = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="This flag filter out tracker created from carriers in test or live mode")
+
+
 class TrackerList(GenericAPIView):
     serializer_class = TrackingStatus
     queryset = models.Tracking.objects
@@ -29,13 +36,18 @@ class TrackerList(GenericAPIView):
         tags=['Trackers'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipment trackers",
-        responses={200: Trackers(), 400: ErrorResponse()}
+        responses={200: Trackers(), 400: ErrorResponse()},
+        query_serializer=TrackerFilters
     )
     def get(self, request: Request):
         """
         Retrieve all shipment trackers.
         """
-        trackers = models.Tracking.objects.access_with(request.user).all()
+        query = (
+            SerializerDecorator[TrackerFilters](data=request.query_params).data
+            if any(request.query_params) else {}
+        )
+        trackers = models.Tracking.objects.access_with(request.user).filter(**query)
         response = self.paginate_queryset(TrackingStatus(trackers, many=True).data)
         return self.get_paginated_response(response)
 

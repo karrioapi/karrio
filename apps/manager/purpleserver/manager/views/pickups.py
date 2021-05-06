@@ -1,6 +1,6 @@
 import logging
 
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -9,6 +9,7 @@ from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
+    FlagField,
     Pickup,
     ErrorResponse,
     OperationConfirmation,
@@ -24,6 +25,12 @@ ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique ma
 Pickups = PaginatedResult('PickupList', Pickup)
 
 
+class PickupFilters(serializers.Serializer):
+    test_mode = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="This flag filter out pickup created from carriers in test or live mode")
+
+
 class PickupList(GenericAPIView):
     serializer_class = Pickup
     queryset = models.Pickup.objects
@@ -33,13 +40,18 @@ class PickupList(GenericAPIView):
         tags=['Pickups'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
-        responses={200: Pickups(), 400: ErrorResponse()}
+        responses={200: Pickups(), 400: ErrorResponse()},
+        query_serializer=PickupFilters
     )
     def get(self, request: Request):
         """
         Retrieve all scheduled pickups.
         """
-        pickups = models.Pickup.objects.access_with(request.user).all()
+        query = (
+            SerializerDecorator[PickupFilters](data=request.query_params).data
+            if any(request.query_params) else {}
+        )
+        pickups = models.Pickup.objects.access_with(request.user).filter(**query)
 
         response = self.paginate_queryset(Pickup(pickups, many=True).data)
         return self.get_paginated_response(response)
