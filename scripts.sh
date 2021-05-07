@@ -126,6 +126,7 @@ rundb() {
 kill_server() {
 	lsof -i tcp:8000 | tail -n +2 | awk '{print $2}' | xargs kill -9
 	pkill purplship
+	pkill Python
 }
 
 runserver() {
@@ -193,6 +194,7 @@ _build() {
 build() {
   build_theme &&
   build_dashboard &&
+  build_js &&
   clean_builds
   sm=$(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
@@ -213,6 +215,15 @@ build_theme() {
 build_dashboard() {
   pushd "${ROOT:?}/webapp" || false &&
   rm -rf node_modules; yarn && yarn build --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
+  popd
+  purplship collectstatic --noinput
+}
+
+build_js() {
+  pushd "${ROOT:?}/webapp/api" || false &&
+  rm -rf node_modules;
+  yarn && npx gulp build \
+  	--output "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/js/purplship.js"
   popd
   purplship collectstatic --noinput
 }
