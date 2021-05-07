@@ -24,6 +24,7 @@ setup(
             'django-constance',
             'django-picklefield',
             'django-email-verification',
+            'django-cors-headers',
             'drf-api-tracking',
             'drf-yasg',
             'gunicorn',
