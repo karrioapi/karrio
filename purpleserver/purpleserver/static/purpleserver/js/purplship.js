@@ -5323,7 +5323,8 @@
     var Client = PurplshipClient;
     var Purplship = /** @class */ (function (_super) {
         __extends(Purplship, _super);
-        function Purplship(apiKey, host) {
+        function Purplship(_a) {
+            var apiKey = _a.apiKey, host = _a.host;
             return _super.call(this, {
                 apiKey: apiKey,
                 basePath: host,

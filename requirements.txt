@@ -55,7 +55,7 @@ Pillow==8.2.0
 promise==2.3
 psycopg2-binary==2.8.6
 purplship==2021.4
-purplship-server==2021.4
+purplship-server==2021.4.1
 purplship-server.client==2021.4
 purplship-server.core==2021.4
 purplship-server.events==2021.3
