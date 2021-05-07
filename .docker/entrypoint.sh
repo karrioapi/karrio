@@ -2,11 +2,11 @@
 
 # Init db and collect static files
 if [[ "$MULTI_TENANT_ENABLE" == "True" ]]; then
-	purplship migrate_schemas --shared
+	purplship migrate_schemas --shared || exit
 else
-	purplship migrate
+	purplship migrate || exit
 fi
-purplship collectstatic --clear --noinput
+purplship collectstatic --clear --noinput || exit
 
 if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
 then
@@ -42,6 +42,6 @@ set -m # turn on bash's job control
 
 gunicorn --config gunicorn-cfg.py purpleserver.wsgi &
 
-purplship run_huey -w 2
+purplship run_huey -w 2  || exit
 
 pkill -f gunicorn

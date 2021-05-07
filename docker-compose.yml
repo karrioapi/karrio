@@ -49,6 +49,7 @@ services:
       POSTGRES_DB: "db"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
+      PGDATA: /var/lib/postgresql/data/pship
     ports:
       - "5432:5432"
     networks:
