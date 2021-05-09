@@ -318,6 +318,16 @@ class Package:
     def thickness(self):
         return Dimension(self.preset.thickness, self.dimension_unit)
 
+    @property
+    def has_dimensions(self):
+        return any(
+            [
+                self.length,
+                self.width,
+                self.height,
+            ]
+        )
+
 
 class Packages(Iterable[Package]):
     """The parcel collection common processing helper"""
@@ -562,6 +572,28 @@ class CompleteAddress:
     @property
     def address_lines(self) -> str:
         return self._compute_address_line(join=False)
+
+    @property
+    def tax_id(self) -> Optional[str]:
+        return self._address.federal_tax_id or self._address.state_tax_id
+
+    @property
+    def taxes(self) -> List[str]:
+        return SF.concat_str(
+            self._address.federal_tax_id, self._address.state_tax_id)
+
+    @property
+    def has_contact_info(self) -> bool:
+        return any([
+            self._address.company_name,
+            self._address.phone_number,
+            self._address.person_name,
+            self._address.email,
+        ])
+
+    @property
+    def has_tax_info(self) -> bool:
+        return any([self._address.federal_tax_id, self._address.state_tax_id])
 
     def _compute_address_line(self, join: bool = True) -> Optional[str]:
         if any([self._address.address_line1, self._address.address_line2]):

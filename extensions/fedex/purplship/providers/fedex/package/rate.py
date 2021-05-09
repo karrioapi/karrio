@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Tuple, List, Optional, cast
-from fedex_lib.rate_service_v26 import (
+from fedex_lib.rate_service_v28 import (
     RateRequest as FedexRateRequest,
     RateReplyDetail,
     TransactionDetail,
@@ -18,7 +18,7 @@ from fedex_lib.rate_service_v26 import (
     Dimensions,
 )
 from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, SF, DF
-from purplship.core.units import Packages, Options, Services, WeightUnit
+from purplship.core.units import Packages, Options, Services, WeightUnit, CompleteAddress
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.providers.fedex.error import parse_error_response
@@ -94,21 +94,19 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
 def rate_request(
     payload: RateRequest, settings: Settings
 ) -> Serializable[FedexRateRequest]:
+    shipper = CompleteAddress.map(payload.shipper)
+    recipient = CompleteAddress.map(payload.recipient)
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
     service = Services(payload.services, ServiceType).first
     options = Options(payload.options)
 
-    package_type = (
-        PackagingType[packages[0].packaging_type or "your_packaging"].value
-        if len(packages) == 1 else None
-    )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
         TransactionDetail=TransactionDetail(CustomerTransactionId="FTC"),
-        Version=VersionId(ServiceId="crs", Major=26, Intermediate=0, Minor=0),
+        Version=VersionId(ServiceId="crs", Major=28, Intermediate=0, Minor=0),
         ReturnTransitAndCommit=True,
         CarrierCodes=None,
         VariableOptions=None,
@@ -117,7 +115,7 @@ def rate_request(
             ShipTimestamp=DF.date(options.shipment_date or datetime.now()),
             DropoffType="REGULAR_PICKUP",
             ServiceType=(service.value if service is not None else None),
-            PackagingType=package_type,
+            PackagingType=PackagingType[packages.package_type].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
                 Units=WeightUnit.LB.value,
@@ -129,97 +127,66 @@ def rate_request(
             Shipper=Party(
                 AccountNumber=settings.account_number,
                 Tins=(
-                    [
-                        TaxpayerIdentification(TinType=None, Number=tax)
-                        for tax in [
-                            payload.shipper.federal_tax_id,
-                            payload.shipper.state_tax_id,
-                        ]
-                    ]
-                    if any([payload.shipper.federal_tax_id, payload.shipper.state_tax_id])
-                    else None
+                    [TaxpayerIdentification(Number=tax) for tax in shipper.taxes]
+                    if shipper.has_tax_info else None
                 ),
-                Contact=Contact(
-                    ContactId=None,
-                    PersonName=payload.shipper.person_name,
-                    Title=None,
-                    CompanyName=payload.shipper.company_name,
-                    PhoneNumber=payload.shipper.phone_number,
-                    PhoneExtension=None,
-                    TollFreePhoneNumber=None,
-                    PagerNumber=None,
-                    FaxNumber=None,
-                    EMailAddress=payload.shipper.email,
-                )
-                if any(
-                    (
-                        payload.shipper.company_name,
-                        payload.shipper.person_name,
-                        payload.shipper.phone_number,
-                        payload.shipper.email,
+                Contact=(
+                    Contact(
+                        ContactId=None,
+                        PersonName=shipper.person_name,
+                        Title=None,
+                        CompanyName=shipper.company_name,
+                        PhoneNumber=shipper.phone_number,
+                        PhoneExtension=None,
+                        TollFreePhoneNumber=None,
+                        PagerNumber=None,
+                        FaxNumber=None,
+                        EMailAddress=shipper.email,
                     )
-                )
-                else None,
+                    if shipper.has_contact_info else None
+                ),
                 Address=Address(
-                    StreetLines=SF.concat_str(
-                        payload.shipper.address_line1, payload.shipper.address_line2
-                    ),
-                    City=payload.shipper.city,
-                    StateOrProvinceCode=payload.shipper.state_code,
-                    PostalCode=payload.shipper.postal_code,
+                    StreetLines=shipper.address_lines,
+                    City=shipper.city,
+                    StateOrProvinceCode=shipper.state_code,
+                    PostalCode=shipper.postal_code,
                     UrbanizationCode=None,
-                    CountryCode=payload.shipper.country_code,
-                    CountryName=None,
-                    Residential=None,
+                    CountryCode=shipper.country_code,
+                    CountryName=shipper.country_name,
+                    Residential=shipper.residential,
                     GeographicCoordinates=None,
                 ),
             ),
             Recipient=Party(
                 AccountNumber=None,
-                Tins=[
-                    TaxpayerIdentification(TinType=None, Number=tax)
-                    for tax in [
-                        payload.recipient.federal_tax_id,
-                        payload.recipient.state_tax_id,
-                    ]
-                ]
-                if any(
-                    [payload.recipient.federal_tax_id, payload.recipient.state_tax_id]
-                )
-                else None,
-                Contact=Contact(
-                    ContactId=None,
-                    PersonName=payload.recipient.person_name,
-                    Title=None,
-                    CompanyName=payload.recipient.company_name,
-                    PhoneNumber=payload.recipient.phone_number,
-                    PhoneExtension=None,
-                    TollFreePhoneNumber=None,
-                    PagerNumber=None,
-                    FaxNumber=None,
-                    EMailAddress=payload.recipient.email,
-                )
-                if any(
-                    (
-                        payload.recipient.company_name,
-                        payload.recipient.person_name,
-                        payload.recipient.phone_number,
-                        payload.recipient.email,
+                Tins=(
+                    [TaxpayerIdentification(Number=tax) for tax in recipient.taxes]
+                    if recipient.has_tax_info else None
+                ),
+                Contact=(
+                    Contact(
+                        ContactId=None,
+                        PersonName=recipient.person_name,
+                        Title=None,
+                        CompanyName=recipient.company_name,
+                        PhoneNumber=recipient.phone_number,
+                        PhoneExtension=None,
+                        TollFreePhoneNumber=None,
+                        PagerNumber=None,
+                        FaxNumber=None,
+                        EMailAddress=recipient.email,
                     )
-                )
-                else None,
+                    if recipient.has_contact_info else None
+                ),
                 Address=Address(
-                    StreetLines=SF.concat_str(
-                        payload.recipient.address_line1,
-                        payload.recipient.address_line2,
-                    ),
-                    City=payload.recipient.city,
-                    StateOrProvinceCode=payload.recipient.state_code,
-                    PostalCode=payload.recipient.postal_code,
+                    StreetLines=recipient.address_lines,
+                    City=recipient.city,
+                    StateOrProvinceCode=recipient.state_code,
+                    PostalCode=recipient.postal_code,
                     UrbanizationCode=None,
-                    CountryCode=payload.recipient.country_code,
-                    CountryName=None,
-                    Residential=None,
+                    CountryCode=recipient.country_code,
+                    CountryName=recipient.country_name,
+                    Residential=recipient.residential,
                     GeographicCoordinates=None,
                 ),
             ),
@@ -250,26 +217,22 @@ def rate_request(
                     GroupPackageCount=1,
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
-                    Weight=FedexWeight(
-                        Units=package.weight_unit.value,
-                        Value=package.weight.value,
-                    )
-                    if package.weight.value is not None
-                    else None,
-                    Dimensions=Dimensions(
-                        Length=package.length.value,
-                        Width=package.width.value,
-                        Height=package.height.value,
-                        Units=package.dimension_unit.value,
-                    )
-                    if any(
-                        [
-                            package.length.value,
-                            package.width.value,
-                            package.height.value,
-                        ]
-                    )
-                    else None,
+                    Weight=(
+                        FedexWeight(
+                            Units=package.weight_unit.value,
+                            Value=package.weight.value,
+                        )
+                        if package.weight.value else None
+                    ),
+                    Dimensions=(
+                        Dimensions(
+                            Length=package.length.value,
+                            Width=package.width.value,
+                            Height=package.height.value,
+                            Units=package.dimension_unit.value,
+                        )
+                        if package.has_dimensions else None
+                    ),
                     PhysicalPackaging=None,
                     ItemDescription=package.parcel.description,
                     ItemDescriptionForClearance=None,
@@ -285,10 +248,10 @@ def rate_request(
 
 
 def _request_serializer(request: FedexRateRequest) -> str:
-    namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:v26="http://fedex.com/ws/rate/v26"'
+    namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:v28="http://fedex.com/ws/rate/v28"'
 
     envelope = create_envelope(body_content=request)
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v26")
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v28")
 
     return XP.export(envelope, namespacedef_=namespacedef_)

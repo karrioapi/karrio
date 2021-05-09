@@ -160,222 +160,222 @@ ParsedPickupCancelResponse = [
 ]
 
 
-PickupAvailabilityRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17">
+PickupAvailabilityRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
-        <v17:PickupAvailabilityRequest>
-            <v17:WebAuthenticationDetail>
-                <v17:UserCredential>
-                    <v17:Key>user_key</v17:Key>
-                    <v17:Password>password</v17:Password>
-                </v17:UserCredential>
-            </v17:WebAuthenticationDetail>
-            <v17:ClientDetail>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-                <v17:MeterNumber>1293587</v17:MeterNumber>
-            </v17:ClientDetail>
-            <v17:TransactionDetail>
-                <v17:CustomerTransactionId>FTC</v17:CustomerTransactionId>
-            </v17:TransactionDetail>
-            <v17:Version>
-                <v17:ServiceId>disp</v17:ServiceId>
-                <v17:Major>17</v17:Major>
-                <v17:Intermediate>0</v17:Intermediate>
-                <v17:Minor>0</v17:Minor>
-            </v17:Version>
-            <v17:AccountNumber>
-                <v17:Type>FEDEX_EXPRESS</v17:Type>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-            </v17:AccountNumber>
-            <v17:PickupAddress>
-                <v17:StreetLines>2271 Herring Cove</v17:StreetLines>
-                <v17:City>Halifax</v17:City>
-                <v17:StateOrProvinceCode>NS</v17:StateOrProvinceCode>
-                <v17:PostalCode>B3L2C2</v17:PostalCode>
-                <v17:CountryCode>CA</v17:CountryCode>
-                <v17:Residential>true</v17:Residential>
-            </v17:PickupAddress>
-            <v17:PickupRequestType>FUTURE_DAY</v17:PickupRequestType>
-            <v17:DispatchDate>2015-01-28</v17:DispatchDate>
-            <v17:PackageReadyTime>15:00:00</v17:PackageReadyTime>
-            <v17:CustomerCloseTime>17:00:00</v17:CustomerCloseTime>
-            <v17:Carriers>FDXE</v17:Carriers>
-        </v17:PickupAvailabilityRequest>
+        <v22:PickupAvailabilityRequest>
+            <v22:WebAuthenticationDetail>
+                <v22:UserCredential>
+                    <v22:Key>user_key</v22:Key>
+                    <v22:Password>password</v22:Password>
+                </v22:UserCredential>
+            </v22:WebAuthenticationDetail>
+            <v22:ClientDetail>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+                <v22:MeterNumber>1293587</v22:MeterNumber>
+            </v22:ClientDetail>
+            <v22:TransactionDetail>
+                <v22:CustomerTransactionId>FTC</v22:CustomerTransactionId>
+            </v22:TransactionDetail>
+            <v22:Version>
+                <v22:ServiceId>disp</v22:ServiceId>
+                <v22:Major>22</v22:Major>
+                <v22:Intermediate>0</v22:Intermediate>
+                <v22:Minor>0</v22:Minor>
+            </v22:Version>
+            <v22:AccountNumber>
+                <v22:Type>FEDEX_EXPRESS</v22:Type>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+            </v22:AccountNumber>
+            <v22:PickupAddress>
+                <v22:StreetLines>2271 Herring Cove</v22:StreetLines>
+                <v22:City>Halifax</v22:City>
+                <v22:StateOrProvinceCode>NS</v22:StateOrProvinceCode>
+                <v22:PostalCode>B3L2C2</v22:PostalCode>
+                <v22:CountryCode>CA</v22:CountryCode>
+                <v22:Residential>true</v22:Residential>
+            </v22:PickupAddress>
+            <v22:PickupRequestType>FUTURE_DAY</v22:PickupRequestType>
+            <v22:DispatchDate>2015-01-28</v22:DispatchDate>
+            <v22:PackageReadyTime>15:00:00</v22:PackageReadyTime>
+            <v22:CustomerCloseTime>17:00:00</v22:CustomerCloseTime>
+            <v22:Carriers>FDXE</v22:Carriers>
+        </v22:PickupAvailabilityRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-PickupRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17">
+PickupRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
-        <v17:CreatePickupRequest>
-            <v17:WebAuthenticationDetail>
-                <v17:UserCredential>
-                    <v17:Key>user_key</v17:Key>
-                    <v17:Password>password</v17:Password>
-                </v17:UserCredential>
-            </v17:WebAuthenticationDetail>
-            <v17:ClientDetail>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-                <v17:MeterNumber>1293587</v17:MeterNumber>
-            </v17:ClientDetail>
-            <v17:TransactionDetail>
-                <v17:CustomerTransactionId>FTC</v17:CustomerTransactionId>
-            </v17:TransactionDetail>
-            <v17:Version>
-                <v17:ServiceId>disp</v17:ServiceId>
-                <v17:Major>17</v17:Major>
-                <v17:Intermediate>0</v17:Intermediate>
-                <v17:Minor>0</v17:Minor>
-            </v17:Version>
-            <v17:AssociatedAccountNumber>
-                <v17:Type>FEDEX_EXPRESS</v17:Type>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-            </v17:AssociatedAccountNumber>
-            <v17:OriginDetail>
-                <v17:PickupLocation>
-                    <v17:Contact>
-                        <v17:PersonName>John Doe</v17:PersonName>
-                        <v17:CompanyName>Jim Duggan</v17:CompanyName>
-                        <v17:PhoneNumber>800-555-1212</v17:PhoneNumber>
-                        <v17:EMailAddress>john.doe@canadapost.ca</v17:EMailAddress>
-                    </v17:Contact>
-                    <v17:Address>
-                        <v17:StreetLines>2271 Herring Cove</v17:StreetLines>
-                        <v17:City>Halifax</v17:City>
-                        <v17:StateOrProvinceCode>NS</v17:StateOrProvinceCode>
-                        <v17:PostalCode>B3L2C2</v17:PostalCode>
-                        <v17:CountryCode>CA</v17:CountryCode>
-                        <v17:Residential>true</v17:Residential>
-                    </v17:Address>
-                </v17:PickupLocation>
-                <v17:ReadyTimestamp>2015-01-28T15:00:00</v17:ReadyTimestamp>
-                <v17:CompanyCloseTime>17:00:00</v17:CompanyCloseTime>
-                <v17:PickupDateType>FUTURE_DAY</v17:PickupDateType>
-            </v17:OriginDetail>
-            <v17:PackageCount>1</v17:PackageCount>
-            <v17:CarrierCode>FDXE</v17:CarrierCode>
-            <v17:Remarks>Door at Back</v17:Remarks>
-        </v17:CreatePickupRequest>
+        <v22:CreatePickupRequest>
+            <v22:WebAuthenticationDetail>
+                <v22:UserCredential>
+                    <v22:Key>user_key</v22:Key>
+                    <v22:Password>password</v22:Password>
+                </v22:UserCredential>
+            </v22:WebAuthenticationDetail>
+            <v22:ClientDetail>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+                <v22:MeterNumber>1293587</v22:MeterNumber>
+            </v22:ClientDetail>
+            <v22:TransactionDetail>
+                <v22:CustomerTransactionId>FTC</v22:CustomerTransactionId>
+            </v22:TransactionDetail>
+            <v22:Version>
+                <v22:ServiceId>disp</v22:ServiceId>
+                <v22:Major>22</v22:Major>
+                <v22:Intermediate>0</v22:Intermediate>
+                <v22:Minor>0</v22:Minor>
+            </v22:Version>
+            <v22:AssociatedAccountNumber>
+                <v22:Type>FEDEX_EXPRESS</v22:Type>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+            </v22:AssociatedAccountNumber>
+            <v22:OriginDetail>
+                <v22:PickupLocation>
+                    <v22:Contact>
+                        <v22:PersonName>John Doe</v22:PersonName>
+                        <v22:CompanyName>Jim Duggan</v22:CompanyName>
+                        <v22:PhoneNumber>800-555-1212</v22:PhoneNumber>
+                        <v22:EMailAddress>john.doe@canadapost.ca</v22:EMailAddress>
+                    </v22:Contact>
+                    <v22:Address>
+                        <v22:StreetLines>2271 Herring Cove</v22:StreetLines>
+                        <v22:City>Halifax</v22:City>
+                        <v22:StateOrProvinceCode>NS</v22:StateOrProvinceCode>
+                        <v22:PostalCode>B3L2C2</v22:PostalCode>
+                        <v22:CountryCode>CA</v22:CountryCode>
+                        <v22:Residential>true</v22:Residential>
+                    </v22:Address>
+                </v22:PickupLocation>
+                <v22:ReadyTimestamp>2015-01-28T15:00:00</v22:ReadyTimestamp>
+                <v22:CompanyCloseTime>17:00:00</v22:CompanyCloseTime>
+                <v22:PickupDateType>FUTURE_DAY</v22:PickupDateType>
+            </v22:OriginDetail>
+            <v22:PackageCount>1</v22:PackageCount>
+            <v22:CarrierCode>FDXE</v22:CarrierCode>
+            <v22:Remarks>Door at Back</v22:Remarks>
+        </v22:CreatePickupRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-PickupUpdateAvailabilityRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17">
+PickupUpdateAvailabilityRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
-        <v17:PickupAvailabilityRequest>
-            <v17:WebAuthenticationDetail>
-                <v17:UserCredential>
-                    <v17:Key>user_key</v17:Key>
-                    <v17:Password>password</v17:Password>
-                </v17:UserCredential>
-            </v17:WebAuthenticationDetail>
-            <v17:ClientDetail>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-                <v17:MeterNumber>1293587</v17:MeterNumber>
-            </v17:ClientDetail>
-            <v17:TransactionDetail>
-                <v17:CustomerTransactionId>FTC</v17:CustomerTransactionId>
-            </v17:TransactionDetail>
-            <v17:Version>
-                <v17:ServiceId>disp</v17:ServiceId>
-                <v17:Major>17</v17:Major>
-                <v17:Intermediate>0</v17:Intermediate>
-                <v17:Minor>0</v17:Minor>
-            </v17:Version>
-            <v17:AccountNumber>
-                <v17:Type>FEDEX_EXPRESS</v17:Type>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-            </v17:AccountNumber>
-            <v17:PickupAddress>
-                <v17:Residential>false</v17:Residential>
-            </v17:PickupAddress>
-            <v17:PickupRequestType>FUTURE_DAY</v17:PickupRequestType>
-            <v17:DispatchDate>2015-01-28</v17:DispatchDate>
-            <v17:PackageReadyTime>15:00:00</v17:PackageReadyTime>
-            <v17:CustomerCloseTime>17:00:00</v17:CustomerCloseTime>
-            <v17:Carriers>FDXE</v17:Carriers>
-        </v17:PickupAvailabilityRequest>
+        <v22:PickupAvailabilityRequest>
+            <v22:WebAuthenticationDetail>
+                <v22:UserCredential>
+                    <v22:Key>user_key</v22:Key>
+                    <v22:Password>password</v22:Password>
+                </v22:UserCredential>
+            </v22:WebAuthenticationDetail>
+            <v22:ClientDetail>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+                <v22:MeterNumber>1293587</v22:MeterNumber>
+            </v22:ClientDetail>
+            <v22:TransactionDetail>
+                <v22:CustomerTransactionId>FTC</v22:CustomerTransactionId>
+            </v22:TransactionDetail>
+            <v22:Version>
+                <v22:ServiceId>disp</v22:ServiceId>
+                <v22:Major>22</v22:Major>
+                <v22:Intermediate>0</v22:Intermediate>
+                <v22:Minor>0</v22:Minor>
+            </v22:Version>
+            <v22:AccountNumber>
+                <v22:Type>FEDEX_EXPRESS</v22:Type>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+            </v22:AccountNumber>
+            <v22:PickupAddress>
+                <v22:Residential>false</v22:Residential>
+            </v22:PickupAddress>
+            <v22:PickupRequestType>FUTURE_DAY</v22:PickupRequestType>
+            <v22:DispatchDate>2015-01-28</v22:DispatchDate>
+            <v22:PackageReadyTime>15:00:00</v22:PackageReadyTime>
+            <v22:CustomerCloseTime>17:00:00</v22:CustomerCloseTime>
+            <v22:Carriers>FDXE</v22:Carriers>
+        </v22:PickupAvailabilityRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-PickupUpdateRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17">
+PickupUpdateRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
-        <v17:CreatePickupRequest>
-            <v17:WebAuthenticationDetail>
-                <v17:UserCredential>
-                    <v17:Key>user_key</v17:Key>
-                    <v17:Password>password</v17:Password>
-                </v17:UserCredential>
-            </v17:WebAuthenticationDetail>
-            <v17:ClientDetail>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-                <v17:MeterNumber>1293587</v17:MeterNumber>
-            </v17:ClientDetail>
-            <v17:TransactionDetail>
-                <v17:CustomerTransactionId>FTC</v17:CustomerTransactionId>
-            </v17:TransactionDetail>
-            <v17:Version>
-                <v17:ServiceId>disp</v17:ServiceId>
-                <v17:Major>17</v17:Major>
-                <v17:Intermediate>0</v17:Intermediate>
-                <v17:Minor>0</v17:Minor>
-            </v17:Version>
-            <v17:AssociatedAccountNumber>
-                <v17:Type>FEDEX_EXPRESS</v17:Type>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-            </v17:AssociatedAccountNumber>
-            <v17:OriginDetail>
-                <v17:PickupLocation>
-                    <v17:Contact>
-                        <v17:PersonName>Jane Doe</v17:PersonName>
-                        <v17:PhoneNumber>800-555-1212</v17:PhoneNumber>
-                        <v17:EMailAddress>john.doe@canadapost.ca</v17:EMailAddress>
-                    </v17:Contact>
-                    <v17:Address>
-                        <v17:Residential>false</v17:Residential>
-                    </v17:Address>
-                </v17:PickupLocation>
-                <v17:ReadyTimestamp>2015-01-28T15:00:00</v17:ReadyTimestamp>
-                <v17:CompanyCloseTime>17:00:00</v17:CompanyCloseTime>
-                <v17:PickupDateType>FUTURE_DAY</v17:PickupDateType>
-            </v17:OriginDetail>
-            <v17:PackageCount>1</v17:PackageCount>
-            <v17:TotalWeight>
-                <v17:Units>LB</v17:Units>
-                <v17:Value>52.92</v17:Value>
-            </v17:TotalWeight>
-            <v17:CarrierCode>FDXE</v17:CarrierCode>
-            <v17:Remarks>Door at Back</v17:Remarks>
-        </v17:CreatePickupRequest>
+        <v22:CreatePickupRequest>
+            <v22:WebAuthenticationDetail>
+                <v22:UserCredential>
+                    <v22:Key>user_key</v22:Key>
+                    <v22:Password>password</v22:Password>
+                </v22:UserCredential>
+            </v22:WebAuthenticationDetail>
+            <v22:ClientDetail>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+                <v22:MeterNumber>1293587</v22:MeterNumber>
+            </v22:ClientDetail>
+            <v22:TransactionDetail>
+                <v22:CustomerTransactionId>FTC</v22:CustomerTransactionId>
+            </v22:TransactionDetail>
+            <v22:Version>
+                <v22:ServiceId>disp</v22:ServiceId>
+                <v22:Major>22</v22:Major>
+                <v22:Intermediate>0</v22:Intermediate>
+                <v22:Minor>0</v22:Minor>
+            </v22:Version>
+            <v22:AssociatedAccountNumber>
+                <v22:Type>FEDEX_EXPRESS</v22:Type>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+            </v22:AssociatedAccountNumber>
+            <v22:OriginDetail>
+                <v22:PickupLocation>
+                    <v22:Contact>
+                        <v22:PersonName>Jane Doe</v22:PersonName>
+                        <v22:PhoneNumber>800-555-1212</v22:PhoneNumber>
+                        <v22:EMailAddress>john.doe@canadapost.ca</v22:EMailAddress>
+                    </v22:Contact>
+                    <v22:Address>
+                        <v22:Residential>false</v22:Residential>
+                    </v22:Address>
+                </v22:PickupLocation>
+                <v22:ReadyTimestamp>2015-01-28T15:00:00</v22:ReadyTimestamp>
+                <v22:CompanyCloseTime>17:00:00</v22:CompanyCloseTime>
+                <v22:PickupDateType>FUTURE_DAY</v22:PickupDateType>
+            </v22:OriginDetail>
+            <v22:PackageCount>1</v22:PackageCount>
+            <v22:TotalWeight>
+                <v22:Units>LB</v22:Units>
+                <v22:Value>52.92</v22:Value>
+            </v22:TotalWeight>
+            <v22:CarrierCode>FDXE</v22:CarrierCode>
+            <v22:Remarks>Door at Back</v22:Remarks>
+        </v22:CreatePickupRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-PickupCancelRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17">
+PickupCancelRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
-        <v17:CancelPickupRequest>
-            <v17:WebAuthenticationDetail>
-                <v17:UserCredential>
-                    <v17:Key>user_key</v17:Key>
-                    <v17:Password>password</v17:Password>
-                </v17:UserCredential>
-            </v17:WebAuthenticationDetail>
-            <v17:ClientDetail>
-                <v17:AccountNumber>2349857</v17:AccountNumber>
-                <v17:MeterNumber>1293587</v17:MeterNumber>
-            </v17:ClientDetail>
-            <v17:TransactionDetail>
-                <v17:CustomerTransactionId>FTC</v17:CustomerTransactionId>
-            </v17:TransactionDetail>
-            <v17:Version>
-                <v17:ServiceId>disp</v17:ServiceId>
-                <v17:Major>17</v17:Major>
-                <v17:Intermediate>0</v17:Intermediate>
-                <v17:Minor>0</v17:Minor>
-            </v17:Version>
-            <v17:CarrierCode>FDXE</v17:CarrierCode>
-            <v17:PickupConfirmationNumber>0074698052</v17:PickupConfirmationNumber>
-        </v17:CancelPickupRequest>
+        <v22:CancelPickupRequest>
+            <v22:WebAuthenticationDetail>
+                <v22:UserCredential>
+                    <v22:Key>user_key</v22:Key>
+                    <v22:Password>password</v22:Password>
+                </v22:UserCredential>
+            </v22:WebAuthenticationDetail>
+            <v22:ClientDetail>
+                <v22:AccountNumber>2349857</v22:AccountNumber>
+                <v22:MeterNumber>1293587</v22:MeterNumber>
+            </v22:ClientDetail>
+            <v22:TransactionDetail>
+                <v22:CustomerTransactionId>FTC</v22:CustomerTransactionId>
+            </v22:TransactionDetail>
+            <v22:Version>
+                <v22:ServiceId>disp</v22:ServiceId>
+                <v22:Major>22</v22:Major>
+                <v22:Intermediate>0</v22:Intermediate>
+                <v22:Minor>0</v22:Minor>
+            </v22:Version>
+            <v22:CarrierCode>FDXE</v22:CarrierCode>
+            <v22:PickupConfirmationNumber>0074698052</v22:PickupConfirmationNumber>
+        </v22:CancelPickupRequest>
     </tns:Body>
 </tns:Envelope>
 """
@@ -383,7 +383,7 @@ PickupCancelRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.
 PickupCancelResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header />
     <SOAP-ENV:Body>
-        <CancelPickupReply xmlns="http://fedex.com/ws/pickup/v17">
+        <CancelPickupReply xmlns="http://fedex.com/ws/pickup/v22">
             <HighestSeverity>SUCCESS</HighestSeverity>
             <Notifications>
                 <Severity>SUCCESS</Severity>
@@ -393,7 +393,7 @@ PickupCancelResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.x
                 <LocalizedMessage>Success</LocalizedMessage>
             </Notifications>
             <TransactionDetail>
-                <CustomerTransactionId>v17 CancelPickup_ExpUS</CustomerTransactionId>
+                <CustomerTransactionId>v22 CancelPickup_ExpUS</CustomerTransactionId>
                 <Localization>
                     <LanguageCode>EN</LanguageCode>
                     <LocaleCode>US</LocaleCode>
@@ -401,7 +401,7 @@ PickupCancelResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.x
             </TransactionDetail>
             <Version>
                 <ServiceId>disp</ServiceId>
-                <Major>17</Major>
+                <Major>22</Major>
                 <Intermediate>0</Intermediate>
                 <Minor>0</Minor>
             </Version>
@@ -413,7 +413,7 @@ PickupCancelResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.x
 PickupAvailabilityResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header />
     <SOAP-ENV:Body>
-        <PickupAvailabilityReply xmlns="http://fedex.com/ws/pickup/v17">
+        <PickupAvailabilityReply xmlns="http://fedex.com/ws/pickup/v22">
             <HighestSeverity>SUCCESS</HighestSeverity>
             <Notifications>
                 <Severity>SUCCESS</Severity>
@@ -431,7 +431,7 @@ PickupAvailabilityResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://sch
             </TransactionDetail>
             <Version>
                 <ServiceId>disp</ServiceId>
-                <Major>17</Major>
+                <Major>22</Major>
                 <Intermediate>0</Intermediate>
                 <Minor>0</Minor>
             </Version>
@@ -506,7 +506,7 @@ PickupResponseXML = f"""<wrapper>
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
         <SOAP-ENV:Header />
         <SOAP-ENV:Body>
-            <CreatePickupReply xmlns="http://fedex.com/ws/pickup/v17">
+            <CreatePickupReply xmlns="http://fedex.com/ws/pickup/v22">
                 <HighestSeverity>SUCCESS</HighestSeverity>
                 <Notifications>
                     <Severity>SUCCESS</Severity>
@@ -516,7 +516,7 @@ PickupResponseXML = f"""<wrapper>
                     <LocalizedMessage>Success</LocalizedMessage>
                 </Notifications>
                 <TransactionDetail>
-                    <CustomerTransactionId>CreatePickupRequest_v17</CustomerTransactionId>
+                    <CustomerTransactionId>CreatePickupRequest_v22</CustomerTransactionId>
                     <Localization>
                         <LanguageCode>EN</LanguageCode>
                         <LocaleCode>ES</LocaleCode>
@@ -524,7 +524,7 @@ PickupResponseXML = f"""<wrapper>
                 </TransactionDetail>
                 <Version>
                     <ServiceId>disp</ServiceId>
-                    <Major>17</Major>
+                    <Major>22</Major>
                     <Intermediate>0</Intermediate>
                     <Minor>0</Minor>
                 </Version>

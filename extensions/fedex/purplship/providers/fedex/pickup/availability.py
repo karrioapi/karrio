@@ -1,5 +1,5 @@
 from datetime import datetime
-from fedex_lib.pickup_service_v20 import (
+from fedex_lib.pickup_service_v22 import (
     PickupAvailabilityRequest,
     TransactionDetail,
     VersionId,
@@ -31,7 +31,7 @@ def pickup_availability_request(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
         TransactionDetail=TransactionDetail(CustomerTransactionId="FTC"),
-        Version=VersionId(ServiceId="disp", Major=17, Intermediate=0, Minor=0),
+        Version=VersionId(ServiceId="disp", Major=22, Intermediate=0, Minor=0),
         PickupType=None,
         AccountNumber=AssociatedAccount(
             Type=AssociatedAccountNumberType.FEDEX_EXPRESS.value,
@@ -67,9 +67,9 @@ def pickup_availability_request(
 def _request_serializer(request: PickupAvailabilityRequest) -> str:
     envelope: Envelope = create_envelope(body_content=request)
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v17")
+    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v22")
 
     return XP.export(
         envelope,
-        namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v17="http://fedex.com/ws/pickup/v17"',
+        namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22"',
     )

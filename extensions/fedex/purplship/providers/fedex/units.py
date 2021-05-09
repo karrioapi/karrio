@@ -86,6 +86,20 @@ class Incoterm(Enum):
     FCA = "FCA"
     FOB = "FOB"
 
+class PurposeType(Enum):
+    gift = "GIFT"
+    not_sold = "NOT_SOLD"
+    personal_effects = "PERSONAL_EFFECTS"
+    repair_and_return = "REPAIR_AND_RETURN"
+    sample = "SAMPLE"
+    sold = "SOLD"
+    other = None
+
+    """ Unified Content type mapping """
+    documents = other
+    merchandise = sold
+    return_merchandise = repair_and_return
+
 
 class PackagingType(Flag):
     fedex_envelope = "FEDEX_ENVELOPE"
