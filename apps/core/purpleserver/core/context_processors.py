@@ -3,13 +3,15 @@ from django.conf import settings
 
 DEFAULT_ALLOWED_CONFIG = [
     'APP_NAME',
-    'BASE_TEMPLATE',
     'APP_WEBSITE',
+    'SUPPORT_EMAIL',
+    'BASE_TEMPLATE',
     'BASE_FOOTER_TEMPLATE',
 ]
 FALLBACK_VALUES = {
     'APP_NAME': 'Purplship',
     'APP_WEBSITE': 'https://purplship.com',
+    'SUPPORT_EMAIL': 'hello@purplship.com',
     'BASE_TEMPLATE': 'purpleserver/base_site.html',
     'BASE_FOOTER_TEMPLATE': 'purpleserver/base_footer.html',
 }

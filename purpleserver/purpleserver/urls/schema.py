@@ -6,6 +6,7 @@ from rest_framework import permissions
 
 APP_VERSION = getattr(settings, 'VERSION', '')
 APP_NAME = getattr(settings, 'APP_NAME', 'Purplship')
+EMAIL_SUPPORT = getattr(settings, 'EMAIL_SUPPORT', 'hello@purplship.com')
 
 SCHEMA_VIEW_DESCRIPTION = f"""
 ## API Reference
@@ -78,7 +79,7 @@ schema_view = views.get_schema_view(
         title=f"{APP_NAME} API",
         default_version=APP_VERSION,
         description=SCHEMA_VIEW_DESCRIPTION,
-        contact=openapi.Contact(email="hello@purplship.com"),
+        contact=openapi.Contact(email=EMAIL_SUPPORT),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
