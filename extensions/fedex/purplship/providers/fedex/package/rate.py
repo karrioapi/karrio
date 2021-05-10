@@ -118,7 +118,7 @@ def rate_request(
             PackagingType=PackagingType[packages.package_type].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
-                Units=WeightUnit.LB.value,
+                Units=packages.weight.unit,
                 Value=packages.weight.LB,
             ),
             TotalInsuredValue=None,
@@ -219,7 +219,7 @@ def rate_request(
                     InsuredValue=None,
                     Weight=(
                         FedexWeight(
-                            Units=package.weight_unit.value,
+                            Units=package.weight.unit,
                             Value=package.weight.value,
                         )
                         if package.weight.value else None

@@ -38,7 +38,7 @@ from fedex_lib.ship_service_v26 import (
     CommercialInvoice,
 )
 from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
-from purplship.core.units import Options, Packages, WeightUnit, CompleteAddress
+from purplship.core.units import Options, Packages, CompleteAddress, Weight
 from purplship.core.models import ShipmentDetails, Message, ShipmentRequest
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
@@ -128,7 +128,8 @@ def shipment_request(
             ManifestDetail=None,
             VariationOptions=None,
             TotalWeight=FedexWeight(
-                Units=WeightUnit.LB.value, Value=packages.weight.LB
+                Units=packages.weight.unit,
+                Value=packages.weight.value
             ),
             TotalInsuredValue=options.insurance,
             PreferredCurrency=options.currency,
@@ -290,7 +291,10 @@ def shipment_request(
                         ) if duty is not None else None
                     ),
                     DocumentContent=None,
-                    CustomsValue=None,
+                    CustomsValue=Money(
+                        Currency=(duty.currency or options.currency),
+                        Amount=(duty.declared_value or options.declared_value)
+                    ),
                     FreightOnValue=None,
                     InsuranceCharges=None,
                     PartiesToTransactionAreRelated=None,
@@ -320,11 +324,17 @@ def shipment_request(
                             Purpose=None,
                             CountryOfManufacture=item.origin_country,
                             HarmonizedCode=None,
-                            Weight=FedexWeight(Units=WeightUnit.LB.value, Value=item.weight.LB),
+                            Weight=FedexWeight(
+                                Units=master_package.weight_unit.value,
+                                Value=Weight(item.weight, item.weight_unit)[master_package.weight_unit.value]
+                            ),
                             Quantity=item.quantity,
                             QuantityUnits='EA',
                             AdditionalMeasures=None,
-                            UnitPrice=item.value_amount,
+                            UnitPrice=Money(
+                                Currency=(options.currency or duty.currency),
+                                Amount=item.value_amount,
+                            ),
                             CustomsValue=None,
                             ExciseConditions=None,
                             ExportLicenseNumber=None,
@@ -367,7 +377,7 @@ def shipment_request(
                     InsuredValue=None,
                     Weight=(
                         FedexWeight(
-                            Units=master_package.weight_unit.value,
+                            Units=master_package.weight.unit,
                             Value=master_package.weight.value,
                         )
                         if master_package.weight.value else None

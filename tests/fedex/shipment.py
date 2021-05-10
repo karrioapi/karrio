@@ -244,6 +244,10 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                     <v26:DutiesPayment>
                         <v26:PaymentType>SENDER</v26:PaymentType>
                     </v26:DutiesPayment>
+                    <v26:CustomsValue>
+                        <v26:Currency>USD</v26:Currency>
+                        <v26:Amount>100</v26:Amount>
+                    </v26:CustomsValue>
                 </v26:CustomsClearanceDetail>
                 <v26:LabelSpecification>
                     <v26:LabelFormatType>COMMON2D</v26:LabelFormatType>

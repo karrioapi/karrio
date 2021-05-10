@@ -97,9 +97,9 @@ class DimensionUnit(Enum):
 
 class Dimension:
     """The dimension common processing helper"""
-    def __init__(self, value: float, unit: DimensionUnit = DimensionUnit.CM, options: Type[Enum] = Enum):
+    def __init__(self, value: float, unit: Union[DimensionUnit, str] = DimensionUnit.CM, options: Type[Enum] = Enum):
         self._value = value
-        self._unit = unit
+        self._unit = DimensionUnit[unit] if isinstance(unit, str) else unit
 
         # Options mapping
         measurement_options = {m.name: m.value for m in list(options)}  # type: ignore
@@ -107,12 +107,19 @@ class Dimension:
         self._min_cm = measurement_options.get('min_cm')
         self._quant = measurement_options.get('quant')
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
     def _compute(self, value: float, min_value: float = None):
         below_min = min_value is not None and value < min_value
         return NF.decimal(
             value=(min_value if below_min else value),
             quant=self._quant
         )
+
+    @property
+    def unit(self) -> DimensionUnit:
+        return self._unit.value
 
     @property
     def value(self):
@@ -196,9 +203,9 @@ class Girth:
 
 class Weight:
     """The weight common processing helper"""
-    def __init__(self, value: float, unit: WeightUnit = WeightUnit.KG, options: Type[Enum] = Enum):
+    def __init__(self, value: float, unit: Union[WeightUnit, str] = WeightUnit.KG, options: Type[Enum] = Enum):
         self._value = value
-        self._unit = unit
+        self._unit = WeightUnit[unit] if isinstance(unit, str) else unit
 
         # Options mapping
         measurement_options = {m.name: m.value for m in list(options)}  # type: ignore
@@ -207,12 +214,19 @@ class Weight:
         self._min_oz = measurement_options.get('min_oz')
         self._quant = measurement_options.get('quant')
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
     def _compute(self, value: float, min_value: float = None) -> Optional[float]:
         below_min = min_value is not None and value < min_value
         return NF.decimal(
             value=(min_value if below_min else value),
             quant=self._quant
         )
+
+    @property
+    def unit(self) -> WeightUnit:
+        return self._unit.value
 
     @property
     def value(self) -> Optional[float]:
@@ -265,26 +279,34 @@ class Package:
         self.parcel: Parcel = parcel
         self.preset: PackagePreset = template or PackagePreset()
 
-    @property
-    def dimension_unit(self):
-        dimensions = [self.parcel.height, self.parcel.width, self.parcel.length]
-        unit = (
+        self._dimension_unit = (
             (self.parcel.dimension_unit or self.preset.dimension_unit)
-            if any(dimensions)
+            if any([self.parcel.height, self.parcel.width, self.parcel.length])
             else self.preset.dimension_unit
         )
-
-        return DimensionUnit[unit]
-
-    @property
-    def weight_unit(self):
-        unit = (
+        self._weight_unit = (
             self.preset.weight_unit
             if self.parcel.weight is None
             else (self.parcel.weight_unit or self.preset.weight_unit)
         )
 
-        return WeightUnit[unit]
+    def _compute_dimension(self, value):
+        dimension = Dimension(value, DimensionUnit[self._dimension_unit])
+        if self._dimension_unit == self.dimension_unit.value:
+            return dimension
+
+        return Dimension(dimension[self.dimension_unit.value], self.dimension_unit)
+
+    @property
+    def dimension_unit(self) -> DimensionUnit:
+        if self.weight_unit == WeightUnit.KG:
+            return DimensionUnit.CM
+
+        return DimensionUnit.IN
+
+    @property
+    def weight_unit(self) -> WeightUnit:
+        return WeightUnit[self._weight_unit]
 
     @property
     def packaging_type(self):
@@ -296,15 +318,15 @@ class Package:
 
     @property
     def width(self):
-        return Dimension(self.preset.width or self.parcel.width, self.dimension_unit)
+        return self._compute_dimension(self.preset.width or self.parcel.width)
 
     @property
     def height(self):
-        return Dimension(self.preset.height or self.parcel.height, self.dimension_unit)
+        return self._compute_dimension(self.preset.height or self.parcel.height)
 
     @property
     def length(self):
-        return Dimension(self.preset.length or self.parcel.length, self.dimension_unit)
+        return self._compute_dimension(self.preset.length or self.parcel.length)
 
     @property
     def girth(self):
@@ -316,7 +338,7 @@ class Package:
 
     @property
     def thickness(self):
-        return Dimension(self.preset.thickness, self.dimension_unit)
+        return self._compute_dimension(self.preset.thickness)
 
     @property
     def has_dimensions(self):
@@ -382,6 +404,13 @@ class Packages(Iterable[Package]):
             (self._items[0].packaging_type or 'your_packaging')
             if len(self._items) == 1 else None
         )
+
+    @property
+    def compatible_units(self) -> Tuple[WeightUnit, DimensionUnit]:
+        if self._items[0].weight_unit == WeightUnit.KG:
+            return WeightUnit.KG, DimensionUnit.CM
+
+        return WeightUnit.LB, DimensionUnit.IN
 
     def validate(self, required: List[str] = None, max_weight: Weight = None):
         required = required or self._required
