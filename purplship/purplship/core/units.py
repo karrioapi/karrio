@@ -118,7 +118,7 @@ class Dimension:
         )
 
     @property
-    def unit(self) -> DimensionUnit:
+    def unit(self) -> str:
         return self._unit.value
 
     @property
@@ -225,7 +225,7 @@ class Weight:
         )
 
     @property
-    def unit(self) -> WeightUnit:
+    def unit(self) -> str:
         return self._unit.value
 
     @property
