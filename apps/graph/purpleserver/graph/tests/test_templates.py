@@ -423,7 +423,7 @@ ADDRESS_TEMPLATE_RESPONSE = {
             },
             'errors': None,
             'id': ANY,
-            'is_default': None,
+            'is_default': False,
             'label': 'Warehouse'
         }
     }
@@ -459,7 +459,7 @@ ADDRESS_TEMPLATE_UPDATE_RESPONSE = {
                 'validation': None
             },
             'id': ANY,
-            'is_default': None,
+            'is_default': False,
             'label': 'Warehouse Update',
             'errors': None,
         }
@@ -482,7 +482,7 @@ PARCEL_TEMPLATE_RESPONSE = {
         'create_template': {
             'errors': None,
             'id': ANY,
-            'is_default': None,
+            'is_default': False,
             'label': 'Purple Pack',
             'parcel': {
                 'dimension_unit': 'CM',
@@ -512,7 +512,7 @@ PARCEL_TEMPLATE_UPDATE_RESPONSE = {
         'update_template': {
             'errors': None,
             'id': ANY,
-            'is_default': None,
+            'is_default': False,
             'label': 'Purple Pack',
             'parcel': {
                 'dimension_unit': 'CM',
@@ -592,7 +592,7 @@ CUSTOMS_TEMPLATE_RESPONSE = {
                 'signer': None
             },
             'id': ANY,
-            'is_default': None,
+            'is_default': False,
             'label': 'Customs info template',
             'errors': None,
         }
@@ -617,7 +617,7 @@ CUSTOMS_TEMPLATE_UPDATE_RESPONSE = {
     "data": {
         "update_template": {
             "id": ANY,
-            "is_default": None,
+            "is_default": False,
             "label": "Customs info template",
             "customs": {
                 "aes": None,

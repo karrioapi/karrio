@@ -54,28 +54,28 @@ class Query(graphene.ObjectType):
         return [serializers.DefaultTemplateSerializer(template).data for template in templates]
 
     def resolve_address_templates(self, info, **kwargs):
-        return graph.Template.objects.access_with(info.context.user).filter(address__isnull=False, **kwargs)
+        return graph.Template.objects.access_with(info.context.user).filter(address__isnull=False)
 
     def resolve_customs_templates(self, info, **kwargs):
-        return graph.Template.objects.access_with(info.context.user).filter(customs__isnull=False, **kwargs)
+        return graph.Template.objects.access_with(info.context.user).filter(customs__isnull=False)
 
     def resolve_parcel_templates(self, info, **kwargs):
-        return graph.Template.objects.access_with(info.context.user).filter(parcel__isnull=False, **kwargs)
+        return graph.Template.objects.access_with(info.context.user).filter(parcel__isnull=False)
 
     def resolve_log(self, info, **kwargs):
         return info.context.user.apirequestlog_set.filter(**kwargs).first()
 
     def resolve_logs(self, info, **kwargs):
-        return info.context.user.apirequestlog_set.filter(**kwargs).order_by('-requested_at')
+        return info.context.user.apirequestlog_set.order_by('-requested_at')
 
     def resolve_shipments(self, info, **kwargs):
-        return manager.Shipment.objects.access_with(info.context.user).filter(**kwargs)
+        return manager.Shipment.objects.access_with(info.context.user)
 
     def resolve_trackers(self, info, **kwargs):
-        return manager.Tracking.objects.access_with(info.context.user).filter(**kwargs)
+        return manager.Tracking.objects.access_with(info.context.user)
 
     def resolve_webhooks(self, info, **kwargs):
-        return events.Webhook.objects.access_with(info.context.user).filter(**kwargs)
+        return events.Webhook.objects.access_with(info.context.user)
 
 
 class Mutation(graphene.ObjectType):
