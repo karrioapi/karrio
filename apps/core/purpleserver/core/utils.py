@@ -113,7 +113,10 @@ def save_many_to_many_data(
             item.delete()
 
     for data in collection_data:
-        item_instance = collection.filter(id=data.get('id')).first()
+        item_instance = (
+            collection.filter(id=data.pop('id')).first()
+            if 'id' in data else None
+        )
 
         if item_instance is None:
             item = SerializerDecorator[serializer](data=data, **kwargs).save().instance
