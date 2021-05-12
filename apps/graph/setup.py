@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.graph',
-      version='2021.4',
+      version='2021.4.1',
       description='Multi-carrier shipping API Graph module',
       long_description=long_description,
       long_description_content_type="text/markdown",

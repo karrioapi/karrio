@@ -7038,7 +7038,7 @@
               "name": "invoice_date",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Date",
                 "ofType": null
               }
             },
@@ -7176,6 +7176,16 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "CustomsIncoterm",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `Date` scalar type represents a Date\nvalue as specified by\n[iso8601](https://en.wikipedia.org/wiki/ISO_8601).",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Date",
           "possibleTypes": null
         },
         {
@@ -12950,7 +12960,7 @@
               "name": "invoice_date",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Date",
                 "ofType": null
               }
             },

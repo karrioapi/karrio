@@ -9,7 +9,7 @@ carrier.canpar==2021.2
 carrier.dhl-express==2021.4
 carrier.dhl-universal==2021.2
 carrier.dicom==2021.2
-carrier.fedex==2020.3.1
+carrier.fedex==2021.4
 carrier.purolator==2020.4.1
 carrier.royalmail==2021.2
 carrier.sendle==2021.2
@@ -54,7 +54,7 @@ phonenumbers==8.12.22
 Pillow==8.2.0
 promise==2.3
 psycopg2-binary==2.8.6
-purplship==2021.4
+purplship==2021.5
 purplship-server==2021.4.1
 purplship-server.client==2021.4
 purplship-server.core==2021.4
@@ -70,7 +70,7 @@ purplship.canpar==2021.3
 purplship.dhl-express==2021.4
 purplship.dhl-universal==2021.3
 purplship.dicom==2021.3
-purplship.fedex==2021.3
+purplship.fedex==2021.5
 purplship.purolator-courier==2021.3.1
 purplship.royalmail==2021.3
 purplship.sendle==2021.3
