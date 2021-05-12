@@ -513,7 +513,7 @@ PARCEL_TEMPLATE_UPDATE_RESPONSE = {
         "update_template": {
             "errors": None,
             "id": ANY,
-            "is_default": None,
+            "is_default": False,
             "label": "Purple Pack",
             "parcel": {
                 "dimension_unit": "CM",
