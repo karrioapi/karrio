@@ -1,5 +1,5 @@
 from typing import List, Tuple, Optional
-from fedex_lib.track_service_v18 import (
+from fedex_lib.track_service_v19 import (
     TrackDetail,
     TrackRequest,
     TransactionDetail,

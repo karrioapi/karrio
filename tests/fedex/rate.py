@@ -19,7 +19,7 @@ class TestFeDexQuote(unittest.TestCase):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         # Remove timeStamp for testing
         serialized_request = re.sub(
-            "<v26:ShipTimestamp>[^>]+</v26:ShipTimestamp>", "", request.serialize()
+            "<v28:ShipTimestamp>[^>]+</v28:ShipTimestamp>", "", request.serialize()
         )
         self.assertEqual(serialized_request, RateRequestXml)
 
@@ -29,7 +29,7 @@ class TestFeDexQuote(unittest.TestCase):
         )
         # Remove timeStamp for testing
         serialized_request = re.sub(
-            "<v26:ShipTimestamp>[^>]+</v26:ShipTimestamp>", "", request.serialize()
+            "<v28:ShipTimestamp>[^>]+</v28:ShipTimestamp>", "", request.serialize()
         )
 
         self.assertEqual(serialized_request, RateRequestUsingPackagePresetXML)
@@ -138,138 +138,146 @@ RateErrorResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmls
 </SOAP-ENV:Envelope>
 """
 
-RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:v26="http://fedex.com/ws/rate/v26">
+RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:v28="http://fedex.com/ws/rate/v28">
     <tns:Body>
-        <v26:RateRequest>
-            <v26:WebAuthenticationDetail>
-                <v26:UserCredential>
-                    <v26:Key>user_key</v26:Key>
-                    <v26:Password>password</v26:Password>
-                </v26:UserCredential>
-            </v26:WebAuthenticationDetail>
-            <v26:ClientDetail>
-                <v26:AccountNumber>2349857</v26:AccountNumber>
-                <v26:MeterNumber>1293587</v26:MeterNumber>
-            </v26:ClientDetail>
-            <v26:TransactionDetail>
-                <v26:CustomerTransactionId>FTC</v26:CustomerTransactionId>
-            </v26:TransactionDetail>
-            <v26:Version>
-                <v26:ServiceId>crs</v26:ServiceId>
-                <v26:Major>26</v26:Major>
-                <v26:Intermediate>0</v26:Intermediate>
-                <v26:Minor>0</v26:Minor>
-            </v26:Version>
-            <v26:ReturnTransitAndCommit>true</v26:ReturnTransitAndCommit>
-            <v26:RequestedShipment>
+        <v28:RateRequest>
+            <v28:WebAuthenticationDetail>
+                <v28:UserCredential>
+                    <v28:Key>user_key</v28:Key>
+                    <v28:Password>password</v28:Password>
+                </v28:UserCredential>
+            </v28:WebAuthenticationDetail>
+            <v28:ClientDetail>
+                <v28:AccountNumber>2349857</v28:AccountNumber>
+                <v28:MeterNumber>1293587</v28:MeterNumber>
+            </v28:ClientDetail>
+            <v28:TransactionDetail>
+                <v28:CustomerTransactionId>FTC</v28:CustomerTransactionId>
+            </v28:TransactionDetail>
+            <v28:Version>
+                <v28:ServiceId>crs</v28:ServiceId>
+                <v28:Major>28</v28:Major>
+                <v28:Intermediate>0</v28:Intermediate>
+                <v28:Minor>0</v28:Minor>
+            </v28:Version>
+            <v28:ReturnTransitAndCommit>true</v28:ReturnTransitAndCommit>
+            <v28:RequestedShipment>
                 
-                <v26:DropoffType>REGULAR_PICKUP</v26:DropoffType>
-                <v26:PackagingType>YOUR_PACKAGING</v26:PackagingType>
-                <v26:TotalWeight>
-                    <v26:Units>LB</v26:Units>
-                    <v26:Value>4.</v26:Value>
-                </v26:TotalWeight>
-                <v26:PreferredCurrency>USD</v26:PreferredCurrency>
-                <v26:Shipper>
-                    <v26:AccountNumber>2349857</v26:AccountNumber>
-                    <v26:Address>
-                        <v26:PostalCode>H3N1S4</v26:PostalCode>
-                        <v26:CountryCode>CA</v26:CountryCode>
-                    </v26:Address>
-                </v26:Shipper>
-                <v26:Recipient>
-                    <v26:Address>
-                        <v26:City>Lome</v26:City>
-                        <v26:CountryCode>TG</v26:CountryCode>
-                    </v26:Address>
-                </v26:Recipient>
-                <v26:RateRequestTypes>LIST</v26:RateRequestTypes>
-                <v26:RateRequestTypes>PREFERRED</v26:RateRequestTypes>
-                <v26:PackageCount>1</v26:PackageCount>
-                <v26:RequestedPackageLineItems>
-                    <v26:SequenceNumber>1</v26:SequenceNumber>
-                    <v26:GroupPackageCount>1</v26:GroupPackageCount>
-                    <v26:Weight>
-                        <v26:Units>LB</v26:Units>
-                        <v26:Value>4.</v26:Value>
-                    </v26:Weight>
-                    <v26:Dimensions>
-                        <v26:Length>10</v26:Length>
-                        <v26:Width>3</v26:Width>
-                        <v26:Height>3</v26:Height>
-                        <v26:Units>IN</v26:Units>
-                    </v26:Dimensions>
-                </v26:RequestedPackageLineItems>
-            </v26:RequestedShipment>
-        </v26:RateRequest>
+                <v28:DropoffType>REGULAR_PICKUP</v28:DropoffType>
+                <v28:PackagingType>YOUR_PACKAGING</v28:PackagingType>
+                <v28:TotalWeight>
+                    <v28:Units>LB</v28:Units>
+                    <v28:Value>4</v28:Value>
+                </v28:TotalWeight>
+                <v28:PreferredCurrency>USD</v28:PreferredCurrency>
+                <v28:Shipper>
+                    <v28:AccountNumber>2349857</v28:AccountNumber>
+                    <v28:Address>
+                        <v28:PostalCode>H3N1S4</v28:PostalCode>
+                        <v28:CountryCode>CA</v28:CountryCode>
+                        <v28:CountryName>Canada</v28:CountryName>
+                        <v28:Residential>false</v28:Residential>
+                    </v28:Address>
+                </v28:Shipper>
+                <v28:Recipient>
+                    <v28:Address>
+                        <v28:City>Lome</v28:City>
+                        <v28:CountryCode>TG</v28:CountryCode>
+                        <v28:CountryName>Togo</v28:CountryName>
+                        <v28:Residential>false</v28:Residential>
+                    </v28:Address>
+                </v28:Recipient>
+                <v28:RateRequestTypes>LIST</v28:RateRequestTypes>
+                <v28:RateRequestTypes>PREFERRED</v28:RateRequestTypes>
+                <v28:PackageCount>1</v28:PackageCount>
+                <v28:RequestedPackageLineItems>
+                    <v28:SequenceNumber>1</v28:SequenceNumber>
+                    <v28:GroupPackageCount>1</v28:GroupPackageCount>
+                    <v28:Weight>
+                        <v28:Units>LB</v28:Units>
+                        <v28:Value>4</v28:Value>
+                    </v28:Weight>
+                    <v28:Dimensions>
+                        <v28:Length>10</v28:Length>
+                        <v28:Width>3</v28:Width>
+                        <v28:Height>3</v28:Height>
+                        <v28:Units>IN</v28:Units>
+                    </v28:Dimensions>
+                </v28:RequestedPackageLineItems>
+            </v28:RequestedShipment>
+        </v28:RateRequest>
     </tns:Body>
 </tns:Envelope>
 """
 
-RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:v26="http://fedex.com/ws/rate/v26">
+RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:v28="http://fedex.com/ws/rate/v28">
     <tns:Body>
-        <v26:RateRequest>
-            <v26:WebAuthenticationDetail>
-                <v26:UserCredential>
-                    <v26:Key>user_key</v26:Key>
-                    <v26:Password>password</v26:Password>
-                </v26:UserCredential>
-            </v26:WebAuthenticationDetail>
-            <v26:ClientDetail>
-                <v26:AccountNumber>2349857</v26:AccountNumber>
-                <v26:MeterNumber>1293587</v26:MeterNumber>
-            </v26:ClientDetail>
-            <v26:TransactionDetail>
-                <v26:CustomerTransactionId>FTC</v26:CustomerTransactionId>
-            </v26:TransactionDetail>
-            <v26:Version>
-                <v26:ServiceId>crs</v26:ServiceId>
-                <v26:Major>26</v26:Major>
-                <v26:Intermediate>0</v26:Intermediate>
-                <v26:Minor>0</v26:Minor>
-            </v26:Version>
-            <v26:ReturnTransitAndCommit>true</v26:ReturnTransitAndCommit>
-            <v26:RequestedShipment>
+        <v28:RateRequest>
+            <v28:WebAuthenticationDetail>
+                <v28:UserCredential>
+                    <v28:Key>user_key</v28:Key>
+                    <v28:Password>password</v28:Password>
+                </v28:UserCredential>
+            </v28:WebAuthenticationDetail>
+            <v28:ClientDetail>
+                <v28:AccountNumber>2349857</v28:AccountNumber>
+                <v28:MeterNumber>1293587</v28:MeterNumber>
+            </v28:ClientDetail>
+            <v28:TransactionDetail>
+                <v28:CustomerTransactionId>FTC</v28:CustomerTransactionId>
+            </v28:TransactionDetail>
+            <v28:Version>
+                <v28:ServiceId>crs</v28:ServiceId>
+                <v28:Major>28</v28:Major>
+                <v28:Intermediate>0</v28:Intermediate>
+                <v28:Minor>0</v28:Minor>
+            </v28:Version>
+            <v28:ReturnTransitAndCommit>true</v28:ReturnTransitAndCommit>
+            <v28:RequestedShipment>
                 
-                <v26:DropoffType>REGULAR_PICKUP</v26:DropoffType>
-                <v26:PackagingType>FEDEX_PAK</v26:PackagingType>
-                <v26:TotalWeight>
-                    <v26:Units>LB</v26:Units>
-                    <v26:Value>2.2</v26:Value>
-                </v26:TotalWeight>
-                <v26:PreferredCurrency>USD</v26:PreferredCurrency>
-                <v26:Shipper>
-                    <v26:AccountNumber>2349857</v26:AccountNumber>
-                    <v26:Address>
-                        <v26:PostalCode>H3N1S4</v26:PostalCode>
-                        <v26:CountryCode>CA</v26:CountryCode>
-                    </v26:Address>
-                </v26:Shipper>
-                <v26:Recipient>
-                    <v26:Address>
-                        <v26:City>Lome</v26:City>
-                        <v26:CountryCode>TG</v26:CountryCode>
-                    </v26:Address>
-                </v26:Recipient>
-                <v26:RateRequestTypes>LIST</v26:RateRequestTypes>
-                <v26:RateRequestTypes>PREFERRED</v26:RateRequestTypes>
-                <v26:PackageCount>1</v26:PackageCount>
-                <v26:RequestedPackageLineItems>
-                    <v26:SequenceNumber>1</v26:SequenceNumber>
-                    <v26:GroupPackageCount>1</v26:GroupPackageCount>
-                    <v26:Weight>
-                        <v26:Units>LB</v26:Units>
-                        <v26:Value>2.2</v26:Value>
-                    </v26:Weight>
-                    <v26:Dimensions>
-                        <v26:Length>1</v26:Length>
-                        <v26:Width>11</v26:Width>
-                        <v26:Height>14</v26:Height>
-                        <v26:Units>IN</v26:Units>
-                    </v26:Dimensions>
-                </v26:RequestedPackageLineItems>
-            </v26:RequestedShipment>
-        </v26:RateRequest>
+                <v28:DropoffType>REGULAR_PICKUP</v28:DropoffType>
+                <v28:PackagingType>FEDEX_PAK</v28:PackagingType>
+                <v28:TotalWeight>
+                    <v28:Units>LB</v28:Units>
+                    <v28:Value>2.2</v28:Value>
+                </v28:TotalWeight>
+                <v28:PreferredCurrency>USD</v28:PreferredCurrency>
+                <v28:Shipper>
+                    <v28:AccountNumber>2349857</v28:AccountNumber>
+                    <v28:Address>
+                        <v28:PostalCode>H3N1S4</v28:PostalCode>
+                        <v28:CountryCode>CA</v28:CountryCode>
+                        <v28:CountryName>Canada</v28:CountryName>
+                        <v28:Residential>false</v28:Residential>
+                    </v28:Address>
+                </v28:Shipper>
+                <v28:Recipient>
+                    <v28:Address>
+                        <v28:City>Lome</v28:City>
+                        <v28:CountryCode>TG</v28:CountryCode>
+                        <v28:CountryName>Togo</v28:CountryName>
+                        <v28:Residential>false</v28:Residential>
+                    </v28:Address>
+                </v28:Recipient>
+                <v28:RateRequestTypes>LIST</v28:RateRequestTypes>
+                <v28:RateRequestTypes>PREFERRED</v28:RateRequestTypes>
+                <v28:PackageCount>1</v28:PackageCount>
+                <v28:RequestedPackageLineItems>
+                    <v28:SequenceNumber>1</v28:SequenceNumber>
+                    <v28:GroupPackageCount>1</v28:GroupPackageCount>
+                    <v28:Weight>
+                        <v28:Units>LB</v28:Units>
+                        <v28:Value>2.2</v28:Value>
+                    </v28:Weight>
+                    <v28:Dimensions>
+                        <v28:Length>1</v28:Length>
+                        <v28:Width>11</v28:Width>
+                        <v28:Height>14</v28:Height>
+                        <v28:Units>IN</v28:Units>
+                    </v28:Dimensions>
+                </v28:RequestedPackageLineItems>
+            </v28:RequestedShipment>
+        </v28:RateRequest>
     </tns:Body>
 </tns:Envelope>
 """

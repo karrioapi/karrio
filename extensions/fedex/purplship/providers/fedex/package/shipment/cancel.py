@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from fedex_lib.ship_service_v25 import (
+from fedex_lib.ship_service_v26 import (
     DeleteShipmentRequest,
     TrackingId,
     TransactionDetail,
