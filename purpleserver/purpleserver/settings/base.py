@@ -299,8 +299,7 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization',
             'in': 'header',
             'description': """
-                The Purplship API uses API keys to authenticate requests. You can view and manage your 
-                API keys in the Purplship Dashboard.
+                API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.
     
                 Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret 
                 API keys in publicly accessible areas such as GitHub, client-side code, and so forth.

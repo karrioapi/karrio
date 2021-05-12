@@ -11,12 +11,12 @@ EMAIL_SUPPORT = getattr(settings, 'EMAIL_SUPPORT', 'hello@purplship.com')
 SCHEMA_VIEW_DESCRIPTION = f"""
 ## API Reference
 
-Purplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.
+{APP_NAME} is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.
         
-The Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request
-bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
+The {APP_NAME} API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded 
+request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
 
-The Purplship API differs for every account as we release new versions.
+The {APP_NAME} API differs for every account as we release new versions.
 These docs are customized to your version of the API.
 
 
@@ -50,23 +50,23 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
             },
             {
                 "name": "Addresses",
-                "description": """
-                This is an object representing your a Purplship shipping address.
+                "description": f"""
+                This is an object representing your a {APP_NAME} shipping address.
                 
-                You can retrieve all addresses related to your Purplship account.
+                You can retrieve all addresses related to your {APP_NAME} account.
                 """
             },
             {
                 "name": "Proxy",
-                "description": """
-                In some scenarios, all we need is to send request to a carrier using the Purplship unified API.
+                "description": f"""
+                In some scenarios, all we need is to send request to a carrier using the {APP_NAME} unified API.
 
-                The Proxy API comes handy for that as it turn Purplship into a simple middleware that converts and 
+                The Proxy API comes handy for that as it turn {APP_NAME} into a simple middleware that converts and 
                 validate your request and simply forward it to the shipping carrier server.
                 
                 > **Note**
                 >
-                > When using the proxy API, no objects are created in the Purplship system.
+                > When using the proxy API, no objects are created in the {APP_NAME} system.
                 """
             },
         ]
