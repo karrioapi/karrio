@@ -1,6 +1,6 @@
 {% extends "purpleserver/base_site.html" %}
 {% load i18n static %}
-{% block title %}Purplship | Tracking - {{ tracker.tracking_number }}{% endblock %}
+{% block title %} | Tracking - {{ tracker.tracking_number }}{% endblock %}
 
 {% block root %}
   <section class="hero is-fullheight">
@@ -9,7 +9,7 @@
     <div class="container">
 
       <div class="has-text-centered my-6">
-        <img src="{% static 'purpleserver/img/logo.svg' %}" width="100" alt="Purplship" />
+        <img src="{% static 'branding/logo.svg' %}" width="100" alt="Purplship" />
       </div>
 
       <div class="card isolated-card">
@@ -75,7 +75,7 @@
     <div class="hero-footer mb-4">
       <div class="content has-text-centered">
         <p>
-          <a href="https://purplship.com" class="button is-white">Powered by &copy; Purplship</a>
+          <a href="{{ APP_WEBSITE }}" class="button is-white">Powered by &copy; {{ APP_NAME }}</a>
         </p>
       </div>
     </div>
