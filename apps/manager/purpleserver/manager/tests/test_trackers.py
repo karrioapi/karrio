@@ -1,12 +1,10 @@
 import json
-import datetime
 from time import sleep
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
 from purplship.core.models import TrackingDetails, TrackingEvent
 from purpleserver.core.tests import APITestCase
-from purpleserver.manager import models
 
 
 class TestTrackers(APITestCase):

@@ -45,14 +45,14 @@ class TrackersCreate(APIView):
 
     @swagger_auto_schema(
         tags=['Trackers'],
-        operation_id=f"{ENDPOINT_ID}retrieve",
-        operation_summary="Retrieve a shipment tracker",
+        operation_id=f"{ENDPOINT_ID}create",
+        operation_summary="Create a shipment tracker",
         query_serializer=TestFilters(),
         responses={200: TrackingStatus(), 404: ErrorResponse()}
     )
     def get(self, request: Request, carrier_name: str, tracking_number: str):
         """
-        This API retrieves or creates (if non existent) a tracking status object containing the
+        This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
         """
         data = dict(tracking_number=tracking_number)
@@ -72,18 +72,32 @@ class TrackersDetails(APIView):
 
     @swagger_auto_schema(
         tags=['Trackers'],
+        operation_id=f"{ENDPOINT_ID}retrieves",
+        operation_summary="Retrieves a shipment tracker",
+        responses={200: TrackingStatus(), 404: ErrorResponse()}
+    )
+    def get(self, request: Request, pk: str):
+        """
+        Retrieve a shipment tracker
+        """
+        tracker = models.Tracking.objects.access_with(request.user).get(pk=pk)
+
+        return Response(TrackingStatus(tracker).data)
+
+    @swagger_auto_schema(
+        tags=['Trackers'],
         operation_id=f"{ENDPOINT_ID}remove",
-        operation_summary="Remove a shipment tracker",
+        operation_summary="Discard a shipment tracker",
         responses={200: Operation(), 400: ErrorResponse()}
     )
     def delete(self, request: Request, pk: str):
         """
-        Remove a shipment tracker.
+        Discard a shipment tracker.
         """
         tracker = models.Tracking.objects.access_with(request.user).get(pk=pk)
 
         tracker.delete(keep_parents=True)
-        serializer = Operation(dict(operation="Remove a tracker", success=True))
+        serializer = Operation(dict(operation="Discard a tracker", success=True))
         return Response(serializer.data)
 
 
