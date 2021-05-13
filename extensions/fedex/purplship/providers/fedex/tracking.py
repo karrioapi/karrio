@@ -94,7 +94,7 @@ def tracking_request(
             for tracking_number in payload.tracking_numbers
         ],
         TransactionTimeOutValueInMilliseconds=None,
-        ProcessingOptions=None,
+        ProcessingOptions=["INCLUDE_DETAILED_SCANS"],
     )
     return Serializable(request, _request_serializer)
 
