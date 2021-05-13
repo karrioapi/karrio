@@ -43,9 +43,9 @@ class Proxy(BaseProxy):
             _throttle += 0.025
 
             return http(
-                url=f"{self.settings.server_url}/vis/track/pin/{tracking_pin}/summary",
+                url=f"{self.settings.server_url}/vis/track/pin/{tracking_pin}/detail",
                 headers={
-                    "Accept": "application/vnd.cpc.track+xml",
+                    "Accept": "application/vnd.cpc.track-v2+xml",
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
