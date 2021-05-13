@@ -2,15 +2,15 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Purplship API",
-    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request\nbodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.4`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
+    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.4.4`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
     "contact": {
       "email": "hello@purplship.com"
     },
-    "version": "2021.4"
+    "version": "2021.4.4"
   },
   "servers": [
     {
-      "url": "https://app.purplship.com/"
+      "url": "http://app.purplship.com"
     }
   ],
   "security": [
@@ -2135,9 +2135,9 @@
         "tags": [
           "Trackers"
         ],
-        "summary": "Retrieve a shipment tracker",
-        "description": "This API retrieves or creates (if non existent) a tracking status object containing the\ndetails and events of a shipping in progress.",
-        "operationId": "$$$$$$retrieve",
+        "summary": "Create a shipment tracker",
+        "description": "This API creates or retrieves (if existent) a tracking status object containing the\ndetails and events of a shipping in progress.",
+        "operationId": "$$$$$$create",
         "parameters": [
           {
             "name": "carrier_name",
@@ -2191,12 +2191,52 @@
       }
     },
     "/v1/trackers/{id}": {
+      "get": {
+        "tags": [
+          "Trackers"
+        ],
+        "summary": "Retrieves a shipment tracker",
+        "description": "Retrieve a shipment tracker",
+        "operationId": "$$$$$$retrieves",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackingStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Trackers"
         ],
-        "summary": "Remove a shipment tracker",
-        "description": "Remove a shipment tracker.",
+        "summary": "Discard a shipment tracker",
+        "description": "Discard a shipment tracker.",
         "operationId": "$$$$$$remove",
         "parameters": [
           {
@@ -5772,7 +5812,7 @@
     "securitySchemes": {
       "Token": {
         "type": "apiKey",
-        "description": "\nThe Purplship API uses API keys to authenticate requests. You can view and manage your \nAPI keys in the Purplship Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret \nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request), \nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"`.\n\nAPI requests without authentication will also fail.\n",
+        "description": "\nAPI keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.\n\nYour API keys carry many privileges, so be sure to keep them secure! Do not share your secret \nAPI keys in publicly accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication to the API is performed via HTTP Bearer Auth. You do not need to provide a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request), \nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"`.\n\nAPI requests without authentication will also fail.\n",
         "name": "Authorization",
         "in": "header"
       }

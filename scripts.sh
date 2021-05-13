@@ -261,6 +261,12 @@ generate_typescript_client() {
 		-o /local/webapp/api \
 		-c /local/artifacts/config.json \
 		--additional-properties=typescriptThreePlus=true
+  
+  rm -f "${ROOT:?}/webapp/api/apis/index.ts"
+  rm -f "${ROOT:?}/webapp/api/.openapi-generator-ignore"
+  rm -rf "${ROOT:?}/webapp/api/.openapi-generator/"
+
+  pushd "${ROOT:?}/webapp" && git checkout "./api/index.ts"; popd
 
 	cd -
 }
