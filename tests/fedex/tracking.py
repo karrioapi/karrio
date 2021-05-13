@@ -240,6 +240,7 @@ TrackingRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                     <v18:Value>794887075005</v18:Value>
                 </v18:PackageIdentifier>
             </v18:SelectionDetails>
+            <v18:ProcessingOptions>INCLUDE_DETAILED_SCANS</v18:ProcessingOptions>
         </v18:TrackRequest>
     </tns:Body>
 </tns:Envelope>
