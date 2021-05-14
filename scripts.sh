@@ -104,14 +104,17 @@ SETTINGS.objects.create(carrier_id='canadapost', test=True, username='6e93d53968
 }
 
 runservices() {
+  cd "${ROOT:?}"
   docker-compose down &&
   docker-compose up "$@"
+  cd -
 }
 
 # shellcheck disable=SC2120
 rundb() {
+  cd "${ROOT:?}"
   docker-compose down &&
-  docker-compose up -d db
+  docker-compose up -d db adminer
 
   if command -v docker-machine &> /dev/null
   then
@@ -121,6 +124,13 @@ rundb() {
   fi
 
   sleep 5
+  cd -
+}
+
+stopdb() {
+	cd "${ROOT:?}"
+	docker-compose down
+	cd -
 }
 
 kill_server() {
