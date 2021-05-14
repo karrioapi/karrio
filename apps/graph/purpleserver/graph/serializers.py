@@ -50,7 +50,7 @@ def apply_optional_fields(serializer: typing.Type[BaseModelSerializer]):
     return type(_name, (serializer,), dict(Meta=_Meta))
 
 
-class AddressModelSerializer(ModelSerializer, validators.AugmentedAddressSerializer):
+class AddressModelSerializer(validators.AugmentedAddressSerializer, ModelSerializer):
     country_code = serializers.CharField(required=False)
 
     class Meta:
