@@ -65,6 +65,7 @@ PARSED_TRACKING_RESPONSE = [
                 },
             ],
             "tracking_number": "M123",
+            "delivered": False
         }
     ],
     [],

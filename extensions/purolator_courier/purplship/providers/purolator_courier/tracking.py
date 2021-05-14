@@ -15,7 +15,7 @@ from purplship.core.models import (
     Message,
     TrackingEvent,
 )
-from purplship.core.utils import Element, DF
+from purplship.core.utils import Element, DF, XP
 from purplship.core.utils.soap import create_envelope
 from pysoap.envelope import Envelope
 from purplship.core.utils.serializable import Serializable
@@ -36,22 +36,23 @@ def parse_tracking_response(
 
 
 def _extract_tracking(node: Element, settings: Settings) -> TrackingDetails:
-    track = TrackingInformation()
-    track.build(node)
+    track = XP.build(TrackingInformation, node)
+
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=str(track.PIN.Value),
         events=[
             TrackingEvent(
-                date=DF.fdate(cast(Scan, scan).ScanDate),
-                time=DF.ftime(cast(Scan, scan).ScanTime, '%H%M%S'),
-                description=cast(Scan, scan).Description,
-                location=cast(Depot, cast(Scan, scan).Depot).Name,
-                code=cast(Scan, scan).ScanType,
+                date=DF.fdate(scan.ScanDate),
+                time=DF.ftime(scan.ScanTime, '%H%M%S'),
+                description=scan.Description,
+                location=scan.Depot.Name,
+                code=scan.ScanType,
             )
             for scan in track.Scans.Scan
         ],
+        delivered=any(scan.ScanType == "Delivery" for scan in track.Scans.Scan)
     )
 
 
