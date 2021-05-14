@@ -208,8 +208,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT_DIR = config('STATIC_ROOT_DIR', default=BASE_DIR)
-STATIC_ROOT = STATIC_ROOT_DIR / 'purpleserver' / 'staticfiles'
+STATIC_ROOT = config('STATIC_ROOT_DIR', default=(BASE_DIR / 'purpleserver' / 'staticfiles'))
 
 STATICFILES_DIRS = [
     BASE_DIR / 'purpleserver' / 'static' / 'purpleserver',

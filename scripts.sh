@@ -49,19 +49,7 @@ init() {
 
 
 # Project helpers
-
-migrate () {
-  echo "> update database migrations"
-  purplship makemigrations &> /dev/null
-
-  echo "> migrate database schemas"
-  if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
-  then
-    purplship migrate_schemas --shared &> /dev/null
-  else
-    purplship migrate &> /dev/null
-  fi
-
+add_data () {
   echo "> setup superuser and initial data"
   if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
   then
@@ -98,6 +86,21 @@ if not any(get_user_model().objects.all()):
     (echo "from purpleserver.providers.extension.models.canadapost import SETTINGS;
 SETTINGS.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
   fi
+}
+
+migrate () {
+  echo "> update database migrations"
+  purplship makemigrations &> /dev/null
+
+  echo "> migrate database schemas"
+  if [[ "$MULTI_TENANT_ENABLE" == "True" ]];
+  then
+    purplship migrate_schemas --shared &> /dev/null
+  else
+    purplship migrate &> /dev/null
+  fi
+
+  add_data
 
   echo "> collect static files"
   purplship collectstatic --noinput
@@ -180,7 +183,7 @@ test() {
 }
 
 test_services() {
-  TEST=True docker-compose up --build --exit-code-from=purpleserver purpleserver
+  TEST=True docker-compose up --build --exit-code-from=pship pship
 }
 
 clean_builds() {
