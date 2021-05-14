@@ -290,7 +290,7 @@ SWAGGER_SETTINGS = {
     'LOGIN_URL': reverse_lazy('admin:login'),
     'LOGOUT_URL': '/admin/logout',
 
-    'DEFAULT_INFO': 'purpleserver.urls.swagger_info',
+    'DEFAULT_INFO': 'purpleserver.urls.schema.swagger_info',
 
     'SECURITY_DEFINITIONS': {
         'Token': {

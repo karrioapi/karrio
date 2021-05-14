@@ -316,6 +316,12 @@ generate_graphql_schema() {
 	cd -
 }
 
+generate_swagger_schema() {
+	cd "${ROOT:?}"
+	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/openapi/latest.json"
+	cd -
+}
+
 stub_server() {
 echo "
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -361,6 +367,7 @@ alias gen:ts=generate_typescript_client
 alias gen:php=generate_php_client
 alias gen:python=generate_python_client
 alias gen:graph=generate_graphql_schema
+alias gen:api=generate_swagger_schema
 
 
 alias dev:webapp=dev_webapp

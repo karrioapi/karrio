@@ -3,7 +3,6 @@ from django.conf import settings
 from drf_yasg import views, openapi, generators
 from rest_framework import permissions
 
-
 APP_VERSION = getattr(settings, 'VERSION', '')
 APP_NAME = getattr(settings, 'APP_NAME', 'Purplship')
 EMAIL_SUPPORT = getattr(settings, 'EMAIL_SUPPORT', 'hello@purplship.com')
@@ -74,18 +73,19 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
         return swagger
 
 
+swagger_info = openapi.Info(
+    title=f"{APP_NAME} API",
+    default_version=APP_VERSION,
+    description=SCHEMA_VIEW_DESCRIPTION,
+    contact=openapi.Contact(email=EMAIL_SUPPORT),
+)
+
 schema_view = views.get_schema_view(
-    openapi.Info(
-        title=f"{APP_NAME} API",
-        default_version=APP_VERSION,
-        description=SCHEMA_VIEW_DESCRIPTION,
-        contact=openapi.Contact(email=EMAIL_SUPPORT),
-    ),
+    swagger_info,
     public=True,
     permission_classes=(permissions.AllowAny,),
     generator_class=OpenAPISchemaGenerator,
 )
-
 
 urlpatterns = [
     path('shipping-openapi.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
