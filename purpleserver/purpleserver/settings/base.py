@@ -21,6 +21,9 @@ from django.core.management.utils import get_random_secret_key
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+with open(BASE_DIR / 'purpleserver' / 'VERSION', "r") as v:
+    VERSION = v.read()
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -35,13 +38,10 @@ Path(WORK_DIR).mkdir(parents=True, exist_ok=True)
 
 USE_HTTPS = config('USE_HTTPS', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
-CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
-with open(BASE_DIR / 'purpleserver' / 'VERSION', "r") as v:
-    VERSION = v.read()
 
 # HTTPS configuration
 if USE_HTTPS is True:
@@ -162,10 +162,10 @@ DATABASES = {
     'default': {
         'NAME': config('DATABASE_NAME', default='db'),
         'ENGINE': 'django.db.backends.{}'.format(DB_ENGINE),
-        'PASSWORD': config('DATABASE_PASSWORD', default=''),
-        'USER': config('DATABASE_USERNAME', default=''),
-        'HOST': config('DATABASE_HOST', default=''),
-        'PORT': config('DATABASE_PORT', default=''),
+        'PASSWORD': config('DATABASE_PASSWORD', default='postgres'),
+        'USER': config('DATABASE_USERNAME', default='postgres'),
+        'HOST': config('DATABASE_HOST', default='db'),
+        'PORT': config('DATABASE_PORT', default='5432'),
     }
 }
 
@@ -208,8 +208,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATIC_ROOT = BASE_DIR / 'purpleserver' / 'staticfiles'
+STATIC_ROOT_DIR = config('STATIC_ROOT_DIR', default=BASE_DIR)
+STATIC_ROOT = STATIC_ROOT_DIR / 'purpleserver' / 'staticfiles'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'purpleserver' / 'static' / 'purpleserver',
@@ -256,7 +256,7 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -279,7 +279,7 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=15),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
