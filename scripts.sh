@@ -335,6 +335,10 @@ httpd.serve_forever()
 " | python
 }
 
+docs() {
+	cd "${ROOT:?}" && mkdocs serve -a localhost:4002; cd -
+}
+
 
 alias env:new=create_env
 alias env:on=activate_env
