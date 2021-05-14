@@ -8,6 +8,7 @@ from purplship.core.models import (
     TrackingEvent,
     Message,
 )
+from purplship.providers.canadapost.units import TRACKING_DELIVERED_EVENT_CODES
 from purplship.providers.canadapost.error import parse_error_response
 
 
@@ -41,7 +42,7 @@ def _extract_tracking(detail_node: Element, settings: Settings) -> TrackingDetai
             )
             for event in events
         ],
-        delivered=any(e.event_identifier == "1496" for e in events)
+        delivered=any(e.event_identifier in TRACKING_DELIVERED_EVENT_CODES for e in events)
     )
 
 

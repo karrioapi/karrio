@@ -137,3 +137,28 @@ INTERNATIONAL_NON_DELIVERY_OPTION = [
     OptionCode.canadapost_return_to_sender.name,
     OptionCode.canadapost_abandon.name,
 ]
+
+
+TRACKING_DELIVERED_EVENT_CODES = [
+    "1421", 
+    "1422",
+    "1423",
+    "1424",
+    "1425",
+    "1426",
+    "1427",
+    "1428",
+    "1429",
+    "1430",
+    "1431",
+    "1432",
+    "1433",
+    "1434",
+    "1441",
+    "1442",
+    "1496",
+    "1497",
+    "1498",
+    "1499",
+]
+
