@@ -140,7 +140,7 @@ class TemplateModelSerializer(ModelSerializer):
             'parcel': save_one_to_one_data('parcel', ParcelModelSerializer, payload=validated_data, **self._extra)
         }
 
-        ensure_unique_default_related_data(validated_data)
+        ensure_unique_default_related_data(validated_data, **self._extra)
 
         return super().create(data)
 
@@ -155,12 +155,14 @@ class TemplateModelSerializer(ModelSerializer):
         save_one_to_one_data(
             'parcel', ParcelModelSerializer, instance, payload=validated_data, partial=True, **self._extra)
 
-        ensure_unique_default_related_data(validated_data, instance)
+        ensure_unique_default_related_data(validated_data, instance, **self._extra)
 
         return super().update(instance, data)
 
 
-def ensure_unique_default_related_data(data: dict = None, instance: typing.Optional[graph.Template] = None):
+def ensure_unique_default_related_data(
+        data: dict = None, instance: typing.Optional[graph.Template] = None, created_by = None):
+
     if (data or {}).get('is_default', getattr(instance, 'is_default', None)) is not True:
         return
 
@@ -173,7 +175,7 @@ def ensure_unique_default_related_data(data: dict = None, instance: typing.Optio
     else:
         return
 
-    default_templates = graph.Template.objects.filter(**query)
+    default_templates = graph.Template.objects.access_with(created_by).filter(**query)
     if any([template for template in default_templates if template.id != instance.id]):
         for template in default_templates:
             template.is_default = False
