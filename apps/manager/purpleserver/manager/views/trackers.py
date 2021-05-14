@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework import serializers
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
+from django.db.models import Q
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
@@ -62,7 +63,7 @@ class TrackersCreate(APIView):
         query_serializer=TestFilters(),
         responses={200: TrackingStatus(), 404: ErrorResponse()}
     )
-    def get(self, request: Request, carrier_name: str, tracking_number: str):
+    def post(self, request: Request, carrier_name: str, tracking_number: str):
         """
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
@@ -88,11 +89,12 @@ class TrackersDetails(APIView):
         operation_summary="Retrieves a shipment tracker",
         responses={200: TrackingStatus(), 404: ErrorResponse()}
     )
-    def get(self, request: Request, pk: str):
+    def get(self, request: Request, id_or_tracking_number: str):
         """
         Retrieve a shipment tracker
         """
-        tracker = models.Tracking.objects.access_with(request.user).get(pk=pk)
+        tracker = models.Tracking.objects.access_with(request.user).get(
+            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number))
 
         return Response(TrackingStatus(tracker).data)
 
@@ -102,11 +104,12 @@ class TrackersDetails(APIView):
         operation_summary="Discard a shipment tracker",
         responses={200: Operation(), 400: ErrorResponse()}
     )
-    def delete(self, request: Request, pk: str):
+    def delete(self, request: Request, id_or_tracking_number: str):
         """
         Discard a shipment tracker.
         """
-        tracker = models.Tracking.objects.access_with(request.user).get(pk=pk)
+        tracker = models.Tracking.objects.access_with(request.user).get(
+            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number))
 
         tracker.delete(keep_parents=True)
         serializer = Operation(dict(operation="Discard a tracker", success=True))
@@ -114,5 +117,5 @@ class TrackersDetails(APIView):
 
 
 router.urls.append(path('trackers', TrackerList.as_view(), name="trackers-list"))
-router.urls.append(path('trackers/<str:pk>', TrackersDetails.as_view(), name="tracker-details"))
+router.urls.append(path('trackers/<str:id_or_tracking_number>', TrackersDetails.as_view(), name="tracker-details"))
 router.urls.append(path('trackers/<carrier_name>/<tracking_number>', TrackersCreate.as_view(), name="shipment-tracker"))
