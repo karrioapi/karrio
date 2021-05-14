@@ -17,11 +17,10 @@
 ## What's Purplship?
 
 Purplship server is an On-prem or cloud Multi-carrier Shipping API.
-The server is in Python, but you can use any programming language to send API requests to 
-any supported shipping carriers (Canada Post, DHL, FedEx, UPS, Purolator...), from your application.
+The server is in Python, but you can use any programming language to send API requests to any supported shipping carriers from your application.
 
-- [Schedule a Live Demo](https://purplship.com/schedule-demo/)
-- [Join us on Discord](https://discord.gg/kXEa3UMRHd)
+- Book a Live Demo here [purplship.com](https://purplship.com/schedule-demo/)
+- Join us on [Discord](https://discord.gg/kXEa3UMRHd)
 
 
 ## Screenshots
@@ -39,57 +38,125 @@ any supported shipping carriers (Canada Post, DHL, FedEx, UPS, Purolator...), fr
 <details>
 <summary>Deploy with docker compose</summary>
 
+- Create a `docker-compose.yml` file
+
 ```yaml
 version: '3'
 
 services:
   db:
     image: postgres
-    restart: always
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - purplship-db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: "db"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
 
-  purplship:
+  pship:
     image: purplship/purplship-server:[version]
-    restart: always
+    restart: unless-stopped
+    ports:
+      - "5002:5002"
     environment:
       - DEBUG_MODE=True
       - ALLOWED_HOSTS=*
+      - DATABASE_NAME=db
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
-      - DATABASE_NAME=db
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
-    ports:
-      - "5002:5002"
     depends_on:
       - db
 ```
 
-</details>
+- Setup the database
 
-OR use our image 
+```terminal
+docker-compose run --rm --entrypoint="purplship migrate" pship
+```
+
+- Create an admin user
+
+```terminal
+docker-compose run --rm --entrypoint="purplship createsuperuser" pship
+```
+
+- Run the application
+
+```terminal
+docker-compose up
+```
+
+Access the application at http://0.0.0.0:5002
+
+</details>
 
 <details>
-<summary>Run an instance of Postgres image</summary>
+<summary>OR use our image</summary>
+
+- Start a Postgres database
 
 ```bash
-docker run -d --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres
+docker run -d \
+  --name db --rm \
+  -e POSTGRES_DB=db \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  postgres
 ```
+
+- Run your shipping API
+
+```bash
+docker run -d \
+  --name pship --rm \
+  -e DEBUG_MODE=True \
+  --link=db:db -p 5002:5002 \
+  purplship/purplship-server:[version]
+```
+
+- Create an admin user
+
+```terminal
+docker exec -it purplship bash -c "purplship createsuperuser"
+```
+
+Access the application at http://0.0.0.0:5002
 
 </details>
-
-```bash
-docker run --rm --name purplship --link=db:db -p5002:5002 purplship/purplship-server:[version]
-```
 
 ### `Heroku`
 
-Host your own Purplship server for FREE with [One-Click Deploy](https://heroku.com/deploy).
+Host your own Purplship server for FREE with One-Click Deploy.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Purplship/purplship-heroku/tree/main/)
+
+
+## Editions
+
+Purplship is available in two editions - **OSS**, and **Enterprise**.
+Here you can find the Open Source Edition released under the `Apache 2`.
+
+To get the quotation of our Enterprise Edition, please visit www.purplship.com and contact us.
+
+
+|                                          | OSS         | Enterprise   |
+| ---------------------------------------- | ----------- | ------------ |
+| Multi-carrier shipping APIs              | Yes         | Yes          |
+| Carrier accounts                         | Unlimited   | Unlimited    |
+| Hosting                                  | Self-hosted | Self-hosted  |
+| Maintenance & support                    | Community   | Dedicated    |
+| Multi-tenant                             | No          | Yes          |
+| Multi-org (soon)                         | No          | Yes          |
+| Reporting (soon)                         | No          | Yes          |
+| Shipping billing data (soon)             | No          | Yes          |
+| Whitelabel                               | No          | Yes          |
+
+**We encourage you to use the Enterprise edition or sponsor us to sustain this project.**
 
 
 ## Official Client Libraries
@@ -112,9 +179,7 @@ Use the [swagger editor](https://editor.swagger.io/) to generate any additional 
 
 ## License
 
-This project is licensed under the terms of the `AGPL v3` license.
-
-We also release a community image under the `Apache 2` license.
+This project codebase is licensed under the terms of the `AGPL v3` license.
 
 See the [LICENSE file](/LICENSE) for license rights and limitations.
 

@@ -1,14 +1,16 @@
 version: '3'
 
 services:
-  purpleserver:
+  pship:
     build:
       context: ./
       dockerfile: ./.docker/Dockerfile
     image: purplship/purplship-server:latest
+    container_name: pship
     env_file: .env
     volumes:
       - .:/temp/dev
+      - purplship-statics:/static
     ports:
       - "5002:5002"
     depends_on:
@@ -27,6 +29,7 @@ services:
       else
         export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
         export RELOAD=${RELOAD:-False}
+        source /temp/dev/scripts.sh && add_data
         ./entrypoint.sh
       fi
       EOF"
@@ -37,11 +40,11 @@ services:
       - "80:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-      - ./purpleserver/purpleserver/staticfiles:/static
+      - purplship-statics:/static
     networks:
       - web_network
     depends_on:
-      - purpleserver
+      - pship
 
   db:
     image: postgres
@@ -54,6 +57,20 @@ services:
       - "5432:5432"
     networks:
       - db_network
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
+    networks:
+      - db_network
+
+volumes:
+  purplship-statics:
+    driver: local
 
 networks:
   db_network:

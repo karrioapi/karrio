@@ -76,3 +76,8 @@ purplship.yunexpress
 -e ./apps/pricing
 -e ./apps/events
 -e ./apps/client
+
+
+# Dev dependencies
+mkdocs-material
+black
