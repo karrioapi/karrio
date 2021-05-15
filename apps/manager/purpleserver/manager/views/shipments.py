@@ -166,11 +166,10 @@ class ShipmentRates(APIView):
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
             data=ShipmentData(shipment).data, context_user=request.user).save(test=shipment.test_mode).instance
 
-        payload: dict = DP.to_dict(dict(
+        payload: dict = dict(
             rates=Rate(rate_response.rates, many=True).data,
             messages=Message(rate_response.messages, many=True).data,
-            selected_rate=None
-        ))
+        )
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
 
