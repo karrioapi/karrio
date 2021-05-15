@@ -147,7 +147,7 @@ shipment_data = {
         "company_name": "CGI",
         "address_line1": "23 jardin private",
         "city": "Ottawa",
-        "postal_code": "K1K4T3",
+        "postal_code": "K1K 4T3",
         "country_code": "CA",
         "person_name": "Jain",
         "state_code": "ON",

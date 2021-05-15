@@ -66,7 +66,7 @@ if __name__ == "__main__":
     unittest.main()
 
 RatePayload = {
-    "shipper": {"postal_code": "H8Z2Z3", "country_code": "CA"},
+    "shipper": {"postal_code": "H8Z 2Z3", "country_code": "CA"},
     "recipient": {"postal_code": "H8Z2V4", "country_code": "CA"},
     "parcels": [
         {

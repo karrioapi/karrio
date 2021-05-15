@@ -111,7 +111,7 @@ def _create_pickup_request(payload: PickupRequest, settings: Settings, update: b
         ),
         city=payload.address.city,
         province=payload.address.state_code,
-        postal_code=payload.address.postal_code,
+        postal_code=(payload.address.postal_code or "").replace(" ", ""),
     )
 
     request = RequestType(
@@ -163,7 +163,7 @@ def _create_pickup_request(payload: PickupRequest, settings: Settings, update: b
 
 
 def _get_pickup_availability(payload: PickupRequest):
-    return Job(id="availability", data=payload.address.postal_code)
+    return Job(id="availability", data=(payload.address.postal_code or "").replace(" ", ""))
 
 
 def _create_pickup(availability_response: str, payload: PickupRequest, settings: Settings):

@@ -90,6 +90,8 @@ def rate_request(
     package = Packages(payload.parcels, PackagePresets, required=["weight"]).single
     services = Services(payload.services, ServiceType)
     options = Options(payload.options, OptionCode)
+    recipient_postal_code = (payload.recipient.postal_code or "").replace(" ", "")
+    shipper_postal_code = (payload.shipper.postal_code or "").replace(" ", "")
 
     request = mailing_scenario(
         customer_number=settings.customer_number,
@@ -126,20 +128,20 @@ def rate_request(
             )
             if any(services) else None
         ),
-        origin_postal_code=payload.shipper.postal_code,
+        origin_postal_code=shipper_postal_code,
         destination=destinationType(
             domestic=(
-                domesticType(postal_code=payload.recipient.postal_code)
+                domesticType(postal_code=recipient_postal_code)
                 if (payload.recipient.country_code == Country.CA.name)
                 else None
             ),
             united_states=(
-                united_statesType(zip_code=payload.recipient.postal_code)
+                united_statesType(zip_code=recipient_postal_code)
                 if (payload.recipient.country_code == Country.US.name)
                 else None
             ),
             international=(
-                internationalType(country_code=payload.recipient.postal_code)
+                internationalType(country_code=recipient_postal_code)
                 if (
                     payload.recipient.country_code
                     not in [Country.US.name, Country.CA.name]
