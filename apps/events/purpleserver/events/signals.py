@@ -59,7 +59,7 @@ def tracker_updated(sender, instance, created, raw, using, update_fields, *args,
     """
     if created:
         event = EventTypes.tracker_created.value
-    elif any(field in update_fields for field in ['delivered', 'events']):
+    elif any(field in (update_fields or []) for field in ['delivered', 'events']):
         event = EventTypes.tracker_updated.value
     else:
         return

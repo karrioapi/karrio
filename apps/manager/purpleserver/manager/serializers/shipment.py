@@ -200,13 +200,14 @@ def create_shipment_tracker(shipment: Optional[models.Shipment]):
                 date=DF.fdate(shipment.updated_at),
                 description="Label created and ready for shipment",
                 location="",
-                code="ready",
+                code="CREATED",
                 time=DF.ftime(shipment.updated_at)
             ))],
             delivered=False,
             test_mode=shipment.test_mode,
             tracking_carrier=shipment.selected_rate_carrier,
-            created_by=shipment.created_by
+            created_by=shipment.created_by,
+            shipment=shipment,
         )
         logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
     except Exception as e:

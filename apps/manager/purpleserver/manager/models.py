@@ -190,6 +190,8 @@ class Tracking(OwnedEntity):
     # System Reference fields
 
     tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
+    shipment = models.ForeignKey(
+        'Shipment', on_delete=models.CASCADE, related_name='tracker', null=True)
 
     # Computed properties
 
@@ -250,7 +252,6 @@ class Shipment(OwnedEntity):
     def delete(self, *args, **kwargs):
         self.parcels.all().delete()
         self.customs and self.customs.delete()
-        Tracking.objects.filter(tracking_number=self.tracking_number).delete()
         return super().delete(*args, **kwargs)
 
     # Computed properties
