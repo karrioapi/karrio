@@ -93,7 +93,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                     address_line_2=SF.concat_str(payload.shipper.address_line2, join=True),
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
-                    postal_zip_code=payload.shipper.postal_code,
+                    postal_zip_code=(payload.shipper.postal_code or "").replace(" ", ""),
                 ),
             ),
             destination=DestinationType(
@@ -111,7 +111,7 @@ def shipment_request(payload: ShipmentRequest, _) -> Serializable[NonContractShi
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,
                     country_code=payload.recipient.country_code,
-                    postal_zip_code=payload.recipient.postal_code,
+                    postal_zip_code=(payload.recipient.postal_code or "").replace(" ", ""),
                 ),
             ),
             options=(
