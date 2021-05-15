@@ -57,7 +57,7 @@ services:
       POSTGRES_PASSWORD: "postgres"
 
   pship:
-    image: purplship/purplship-server:[version]
+    image: danh91.docker.scarf.sh/purplship/purplship-server:[version]
     restart: unless-stopped
     ports:
       - "5002:5002"
@@ -116,7 +116,7 @@ docker run -d \
   --name pship --rm \
   -e DEBUG_MODE=True \
   --link=db:db -p 5002:5002 \
-  purplship/purplship-server:[version]
+  danh91.docker.scarf.sh/purplship/purplship-server:[version]
 ```
 
 - Create an admin user
