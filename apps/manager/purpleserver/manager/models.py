@@ -184,7 +184,7 @@ class Tracking(OwnedEntity):
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
     tracking_number = models.CharField(max_length=50)
     events = JSONField(blank=True, null=True, default=[])
-    delivered = models.BooleanField(null=True)
+    delivered = models.BooleanField(blank=True, null=True, default=False)
     test_mode = models.BooleanField(null=False)
 
     # System Reference fields
@@ -250,6 +250,7 @@ class Shipment(OwnedEntity):
     def delete(self, *args, **kwargs):
         self.parcels.all().delete()
         self.customs and self.customs.delete()
+        Tracking.objects.filter(tracking_number=self.tracking_number).delete()
         return super().delete(*args, **kwargs)
 
     # Computed properties

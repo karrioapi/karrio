@@ -25,6 +25,7 @@ urlpatterns = [
     path('api_logs', index, name='api_logs'),
     path('api_logs/<str:log_id>', index, name='api_logs'),
     path('buy_label/<str:id>', index, name='buy_label'),
+    path('shipments/<str:id>', index, name='shipment_details'),
     path('configurations/<str:config_name>', index, name='configurations'),
     path('trackers', index, name='trackers'),
     path('settings/<str:settings_name>', index, name='settings'),

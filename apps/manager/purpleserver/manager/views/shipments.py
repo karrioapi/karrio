@@ -30,6 +30,7 @@ from purpleserver.core.serializers import (
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import (
     reset_related_shipment_rates,
+    create_shipment_tracker,
     ShipmentSerializer,
     ShipmentPurchaseData,
     ShipmentValidationData,
@@ -319,6 +320,7 @@ class ShipmentPurchase(APIView):
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response), context_user=request.user).save()
+        create_shipment_tracker(shipment)
 
         return Response(Shipment(shipment).data)
 

@@ -152,6 +152,9 @@ class TestShipmentPurchase(TestShipmentFixture):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PURCHASED_SHIPMENT)
 
+        # Assert a tracker is created for the newly purchased shipment
+        self.assertTrue(models.Tracking.objects.filter(tracking_number=PURCHASED_SHIPMENT['tracking_number']).exists())
+
     def test_cancel_shipment(self):
         url = reverse('purpleserver.manager:shipment-details', kwargs=dict(pk=self.shipment.pk))
 
@@ -177,6 +180,8 @@ class TestShipmentPurchase(TestShipmentFixture):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, CANCEL_PURCHASED_RESPONSE)
+
+        self.assertFalse(models.Tracking.objects.filter(tracking_number=self.shipment.tracking_number).exists())
 
 
 SHIPMENT_DATA = {

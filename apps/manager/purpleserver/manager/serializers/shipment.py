@@ -1,9 +1,10 @@
+import logging
 from typing import Optional
 from django.db import transaction
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
-from purplship.core.utils import DP
+from purplship.core.utils import DP, DF
 from purpleserver.core.gateway import Shipments, Carriers
 from purpleserver.core.utils import SerializerDecorator, owned_model_serializer, save_one_to_one_data, \
     save_many_to_many_data
@@ -27,6 +28,8 @@ from purpleserver.manager.serializers.customs import CustomsSerializer
 from purpleserver.manager.serializers.parcel import ParcelSerializer
 from purpleserver.manager.serializers.rate import RateSerializer
 import purpleserver.manager.models as models
+
+logger = logging.getLogger(__name__)
 
 
 @owned_model_serializer
@@ -187,3 +190,24 @@ def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
         shipment.rates = []
         shipment.messages = []
         shipment.save()
+
+
+def create_shipment_tracker(shipment: Optional[models.Shipment]):
+    try:
+        models.Tracking.objects.create(
+            tracking_number=shipment.tracking_number,
+            events=[DP.to_dict(datatypes.TrackingEvent(
+                date=DF.fdate(shipment.updated_at),
+                description="Label created and ready for shipment",
+                location="",
+                code="ready",
+                time=DF.ftime(shipment.updated_at)
+            ))],
+            delivered=False,
+            test_mode=shipment.test_mode,
+            tracking_carrier=shipment.selected_rate_carrier,
+            created_by=shipment.created_by
+        )
+        logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
+    except Exception as e:
+        logger.exception("Failed to create new label tracker", e)
