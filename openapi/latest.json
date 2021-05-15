@@ -2,34 +2,20 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Purplship API",
-    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.4.4`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
+    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.5-rc`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
     "contact": {
       "email": "hello@purplship.com"
     },
-    "version": "2021.4.4"
+    "version": "2021.5-rc"
   },
   "servers": [
     {
-      "url": "http://app.purplship.com"
+      "url": "https://app.purplship.com/"
     }
   ],
   "security": [
     {
       "Token": []
-    }
-  ],
-  "tags": [
-    {
-      "name": "API",
-      "description": "\nFor client-side code, we encourage the use of JSON Web Tokens (JWT) to authenticate your app.\nThe JWT tokens changes for every new session and have an expiration timestamp.\n\nTo authenticate via JWT access key, use `-H \"Authorization: Bearer eyJ0eXAxxx...xxxaS86FjLH6U\"`.\n"
-    },
-    {
-      "name": "Addresses",
-      "description": "\nThis is an object representing your a Purplship shipping address.\n\nYou can retrieve all addresses related to your Purplship account.\n"
-    },
-    {
-      "name": "Proxy",
-      "description": "\nIn some scenarios, all we need is to send request to a carrier using the Purplship unified API.\n\nThe Proxy API comes handy for that as it turn Purplship into a simple middleware that converts and \nvalidate your request and simply forward it to the shipping carrier server.\n\n> **Note**\n>\n> When using the proxy API, no objects are created in the Purplship system.\n"
     }
   ],
   "paths": {
@@ -1000,6 +986,15 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "test_mode",
+            "in": "query",
+            "description": "This flag filter out pickup created from carriers in test or live mode",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
           }
         ],
         "responses": {
@@ -1676,6 +1671,15 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "test_mode",
+            "in": "query",
+            "description": "This flag filter out shipment created in test or prod mode",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
           }
         ],
         "responses": {
@@ -1708,6 +1712,17 @@
         "summary": "Create a shipment",
         "description": "Create a new shipment instance.",
         "operationId": "$$$$$create",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "Create shipment in test or prod mode",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2104,6 +2119,15 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "test_mode",
+            "in": "query",
+            "description": "This flag filter out tracker created from carriers in test or live mode",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
           }
         ],
         "responses": {
@@ -2190,7 +2214,7 @@
         }
       }
     },
-    "/v1/trackers/{id}": {
+    "/v1/trackers/{id_or_tracking_number}": {
       "get": {
         "tags": [
           "Trackers"
@@ -2200,7 +2224,7 @@
         "operationId": "$$$$$$retrieves",
         "parameters": [
           {
-            "name": "id",
+            "name": "id_or_tracking_number",
             "in": "path",
             "required": true,
             "schema": {
@@ -2240,7 +2264,7 @@
         "operationId": "$$$$$$remove",
         "parameters": [
           {
-            "name": "id",
+            "name": "id_or_tracking_number",
             "in": "path",
             "required": true,
             "schema": {
@@ -2295,6 +2319,15 @@
             "description": "The initial index from which to return the results.",
             "schema": {
               "type": "integer"
+            }
+          },
+          {
+            "name": "test_mode",
+            "in": "query",
+            "description": "This flag filter out webhooks created in test or live mode",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
             }
           }
         ],

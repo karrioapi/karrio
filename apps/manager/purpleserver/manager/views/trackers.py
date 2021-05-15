@@ -63,7 +63,7 @@ class TrackersCreate(APIView):
         query_serializer=TestFilters(),
         responses={200: TrackingStatus(), 404: ErrorResponse()}
     )
-    def post(self, request: Request, carrier_name: str, tracking_number: str):
+    def get(self, request: Request, carrier_name: str, tracking_number: str):
         """
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
