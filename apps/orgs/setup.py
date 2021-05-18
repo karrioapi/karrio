@@ -1,11 +1,11 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
       name='purplship-server.orgs',
-      version='2021.4',
+      version='2021.5-rc2',
       description='Multi-carrier shipping API organization module',
       long_description=long_description,
       long_description_content_type="text/markdown",
@@ -13,11 +13,12 @@ setup(
       author='Purplship',
       author_email='hello@purplship.com',
       license='AGPLv3',
-      packages=find_packages("."),
+      packages=find_namespace_packages("."),
       install_requires=[
             'django-extensions',
             'django-organizations',
             'purplship-server.core',
+            'purplship-server.graph',
       ],
       dependency_links=[
             'https://git.io/purplship',

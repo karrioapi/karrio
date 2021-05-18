@@ -6,7 +6,7 @@ from rest_framework.serializers import Serializer, CharField, ChoiceField, Boole
 
 from purplship.core.utils import DP, DF
 from purpleserver.core.gateway import Shipments, Carriers
-from purpleserver.core.utils import SerializerDecorator, owned_model_serializer, save_one_to_one_data, \
+from purpleserver.serializers import SerializerDecorator, owned_model_serializer, save_one_to_one_data, \
     save_many_to_many_data
 import purpleserver.core.datatypes as datatypes
 from purpleserver.providers.models import Carrier
@@ -54,50 +54,41 @@ class ShipmentSerializer(ShipmentData):
         super().__init__(instance, **kwargs)
 
     @transaction.atomic
-    def create(self, validated_data: dict) -> models.Shipment:
+    def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
         test = validated_data.get('test')
-        context_user = self._context_user
         carrier_ids = validated_data.get('carrier_ids', [])
-        carriers = Carriers.list(carrier_ids=carrier_ids, created_by=context_user) if any(carrier_ids) else []
+        carriers = Carriers.list(carrier_ids=carrier_ids, test=test, context=context) if any(carrier_ids) else []
+
+        # Get live rates
         rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](
-            data=validated_data, context_user=context_user).save(test=test).instance
-        test_mode = all([r.test_mode for r in rate_response.rates])
+            data=validated_data, context=context).save(test=test).instance
 
         shipment_data = {
-            key: value for key, value in validated_data.items()
-            if key in models.Shipment.DIRECT_PROPS and value is not None
+            **{
+                key: value for key, value in validated_data.items()
+                if key in models.Shipment.DIRECT_PROPS and value is not None
+            },
+            'customs': save_one_to_one_data('customs', CustomsSerializer, payload=validated_data, context=context),
+            'shipper': save_one_to_one_data('shipper', AddressSerializer, payload=validated_data, context=context),
+            'recipient': save_one_to_one_data('recipient', AddressSerializer, payload=validated_data, context=context),
         }
-
-        shipment_data.update(
-            shipper=save_one_to_one_data(
-                'shipper', AddressSerializer, payload=validated_data, context_user=context_user),
-
-            recipient=save_one_to_one_data(
-                'recipient', AddressSerializer, payload=validated_data, context_user=context_user),
-
-            customs=save_one_to_one_data(
-                'customs', CustomsSerializer, payload=validated_data, context_user=context_user),
-        )
 
         shipment = models.Shipment.objects.create(**{
             **shipment_data,
-            'test_mode': test_mode,
-            'created_by': context_user,
             'rates': DP.to_dict(rate_response.rates),
-            'messages': DP.to_dict(rate_response.messages)
+            'messages': DP.to_dict(rate_response.messages),
+            'test_mode': all([r.test_mode for r in rate_response.rates]),
         })
         shipment.carriers.set(carriers)
 
-        save_many_to_many_data(
-            'parcels', ParcelSerializer, shipment, payload=validated_data, context_user=self._context_user)
+        save_many_to_many_data('parcels', ParcelSerializer, shipment, payload=validated_data, context=context)
 
         return shipment
 
     @transaction.atomic
-    def update(self, instance: models.Shipment, validated_data: dict) -> models.Shipment:
+    def update(self, instance: models.Shipment, validated_data: dict, context: dict) -> models.Shipment:
         changes = []
         data = validated_data.copy()
-        context_user = self._context_user or instance.created_by
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS:
@@ -116,7 +107,7 @@ class ShipmentSerializer(ShipmentData):
 
         if validated_data.get('customs') is not None:
             changes.append('customs')
-            save_one_to_one_data('customs', CustomsSerializer, instance, payload=validated_data, context_user=context_user)
+            save_one_to_one_data('customs', CustomsSerializer, instance, payload=validated_data, context=context)
 
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
@@ -149,7 +140,7 @@ class ShipmentValidationData(Shipment):
     rates = Rate(many=True, required=True)
     payment = Payment(required=True)
 
-    def create(self, validated_data: dict) -> datatypes.Shipment:
+    def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
         return Shipments.create(
             ShippingRequest(validated_data).data,
             resolve_tracking_url=(
@@ -163,7 +154,7 @@ class ShipmentValidationData(Shipment):
 
 class ShipmentCancelSerializer(Shipment):
 
-    def update(self, instance: models.Shipment, validated_data: dict) -> datatypes.ConfirmationResponse:
+    def update(self, instance: models.Shipment, validated_data: dict, **kwargs) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
             response = Shipments.cancel(
                 payload=ShipmentCancelRequest(instance).data,

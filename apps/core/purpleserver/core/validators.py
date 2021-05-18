@@ -4,7 +4,7 @@ import requests
 import phonenumbers
 from constance import config
 from datetime import datetime
-from rest_framework import serializers
+from purpleserver import serializers
 from purplship.core import units, utils
 from purpleserver.core import dataunits, datatypes
 

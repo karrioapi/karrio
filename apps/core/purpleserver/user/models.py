@@ -1,6 +1,13 @@
+import os
+import binascii
+import importlib
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserManager
 from django.utils.translation import ugettext_lazy as _
+from rest_framework.authtoken.models import Token as BaseToken
+
+from purpleserver.core.models import ControlledAccessModel
 
 
 class UserManager(DefaultUserManager):
@@ -49,3 +56,29 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    def delete(self, *args, **kwargs):
+        self.tokens.all().delete()
+        super().delete(*args, **kwargs)
+
+
+class Token(BaseToken, ControlledAccessModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tokens'
+    )
+
+    class Meta:
+        verbose_name = _("Token")
+        verbose_name_plural = _("Tokens")
+
+    @property
+    def pk(self):
+        return self.key
+
+    @classmethod
+    def generate_key(cls):
+        return f"key_{binascii.hexlify(os.urandom(16)).decode()}"
+
+    @property
+    def organization(self):
+        return (self.org.first() if hasattr(self, 'org') else None)

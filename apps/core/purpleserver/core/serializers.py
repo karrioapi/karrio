@@ -1,7 +1,7 @@
 from enum import Enum
 from drf_yasg import openapi
 from rest_framework.serializers import (
-    Serializer, CharField, FloatField,
+    CharField, FloatField,
     BooleanField, IntegerField, ListField,
     ChoiceField, DictField, URLField
 )
@@ -12,6 +12,7 @@ from purplship.core.units import (
     LabelType
 )
 from purpleserver.providers.models import MODELS
+from purpleserver.serializers import Serializer
 from purpleserver.core.validators import (
     AugmentedAddressSerializer,
     PresetSerializer,

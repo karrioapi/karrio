@@ -1,6 +1,6 @@
 from django.urls import path
 from django.conf import settings
-from drf_yasg import views, openapi, generators
+from drf_yasg import views, openapi, generators, inspectors
 from rest_framework import permissions
 
 APP_VERSION = getattr(settings, 'VERSION', '')
@@ -71,6 +71,17 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
         ]
 
         return swagger
+
+
+class SwaggerAutoSchema(inspectors.SwaggerAutoSchema):
+    def get_operation(self, operation_keys=None):
+        operation = super().get_operation(operation_keys)
+
+        return openapi.Operation(
+            operation.operation_id,
+            **{k: v for k,v in operation.items() if k != operation.operation_id},
+            **{'x-code-samples': self.overrides.get('code_examples')}
+        )
 
 
 swagger_info = openapi.Info(

@@ -1,9 +1,7 @@
-from purpleserver.settings.base import INSTALLED_APPS
+from purpleserver.settings.base import *
 
 
-INSTALLED_APPS = [
-    *INSTALLED_APPS,
-
+INSTALLED_APPS += [
     'graphene_django',
     'django_filters',
 ]

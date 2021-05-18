@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
-from purpleserver.core.utils import SerializerDecorator, PaginatedResult
+from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, AddressData, Address
 from purpleserver.manager.serializers import AddressSerializer, reset_related_shipment_rates
@@ -36,7 +36,7 @@ class AddressList(GenericAPIView):
         """
         Retrieve all addresses.
         """
-        addresses = models.Address.objects.access_with(request.user).all()
+        addresses = models.Address.access_by(request).all()
         response = self.paginate_queryset(Address(addresses, many=True).data)
         return self.get_paginated_response(response)
 
@@ -51,7 +51,7 @@ class AddressList(GenericAPIView):
         """
         Create a new address.
         """
-        address = SerializerDecorator[AddressSerializer](data=request.data, context_user=request.user).save().instance
+        address = SerializerDecorator[AddressSerializer](data=request.data, context=request).save().instance
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
@@ -67,7 +67,7 @@ class AddressDetail(APIView):
         """
         Retrieve an address.
         """
-        address = models.Address.objects.access_with(request.user).get(pk=pk)
+        address = models.Address.access_by(request).get(pk=pk)
         return Response(Address(address).data)
 
     @swagger_auto_schema(
@@ -81,7 +81,7 @@ class AddressDetail(APIView):
         """
         update an address.
         """
-        address = models.Address.objects.access_with(request.user).get(pk=pk)
+        address = models.Address.access_by(request).get(pk=pk)
         shipment = address.shipper.first() or address.recipient.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(

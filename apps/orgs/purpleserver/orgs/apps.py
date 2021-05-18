@@ -1,5 +1,7 @@
 from django.apps import AppConfig
+from django.utils.translation import gettext_lazy as _
 
 
-class OrganizationConfig(AppConfig):
+class OrgsConfig(AppConfig):
     name = 'purpleserver.orgs'
+    verbose_name = _("Organizations")

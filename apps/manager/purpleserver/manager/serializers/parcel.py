@@ -1,5 +1,5 @@
 from purpleserver.core.serializers import ParcelData
-from purpleserver.core.utils import owned_model_serializer
+from purpleserver.serializers import owned_model_serializer
 from purpleserver.manager.models import Parcel
 
 
@@ -12,11 +12,10 @@ class ParcelSerializer(ParcelData):
 
         super().__init__(*args, **kwargs)
 
-    def create(self, validated_data: dict) -> Parcel:
-        validated_data.update(created_by=self._context_user)
+    def create(self, validated_data: dict, **kwargs) -> Parcel:
         return Parcel.objects.create(**validated_data)
 
-    def update(self, instance: Parcel, validated_data: dict) -> Parcel:
+    def update(self, instance: Parcel, validated_data: dict, **kwargs) -> Parcel:
         for key, val in validated_data.items():
             setattr(instance, key, val)
 

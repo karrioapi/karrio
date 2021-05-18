@@ -44,7 +44,12 @@ create_env() {
 
 init() {
     create_env &&
-    pip install -r "${ROOT:?}/requirements.dev.txt"
+    pip install -r "${ROOT:?}/requirements.dev.txt" &&
+
+    if [[ "$*" != *--no-insider* ]];
+	then
+    	pip install -r "${ROOT:?}/requirements.insider.dev.txt"
+	fi
 }
 
 
@@ -81,7 +86,7 @@ if not any(get_user_model().objects.all()):
    get_user_model().objects.create_superuser('admin@domain.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
-    (echo "from django.contrib.auth import get_user_model; from rest_framework.authtoken.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
+    (echo "from django.contrib.auth import get_user_model; from purpleserver.user.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
 
     (echo "from purpleserver.providers.extension.models.canadapost import SETTINGS;
 SETTINGS.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
@@ -171,15 +176,15 @@ run_mail_server() {
 }
 
 test() {
-  if [[ "$*" == *--rdb* ]]; then
-    rundb
-  fi
+	if [[ "$*" == *--rdb* ]]; then
+		rundb
+	fi
 
-  purplship test --failfast purpleserver.proxy.tests &&
-  purplship test --failfast purpleserver.pricing.tests &&
-  purplship test --failfast purpleserver.manager.tests &&
-  purplship test --failfast purpleserver.events.tests &&
-  purplship test --failfast purpleserver.graph.tests
+	purplship test --failfast purpleserver.proxy.tests &&
+	purplship test --failfast purpleserver.pricing.tests &&
+	purplship test --failfast purpleserver.manager.tests &&
+	purplship test --failfast purpleserver.events.tests &&
+	purplship test --failfast purpleserver.graph.tests
 }
 
 test_services() {

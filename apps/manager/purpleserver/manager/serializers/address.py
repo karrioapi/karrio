@@ -1,4 +1,4 @@
-from purpleserver.core.utils import owned_model_serializer
+from purpleserver.serializers import owned_model_serializer
 from purplship.core import utils
 from purpleserver.core import gateway
 from purpleserver.core.serializers import AddressData
@@ -31,11 +31,10 @@ class AddressSerializer(AddressData):
 
         return validated_data
 
-    def create(self, validated_data: dict) -> models.Address:
-        validated_data.update(created_by=self._context_user)
+    def create(self, validated_data: dict, **kwargs) -> models.Address:
         return models.Address.objects.create(**validated_data)
 
-    def update(self, instance: models.Address, validated_data: dict) -> models.Address:
+    def update(self, instance: models.Address, validated_data: dict, **kwargs) -> models.Address:
         for key, val in validated_data.items():
             setattr(instance, key, val)
 

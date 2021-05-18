@@ -1,5 +1,5 @@
 from purpleserver.core.serializers import CommodityData, Commodity
-from purpleserver.core.utils import owned_model_serializer
+from purpleserver.serializers import owned_model_serializer
 import purpleserver.manager.models as models
 
 
@@ -12,11 +12,10 @@ class CommoditySerializer(Commodity):
 
         super().__init__(*args, **kwargs)
 
-    def create(self, validated_data: dict) -> Commodity:
-        validated_data.update(created_by=self._context_user)
+    def create(self, validated_data: dict, **kwargs) -> Commodity:
         return models.Commodity.objects.create(**validated_data)
 
-    def update(self, instance: models.Commodity, validated_data: dict) -> models.Commodity:
+    def update(self, instance: models.Commodity, validated_data: dict, **kwargs) -> models.Commodity:
         for key, val in validated_data.items():
             setattr(instance, key, val)
 

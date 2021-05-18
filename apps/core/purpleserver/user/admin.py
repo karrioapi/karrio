@@ -1,7 +1,15 @@
 from django.contrib import admin
+from django.contrib.admin.utils import quote
+from django.contrib.admin.views.main import ChangeList
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.urls import reverse
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import ugettext_lazy as _
-from purpleserver.user.models import User
+
+from purpleserver.user.models import Token
+
+User = get_user_model()
 
 
 class UserAdmin(BaseUserAdmin):
@@ -25,4 +33,11 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
 
 
+class TokenAdmin(admin.ModelAdmin):
+    list_display = ('key', 'user', 'created')
+    fields = ('user',)
+    ordering = ('-created',)
+
+
 admin.site.register(User, UserAdmin)
+admin.site.register(Token, TokenAdmin)

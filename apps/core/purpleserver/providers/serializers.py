@@ -2,7 +2,7 @@ from typing import Dict, Type
 
 from rest_framework.serializers import ModelSerializer, Serializer, ChoiceField
 
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.serializers import SerializerDecorator
 from purpleserver.core.serializers import CARRIERS, PlainDictField
 from purpleserver.providers.models import MODELS, Carrier
 
@@ -51,7 +51,7 @@ class CarrierSerializer(Serializer):
 
         super().__init__(*args, **kwargs)
 
-    def create(self, validated_data: dict) -> Carrier:
+    def create(self, validated_data: dict, **kwargs) -> Carrier:
         created_by = validated_data["created_by"]
         carrier_name = validated_data['carrier_name']
         carrier_config = {
@@ -61,7 +61,7 @@ class CarrierSerializer(Serializer):
 
         return MODELS[carrier_name].objects.create(**carrier_config)
 
-    def update(self, instance: Carrier, validated_data: dict) -> Carrier:
+    def update(self, instance: Carrier, validated_data: dict, **kwargs) -> Carrier:
         carrier_config = validated_data['carrier_config']
 
         for key, val in carrier_config.items():

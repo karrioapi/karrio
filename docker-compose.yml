@@ -20,16 +20,20 @@ services:
       - web_network
     entrypoint: |
       bash -c "bash -s <<EOF
-      cd /temp/dev &&
-      pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade --src /temp/src &&
+      cd /temp/dev && pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade --src /temp/src &&
       cd /app &&
       if [[ "${TEST:-False}" == "True" ]];
       then
-        source /temp/dev/scripts.sh && test
+        source /temp/dev/scripts.sh && \
+        test --no-insider && \
+        cd /temp/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade --src /temp/src && \
+        test
       else
         export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
         export RELOAD=${RELOAD:-False}
-        source /temp/dev/scripts.sh && add_data
+        cd /temp/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade --src /temp/src && \
+        source /temp/dev/scripts.sh && \
+        add_data
         ./entrypoint.sh
       fi
       EOF"

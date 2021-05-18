@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.core.views.api import APIView
 from purpleserver.proxy.router import router
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.serializers import SerializerDecorator
 from purpleserver.core.gateway import Shipments
 from purpleserver.core.serializers import (
     CharField, ChoiceField, COUNTRIES,
@@ -84,7 +84,7 @@ class ShippingCancel(APIView):
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[ShipmentCancelRequest](data=request.data).data
 
-        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'user': request.user})
+        response = Shipments.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'context': request})
 
         return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 

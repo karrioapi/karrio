@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from purpleserver.core.views.api import APIView
 from purpleserver.proxy.router import router
-from purpleserver.core.utils import SerializerDecorator
+from purpleserver.serializers import SerializerDecorator
 from purpleserver.core.gateway import Pickups
 from purpleserver.core.serializers import (
     PickupCancelRequest,
@@ -41,7 +41,7 @@ class PickupDetails(APIView):
         payload = SerializerDecorator[PickupRequest](data=request.data).data
 
         response = Pickups.schedule(payload, carrier_filter={
-            **filters, 'carrier_name': carrier_name, 'user': request.user
+            **filters, 'carrier_name': carrier_name, 'context': request
         })
 
         return Response(PickupResponse(response).data, status=status.HTTP_201_CREATED)
@@ -61,7 +61,7 @@ class PickupDetails(APIView):
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupUpdateRequest](data=request.data).data
 
-        response = Pickups.update(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'user': request.user})
+        response = Pickups.update(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'context': request})
 
         return Response(PickupResponse(response).data, status=status.HTTP_200_OK)
 
@@ -83,7 +83,7 @@ class PickupCancel(APIView):
         filters = SerializerDecorator[TestFilters](data=request.query_params).data
         payload = SerializerDecorator[PickupCancelRequest](data=request.data).data
 
-        response = Pickups.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'user': request.user})
+        response = Pickups.cancel(payload, carrier_filter={**filters, 'carrier_name': carrier_name, 'context': request})
 
         return Response(OperationResponse(response).data, status=status.HTTP_200_OK)
 

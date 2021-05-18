@@ -1,6 +1,6 @@
 import logging
 from django.utils import timezone
-from purpleserver.core.utils import owned_model_serializer
+from purpleserver.serializers import owned_model_serializer
 from rest_framework.serializers import CharField, BooleanField
 from purplship.core.utils import DP
 from purpleserver.core.gateway import Shipments, Carriers
@@ -17,7 +17,7 @@ class TrackingSerializer(TrackingDetails):
     carrier_name = CharField(required=False)
     test_mode = BooleanField(required=False)
 
-    def create(self, validated_data: dict) -> models.Tracking:
+    def create(self, validated_data: dict, **kwargs) -> models.Tracking:
         carrier_filter = validated_data['carrier_filter']
         tracking_number = validated_data['tracking_number']
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
@@ -28,7 +28,7 @@ class TrackingSerializer(TrackingDetails):
         )
 
         return models.Tracking.objects.create(
-            created_by=self._context_user,
+            created_by=validated_data['created_by'],
             tracking_number=tracking_number,
             events=DP.to_dict(response.tracking.events),
             test_mode=response.tracking.test_mode,
@@ -36,7 +36,7 @@ class TrackingSerializer(TrackingDetails):
             tracking_carrier=carrier,
         )
 
-    def update(self, instance: models.Tracking, validated_data) -> models.Tracking:
+    def update(self, instance: models.Tracking, validated_data: dict, **kwargs) -> models.Tracking:
         last_fetch = (timezone.now() - instance.updated_at).seconds / 60  # minutes since last fetch
 
         if last_fetch >= 30 and instance.delivered is not True:

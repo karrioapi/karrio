@@ -73,12 +73,10 @@ purplship.yunexpress
 -e ./apps/graph
 -e ./purpleserver
 -e ./apps/proxy
--e ./apps/tenants
 -e ./apps/manager
 -e ./apps/pricing
 -e ./apps/events
 -e ./apps/client
--e ./apps/orgs
 
 
 # Dev dependencies
