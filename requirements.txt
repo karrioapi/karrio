@@ -56,12 +56,12 @@ Pillow==8.2.0
 promise==2.3
 psycopg2-binary==2.8.6
 purplship==2021.5
-purplship-server==2021.5rc0
-purplship-server.client==2021.5rc0
+purplship-server==2021.5rc1
+purplship-server.client==2021.5rc1
 purplship-server.core==2021.5rc0
-purplship-server.events==2021.5rc0
+purplship-server.events==2021.5rc1
 purplship-server.graph==2021.5rc0
-purplship-server.manager==2021.5rc0
+purplship-server.manager==2021.5rc1
 purplship-server.pricing==2021.3
 purplship-server.proxy==2021.3.1
 purplship.aramex==2021.3

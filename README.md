@@ -122,7 +122,7 @@ docker run -d \
 - Create an admin user
 
 ```terminal
-docker exec -it purplship bash -c "purplship createsuperuser"
+docker exec -it pship bash -c "purplship createsuperuser"
 ```
 
 Access the application at http://0.0.0.0:5002
