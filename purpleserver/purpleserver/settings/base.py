@@ -98,7 +98,7 @@ INSTALLED_APPS = [
     *BASE_APPS,
 
     'rest_framework',
-    'rest_framework.authtoken',
+    # 'rest_framework.authtoken',
 
     'django_email_verification',
     'rest_framework_tracking',
@@ -115,7 +115,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'purpleserver.core.authentication.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -147,6 +148,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'purpleserver.wsgi.application'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 # Purplship Middleware
@@ -224,10 +226,9 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'purpleserver.core.authentication.TokenAuthentication',
+        'purpleserver.core.authentication.JWTAuthentication',
     ),
 
     'DEFAULT_THROTTLE_CLASSES': (
@@ -291,6 +292,7 @@ SWAGGER_SETTINGS = {
     'LOGOUT_URL': '/admin/logout',
 
     'DEFAULT_INFO': 'purpleserver.urls.schema.swagger_info',
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'purpleserver.urls.schema.SwaggerAutoSchema',
 
     'SECURITY_DEFINITIONS': {
         'Token': {

@@ -1,11 +1,6 @@
 from django.conf.global_settings import CACHES
-from purpleserver.settings.base import (
-    BASE_DIR,
-    DATABASES,
-    MIDDLEWARE,
-    BASE_APPS,
-    INSTALLED_APPS
-)
+from purpleserver.settings.base import *
+
 
 DATABASES["default"]["ENGINE"] = 'django_tenants.postgresql_backend'
 

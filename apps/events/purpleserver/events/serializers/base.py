@@ -1,5 +1,5 @@
 from enum import Enum
-from rest_framework import serializers
+from purpleserver import serializers
 
 from purpleserver.core.serializers import EntitySerializer
 

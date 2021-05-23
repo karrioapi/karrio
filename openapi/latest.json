@@ -2,11 +2,11 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Purplship API",
-    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.5-rc`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
+    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.5-rc2`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
     "contact": {
       "email": "hello@purplship.com"
     },
-    "version": "2021.5-rc"
+    "version": "2021.5-rc2"
   },
   "servers": [
     {
@@ -826,6 +826,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request POST \\\n    --url /v1/parcels \\\n    --header 'Authorization: Token <API_KEY>' \\\n    --header 'Content-Type: application/json' \\\n    --data '{\n      \"weight\": 1,\n      \"weight_unit\": \"KG\",\n      \"package_preset\": \"canadapost_corrugated_small_box\"\n    }'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -2548,6 +2554,12 @@
             "title": "Password",
             "minLength": 1,
             "type": "string"
+          },
+          "org_id": {
+            "title": "Org id",
+            "minLength": 1,
+            "type": "string",
+            "description": "\nshould be specified only in a multi-org deployment.\n\nNote that this will fallback to the first org related to the user by default.\n"
           }
         }
       },

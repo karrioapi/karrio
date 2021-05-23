@@ -1,11 +1,12 @@
+import importlib
 from rest_framework import generics, views
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-
 from rest_framework_tracking.mixins import LoggingMixin
-from rest_framework_tracking.models import APIRequestLog
+
 from purplship.core.utils import DP
+from purpleserver.core.authentication import TokenAuthentication, JWTAuthentication, SessionAuthentication
+from purpleserver.core.models import APILog
 
 
 class PurplshipLoggingMixin(LoggingMixin):
@@ -19,17 +20,24 @@ class PurplshipLoggingMixin(LoggingMixin):
             DP.jsonify(self.log['query_params'])
         )
 
-        APIRequestLog(**{
+        log = APILog(**{
             **self.log,
             'data': data,
             'query_params': query_params
-        }).save()
+        })
+        log.save()
+
+        if ((importlib.util.find_spec('purpleserver.orgs') is not None) and (getattr(self.request, 'org', None) is not None)):
+            log.link = log.__class__.link.related.related_model.objects.create(
+                org=self.request.org, item=log
+            )
+            log.save()
 
 
 class BaseView:
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    authentication_classes = [SessionAuthentication, TokenAuthentication, JWTAuthentication]
 
 
 class BaseGenericAPIView(generics.GenericAPIView, BaseView):

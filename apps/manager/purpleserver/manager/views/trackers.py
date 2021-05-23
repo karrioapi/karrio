@@ -3,7 +3,7 @@ import logging
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import serializers
+from purpleserver import serializers
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 from django.db.models import Q
@@ -12,7 +12,7 @@ from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
     FlagField, TrackingStatus, ErrorResponse, TestFilters, Operation
 )
-from purpleserver.core.utils import SerializerDecorator, PaginatedResult
+from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import TrackingSerializer
 import purpleserver.manager.models as models
@@ -48,7 +48,7 @@ class TrackerList(GenericAPIView):
             SerializerDecorator[TrackerFilters](data=request.query_params).data
             if any(request.query_params) else {}
         )
-        trackers = models.Tracking.objects.access_with(request.user).filter(**query)
+        trackers = models.Tracking.access_by(request).filter(**query)
         response = self.paginate_queryset(TrackingStatus(trackers, many=True).data)
         return self.get_paginated_response(response)
 
@@ -74,10 +74,10 @@ class TrackersCreate(APIView):
             "carrier_name": carrier_name,
             "user": request.user
         }
-        tracking = models.Tracking.objects.access_with(request.user).filter(tracking_number=tracking_number).first()
+        tracking = models.Tracking.access_by(request).filter(tracking_number=tracking_number).first()
 
         instance = SerializerDecorator[TrackingSerializer](
-            tracking, data=data, context_user=request.user).save(carrier_filter=carrier_filter).instance
+            tracking, data=data, context=request).save(carrier_filter=carrier_filter).instance
         return Response(TrackingStatus(instance).data)
 
 
@@ -93,7 +93,7 @@ class TrackersDetails(APIView):
         """
         Retrieve a shipment tracker
         """
-        tracker = models.Tracking.objects.access_with(request.user).get(
+        tracker = models.Tracking.access_by(request).get(
             Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number))
 
         return Response(TrackingStatus(tracker).data)
@@ -108,7 +108,7 @@ class TrackersDetails(APIView):
         """
         Discard a shipment tracker.
         """
-        tracker = models.Tracking.objects.access_with(request.user).get(
+        tracker = models.Tracking.access_by(request).get(
             Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number))
 
         tracker.delete(keep_parents=True)

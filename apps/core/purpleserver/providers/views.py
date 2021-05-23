@@ -1,12 +1,12 @@
 import logging
 
 from django.urls import path
-from rest_framework import serializers
+from purpleserver import serializers
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
 
-from purpleserver.core.utils import SerializerDecorator, PaginatedResult
+from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.core.views.api import GenericAPIView
 from purpleserver.core.gateway import Carriers
 from purpleserver.core.serializers import CarrierSettings, ErrorResponse, FlagField, FlagsSerializer, CARRIERS
@@ -49,7 +49,7 @@ class CarrierList(GenericAPIView):
         """
         query = SerializerDecorator[CarrierFilters](data=request.query_params).data
 
-        carriers = [carrier.data for carrier in Carriers.list(**{**query, 'user': request.user})]
+        carriers = [carrier.data for carrier in Carriers.list(**{**query, 'context': request})]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
         return self.get_paginated_response(response)
 

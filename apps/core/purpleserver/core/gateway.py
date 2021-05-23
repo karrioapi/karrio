@@ -25,8 +25,8 @@ class Carriers:
         query = tuple()
 
         # Check if the system_only flag is not specified and there is a provided user, get the users carriers
-        if not list_filter.get('system_only') and 'user' in list_filter:
-            access = get_access_filter(list_filter.get('user'))
+        if not list_filter.get('system_only') and 'context' in list_filter:
+            access = get_access_filter(list_filter.get('context'))
             if len(access) > 0:
                 query += (Q(created_by__isnull=True) | access,)
 

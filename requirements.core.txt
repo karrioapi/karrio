@@ -7,6 +7,7 @@ purplship-server.core==2021.5rc0
 purplship-server.events==2021.5rc0
 purplship-server.graph==2021.5rc0
 purplship-server.manager==2021.5rc0
+purplship-server.organizations
 purplship-server.pricing
 purplship-server.proxy
 purplship.aramex

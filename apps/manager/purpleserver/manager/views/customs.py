@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
-from purpleserver.core.utils import SerializerDecorator, PaginatedResult
+from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, CustomsData, Customs, Operation
 from purpleserver.manager.serializers import (
@@ -40,7 +40,7 @@ class CustomsList(GenericAPIView):
         """
         Retrieve all stored customs declarations.
         """
-        customs_info = models.Customs.objects.access_with(request.user).all()
+        customs_info = models.Customs.access_by(request).all()
         serializer = Customs(customs_info, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)
@@ -56,7 +56,7 @@ class CustomsList(GenericAPIView):
         """
         Create a new customs declaration.
         """
-        customs = SerializerDecorator[CustomsSerializer](data=request.data, context_user=request.user).save().instance
+        customs = SerializerDecorator[CustomsSerializer](data=request.data, context=request).save().instance
         return Response(Customs(customs).data, status=status.HTTP_201_CREATED)
 
 
@@ -72,7 +72,7 @@ class CustomsDetail(APIView):
         """
         Retrieve customs declaration.
         """
-        address = models.Customs.objects.access_with(request.user).get(pk=pk)
+        address = models.Customs.access_by(request).get(pk=pk)
         return Response(Customs(address).data)
 
     @swagger_auto_schema(
@@ -86,7 +86,7 @@ class CustomsDetail(APIView):
         """
         modify an existing customs declaration.
         """
-        customs = models.Customs.objects.access_with(request.user).get(pk=pk)
+        customs = models.Customs.access_by(request).get(pk=pk)
         shipment = customs.shipment_set.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -95,7 +95,7 @@ class CustomsDetail(APIView):
                 code='state_error'
             )
 
-        SerializerDecorator[CustomsSerializer](customs, data=request.data, context_user=request.user).save()
+        SerializerDecorator[CustomsSerializer](customs, data=request.data, context=request).save()
         reset_related_shipment_rates(shipment)
         return Response(Customs(customs).data)
 
@@ -109,7 +109,7 @@ class CustomsDetail(APIView):
         """
         Discard a customs declaration.
         """
-        customs = models.Customs.objects.access_with(request.user).get(pk=pk)
+        customs = models.Customs.access_by(request).get(pk=pk)
         shipment = customs.shipment_set.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -138,7 +138,7 @@ class CustomsCommodities(APIView):
         """
         Add a customs commodity.
         """
-        customs = models.Customs.objects.access_with(request.user).get(pk=pk)
+        customs = models.Customs.access_by(request).get(pk=pk)
         shipment = customs.shipment_set.first()
 
         if shipment.status == ShipmentStatus.purchased.value:
@@ -148,7 +148,7 @@ class CustomsCommodities(APIView):
             )
 
         commodity = SerializerDecorator[CommoditySerializer](
-            data=request.data, context_user=request.user).save().instance
+            data=request.data, context=request).save().instance
         customs.commodities.add(commodity)
         return Response(Customs(commodity.customs_set.first()).data)
 
@@ -165,7 +165,7 @@ class DiscardCommodities(APIView):
         """
         Discard a customs commodity.
         """
-        customs = models.Customs.objects.access_with(request.user).get(pk=pk)
+        customs = models.Customs.access_by(request).get(pk=pk)
         shipment = customs.shipment_set.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(

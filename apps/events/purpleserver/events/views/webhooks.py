@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
-from purpleserver.core.utils import SerializerDecorator, PaginatedResult
+from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.core.serializers import ErrorResponse, Operation, FlagField
 from purpleserver.events.serializers import WebhookData, Webhook, WebhookSerializer
 from purpleserver.events.router import router
@@ -45,7 +45,7 @@ class WebhookList(GenericAPIView):
             SerializerDecorator[WebhookFilters](data=request.query_params).data
             if any(request.query_params) else {}
         )
-        webhooks = models.Webhook.objects.access_with(request.user).filter(**query)
+        webhooks = models.Webhook.access_by(request).filter(**query)
         response = self.paginate_queryset(Webhook(webhooks, many=True).data)
         return self.get_paginated_response(response)
 
@@ -59,7 +59,7 @@ class WebhookList(GenericAPIView):
     def post(self, request: Request):
         """Create a new webhook."""
         webhook = SerializerDecorator[WebhookSerializer](
-            data=request.data).save(created_by=request.user).instance
+            data=request.data, context=request).save().instance
 
         return Response(Webhook(webhook).data, status=status.HTTP_201_CREATED)
 
@@ -76,7 +76,7 @@ class WebhookDetail(APIView):
         """
         Retrieve a webhook.
         """
-        webhook = models.Webhook.objects.access_with(request.user).get(pk=pk)
+        webhook = models.Webhook.access_by(request).get(pk=pk)
         return Response(Webhook(webhook).data)
 
     @swagger_auto_schema(
@@ -90,7 +90,7 @@ class WebhookDetail(APIView):
         """
         update a webhook.
         """
-        webhook = models.Webhook.objects.access_with(request.user).get(pk=pk)
+        webhook = models.Webhook.access_by(request).get(pk=pk)
 
         SerializerDecorator[WebhookSerializer](webhook, data=request.data).save()
         return Response(Webhook(webhook).data)
@@ -105,7 +105,7 @@ class WebhookDetail(APIView):
         """
         Remove a webhook.
         """
-        webhook = models.Webhook.objects.access_with(request.user).get(pk=pk)
+        webhook = models.Webhook.access_by(request).get(pk=pk)
 
         webhook.delete(keep_parents=True)
         serializer = Operation(dict(operation="Remove webhook", success=True))

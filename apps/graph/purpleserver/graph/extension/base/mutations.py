@@ -1,10 +1,12 @@
+import pydoc
 import graphene
 from graphene_django.rest_framework.mutation import SerializerMutation
-from rest_framework.authtoken.models import Token
+from django.conf import settings
 
-from purpleserver.core.utils import save_many_to_many_data
+from purpleserver.serializers import save_many_to_many_data, SerializerDecorator
+from purpleserver.user.serializers import TokenSerializer, Token
 import purpleserver.graph.serializers as serializers
-import purpleserver.graph.schema.types as types
+import purpleserver.graph.extension.base.types as types
 
 
 class _SerializerMutation(SerializerMutation):
@@ -16,11 +18,11 @@ class _SerializerMutation(SerializerMutation):
         data = input.copy()
 
         if 'id' in input:
-            instance = cls._meta.model_class.objects.access_with(info.context.user).get(id=data.pop('id'))
+            instance = cls._meta.model_class.access_by(info.context).get(id=data.pop('id'))
 
-            return {'instance': instance, 'data': data, 'partial': True, 'created_by': info.context.user}
+            return {'instance': instance, 'data': data, 'partial': True, 'context': info.context}
 
-        return {'data': data, 'partial': False, 'created_by': info.context.user}
+        return {'data': data, 'partial': False, 'context': info.context}
 
 
 class CreateConnection(_SerializerMutation):
@@ -63,7 +65,7 @@ class UpdateTemplate(_SerializerMutation):
 
         if 'commodities' in customs_data and instance is not None:
             customs = getattr(instance, 'customs', None)
-            extra = {'partial': True, 'created_by': info.context.user}
+            extra = {'context': info.context}
             save_many_to_many_data(
                 'commodities', serializers.CommodityModelSerializer, customs, payload=customs_data, **extra)
 
@@ -78,13 +80,12 @@ class TokenMutation(graphene.relay.ClientIDMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, refresh: bool = None):
-        user = types.User.objects.get(id=info.context.user.id)
+        tokens = Token.access_by(info.context)
 
-        if refresh and user.auth_token is not None:
-            user.auth_token.delete()
-            user.save()
+        if refresh and any(tokens):
+            tokens.delete()
 
-        token, created = Token.objects.get_or_create(user=user)
+        token = SerializerDecorator[TokenSerializer](data={}, context=info.context).save().instance
 
         return TokenMutation(token=token)
 
@@ -111,7 +112,7 @@ def create_delete_mutation(name: str, model, **filter):
 
         @classmethod
         def mutate_and_get_payload(cls, root, info, id):
-            instance = model.objects.access_with(info.context.user).get(id=id, **filter)
+            instance = model.access_by(info.context).get(id=id, **filter)
             instance.delete()
 
             return cls(id=id)

@@ -1,6 +1,6 @@
-from rest_framework import serializers
+from purpleserver import serializers
 
-from purpleserver.core.utils import SerializerDecorator, owned_model_serializer, save_one_to_one_data
+from purpleserver.serializers import SerializerDecorator, owned_model_serializer, save_one_to_one_data
 from purpleserver.core.gateway import Pickups, Carriers
 from purpleserver.core.datatypes import Confirmation
 from purpleserver.core.serializers import (
@@ -16,9 +16,8 @@ import purpleserver.manager.models as models
 
 
 def shipment_exists(value):
-    validation = {
-        key: models.Shipment.objects.filter(tracking_number=key) for key in value
-    }
+    validation = {key: models.Shipment.objects.filter(tracking_number=key) for key in value}
+
     if not all(val.exists() for val in validation.values()):
         invalids = [key for key, val in validation.items() if val.exists() is False]
         raise serializers.ValidationError(f"Shipment with the tracking numbers: {invalids} not found", code="invalid")
@@ -30,9 +29,8 @@ def shipment_exists(value):
 
 
 def pickup_exists(value):
-    validation = {
-        key: models.Pickup.objects.filter(tracking_number=key).exists() for key in value
-    }
+    validation = {key: models.Pickup.objects.filter(tracking_number=key).exists() for key in value}
+
     if not all(validation.values()):
         invalids = [key for key, val in validation.items() if val is False]
         raise serializers.ValidationError(f"Shipment with the tracking numbers: {invalids} not found", code="invalid")
@@ -43,7 +41,6 @@ def address_exists(value):
         raise serializers.ValidationError(f"Address with id {value} not found: {value}", code="invalid")
 
 
-@owned_model_serializer
 class PickupSerializer(PickupRequest):
     parcels = None
     address = AddressData(required=False, validators=[address_exists], help_text="The pickup address")
@@ -80,27 +77,27 @@ class PickupSerializer(PickupRequest):
 
         return validated_data
 
-    def create(self, validated_data: dict) -> models.Pickup:
+
+@owned_model_serializer
+class PickupData(PickupSerializer):
+    def create(self, validated_data: dict, context: dict, **kwargs) -> models.Pickup:
         carrier_filter = validated_data["carrier_filter"]
         carrier = next(iter(Carriers.list(**carrier_filter)), None)
         request_data = PickupRequest({
-            **validated_data,
-            "parcels": sum([list(s.parcels.all()) for s in self._shipments], [])
+            **validated_data, "parcels": sum([list(s.parcels.all()) for s in self._shipments], [])
         }).data
 
         response = Pickups.schedule(payload=request_data, carrier=carrier)
         payload = {
-            key: value for key, value in Pickup(response.pickup).data.items()
-            if key in models.Pickup.DIRECT_PROPS
+            key: value for key, value in Pickup(response.pickup).data.items() if key in models.Pickup.DIRECT_PROPS
         }
-        address = save_one_to_one_data(
-                'address', AddressSerializer, payload=validated_data, context_user=self._context_user)
+        address = save_one_to_one_data('address', AddressSerializer, payload=validated_data, context=context)
 
         pickup = models.Pickup.objects.create(**{
             **payload,
             "address": address,
-            "created_by": self._context_user,
             "pickup_carrier": carrier,
+            "created_by": validated_data['created_by'],
             "test_mode": response.pickup.test_mode,
             "confirmation_number": response.pickup.confirmation_number,
         })
@@ -108,7 +105,33 @@ class PickupSerializer(PickupRequest):
 
         return pickup
 
-    def update(self, instance: models.Pickup, validated_data) -> models.Tracking:
+
+@owned_model_serializer
+class PickupUpdateData(PickupSerializer):
+    confirmation_number = serializers.CharField(required=True, help_text="pickup identification number")
+    pickup_date = serializers.CharField(required=False, help_text="""
+    The expected pickup date
+    
+    Date Format: YYYY-MM-DD
+    """)
+    ready_time = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True, help_text="The ready time for pickup.")
+    closing_time = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True, help_text="The closing or late time of the pickup")
+    instruction = serializers.CharField(required=False, allow_blank=True, allow_null=True, help_text="""
+    The pickup instruction.
+    
+    eg: Handle with care.
+    """)
+    package_location = serializers.CharField(required=False, allow_blank=True, allow_null=True, help_text="""
+    The package(s) location.
+    
+    eg: Behind the entrance door.
+    """)
+    tracking_numbers = StringListField(
+        required=False, validators=[shipment_exists], help_text="The list of shipments to be picked up")
+
+    def update(self, instance: models.Pickup, validated_data: dict, context: dict, **kwargs) -> models.Tracking:
         request_data = PickupUpdateRequest({
             **PickupUpdateRequest(instance).data,
             **validated_data,
@@ -126,47 +149,17 @@ class PickupSerializer(PickupRequest):
                 setattr(instance, key, val)
                 validated_data.pop(key)
 
-        save_one_to_one_data(
-            'address', AddressSerializer, instance, payload=validated_data, context_user=self._context_user)
+        save_one_to_one_data('address', AddressSerializer, instance, payload=validated_data, context=context)
 
         instance.save()
         return instance
-
-
-class PickupData(PickupSerializer):
-    pass
-
-
-class PickupUpdateData(PickupData):
-    confirmation_number = serializers.CharField(required=True, help_text="pickup identification number")
-    pickup_date = serializers.CharField(required=False, help_text="""
-    The expected pickup date
-    
-    Date Format: YYYY-MM-DD
-    """)
-    ready_time = serializers.CharField(required=False, allow_blank=True, allow_null=True, help_text="The ready time for pickup.")
-    closing_time = serializers.CharField(required=False, allow_blank=True, allow_null=True, help_text="The closing or late time of the pickup")
-    instruction = serializers.CharField(required=False, allow_blank=True, allow_null=True, help_text="""
-    The pickup instruction.
-    
-    eg: Handle with care.
-    """)
-    package_location = serializers.CharField(required=False, allow_blank=True, allow_null=True, help_text="""
-    The package(s) location.
-    
-    eg: Behind the entrance door.
-    """)
-    tracking_numbers = StringListField(
-        required=False,
-        validators=[shipment_exists],
-        help_text="The list of shipments to be picked up")
 
 
 @owned_model_serializer
 class PickupCancelData(serializers.Serializer):
     reason = serializers.CharField(required=False, help_text="The reason of the pickup cancellation")
 
-    def update(self, instance: models.Pickup, validated_data) -> Confirmation:
+    def update(self, instance: models.Pickup, validated_data: dict, **kwargs) -> Confirmation:
         request = PickupCancelRequest({
             **PickupCancelRequest(instance).data,
             **validated_data
