@@ -44,6 +44,7 @@ from purplship.providers.dhl_express.units import (
     ExportReasonCode,
     WeightUnit as DHLWeightUnit,
     DimensionUnit,
+    COUNTRY_PREFERED_UNITS,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
@@ -86,7 +87,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
 
-    weight_unit, dim_unit = packages.compatible_units
+    weight_unit, dim_unit = (COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code) or packages.compatible_units)
     is_document = all(p.parcel.is_document for p in packages)
     package_type = PackageType[packages.package_type].value
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value

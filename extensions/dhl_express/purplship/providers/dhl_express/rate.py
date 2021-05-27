@@ -26,6 +26,7 @@ from purplship.providers.dhl_express.units import (
     PackagePresets,
     SpecialServiceCode,
     NetworkType,
+    COUNTRY_PREFERED_UNITS,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
@@ -114,7 +115,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
 
     is_document = all([parcel.is_document for parcel in payload.parcels])
     is_dutiable = not is_document
-    weight_unit, dim_unit = packages.compatible_units
+    weight_unit, dim_unit = (COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code) or packages.compatible_units)
     paperless = (SpecialServiceCode.dhl_paperless_trade if (is_international and is_dutiable) else None)
     special_services = [*options, *([(paperless.name, None)] if paperless is not None else [])]
     insurance = options['dhl_shipment_insurance'].value if 'dhl_shipment_insurance' in options else None
