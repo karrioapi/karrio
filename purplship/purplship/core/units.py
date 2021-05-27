@@ -390,13 +390,13 @@ class Packages(Iterable[Package]):
 
     @property
     def weight(self) -> Weight:
-        return Weight(
-            unit=WeightUnit.LB,
-            value=sum(
-                pkg.weight.LB for pkg in self._items if pkg.weight.LB is not None
-            )
-            or None,
-        )
+        unit, _ = self.compatible_units
+        value = sum(pkg.weight[unit.name] for pkg in self._items if pkg.weight[unit.name] is not None)
+
+        if value is None or not any(self._items):
+            return Weight(None, None)
+
+        return Weight(unit=unit, value=value)
 
     @property
     def package_type(self) -> str:
@@ -407,7 +407,7 @@ class Packages(Iterable[Package]):
 
     @property
     def compatible_units(self) -> Tuple[WeightUnit, DimensionUnit]:
-        if self._items[0].weight_unit == WeightUnit.KG:
+        if any(self._items) and self._items[0].weight_unit == WeightUnit.KG:
             return WeightUnit.KG, DimensionUnit.CM
 
         return WeightUnit.LB, DimensionUnit.IN
