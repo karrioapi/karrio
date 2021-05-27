@@ -119,10 +119,16 @@ class Dimension:
 
     @property
     def unit(self) -> str:
+        if self._unit is None:
+            return None
+
         return self._unit.value
 
     @property
     def value(self):
+        if self._unit is None or self._value is None:
+            return None
+
         return self.__getattribute__(str(self._unit.name))
 
     @property
@@ -226,10 +232,16 @@ class Weight:
 
     @property
     def unit(self) -> str:
+        if self._unit is None:
+            return None
+
         return self._unit.value
 
     @property
     def value(self) -> Optional[float]:
+        if self._unit is None or self._value is None:
+            return None
+
         return self.__getattribute__(str(self._unit.name))
 
     @property

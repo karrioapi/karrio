@@ -40,6 +40,8 @@ def parse_pickup_response(response: Element, settings: Settings) -> Tuple[Pickup
 
 def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[Envelope]:
     packages = Packages(payload.parcels)
+    weight = packages.weight.value
+    weight_unit = (WeightUnit[packages.weight.unit].value if weight is not None else None)
 
     request = create_envelope(
         body_content=schedulePickupV2(
@@ -70,8 +72,8 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[E
                     pickup_location=payload.package_location,
                     pickup_phone=payload.address.phone_number,
                     shipper_num=None,
-                    unit_of_measure=WeightUnit.LB.value,
-                    weight=packages.weight.LB
+                    unit_of_measure=weight_unit,
+                    weight=weight
                 ),
                 user_id=settings.username
             )
