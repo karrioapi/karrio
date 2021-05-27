@@ -34,7 +34,17 @@ class CustomsList(GenericAPIView):
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all customs info",
-        responses={200: CustomsInfoList(), 400: ErrorResponse()}
+        responses={200: CustomsInfoList(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url '/v1/customs_info' \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request):
         """
@@ -50,7 +60,40 @@ class CustomsList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a customs info",
         request_body=CustomsData(),
-        responses={200: Customs(), 400: ErrorResponse()}
+        responses={200: Customs(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request POST \\
+                  --url /v1/customs_info \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --header 'Content-Type: application/json' \\
+                  --data '{
+                    "content_type": "merchandise",
+                    "incoterm": "DDU",
+                    "commodities": [
+                      {
+                        "weight": 2,
+                        "weight_unit": "KG",
+                        "quantity": 1,
+                        "sku": "XXXXX0000123",
+                        "value_amount": 30,
+                        "value_currency": "USD",
+                        "origin_country": "JM"
+                      }
+                    ],
+                    "duty": {
+                      "paid_by": "recipient",
+                      "currency": "USD",
+                      "declared_value": 60,
+                    },
+                    "certify": true,
+                    "signer": "Kex",
+                  }'
+                '''
+            }
+        ]
     )
     def post(self, request: Request):
         """
@@ -66,7 +109,17 @@ class CustomsDetail(APIView):
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a customs info",
-        responses={200: Customs(), 400: ErrorResponse()}
+        responses={200: Customs(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request, pk: str):
         """
@@ -80,7 +133,26 @@ class CustomsDetail(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a customs info",
         request_body=CustomsData(),
-        responses={200: Customs(), 400: ErrorResponse()}
+        responses={200: Customs(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request PATCH \\
+                  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --header 'Content-Type: application/json' \\
+                  --data '{
+                    "content_type": "merchandise",
+                    "duty": {
+                      "paid_by": "recipient",
+                      "currency": "CAD",
+                      "declared_value": 100,
+                    }
+                  }'
+                '''
+            }
+        ]
     )
     def patch(self, request: Request, pk: str):
         """
@@ -103,7 +175,17 @@ class CustomsDetail(APIView):
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}discard",
         operation_summary="Discard a customs info",
-        responses={200: Operation(), 400: ErrorResponse()}
+        responses={200: Operation(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request DELETE \\
+                  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def delete(self, request: Request, pk: str):
         """
@@ -132,7 +214,27 @@ class CustomsCommodities(APIView):
         operation_id=f"{ENDPOINT_ID}add_commodity",
         operation_summary="Add a commodity",
         responses={200: Customs(), 400: ErrorResponse()},
-        request_body=CommodityData()
+        request_body=CommodityData(),
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request POST \\
+                  --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --header 'Content-Type: application/json' \\
+                  --data '{
+                    "weight": 1,
+                    "weight_unit": "KG",
+                    "quantity": 1,
+                    "sku": "XXXXX0000123",
+                    "value_amount": 25,
+                    "value_currency": "USD",
+                    "origin_country": "CA"
+                  }'
+                '''
+            }
+        ]
     )
     def post(self, request: Request, pk: str):
         """
@@ -159,7 +261,17 @@ class DiscardCommodities(APIView):
         tags=['Customs'],
         operation_id=f"{ENDPOINT_ID}discard_commodity",
         operation_summary="Discard a commodity",
-        responses={200: Operation(), 400: ErrorResponse()}
+        responses={200: Operation(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request DELETE \\
+                  --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities/<COMMODITY_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def delete(self, request: Request, pk: str, ck: str):
         """

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Purplship API",
-    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.5-rc2`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n",
+    "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.5-rc2`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, \nlist shipments, and list trackers. These list API methods share a common structure, taking at least these \ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order. \nThe offset parameter returns objects listed after an index. \nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates, \nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
     "contact": {
       "email": "hello@purplship.com"
     },
@@ -168,7 +168,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET \\\n  --url '/v1/addresses' \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -209,6 +215,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request POST \\\n  --url /v1/addresses \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n    \"address_line1\": \"125 Church St\",\n    \"person_name\": \"John Doe\",\n    \"company_name\": \"A corp.\",\n    \"phone_number\": \"+1 514 000 0000\",\n    \"city\": \"Moncton\",\n    \"country_code\": \"CA\",\n    \"postal_code\": \"E1C4Z8\",\n    \"residential\": false,\n    \"state_code\": \"NB\"\n}'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -251,7 +263,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET \\\n  --url /v1/addresses/<ADDRESS_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -302,6 +320,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request PATCH \\\n  --url /v1/addresses/<ADDRESS_ID> \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n    \"city\": \"Pierrefonds\"\n}'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -408,7 +432,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET                   --url '/v1/carriers' \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       }
     },
     "/v1/customs_info": {
@@ -458,7 +488,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET \\\n  --url '/v1/customs_info' \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -499,6 +535,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request POST \\\n  --url /v1/customs_info \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n    \"content_type\": \"merchandise\",\n    \"incoterm\": \"DDU\",\n    \"commodities\": [\n      {\n        \"weight\": 2,\n        \"weight_unit\": \"KG\",\n        \"quantity\": 1,\n        \"sku\": \"XXXXX0000123\",\n        \"value_amount\": 30,\n        \"value_currency\": \"USD\",\n        \"origin_country\": \"JM\"\n      }\n    ],\n    \"duty\": {\n      \"paid_by\": \"recipient\",\n      \"currency\": \"USD\",\n      \"declared_value\": 60,\n    },\n    \"certify\": true,\n    \"signer\": \"Kex\",\n  }'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -541,7 +583,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -581,7 +629,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request DELETE \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -632,6 +686,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request PATCH \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID> \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n    \"content_type\": \"merchandise\",\n    \"duty\": {\n      \"paid_by\": \"recipient\",\n      \"currency\": \"CAD\",\n      \"declared_value\": 100,\n    }\n  }'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -685,6 +745,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request POST \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n    \"weight\": 1,\n    \"weight_unit\": \"KG\",\n    \"quantity\": 1,\n    \"sku\": \"XXXXX0000123\",\n    \"value_amount\": 25,\n    \"value_currency\": \"USD\",\n    \"origin_country\": \"CA\"\n  }'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -735,7 +801,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request DELETE \\\n  --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities/<COMMODITY_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       }
     },
     "/v1/parcels": {
@@ -785,7 +857,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET \\\n  --url '/v1/parcels' \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -874,7 +952,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET \\\n  --url /v1/parcels/<PARCEL_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -914,7 +998,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request DELETE \\\n    --url /v1/parcels/<PARCEL_ID> \\\n    --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -965,6 +1055,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request PATCH \\\n    --url /v1/parcels/<PARCEL_ID> \\\n    --header 'Authorization: Token <API_KEY>' \\\n    --header 'Content-Type: application/json' \\\n    --data '{\n      \"weight\": 1.2,\n    }'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -1024,7 +1120,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET \\\n  --url '/v1/pickups' \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       }
     },
     "/v1/pickups/{carrier_name}/schedule": {
@@ -1087,6 +1189,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request POST \\\n  --url /v1/pickups/<PICKUP_ID> \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --data '{\n    \"pickup_date\": \"2020-10-25\",\n    \"address\": {\n      \"address_line1\": \"125 Church St\",\n      \"person_name\": \"John Doe\",\n      \"city\": \"Moncton\",\n      \"country_code\": \"CA\",\n      \"postal_code\": \"E1C4Z8\",\n      \"state_code\": \"NB\",\n    },\n    \"ready_time\": \"13:00\",\n    \"closing_time\": \"17:00\",\n    \"instruction\": \"Should not be folded\",\n    \"package_location\": \"At the main entrance hall\",\n    \"tracking_numbers\": [\n        \"8545763607864201002\"\n    ]\n}'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -1129,7 +1237,13 @@
               }
             }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request GET \\\n  --url /v1/pickups/<PICKUP_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -1180,6 +1294,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request PATCH \\\n  --url /v1/pickups/<PICKUP_ID> \\\n  --header 'Authorization: Token <API_KEY>' \\\n  --data '{\n    \"address\": {\n      \"phone_number\": \"514-000-0000\",\n      \"residential\": false,\n      \"email\": \"john@a.com\"\n    },\n    \"ready_time\": \"13:00\",\n    \"closing_time\": \"20:00\",\n}'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -1233,6 +1353,12 @@
             }
           }
         },
+        "x-code-samples": [
+          {
+            "lang": "bash",
+            "source": "\ncurl --request POST \\\n  --url /v1/pickups/<PICKUP_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+          }
+        ],
         "x-codegen-request-body-name": "data"
       }
     },
@@ -2559,7 +2685,7 @@
             "title": "Org id",
             "minLength": 1,
             "type": "string",
-            "description": "\nshould be specified only in a multi-org deployment.\n\nNote that this will fallback to the first org related to the user by default.\n"
+            "description": "\n**should be specified only in a multi-org deployment.**\n\nNote the first org related to the user is selected by default.\n"
           }
         }
       },

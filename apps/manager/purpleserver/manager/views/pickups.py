@@ -41,7 +41,17 @@ class PickupList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
         responses={200: Pickups(), 400: ErrorResponse()},
-        query_serializer=PickupFilters
+        query_serializer=PickupFilters,
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url '/v1/pickups' \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request):
         """
@@ -65,7 +75,35 @@ class PickupRequest(APIView):
         operation_summary="Schedule a pickup",
         responses={200: Pickup(), 400: ErrorResponse()},
         query_serializer=TestFilters(),
-        request_body=PickupData()
+        request_body=PickupData(),
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request POST \\
+                  --url /v1/pickups/<PICKUP_ID> \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --data '{
+                    "pickup_date": "2020-10-25",
+                    "address": {
+                      "address_line1": "125 Church St",
+                      "person_name": "John Doe",
+                      "city": "Moncton",
+                      "country_code": "CA",
+                      "postal_code": "E1C4Z8",
+                      "state_code": "NB",
+                    },
+                    "ready_time": "13:00",
+                    "closing_time": "17:00",
+                    "instruction": "Should not be folded",
+                    "package_location": "At the main entrance hall",
+                    "tracking_numbers": [
+                        "8545763607864201002"
+                    ]
+                }'
+                '''
+            }
+        ]
     )
     def post(self, request: Request, carrier_name: str):
         """
@@ -90,6 +128,16 @@ class PickupDetails(APIView):
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a pickup",
         responses={200: Pickup(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url /v1/pickups/<PICKUP_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request, pk: str):
         """Retrieve a scheduled pickup."""
@@ -101,7 +149,26 @@ class PickupDetails(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a pickup",
         responses={200: OperationConfirmation(), 400: ErrorResponse()},
-        request_body=PickupUpdateData()
+        request_body=PickupUpdateData(),
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request PATCH \\
+                  --url /v1/pickups/<PICKUP_ID> \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --data '{
+                    "address": {
+                      "phone_number": "514-000-0000",
+                      "residential": false,
+                      "email": "john@a.com"
+                    },
+                    "ready_time": "13:00",
+                    "closing_time": "20:00",
+                }'
+                '''
+            }
+        ]
     )
     def patch(self, request: Request, pk: str):
         """
@@ -121,7 +188,17 @@ class PickupCancel(APIView):
         operation_id=f"{ENDPOINT_ID}cancel",
         operation_summary="Cancel a pickup",
         responses={200: OperationConfirmation(), 400: ErrorResponse()},
-        request_body=PickupCancelData()
+        request_body=PickupCancelData(),
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request POST \\
+                  --url /v1/pickups/<PICKUP_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def post(self, request: Request, pk: str):
         """

@@ -29,7 +29,17 @@ class ParcelList(GenericAPIView):
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all parcels",
-        responses={200: Parcels(), 400: ErrorResponse()}
+        responses={200: Parcels(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url '/v1/parcels' \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request):
         """
@@ -77,7 +87,17 @@ class ParcelDetail(APIView):
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a parcel",
-        responses={200: Parcel(), 400: ErrorResponse()}
+        responses={200: Parcel(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url /v1/parcels/<PARCEL_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request, pk: str):
         """
@@ -91,7 +111,21 @@ class ParcelDetail(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a parcel",
         request_body=ParcelData(),
-        responses={200: Parcel(), 400: ErrorResponse()}
+        responses={200: Parcel(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request PATCH \\
+                    --url /v1/parcels/<PARCEL_ID> \\
+                    --header 'Authorization: Token <API_KEY>' \\
+                    --header 'Content-Type: application/json' \\
+                    --data '{
+                      "weight": 1.2,
+                    }'
+                '''
+            }
+        ]
     )
     def patch(self, request: Request, pk: str):
         """
@@ -114,7 +148,17 @@ class ParcelDetail(APIView):
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}discard",
         operation_summary="Remove a parcel",
-        responses={200: Operation(), 400: ErrorResponse()}
+        responses={200: Operation(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request DELETE \\
+                    --url /v1/parcels/<PARCEL_ID> \\
+                    --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def delete(self, request: Request, pk: str):
         """

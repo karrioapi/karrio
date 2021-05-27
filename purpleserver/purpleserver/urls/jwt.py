@@ -25,9 +25,9 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
 
         self.fields['org_id'] = serializers.CharField(
             required=False, help_text="""
-            should be specified only in a multi-org deployment.
+            **should be specified only in a multi-org deployment.**
             
-            Note that this will fallback to the first org related to the user by default.
+            Note the first org related to the user is selected by default.
             """)
 
     @classmethod

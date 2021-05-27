@@ -1,39 +1,67 @@
 # Installing
 
-- Start a Postgres database
+We recommend using Docker because it takes care of all of the necessary dependencies.
 
-```bash
-docker run -d \
-  --name db --rm \
-  -e POSTGRES_DB=db \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  postgres
+
+## Prerequisites 
+
+You will need to install [Docker Desktop](https://www.docker.com/products/docker-desktop) and 
+[Docker Compose](https://docs.docker.com/compose/install/) before following the instructions below.
+
+
+## Installation using Docker Compose
+
+- Create a `docker-compose.yml` file
+
+```yaml
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - purplship-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+
+  pship:
+    image: danh91.docker.scarf.sh/purplship/purplship-server:[version]
+    restart: unless-stopped
+    ports:
+      - "5002:5002"
+    environment:
+      - DEBUG_MODE=True
+      - ALLOWED_HOSTS=*
+      - DATABASE_NAME=db
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+    depends_on:
+      - db
 ```
 
-- Run your shipping API
+- Setup the database
 
-```bash
-docker run -d \
-  --name pship --rm \
-  -e DEBUG_MODE=True \
-  --link=db:db -p 5002:5002 \
-  purplship/purplship-server:[version]
+```terminal
+docker-compose run --rm --entrypoint="purplship migrate" pship
 ```
 
 - Create an admin user
 
 ```terminal
-docker exec -it purplship bash -c "purplship createsuperuser"
+docker-compose run --rm --entrypoint="purplship createsuperuser" pship
 ```
 
-Access the application at [http://0.0.0.0:5002](http://0.0.0.0:5002)
+- Run the application
 
-## Updating Purplship
+```terminal
+docker-compose up
+```
 
-All you need to do to upgrade Purplship is to restart your Docker server with a new image tag.
-
-We actively maintain the two most recent monthly releases of Purplship.
-
-> The Docker server image tags follow CalVer semantics, so version 2021.4.2 can be found at purplship/purplship-server:2021.4.2.
-> You can see the full list of tags on our [Docker Hub page](https://hub.docker.com/r/purplship/purplship-server/tags).
+Access the application at http://0.0.0.0:5002

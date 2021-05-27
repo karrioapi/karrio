@@ -7,6 +7,7 @@ and [Purplship SDK](https://sdk.purplship.com).
 ## Guides
 
   - [User Guides](user-guides/index.md)
+  - [API Guides](api-guides/index.md)
   - [Developer Guides](developer-guides/architecture.md)
 
 ## Resources
@@ -14,4 +15,4 @@ and [Purplship SDK](https://sdk.purplship.com).
 - [Community on Discord](https://discord.gg/kXEa3UMRHd)
 - [Issue trackers](https://github.com/Purplship/purplship-server/issues)
 - [Puprlship blog](https://blog.purplship.com).
-- [@Purplship on Twitter](https://twitter.com/purplship).
+- [@Purplship](https://twitter.com/purplship) on Twitter.

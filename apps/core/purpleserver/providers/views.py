@@ -41,7 +41,17 @@ class CarrierList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all carriers",
         responses={200: CarriersSettingsList(), 400: ErrorResponse()},
-        query_serializer=CarrierFilters
+        query_serializer=CarrierFilters,
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \
+                  --url '/v1/carriers' \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request):
         """

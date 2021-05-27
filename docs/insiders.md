@@ -1,3 +1,3 @@
-# Sponsorship
+# Sponsoring Purplship OSS
 
 

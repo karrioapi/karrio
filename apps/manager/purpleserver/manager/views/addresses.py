@@ -30,7 +30,17 @@ class AddressList(GenericAPIView):
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all addresses",
-        responses={200: Addresses(), 400: ErrorResponse()}
+        responses={200: Addresses(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url '/v1/addresses' \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request):
         """
@@ -45,7 +55,29 @@ class AddressList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create an address",
         request_body=AddressData(),
-        responses={200: Address(), 400: ErrorResponse()}
+        responses={200: Address(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request POST \\
+                  --url /v1/addresses \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --header 'Content-Type: application/json' \\
+                  --data '{
+                    "address_line1": "125 Church St",
+                    "person_name": "John Doe",
+                    "company_name": "A corp.",
+                    "phone_number": "+1 514 000 0000",
+                    "city": "Moncton",
+                    "country_code": "CA",
+                    "postal_code": "E1C4Z8",
+                    "residential": false,
+                    "state_code": "NB"
+                }'
+                '''
+            }
+        ]
     )
     def post(self, request: Request):
         """
@@ -61,7 +93,17 @@ class AddressDetail(APIView):
         tags=['Addresses'],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve an address",
-        responses={200: Address(), 400: ErrorResponse()}
+        responses={200: Address(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url /v1/addresses/<ADDRESS_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request, pk: str):
         """
@@ -75,7 +117,21 @@ class AddressDetail(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update an address",
         request_body=AddressData(),
-        responses={200: Address(), 400: ErrorResponse()}
+        responses={200: Address(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request PATCH \\
+                  --url /v1/addresses/<ADDRESS_ID> \\
+                  --header 'Authorization: Token <API_KEY>' \\
+                  --header 'Content-Type: application/json' \\
+                  --data '{
+                    "city": "Pierrefonds"
+                }'
+                '''
+            }
+        ]
     )
     def patch(self, request: Request, pk: str):
         """

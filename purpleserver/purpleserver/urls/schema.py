@@ -27,6 +27,35 @@ The current version is `{settings.VERSION}`.
 Read our API changelog and to learn more about backwards compatibility.
 
 As a precaution, use API versioning to check a new API version before committing to an upgrade.
+
+
+## Pagination
+
+All top-level API resources have support for bulk fetches via "list" API methods. For instance, you can list addresses, 
+list shipments, and list trackers. These list API methods share a common structure, taking at least these 
+two parameters: limit, and offset.
+
+{APP_NAME} utilizes offset-based pagination via the offset and limit parameters.
+Both parameters take a number as value (see below) and return objects in reverse chronological order. 
+The offset parameter returns objects listed after an index. 
+The limit parameter take a limit on the number of objects to be returned from 1 to 100.
+
+
+```json
+{{
+    "next": "/v1/shipments?limit=25&offset=50",
+    "previous": "/v1/shipments?limit=25&offset=25",
+    "results": [
+    ]
+}}
+```
+
+## Environments
+
+The {APP_NAME} API offer the possibility to create and retrieve certain objects in `test_mode`.
+In development, it is therefore possible to add carrier connections, get live rates, 
+buy labels, create trackers and schedule pickups in `test_mode`.
+
 """
 
 AUTHENTICATION_DESCRIPTION = """
@@ -51,8 +80,71 @@ class OpenAPISchemaGenerator(generators.OpenAPISchemaGenerator):
                 "name": "Addresses",
                 "description": f"""
                 This is an object representing your a {APP_NAME} shipping address.
-                
                 You can retrieve all addresses related to your {APP_NAME} account.
+                
+                Address objects are linked to your shipment history, and can be used for recurring shipping
+                to / from the same locations.
+                """
+            },
+            {
+                "name": "Carriers",
+                "description": f"""
+                This is an object representing your a {APP_NAME} carrier account connectsions.
+                You can retrieve all configured connections available to your {APP_NAME} account.
+                
+                The `carrier_id` is a nickname you assign to your connection.
+                """
+            },
+            {
+                "name": "Customs",
+                "description": f"""
+                This is an object representing your a {APP_NAME} shipping customs declaration.
+                You can retrieve all customs declarations used historically with your {APP_NAME} account shipments.
+                """
+            },
+            {
+                "name": "Parcels",
+                "description": f"""
+                This is an object representing your a {APP_NAME} shipping parcel.
+                
+                Parcel objects are linked to your shipment history, and can be used for recurring shipping
+                using the same packaging.
+                """
+            },
+            {
+                "name": "Shipments",
+                "description": f"""
+                This is an object representing your a {APP_NAME} shipment.
+                
+                A Shipment guides you through process of preparing and purchasing a label for an order.
+                
+                A Shipment transitions through multiple statuses throughout its lifetime as the package
+                shipped makes its journey to it's destination.
+                """
+            },
+            {
+                "name": "Trackers",
+                "description": f"""
+                This is an object representing your a {APP_NAME} shipment tracker.
+                
+                A shipment tracker is an object attached to a shipment by it's tracking number.
+                The tracker provide the latest tracking status and events associated with a shipment 
+                """
+            },
+            {
+                "name": "Pickups",
+                "description": f"""
+                This is an object representing your a {APP_NAME} pickup booking.
+                You can retrieve all pickup booked historically for your {APP_NAME} account shipments.
+                """
+            },
+            {
+                "name": "Webhooks",
+                "description": f"""
+                This is an object representing your a {APP_NAME} webhook.
+                
+                You can configure webhook endpoints via the API to be notified about events that happen in your 
+                {APP_NAME} account. 
                 """
             },
             {
