@@ -54,7 +54,8 @@ def valid_datetime_format(value):
 
 class PresetSerializer:
 
-    def __init__(self, *args, data = None, partial = None, **kwargs):
+    def __init__(self, *args, **kwargs):
+        data = kwargs.get('data')
         if data is not None and 'package_preset' in data:
             dimensions_required_together(data)
             preset = next((
