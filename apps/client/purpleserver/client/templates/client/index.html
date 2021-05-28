@@ -8,7 +8,7 @@
 
 {% block root %}
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root" data-token="{{ api_token }}" style="height: 100vh"></div>
+  <div id="root" data-token="{{ api_token }}" style="min-height: 100vh"></div>
 
   {% block footer %}{% include BASE_FOOTER_TEMPLATE %}{% endblock %}
 {% endblock %}
