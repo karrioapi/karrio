@@ -177,7 +177,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                     ]
                 ),
                 NumberOfPieces=len(packages),
-                ShipmentWeight=packages.weight.value,
+                ShipmentWeight=packages.weight[weight_unit.name],
                 Volume=None,
                 PaymentAccountNumber=settings.account_number,
                 InsuredCurrency=(options.currency if insurance is not None else None),
