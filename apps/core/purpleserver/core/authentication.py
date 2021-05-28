@@ -5,7 +5,7 @@ from django.contrib.auth import mixins
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.middleware import AuthenticationMiddleware as BaseAuthenticationMiddleware
 from rest_framework import exceptions
-from rest_framework.authentication import TokenAuthentication as BaseTokenAuthentication, SessionAuthentication
+from rest_framework.authentication import TokenAuthentication as BaseTokenAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication as BaseJWTAuthentication
 
 logger = logging.getLogger(__name__)

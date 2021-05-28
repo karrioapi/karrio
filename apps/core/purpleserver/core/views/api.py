@@ -5,7 +5,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework_tracking.mixins import LoggingMixin
 
 from purplship.core.utils import DP
-from purpleserver.core.authentication import TokenAuthentication, JWTAuthentication, SessionAuthentication
+from purpleserver.core.authentication import TokenAuthentication, JWTAuthentication
 from purpleserver.core.models import APILog
 
 
@@ -37,7 +37,7 @@ class PurplshipLoggingMixin(LoggingMixin):
 class BaseView:
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
-    authentication_classes = [SessionAuthentication, TokenAuthentication, JWTAuthentication]
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
 
 
 class BaseGenericAPIView(generics.GenericAPIView, BaseView):
