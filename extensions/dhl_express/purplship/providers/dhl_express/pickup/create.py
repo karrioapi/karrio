@@ -21,7 +21,7 @@ from purplship.core.models import (
     PickupDetails,
     ChargeDetails,
 )
-from purplship.core.units import WeightUnit, Weight
+from purplship.core.units import WeightUnit, Weight, Packages
 from purplship.providers.dhl_express.units import (
     CountryRegion,
     WeightUnit as DHLWeightUnit,
@@ -66,13 +66,8 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
 def pickup_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[BookPURequest]:
-    weight_unit = DHLWeightUnit.LB
-    weight = sum(
-        [
-            Weight(parcel.weight, WeightUnit[weight_unit.name]).LB
-            for parcel in payload.parcels
-        ]
-    )
+    packages = Packages(payload.parcels)
+
     request = BookPURequest(
         Request=settings.Request(
             MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)
@@ -112,7 +107,10 @@ def pickup_request(
             CloseTime=f"{payload.closing_time}:00",
             SpecialInstructions=[payload.instruction],
             RemotePickupFlag="Y",
-            weight=WeightSeg(Weight=weight, WeightUnit=weight_unit.value),
+            weight=WeightSeg(
+                Weight=packages.weight.value,
+                WeightUnit=DHLWeightUnit[packages.weight.unit].value
+            ),
         ),
         ShipmentDetails=None,
         ConsigneeDetails=None,

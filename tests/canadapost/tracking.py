@@ -37,9 +37,7 @@ class TestCanadaPostTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            import logging
 
-            logging.warning(DP.to_dict(parsed_response))
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
             )

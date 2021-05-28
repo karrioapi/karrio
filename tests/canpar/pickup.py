@@ -208,7 +208,6 @@ PickupRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-
                     </xsd1:pickup_address>
                     <xsd1:pickup_date>2015-01-28T15:00:00</xsd1:pickup_date>
                     <xsd1:pickup_phone>1 514 5555555</xsd1:pickup_phone>
-                    <xsd1:unit_of_measure>L</xsd1:unit_of_measure>
                 </xsd:pickup>
                 <xsd:user_id>user_id</xsd:user_id>
             </ws:request>
@@ -236,8 +235,8 @@ PickupUpdateRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05
                     </xsd1:pickup_address>
                     <xsd1:pickup_date>2015-01-28T15:00:00</xsd1:pickup_date>
                     <xsd1:pickup_phone>1 514 5555555</xsd1:pickup_phone>
-                    <xsd1:unit_of_measure>L</xsd1:unit_of_measure>
-                    <xsd1:weight>8.82</xsd1:weight>
+                    <xsd1:unit_of_measure>K</xsd1:unit_of_measure>
+                    <xsd1:weight>4.</xsd1:weight>
                 </xsd:pickup>
                 <xsd:user_id>user_id</xsd:user_id>
             </ws:request>

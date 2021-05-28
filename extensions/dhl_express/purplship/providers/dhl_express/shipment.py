@@ -44,6 +44,7 @@ from purplship.providers.dhl_express.units import (
     ExportReasonCode,
     WeightUnit as DHLWeightUnit,
     DimensionUnit,
+    COUNTRY_PREFERED_UNITS,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
@@ -86,6 +87,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     shipper = CompleteAddress.map(payload.shipper)
     recipient = CompleteAddress.map(payload.recipient)
 
+    weight_unit, dim_unit = (COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code) or packages.compatible_units)
     is_document = all(p.parcel.is_document for p in packages)
     package_type = PackageType[packages.package_type].value
     label_format, label_template = LabelType[payload.label_type or 'PDF_6x4'].value
@@ -205,12 +207,12 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         ScheduleB=None,
                         ECCN=None,
                         Weight=WeightType(
-                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB']).LB,
-                            WeightUnit=DHLWeightUnit.LB.value
+                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB'])[weight_unit.name],
+                            WeightUnit=DHLWeightUnit[weight_unit.name].value
                         ),
                         GrossWeight=WeightType(
-                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB']).LB,
-                            WeightUnit=DHLWeightUnit.LB.value
+                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB'])[weight_unit.name],
+                            WeightUnit=DHLWeightUnit[weight_unit.name].value
                         ),
                         License=None,
                         LicenseSymbol=None,
@@ -249,10 +251,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         PackageType=(
                             package_type or PackageType[package.packaging_type or "your_packaging"].value
                         ),
-                        Depth=package.length.IN,
-                        Width=package.width.IN,
-                        Height=package.height.IN,
-                        Weight=package.weight.LB,
+                        Depth=package.length[dim_unit.name],
+                        Width=package.width[dim_unit.name],
+                        Height=package.height[dim_unit.name],
+                        Weight=package.weight[weight_unit.name],
                         PieceContents=(package.parcel.content or package.parcel.description),
                         PieceReference=(
                             [Reference(ReferenceID=package.parcel.id)]
@@ -266,12 +268,12 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     for (index, package) in enumerate(packages, start=1)
                 ]
             ),
-            WeightUnit=DHLWeightUnit.LB.value,
+            WeightUnit=DHLWeightUnit[weight_unit.name].value,
             GlobalProductCode=product,
             LocalProductCode=product,
             Date=(options.shipment_date or time.strftime("%Y-%m-%d")),
             Contents=content,
-            DimensionUnit=DimensionUnit.IN.value,
+            DimensionUnit=DimensionUnit[dim_unit.name].value,
             PackageType=package_type,
             IsDutiable=("Y" if is_dutiable else "N"),
             CurrencyCode=options.currency or "USD",

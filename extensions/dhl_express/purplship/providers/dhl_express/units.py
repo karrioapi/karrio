@@ -1,65 +1,65 @@
 """ DHL Native Types """
 
 from purplship.core.utils import Enum, Flag, Spec
-from purplship.core.units import PackagePreset
+from purplship.core import units
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
 
 class PackagePresets(Flag):
-    dhl_express_envelope = PackagePreset(
+    dhl_express_envelope = units.PackagePreset(
         **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"),
         **PRESET_DEFAULTS
     )
-    dhl_express_standard_flyer = PackagePreset(
+    dhl_express_standard_flyer = units.PackagePreset(
         **dict(weight=2.0, width=40.0, height=30.0, length=1.5, packaging_type="pak"),
         **PRESET_DEFAULTS
     )
-    dhl_express_large_flyer = PackagePreset(
+    dhl_express_large_flyer = units.PackagePreset(
         **dict(weight=3.0, width=47.5, height=37.5, length=1.5, packaging_type="pak"),
         **PRESET_DEFAULTS
     )
-    dhl_express_box_2 = PackagePreset(
+    dhl_express_box_2 = units.PackagePreset(
         **dict(weight=1.0, width=33.7, height=18.2, length=10.0, packaging_type="medium_box"),
         **PRESET_DEFAULTS
     )
-    dhl_express_box_3 = PackagePreset(
+    dhl_express_box_3 = units.PackagePreset(
         **dict(weight=2.0, width=33.6, height=32.0, length=5.2, packaging_type="medium_box"),
         **PRESET_DEFAULTS
     )
-    dhl_express_box_4 = PackagePreset(
+    dhl_express_box_4 = units.PackagePreset(
         **dict(weight=5.0, width=33.7, height=32.2, length=18.0, packaging_type="medium_box"),
         **PRESET_DEFAULTS
     )
-    dhl_express_box_5 = PackagePreset(
+    dhl_express_box_5 = units.PackagePreset(
         **dict(weight=10.0, width=33.7, height=32.2, length=34.5, packaging_type="medium_box"),
         **PRESET_DEFAULTS
     )
-    dhl_express_box_6 = PackagePreset(
+    dhl_express_box_6 = units.PackagePreset(
         **dict(weight=15.0, width=41.7, height=35.9, length=36.9, packaging_type="large_box"),
         **PRESET_DEFAULTS
     )
-    dhl_express_box_7 = PackagePreset(
+    dhl_express_box_7 = units.PackagePreset(
         **dict(weight=20.0, width=48.1, height=40.4, length=38.9, packaging_type="large_box"),
         **PRESET_DEFAULTS
     )
-    dhl_express_box_8 = PackagePreset(
+    dhl_express_box_8 = units.PackagePreset(
         **dict(weight=25.0, width=54.2, height=44.4, length=40.9, packaging_type="large_box"),
         **PRESET_DEFAULTS
     )
-    dhl_express_tube = PackagePreset(
+    dhl_express_tube = units.PackagePreset(
         **dict(weight=5.0, width=96.0, height=15.0, length=15.0, packaging_type="tube"),
         **PRESET_DEFAULTS
     )
-    dhl_didgeridoo_box = PackagePreset(
+    dhl_didgeridoo_box = units.PackagePreset(
         **dict(weight=10.0, width=13.0, height=13.0, length=162.0, packaging_type="medium_box"),
         **PRESET_DEFAULTS
     )
-    dhl_jumbo_box = PackagePreset(
+    dhl_jumbo_box = units.PackagePreset(
         **dict(weight=30.0, width=45.0, height=42.7, length=33.0, packaging_type="medium_box"),
         **PRESET_DEFAULTS
     )
-    dhl_jumbo_box_junior = PackagePreset(
+    dhl_jumbo_box_junior = units.PackagePreset(
         **dict(weight=20.0, width=39.9, height=34.0, length=24.1, packaging_type="medium_box"),
         **PRESET_DEFAULTS
     )
@@ -462,6 +462,11 @@ class SpecialServiceCode(Enum):
     """ Unified Option type mapping """
     insurance = dhl_shipment_insurance
     cash_on_delivery = dhl_cash_on_delivery
+
+
+COUNTRY_PREFERED_UNITS = dict(
+    JM=(units.WeightUnit.KG, units.DimensionUnit.CM),
+)
 
 
 class CountryRegion(Enum):

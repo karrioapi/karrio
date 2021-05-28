@@ -26,6 +26,7 @@ from purplship.providers.dhl_express.units import (
     PackagePresets,
     SpecialServiceCode,
     NetworkType,
+    COUNTRY_PREFERED_UNITS,
 )
 from purplship.providers.dhl_express.utils import Settings
 from purplship.providers.dhl_express.error import parse_error_response
@@ -108,12 +109,13 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
     options = Options(payload.options, SpecialServiceCode)
 
     is_international = payload.shipper.country_code != payload.recipient.country_code
-    is_document = all([parcel.is_document for parcel in payload.parcels])
-    is_dutiable = not is_document
 
     if not is_international and payload.shipper.country_code in ["CA"]:
         raise DestinationNotServicedError(payload.shipper.country_code)
 
+    is_document = all([parcel.is_document for parcel in payload.parcels])
+    is_dutiable = not is_document
+    weight_unit, dim_unit = (COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code) or packages.compatible_units)
     paperless = (SpecialServiceCode.dhl_paperless_trade if (is_international and is_dutiable) else None)
     special_services = [*options, *([(paperless.name, None)] if paperless is not None else [])]
     insurance = options['dhl_shipment_insurance'].value if 'dhl_shipment_insurance' in options else None
@@ -152,8 +154,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
             BkgDetails=BkgDetailsType(
                 PaymentCountryCode=payload.shipper.country_code,
                 NetworkTypeCode=NetworkType.both_time_and_day_definite.value,
-                WeightUnit=WeightUnit.LB.value,
-                DimensionUnit=DimensionUnit.IN.value,
+                WeightUnit=weight_unit.value,
+                DimensionUnit=dim_unit.value,
                 ReadyTime=time.strftime("PT%HH%MM"),
                 Date=time.strftime("%Y-%m-%d"),
                 IsDutiable=("Y" if is_dutiable else "N"),
@@ -164,10 +166,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                             PackageTypeCode=DCTPackageType[
                                 package.packaging_type or "your_packaging"
                             ].value,
-                            Depth=package.length.IN,
-                            Width=package.width.IN,
-                            Height=package.height.IN,
-                            Weight=package.weight.LB,
+                            Depth=package.length[dim_unit.name],
+                            Width=package.width[dim_unit.name],
+                            Height=package.height[dim_unit.name],
+                            Weight=package.weight[weight_unit.name],
                         )
                         for index, package in enumerate(
                             cast(Iterable[Package], packages), 1
@@ -175,7 +177,7 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
                     ]
                 ),
                 NumberOfPieces=len(packages),
-                ShipmentWeight=packages.weight.LB,
+                ShipmentWeight=packages.weight[weight_unit.name],
                 Volume=None,
                 PaymentAccountNumber=settings.account_number,
                 InsuredCurrency=(options.currency if insurance is not None else None),
@@ -196,8 +198,8 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[DCTRe
             ),
             Dutiable=(
                 DCTDutiable(
-                    DeclaredValue=insurance or 1.0,
-                    DeclaredCurrency=options.currency or CountryCurrency[payload.shipper.country_code].value
+                    DeclaredValue=(insurance or 1.0),
+                    DeclaredCurrency=(options.currency or CountryCurrency[payload.shipper.country_code].value)
                 )
                 if is_dutiable else None
             ),
