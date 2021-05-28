@@ -54,13 +54,14 @@ def valid_datetime_format(value):
 
 class PresetSerializer:
 
-    def __init__(self, *args, **kwargs):
-        data = kwargs.get('data')
+    def __init__(self, *args, data = None, partial = None, **kwargs):
         if data is not None and 'package_preset' in data:
-            preset = next(
-                (presets[data['package_preset']] for carrier, presets in dataunits.REFERENCE_MODELS["package_presets"].items() if data['package_preset'] in presets),
-                {}
-            )
+            dimensions_required_together(data)
+            preset = next((
+                presets[data['package_preset']] for carrier, presets
+                in dataunits.REFERENCE_MODELS["package_presets"].items()
+                if data['package_preset'] in presets
+            ), {})
 
             kwargs.update(data={
                 **data,
