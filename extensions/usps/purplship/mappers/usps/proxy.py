@@ -22,3 +22,17 @@ class Proxy(BaseProxy):
         response = http(url=f"{self.settings.server_url}?{query}", method="GET")
 
         return Deserializable(response, XP.to_xml)
+
+    def create_shipment(self, request: Serializable) -> Deserializable:
+        api = "eVSCertify" if self.settings.test else "eVS"
+        serialized_request = request.serialize().replace("eVSRequest", f"{api}Request")
+        query = urllib.parse.urlencode({"API": api, "XML": serialized_request})
+        response = http(url=f"{self.settings.server_url}?{query}", method="GET")
+
+        return Deserializable(response, XP.to_xml)
+
+    def cancel_shipment(self, request: Serializable) -> Deserializable:
+        query = urllib.parse.urlencode({"API": "eVSCancel", "XML": request.serialize()})
+        response = http(url=f"{self.settings.server_url}?{query}", method="GET")
+
+        return Deserializable(response, XP.to_xml)

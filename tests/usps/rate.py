@@ -1,7 +1,6 @@
 import logging
 import unittest
 import urllib.parse
-from datetime import datetime, timedelta
 from unittest.mock import patch
 from purplship.core.utils import DP
 from purplship.core.models import RateRequest

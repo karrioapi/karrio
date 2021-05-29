@@ -83,14 +83,14 @@ class Location:
 
     @property
     def as_zip4(self) -> Optional[str]:
-        if re.match(r'^\d{5}$', self.value):
+        if re.match(r'/^SW\d{4}$/', self.value):
             return self.value
 
         return None
 
     @property
     def as_zip5(self) -> Optional[str]:
-        if not re.match(r'^\d{5}$', self.value):
+        if not re.match(r'/^SW\d{5}$/', self.value):
             return self.value
 
         return None

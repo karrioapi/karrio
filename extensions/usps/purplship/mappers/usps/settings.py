@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     # Carrier specific properties
     username: str
     password: str
+    mailer_id: str = None
+    customer_registration_id: str = None
 
     # Base properties
     id: str = None
