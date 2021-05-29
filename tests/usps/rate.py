@@ -1,7 +1,7 @@
 import logging
 import unittest
 import urllib.parse
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship import Rating
@@ -72,7 +72,6 @@ PARSED_RATE_RESPONSE = [
             "currency": "USD",
             "service": "usps_priority_mail_express",
             "total_charge": 31.15,
-            "transit_days": 2,
         },
         {
             "base_charge": 31.15,
@@ -81,7 +80,6 @@ PARSED_RATE_RESPONSE = [
             "currency": "USD",
             "service": "usps_priority_mail_express_hold_for_pickup",
             "total_charge": 31.15,
-            "transit_days": 2,
         },
         {
             "base_charge": 43.65,
@@ -90,7 +88,6 @@ PARSED_RATE_RESPONSE = [
             "currency": "USD",
             "service": "usps_priority_mail_express_sunday_holiday_delivery",
             "total_charge": 43.65,
-            "transit_days": 1,
         },
         {
             "base_charge": 8.85,
@@ -99,7 +96,6 @@ PARSED_RATE_RESPONSE = [
             "currency": "USD",
             "service": "usps_priority_mail",
             "total_charge": 8.85,
-            "transit_days": 3,
         },
         {
             "base_charge": 21.9,
@@ -108,7 +104,6 @@ PARSED_RATE_RESPONSE = [
             "currency": "USD",
             "service": "usps_priority_mail_large_flat_rate_box",
             "total_charge": 21.9,
-            "transit_days": 3,
         },
         {
             "base_charge": 15.5,
@@ -117,7 +112,6 @@ PARSED_RATE_RESPONSE = [
             "currency": "USD",
             "service": "usps_priority_mail_medium_flat_rate_box",
             "total_charge": 15.5,
-            "transit_days": 3,
         },
         {
             "base_charge": 3.45,
@@ -197,37 +191,31 @@ RATE_RESPONSE_XML = f"""<?xml version="1.0" encoding="UTF-8"?>
     <Postage CLASSID="3">
       <MailService>Priority Mail Express 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;</MailService>
       <Rate>31.15</Rate>
-      <CommitmentDate>2021-06-01</CommitmentDate>
       <CommitmentName>2-Day</CommitmentName>
     </Postage>
     <Postage CLASSID="2">
       <MailService>Priority Mail Express 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Hold For Pickup</MailService>
       <Rate>31.15</Rate>
-      <CommitmentDate>2021-06-01</CommitmentDate>
       <CommitmentName>2-Day</CommitmentName>
     </Postage>
     <Postage CLASSID="23">
       <MailService>Priority Mail Express 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Sunday/Holiday Delivery</MailService>
       <Rate>43.65</Rate>
-      <CommitmentDate>2021-05-31</CommitmentDate>
       <CommitmentName>2-Day</CommitmentName>
     </Postage>
     <Postage CLASSID="1">
       <MailService>Priority Mail 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;</MailService>
       <Rate>8.85</Rate>
-      <CommitmentDate>2021-06-02</CommitmentDate>
       <CommitmentName>2-Day</CommitmentName>
     </Postage>
     <Postage CLASSID="22">
       <MailService>Priority Mail 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Large Flat Rate Box</MailService>
       <Rate>21.90</Rate>
-      <CommitmentDate>2021-06-02</CommitmentDate>
       <CommitmentName>2-Day</CommitmentName>
     </Postage>
     <Postage CLASSID="17">
       <MailService>Priority Mail 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Medium Flat Rate Box</MailService>
       <Rate>15.50</Rate>
-      <CommitmentDate>2021-06-02</CommitmentDate>
       <CommitmentName>2-Day</CommitmentName>
     </Postage>
     <Postage CLASSID="6">

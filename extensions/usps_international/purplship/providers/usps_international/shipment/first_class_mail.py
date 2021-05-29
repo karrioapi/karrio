@@ -1,3 +1,4 @@
+import time
 from typing import Tuple, List
 from usps_lib.evs_first_class_mail_intl_response import eVSFirstClassMailIntlResponse
 from usps_lib.evs_first_class_mail_intl_request import (
@@ -45,7 +46,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     options = Options(payload.options, ShipmentOption)
 
     label_format = LabelFormat[payload.label_type or 'usps_6_x_4_label'].value
-    extra_services = [getattr(option, 'value', option) for key, option in options if 'usps_option' not in key]
+    extra_services = [
+        getattr(option, 'value', option) for key, option in options
+        if key in ShipmentOption and 'usps_option' not in key
+    ]
     customs = payload.customs or Customs(commodities=[])
 
     request = eVSFirstClassMailIntlRequest(
@@ -56,22 +60,22 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         FromFirstName=customs.signer or payload.shipper.person_name,
         FromLastName=payload.shipper.person_name,
         FromFirm=payload.shipper.company_name or "N/A",
-        FromAddress1=payload.shipper.address_line1,
-        FromAddress2=payload.shipper.address_line2,
+        FromAddress1=payload.shipper.address_line2,
+        FromAddress2=payload.shipper.address_line1,
         FromUrbanization=None,
         FromCity=payload.shipper.city,
         FromZip5=Location(payload.shipper.postal_code).as_zip5,
-        FromZip4=Location(payload.shipper.postal_code).as_zip4,
+        FromZip4=Location(payload.shipper.postal_code).as_zip4 or "",
         FromPhone=payload.shipper.phone_number,
         ToName=None,
         ToFirstName=payload.recipient.person_name,
         ToLastName=payload.recipient.person_name,
         ToFirm=payload.recipient.company_name or "N/A",
-        ToAddress1=payload.recipient.address_line1,
-        ToAddress2=payload.recipient.address_line2,
+        ToAddress1=payload.recipient.address_line2,
+        ToAddress2=payload.recipient.address_line1,
         ToAddress3=None,
         ToCity=payload.recipient.city,
-        ToProvince=Location(payload.recipient.state_code).as_state_name,
+        ToProvince=Location(payload.recipient.state_code, country=payload.recipient.country_code).as_state_name,
         ToCountry=Location(payload.recipient.country_code).as_country_name,
         ToPostalCode=payload.recipient.postal_code,
         ToPOBoxFlag=None,
@@ -108,32 +112,28 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         CustomerRefNo=None,
         CustomerRefNo2=None,
         POZipCode=None,
-        LabelDate=DF.fdatetime(options.shipment_date, output_format="%m/%d/%Y"),
+        LabelDate=DF.fdatetime((options.shipment_date or time.strftime('%Y-%m-%d')), current_format="%Y-%m-%d", output_format="%m/%d/%Y"),
         HoldForManifest=None,
         EELPFC=customs.eel_pfc,
         Container=None,
         Length=package.length.IN,
-        Width=package.weight.IN,
+        Width=package.width.IN,
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
         ExtraServices=(
-            ExtraServicesType(
-                ExtraService=[
-                    getattr(option, 'value', option)
-                    for option in extra_services
-                ]
-            ) if any(extra_services) else None
+            ExtraServicesType(ExtraService=[s for s in extra_services])
+            if any(extra_services) else None
         ),
         PriceOptions=None,
         ActionCode=None,
         OptOutOfSPE=None,
         PermitNumber=None,
         AccountZipCode=None,
-        Machinable=options['usps_option_machinable_item'],
+        Machinable=(options.usps_option_machinable_item or False),
         DestinationRateIndicator="I",
-        MID=None,
-        LogisticsManagerMID=None,
-        CRID=None,
+        MID=settings.mailer_id,
+        LogisticsManagerMID=settings.logistics_manager_mailer_id,
+        CRID=settings.customer_registration_id,
         VendorCode=None,
         VendorProductVersionNumber=None,
         RemainingBarcodes=None,

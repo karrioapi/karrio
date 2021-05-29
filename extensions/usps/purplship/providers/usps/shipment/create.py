@@ -37,7 +37,6 @@ def parse_shipment_response(response: Element, settings: Settings) -> Tuple[Ship
 
 def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
     shipment = XP.build(eVSResponse, response)
-    total_charge = NF.decimal(shipment.Postage)
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -66,7 +65,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     insurance = next((option.value for key, option in options if 'usps_insurance' in key), options.insurance)
     # Gets the first provided non delivery option or default to "RETURN"
     non_delivery = next((option.value for name, option in options if 'non_delivery' in name), "RETURN")
-    redirect_address = Address(**(options['usps_option_redirect_non_delivery'] or {}))
+    redirect_address = Address(**(options.usps_option_redirect_non_delivery or {}))
 
     request = eVSRequest(
         USERID=settings.username,
@@ -108,7 +107,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         Length=package.length.IN,
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
-        Machinable=options["usps_option_machinable_item"],
+        Machinable=options.usps_option_machinable_item,
         ProcessingCategory=None,
         PriceOptions=None,
         InsuredAmount=insurance,
@@ -122,7 +121,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ),
         CRID=settings.customer_registration_id,
         MID=settings.mailer_id,
-        LogisticsManagerMID=None,
+        LogisticsManagerMID=settings.logistics_manager_mailer_id,
         VendorCode=None,
         VendorProductVersionNumber=None,
         SenderName=(payload.shipper.person_name or payload.shipper.company_name),
@@ -133,7 +132,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ImageType="PDF",
         HoldForManifest=None,
         NineDigitRoutingZip=None,
-        ShipInfo=options["usps_option_ship_info"],
+        ShipInfo=options.usps_option_ship_info,
         CarrierRelease=None,
         DropOffTime=None,
         ReturnCommitments=None,

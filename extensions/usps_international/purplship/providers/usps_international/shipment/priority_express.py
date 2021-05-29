@@ -1,3 +1,4 @@
+import time
 from typing import Tuple, List
 from usps_lib.evs_express_mail_intl_response import eVSExpressMailIntlResponse
 from usps_lib.evs_express_mail_intl_request import (
@@ -7,7 +8,7 @@ from usps_lib.evs_express_mail_intl_request import (
     ItemDetailType,
 )
 from purplship.core.utils import Serializable, Element, XP, DF, SF, Location
-from purplship.core.units import Packages, Options, Weight, WeightUnit
+from purplship.core.units import Packages, Options, Weight, WeightUnit, CompleteAddress
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
@@ -49,7 +50,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     insurance = getattr((options['usps_insurance_express_mail_international']), 'value', options.insurance)
     # Gets the first provided non delivery option or default to "RETURN"
     non_delivery = next((option.value for name, option in options if 'non_delivery' in name), "RETURN")
-    redirect_address = Address(**(options['usps_option_redirect_non_delivery'] or {}))
+    redirect_address = CompleteAddress.map(Address(**(options['usps_option_redirect_non_delivery'] or {})))
 
     request = eVSExpressMailIntlRequest(
         USERID=settings.username,
@@ -60,23 +61,23 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         FromFirstName=customs.signer or payload.shipper.person_name or "N/A",
         FromLastName=payload.shipper.person_name,
         FromFirm=payload.shipper.company_name or "N/A",
-        FromAddress1=payload.shipper.address_line1,
-        FromAddress2=payload.shipper.address_line2,
+        FromAddress1=payload.shipper.address_line2,
+        FromAddress2=payload.shipper.address_line1,
         FromUrbanization=None,
         FromCity=payload.shipper.city,
         FromZip5=Location(payload.shipper.postal_code).as_zip5,
-        FromZip4=Location(payload.shipper.postal_code).as_zip4,
+        FromZip4=Location(payload.shipper.postal_code).as_zip4 or "",
         FromPhone=payload.shipper.phone_number,
         FromCustomsReference=None,
         ToName=None,
         ToFirstName=payload.recipient.person_name,
         ToLastName=payload.recipient.person_name,
         ToFirm=payload.recipient.company_name or "N/A",
-        ToAddress1=payload.recipient.address_line1,
-        ToAddress2=payload.recipient.address_line2,
+        ToAddress1=payload.recipient.address_line2,
+        ToAddress2=payload.recipient.address_line1,
         ToAddress3=None,
         ToCity=payload.recipient.city,
-        ToProvince=Location(payload.recipient.state_code).as_state_name,
+        ToProvince=Location(payload.recipient.state_code, country=payload.recipient.country_code).as_state_name,
         ToCountry=Location(payload.recipient.country_code).as_country_name,
         ToPostalCode=payload.recipient.postal_code,
         ToPOBoxFlag=None,
@@ -88,11 +89,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         RedirectName=redirect_address.person_name,
         RedirectEmail=redirect_address.email,
         RedirectSMS=redirect_address.phone_number,
-        RedirectAddress=SF.concat_str(redirect_address.address_line1, redirect_address.address_line2, join=True),
+        RedirectAddress=redirect_address.address_line,
         RedirectCity=redirect_address.city,
         RedirectState=redirect_address.state_code,
         RedirectZipCode=redirect_address.postal_code,
-        RedirectZip4=Location(redirect_address.postal_code).as_zip4,
+        RedirectZip4=Location(redirect_address.postal_code).as_zip4 or "",
         Container=None,
         ShippingContents=ShippingContentsType(
             ItemDetail=[
@@ -105,7 +106,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     HSTariffNumber=item.sku,
                     CountryOfOrigin=Location(item.origin_country).as_country_name
                 )
-                for item in payload.customs.commodities
+                for item in customs.commodities
             ]
         ),
         InsuredAmount=insurance,
@@ -113,7 +114,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         GrossOunces=package.weight.OZ,
         ContentType=ContentType[customs.content_type or "other"].value,
         ContentTypeOther=customs.content_description or "N/A",
-        Agreement=('N' if customs.certify else 'Y'),
+        Agreement=('Y' if customs.certify else 'N'),
         Comments=customs.content_description,
         LicenseNumber=customs.license_number,
         CertificateNumber=customs.certificate_number,
@@ -124,13 +125,13 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         CustomerRefNo=None,
         CustomerRefNo2=None,
         POZipCode=None,
-        LabelDate=DF.fdatetime(options.shipment_date, output_format="%m/%d/%Y"),
+        LabelDate=DF.fdatetime((options.shipment_date or time.strftime('%Y-%m-%d')), current_format="%Y-%m-%d", output_format="%m/%d/%Y"),
         EMCAAccount=None,
         HoldForManifest=None,
         EELPFC=customs.eel_pfc,
         PriceOptions=None,
         Length=package.length.IN,
-        Width=package.weight.IN,
+        Width=package.width.IN,
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
         LabelTime=None,
@@ -143,11 +144,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ImportersTelephoneNumber=None,
         ImportersFaxNumber=None,
         ImportersEmail=None,
-        Machinable=options['usps_option_machinable_item'],
+        Machinable=options.usps_option_machinable_item or False,
         DestinationRateIndicator="I",
-        MID=None,
-        LogisticsManagerMID=None,
-        CRID=None,
+        MID=settings.mailer_id,
+        LogisticsManagerMID=settings.logistics_manager_mailer_id,
+        CRID=settings.customer_registration_id,
         VendorCode=None,
         VendorProductVersionNumber=None,
     )

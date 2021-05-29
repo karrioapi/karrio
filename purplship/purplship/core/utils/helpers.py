@@ -83,14 +83,14 @@ class Location:
 
     @property
     def as_zip4(self) -> Optional[str]:
-        if re.match(r'/^SW\d{4}$/', self.value):
+        if re.match(r'/^SW\d{4}$/', self.value or ""):
             return self.value
 
         return None
 
     @property
     def as_zip5(self) -> Optional[str]:
-        if not re.match(r'/^SW\d{5}$/', self.value):
+        if not re.match(r'/^SW\d{5}$/', self.value or ""):
             return self.value
 
         return None
@@ -107,9 +107,9 @@ class Location:
     def as_state_name(self) -> str:
         from purplship.core.units import CountryState
         try:
-            country: Any = CountryState[self.extra['country']]
-            if self.value in country:
-                return country[self.value].value
+            country: Any = CountryState.__members__.get(self.extra['country'])
+            if self.value in getattr(country, 'value', []):
+                return country.value[self.value].value
 
             return self.value
         except KeyError as e:

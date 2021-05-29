@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     password: str
     mailer_id: str = None
     customer_registration_id: str = None
+    logistics_manager_mailer_id: str = None
 
     # Base properties
     id: str = None

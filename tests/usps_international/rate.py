@@ -75,7 +75,6 @@ PARSED_RATE_RESPONSE = [
             "extra_charges": [{"amount": 0.0, "currency": "USD", "name": "Insurance"}],
             "service": "usps_priority_mail_express_international",
             "total_charge": 82.45,
-            "transit_days": 10,
         },
         {
             "base_charge": 55.35,
@@ -197,7 +196,6 @@ RATE_RESPONSE_XML = f"""<?xml version="1.0" encoding="UTF-8"?>
       <SvcDescription>Priority Mail Express International&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;</SvcDescription>
       <MaxDimensions>Max. length 59", max. length plus girth 108"</MaxDimensions>
       <MaxWeight>66</MaxWeight>
-      <GuaranteeAvailability>06/09/2021</GuaranteeAvailability>
     </Service>
     <Service ID="2">
       <Pounds>3</Pounds>

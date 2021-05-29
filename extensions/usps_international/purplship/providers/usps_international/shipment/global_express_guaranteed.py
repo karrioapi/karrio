@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 from typing import Tuple, List
 from usps_lib.evs_gxg_get_label_response import eVSGXGGetLabelResponse
 from usps_lib.evs_gxg_get_label_request import (
@@ -15,7 +15,7 @@ from purplship.core.models import (
     Customs,
 )
 from purplship.providers.usps_international.units import (
-    LabelFormat, ShipmentOption, ContentType, PackagingType, Incoterm
+    ShipmentOption, ContentType, PackagingType, Incoterm
 )
 from purplship.providers.usps_international.error import parse_error_response
 from purplship.providers.usps_international.utils import Settings
@@ -56,7 +56,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         Option=None,
         Revision=2,
         ImageParameters=None,
-        FromFirstName=customs.signer or payload.shipper.person_name or "N/A",
+        FromFirstName=(customs.signer or payload.shipper.person_name or "N/A"),
         FromMiddleInitial=None,
         FromLastName=payload.shipper.person_name,
         FromFirm=payload.shipper.company_name or "N/A",
@@ -96,10 +96,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                     HSTariffNumber=item.sku,
                     CountryofManufacture=Location(item.origin_country).as_country_name
                 )
-                for item in payload.customs.commodities
+                for item in customs.commodities
             ]
         ),
-        PurposeOfShipment=ContentType[customs.content_type or 'other'],
+        PurposeOfShipment=ContentType[customs.content_type or 'other'].value,
         PartiesToTransaction=None,
         Agreement=('N' if customs.certify else 'Y'),
         Postage=None,
@@ -107,12 +107,12 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         GrossPounds=package.weight.LB,
         GrossOunces=package.weight.OZ,
         Length=package.length.IN,
-        Width=package.weight.IN,
+        Width=package.width.IN,
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
         Shape=None,
         CIRequired=customs.commercial_invoice,
-        InvoiceDate=None,
+        InvoiceDate=DF.fdatetime(customs.invoice_date, output_format="%m/%d/%Y"),
         InvoiceNumber=customs.invoice,
         CustomerOrderNumber=None,
         CustOrderNumber=None,
@@ -125,7 +125,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ImageLayout=None,
         CustomerRefNo=None,
         CustomerRefNo2=None,
-        ShipDate=DF.fdatetime((options.shipment_date or datetime.now()), output_format="%m/%d/%Y"),
+        ShipDate=DF.fdatetime((options.shipment_date or time.strftime('%Y-%m-%d')), current_format="%Y-%m-%d", output_format="%m/%d/%Y"),
         HoldForManifest=None,
         PriceOptions=None,
         CommercialShipment=customs.commercial_invoice,
@@ -135,11 +135,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         OptOutOfSPE=None,
         PermitNumber=None,
         AccountZipCode=None,
-        Machinable=options['usps_option_machinable_item'],
+        Machinable=(options.usps_option_machinable_item or False),
         DestinationRateIndicator="I",
-        MID=None,
-        LogisticsManagerMID=None,
-        CRID=None,
+        MID=settings.mailer_id,
+        LogisticsManagerMID=settings.logistics_manager_mailer_id,
+        CRID=settings.customer_registration_id,
         VendorCode=None,
         VendorProductVersionNumber=None,
         OverrideMID=None,

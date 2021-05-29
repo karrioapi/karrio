@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from datetime import datetime
-from usps_lib.intl_rate_v2_request import IntlRateV2Request, PackageType, ExtraServicesType
+from usps_lib.intl_rate_v2_request import IntlRateV2Request, PackageType, ExtraServicesType, GXGType
 from usps_lib.intl_rate_v2_response import ServiceType, ExtraServiceType
 
 from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
@@ -86,7 +86,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
                 Ounces=package.weight.OZ,
                 Machinable=options.usps_option_machinable_item or False,
                 MailType=PackagingType[package.packaging_type or "package"].value,
-                GXG=None,
+                GXG=(
+                    GXGType(POBoxFlag='N', GiftFlag='N')
+                    if any('global_express_guaranteed' in s.name for s in payload.services) else None
+                ),
                 ValueOfContents=(options.declared_value or ""),
                 Country=recipient.country_name,
                 Width=package.width.IN,
@@ -96,7 +99,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
                 OriginZip=payload.shipper.postal_code,
                 CommercialFlag=commercial,
                 CommercialPlusFlag=commercial_plus,
-                AcceptanceDateTime=datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
+                AcceptanceDateTime=DF.fdatetime(
+                    (options.shipment_date or datetime.today()),
+                    output_format="%Y-%m-%dT%H:%M:%S"
+                ),
                 DestinationPostalCode=recipient.postal_code,
                 ExtraServices=(
                     ExtraServicesType(ExtraService=[s for s in extra_services])
