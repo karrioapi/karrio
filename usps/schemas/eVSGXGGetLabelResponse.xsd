@@ -13,8 +13,8 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element type="xs:string" name="Insurance"/>
-                <xs:element type="xs:long" name="USPSBarcodeNumber"/>
-                <xs:element type="xs:long" name="FedExBarcodeNumber"/>
+                <xs:element type="xs:string" name="USPSBarcodeNumber"/>
+                <xs:element type="xs:string" name="FedExBarcodeNumber"/>
                 <xs:element type="xs:string" name="LabelImage"/>
                 <xs:element type="xs:string" name="LabelImagePage2"/>
                 <xs:element type="xs:string" name="LabelImagePage3"/>
@@ -24,7 +24,7 @@
                 <xs:element type="xs:string" name="CIImagePage3"/>
                 <xs:element type="xs:string" name="CIImagePage4"/>
                 <xs:element type="xs:float" name="InsuranceFee"/>
-                <xs:element type="xs:byte" name="DimensionalWeight"/>
+                <xs:element type="xs:float" name="DimensionalWeight"/>
                 <xs:element type="xs:string" name="LogMessage"/>
                 <xs:element type="xs:short" name="RemainingBarcodes"/>
             </xs:sequence>

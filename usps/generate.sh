@@ -1,5 +1,5 @@
 SCHEMAS=./schemas
-DATA_TYPES=./pyusps
+DATA_TYPES=./usps_lib
 mkdir -p $DATA_TYPES
 find $DATA_TYPES -name "*.py" -exec rm -r {} \;
 touch $DATA_TYPES/__init__.py

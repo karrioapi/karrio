@@ -54,7 +54,7 @@
                 <xs:element name="ShippingContents">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="ItemDetail">
+                            <xs:element name="ItemDetail" maxOccurs="unbounded" minOccurs="0">
                                 <xs:complexType>
                                     <xs:sequence>
                                         <xs:element type="xs:string" name="Description"/>
@@ -62,7 +62,7 @@
                                         <xs:element type="xs:float" name="Value"/>
                                         <xs:element type="xs:float" name="NetPounds"/>
                                         <xs:element type="xs:float" name="NetOunces"/>
-                                        <xs:element type="xs:integer" name="HSTariffNumber"/>
+                                        <xs:element type="xs:string" name="HSTariffNumber"/>
                                         <xs:element type="xs:string" name="CountryOfOrigin"/>
                                     </xs:sequence>
                                 </xs:complexType>
@@ -73,8 +73,8 @@
                 <xs:element type="xs:string" name="InsuredNumber"/>
                 <xs:element type="xs:decimal" name="InsuredAmount"/>
                 <xs:element type="xs:string" name="Postage"/>
-                <xs:element type="xs:integer" name="GrossPounds"/>
-                <xs:element type="xs:integer" name="GrossOunces"/>
+                <xs:element type="xs:float" name="GrossPounds"/>
+                <xs:element type="xs:float" name="GrossOunces"/>
                 <xs:element type="xs:string" name="ContentType"/>
                 <xs:element type="xs:string" name="ContentTypeOther"/>
                 <xs:element type="xs:string" name="Agreement"/>

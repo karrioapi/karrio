@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Feb 17 05:44:56 2021 by generateDS.py version 2.37.15.
+# Generated Sat May 29 15:47:01 2021 by generateDS.py version 2.38.6.
 # Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', 'usps_lib/track_response.py')
+#   ('-o', './usps_lib/track_response.py')
 #
 # Command line arguments:
-#   schemas/TrackResponse.xsd
+#   ./schemas/TrackResponse.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "usps_lib/track_response.py" schemas/TrackResponse.xsd
+#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/track_response.py" ./schemas/TrackResponse.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps
@@ -339,6 +339,7 @@ except ModulenotfoundExp_ as exp:
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
             for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
                 if value not in (True, 1, False, 0, ):
                     raise_parse_error(
                         node,

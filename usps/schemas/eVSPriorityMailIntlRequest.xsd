@@ -62,7 +62,7 @@
                                         <xs:element type="xs:float" name="Value"/>
                                         <xs:element type="xs:float" name="NetPounds"/>
                                         <xs:element type="xs:float" name="NetOunces"/>
-                                        <xs:element type="xs:integer" name="HSTariffNumber"/>
+                                        <xs:element type="xs:string" name="HSTariffNumber"/>
                                         <xs:element type="xs:string" name="CountryOfOrigin"/>
                                     </xs:sequence>
                                 </xs:complexType>
@@ -104,14 +104,14 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element type="xs:string" name="ActionCode"/>
-                <xs:element type="xs:string" name="OptOutOfSPE"/>
+                <xs:element type="xs:boolean" name="OptOutOfSPE"/>
                 <xs:element type="xs:string" name="PermitNumber"/>
                 <xs:element type="xs:string" name="AccountZipCode"/>
                 <xs:element type="xs:string" name="ImportersReferenceType"/>
                 <xs:element type="xs:string" name="ImportersTelephoneNumber"/>
                 <xs:element type="xs:string" name="ImportersFaxNumber"/>
                 <xs:element type="xs:string" name="ImportersEmail"/>
-                <xs:element type="xs:string" name="Machinable"/>
+                <xs:element type="xs:boolean" name="Machinable"/>
                 <xs:element type="xs:string" name="DestinationRateIndicator"/>
                 <xs:element type="xs:string" name="MID"/>
                 <xs:element type="xs:string" name="LogisticsManagerMID"/>

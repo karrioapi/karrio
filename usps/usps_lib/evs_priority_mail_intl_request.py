@@ -2,33 +2,37 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Thu Nov  5 20:52:33 2020 by generateDS.py version 2.35.15.
-# Python 3.8.1 (v3.8.1:1b293b6006, Dec 18 2019, 14:08:53)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sat May 29 15:47:03 2021 by generateDS.py version 2.38.6.
+# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './pyusps/evs_priority_mail_intl_request.py')
+#   ('-o', './usps_lib/evs_priority_mail_intl_request.py')
 #
 # Command line arguments:
 #   ./schemas/eVSPriorityMailIntlRequest.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./pyusps/evs_priority_mail_intl_request.py" ./schemas/eVSPriorityMailIntlRequest.xsd
+#   /Users/danielkobina/Workspace/project/purplship-carriers/.venv/purplship-carriers/bin/generateDS --no-namespace-defs -o "./usps_lib/evs_priority_mail_intl_request.py" ./schemas/eVSPriorityMailIntlRequest.xsd
 #
 # Current working directory (os.getcwd()):
-#   py-usps
+#   usps
 #
 
+import sys
+try:
+    ModulenotfoundExp_ = ModuleNotFoundError
+except NameError:
+    ModulenotfoundExp_ = ImportError
 from six.moves import zip_longest
 import os
-import sys
 import re as re_
 import base64
 import datetime as datetime_
 import decimal as decimal_
 try:
     from lxml import etree as etree_
-except ImportError:
+except ModulenotfoundExp_ :
     from xml.etree import ElementTree as etree_
 
 
@@ -107,11 +111,11 @@ def parsexmlstring_(instring, parser=None, **kwargs):
 
 try:
     from generatedsnamespaces import GenerateDSNamespaceDefs as GenerateDSNamespaceDefs_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceDefs_ = {}
 try:
     from generatedsnamespaces import GenerateDSNamespaceTypePrefixes as GenerateDSNamespaceTypePrefixes_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceTypePrefixes_ = {}
 
 #
@@ -122,7 +126,7 @@ except ImportError:
 #
 try:
     from generatedscollector import GdsCollector as GdsCollector_
-except ImportError:
+except ModulenotfoundExp_ :
 
     class GdsCollector_(object):
 
@@ -156,7 +160,7 @@ except ImportError:
 
 try:
     from enum import Enum
-except ImportError:
+except ModulenotfoundExp_ :
     Enum = object
 
 #
@@ -168,7 +172,7 @@ except ImportError:
 
 try:
     from generatedssuper import GeneratedsSuper
-except ImportError as exp:
+except ModulenotfoundExp_ as exp:
     
     class GeneratedsSuper(object):
         __hash__ = object.__hash__
@@ -211,6 +215,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires integer value')
             return value
         def gds_format_integer_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_integer_list(
                 self, input_data, node=None, input_name=''):
@@ -219,7 +225,7 @@ except ImportError as exp:
                 try:
                     int(value)
                 except (TypeError, ValueError):
-                    raise_parse_error(node, 'Requires sequence of integer valuess')
+                    raise_parse_error(node, 'Requires sequence of integer values')
             return values
         def gds_format_float(self, input_data, input_name=''):
             return ('%.15f' % input_data).rstrip('0')
@@ -236,6 +242,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires float value')
             return value
         def gds_format_float_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_float_list(
                 self, input_data, node=None, input_name=''):
@@ -247,7 +255,12 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of float values')
             return values
         def gds_format_decimal(self, input_data, input_name=''):
-            return ('%s' % input_data).rstrip('0')
+            return_value = '%s' % input_data
+            if '.' in return_value:
+                return_value = return_value.rstrip('0')
+                if return_value.endswith('.'):
+                    return_value = return_value.rstrip('.')
+            return return_value
         def gds_parse_decimal(self, input_data, node=None, input_name=''):
             try:
                 decimal_value = decimal_.Decimal(input_data)
@@ -261,7 +274,9 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
-            return '%s' % ' '.join(input_data)
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
+            return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -272,7 +287,7 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of decimal values')
             return values
         def gds_format_double(self, input_data, input_name=''):
-            return '%e' % input_data
+            return '%s' % input_data
         def gds_parse_double(self, input_data, node=None, input_name=''):
             try:
                 fval_ = float(input_data)
@@ -286,6 +301,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires double or float value')
             return value
         def gds_format_double_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_double_list(
                 self, input_data, node=None, input_name=''):
@@ -315,11 +332,14 @@ except ImportError as exp:
                     '(one of True, 1, False, 0)')
             return input_data
         def gds_format_boolean_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_boolean_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
             for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
                 if value not in (True, 1, False, 0, ):
                     raise_parse_error(
                         node,
@@ -766,7 +786,10 @@ def find_attr_value_(attr_name, node):
         value = attrs.get(attr_name)
     elif len(attr_parts) == 2:
         prefix, name = attr_parts
-        namespace = node.nsmap.get(prefix)
+        if prefix == 'xml':
+            namespace = 'http://www.w3.org/XML/1998/namespace'
+        else:
+            namespace = node.nsmap.get(prefix)
         if namespace is not None:
             value = attrs.get('{%s}%s' % (namespace, name, ))
     return value
@@ -847,7 +870,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element):
+    def to_etree(self, element, mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -867,7 +890,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self):
+    def to_etree_simple(self, mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -1970,7 +1993,7 @@ class eVSPriorityMailIntlRequest(GeneratedsSuper):
         if self.OptOutOfSPE is not None:
             namespaceprefix_ = self.OptOutOfSPE_nsprefix_ + ':' if (UseCapturedNS_ and self.OptOutOfSPE_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sOptOutOfSPE>%s</%sOptOutOfSPE>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.OptOutOfSPE), input_name='OptOutOfSPE')), namespaceprefix_ , eol_))
+            outfile.write('<%sOptOutOfSPE>%s</%sOptOutOfSPE>%s' % (namespaceprefix_ , self.gds_format_boolean(self.OptOutOfSPE, input_name='OptOutOfSPE'), namespaceprefix_ , eol_))
         if self.PermitNumber is not None:
             namespaceprefix_ = self.PermitNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.PermitNumber_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -1998,7 +2021,7 @@ class eVSPriorityMailIntlRequest(GeneratedsSuper):
         if self.Machinable is not None:
             namespaceprefix_ = self.Machinable_nsprefix_ + ':' if (UseCapturedNS_ and self.Machinable_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sMachinable>%s</%sMachinable>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Machinable), input_name='Machinable')), namespaceprefix_ , eol_))
+            outfile.write('<%sMachinable>%s</%sMachinable>%s' % (namespaceprefix_ , self.gds_format_boolean(self.Machinable, input_name='Machinable'), namespaceprefix_ , eol_))
         if self.DestinationRateIndicator is not None:
             namespaceprefix_ = self.DestinationRateIndicator_nsprefix_ + ':' if (UseCapturedNS_ and self.DestinationRateIndicator_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -2508,10 +2531,10 @@ class eVSPriorityMailIntlRequest(GeneratedsSuper):
             self.ActionCode = value_
             self.ActionCode_nsprefix_ = child_.prefix
         elif nodeName_ == 'OptOutOfSPE':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'OptOutOfSPE')
-            value_ = self.gds_validate_string(value_, node, 'OptOutOfSPE')
-            self.OptOutOfSPE = value_
+            sval_ = child_.text
+            ival_ = self.gds_parse_boolean(sval_, node, 'OptOutOfSPE')
+            ival_ = self.gds_validate_boolean(ival_, node, 'OptOutOfSPE')
+            self.OptOutOfSPE = ival_
             self.OptOutOfSPE_nsprefix_ = child_.prefix
         elif nodeName_ == 'PermitNumber':
             value_ = child_.text
@@ -2550,10 +2573,10 @@ class eVSPriorityMailIntlRequest(GeneratedsSuper):
             self.ImportersEmail = value_
             self.ImportersEmail_nsprefix_ = child_.prefix
         elif nodeName_ == 'Machinable':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'Machinable')
-            value_ = self.gds_validate_string(value_, node, 'Machinable')
-            self.Machinable = value_
+            sval_ = child_.text
+            ival_ = self.gds_parse_boolean(sval_, node, 'Machinable')
+            ival_ = self.gds_validate_boolean(ival_, node, 'Machinable')
+            self.Machinable = ival_
             self.Machinable_nsprefix_ = child_.prefix
         elif nodeName_ == 'DestinationRateIndicator':
             value_ = child_.text
@@ -2990,7 +3013,7 @@ class ItemDetailType(GeneratedsSuper):
         if self.HSTariffNumber is not None:
             namespaceprefix_ = self.HSTariffNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.HSTariffNumber_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sHSTariffNumber>%s</%sHSTariffNumber>%s' % (namespaceprefix_ , self.gds_format_integer(self.HSTariffNumber, input_name='HSTariffNumber'), namespaceprefix_ , eol_))
+            outfile.write('<%sHSTariffNumber>%s</%sHSTariffNumber>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.HSTariffNumber), input_name='HSTariffNumber')), namespaceprefix_ , eol_))
         if self.CountryOfOrigin is not None:
             namespaceprefix_ = self.CountryOfOrigin_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryOfOrigin_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -3039,11 +3062,11 @@ class ItemDetailType(GeneratedsSuper):
             fval_ = self.gds_validate_float(fval_, node, 'NetOunces')
             self.NetOunces = fval_
             self.NetOunces_nsprefix_ = child_.prefix
-        elif nodeName_ == 'HSTariffNumber' and child_.text:
-            sval_ = child_.text
-            ival_ = self.gds_parse_integer(sval_, node, 'HSTariffNumber')
-            ival_ = self.gds_validate_integer(ival_, node, 'HSTariffNumber')
-            self.HSTariffNumber = ival_
+        elif nodeName_ == 'HSTariffNumber':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'HSTariffNumber')
+            value_ = self.gds_validate_string(value_, node, 'HSTariffNumber')
+            self.HSTariffNumber = value_
             self.HSTariffNumber_nsprefix_ = child_.prefix
         elif nodeName_ == 'CountryOfOrigin':
             value_ = child_.text
@@ -3220,7 +3243,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     return rootObj
 
 
-def parseEtree(inFileName, silence=False, print_warnings=True):
+def parseEtree(inFileName, silence=False, print_warnings=True,
+               mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -3232,8 +3256,10 @@ def parseEtree(inFileName, silence=False, print_warnings=True):
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
-    mapping = {}
-    rootElement = rootObj.to_etree(None, name_=rootTag, mapping_=mapping)
+    if mapping is None:
+        mapping = {}
+    rootElement = rootObj.to_etree(
+        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
     reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
     if not SaveElementTreeNode:
         doc = None
@@ -3334,6 +3360,12 @@ if __name__ == '__main__':
 
 RenameMappings_ = {
 }
+
+#
+# Mapping of namespaces to types defined in them
+# and the file in which each is defined.
+# simpleTypes are marked "ST" and complexTypes "CT".
+NamespaceToDefMappings_ = {}
 
 __all__ = [
     "ExtraServicesType",
