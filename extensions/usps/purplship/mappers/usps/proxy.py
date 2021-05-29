@@ -16,3 +16,9 @@ class Proxy(BaseProxy):
         response = http(url=f"{self.settings.server_url}?{query}", method="GET")
 
         return Deserializable(response, XP.to_xml)
+
+    def get_rates(self, request: Serializable) -> Deserializable:
+        query = urllib.parse.urlencode({"API": "RateV4", "XML": request.serialize()})
+        response = http(url=f"{self.settings.server_url}?{query}", method="GET")
+
+        return Deserializable(response, XP.to_xml)
