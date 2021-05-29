@@ -1,6 +1,6 @@
 # purplship.usps_international
 
-This package is a USPS International Express extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
+This package is a USPS International extension of the [purplship](https://pypi.org/project/purplship) multi carrier shipping SDK.
 
 ## Requirements
 

@@ -80,13 +80,13 @@ class PackagingType(Enum):
 
 
 class ShipmentOption(Enum):
-    usps_registered_mail = Spec.asKey("103")
-    usps_insurance_global_express_guaranteed = Spec.asValue("106")
-    usps_insurance_express_mail_international = Spec.asValue("107")
-    usps_insurance_priority_mail_international = Spec.asValue("108")
-    usps_return_receipt = Spec.asKey("105")
-    usps_certificate_of_mailing = Spec.asKey("100")
-    usps_electronic_usps_delivery_confirmation_international = Spec.asKey("109")
+    usps_registered_mail = Spec.asKey(103)
+    usps_insurance_global_express_guaranteed = Spec.asKey(106)
+    usps_insurance_express_mail_international = Spec.asKey(107)
+    usps_insurance_priority_mail_international = Spec.asKey(108)
+    usps_return_receipt = Spec.asKey(105)
+    usps_certificate_of_mailing = Spec.asKey(100)
+    usps_electronic_usps_delivery_confirmation_international = Spec.asKey(109)
 
     """ Non official options """
     usps_option_machinable_item = Spec.asFlag("usps_option_machinable_item")

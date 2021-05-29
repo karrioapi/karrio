@@ -6,7 +6,7 @@ from usps_lib.intl_rate_v2_response import ServiceType, ExtraServiceType
 from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
 from purplship.core.utils import Serializable, Element, NF, XP, DF
 from purplship.core.models import RateDetails, Message, RateRequest, ChargeDetails
-from purplship.core.units import Packages, Country, Weight, WeightUnit, Services, Options, Currency
+from purplship.core.units import Packages, Country, Weight, WeightUnit, Services, Options, Currency, CompleteAddress
 
 from purplship.providers.usps_international.units import (
     ShipmentService, ShipmentOption, PackagingType, ServiceClassID
@@ -18,32 +18,30 @@ from purplship.providers.usps_international import Settings
 def parse_rate_response(response: Element, settings: Settings) -> Tuple[List[RateDetails], List[Message]]:
     quotes: List[RateDetails] = [
         _extract_details(package, settings)
-        for package in response.xpath(".//*[local-name() = $name]", name="Service")
+        for package in XP.find("Service", response)
     ]
     return quotes, parse_error_response(response, settings)
 
 
 def _extract_details(service_node: Element, settings: Settings) -> RateDetails:
     service: ServiceType = XP.build(ServiceType, service_node)
+
     charges: List[ExtraServiceType] = service.ExtraServices.ExtraService
     delivery_date = DF.date(service.GuaranteeAvailability, "%m/%d/%Y")
-    transit = (
-        (delivery_date - datetime.now()).days
-        if delivery_date is not None else None
-    )
+    transit = ((delivery_date - datetime.now()).days if delivery_date is not None else None)
 
     return RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
 
-        service=ServiceClassID(str(service.ID)),
+        service=ServiceClassID(str(service.ID)).name,
         base_charge=NF.decimal(service.Postage),
         total_charge=NF.decimal(service.Postage),
         currency=Currency.USD.name,
         transit_days=transit,
         extra_charges=[
             ChargeDetails(
-                name=charge.ServiceID,
+                name=charge.ServiceName,
                 amount=NF.decimal(charge.Price),
                 currency=Currency.USD.name,
             )
@@ -70,16 +68,13 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
         raise DestinationNotServicedError(payload.recipient.country_code)
 
     package = Packages(payload.parcels, max_weight=Weight(70, WeightUnit.LB)).single
+    recipient = CompleteAddress(payload.recipient)
     options = Options(payload.options, ShipmentOption)
     services = Services(payload.services, ShipmentService)
 
     extra_services = [getattr(option, 'value', option) for key, option in options if 'usps_option' not in key]
     commercial = next(("Y" for svc in services if "commercial" in svc.name), "N")
     commercial_plus = next(("Y" for svc in services if "plus" in svc.name), "N")
-    country = (
-        Country[payload.recipient.country_code].value
-        if payload.recipient.country_code else None
-    )
 
     request = IntlRateV2Request(
         USERID=settings.username,
@@ -89,11 +84,11 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
                 ID=0,
                 Pounds=package.weight.LB,
                 Ounces=package.weight.OZ,
-                Machinable=options["usps_option_machinable_item"],
+                Machinable=options.usps_option_machinable_item or False,
                 MailType=PackagingType[package.packaging_type or "package"].value,
                 GXG=None,
-                ValueOfContents=None,
-                Country=country,
+                ValueOfContents=(options.declared_value or ""),
+                Country=recipient.country_name,
                 Width=package.width.IN,
                 Length=package.length.IN,
                 Height=package.height.IN,
@@ -102,14 +97,10 @@ def rate_request(payload: RateRequest, settings: Settings) -> Serializable[IntlR
                 CommercialFlag=commercial,
                 CommercialPlusFlag=commercial_plus,
                 AcceptanceDateTime=datetime.today().strftime("%Y-%m-%dT%H:%M:%S"),
-                DestinationPostalCode=payload.recipient.postal_code,
+                DestinationPostalCode=recipient.postal_code,
                 ExtraServices=(
-                    ExtraServicesType(
-                        ExtraService=[
-                            getattr(option, 'value', option)
-                            for option in extra_services
-                        ]
-                    ) if any(extra_services) else None
+                    ExtraServicesType(ExtraService=[s for s in extra_services])
+                    if any(extra_services) else None
                 ),
                 Content=None,
             )
