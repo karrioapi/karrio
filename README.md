@@ -19,8 +19,9 @@
 Purplship server is an On-prem or cloud Multi-carrier Shipping API.
 The server is in Python, but you can use any programming language to send API requests to any supported shipping carriers from your application.
 
-- Book a Live Demo here [purplship.com](https://purplship.com/schedule-demo/)
-- Join us on [Discord](https://discord.gg/kXEa3UMRHd)
+- [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
+- [Join us on Discord](https://discord.gg/kXEa3UMRHd)
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91).
 
 
 ## Screenshots
@@ -144,19 +145,16 @@ Here you can find the Open Source Edition released under the `Apache 2`.
 To get the quotation of our Enterprise Edition, please visit www.purplship.com and contact us.
 
 
-|                                          | OSS         | Enterprise   |
-| ---------------------------------------- | ----------- | ------------ |
-| Multi-carrier shipping APIs              | Yes         | Yes          |
-| Carrier accounts                         | Unlimited   | Unlimited    |
-| Hosting                                  | Self-hosted | Self-hosted  |
-| Maintenance & support                    | Community   | Dedicated    |
-| Multi-tenant                             | No          | Yes          |
-| Multi-org (soon)                         | No          | Yes          |
-| Reporting (soon)                         | No          | Yes          |
-| Shipping billing data (soon)             | No          | Yes          |
-| Whitelabel                               | No          | Yes          |
-
-**We encourage you to use the Enterprise edition or sponsor us to sustain this project.**
+|                                          | OSS         | Bronze Sponsor | Enterprise   |
+| ---------------------------------------- | ----------- | -------------- | ------------ |
+| Multi-carrier shipping APIs              | Yes         | Yes            | Yes          |
+| Carrier accounts                         | Unlimited   | Unlimited      | Unlimited    |
+| Hosting                                  | Self-hosted | Self-hosted    | Self-hosted  |
+| Maintenance & support                    | Community   | Priority Ticket| Dedicated    |
+| Whitelabel                               | No          | Yes            | Yes          |
+| Multi-tenant & Multi-org                 | No          | No             | Yes          |
+| Reporting & Analytics (soon)             | No          | No             | Yes          |
+| Shipping billing data (soon)             | No          | No             | Yes          |
 
 
 ## Official Client Libraries
@@ -170,12 +168,11 @@ Use the [swagger editor](https://editor.swagger.io/) to generate any additional 
 
 ## Resources
 
-- **Documentation** - Learn more at [docs.purplship.com](https://docs.purplship.com)
-- **Community** - Feature requests, general questions on [Discord](https://discord.gg/kXEa3UMRHd)
-- **Bug Tracker** - [File bugs](https://github.com/Purplship/purplship-server/issues)
-- **Blog** - Get the latest updates from the [Puprlship blog](https://blog.purplship.com).
-- **Twitter** - Follow [Purplship](https://twitter.com/purplship).
-
+- [**Documentation**](https://docs.purplship.com)
+- [**Community on Discord**](https://discord.gg/kXEa3UMRHd)
+- [**Bug Tracker**](https://github.com/PurplShip/purplship/issues)
+- [**Blog**](https://blog.purplship.com)
+- [**@Purplship on Twitter**](https://twitter.com/purplship)
 
 ## License
 

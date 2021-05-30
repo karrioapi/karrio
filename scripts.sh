@@ -224,9 +224,9 @@ build() {
 }
 
 build_theme() {
-  pushd "${ROOT:?}/webapp" || false &&
+  cd "${ROOT:?}/webapp" || false &&
   rm -rf node_modules; yarn && yarn build:theme "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/css/purplship.theme.min.css"
-  popd || true
+  cd - || true
   purplship collectstatic --noinput
 }
 
@@ -238,21 +238,21 @@ build_dashboard() {
 }
 
 build_js() {
-  pushd "${ROOT:?}/webapp/api" || false &&
+  cd "${ROOT:?}/webapp/api" || false &&
   rm -rf node_modules;
   yarn && npx gulp build \
   	--output "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/js/purplship.js"
-  popd
+  cd -
   purplship collectstatic --noinput
 }
 
 dev_webapp() {
-  pushd "${ROOT:?}/webapp" || false &&
+  cd "${ROOT:?}/webapp" || false &&
   rm -rf node_modules;
   yarn && yarn build -w \
     --env postbuild="purplship collectstatic --noinput" \
     --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
-  popd
+  cd -
 }
 
 build_image() {
@@ -279,14 +279,14 @@ generate_typescript_client() {
 		-o /local/webapp/api \
 		-c /local/artifacts/config.json \
 		--additional-properties=typescriptThreePlus=true
-  
-  rm -f "${ROOT:?}/webapp/api/apis/index.ts"
-  rm -f "${ROOT:?}/webapp/api/.openapi-generator-ignore"
-  rm -rf "${ROOT:?}/webapp/api/.openapi-generator/"
-
-  pushd "${ROOT:?}/webapp" && git checkout "./api/index.ts"; popd
 
 	cd -
+  
+	rm -f "${ROOT:?}/webapp/api/apis/index.ts"
+	rm -f "${ROOT:?}/webapp/api/.openapi-generator-ignore"
+	rm -rf "${ROOT:?}/webapp/api/.openapi-generator/"
+
+	cd "${ROOT:?}/webapp" && git checkout "./api/index.ts"; cd -
 }
 
 generate_php_client() {

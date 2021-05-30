@@ -1,0 +1,4878 @@
+openapi: 3.0.1
+info:
+  title: Purplship API
+  description: "\n## API Reference\n\nPurplship is an open source multi-carrier shipping\
+    \ API that simplifies the integration of logistic carrier services.\n\nThe Purplship\
+    \ API is organized around REST. Our API has predictable resource-oriented URLs,\
+    \ accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses\
+    \ standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API\
+    \ differs for every account as we release new versions.\nThese docs are customized\
+    \ to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible\
+    \ changes are made to the API, a new, dated version is released. \nThe current\
+    \ version is `2021.5`. \n\nRead our API changelog and to learn more about backwards\
+    \ compatibility.\n\nAs a precaution, use API versioning to check a new API version\
+    \ before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources\
+    \ have support for bulk fetches via \"list\" API methods. For instance, you can\
+    \ list addresses, \nlist shipments, and list trackers. These list API methods\
+    \ share a common structure, taking at least these \ntwo parameters: limit, and\
+    \ offset.\n\nPurplship utilizes offset-based pagination via the offset and limit\
+    \ parameters.\nBoth parameters take a number as value (see below) and return objects\
+    \ in reverse chronological order. \nThe offset parameter returns objects listed\
+    \ after an index. \nThe limit parameter take a limit on the number of objects\
+    \ to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=50\"\
+    ,\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n\
+    \    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to\
+    \ create and retrieve certain objects in `test_mode`.\nIn development, it is therefore\
+    \ possible to add carrier connections, get live rates, \nbuy labels, create trackers\
+    \ and schedule pickups in `test_mode`.\n\n"
+  contact:
+    email: hello@purplship.com
+  version: "2021.5"
+servers:
+- url: https://app.purplship.com
+security:
+- Token: []
+paths:
+  /api/token:
+    post:
+      tags:
+      - API
+      summary: Obtain auth token pair
+      description: Authenticate the user and return a token pair
+      operationId: '&&authenticate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        201:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+      x-codegen-request-body-name: data
+  /api/token/refresh:
+    post:
+      tags:
+      - API
+      summary: Refresh auth token
+      description: Authenticate the user and return a token pair
+      operationId: '&&refresh_token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+      x-codegen-request-body-name: data
+  /api/token/verify:
+    post:
+      tags:
+      - API
+      summary: Verify auth token
+      description: Verify an existent authentication token
+      operationId: '&&verify_token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+      x-codegen-request-body-name: data
+  /v1/addresses:
+    get:
+      tags:
+      - Addresses
+      summary: List all addresses
+      description: Retrieve all addresses.
+      operationId: $list
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressList'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET \
+            --url '/v1/addresses' \
+            --header 'Authorization: Token <API_KEY>'
+    post:
+      tags:
+      - Addresses
+      summary: Create an address
+      description: Create a new address.
+      operationId: $create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request POST \
+            --url /v1/addresses \
+            --header 'Authorization: Token <API_KEY>' \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "address_line1": "125 Church St",
+              "person_name": "John Doe",
+              "company_name": "A corp.",
+              "phone_number": "+1 514 000 0000",
+              "city": "Moncton",
+              "country_code": "CA",
+              "postal_code": "E1C4Z8",
+              "residential": false,
+              "state_code": "NB"
+          }'
+      x-codegen-request-body-name: data
+  /v1/addresses/{id}:
+    get:
+      tags:
+      - Addresses
+      summary: Retrieve an address
+      description: Retrieve an address.
+      operationId: $retrieve
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET \
+            --url /v1/addresses/<ADDRESS_ID> \
+            --header 'Authorization: Token <API_KEY>'
+    patch:
+      tags:
+      - Addresses
+      summary: Update an address
+      description: update an address.
+      operationId: $update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request PATCH \
+            --url /v1/addresses/<ADDRESS_ID> \
+            --header 'Authorization: Token <API_KEY>' \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "city": "Pierrefonds"
+          }'
+      x-codegen-request-body-name: data
+  /v1/carriers:
+    get:
+      tags:
+      - Carriers
+      summary: List all carriers
+      description: Returns the list of configured carriers
+      operationId: '&&list'
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: carrier_name
+        in: query
+        description: Indicates a carrier (type)
+        schema:
+          type: string
+          enum:
+          - aramex
+          - australiapost
+          - canadapost
+          - canpar
+          - dhl_express
+          - dhl_universal
+          - dicom
+          - fedex
+          - purolator_courier
+          - royalmail
+          - sendle
+          - sf_express
+          - ups
+          - usps
+          - yanwen
+          - yunexpress
+          - eshipper
+          - freightcom
+      - name: test
+        in: query
+        description: This flag filter out carriers in test or prod mode
+        schema:
+          type: boolean
+          nullable: true
+      - name: active
+        in: query
+        description: This flag indicates whether to return active carriers only
+        schema:
+          type: boolean
+          nullable: true
+      - name: system_only
+        in: query
+        description: This flag indicates that only system carriers should be returned
+        schema:
+          type: boolean
+          nullable: true
+          default: false
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierList'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET                   --url '/v1/carriers' \
+            --header 'Authorization: Token <API_KEY>'
+  /v1/customs_info:
+    get:
+      tags:
+      - Customs
+      summary: List all customs info
+      description: Retrieve all stored customs declarations.
+      operationId: $$list
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomsList'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET \
+            --url '/v1/customs_info' \
+            --header 'Authorization: Token <API_KEY>'
+    post:
+      tags:
+      - Customs
+      summary: Create a customs info
+      description: Create a new customs declaration.
+      operationId: $$create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomsData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customs'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request POST \
+            --url /v1/customs_info \
+            --header 'Authorization: Token <API_KEY>' \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "content_type": "merchandise",
+              "incoterm": "DDU",
+              "commodities": [
+                {
+                  "weight": 2,
+                  "weight_unit": "KG",
+                  "quantity": 1,
+                  "sku": "XXXXX0000123",
+                  "value_amount": 30,
+                  "value_currency": "USD",
+                  "origin_country": "JM"
+                }
+              ],
+              "duty": {
+                "paid_by": "recipient",
+                "currency": "USD",
+                "declared_value": 60,
+              },
+              "certify": true,
+              "signer": "Kex",
+            }'
+      x-codegen-request-body-name: data
+  /v1/customs_info/{id}:
+    get:
+      tags:
+      - Customs
+      summary: Retrieve a customs info
+      description: Retrieve customs declaration.
+      operationId: $$retrieve
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customs'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET \
+            --url /v1/customs_info/<CUSTOMS_INFO_ID> \
+            --header 'Authorization: Token <API_KEY>'
+    delete:
+      tags:
+      - Customs
+      summary: Discard a customs info
+      description: Discard a customs declaration.
+      operationId: $$discard
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request DELETE \
+            --url /v1/customs_info/<CUSTOMS_INFO_ID> \
+            --header 'Authorization: Token <API_KEY>'
+    patch:
+      tags:
+      - Customs
+      summary: Update a customs info
+      description: modify an existing customs declaration.
+      operationId: $$update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomsData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customs'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request PATCH \
+            --url /v1/customs_info/<CUSTOMS_INFO_ID> \
+            --header 'Authorization: Token <API_KEY>' \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "content_type": "merchandise",
+              "duty": {
+                "paid_by": "recipient",
+                "currency": "CAD",
+                "declared_value": 100,
+              }
+            }'
+      x-codegen-request-body-name: data
+  /v1/customs_info/{id}/commodities:
+    post:
+      tags:
+      - Customs
+      summary: Add a commodity
+      description: Add a customs commodity.
+      operationId: $$add_commodity
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommodityData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customs'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request POST \
+            --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities \
+            --header 'Authorization: Token <API_KEY>' \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "weight": 1,
+              "weight_unit": "KG",
+              "quantity": 1,
+              "sku": "XXXXX0000123",
+              "value_amount": 25,
+              "value_currency": "USD",
+              "origin_country": "CA"
+            }'
+      x-codegen-request-body-name: data
+  /v1/customs_info/{id}/commodities/{ck}:
+    delete:
+      tags:
+      - Customs
+      summary: Discard a commodity
+      description: Discard a customs commodity.
+      operationId: $$discard_commodity
+      parameters:
+      - name: ck
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request DELETE \
+            --url /v1/customs_info/<CUSTOMS_INFO_ID>/commodities/<COMMODITY_ID> \
+            --header 'Authorization: Token <API_KEY>'
+  /v1/parcels:
+    get:
+      tags:
+      - Parcels
+      summary: List all parcels
+      description: Retrieve all stored parcels.
+      operationId: $$$list
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParcelList'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET \
+            --url '/v1/parcels' \
+            --header 'Authorization: Token <API_KEY>'
+    post:
+      tags:
+      - Parcels
+      summary: Create a parcel
+      description: Create a new parcel.
+      operationId: $$$create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParcelData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parcel'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request POST \
+              --url /v1/parcels \
+              --header 'Authorization: Token <API_KEY>' \
+              --header 'Content-Type: application/json' \
+              --data '{
+                "weight": 1,
+                "weight_unit": "KG",
+                "package_preset": "canadapost_corrugated_small_box"
+              }'
+      x-codegen-request-body-name: data
+  /v1/parcels/{id}:
+    get:
+      tags:
+      - Parcels
+      summary: Retrieve a parcel
+      description: Retrieve a parcel.
+      operationId: $$$retrieve
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parcel'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET \
+            --url /v1/parcels/<PARCEL_ID> \
+            --header 'Authorization: Token <API_KEY>'
+    delete:
+      tags:
+      - Parcels
+      summary: Remove a parcel
+      description: Remove a parcel.
+      operationId: $$$discard
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request DELETE \
+              --url /v1/parcels/<PARCEL_ID> \
+              --header 'Authorization: Token <API_KEY>'
+    patch:
+      tags:
+      - Parcels
+      summary: Update a parcel
+      description: modify an existing parcel's details.
+      operationId: $$$update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParcelData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parcel'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request PATCH \
+              --url /v1/parcels/<PARCEL_ID> \
+              --header 'Authorization: Token <API_KEY>' \
+              --header 'Content-Type: application/json' \
+              --data '{
+                "weight": 1.2,
+              }'
+      x-codegen-request-body-name: data
+  /v1/pickups:
+    get:
+      tags:
+      - Pickups
+      summary: List shipment pickups
+      description: Retrieve all scheduled pickups.
+      operationId: $$$$list
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: test_mode
+        in: query
+        description: This flag filter out pickup created from carriers in test or
+          live mode
+        schema:
+          type: boolean
+          nullable: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickupList'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET \
+            --url '/v1/pickups' \
+            --header 'Authorization: Token <API_KEY>'
+  /v1/pickups/{carrier_name}/schedule:
+    post:
+      tags:
+      - Pickups
+      summary: Schedule a pickup
+      description: Schedule a pickup for one or many shipments with labels already
+        purchased.
+      operationId: $$$$schedule
+      parameters:
+      - name: carrier_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: test
+        in: query
+        description: The test flag indicates whether to use a carrier configured for
+          test.
+        schema:
+          type: boolean
+          nullable: true
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pickup'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request POST \
+            --url /v1/pickups/<PICKUP_ID> \
+            --header 'Authorization: Token <API_KEY>' \
+            --data '{
+              "pickup_date": "2020-10-25",
+              "address": {
+                "address_line1": "125 Church St",
+                "person_name": "John Doe",
+                "city": "Moncton",
+                "country_code": "CA",
+                "postal_code": "E1C4Z8",
+                "state_code": "NB",
+              },
+              "ready_time": "13:00",
+              "closing_time": "17:00",
+              "instruction": "Should not be folded",
+              "package_location": "At the main entrance hall",
+              "tracking_numbers": [
+                  "8545763607864201002"
+              ]
+          }'
+      x-codegen-request-body-name: data
+  /v1/pickups/{id}:
+    get:
+      tags:
+      - Pickups
+      summary: Retrieve a pickup
+      description: Retrieve a scheduled pickup.
+      operationId: $$$$retrieve
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pickup'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request GET \
+            --url /v1/pickups/<PICKUP_ID> \
+            --header 'Authorization: Token <API_KEY>'
+    patch:
+      tags:
+      - Pickups
+      summary: Update a pickup
+      description: Modify a pickup for one or many shipments with labels already purchased.
+      operationId: $$$$update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupUpdateData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationConfirmation'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request PATCH \
+            --url /v1/pickups/<PICKUP_ID> \
+            --header 'Authorization: Token <API_KEY>' \
+            --data '{
+              "address": {
+                "phone_number": "514-000-0000",
+                "residential": false,
+                "email": "john@a.com"
+              },
+              "ready_time": "13:00",
+              "closing_time": "20:00",
+          }'
+      x-codegen-request-body-name: data
+  /v1/pickups/{id}/cancel:
+    post:
+      tags:
+      - Pickups
+      summary: Cancel a pickup
+      description: Cancel a pickup of one or more shipments.
+      operationId: $$$$cancel
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupCancelData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationConfirmation'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+      - lang: bash
+        source: |2
+
+          curl --request POST \
+            --url /v1/pickups/<PICKUP_ID> \
+            --header 'Authorization: Token <API_KEY>'
+      x-codegen-request-body-name: data
+  /v1/proxy/pickups/{carrier_name}:
+    put:
+      tags:
+      - Proxy
+      summary: Update a pickup
+      description: Modify a scheduled pickup
+      operationId: '@update_pickup'
+      parameters:
+      - name: carrier_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: test
+        in: query
+        description: The test flag indicates whether to use a carrier configured for
+          test.
+        schema:
+          type: boolean
+          nullable: true
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupUpdateRequest'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickupResponse'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+    post:
+      tags:
+      - Proxy
+      summary: Schedule a pickup
+      description: Schedule one or many parcels pickup
+      operationId: '@schedule_pickup'
+      parameters:
+      - name: carrier_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: test
+        in: query
+        description: The test flag indicates whether to use a carrier configured for
+          test.
+        schema:
+          type: boolean
+          nullable: true
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupRequest'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickupResponse'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/proxy/pickups/{carrier_name}/cancel:
+    post:
+      tags:
+      - Proxy
+      summary: Cancel a pickup
+      description: Cancel a pickup previously scheduled
+      operationId: '@cancel_pickup'
+      parameters:
+      - name: carrier_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: test
+        in: query
+        description: The test flag indicates whether to use a carrier configured for
+          test.
+        schema:
+          type: boolean
+          nullable: true
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupCancelRequest'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationResponse'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/proxy/rates:
+    post:
+      tags:
+      - Proxy
+      summary: Fetch shipment rates
+      description: |2
+
+        The Shipping process begins by fetching rates for your shipment.
+        Use this service to fetch a shipping rates available.
+      operationId: '@@fetch_rates'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateRequest'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateResponse'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/proxy/shipping:
+    post:
+      tags:
+      - Proxy
+      summary: Buy a shipment label
+      description: |-
+        Once the shipping rates are retrieved, provide the required info to
+        submit the shipment by specifying your preferred rate.
+      operationId: '@@@buy_label'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingRequest'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/proxy/shipping/{carrier_name}/cancel:
+    post:
+      tags:
+      - Proxy
+      summary: Void a shipment label
+      description: Cancel a shipment and the label previously created
+      operationId: '@@@void_label'
+      parameters:
+      - name: carrier_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: test
+        in: query
+        description: The test flag indicates whether to use a carrier configured for
+          test.
+        schema:
+          type: boolean
+          nullable: true
+          default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipmentCancelRequest'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationResponse'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/proxy/tracking/{carrier_name}/{tracking_number}:
+    get:
+      tags:
+      - Proxy
+      summary: Track a shipment
+      description: You can track a shipment by specifying the carrier and the shipment
+        tracking number.
+      operationId: '@@@@track_shipment'
+      parameters:
+      - name: carrier_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tracking_number
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: test
+        in: query
+        description: The test flag indicates whether to use a carrier configured for
+          test.
+        schema:
+          type: boolean
+          nullable: true
+          default: false
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingResponse'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/references:
+    get:
+      tags:
+      - API
+      summary: Data References
+      operationId: '&&data'
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/References'
+  /v1/shipments:
+    get:
+      tags:
+      - Shipments
+      summary: List all shipments
+      description: Retrieve all shipments.
+      operationId: $$$$$list
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: test_mode
+        in: query
+        description: This flag filter out shipment created in test or prod mode
+        schema:
+          type: boolean
+          nullable: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentList'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Shipments
+      summary: Create a shipment
+      description: Create a new shipment instance.
+      operationId: $$$$$create
+      parameters:
+      - name: test
+        in: query
+        description: Create shipment in test or prod mode
+        schema:
+          type: boolean
+          nullable: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipmentData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/shipments/{id}:
+    get:
+      tags:
+      - Shipments
+      summary: Retrieve a shipment
+      description: Retrieve a shipment.
+      operationId: $$$$$retrieve
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Shipments
+      summary: Cancel a shipment
+      description: Void a shipment with the associated label.
+      operationId: $$$$$cancel
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationResponse'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/shipments/{id}/customs:
+    post:
+      tags:
+      - Shipments
+      summary: Add a customs declaration
+      description: Add the customs declaration for the shipment if non existent.
+      operationId: $$$$$add_customs
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomsData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/shipments/{id}/options:
+    post:
+      tags:
+      - Shipments
+      summary: Add shipment options
+      description: |-
+        Add one or many options to your shipment.<br/>
+        **eg:**<br/>
+        - add shipment **insurance**
+        - specify the preferred transaction **currency**
+        - setup a **cash collected on delivery** option
+
+        ```json
+        {
+            "insurance": 120,
+            "currency": "USD"
+        }
+        ```
+
+        And many more, check additional options available in the [reference](#operation/all_references).
+      operationId: $$$$$set_options
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: options
+              type: object
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/shipments/{id}/parcels:
+    post:
+      tags:
+      - Shipments
+      summary: Add a shipment parcel
+      description: Add a parcel to an existing shipment for a multi-parcel shipment.
+      operationId: $$$$$add_parcel
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParcelData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/shipments/{id}/purchase:
+    post:
+      tags:
+      - Shipments
+      summary: Buy a shipment label
+      description: Select your preferred rates to buy a shipment label.
+      operationId: $$$$$purchase
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipmentPurchaseData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/shipments/{id}/rates:
+    get:
+      tags:
+      - Shipments
+      summary: Fetch new shipment rates
+      description: Refresh the list of the shipment rates
+      operationId: $$$$$rates
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/trackers:
+    get:
+      tags:
+      - Trackers
+      summary: List all shipment trackers
+      description: Retrieve all shipment trackers.
+      operationId: $$$$$$list
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: test_mode
+        in: query
+        description: This flag filter out tracker created from carriers in test or
+          live mode
+        schema:
+          type: boolean
+          nullable: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackerList'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/trackers/{carrier_name}/{tracking_number}:
+    get:
+      tags:
+      - Trackers
+      summary: Create a shipment tracker
+      description: |-
+        This API creates or retrieves (if existent) a tracking status object containing the
+        details and events of a shipping in progress.
+      operationId: $$$$$$create
+      parameters:
+      - name: carrier_name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tracking_number
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: test
+        in: query
+        description: The test flag indicates whether to use a carrier configured for
+          test.
+        schema:
+          type: boolean
+          nullable: true
+          default: false
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingStatus'
+        404:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/trackers/{id_or_tracking_number}:
+    get:
+      tags:
+      - Trackers
+      summary: Retrieves a shipment tracker
+      description: Retrieve a shipment tracker
+      operationId: $$$$$$retrieves
+      parameters:
+      - name: id_or_tracking_number
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingStatus'
+        404:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Trackers
+      summary: Discard a shipment tracker
+      description: Discard a shipment tracker.
+      operationId: $$$$$$remove
+      parameters:
+      - name: id_or_tracking_number
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/webhooks:
+    get:
+      tags:
+      - Webhooks
+      summary: List all webhooks
+      description: Retrieve all webhooks.
+      operationId: $$$$$$$list
+      parameters:
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: test_mode
+        in: query
+        description: This flag filter out webhooks created in test or live mode
+        schema:
+          type: boolean
+          nullable: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookList'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Webhooks
+      summary: Create a webhook
+      description: Create a new webhook.
+      operationId: $$$$$$$create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+  /v1/webhooks/{id}:
+    get:
+      tags:
+      - Webhooks
+      summary: Retrieve a webhook
+      description: Retrieve a webhook.
+      operationId: $$$$$$$retrieve
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Webhooks
+      summary: Remove a webhook
+      description: Remove a webhook.
+      operationId: $$$$$$$remove
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - Webhooks
+      summary: Update a webhook
+      description: update a webhook.
+      operationId: $$$$$$$update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookData'
+        required: true
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        400:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: data
+components:
+  schemas:
+    TokenObtainPair:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          title: Email
+          minLength: 1
+          type: string
+        password:
+          title: Password
+          minLength: 1
+          type: string
+        org_id:
+          title: Org id
+          minLength: 1
+          type: string
+          description: |2
+
+            **should be specified only in a multi-org deployment.**
+
+            Note the first org related to the user is selected by default.
+    TokenPair:
+      required:
+      - access
+      - refresh
+      type: object
+      properties:
+        access:
+          title: Access
+          minLength: 1
+          type: string
+        refresh:
+          title: Refresh
+          minLength: 1
+          type: string
+    TokenRefresh:
+      required:
+      - refresh
+      type: object
+      properties:
+        refresh:
+          title: Refresh
+          minLength: 1
+          type: string
+    AccessToken:
+      required:
+      - access
+      type: object
+      properties:
+        access:
+          title: Access
+          minLength: 1
+          type: string
+    TokenVerify:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          title: Token
+          minLength: 1
+          type: string
+    AddressValidation:
+      required:
+      - success
+      type: object
+      properties:
+        success:
+          title: Success
+          type: boolean
+          description: True if the address is valid
+        meta:
+          title: Meta
+          type: object
+          properties: {}
+          description: validation service details
+          nullable: true
+      description: Specify address validation result
+      nullable: true
+      x-nullable: true
+    Address:
+      required:
+      - country_code
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique identifier
+        postal_code:
+          title: Postal code
+          type: string
+          description: |2
+
+            The address postal code
+
+            **(required for shipment purchase)**
+          nullable: true
+        city:
+          title: City
+          type: string
+          description: |2
+
+            The address city.
+
+            **(required for shipment purchase)**
+          nullable: true
+        federal_tax_id:
+          title: Federal tax id
+          type: string
+          description: The party frederal tax id
+          nullable: true
+        state_tax_id:
+          title: State tax id
+          type: string
+          description: The party state id
+          nullable: true
+        person_name:
+          title: Person name
+          type: string
+          description: |2
+
+            attention to
+
+            **(required for shipment purchase)**
+          nullable: true
+        company_name:
+          title: Company name
+          type: string
+          description: The company name if the party is a company
+          nullable: true
+        country_code:
+          title: Country code
+          type: string
+          description: The address country code
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AN
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - IC
+          - ID
+          - IE
+          - IL
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KV
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - NO
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WS
+          - XB
+          - XC
+          - XE
+          - XM
+          - XN
+          - XS
+          - XY
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+        email:
+          title: Email
+          type: string
+          description: The party email
+          nullable: true
+        phone_number:
+          title: Phone number
+          type: string
+          description: The party phone number.
+          nullable: true
+        state_code:
+          title: State code
+          type: string
+          description: The address state code
+          nullable: true
+        suburb:
+          title: Suburb
+          type: string
+          description: The address suburb if known
+          nullable: true
+        residential:
+          title: Residential
+          type: boolean
+          description: Indicate if the address is residential or commercial (enterprise)
+          nullable: true
+          default: false
+        address_line1:
+          title: Address line1
+          type: string
+          description: |2
+
+            The address line with street number <br/>
+            **(required for shipment purchase)**
+          nullable: true
+        address_line2:
+          title: Address line2
+          type: string
+          description: The address line with suite number
+          nullable: true
+        validate_location:
+          title: Validate location
+          type: boolean
+          description: Indicate if the address should be validated
+          nullable: true
+          default: false
+        validation:
+          $ref: '#/components/schemas/AddressValidation'
+    AddressList:
+      required:
+      - results
+      type: object
+      properties:
+        next:
+          title: Next
+          minLength: 1
+          type: string
+          format: uri
+        previous:
+          title: Previous
+          minLength: 1
+          type: string
+          format: uri
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+    Message:
+      type: object
+      properties:
+        carrier_name:
+          title: Carrier name
+          minLength: 1
+          type: string
+          description: The targeted carrier
+        carrier_id:
+          title: Carrier id
+          minLength: 1
+          type: string
+          description: The targeted carrier name (unique identifier)
+        message:
+          title: Message
+          minLength: 1
+          type: string
+          description: The error or warning message
+        code:
+          title: Code
+          minLength: 1
+          type: string
+          description: The message code
+        details:
+          title: Details
+          type: object
+          additionalProperties:
+            type: string
+            nullable: true
+          description: any additional details
+      description: The list of error messages
+    ErrorResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          description: The list of error messages
+          items:
+            $ref: '#/components/schemas/Message'
+    AddressData:
+      required:
+      - country_code
+      type: object
+      properties:
+        postal_code:
+          title: Postal code
+          type: string
+          description: |2
+
+            The address postal code
+
+            **(required for shipment purchase)**
+          nullable: true
+        city:
+          title: City
+          type: string
+          description: |2
+
+            The address city.
+
+            **(required for shipment purchase)**
+          nullable: true
+        federal_tax_id:
+          title: Federal tax id
+          type: string
+          description: The party frederal tax id
+          nullable: true
+        state_tax_id:
+          title: State tax id
+          type: string
+          description: The party state id
+          nullable: true
+        person_name:
+          title: Person name
+          type: string
+          description: |2
+
+            attention to
+
+            **(required for shipment purchase)**
+          nullable: true
+        company_name:
+          title: Company name
+          type: string
+          description: The company name if the party is a company
+          nullable: true
+        country_code:
+          title: Country code
+          type: string
+          description: The address country code
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AN
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - IC
+          - ID
+          - IE
+          - IL
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KV
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - NO
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WS
+          - XB
+          - XC
+          - XE
+          - XM
+          - XN
+          - XS
+          - XY
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+        email:
+          title: Email
+          type: string
+          description: The party email
+          nullable: true
+        phone_number:
+          title: Phone number
+          type: string
+          description: The party phone number.
+          nullable: true
+        state_code:
+          title: State code
+          type: string
+          description: The address state code
+          nullable: true
+        suburb:
+          title: Suburb
+          type: string
+          description: The address suburb if known
+          nullable: true
+        residential:
+          title: Residential
+          type: boolean
+          description: Indicate if the address is residential or commercial (enterprise)
+          nullable: true
+          default: false
+        address_line1:
+          title: Address line1
+          type: string
+          description: |2
+
+            The address line with street number <br/>
+            **(required for shipment purchase)**
+          nullable: true
+        address_line2:
+          title: Address line2
+          type: string
+          description: The address line with suite number
+          nullable: true
+        validate_location:
+          title: Validate location
+          type: boolean
+          description: Indicate if the address should be validated
+          nullable: true
+          default: false
+    CarrierSettings:
+      required:
+      - active
+      - carrier_id
+      - carrier_name
+      - id
+      - test
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique address identifier
+        carrier_name:
+          title: Carrier name
+          type: string
+          description: Indicates a carrier (type)
+          enum:
+          - aramex
+          - australiapost
+          - canadapost
+          - canpar
+          - dhl_express
+          - dhl_universal
+          - dicom
+          - fedex
+          - purolator_courier
+          - royalmail
+          - sendle
+          - sf_express
+          - ups
+          - usps
+          - yanwen
+          - yunexpress
+          - eshipper
+          - freightcom
+        carrier_id:
+          title: Carrier id
+          minLength: 1
+          type: string
+          description: Indicates a specific carrier configuration name.
+        test:
+          title: Test
+          type: boolean
+          description: "\nThe test flag indicates whether to use a carrier configured\
+            \ for test. \n"
+        active:
+          title: Active
+          type: boolean
+          description: "\nThe active flag indicates whether the carrier account is\
+            \ active or not. \n"
+    CarrierList:
+      required:
+      - results
+      type: object
+      properties:
+        next:
+          title: Next
+          minLength: 1
+          type: string
+          format: uri
+        previous:
+          title: Previous
+          minLength: 1
+          type: string
+          format: uri
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierSettings'
+    Commodity:
+      required:
+      - weight
+      - weight_unit
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique identifier
+        weight:
+          title: Weight
+          type: number
+          description: The commodity's weight
+        weight_unit:
+          title: Weight unit
+          type: string
+          description: The commodity's weight unit
+          enum:
+          - KG
+          - LB
+        description:
+          title: Description
+          type: string
+          description: A description of the commodity
+          nullable: true
+        quantity:
+          title: Quantity
+          type: integer
+          description: The commodity's quantity (number or item)
+          nullable: true
+        sku:
+          title: Sku
+          type: string
+          description: The commodity's sku number
+          nullable: true
+        value_amount:
+          title: Value amount
+          type: number
+          description: The monetary value of the commodity
+          nullable: true
+        value_currency:
+          title: Value currency
+          type: string
+          description: The currency of the commodity value amount
+          nullable: true
+        origin_country:
+          title: Origin country
+          type: string
+          description: The origin or manufacture country
+          nullable: true
+      description: The parcel content items
+      nullable: true
+      x-nullable: true
+    Duty:
+      type: object
+      properties:
+        paid_by:
+          title: Paid by
+          type: string
+          description: The duty payer
+          nullable: true
+          enum:
+          - sender
+          - recipient
+          - third_party
+        currency:
+          title: Currency
+          type: string
+          description: The declared value currency
+          nullable: true
+          enum:
+          - EUR
+          - AED
+          - USD
+          - XCD
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - XOF
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - XAF
+          - CHF
+          - NZD
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - FJD
+          - GBP
+          - GEL
+          - GHS
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - XPF
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - OMR
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - YER
+          - ZAR
+        declared_value:
+          title: Declared value
+          type: number
+          description: The package declared value
+          nullable: true
+        account_number:
+          title: Account number
+          type: string
+          description: The duty payment account number
+          nullable: true
+        bill_to:
+          $ref: '#/components/schemas/Address'
+      description: |2
+
+        The payment details.<br/>
+        Note that this is required for a Dutiable parcel shipped internationally.
+      nullable: true
+      x-nullable: true
+    Customs:
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique identifier
+        aes:
+          title: Aes
+          type: string
+          nullable: true
+        eel_pfc:
+          title: Eel pfc
+          type: string
+          nullable: true
+        content_type:
+          title: Content type
+          type: string
+          nullable: true
+          enum:
+          - documents
+          - gift
+          - sample
+          - merchandise
+          - return_merchandise
+          - other
+        content_description:
+          title: Content description
+          type: string
+          nullable: true
+        incoterm:
+          title: Incoterm
+          type: string
+          description: The customs 'term of trade' also known as 'incoterm'
+          nullable: true
+          enum:
+          - CFR
+          - CIF
+          - CIP
+          - CPT
+          - DAF
+          - DDP
+          - DDU
+          - DEQ
+          - DES
+          - EXW
+          - FAS
+          - FCA
+          - FOB
+        commodities:
+          type: array
+          description: The parcel content items
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Commodity'
+        duty:
+          $ref: '#/components/schemas/Duty'
+        invoice:
+          title: Invoice
+          type: string
+          description: The invoice reference number
+          nullable: true
+        invoice_date:
+          title: Invoice date
+          type: string
+          description: The invoice date
+          nullable: true
+        commercial_invoice:
+          title: Commercial invoice
+          type: boolean
+          description: Indicates if the shipment is commercial
+          nullable: true
+        certify:
+          title: Certify
+          type: boolean
+          description: Indicate that signer certified confirmed all
+          nullable: true
+        signer:
+          title: Signer
+          type: string
+          nullable: true
+        certificate_number:
+          title: Certificate number
+          type: string
+          nullable: true
+        options:
+          title: Options
+          type: object
+          properties: {}
+          nullable: true
+    CustomsList:
+      required:
+      - results
+      type: object
+      properties:
+        next:
+          title: Next
+          minLength: 1
+          type: string
+          format: uri
+        previous:
+          title: Previous
+          minLength: 1
+          type: string
+          format: uri
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customs'
+    CustomsData:
+      type: object
+      properties:
+        aes:
+          title: Aes
+          type: string
+          nullable: true
+        eel_pfc:
+          title: Eel pfc
+          type: string
+          nullable: true
+        content_type:
+          title: Content type
+          type: string
+          nullable: true
+          enum:
+          - documents
+          - gift
+          - sample
+          - merchandise
+          - return_merchandise
+          - other
+        content_description:
+          title: Content description
+          type: string
+          nullable: true
+        incoterm:
+          title: Incoterm
+          type: string
+          description: The customs 'term of trade' also known as 'incoterm'
+          nullable: true
+          enum:
+          - CFR
+          - CIF
+          - CIP
+          - CPT
+          - DAF
+          - DDP
+          - DDU
+          - DEQ
+          - DES
+          - EXW
+          - FAS
+          - FCA
+          - FOB
+        commodities:
+          type: array
+          description: The parcel content items
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Commodity'
+        duty:
+          $ref: '#/components/schemas/Duty'
+        invoice:
+          title: Invoice
+          type: string
+          description: The invoice reference number
+          nullable: true
+        invoice_date:
+          title: Invoice date
+          type: string
+          description: The invoice date
+          nullable: true
+        commercial_invoice:
+          title: Commercial invoice
+          type: boolean
+          description: Indicates if the shipment is commercial
+          nullable: true
+        certify:
+          title: Certify
+          type: boolean
+          description: Indicate that signer certified confirmed all
+          nullable: true
+        signer:
+          title: Signer
+          type: string
+          nullable: true
+        certificate_number:
+          title: Certificate number
+          type: string
+          nullable: true
+        options:
+          title: Options
+          type: object
+          properties: {}
+          nullable: true
+    Operation:
+      required:
+      - operation
+      - success
+      type: object
+      properties:
+        operation:
+          title: Operation
+          minLength: 1
+          type: string
+          description: Operation performed
+        success:
+          title: Success
+          type: boolean
+          description: Specify whether the operation was successful
+    CommodityData:
+      required:
+      - weight
+      - weight_unit
+      type: object
+      properties:
+        weight:
+          title: Weight
+          type: number
+          description: The commodity's weight
+        weight_unit:
+          title: Weight unit
+          type: string
+          description: The commodity's weight unit
+          enum:
+          - KG
+          - LB
+        description:
+          title: Description
+          type: string
+          description: A description of the commodity
+          nullable: true
+        quantity:
+          title: Quantity
+          type: integer
+          description: The commodity's quantity (number or item)
+          nullable: true
+        sku:
+          title: Sku
+          type: string
+          description: The commodity's sku number
+          nullable: true
+        value_amount:
+          title: Value amount
+          type: number
+          description: The monetary value of the commodity
+          nullable: true
+        value_currency:
+          title: Value currency
+          type: string
+          description: The currency of the commodity value amount
+          nullable: true
+        origin_country:
+          title: Origin country
+          type: string
+          description: The origin or manufacture country
+          nullable: true
+    Parcel:
+      required:
+      - weight
+      - weight_unit
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique identifier
+        weight:
+          title: Weight
+          type: number
+          description: The parcel's weight
+        width:
+          title: Width
+          type: number
+          description: The parcel's width
+          nullable: true
+        height:
+          title: Height
+          type: number
+          description: The parcel's height
+          nullable: true
+        length:
+          title: Length
+          type: number
+          description: The parcel's length
+          nullable: true
+        packaging_type:
+          title: Packaging type
+          type: string
+          description: |2
+
+            The parcel's packaging type.
+
+            **Note that the packaging is optional when using a package preset**
+
+            values: <br/>- **envelope**<br/>- **pak**<br/>- **tube**<br/>- **pallet**<br/>- **small_box**<br/>- **medium_box**<br/>- **your_packaging**
+
+            For specific carriers packaging type, please consult [the reference](#operation/references).
+          nullable: true
+        package_preset:
+          title: Package preset
+          type: string
+          description: |2
+
+            The parcel's package preset.
+
+            For specific carriers package preset, please consult [the reference](#operation/references).
+          nullable: true
+        description:
+          title: Description
+          type: string
+          description: The parcel's description
+          nullable: true
+        content:
+          title: Content
+          type: string
+          description: The parcel's content description
+          nullable: true
+        is_document:
+          title: Is document
+          type: boolean
+          description: Indicates if the parcel is composed of documents only
+          nullable: true
+          default: false
+        weight_unit:
+          title: Weight unit
+          type: string
+          description: The parcel's weight unit
+          enum:
+          - KG
+          - LB
+        dimension_unit:
+          title: Dimension unit
+          type: string
+          description: The parcel's dimension unit
+          nullable: true
+          enum:
+          - CM
+          - IN
+    ParcelList:
+      required:
+      - results
+      type: object
+      properties:
+        next:
+          title: Next
+          minLength: 1
+          type: string
+          format: uri
+        previous:
+          title: Previous
+          minLength: 1
+          type: string
+          format: uri
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Parcel'
+    ParcelData:
+      required:
+      - weight
+      - weight_unit
+      type: object
+      properties:
+        weight:
+          title: Weight
+          type: number
+          description: The parcel's weight
+        width:
+          title: Width
+          type: number
+          description: The parcel's width
+          nullable: true
+        height:
+          title: Height
+          type: number
+          description: The parcel's height
+          nullable: true
+        length:
+          title: Length
+          type: number
+          description: The parcel's length
+          nullable: true
+        packaging_type:
+          title: Packaging type
+          type: string
+          description: |2
+
+            The parcel's packaging type.
+
+            **Note that the packaging is optional when using a package preset**
+
+            values: <br/>- **envelope**<br/>- **pak**<br/>- **tube**<br/>- **pallet**<br/>- **small_box**<br/>- **medium_box**<br/>- **your_packaging**
+
+            For specific carriers packaging type, please consult [the reference](#operation/references).
+          nullable: true
+        package_preset:
+          title: Package preset
+          type: string
+          description: |2
+
+            The parcel's package preset.
+
+            For specific carriers package preset, please consult [the reference](#operation/references).
+          nullable: true
+        description:
+          title: Description
+          type: string
+          description: The parcel's description
+          nullable: true
+        content:
+          title: Content
+          type: string
+          description: The parcel's content description
+          nullable: true
+        is_document:
+          title: Is document
+          type: boolean
+          description: Indicates if the parcel is composed of documents only
+          nullable: true
+          default: false
+        weight_unit:
+          title: Weight unit
+          type: string
+          description: The parcel's weight unit
+          enum:
+          - KG
+          - LB
+        dimension_unit:
+          title: Dimension unit
+          type: string
+          description: The parcel's dimension unit
+          nullable: true
+          enum:
+          - CM
+          - IN
+    Charge:
+      type: object
+      properties:
+        name:
+          title: Name
+          type: string
+          description: The charge description
+          nullable: true
+        amount:
+          title: Amount
+          type: number
+          description: The charge monetary value
+          nullable: true
+        currency:
+          title: Currency
+          type: string
+          description: The charge amount currency
+          nullable: true
+      description: The pickup cost details
+      nullable: true
+      x-nullable: true
+    Pickup:
+      required:
+      - address
+      - carrier_id
+      - carrier_name
+      - confirmation_number
+      - parcels
+      - test_mode
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique pickup identifier
+        carrier_name:
+          title: Carrier name
+          minLength: 1
+          type: string
+          description: The pickup carrier
+        carrier_id:
+          title: Carrier id
+          minLength: 1
+          type: string
+          description: The pickup carrier configured name
+        confirmation_number:
+          title: Confirmation number
+          minLength: 1
+          type: string
+          description: The pickup confirmation identifier
+        pickup_date:
+          title: Pickup date
+          minLength: 1
+          type: string
+          description: The pickup date
+          nullable: true
+        pickup_charge:
+          $ref: '#/components/schemas/Charge'
+        ready_time:
+          title: Ready time
+          minLength: 1
+          type: string
+          description: The pickup expected ready time
+          nullable: true
+        closing_time:
+          title: Closing time
+          minLength: 1
+          type: string
+          description: The pickup expected closing or late time
+          nullable: true
+        address:
+          $ref: '#/components/schemas/Address'
+        parcels:
+          type: array
+          description: The shipment parcels to pickup.
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Parcel'
+        instruction:
+          title: Instruction
+          type: string
+          description: |2
+
+            The pickup instruction.
+
+            eg: Handle with care.
+          nullable: true
+        package_location:
+          title: Package location
+          type: string
+          description: |2
+
+            The package(s) location.
+
+            eg: Behind the entrance door.
+          nullable: true
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: Advanced carrier specific pickup options
+          nullable: true
+        test_mode:
+          title: Test mode
+          type: boolean
+          description: Specified whether it was created with a carrier in test mode
+    PickupList:
+      required:
+      - results
+      type: object
+      properties:
+        next:
+          title: Next
+          minLength: 1
+          type: string
+          format: uri
+        previous:
+          title: Previous
+          minLength: 1
+          type: string
+          format: uri
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pickup'
+    PickupData:
+      required:
+      - closing_time
+      - pickup_date
+      - ready_time
+      - tracking_numbers
+      type: object
+      properties:
+        pickup_date:
+          title: Pickup date
+          minLength: 1
+          type: string
+          description: |2
+
+            The expected pickup date
+
+            Date Format: `YYYY-MM-DD`
+        address:
+          $ref: '#/components/schemas/AddressData'
+        ready_time:
+          title: Ready time
+          minLength: 1
+          type: string
+          description: |2
+
+            The ready time for pickup.
+
+            Time Format: `HH:MM`
+        closing_time:
+          title: Closing time
+          minLength: 1
+          type: string
+          description: |2
+
+            The closing or late time of the pickup
+
+            Time Format: `HH:MM`
+        instruction:
+          title: Instruction
+          type: string
+          description: |2
+
+            The pickup instruction.
+
+            eg: Handle with care.
+          nullable: true
+        package_location:
+          title: Package location
+          type: string
+          description: |2
+
+            The package(s) location.
+
+            eg: Behind the entrance door.
+          nullable: true
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: Advanced carrier specific pickup options
+          nullable: true
+        tracking_numbers:
+          type: array
+          description: The list of shipments to be picked up
+          items:
+            minLength: 1
+            type: string
+    PickupUpdateData:
+      required:
+      - confirmation_number
+      type: object
+      properties:
+        pickup_date:
+          title: Pickup date
+          minLength: 1
+          type: string
+          description: |2
+
+            The expected pickup date
+
+            Date Format: YYYY-MM-DD
+        address:
+          $ref: '#/components/schemas/AddressData'
+        ready_time:
+          title: Ready time
+          type: string
+          description: The ready time for pickup.
+          nullable: true
+        closing_time:
+          title: Closing time
+          type: string
+          description: The closing or late time of the pickup
+          nullable: true
+        instruction:
+          title: Instruction
+          type: string
+          description: |2
+
+            The pickup instruction.
+
+            eg: Handle with care.
+          nullable: true
+        package_location:
+          title: Package location
+          type: string
+          description: |2
+
+            The package(s) location.
+
+            eg: Behind the entrance door.
+          nullable: true
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: Advanced carrier specific pickup options
+          nullable: true
+        tracking_numbers:
+          type: array
+          description: The list of shipments to be picked up
+          items:
+            minLength: 1
+            type: string
+        confirmation_number:
+          title: Confirmation number
+          minLength: 1
+          type: string
+          description: pickup identification number
+    OperationConfirmation:
+      required:
+      - carrier_id
+      - carrier_name
+      - operation
+      - success
+      type: object
+      properties:
+        operation:
+          title: Operation
+          minLength: 1
+          type: string
+          description: Operation performed
+        success:
+          title: Success
+          type: boolean
+          description: Specify whether the operation was successful
+        carrier_name:
+          title: Carrier name
+          minLength: 1
+          type: string
+          description: The operation carrier
+        carrier_id:
+          title: Carrier id
+          minLength: 1
+          type: string
+          description: The targeted carrier's name (unique identifier)
+    PickupCancelData:
+      type: object
+      properties:
+        reason:
+          title: Reason
+          minLength: 1
+          type: string
+          description: The reason of the pickup cancellation
+    PickupRequest:
+      required:
+      - address
+      - closing_time
+      - parcels
+      - pickup_date
+      - ready_time
+      type: object
+      properties:
+        pickup_date:
+          title: Pickup date
+          minLength: 1
+          type: string
+          description: |2
+
+            The expected pickup date
+
+            Date Format: `YYYY-MM-DD`
+        address:
+          $ref: '#/components/schemas/AddressData'
+        parcels:
+          type: array
+          description: The shipment parcels to pickup.
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ParcelData'
+        ready_time:
+          title: Ready time
+          minLength: 1
+          type: string
+          description: |2
+
+            The ready time for pickup.
+
+            Time Format: `HH:MM`
+        closing_time:
+          title: Closing time
+          minLength: 1
+          type: string
+          description: |2
+
+            The closing or late time of the pickup
+
+            Time Format: `HH:MM`
+        instruction:
+          title: Instruction
+          type: string
+          description: |2
+
+            The pickup instruction.
+
+            eg: Handle with care.
+          nullable: true
+        package_location:
+          title: Package location
+          type: string
+          description: |2
+
+            The package(s) location.
+
+            eg: Behind the entrance door.
+          nullable: true
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: Advanced carrier specific pickup options
+          nullable: true
+    PickupResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          description: The list of note or warning messages
+          items:
+            $ref: '#/components/schemas/Message'
+        pickup:
+          $ref: '#/components/schemas/Pickup'
+    PickupUpdateRequest:
+      required:
+      - address
+      - closing_time
+      - confirmation_number
+      - parcels
+      - pickup_date
+      - ready_time
+      type: object
+      properties:
+        pickup_date:
+          title: Pickup date
+          minLength: 1
+          type: string
+          description: |2
+
+            The expected pickup date
+
+            Date Format: `YYYY-MM-DD`
+        address:
+          $ref: '#/components/schemas/Address'
+        parcels:
+          type: array
+          description: The shipment parcels to pickup.
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Parcel'
+        confirmation_number:
+          title: Confirmation number
+          minLength: 1
+          type: string
+          description: pickup identification number
+        ready_time:
+          title: Ready time
+          minLength: 1
+          type: string
+          description: |2
+
+            The ready time for pickup.
+
+            Time Format: `HH:MM`
+        closing_time:
+          title: Closing time
+          minLength: 1
+          type: string
+          description: |2
+
+            The closing or late time of the pickup
+
+            Time Format: `HH:MM`
+        instruction:
+          title: Instruction
+          type: string
+          description: |2
+
+            The pickup instruction.
+
+            eg: Handle with care.
+          nullable: true
+        package_location:
+          title: Package location
+          type: string
+          description: |2
+
+            The package(s) location.
+
+            eg: Behind the entrance door.
+          nullable: true
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: Advanced carrier specific pickup options
+          nullable: true
+    PickupCancelRequest:
+      required:
+      - confirmation_number
+      type: object
+      properties:
+        confirmation_number:
+          title: Confirmation number
+          minLength: 1
+          type: string
+          description: The pickup confirmation identifier
+        address:
+          $ref: '#/components/schemas/AddressData'
+        pickup_date:
+          title: Pickup date
+          minLength: 1
+          type: string
+          description: |2
+
+            The pickup date
+
+            Date Format: `YYYY-MM-DD`
+          nullable: true
+        reason:
+          title: Reason
+          minLength: 1
+          type: string
+          description: The reason of the pickup cancellation
+    OperationResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          description: The list of note or warning messages
+          items:
+            $ref: '#/components/schemas/Message'
+        confirmation:
+          $ref: '#/components/schemas/OperationConfirmation'
+    RateRequest:
+      required:
+      - parcels
+      - recipient
+      - shipper
+      type: object
+      properties:
+        shipper:
+          $ref: '#/components/schemas/Address'
+        recipient:
+          $ref: '#/components/schemas/Address'
+        parcels:
+          type: array
+          description: The shipment's parcels
+          items:
+            $ref: '#/components/schemas/Parcel'
+        services:
+          type: array
+          description: |2
+
+            The requested carrier service for the shipment.<br/>
+            Please consult [the reference](#operation/references) for specific carriers services.
+
+            Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
+          nullable: true
+          items:
+            minLength: 1
+            type: string
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: |2
+
+            The options available for the shipment.
+
+            Please consult [the reference](#operation/references) for additional specific carriers options.
+          nullable: true
+        reference:
+          title: Reference
+          type: string
+          description: The shipment reference
+          nullable: true
+        carrier_ids:
+          type: array
+          description: |2
+
+            The list of configured carriers you wish to get rates from.
+          nullable: true
+          items:
+            minLength: 1
+            type: string
+    Rate:
+      required:
+      - carrier_id
+      - carrier_name
+      - currency
+      - test_mode
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique identifier
+        carrier_name:
+          title: Carrier name
+          minLength: 1
+          type: string
+          description: The rate's carrier
+        carrier_id:
+          title: Carrier id
+          minLength: 1
+          type: string
+          description: The targeted carrier's name (unique identifier)
+        currency:
+          title: Currency
+          minLength: 1
+          type: string
+          description: The rate monetary values currency code
+        service:
+          title: Service
+          type: string
+          description: The carrier's rate (quote) service
+          nullable: true
+        discount:
+          title: Discount
+          type: number
+          description: The monetary amount of the discount on the rate
+          nullable: true
+        base_charge:
+          title: Base charge
+          type: number
+          description: |2
+
+            The rate's monetary amount of the base charge.<br/>
+            This is the net amount of the rate before additional charges
+        total_charge:
+          title: Total charge
+          type: number
+          description: |2
+
+            The rate's monetary amount of the total charge.<br/>
+            This is the gross amount of the rate after adding the additional charges
+        duties_and_taxes:
+          title: Duties and taxes
+          type: number
+          description: The monetary amount of the duties and taxes if applied
+          nullable: true
+        transit_days:
+          title: Transit days
+          type: integer
+          description: The estimated delivery transit days
+          nullable: true
+        extra_charges:
+          type: array
+          description: list of the rate's additional charges
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Charge'
+        meta:
+          title: Meta
+          type: object
+          properties: {}
+          description: provider specific metadata
+          nullable: true
+        carrier_ref:
+          title: Carrier ref
+          type: string
+          description: The system carrier configuration id
+          nullable: true
+        test_mode:
+          title: Test mode
+          type: boolean
+          description: Specified whether it was created with a carrier in test mode
+      description: The list of returned rates
+    RateResponse:
+      required:
+      - rates
+      type: object
+      properties:
+        messages:
+          type: array
+          description: The list of note or warning messages
+          items:
+            $ref: '#/components/schemas/Message'
+        rates:
+          type: array
+          description: The list of returned rates
+          items:
+            $ref: '#/components/schemas/Rate'
+    Payment:
+      required:
+      - currency
+      type: object
+      properties:
+        paid_by:
+          title: Paid by
+          type: string
+          description: The payor type
+          default: sender
+          enum:
+          - sender
+          - recipient
+          - third_party
+        currency:
+          title: Currency
+          type: string
+          description: The payment amount currency
+          enum:
+          - EUR
+          - AED
+          - USD
+          - XCD
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - XOF
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - XAF
+          - CHF
+          - NZD
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - FJD
+          - GBP
+          - GEL
+          - GHS
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - XPF
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - OMR
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - YER
+          - ZAR
+        account_number:
+          title: Account number
+          type: string
+          description: The payor account number
+          nullable: true
+      description: The payment details
+    ShippingRequest:
+      required:
+      - parcels
+      - payment
+      - rates
+      - recipient
+      - selected_rate_id
+      - shipper
+      type: object
+      properties:
+        shipper:
+          $ref: '#/components/schemas/AddressData'
+        recipient:
+          $ref: '#/components/schemas/AddressData'
+        parcels:
+          type: array
+          description: The shipment's parcels
+          items:
+            $ref: '#/components/schemas/ParcelData'
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: |2
+
+            The options available for the shipment.<br/>
+            Please consult [the reference](#operation/references) for additional specific carriers options.
+          nullable: true
+        payment:
+          $ref: '#/components/schemas/Payment'
+        customs:
+          $ref: '#/components/schemas/CustomsData'
+        reference:
+          title: Reference
+          type: string
+          description: The shipment reference
+          nullable: true
+        label_type:
+          title: Label type
+          type: string
+          description: The shipment label file type.
+          default: PDF
+          enum:
+          - PDF
+          - ZPL
+        selected_rate_id:
+          title: Selected rate id
+          minLength: 1
+          type: string
+          description: The shipment selected rate.
+        rates:
+          type: array
+          description: The list for shipment rates fetched previously
+          items:
+            $ref: '#/components/schemas/Rate'
+    Shipment:
+      required:
+      - created_at
+      - parcels
+      - recipient
+      - shipper
+      - test_mode
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique identifier
+        status:
+          title: Status
+          type: string
+          description: The current Shipment status
+          default: created
+          enum:
+          - created
+          - purchased
+          - shipped
+          - transit
+          - delivered
+        carrier_name:
+          title: Carrier name
+          type: string
+          description: The shipment carrier
+          nullable: true
+        carrier_id:
+          title: Carrier id
+          type: string
+          description: The shipment carrier configured identifier
+          nullable: true
+        label:
+          title: Label
+          type: string
+          description: The shipment label in base64 string
+          nullable: true
+        tracking_number:
+          title: Tracking number
+          type: string
+          description: The shipment tracking number
+          nullable: true
+        shipment_identifier:
+          title: Shipment identifier
+          type: string
+          description: The shipment carrier system identifier
+          nullable: true
+        selected_rate:
+          $ref: '#/components/schemas/Rate'
+        selected_rate_id:
+          title: Selected rate id
+          type: string
+          description: The shipment selected rate.
+          nullable: true
+        rates:
+          type: array
+          description: The list for shipment rates fetched previously
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Rate'
+        tracking_url:
+          title: Tracking url
+          type: string
+          description: The shipment tracking url
+          format: uri
+          nullable: true
+        service:
+          title: Service
+          type: string
+          description: The selected service
+          nullable: true
+        shipper:
+          $ref: '#/components/schemas/Address'
+        recipient:
+          $ref: '#/components/schemas/Address'
+        parcels:
+          type: array
+          description: The shipment's parcels
+          items:
+            $ref: '#/components/schemas/Parcel'
+        services:
+          type: array
+          description: |2
+
+            The carriers services requested for the shipment.
+
+            Please consult [the reference](#operation/references) for specific carriers services.<br/>
+            Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
+          nullable: true
+          items:
+            minLength: 1
+            type: string
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: |2
+
+            The options available for the shipment.<br/>
+            Please consult [the reference](#operation/references) for additional specific carriers options.
+          nullable: true
+        payment:
+          $ref: '#/components/schemas/Payment'
+        customs:
+          $ref: '#/components/schemas/Customs'
+        reference:
+          title: Reference
+          type: string
+          description: The shipment reference
+          nullable: true
+        label_type:
+          title: Label type
+          type: string
+          description: The shipment label file type.
+          nullable: true
+          enum:
+          - PDF
+          - ZPL
+        carrier_ids:
+          type: array
+          description: |2
+
+            The list of configured carriers you wish to get rates from.
+
+            *Note that the request will be sent to all carriers in nothing is specified*
+          nullable: true
+          items:
+            minLength: 1
+            type: string
+        meta:
+          title: Meta
+          type: object
+          properties: {}
+          description: provider specific metadata
+          nullable: true
+        created_at:
+          title: Created at
+          minLength: 1
+          type: string
+          description: |2
+
+            The shipment creation date
+
+            Date Format: `YYYY-MM-DD`
+        test_mode:
+          title: Test mode
+          type: boolean
+          description: Specified whether it was created with a carrier in test mode
+        messages:
+          type: array
+          description: The list of note or warning messages
+          items:
+            $ref: '#/components/schemas/Message'
+    ShipmentCancelRequest:
+      required:
+      - shipment_identifier
+      type: object
+      properties:
+        shipment_identifier:
+          title: Shipment identifier
+          minLength: 1
+          type: string
+          description: The shipment identifier returned during creation
+        service:
+          title: Service
+          type: string
+          description: The selected shipment service
+          nullable: true
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: Advanced carrier specific cancellation options
+          nullable: true
+    TrackingEvent:
+      type: object
+      properties:
+        date:
+          title: Date
+          minLength: 1
+          type: string
+          description: The tracking event's date
+        description:
+          title: Description
+          minLength: 1
+          type: string
+          description: The tracking event's description
+        location:
+          title: Location
+          minLength: 1
+          type: string
+          description: The tracking event's location
+        code:
+          title: Code
+          type: string
+          description: The tracking event's code
+          nullable: true
+        time:
+          title: Time
+          type: string
+          description: The tracking event's time
+          nullable: true
+      description: The tracking details events
+      nullable: true
+      x-nullable: true
+    TrackingStatus:
+      required:
+      - carrier_id
+      - carrier_name
+      - test_mode
+      - tracking_number
+      type: object
+      properties:
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique identifier
+        carrier_name:
+          title: Carrier name
+          minLength: 1
+          type: string
+          description: The tracking carrier
+        carrier_id:
+          title: Carrier id
+          minLength: 1
+          type: string
+          description: The tracking carrier configured identifier
+        tracking_number:
+          title: Tracking number
+          minLength: 1
+          type: string
+          description: The shipment tracking number
+        events:
+          type: array
+          description: The tracking details events
+          nullable: true
+          items:
+            $ref: '#/components/schemas/TrackingEvent'
+        delivered:
+          title: Delivered
+          type: boolean
+          description: Specified whether the related shipment was delivered
+        test_mode:
+          title: Test mode
+          type: boolean
+          description: Specified whether the object was created with a carrier in
+            test mode
+      description: The tracking details retrieved
+    TrackingResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          description: The list of note or warning messages
+          items:
+            $ref: '#/components/schemas/Message'
+        tracking:
+          $ref: '#/components/schemas/TrackingStatus'
+    References:
+      required:
+      - APP_NAME
+      - APP_VERSION
+      - carriers
+      - countries
+      - currencies
+      - customs_content_type
+      - incoterms
+      - options
+      - package_presets
+      - packaging_types
+      - payment_types
+      - services
+      - states
+      type: object
+      properties:
+        APP_NAME:
+          title: App name
+          minLength: 1
+          type: string
+        APP_VERSION:
+          title: App version
+          minLength: 1
+          type: string
+        countries:
+          title: Countries
+          type: object
+          properties: {}
+        currencies:
+          title: Currencies
+          type: object
+          properties: {}
+        carriers:
+          title: Carriers
+          type: object
+          properties: {}
+        customs_content_type:
+          title: Customs content type
+          type: object
+          properties: {}
+        incoterms:
+          title: Incoterms
+          type: object
+          properties: {}
+        states:
+          title: States
+          type: object
+          properties: {}
+        services:
+          title: Services
+          type: object
+          properties: {}
+        options:
+          title: Options
+          type: object
+          properties: {}
+        package_presets:
+          title: Package presets
+          type: object
+          properties: {}
+        packaging_types:
+          title: Packaging types
+          type: object
+          properties: {}
+        payment_types:
+          title: Payment types
+          type: object
+          properties: {}
+    ShipmentList:
+      required:
+      - results
+      type: object
+      properties:
+        next:
+          title: Next
+          minLength: 1
+          type: string
+          format: uri
+        previous:
+          title: Previous
+          minLength: 1
+          type: string
+          format: uri
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Shipment'
+    ShipmentData:
+      required:
+      - parcels
+      - recipient
+      - shipper
+      type: object
+      properties:
+        shipper:
+          $ref: '#/components/schemas/AddressData'
+        recipient:
+          $ref: '#/components/schemas/AddressData'
+        parcels:
+          type: array
+          description: The shipment's parcels
+          items:
+            $ref: '#/components/schemas/ParcelData'
+        options:
+          title: Options
+          type: object
+          properties: {}
+          description: |2
+
+            The options available for the shipment.<br/>
+            Please consult [the reference](#operation/references) for additional specific carriers options.
+          nullable: true
+        payment:
+          $ref: '#/components/schemas/Payment'
+        customs:
+          $ref: '#/components/schemas/CustomsData'
+        reference:
+          title: Reference
+          type: string
+          description: The shipment reference
+          nullable: true
+        label_type:
+          title: Label type
+          type: string
+          description: The shipment label file type.
+          default: PDF
+          enum:
+          - PDF
+          - ZPL
+        services:
+          type: array
+          description: |2
+
+            The requested carrier service for the shipment.
+
+            Please consult [the reference](#operation/references) for specific carriers services.<br/>
+            Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
+          nullable: true
+          items:
+            minLength: 1
+            type: string
+        carrier_ids:
+          type: array
+          description: |2
+
+            The list of configured carriers you wish to get rates from.
+
+            *Note that the request will be sent to all carriers in nothing is specified*
+          nullable: true
+          items:
+            minLength: 1
+            type: string
+    ShipmentPurchaseData:
+      required:
+      - selected_rate_id
+      type: object
+      properties:
+        selected_rate_id:
+          title: Selected rate id
+          minLength: 1
+          type: string
+          description: The shipment selected rate.
+        label_type:
+          title: Label type
+          type: string
+          description: The shipment label file type.
+          default: PDF
+          enum:
+          - PDF
+          - ZPL
+        payment:
+          $ref: '#/components/schemas/Payment'
+    TrackerList:
+      required:
+      - results
+      type: object
+      properties:
+        next:
+          title: Next
+          minLength: 1
+          type: string
+          format: uri
+        previous:
+          title: Previous
+          minLength: 1
+          type: string
+          format: uri
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackingStatus'
+    Webhook:
+      required:
+      - enabled_events
+      - test_mode
+      - url
+      type: object
+      properties:
+        url:
+          title: Url
+          minLength: 1
+          type: string
+          description: The URL of the webhook endpoint.
+          format: uri
+        description:
+          title: Description
+          type: string
+          description: An optional description of what the webhook is used for.
+          nullable: true
+        enabled_events:
+          type: array
+          description: The list of events to enable for this endpoint.
+          items:
+            type: string
+            enum:
+            - all
+            - shipment.purchased
+            - shipment.cancelled
+            - shipment.fulfilled
+            - tracker.created
+            - tracker.updated
+        test_mode:
+          title: Test mode
+          type: boolean
+          description: Specified whether it was created with a carrier in test mode
+        disabled:
+          title: Disabled
+          type: boolean
+          description: Indicates that the webhook is disabled
+          nullable: true
+        id:
+          title: Id
+          minLength: 1
+          type: string
+          description: A unique identifier
+        last_event_at:
+          title: Last event at
+          type: string
+          description: The datetime of the last event sent.
+          format: date-time
+          nullable: true
+    WebhookList:
+      required:
+      - results
+      type: object
+      properties:
+        next:
+          title: Next
+          minLength: 1
+          type: string
+          format: uri
+        previous:
+          title: Previous
+          minLength: 1
+          type: string
+          format: uri
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webhook'
+    WebhookData:
+      required:
+      - enabled_events
+      - test_mode
+      - url
+      type: object
+      properties:
+        url:
+          title: Url
+          minLength: 1
+          type: string
+          description: The URL of the webhook endpoint.
+          format: uri
+        description:
+          title: Description
+          type: string
+          description: An optional description of what the webhook is used for.
+          nullable: true
+        enabled_events:
+          type: array
+          description: The list of events to enable for this endpoint.
+          items:
+            type: string
+            enum:
+            - all
+            - shipment.purchased
+            - shipment.cancelled
+            - shipment.fulfilled
+            - tracker.created
+            - tracker.updated
+        test_mode:
+          title: Test mode
+          type: boolean
+          description: Specified whether it was created with a carrier in test mode
+        disabled:
+          title: Disabled
+          type: boolean
+          description: Indicates that the webhook is disabled
+          nullable: true
+  securitySchemes:
+    Token:
+      type: apiKey
+      description: "\nAPI keys are used to authenticate requests. You can view and\
+        \ manage your API keys in the Dashboard.\n\nYour API keys carry many privileges,\
+        \ so be sure to keep them secure! Do not share your secret \nAPI keys in publicly\
+        \ accessible areas such as GitHub, client-side code, and so forth.\n\nAuthentication\
+        \ to the API is performed via HTTP Bearer Auth. You do not need to provide\
+        \ a password.\nTo authenticate via bearer auth (e.g., for a cross-origin request),\
+        \ \nuse `-H \"Authorization: Token 19707922d97cef7a5d5e17c331ceeff66f226660\"\
+        `.\n\nAPI requests without authentication will also fail.\n"
+      name: Authorization
+      in: header
