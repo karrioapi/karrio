@@ -9,19 +9,17 @@ add "&raw" to the end of the URL within a browser.
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
-    <meta name="theme-color" content="#ffffff">
-    <title>Purplship | Graph</title>
-
-    <style>
+  <link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
+  <meta name="theme-color" content="#ffffff">
+  <title>{{ APP_NAME }} | Graph</title>
+  <style>
     html, body, #editor {
       height: 100%;
       margin: 0;
       overflow: hidden;
       width: 100%;
     }
-    </style>
-
+  </style>
   <link href="https://cdn.jsdelivr.net/npm/graphiql@{{graphiql_version}}/graphiql.min.css"
         integrity="{{graphiql_css_sri}}"
         rel="stylesheet"

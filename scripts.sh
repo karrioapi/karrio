@@ -44,7 +44,12 @@ create_env() {
 
 init() {
     create_env &&
-    pip install -r "${ROOT:?}/requirements.dev.txt"
+    pip install -r "${ROOT:?}/requirements.dev.txt" &&
+
+    if [[ "$*" != *--no-insider* ]];
+	then
+    	pip install -r "${ROOT:?}/requirements.insider.dev.txt"
+	fi
 }
 
 
@@ -81,7 +86,7 @@ if not any(get_user_model().objects.all()):
    get_user_model().objects.create_superuser('admin@domain.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
-    (echo "from django.contrib.auth import get_user_model; from rest_framework.authtoken.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='19707922d97cef7a5d5e17c331ceeff66f226660')" | purplship shell) > /dev/null 2>&1;
+    (echo "from django.contrib.auth import get_user_model; from purpleserver.user.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
 
     (echo "from purpleserver.providers.extension.models.canadapost import SETTINGS;
 SETTINGS.objects.create(carrier_id='canadapost', test=True, username='6e93d53968881714', customer_number='2004381', contract_id='42708517', password='0bfa9fcb9853d1f51ee57a')" | purplship shell) > /dev/null 2>&1;
@@ -171,15 +176,15 @@ run_mail_server() {
 }
 
 test() {
-  if [[ "$*" == *--rdb* ]]; then
-    rundb
-  fi
+	if [[ "$*" == *--rdb* ]]; then
+		rundb
+	fi
 
-  purplship test --failfast purpleserver.proxy.tests &&
-  purplship test --failfast purpleserver.pricing.tests &&
-  purplship test --failfast purpleserver.manager.tests &&
-  purplship test --failfast purpleserver.events.tests &&
-  purplship test --failfast purpleserver.graph.tests
+	purplship test --failfast purpleserver.proxy.tests &&
+	purplship test --failfast purpleserver.pricing.tests &&
+	purplship test --failfast purpleserver.manager.tests &&
+	purplship test --failfast purpleserver.events.tests &&
+	purplship test --failfast purpleserver.graph.tests
 }
 
 test_services() {
@@ -219,9 +224,9 @@ build() {
 }
 
 build_theme() {
-  pushd "${ROOT:?}/webapp" || false &&
+  cd "${ROOT:?}/webapp" || false &&
   rm -rf node_modules; yarn && yarn build:theme "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/css/purplship.theme.min.css"
-  popd || true
+  cd - || true
   purplship collectstatic --noinput
 }
 
@@ -233,21 +238,21 @@ build_dashboard() {
 }
 
 build_js() {
-  pushd "${ROOT:?}/webapp/api" || false &&
+  cd "${ROOT:?}/webapp/api" || false &&
   rm -rf node_modules;
   yarn && npx gulp build \
   	--output "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/js/purplship.js"
-  popd
+  cd -
   purplship collectstatic --noinput
 }
 
 dev_webapp() {
-  pushd "${ROOT:?}/webapp" || false &&
+  cd "${ROOT:?}/webapp" || false &&
   rm -rf node_modules;
   yarn && yarn build -w \
     --env postbuild="purplship collectstatic --noinput" \
     --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
-  popd
+  cd -
 }
 
 build_image() {
@@ -274,14 +279,14 @@ generate_typescript_client() {
 		-o /local/webapp/api \
 		-c /local/artifacts/config.json \
 		--additional-properties=typescriptThreePlus=true
-  
-  rm -f "${ROOT:?}/webapp/api/apis/index.ts"
-  rm -f "${ROOT:?}/webapp/api/.openapi-generator-ignore"
-  rm -rf "${ROOT:?}/webapp/api/.openapi-generator/"
-
-  pushd "${ROOT:?}/webapp" && git checkout "./api/index.ts"; popd
 
 	cd -
+  
+	rm -f "${ROOT:?}/webapp/api/apis/index.ts"
+	rm -f "${ROOT:?}/webapp/api/.openapi-generator-ignore"
+	rm -rf "${ROOT:?}/webapp/api/.openapi-generator/"
+
+	cd "${ROOT:?}/webapp" && git checkout "./api/index.ts"; cd -
 }
 
 generate_php_client() {
@@ -313,6 +318,12 @@ generate_graphql_schema() {
 		--schema "${ROOT:?}/graphql/schema.json" \
 		--target typescript \
 		--output "${ROOT:?}/webapp/graphql/types.ts"
+	cd -
+}
+
+generate_swagger_schema() {
+	cd "${ROOT:?}"
+	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/openapi/latest.json"
 	cd -
 }
 
@@ -361,8 +372,10 @@ alias gen:ts=generate_typescript_client
 alias gen:php=generate_php_client
 alias gen:python=generate_python_client
 alias gen:graph=generate_graphql_schema
+alias gen:api=generate_swagger_schema
 
 
 alias dev:webapp=dev_webapp
+
 
 activate_env

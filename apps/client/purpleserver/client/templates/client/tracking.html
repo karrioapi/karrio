@@ -9,14 +9,14 @@
     <div class="container">
 
       <div class="has-text-centered my-6">
-        <img src="{% static 'branding/logo.svg' %}" width="100" alt="Purplship" />
+        <img src="{% static 'branding/logo.svg' %}" width="100" alt="{{ APP_NAME }}" />
       </div>
 
       <div class="card isolated-card">
         <div class="card-content">
 
           <p class="has-text-centered pb-4">
-            <span class="tag is-primary is-medium">{{ carrier_name }}</span>
+            <strong class="tag is-{{carrier_name}} is-medium">{{ carrier_label }}</strong>
           </p>
 
           <p class="subtitle has-text-centered is-6">

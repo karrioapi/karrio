@@ -4,17 +4,20 @@ from django.db import models
 from django.conf import settings
 from django.forms.models import model_to_dict
 
-from purpleserver.core.models import OwnedEntity, OwnedEntityManager, uuid
+from purpleserver.core.models import OwnedEntity, uuid
 from purpleserver.core.datatypes import CarrierSettings
 
 
-class CarrierManager(OwnedEntityManager):
+class CarrierManager(models.Manager):
     def get_queryset(self):
         from purpleserver.providers.models import MODELS
         return super().get_queryset().prefetch_related(*[Model.__name__.lower() for Model in MODELS.values()])
 
 
 class Carrier(OwnedEntity):
+    class Meta:
+        ordering = ['test', '-created_at']
+
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='car_'), editable=False)
     carrier_id = models.CharField(
         max_length=200, unique=True,

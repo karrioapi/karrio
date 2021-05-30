@@ -12,7 +12,7 @@ class TrackingView(View):
 
     def get(self, request, tracker_id: str):
         tracker = Tracking.objects.get(id=tracker_id)
-        carrier_name = dataunits.REFERENCE_MODELS['carriers'].get(tracker.tracking_carrier.data.carrier_name)
+        carrier_label = dataunits.REFERENCE_MODELS['carriers'].get(tracker.tracking_carrier.data.carrier_name)
         events = [
             {
                 **event,
@@ -24,7 +24,8 @@ class TrackingView(View):
         context = dict(
             events=events,
             tracker=tracker,
-            carrier_name=carrier_name
+            carrier_label=carrier_label,
+            carrier_name=tracker.tracking_carrier.data.carrier_name
         )
 
         return render(request, self.template_name, context=context)

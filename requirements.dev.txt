@@ -2,19 +2,20 @@ wheel
 
 # carrier datatype libraries
 
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.aramex&subdirectory=aramex
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.australiapost&subdirectory=australiapost
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dhl_universal&subdirectory=dhl_universal
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dicom&subdirectory=dicom
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.royalmail&subdirectory=royalmail
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sendle&subdirectory=sendle
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sf_express&subdirectory=sf_express
-# -e git+https://github.com/PurplShip/purplship-carriers.git@adding-tnt-schemas-lib#egg=carrier.usps&subdirectory=usps
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yanwen&subdirectory=yanwen
-# -e git+https://github.com/PurplShip/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yunexpress&subdirectory=yunexpress
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.aramex&subdirectory=aramex
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.australiapost&subdirectory=australiapost
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dhl_universal&subdirectory=dhl_universal
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.dicom&subdirectory=dicom
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.royalmail&subdirectory=royalmail
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sendle&subdirectory=sendle
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.sf_express&subdirectory=sf_express
+# -e git+https://github.com/Purplship/purplship-carriers.git@adding-tnt-schemas-lib#egg=carrier.usps&subdirectory=usps
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yanwen&subdirectory=yanwen
+# -e git+https://github.com/Purplship/purplship-carriers.git@carrier-schema-libs-update#egg=carrier.yunexpress&subdirectory=yunexpress
 
 
 # purplship sdk carrier extensions
+
 
 # -e git+https://github.com/PurplShip/purplship.git@differentiate-shipment-declared-value-from-insurance-amount#egg=purplship&subdirectory=purplship
 # -e git+https://github.com/PurplShip/purplship.git@rename-exception-naming#egg=purplship_canadapost&subdirectory=extensions/canadapost
@@ -38,10 +39,11 @@ wheel
 
 
 
+
 # Purplship server extentions packages
 
-# -e git+https://github.com/PurplShip/purplship-extension.git@purplship-2021.2-compatible#egg=eshipper.extension&subdirectory=src/eshipper
-# -e git+https://github.com/PurplShip/purplship-extension.git@purplship-2021.2-compatible#egg=freightcom.extension&subdirectory=src/freightcom
+# -e git+https://github.com/Purplship/purplship-extension.git@purplship-2021.2-compatible#egg=eshipper.extension&subdirectory=src/eshipper
+# -e git+https://github.com/Purplship/purplship-extension.git@purplship-2021.2-compatible#egg=freightcom.extension&subdirectory=src/freightcom
 
 
 # Installed versions
@@ -71,7 +73,6 @@ purplship.yunexpress
 -e ./apps/graph
 -e ./purpleserver
 -e ./apps/proxy
--e ./apps/tenants
 -e ./apps/manager
 -e ./apps/pricing
 -e ./apps/events

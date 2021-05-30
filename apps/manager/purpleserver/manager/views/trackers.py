@@ -3,14 +3,16 @@ import logging
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
+from purpleserver import serializers
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
+from django.db.models import Q
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
-    TrackingStatus, ErrorResponse, TestFilters, Operation
+    FlagField, TrackingStatus, ErrorResponse, TestFilters, Operation
 )
-from purpleserver.core.utils import SerializerDecorator, PaginatedResult
+from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import TrackingSerializer
 import purpleserver.manager.models as models
@@ -18,6 +20,12 @@ import purpleserver.manager.models as models
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Trackers = PaginatedResult('TrackerList', TrackingStatus)
+
+
+class TrackerFilters(serializers.Serializer):
+    test_mode = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="This flag filter out tracker created from carriers in test or live mode")
 
 
 class TrackerList(GenericAPIView):
@@ -29,13 +37,18 @@ class TrackerList(GenericAPIView):
         tags=['Trackers'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipment trackers",
-        responses={200: Trackers(), 400: ErrorResponse()}
+        responses={200: Trackers(), 400: ErrorResponse()},
+        query_serializer=TrackerFilters
     )
     def get(self, request: Request):
         """
         Retrieve all shipment trackers.
         """
-        trackers = models.Tracking.objects.access_with(request.user).all()
+        query = (
+            SerializerDecorator[TrackerFilters](data=request.query_params).data
+            if any(request.query_params) else {}
+        )
+        trackers = models.Tracking.access_by(request).filter(**query)
         response = self.paginate_queryset(TrackingStatus(trackers, many=True).data)
         return self.get_paginated_response(response)
 
@@ -61,10 +74,10 @@ class TrackersCreate(APIView):
             "carrier_name": carrier_name,
             "user": request.user
         }
-        tracking = models.Tracking.objects.access_with(request.user).filter(tracking_number=tracking_number).first()
+        tracking = models.Tracking.access_by(request).filter(tracking_number=tracking_number).first()
 
         instance = SerializerDecorator[TrackingSerializer](
-            tracking, data=data, context_user=request.user).save(carrier_filter=carrier_filter).instance
+            tracking, data=data, context=request).save(carrier_filter=carrier_filter).instance
         return Response(TrackingStatus(instance).data)
 
 
@@ -76,11 +89,12 @@ class TrackersDetails(APIView):
         operation_summary="Retrieves a shipment tracker",
         responses={200: TrackingStatus(), 404: ErrorResponse()}
     )
-    def get(self, request: Request, pk: str):
+    def get(self, request: Request, id_or_tracking_number: str):
         """
         Retrieve a shipment tracker
         """
-        tracker = models.Tracking.objects.access_with(request.user).get(pk=pk)
+        tracker = models.Tracking.access_by(request).get(
+            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number))
 
         return Response(TrackingStatus(tracker).data)
 
@@ -90,11 +104,12 @@ class TrackersDetails(APIView):
         operation_summary="Discard a shipment tracker",
         responses={200: Operation(), 400: ErrorResponse()}
     )
-    def delete(self, request: Request, pk: str):
+    def delete(self, request: Request, id_or_tracking_number: str):
         """
         Discard a shipment tracker.
         """
-        tracker = models.Tracking.objects.access_with(request.user).get(pk=pk)
+        tracker = models.Tracking.access_by(request).get(
+            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number))
 
         tracker.delete(keep_parents=True)
         serializer = Operation(dict(operation="Discard a tracker", success=True))
@@ -102,5 +117,5 @@ class TrackersDetails(APIView):
 
 
 router.urls.append(path('trackers', TrackerList.as_view(), name="trackers-list"))
-router.urls.append(path('trackers/<str:pk>', TrackersDetails.as_view(), name="tracker-details"))
+router.urls.append(path('trackers/<str:id_or_tracking_number>', TrackersDetails.as_view(), name="tracker-details"))
 router.urls.append(path('trackers/<carrier_name>/<tracking_number>', TrackersCreate.as_view(), name="shipment-tracker"))

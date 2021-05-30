@@ -1,7 +1,7 @@
 from enum import Enum
 from drf_yasg import openapi
 from rest_framework.serializers import (
-    Serializer, CharField, FloatField,
+    CharField, FloatField,
     BooleanField, IntegerField, ListField,
     ChoiceField, DictField, URLField
 )
@@ -12,10 +12,10 @@ from purplship.core.units import (
     LabelType
 )
 from purpleserver.providers.models import MODELS
+from purpleserver.serializers import Serializer
 from purpleserver.core.validators import (
     AugmentedAddressSerializer,
     PresetSerializer,
-    dimensions_required_together,
     valid_time_format,
     valid_date_format,
 )
@@ -175,8 +175,6 @@ class Commodity(EntitySerializer, CommodityData):
 
 
 class ParcelData(PresetSerializer, Serializer):
-    class Meta:
-        validators = [dimensions_required_together]
 
     weight = FloatField(required=True, help_text="The parcel's weight")
     width = FloatField(required=False, allow_null=True, help_text="The parcel's width")

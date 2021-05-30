@@ -113,6 +113,7 @@ def save_updated_trackers(responses: List[BatchResponse], trackers: List[models.
 
                     if any(changes):
                         tracker.save(update_fields=changes)
+                        serializers.update_shipment_tracker(tracker)
                         logger.debug(f"tracking info {details.tracking_number} updated successfully")
                     else:
                         logger.debug(f"no changes detect")

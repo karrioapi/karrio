@@ -3,13 +3,13 @@ import graphene_django
 from graphene.types import generic
 
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
-from rest_framework_tracking.models import APIRequestLog
 
+import purpleserver.core.models as core
 import purpleserver.providers.models as providers
 import purpleserver.manager.models as manager
 import purpleserver.events.models as events
 import purpleserver.graph.models as graph
+import purpleserver.user.models as auth
 
 User = get_user_model()
 
@@ -40,20 +40,20 @@ class SystemConnectionType(graphene_django.DjangoObjectType, ConnectionType):
 
     class Meta:
         model = providers.Carrier
-        fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id', 'carrier_name')
+        fields = ('created_at', 'updated_at', 'id', 'active', 'test', 'carrier_id', 'carrier_name', 'test')
 
 
 class LogType(graphene_django.DjangoObjectType):
 
     class Meta:
-        model = APIRequestLog
+        model = core.APILog
         filter_fields = {'path': ['icontains']}
         interfaces = (CustomNode,)
 
 
 class TokenType(graphene_django.DjangoObjectType):
     class Meta:
-        model = Token
+        model = auth.Token
         exclude = ('user', )
 
 

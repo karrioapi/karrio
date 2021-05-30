@@ -25,8 +25,8 @@ class Carriers:
         query = tuple()
 
         # Check if the system_only flag is not specified and there is a provided user, get the users carriers
-        if not list_filter.get('system_only') and 'user' in list_filter:
-            access = get_access_filter(list_filter.get('user'))
+        if not list_filter.get('system_only') and 'context' in list_filter:
+            access = get_access_filter(list_filter.get('context'))
             if len(access) > 0:
                 query += (Q(created_by__isnull=True) | access,)
 
@@ -131,7 +131,7 @@ class Shipments:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Shipment.cancel(datatypes.ShipmentCancelRequest(**payload))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -164,7 +164,7 @@ class Shipments:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Tracking.fetch(datatypes.TrackingRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -172,7 +172,7 @@ class Shipments:
         # The request call is wrapped in identity to simplify mocking in tests
         results, messages = identity(lambda: request.from_(gateway).parse())
 
-        if any(messages or []) and not any(results or []):
+        if not any(results or []):
             raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_404_NOT_FOUND)
 
         return datatypes.TrackingResponse(
@@ -191,7 +191,7 @@ class Pickups:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.schedule(datatypes.PickupRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -217,7 +217,7 @@ class Pickups:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.update(datatypes.PickupUpdateRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -242,7 +242,7 @@ class Pickups:
         carrier = carrier or next(iter(Carriers.list(**{**(carrier_filter or {}), 'active': True})), None)
 
         if carrier is None:
-            raise NotFound('No configured and active carrier found')
+            raise NotFound('No active carrier connection found to process the request')
 
         request = purplship.Pickup.cancel(datatypes.PickupCancelRequest(**DP.to_dict(payload)))
         gateway = purplship.gateway[carrier.data.carrier_name].create(carrier.data.dict())
@@ -276,11 +276,12 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict, user=None) -> datatypes.RateResponse:
+    def fetch(payload: dict, user=None, test: bool = None) -> datatypes.RateResponse:
         request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
-            carrier.data for carrier in Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user)
+            carrier.data for carrier in
+            Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user, test=test)
         ]
         gateways = [
             purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list
@@ -288,7 +289,7 @@ class Rates:
         compatible_gateways = [g for g in gateways if 'get_rates' in g.features]
 
         if len(compatible_gateways) == 0:
-            raise NotFound("No configured and active carriers specified")
+            raise NotFound("No active carrier connection found to process the request")
 
         # The request call is wrapped in identity to simplify mocking in tests
         rates, messages = identity(lambda: request.from_(*compatible_gateways).parse())

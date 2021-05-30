@@ -84,7 +84,7 @@ class Commodity(OwnedEntity):
 class Customs(OwnedEntity):
     DIRECT_PROPS = [
         'eel_pfc', 'aes', 'content_description', 'content_type',
-        'incoterm', 'commercial_invoice', 'certify', 'duty',
+        'incoterm', 'commercial_invoice', 'certify', 'duty', 'created_by',
         'certificate_number', 'signer', 'invoice', 'invoice_date', 'options'
     ]
     RELATIONAL_PROPS = ['commodities']
@@ -124,7 +124,7 @@ class Customs(OwnedEntity):
 class Pickup(OwnedEntity):
     DIRECT_PROPS = [
         "confirmation_number", "pickup_date", "instruction", "package_location", "ready_time",
-        "closing_time", "test_mode", "pickup_charge"
+        "closing_time", "test_mode", "pickup_charge", 'created_by',
     ]
 
     class Meta:
@@ -184,12 +184,14 @@ class Tracking(OwnedEntity):
     id = models.CharField(max_length=50, primary_key=True, default=partial(uuid, prefix='trk_'), editable=False)
     tracking_number = models.CharField(max_length=50)
     events = JSONField(blank=True, null=True, default=[])
-    delivered = models.BooleanField(null=True)
+    delivered = models.BooleanField(blank=True, null=True, default=False)
     test_mode = models.BooleanField(null=False)
 
     # System Reference fields
 
     tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
+    shipment = models.ForeignKey(
+        'Shipment', on_delete=models.CASCADE, related_name='tracker', null=True)
 
     # Computed properties
 
@@ -204,10 +206,11 @@ class Tracking(OwnedEntity):
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [
-        'label', 'options', 'services', 'status', 'service', 'meta', 'rates', 'label_type',
-        'tracking_number', 'tracking_url', 'shipment_identifier', 'test_mode', 'messages'
+        'label', 'options', 'services', 'status', 'service', 'meta', 'label_type',
+        'tracking_number', 'tracking_url', 'shipment_identifier', 'test_mode',
+        'messages', 'rates', 'payment', 'created_by',
     ]
-    RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'payment', 'customs', 'selected_rate']
+    RELATIONAL_PROPS = ['shipper', 'recipient', 'parcels', 'customs', 'selected_rate']
 
     class Meta:
         db_table = "shipment"
@@ -263,18 +266,12 @@ class Shipment(OwnedEntity):
 
     @property
     def carrier_ids(self) -> List[str]:
-        return [
-            carrier.carrier_id for carrier in self.carriers.all()
-        ]
+        return [carrier.carrier_id for carrier in self.carriers.all()]
 
     @property
     def selected_rate_id(self) -> str:
-        return (
-            cast(dict, self.selected_rate).get('id') if self.selected_rate is not None else None
-        )
+        return (cast(dict, self.selected_rate).get('id') if self.selected_rate is not None else None)
 
     @property
     def service(self) -> str:
-        return (
-            cast(dict, self.selected_rate).get('service') if self.selected_rate is not None else None
-        )
+        return (cast(dict, self.selected_rate).get('service') if self.selected_rate is not None else None)

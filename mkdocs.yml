@@ -11,8 +11,8 @@ theme:
   features:
     - navigation.sections
   palette:
-    primary: deep purple
-    accent: deep purple
+    primary: purple
+    accent: purple
   favicon: images/favicon.ico
   logo: images/icon.png
 
@@ -27,10 +27,19 @@ nav:
     - api-guides/index.md
     - api-guides/references.md
   - Developer Guides:
+    - developer-guides/index.md
+    - Architecture: developer-guides/architecture.md
     - developer-guides/installing.md
-    - developer-guides/architecture.md
-    - developer-guides/developing.md
-    - developer-guides/deployment.md
+    - developer-guides/rest-api.md
+    - developer-guides/graphql.md
+    - developer-guides/extensibility.md
+    - Running Purplship:
+      - developer-guides/configuration.md
+      - developer-guides/docker.md
+      - developer-guides/heroku.md
+    - Community:
+      - FAQ: developer-guides/FAQ.md
+      - developer-guides/support.md
   - Insiders: insiders.md
 
 extra:

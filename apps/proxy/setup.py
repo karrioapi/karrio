@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.proxy',
-      version='2021.3.1',
+      version='2021.5',
       description='Multi-carrier shipping API Proxy module',
       long_description=long_description,
       long_description_content_type="text/markdown",

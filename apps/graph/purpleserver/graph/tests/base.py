@@ -1,7 +1,8 @@
 from graphene_django.utils.testing import GraphQLTestCase
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
+
 from purpleserver.providers.models import MODELS
+from purpleserver.user.models import Token
 
 
 class GraphTestCase(GraphQLTestCase):

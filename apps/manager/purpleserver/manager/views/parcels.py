@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
-from purpleserver.core.utils import SerializerDecorator, PaginatedResult
+from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.core.serializers import ShipmentStatus, ErrorResponse, ParcelData, Parcel, Operation
 from purpleserver.manager.serializers import ParcelSerializer, reset_related_shipment_rates
@@ -29,13 +29,23 @@ class ParcelList(GenericAPIView):
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all parcels",
-        responses={200: Parcels(), 400: ErrorResponse()}
+        responses={200: Parcels(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url '/v1/parcels' \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request):
         """
         Retrieve all stored parcels.
         """
-        parcels = models.Parcel.objects.access_with(request.user).all()
+        parcels = models.Parcel.access_by(request).all()
         serializer = Parcel(parcels, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)
@@ -45,13 +55,29 @@ class ParcelList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a parcel",
         request_body=ParcelData(),
-        responses={200: Parcel(), 400: ErrorResponse()}
+        responses={200: Parcel(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request POST \\
+                    --url /v1/parcels \\
+                    --header 'Authorization: Token <API_KEY>' \\
+                    --header 'Content-Type: application/json' \\
+                    --data '{
+                      "weight": 1,
+                      "weight_unit": "KG",
+                      "package_preset": "canadapost_corrugated_small_box"
+                    }'
+                '''
+            }
+        ]
     )
     def post(self, request: Request):
         """
         Create a new parcel.
         """
-        parcel = SerializerDecorator[ParcelSerializer](data=request.data, context_user=request.user).save().instance
+        parcel = SerializerDecorator[ParcelSerializer](data=request.data, context=request).save().instance
         return Response(Parcel(parcel).data, status=status.HTTP_201_CREATED)
 
 
@@ -61,13 +87,23 @@ class ParcelDetail(APIView):
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}retrieve",
         operation_summary="Retrieve a parcel",
-        responses={200: Parcel(), 400: ErrorResponse()}
+        responses={200: Parcel(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request GET \\
+                  --url /v1/parcels/<PARCEL_ID> \\
+                  --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def get(self, request: Request, pk: str):
         """
         Retrieve a parcel.
         """
-        address = models.Parcel.objects.access_with(request.user).get(pk=pk)
+        address = models.Parcel.access_by(request).get(pk=pk)
         return Response(Parcel(address).data)
 
     @swagger_auto_schema(
@@ -75,13 +111,27 @@ class ParcelDetail(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         operation_summary="Update a parcel",
         request_body=ParcelData(),
-        responses={200: Parcel(), 400: ErrorResponse()}
+        responses={200: Parcel(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request PATCH \\
+                    --url /v1/parcels/<PARCEL_ID> \\
+                    --header 'Authorization: Token <API_KEY>' \\
+                    --header 'Content-Type: application/json' \\
+                    --data '{
+                      "weight": 1.2,
+                    }'
+                '''
+            }
+        ]
     )
     def patch(self, request: Request, pk: str):
         """
         modify an existing parcel's details.
         """
-        parcel = models.Parcel.objects.access_with(request.user).get(pk=pk)
+        parcel = models.Parcel.access_by(request).get(pk=pk)
         shipment = parcel.shipment_parcels.first()
         if shipment is not None and shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -98,13 +148,23 @@ class ParcelDetail(APIView):
         tags=['Parcels'],
         operation_id=f"{ENDPOINT_ID}discard",
         operation_summary="Remove a parcel",
-        responses={200: Operation(), 400: ErrorResponse()}
+        responses={200: Operation(), 400: ErrorResponse()},
+        code_examples=[
+            {
+                'lang': 'bash',
+                'source': '''
+                curl --request DELETE \\
+                    --url /v1/parcels/<PARCEL_ID> \\
+                    --header 'Authorization: Token <API_KEY>'
+                '''
+            }
+        ]
     )
     def delete(self, request: Request, pk: str):
         """
         Remove a parcel.
         """
-        parcel = models.Parcel.objects.access_with(request.user).get(pk=pk)
+        parcel = models.Parcel.access_by(request).get(pk=pk)
         shipment = parcel.shipment_parcels.first()
 
         if shipment is not None and (

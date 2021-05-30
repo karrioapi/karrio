@@ -1,11 +1,12 @@
+import logging
 from typing import Optional
 from django.db import transaction
 from rest_framework.reverse import reverse
 from rest_framework.serializers import Serializer, CharField, ChoiceField, BooleanField
 
-from purplship.core.utils import DP
+from purplship.core.utils import DP, DF
 from purpleserver.core.gateway import Shipments, Carriers
-from purpleserver.core.utils import SerializerDecorator, owned_model_serializer, save_one_to_one_data, \
+from purpleserver.serializers import SerializerDecorator, owned_model_serializer, save_one_to_one_data, \
     save_many_to_many_data
 import purpleserver.core.datatypes as datatypes
 from purpleserver.providers.models import Carrier
@@ -19,13 +20,16 @@ from purpleserver.core.serializers import (
     ShippingRequest,
     ShipmentCancelRequest,
     LABEL_TYPES,
-    LabelType
+    LabelType,
+    Message,
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.customs import CustomsSerializer
 from purpleserver.manager.serializers.parcel import ParcelSerializer
 from purpleserver.manager.serializers.rate import RateSerializer
 import purpleserver.manager.models as models
+
+logger = logging.getLogger(__name__)
 
 
 @owned_model_serializer
@@ -39,6 +43,7 @@ class ShipmentSerializer(ShipmentData):
     selected_rate = Rate(required=False, allow_null=True)
     tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
     test_mode = BooleanField(required=False)
+    messages = Message(many=True, required=False)
 
     def __init__(self, instance: models.Shipment = None, **kwargs):
         data = kwargs.get('data')
@@ -49,49 +54,41 @@ class ShipmentSerializer(ShipmentData):
         super().__init__(instance, **kwargs)
 
     @transaction.atomic
-    def create(self, validated_data: dict) -> models.Shipment:
-        context_user = self._context_user
+    def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
+        test = validated_data.get('test')
         carrier_ids = validated_data.get('carrier_ids', [])
-        carriers = Carriers.list(carrier_ids=carrier_ids, created_by=context_user) if any(carrier_ids) else []
+        carriers = Carriers.list(carrier_ids=carrier_ids, test=test, context=context) if any(carrier_ids) else []
+
+        # Get live rates
         rate_response: datatypes.RateResponse = SerializerDecorator[RateSerializer](
-            data=validated_data, context_user=context_user).save().instance
-        test_mode = all([r.test_mode for r in rate_response.rates])
+            data=validated_data, context=context).save(test=test).instance
 
         shipment_data = {
-            key: value for key, value in validated_data.items()
-            if key in models.Shipment.DIRECT_PROPS and value is not None
+            **{
+                key: value for key, value in validated_data.items()
+                if key in models.Shipment.DIRECT_PROPS and value is not None
+            },
+            'customs': save_one_to_one_data('customs', CustomsSerializer, payload=validated_data, context=context),
+            'shipper': save_one_to_one_data('shipper', AddressSerializer, payload=validated_data, context=context),
+            'recipient': save_one_to_one_data('recipient', AddressSerializer, payload=validated_data, context=context),
         }
-
-        shipment_data.update(
-            shipper=save_one_to_one_data(
-                'shipper', AddressSerializer, payload=validated_data, context_user=context_user),
-
-            recipient=save_one_to_one_data(
-                'recipient', AddressSerializer, payload=validated_data, context_user=context_user),
-
-            customs=save_one_to_one_data(
-                'customs', CustomsSerializer, payload=validated_data, context_user=context_user),
-        )
 
         shipment = models.Shipment.objects.create(**{
             **shipment_data,
-            'test_mode': test_mode,
-            'created_by': context_user,
             'rates': DP.to_dict(rate_response.rates),
-            'messages': DP.to_dict(rate_response.messages)
+            'messages': DP.to_dict(rate_response.messages),
+            'test_mode': all([r.test_mode for r in rate_response.rates]),
         })
         shipment.carriers.set(carriers)
 
-        save_many_to_many_data(
-            'parcels', ParcelSerializer, shipment, payload=validated_data, context_user=self._context_user)
+        save_many_to_many_data('parcels', ParcelSerializer, shipment, payload=validated_data, context=context)
 
         return shipment
 
     @transaction.atomic
-    def update(self, instance: models.Shipment, validated_data: dict) -> models.Shipment:
+    def update(self, instance: models.Shipment, validated_data: dict, context: dict) -> models.Shipment:
         changes = []
         data = validated_data.copy()
-        context_user = self._context_user or instance.created_by
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS:
@@ -110,11 +107,7 @@ class ShipmentSerializer(ShipmentData):
 
         if validated_data.get('customs') is not None:
             changes.append('customs')
-            save_one_to_one_data('customs', CustomsSerializer, instance, payload=validated_data, context_user=context_user)
-
-        if 'rates' in validated_data:
-            changes.append('rates')
-            instance.rates = DP.to_dict(validated_data.get('rates', []))
+            save_one_to_one_data('customs', CustomsSerializer, instance, payload=validated_data, context=context)
 
         if 'selected_rate' in validated_data:
             selected_rate = validated_data.get('selected_rate', {})
@@ -147,7 +140,7 @@ class ShipmentValidationData(Shipment):
     rates = Rate(many=True, required=True)
     payment = Payment(required=True)
 
-    def create(self, validated_data: dict) -> datatypes.Shipment:
+    def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
         return Shipments.create(
             ShippingRequest(validated_data).data,
             resolve_tracking_url=(
@@ -161,7 +154,7 @@ class ShipmentValidationData(Shipment):
 
 class ShipmentCancelSerializer(Shipment):
 
-    def update(self, instance: models.Shipment, validated_data: dict) -> datatypes.ConfirmationResponse:
+    def update(self, instance: models.Shipment, validated_data: dict, **kwargs) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
             response = Shipments.cancel(
                 payload=ShipmentCancelRequest(instance).data,
@@ -188,3 +181,25 @@ def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
         shipment.rates = []
         shipment.messages = []
         shipment.save()
+
+
+def create_shipment_tracker(shipment: Optional[models.Shipment]):
+    try:
+        models.Tracking.objects.create(
+            tracking_number=shipment.tracking_number,
+            events=[DP.to_dict(datatypes.TrackingEvent(
+                date=DF.fdate(shipment.updated_at),
+                description="Label created and ready for shipment",
+                location="",
+                code="CREATED",
+                time=DF.ftime(shipment.updated_at)
+            ))],
+            delivered=False,
+            test_mode=shipment.test_mode,
+            tracking_carrier=shipment.selected_rate_carrier,
+            created_by=shipment.created_by,
+            shipment=shipment,
+        )
+        logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
+    except Exception as e:
+        logger.exception("Failed to create new label tracker", e)

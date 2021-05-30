@@ -3,7 +3,7 @@ import logging
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status
+from rest_framework import status, serializers
 
 from drf_yasg import openapi
 from django.urls import path
@@ -12,8 +12,10 @@ from drf_yasg.utils import swagger_auto_schema
 from purplship.core.utils import DP
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.exceptions import PurplShipApiException
-from purpleserver.core.utils import SerializerDecorator, PaginatedResult
+from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.core.serializers import (
+    CARRIERS,
+    FlagField,
     ShipmentStatus,
     ErrorResponse,
     Shipment,
@@ -28,6 +30,7 @@ from purpleserver.core.serializers import (
 from purpleserver.manager.router import router
 from purpleserver.manager.serializers import (
     reset_related_shipment_rates,
+    create_shipment_tracker,
     ShipmentSerializer,
     ShipmentPurchaseData,
     ShipmentValidationData,
@@ -42,6 +45,18 @@ ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique m
 Shipments = PaginatedResult('ShipmentList', Shipment)
 
 
+class ShipmentFilters(serializers.Serializer):
+    test_mode = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="This flag filter out shipment created in test or prod mode")
+
+
+class ShipmentMode(serializers.Serializer):
+    test = FlagField(
+        required=False, allow_null=True, default=None,
+        help_text="Create shipment in test or prod mode")
+
+
 class ShipmentList(GenericAPIView):
     serializer_class = Shipment
     queryset = models.Shipment.objects
@@ -51,13 +66,18 @@ class ShipmentList(GenericAPIView):
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipments",
-        responses={200: Shipments(), 400: ErrorResponse()}
+        responses={200: Shipments(), 400: ErrorResponse()},
+        query_serializer=ShipmentFilters
     )
     def get(self, request: Request):
         """
         Retrieve all shipments.
         """
-        shipments = models.Shipment.objects.access_with(request.user).all()
+        query = (
+            SerializerDecorator[ShipmentFilters](data=request.query_params).data
+            if any(request.query_params) else {}
+        )
+        shipments = models.Shipment.access_by(request).filter(**query)
 
         response = self.paginate_queryset(Shipment(shipments, many=True).data)
         return self.get_paginated_response(response)
@@ -67,14 +87,15 @@ class ShipmentList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}create",
         operation_summary="Create a shipment",
         responses={200: Shipment(), 400: ErrorResponse()},
-        request_body=ShipmentData()
+        request_body=ShipmentData(),
+        query_serializer=ShipmentMode,
     )
     def post(self, request: Request):
         """
         Create a new shipment instance.
         """
-        shipment = SerializerDecorator[ShipmentSerializer](
-            data=request.data, context_user=request.user).save().instance
+        query = SerializerDecorator[ShipmentMode](data=request.query_params).data
+        shipment = SerializerDecorator[ShipmentSerializer](data=request.data, context=request).save(**query).instance
 
         return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
 
@@ -91,7 +112,7 @@ class ShipmentDetail(APIView):
         """
         Retrieve a shipment.
         """
-        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
         return Response(Shipment(shipment).data)
 
@@ -105,7 +126,7 @@ class ShipmentDetail(APIView):
         """
         Void a shipment with the associated label.
         """
-        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
         if shipment.status not in [ShipmentStatus.purchased.value, ShipmentStatus.created.value]:
             raise PurplShipApiException(
@@ -139,16 +160,15 @@ class ShipmentRates(APIView):
         """
         Refresh the list of the shipment rates
         """
-        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
-            data=ShipmentData(shipment).data, context_user=request.user).save().instance
+            data=ShipmentData(shipment).data, context=request).save(test=shipment.test_mode).instance
 
-        payload: dict = DP.to_dict(dict(
+        payload: dict = dict(
             rates=Rate(rate_response.rates, many=True).data,
             messages=Message(rate_response.messages, many=True).data,
-            selected_rate=None
-        ))
+        )
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
 
@@ -185,19 +205,18 @@ class ShipmentOptions(APIView):
 
         And many more, check additional options available in the [reference](#operation/all_references).
         """
-        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
                 "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        payload: dict = DP.to_dict(dict(
-            options=request.data,
-            selected_rate=None,
+        payload: dict = dict(
+            options=DP.to_dict(request.data),
             shipment_rates=[],
             messages=[]
-        ))
+        )
 
         SerializerDecorator[ShipmentSerializer](shipment, data=payload).save()
 
@@ -217,7 +236,7 @@ class ShipmentCustoms(APIView):
         """
         Add the customs declaration for the shipment if non existent.
         """
-        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -229,14 +248,13 @@ class ShipmentCustoms(APIView):
                 "Shipment customs declaration already defined", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        payload: dict = DP.to_dict(dict(
-            customs=request.data,
-            selected_rate=None,
+        payload: dict = dict(
+            customs=DP.to_dict(request.data),
             shipment_rates=[],
             messages=[]
-        ))
+        )
 
-        SerializerDecorator[ShipmentSerializer](shipment, data=payload, context_user=request.user).save()
+        SerializerDecorator[ShipmentSerializer](shipment, data=payload, context=request).save()
         return Response(Shipment(shipment).data)
 
 
@@ -253,14 +271,14 @@ class ShipmentParcels(APIView):
         """
         Add a parcel to an existing shipment for a multi-parcel shipment.
         """
-        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
                 "Shipment already 'purchased'", code='state_error', status_code=status.HTTP_409_CONFLICT
             )
 
-        parcel = SerializerDecorator[ParcelSerializer](data=request.data, context_user=request.user).save().instance
+        parcel = SerializerDecorator[ParcelSerializer](data=request.data, context=request).save().instance
         shipment.shipment_parcels.add(parcel)
         reset_related_shipment_rates(shipment)
         return Response(Shipment(shipment).data)
@@ -279,7 +297,7 @@ class ShipmentPurchase(APIView):
         """
         Select your preferred rates to buy a shipment label.
         """
-        shipment = models.Shipment.objects.access_with(request.user).get(pk=pk)
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -294,10 +312,11 @@ class ShipmentPurchase(APIView):
 
         # Submit shipment to carriers
         response: Shipment = SerializerDecorator[ShipmentValidationData](
-            data=payload, context_user=request.user).save().instance
+            data=payload, context=request).save().instance
 
         # Update shipment state
-        SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response), context_user=request.user).save()
+        SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response), context=request).save()
+        create_shipment_tracker(shipment)
 
         return Response(Shipment(shipment).data)
 
