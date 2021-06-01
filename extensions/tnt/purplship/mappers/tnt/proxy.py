@@ -9,10 +9,10 @@ class Proxy(BaseProxy):
 
     """ Proxy Methods """
 
-    def get_rates(self, request: Serializable) -> Deserializable[str]:
-        response = self._send_request(request, '/expressconnect/pricing/getprice')
-
-        return Deserializable(response, XP.to_xml)
+    # def get_rates(self, request: Serializable) -> Deserializable[str]:
+    #     response = self._send_request(request, '/expressconnect/pricing/getprice')
+    #
+    #     return Deserializable(response, XP.to_xml)
 
     def get_tracking(
         self, request: Serializable
@@ -21,26 +21,26 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def create_shipment(
-        self, request: Serializable
-    ) -> Deserializable[str]:
-
-        def process(job: Job):
-            if job.data is None:
-                return job.fallback
-
-            return self._send_request(
-                request=job.data,
-                path=dict(
-                    create="/expressconnect/shipping/ship",
-                    get_label="/expresslabel/documentation/getlabel"
-                )[job.id],
-            )
-
-        pipeline: Pipeline = request.serialize()
-        response = pipeline.apply(process)
-
-        return Deserializable(XP.bundle_xml(response), XP.to_xml)
+    # def create_shipment(
+    #     self, request: Serializable
+    # ) -> Deserializable[str]:
+    #
+    #     def process(job: Job):
+    #         if job.data is None:
+    #             return job.fallback
+    #
+    #         return self._send_request(
+    #             request=job.data,
+    #             path=dict(
+    #                 create="/expressconnect/shipping/ship",
+    #                 get_label="/expresslabel/documentation/getlabel"
+    #             )[job.id],
+    #         )
+    #
+    #     pipeline: Pipeline = request.serialize()
+    #     response = pipeline.apply(process)
+    #
+    #     return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
     """ Private Methods """
 
