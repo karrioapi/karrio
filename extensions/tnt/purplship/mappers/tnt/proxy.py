@@ -1,3 +1,4 @@
+import urllib.parse
 from purplship.core.utils import XP, request as http, Serializable, Deserializable, Job, Pipeline
 from purplship.api.proxy import Proxy as BaseProxy
 from purplship.mappers.tnt.settings import Settings
@@ -16,7 +17,7 @@ class Proxy(BaseProxy):
     def get_tracking(
         self, request: Serializable
     ) -> Deserializable[str]:
-        response = self._send_request(request, '/expressconnect/pricing/track.do')
+        response = self._send_request(request, '/expressconnect/track.do')
 
         return Deserializable(response, XP.to_xml)
 
@@ -46,9 +47,9 @@ class Proxy(BaseProxy):
     def _send_request(self, request: Serializable, path: str) -> str:
         return http(
             url=f"{self.settings.server_url}{path}",
-            data=bytearray(request.serialize(), "utf-8"),
+            data=bytearray(urllib.parse.urlencode(dict(xml_in=request.serialize())), "utf-8"),
             headers={
-                "Content-Type": "application/xml",
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": f"Basic {self.settings.authorization}"
             },
             method="POST",
