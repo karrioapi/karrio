@@ -9,13 +9,16 @@ from purplship.providers.tnt import Settings
 
 
 def parse_error_response(response, settings: Settings) -> List[Message]:
-    structure_errors = response.xpath(".//*[local-name() = $name]", name="ErrorStructure")
-    broken_rules_nodes = response.xpath(".//*[local-name() = $name]", name="brokenRules")
-    broken_rule_nodes = response.xpath(".//*[local-name() = $name]", name="brokenRule")
-    runtime_errors = response.xpath(".//*[local-name() = $name]", name="runtime_error")
-    parse_errors = response.xpath(".//*[local-name() = $name]", name="parse_error")
-    errors = response.xpath(".//*[local-name() = $name]", name="ERROR")
-    faults = response.xpath(".//*[local-name() = $name]", name="fault")
+    structure_errors = XP.find("ErrorStructure", response)
+    broken_rules_nodes = XP.find("brokenRules", response)
+    broken_rule_nodes = XP.find("brokenRule", response)
+    runtime_errors = XP.find("runtime_error", response)
+    parse_errors = XP.find("parse_error", response)
+    ERRORS = XP.find("ERROR", response)
+    errors = XP.find("Error", response)
+    faults = XP.find("fault", response)
+
+
 
     return [
         *[_extract_structure_error(node, settings) for node in structure_errors],
@@ -23,22 +26,21 @@ def parse_error_response(response, settings: Settings) -> List[Message]:
         *[_extract_broken_rule(node, settings) for node in broken_rule_nodes],
         *[_extract_runtime_error(node, settings) for node in runtime_errors],
         *[_extract_parse_error(node, settings) for node in parse_errors],
-        *[_extract_error(node, settings) for node in errors],
+        *[_extract_structure_error(node, settings) for node in errors],
+        *[_extract_error(node, settings) for node in ERRORS],
         *[_extract_faut(node, settings) for node in faults],
     ]
 
 
 def _extract_structure_error(node: Element, settings: Settings) -> Message:
-    error = XP.build(ErrorStructure, node)
-
     return Message(
         # context info
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
 
         # carrier error info
-        code=error.Code,
-        message=error.Message,
+        code=XP.find("Code", node, first=True).text,
+        message=XP.find("Message", node, first=True).text,
     )
 
 

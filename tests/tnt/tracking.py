@@ -175,7 +175,7 @@ PARSED_TRACKING_RESPONSE = [
 
 
 TRACKING_REQUEST = f"""<TrackRequest locale="en_US" version="3.1">
-    <SearchCriteria>
+    <SearchCriteria marketType="INTERNATIONAL" originCountry="US">
         <ConsignmentNumber>22222222</ConsignmentNumber>
         <ConsignmentNumber>123456782</ConsignmentNumber>
     </SearchCriteria>

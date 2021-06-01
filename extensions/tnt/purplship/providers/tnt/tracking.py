@@ -52,11 +52,15 @@ def _extract_detail(node: Element, settings: Settings) -> TrackingDetails:
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[TrackRequest]:
+def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializable[TrackRequest]:
     request = TrackRequest(
         locale="en_US",
         version="3.1",
-        SearchCriteria=SearchCriteriaType(ConsignmentNumber=payload.tracking_numbers),
+        SearchCriteria=SearchCriteriaType(
+            marketType="INTERNATIONAL",
+            originCountry=(settings.account_country_code or "US"),
+            ConsignmentNumber=payload.tracking_numbers
+        ),
         LevelOfDetail=LevelOfDetailType(
             Complete=CompleteType(
                 originAddress=True,
