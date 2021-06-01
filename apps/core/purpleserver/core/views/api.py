@@ -41,7 +41,11 @@ class BaseView:
 
 
 class BaseGenericAPIView(generics.GenericAPIView, BaseView):
-    pass
+    def get_queryset(self):
+        if (self.model is not None) and (getattr(self.model, 'access_by', None) is not None):
+            return self.model.access_by(self.request)
+
+        return None
 
 
 class GenericAPIView(PurplshipLoggingMixin, BaseGenericAPIView):

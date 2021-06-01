@@ -22,6 +22,7 @@ setup(
             'djangorestframework',
             'djangorestframework-simplejwt',
             'django-constance',
+            'django-filter',
             'django-picklefield',
             'django-email-verification',
             'django-cors-headers',

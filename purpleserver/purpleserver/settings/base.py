@@ -98,7 +98,6 @@ INSTALLED_APPS = [
     *BASE_APPS,
 
     'rest_framework',
-    # 'rest_framework.authtoken',
 
     'django_email_verification',
     'rest_framework_tracking',
@@ -107,6 +106,7 @@ INSTALLED_APPS = [
     'constance.backends.database',
     'huey.contrib.djhuey',
     'corsheaders',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -115,7 +115,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+
     'purpleserver.core.authentication.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -240,6 +240,10 @@ REST_FRAMEWORK = {
         'anon': '40/minute',
         'user': '60/minute'
     },
+
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 
     'EXCEPTION_HANDLER': 'purpleserver.core.exceptions.custom_exception_handler',
 

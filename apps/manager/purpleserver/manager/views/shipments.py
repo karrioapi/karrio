@@ -8,12 +8,14 @@ from rest_framework import status, serializers
 from drf_yasg import openapi
 from django.urls import path
 from drf_yasg.utils import swagger_auto_schema
+from django_filters import rest_framework as filters
 
 from purplship.core.utils import DP
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.exceptions import PurplShipApiException
 from purpleserver.serializers import SerializerDecorator, PaginatedResult
 from purpleserver.core.serializers import (
+    MODELS,
     CARRIERS,
     FlagField,
     ShipmentStatus,
@@ -45,10 +47,25 @@ ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique m
 Shipments = PaginatedResult('ShipmentList', Shipment)
 
 
-class ShipmentFilters(serializers.Serializer):
-    test_mode = FlagField(
-        required=False, allow_null=True, default=None,
-        help_text="This flag filter out shipment created in test or prod mode")
+class ShipmentFilters(filters.FilterSet):
+    created_start = filters.DateFilter(field_name="created_at", lookup_expr='gte')
+    created_end = filters.DateFilter(field_name="created_at", lookup_expr='lte')
+    carrier_id = filters.CharFilter(field_name="selected_rate_carrier__carrier_id")
+    service = filters.CharFilter(field_name="selected_rate__service")
+
+    parameters = [
+        openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
+        openapi.Parameter('carrier_name', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('carrier_id', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('status', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('service', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('created_end', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
+        openapi.Parameter('created_start', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
+    ]
+
+    class Meta:
+        model = models.Shipment
+        fields = ['test_mode', 'status']
 
 
 class ShipmentMode(serializers.Serializer):
@@ -58,27 +75,33 @@ class ShipmentMode(serializers.Serializer):
 
 
 class ShipmentList(GenericAPIView):
+    model = models.Shipment
     serializer_class = Shipment
-    queryset = models.Shipment.objects
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ShipmentFilters
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if 'carrier_name' in self.request.query_params:
+            carrier_name = self.request.query_params['carrier_name']
+            return queryset.filter(selected_rate_carrier__in=MODELS[carrier_name].objects.all())
+
+        return queryset
 
     @swagger_auto_schema(
         tags=['Shipments'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipments",
         responses={200: Shipments(), 400: ErrorResponse()},
-        query_serializer=ShipmentFilters
+        manual_parameters=ShipmentFilters.parameters,
     )
     def get(self, request: Request):
         """
         Retrieve all shipments.
         """
-        query = (
-            SerializerDecorator[ShipmentFilters](data=request.query_params).data
-            if any(request.query_params) else {}
-        )
-        shipments = models.Shipment.access_by(request).filter(**query)
-
+        shipments = self.filter_queryset(self.get_queryset())
         response = self.paginate_queryset(Shipment(shipments, many=True).data)
         return self.get_paginated_response(response)
 
@@ -88,7 +111,7 @@ class ShipmentList(GenericAPIView):
         operation_summary="Create a shipment",
         responses={200: Shipment(), 400: ErrorResponse()},
         request_body=ShipmentData(),
-        query_serializer=ShipmentMode,
+        query_serializer=ShipmentMode(),
     )
     def post(self, request: Request):
         """

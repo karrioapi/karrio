@@ -3,7 +3,6 @@ from purpleserver.settings.base import *
 
 INSTALLED_APPS += [
     'graphene_django',
-    'django_filters',
 ]
 
 GRAPHENE = {
