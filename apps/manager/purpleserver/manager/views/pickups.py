@@ -4,8 +4,11 @@ from rest_framework import status, serializers
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
+
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
+from django_filters import rest_framework as filters
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
@@ -25,23 +28,29 @@ ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique ma
 Pickups = PaginatedResult('PickupList', Pickup)
 
 
-class PickupFilters(serializers.Serializer):
-    test_mode = FlagField(
-        required=False, allow_null=True, default=None,
-        help_text="This flag filter out pickup created from carriers in test or live mode")
+class PickupFilters(filters.FilterSet):
+    parameters = [
+        openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
+    ]
+
+    class Meta:
+        model = models.Pickup
+        fields = ['test_mode']
 
 
 class PickupList(GenericAPIView):
-    serializer_class = Pickup
-    queryset = models.Pickup.objects
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = PickupFilters
+    serializer_class = Pickup
+    model = models.Pickup
 
     @swagger_auto_schema(
         tags=['Pickups'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
         responses={200: Pickups(), 400: ErrorResponse()},
-        query_serializer=PickupFilters,
+        query_serializer=PickupFilters.parameters,
         code_examples=[
             {
                 'lang': 'bash',
@@ -57,12 +66,7 @@ class PickupList(GenericAPIView):
         """
         Retrieve all scheduled pickups.
         """
-        query = (
-            SerializerDecorator[PickupFilters](data=request.query_params).data
-            if any(request.query_params) else {}
-        )
-        pickups = models.Pickup.access_by(request).filter(**query)
-
+        pickups = self.filter_queryset(self.get_queryset())
         response = self.paginate_queryset(Pickup(pickups, many=True).data)
         return self.get_paginated_response(response)
 

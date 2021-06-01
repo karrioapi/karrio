@@ -75,11 +75,11 @@ class ShipmentMode(serializers.Serializer):
 
 
 class ShipmentList(GenericAPIView):
-    model = models.Shipment
-    serializer_class = Shipment
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ShipmentFilters
+    serializer_class = Shipment
+    model = models.Shipment
 
     def get_queryset(self):
         queryset = super().get_queryset()

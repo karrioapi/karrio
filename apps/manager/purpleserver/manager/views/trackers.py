@@ -3,10 +3,12 @@ import logging
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.request import Request
-from purpleserver import serializers
+
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 from django.db.models import Q
+from django_filters import rest_framework as filters
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.core.serializers import (
@@ -22,33 +24,35 @@ ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique 
 Trackers = PaginatedResult('TrackerList', TrackingStatus)
 
 
-class TrackerFilters(serializers.Serializer):
-    test_mode = FlagField(
-        required=False, allow_null=True, default=None,
-        help_text="This flag filter out tracker created from carriers in test or live mode")
+class TrackerFilters(filters.FilterSet):
+    parameters = [
+        openapi.Parameter('test_mode', in_=openapi.IN_QUERY, type=openapi.TYPE_BOOLEAN),
+    ]
+
+    class Meta:
+        model = models.Tracking
+        fields = ['test_mode']
 
 
 class TrackerList(GenericAPIView):
-    serializer_class = TrackingStatus
-    queryset = models.Tracking.objects
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
+    filter_backends = (filters.DjangoFilterBackend,)
+    serializer_class = TrackingStatus
+    filterset_class = TrackerFilters
+    model = models.Tracking
 
     @swagger_auto_schema(
         tags=['Trackers'],
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipment trackers",
         responses={200: Trackers(), 400: ErrorResponse()},
-        query_serializer=TrackerFilters
+        query_serializer=TrackerFilters.parameters
     )
     def get(self, request: Request):
         """
         Retrieve all shipment trackers.
         """
-        query = (
-            SerializerDecorator[TrackerFilters](data=request.query_params).data
-            if any(request.query_params) else {}
-        )
-        trackers = models.Tracking.access_by(request).filter(**query)
+        trackers = self.filter_queryset(self.get_queryset())
         response = self.paginate_queryset(TrackingStatus(trackers, many=True).data)
         return self.get_paginated_response(response)
 
