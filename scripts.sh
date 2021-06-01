@@ -210,9 +210,9 @@ _build() {
 }
 
 build() {
-  build_theme &&
+  build_theme -i &&
   build_dashboard &&
-  build_js &&
+  build_js -i &&
   clean_builds
   sm=$(find "${ROOT:?}" -type f -name "setup.py" ! -path "*$ENV_DIR/*" -prune -exec dirname '{}' \;  2>&1 | grep -v 'permission denied')
 
@@ -224,26 +224,33 @@ build() {
 }
 
 build_theme() {
-  cd "${ROOT:?}/webapp" || false &&
-  rm -rf node_modules; yarn && yarn build:theme "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/css/purplship.theme.min.css"
-  cd - || true
-  purplship collectstatic --noinput
+  	cd "${ROOT:?}/webapp" || false &&
+	if [[ "$*" == *-i* ]]; then
+		rm -rf node_modules; yarn
+	fi
+	yarn build:theme "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/css/purplship.theme.min.css"
+	cd - || true
+	purplship collectstatic --noinput
 }
 
 build_dashboard() {
-  pushd "${ROOT:?}/webapp" || false &&
-  rm -rf node_modules; yarn && yarn build --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
-  popd
-  purplship collectstatic --noinput
+  	cd "${ROOT:?}/webapp" || false &&
+	if [[ "$*" == *-i* ]]; then
+		rm -rf node_modules; yarn
+	fi
+	yarn build --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
+	cd -
+	purplship collectstatic --noinput
 }
 
 build_js() {
-  cd "${ROOT:?}/webapp/api" || false &&
-  rm -rf node_modules;
-  yarn && npx gulp build \
-  	--output "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/js/purplship.js"
-  cd -
-  purplship collectstatic --noinput
+	cd "${ROOT:?}/webapp/api" || false &&
+	if [[ "$*" == *-i* ]]; then
+		rm -rf node_modules; yarn
+	fi
+	npx gulp build --output "${ROOT:?}/purpleserver/purpleserver/static/purpleserver/js/purplship.js"
+	cd -
+	purplship collectstatic --noinput
 }
 
 dev_webapp() {
@@ -263,7 +270,7 @@ generate_node_client() {
 	cd "${ROOT:?}"
 	mkdir -p "${ROOT:?}/codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/openapi/latest.json \
+		-i /local/schemas/openapi.json \
 		-g javascript \
 		-o /local/codegen/node \
 		-c /local/artifacts/config.json
@@ -274,7 +281,7 @@ generate_node_client() {
 generate_typescript_client() {
 	cd "${ROOT:?}"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/openapi/latest.json \
+		-i /local/schemas/openapi.json \
 		-g typescript-fetch \
 		-o /local/webapp/api \
 		-c /local/artifacts/config.json \
@@ -293,7 +300,7 @@ generate_php_client() {
 	cd "${ROOT:?}"
 	mkdir -p "${ROOT:?}/codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/openapi/latest.json \
+		-i /local/schemas/openapi.json \
 		-g php \
 		-o /local/codegen/php
 
@@ -304,7 +311,7 @@ generate_python_client() {
 	cd "${ROOT:?}"
 	mkdir -p "${ROOT:?}/codegen"
 	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-		-i /local/openapi/latest.json \
+		-i /local/schemas/openapi.json \
 		-g python \
 		-o /local/codegen/python
 
@@ -313,17 +320,23 @@ generate_python_client() {
 
 generate_graphql_schema() {
 	cd "${ROOT:?}"
-	purplship graphql_schema --out "${ROOT:?}/graphql/schema.json"
+	purplship graphql_schema --out "${ROOT:?}/schemas/graphql.json"
 	apollo-codegen generate "${ROOT:?}/webapp/graphql/queries.ts" \
-		--schema "${ROOT:?}/graphql/schema.json" \
+		--schema "${ROOT:?}/schemas/graphql.json" \
 		--target typescript \
 		--output "${ROOT:?}/webapp/graphql/types.ts"
 	cd -
 }
 
-generate_swagger_schema() {
+generate_api_schema() {
 	cd "${ROOT:?}"
-	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/openapi/latest.json"
+	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/schemas/swagger.json"
+	docker run -d -p 8085:8080 --rm --name swagger swaggerapi/swagger-converter:v1.0.2
+	sleep 4 &&
+	curl -X POST -H "Content-Type: application/json" \
+		-d @./schemas/swagger.json http://localhost:8085/api/convert \
+		| python -m json.tool >| ./schemas/openapi.json
+	docker rm -f swagger
 	cd -
 }
 
@@ -372,7 +385,7 @@ alias gen:ts=generate_typescript_client
 alias gen:php=generate_php_client
 alias gen:python=generate_python_client
 alias gen:graph=generate_graphql_schema
-alias gen:api=generate_swagger_schema
+alias gen:api=generate_api_schema
 
 
 alias dev:webapp=dev_webapp

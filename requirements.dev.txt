@@ -62,6 +62,7 @@ purplship.purolator-courier
 purplship.royalmail
 purplship.sendle
 purplship.sf-express
+purplship.tnt
 purplship.ups
 purplship.usps
 purplship.yanwen
