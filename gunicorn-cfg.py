@@ -8,5 +8,5 @@ accesslog = '-'
 loglevel = 'debug'
 capture_output = True
 enable_stdio_inheritance = True
-reload = decouple.config("RELOAD", default=False)
-workers = decouple.config("PURPLSHIP_WORKERS", default=2)
+reload = decouple.config("DEBUG_MODE", default=False, cast=bool)
+workers = decouple.config("PURPLSHIP_WORKERS", default=2, cast=int)

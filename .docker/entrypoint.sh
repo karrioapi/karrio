@@ -11,7 +11,7 @@ purplship collectstatic --clear --noinput || exit
 # Start services
 set -m # turn on bash's job control
 
-gunicorn --config gunicorn-cfg.py purpleserver.wsgi &
+gunicorn --config gunicorn-cfg.py purpleserver.asgi -k uvicorn.workers.UvicornWorker &
 
 purplship run_huey -w 2  || exit
 

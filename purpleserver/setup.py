@@ -29,6 +29,7 @@ setup(
             'drf-api-tracking',
             'drf-yasg',
             'gunicorn',
+            'uvicorn',
             'jsonfield',
             'more-itertools',
             'requests',

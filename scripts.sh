@@ -6,6 +6,8 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="${PWD##*/}"
 ENV_DIR=".venv"
 
+export DEBUG_MODE=True
+
 export DATABASE_PORT=5432
 export DATABASE_NAME=db
 export DATABASE_ENGINE=postgresql_psycopg2
@@ -163,8 +165,8 @@ runserver() {
 		migrate
 	fi
 
-	purplship runserver &
-	sleep 3
+	gunicorn --config "${ROOT:?}/gunicorn-cfg.py" purpleserver.asgi -k uvicorn.workers.UvicornWorker &
+	sleep 1
 	purplship run_huey -w 2
 
 	kill_server
