@@ -22,7 +22,6 @@ Addresses = PaginatedResult('AddressList', Address)
 
 
 class AddressList(GenericAPIView):
-    serializer_class = Address
     queryset = models.Address.objects
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 

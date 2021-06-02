@@ -262,7 +262,7 @@ class Shipment(OwnedEntity):
 
     @property
     def carrier_name(self) -> str:
-        return cast(Carrier, self.selected_rate_carrier).data.carrier_name
+        return cast(Carrier, self.selected_rate_carrier).carrier_name
 
     @property
     def carrier_ids(self) -> List[str]:

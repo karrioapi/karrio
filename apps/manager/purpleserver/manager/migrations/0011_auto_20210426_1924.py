@@ -2,6 +2,25 @@
 
 from django.db import migrations
 import jsonfield.fields
+from django.forms.models import model_to_dict
+
+
+def forwards_func(apps, schema_editor):
+    db_alias = schema_editor.connection.alias
+    Customs = apps.get_model("manager", "Customs")
+    Shipment = apps.get_model("manager", "Shipment")
+
+    for customs in Customs.objects.using(db_alias).all():
+        customs.duty=model_to_dict(customs.duty)
+        customs.save()
+
+    for shipment in Shipment.objects.using(db_alias).all():
+        shipment.payment=model_to_dict(shipment.payment)
+        shipment.save()
+
+
+def reverse_func(apps, schema_editor):
+    pass
 
 
 class Migration(migrations.Migration):
@@ -21,6 +40,7 @@ class Migration(migrations.Migration):
             name='payment',
             field=jsonfield.fields.JSONField(blank=True, default={}, null=True),
         ),
+        migrations.RunPython(forwards_func, reverse_func),
         migrations.DeleteModel(
             name='Payment',
         ),

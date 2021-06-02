@@ -12,7 +12,7 @@ setup(
       description='Multi-carrier shipping API',
       long_description=long_description,
       long_description_content_type="text/markdown",
-      url='https://github.com/PurplShip/purplship-server',
+      url='https://github.com/Purplship/purplship-server',
       author='Purplship Team',
       author_email='danielk.developer@gmail.com',
       license='Apache License Version 2.0',

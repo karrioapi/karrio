@@ -21,7 +21,6 @@ Parcels = PaginatedResult('ParcelList', Parcel)
 
 
 class ParcelList(GenericAPIView):
-    serializer_class = Parcel
     queryset = models.Parcel.objects
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 

@@ -26,7 +26,6 @@ CustomsInfoList = PaginatedResult('CustomsList', Customs)
 
 
 class CustomsList(GenericAPIView):
-    serializer_class = Customs
     queryset = models.Customs.objects
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
 

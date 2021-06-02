@@ -42,7 +42,6 @@ class PickupList(GenericAPIView):
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = PickupFilters
-    serializer_class = Pickup
     model = models.Pickup
 
     @swagger_auto_schema(
@@ -50,7 +49,7 @@ class PickupList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List shipment pickups",
         responses={200: Pickups(), 400: ErrorResponse()},
-        query_serializer=PickupFilters.parameters,
+        manual_parameters=PickupFilters.parameters,
         code_examples=[
             {
                 'lang': 'bash',

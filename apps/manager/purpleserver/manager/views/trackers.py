@@ -37,7 +37,6 @@ class TrackerFilters(filters.FilterSet):
 class TrackerList(GenericAPIView):
     pagination_class = type('CustomPagination', (LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (filters.DjangoFilterBackend,)
-    serializer_class = TrackingStatus
     filterset_class = TrackerFilters
     model = models.Tracking
 
@@ -46,7 +45,7 @@ class TrackerList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}list",
         operation_summary="List all shipment trackers",
         responses={200: Trackers(), 400: ErrorResponse()},
-        query_serializer=TrackerFilters.parameters
+        manual_parameters=TrackerFilters.parameters
     )
     def get(self, request: Request):
         """
