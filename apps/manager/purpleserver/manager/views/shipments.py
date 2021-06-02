@@ -83,7 +83,7 @@ class ShipmentList(GenericAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        if 'carrier_name' in self.request.query_params:
+        if 'carrier_name' in getattr(self.request, 'query_params', {}):
             carrier_name = self.request.query_params['carrier_name']
             return queryset.filter(selected_rate_carrier__in=MODELS[carrier_name].objects.all())
 
