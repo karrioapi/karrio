@@ -30,7 +30,7 @@ def index(request: Request, *args, **kwargs):
         orgs = getattr(
             model.objects.get(
                 Q(id=kwargs['id'], org__users__id=request.user.id) |
-                Q(**{"id": kwargs['id'], f"{user_key}__id": request.user.id})
+                Q(**{"id": kwargs['id'], f"{user_key}__id": request.user.id, 'org': None})
             ),
             'org', None
         )
