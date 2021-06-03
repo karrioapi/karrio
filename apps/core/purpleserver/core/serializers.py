@@ -208,7 +208,7 @@ class Parcel(EntitySerializer, ParcelData):
 class Payment(Serializer):
 
     paid_by = ChoiceField(required=False, choices=PAYMENT_TYPES, default=PAYMENT_TYPES[0][0], help_text="The payor type")
-    currency = ChoiceField(required=True, choices=CURRENCIES, help_text="The payment amount currency")
+    currency = ChoiceField(required=False, choices=CURRENCIES, help_text="The payment amount currency")
     account_number = CharField(required=False, allow_blank=True, allow_null=True, help_text="The payor account number")
 
 
