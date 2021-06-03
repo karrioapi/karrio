@@ -20,7 +20,7 @@ from purpleserver.core.validators import (
     valid_date_format,
 )
 
-CARRIERS = [(k, k) for k in MODELS.keys()]
+CARRIERS = [(k, k) for k in sorted(MODELS.keys())]
 COUNTRIES = [(c.name, c.name) for c in list(Country)]
 CURRENCIES = [(c.name, c.name) for c in list(Currency)]
 WEIGHT_UNIT = [(c.name, c.name) for c in list(WeightUnit)]

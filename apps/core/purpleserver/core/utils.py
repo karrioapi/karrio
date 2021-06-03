@@ -23,8 +23,10 @@ def post_processing(methods: List[str] = None):
             def wrapper(*args, **kwargs):
                 result = method(*args, **kwargs)
                 processes = klass.post_process_functions
+                context = kwargs.get('context')
+
                 return functools.reduce(
-                    lambda processed_result, process: process(processed_result), processes, result
+                    lambda cummulated_result, process: process(context, cummulated_result), processes, result
                 )
 
             setattr(klass, name, wrapper)

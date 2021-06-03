@@ -1,21 +1,31 @@
 import logging
-from django.db.models.signals import post_save, post_delete
+import functools
+import importlib
+from django.db.models import Q
 
+from purpleserver.serializers import Context
 from purpleserver.core.gateway import Rates
 import purpleserver.pricing.models as models
 
 logger = logging.getLogger(__name__)
 
 
-def register_rate_post_processing(*_, **__):
-    logger.debug("register custom surcharge  processing")
-    try:
-        Rates.post_process_functions = [
-            charge.apply_charge for charge in models.Surcharge.objects.all()
-        ]
-    except:
-        logger.warning("Failed to register custom charge processing")
+def register_rate_post_processing(*args, **kwargs):
+    logger.debug("register custom surcharge processing")
+    Rates.post_process_functions += [apply_custom_surcharges]
 
 
-post_save.connect(register_rate_post_processing, sender=models.Surcharge)
-post_delete.connect(register_rate_post_processing, sender=models.Surcharge)
+def apply_custom_surcharges(context: Context, result):
+    if importlib.util.find_spec('purpleserver.orgs') is not None:
+        charges = models.Surcharge.objects.filter(
+            Q(active=True, org__id=getattr(context.org, 'id', None))
+            | Q(active=True, org=None)
+        )
+    else:
+        charges = models.Surcharge.objects.all()
+
+    return functools.reduce(
+        lambda cummulated_result, charge: charge.apply_charge(cummulated_result),
+        charges,
+        result
+    )

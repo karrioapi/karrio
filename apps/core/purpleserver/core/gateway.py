@@ -10,6 +10,7 @@ from rest_framework.exceptions import NotFound, ValidationError
 import purplship
 from purplship.core.utils import DP
 
+from purpleserver.serializers import Context
 from purpleserver.providers import models
 from purpleserver.core.models import get_access_filter
 from purpleserver.core import datatypes, serializers, exceptions, validators
@@ -29,8 +30,7 @@ class Carriers:
             access = get_access_filter(list_filter.get('context'))
             if len(access) > 0:
                 query += (Q(created_by__isnull=True) | access,)
-
-        if list_filter.get('system_only') is True:
+        elif list_filter.get('system_only') is True:
             query += (Q(created_by__isnull=True),)
 
         # Check if the test filter is specified then set it otherwise return all carriers prod and test mode
@@ -276,12 +276,12 @@ class Rates:
     post_process_functions: List[Callable] = []
 
     @staticmethod
-    def fetch(payload: dict, user=None, test: bool = None) -> datatypes.RateResponse:
+    def fetch(payload: dict, context: Context = None, test: bool = None) -> datatypes.RateResponse:
         request = purplship.Rating.fetch(datatypes.RateRequest(**DP.to_dict(payload)))
 
         carrier_settings_list = [
             carrier.data for carrier in
-            Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, user=user, test=test)
+            Carriers.list(carrier_ids=payload.get('carrier_ids', []), active=True, context=context, test=test)
         ]
         gateways = [
             purplship.gateway[c.carrier_name].create(c.dict()) for c in carrier_settings_list
@@ -309,7 +309,4 @@ class Rates:
 
         rates: List[datatypes.Rate] = sorted(map(consolidate_rate, rates), key=lambda rate: rate.total_charge)
 
-        return datatypes.RateResponse(
-            rates=sorted(rates, key=lambda rate: rate.total_charge),
-            messages=messages
-        )
+        return datatypes.RateResponse(rates=rates, messages=messages)

@@ -8,6 +8,7 @@ from organizations.abstract import (
 )
 
 import purpleserver.providers.models as providers
+import purpleserver.pricing.models as pricing
 import purpleserver.manager.models as manager
 import purpleserver.events.models as events
 import purpleserver.graph.models as graph
@@ -35,6 +36,8 @@ class Organization(AbstractOrganization):
     logs = models.ManyToManyField(core.APILog, related_name="org", through='LogLink')
 
     tokens = models.ManyToManyField(auth.Token, related_name="org", through='TokenLink')
+
+    surcharges = models.ManyToManyField(pricing.Surcharge, related_name="org")
 
 
 class OrganizationUser(AbstractOrganizationUser):

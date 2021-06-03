@@ -35,7 +35,7 @@ class RateViewAPI(APIView):
         rate_request = RateRequest(data=request.data)
         rate_request.is_valid(raise_exception=True)
 
-        response = Rates.fetch(rate_request.validated_data, request.user)
+        response = Rates.fetch(rate_request.validated_data, context=request)
 
         return Response(
             RateResponse(response).data,
