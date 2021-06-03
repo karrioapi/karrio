@@ -22,7 +22,7 @@ def apply_custom_surcharges(context: Context, result):
             | Q(active=True, org=None)
         )
     else:
-        charges = models.Surcharge.objects.all()
+        charges = models.Surcharge.objects.filter(active=True)
 
     return functools.reduce(
         lambda cummulated_result, charge: charge.apply_charge(cummulated_result),
