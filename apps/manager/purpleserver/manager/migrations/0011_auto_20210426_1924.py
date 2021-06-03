@@ -11,12 +11,14 @@ def forwards_func(apps, schema_editor):
     Shipment = apps.get_model("manager", "Shipment")
 
     for customs in Customs.objects.using(db_alias).all():
-        customs.duty=model_to_dict(customs.duty)
-        customs.save()
+        if customs.duty is not None:
+            customs.duty=model_to_dict(customs.duty)
+            customs.save()
 
     for shipment in Shipment.objects.using(db_alias).all():
-        shipment.payment=model_to_dict(shipment.payment)
-        shipment.save()
+        if shipment.payment is not None:
+            shipment.payment=model_to_dict(shipment.payment)
+            shipment.save()
 
 
 def reverse_func(apps, schema_editor):
