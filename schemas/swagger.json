@@ -2,11 +2,11 @@
     "swagger": "2.0",
     "info": {
         "title": "Purplship API",
-        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.5`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, \nlist shipments, and list trackers. These list API methods share a common structure, taking at least these \ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order. \nThe offset parameter returns objects listed after an index. \nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates, \nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.6-rc`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, \nlist shipments, and list trackers. These list API methods share a common structure, taking at least these \ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order. \nThe offset parameter returns objects listed after an index. \nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates, \nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
         "contact": {
             "email": "hello@purplship.com"
         },
-        "version": "2021.5"
+        "version": "2021.6-rc"
     },
     "host": "app.purplship.com",
     "schemes": [
@@ -274,6 +274,35 @@
                     }
                 ]
             },
+            "delete": {
+                "operationId": "$discard",
+                "summary": "Discard an address",
+                "description": "Discard an address.",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Operation"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Addresses"
+                ],
+                "x-code-samples": [
+                    {
+                        "lang": "bash",
+                        "source": "\ncurl --request DELETE \\\n  --url /v1/addresses/<ADDRESS_ID> \\\n  --header 'Authorization: Token <API_KEY>'\n"
+                    }
+                ]
+            },
             "parameters": [
                 {
                     "name": "id",
@@ -317,7 +346,9 @@
                             "dhl_express",
                             "dhl_universal",
                             "dicom",
+                            "eshipper",
                             "fedex",
+                            "freightcom",
                             "purolator_courier",
                             "royalmail",
                             "sendle",
@@ -326,9 +357,7 @@
                             "ups",
                             "usps",
                             "yanwen",
-                            "yunexpress",
-                            "eshipper",
-                            "freightcom"
+                            "yunexpress"
                         ]
                     },
                     {
@@ -865,6 +894,11 @@
                 "description": "Retrieve all scheduled pickups.",
                 "parameters": [
                     {
+                        "name": "test_mode",
+                        "in": "query",
+                        "type": "boolean"
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -877,14 +911,6 @@
                         "description": "The initial index from which to return the results.",
                         "required": false,
                         "type": "integer"
-                    },
-                    {
-                        "name": "test_mode",
-                        "in": "query",
-                        "description": "This flag filter out pickup created from carriers in test or live mode",
-                        "required": false,
-                        "type": "boolean",
-                        "x-nullable": true
                     }
                 ],
                 "responses": {
@@ -1435,6 +1461,38 @@
                 "description": "Retrieve all shipments.",
                 "parameters": [
                     {
+                        "name": "test_mode",
+                        "in": "query",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "created_start",
+                        "in": "query",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    {
+                        "name": "created_end",
+                        "in": "query",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    {
+                        "name": "carrier_id",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "service",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -1449,12 +1507,9 @@
                         "type": "integer"
                     },
                     {
-                        "name": "test_mode",
+                        "name": "carrier_name",
                         "in": "query",
-                        "description": "This flag filter out shipment created in test or prod mode",
-                        "required": false,
-                        "type": "boolean",
-                        "x-nullable": true
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -1783,6 +1838,11 @@
                 "description": "Retrieve all shipment trackers.",
                 "parameters": [
                     {
+                        "name": "test_mode",
+                        "in": "query",
+                        "type": "boolean"
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Number of results to return per page.",
@@ -1795,14 +1855,6 @@
                         "description": "The initial index from which to return the results.",
                         "required": false,
                         "type": "integer"
-                    },
-                    {
-                        "name": "test_mode",
-                        "in": "query",
-                        "description": "This flag filter out tracker created from carriers in test or live mode",
-                        "required": false,
-                        "type": "boolean",
-                        "x-nullable": true
                     }
                 ],
                 "responses": {
@@ -2072,6 +2124,48 @@
                 "summary": "Remove a webhook",
                 "description": "Remove a webhook.",
                 "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Operation"
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                },
+                "tags": [
+                    "Webhooks"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/v1/webhooks/{id}/test": {
+            "post": {
+                "operationId": "$$$$$$$test",
+                "summary": "Test a webhook",
+                "description": "test a webhook.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/WebhookTestRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "",
@@ -2962,6 +3056,26 @@
                 }
             }
         },
+        "Operation": {
+            "required": [
+                "operation",
+                "success"
+            ],
+            "type": "object",
+            "properties": {
+                "operation": {
+                    "title": "Operation",
+                    "description": "Operation performed",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "success": {
+                    "title": "Success",
+                    "description": "Specify whether the operation was successful",
+                    "type": "boolean"
+                }
+            }
+        },
         "CarrierSettings": {
             "required": [
                 "id",
@@ -2990,7 +3104,9 @@
                         "dhl_express",
                         "dhl_universal",
                         "dicom",
+                        "eshipper",
                         "fedex",
+                        "freightcom",
                         "purolator_courier",
                         "royalmail",
                         "sendle",
@@ -2999,9 +3115,7 @@
                         "ups",
                         "usps",
                         "yanwen",
-                        "yunexpress",
-                        "eshipper",
-                        "freightcom"
+                        "yunexpress"
                     ]
                 },
                 "carrier_id": {
@@ -3538,26 +3652,6 @@
                     "type": "object",
                     "additionalProperties": true,
                     "x-nullable": true
-                }
-            }
-        },
-        "Operation": {
-            "required": [
-                "operation",
-                "success"
-            ],
-            "type": "object",
-            "properties": {
-                "operation": {
-                    "title": "Operation",
-                    "description": "Operation performed",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "success": {
-                    "title": "Success",
-                    "description": "Specify whether the operation was successful",
-                    "type": "boolean"
                 }
             }
         },
@@ -4492,9 +4586,6 @@
         },
         "Payment": {
             "description": "The payment details",
-            "required": [
-                "currency"
-            ],
             "type": "object",
             "properties": {
                 "paid_by": {
@@ -5416,6 +5507,19 @@
                     "description": "Indicates that the webhook is disabled",
                     "type": "boolean",
                     "x-nullable": true
+                }
+            }
+        },
+        "WebhookTestRequest": {
+            "required": [
+                "payload"
+            ],
+            "type": "object",
+            "properties": {
+                "payload": {
+                    "title": "Payload",
+                    "type": "object",
+                    "additionalProperties": true
                 }
             }
         }
