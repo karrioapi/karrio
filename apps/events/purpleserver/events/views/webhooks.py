@@ -9,8 +9,9 @@ from django.urls import path
 
 from purpleserver.core.views.api import GenericAPIView, APIView
 from purpleserver.serializers import SerializerDecorator, PaginatedResult
-from purpleserver.core.serializers import ErrorResponse, Operation, FlagField
+from purpleserver.core.serializers import ErrorResponse, Operation, FlagField, PlainDictField
 from purpleserver.events.serializers import WebhookData, Webhook, WebhookSerializer
+from purpleserver.events.tasks.webhook import notify_subscribers
 from purpleserver.events.router import router
 from purpleserver.events import models
 
@@ -18,6 +19,10 @@ from purpleserver.events import models
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Webhooks = PaginatedResult('WebhookList', Webhook)
+
+
+class WebhookTestRequest(serializers.Serializer):
+    payload = PlainDictField(required=True)
 
 
 class WebhookFilters(serializers.Serializer):
@@ -112,5 +117,27 @@ class WebhookDetail(APIView):
         return Response(serializer.data)
 
 
+class WebhookTest(APIView):
+
+    @swagger_auto_schema(
+        tags=['Webhooks'],
+        operation_id=f"{ENDPOINT_ID}test",
+        operation_summary="Test a webhook",
+        request_body=WebhookTestRequest(),
+        responses={200: Operation(), 400: ErrorResponse()}
+    )
+    def post(self, request: Request, pk: str):
+        """
+        test a webhook.
+        """
+        webhook = models.Webhook.access_by(request).get(pk=pk)
+
+        notification, *_ = notify_subscribers([webhook], request.data)
+        _, response = notification
+        serializer = Operation(dict(operation="Test Webhook", success=response.ok))
+        return Response(serializer.data)
+
+
 router.urls.append(path('webhooks', WebhookList.as_view(), name="webhook-list"))
 router.urls.append(path('webhooks/<str:pk>', WebhookDetail.as_view(), name="webhook-details"))
+router.urls.append(path('webhooks/<str:pk>/test', WebhookTest.as_view(), name="webhook-test"))

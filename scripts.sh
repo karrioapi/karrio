@@ -334,7 +334,7 @@ generate_api_schema() {
 	cd "${ROOT:?}"
 	purplship generate_swagger -f json -o -u https://app.purplship.com "${ROOT:?}/schemas/swagger.json"
 	docker run -d -p 8085:8080 --rm --name swagger swaggerapi/swagger-converter:v1.0.2
-	sleep 4 &&
+	sleep 5 &&
 	curl -X POST -H "Content-Type: application/json" \
 		-d @./schemas/swagger.json http://localhost:8085/api/convert \
 		| python -m json.tool >| ./schemas/openapi.json
@@ -356,7 +356,7 @@ class S(BaseHTTPRequestHandler):
     	self.end_headers()
     	self.wfile.write('good'.encode('utf8'))
 addr = 'localhost'
-port = 8080
+port = 5050
 server_address = (addr, port)
 httpd = HTTPServer(server_address, S)
 print(f'Starting httpd server on {addr}:{port}')
