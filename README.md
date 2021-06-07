@@ -24,6 +24,9 @@ shipping carriers from your app.
 - [Join us on Discord](https://discord.gg/kXEa3UMRHd)
 - [Want to partner? Reach Out](https://purplship.com/#contact)
 
+Purplship makes shipping service simple and accessible.
+Help us out… If you love Open standard and great software, give us a star! 🌟
+
 
 ## Features
 
@@ -34,6 +37,7 @@ shipping carriers from your app.
 - **Address Validation**: Validate shipping addresses using the Google Geocoding API
 - **Shipping Web App**: Use a single dashboard to orchestrate your logistics operation.
 - **Cloud**: Optimized for deployments using Docker
+
 
 <img src="https://raw.githubusercontent.com/Purplship/purplship-server/main/artifacts/shipping-dashboard.jpeg">
 <img src="https://raw.githubusercontent.com/Purplship/purplship-server/main/artifacts/tracking-dashboard.jpeg">
