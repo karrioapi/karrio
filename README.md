@@ -16,20 +16,27 @@
 
 ## What's Purplship?
 
-Purplship server is an On-prem or cloud Multi-carrier Shipping API.
-The server is in Python, but you can use any programming language to send API requests to any supported shipping carriers from your application.
+Purplship server is a headless **shipping platform** for innovators who want to regain control over their logistics
+processes and fulfilment automation.
+The server is in Python, but you can use any programming language to send API requests to the growing network of 
+shipping carriers from your app.
 
-- [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
 - [Join us on Discord](https://discord.gg/kXEa3UMRHd)
-- [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91).
+- [Want to partner? Reach Out](https://purplship.com/#contact)
 
 
-## Screenshots
+## Features
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Purplship/purplship-server/main/artifacts/dashboard1.png" width="400">
-  <img src="https://raw.githubusercontent.com/Purplship/purplship-server/main/artifacts/dashboard2.png" width="400">
-</p>
+- **Headless shipping API**: Power up your application with access to a network of carrier services
+- **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
+- **Shipping**: Connect carrier accounts, get live rates and purchase shipping labels
+- **Tracking**: Create package tracker, get real time tracking status and provide a branded tracking page
+- **Address Validation**: Validate shipping addresses using the Google Geocoding API
+- **Shipping Web App**: Use a single dashboard to orchestrate your logistics operation.
+- **Cloud**: Optimized for deployments using Docker
+
+<img src="https://raw.githubusercontent.com/Purplship/purplship-server/main/artifacts/shipping-dashboard.jpeg">
+<img src="https://raw.githubusercontent.com/Purplship/purplship-server/main/artifacts/tracking-dashboard.jpeg">
 
 
 ## Deployment
@@ -155,6 +162,10 @@ To get the quotation of our Enterprise Edition, please visit www.purplship.com a
 | Multi-tenant & Multi-org                 | No          | No             | Yes          |
 | Reporting & Analytics (soon)             | No          | No             | Yes          |
 | Shipping billing data (soon)             | No          | No             | Yes          |
+
+
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
+- [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
 
 
 ## Official Client Libraries
