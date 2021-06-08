@@ -47,7 +47,11 @@ def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
                 time=DF.ftime(event.timestamp, '%Y-%m-%dT%H:%M:%S'),
             ) for event in detail.events
         ],
-        delivered=detail.status.status.lower() == "delivered"
+        delivered=(
+            detail.status.status.lower() == "delivered"
+            if all([detail.status, detail.status.status]) else
+            False
+        )
     )
 
 
