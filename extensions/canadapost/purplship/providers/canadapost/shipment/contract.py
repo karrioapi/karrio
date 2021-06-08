@@ -24,6 +24,7 @@ from canadapost_lib.shipment import (
 from purplship.core.units import Currency, WeightUnit, Options, Packages
 from purplship.core.utils import Serializable, Element, XP, SF
 from purplship.core.models import (
+    Duty,
     Message,
     ShipmentDetails,
     ShipmentRequest,
@@ -87,10 +88,10 @@ def shipment_request(
     )
     all_options = (
         [*options, (OptionCode.canadapost_return_to_sender.name, OptionCode.canadapost_return_to_sender.value.apply(True))]
-        if is_intl and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
-        else [*options]
+        if is_intl and not any(key in options for key in INTERNATIONAL_NON_DELIVERY_OPTION) else [*options]
     )
-
+    customs = payload.customs
+    duty = getattr(customs, 'duty', Duty())
     label_encoding, label_format = LabelType[payload.label_type or 'PDF_4x6'].value
 
     request = ShipmentType(
@@ -181,14 +182,14 @@ def shipment_request(
             ),
             customs=(
                 CustomsType(
-                    currency=options.currency or Currency.CAD.value,
+                    currency=options.currency or Currency.CAD.name,
                     conversion_from_cad=None,
                     reason_for_export="OTH",
-                    other_reason=payload.customs.content_type,
-                    duties_and_taxes_prepaid=payload.customs.duty.account_number,
-                    certificate_number=payload.customs.certificate_number,
-                    licence_number=None,
-                    invoice_number=None,
+                    other_reason=customs.content_type,
+                    duties_and_taxes_prepaid=duty.account_number,
+                    certificate_number=customs.certificate_number,
+                    licence_number=customs.license_number,
+                    invoice_number=customs.invoice,
                     sku_list=(
                         sku_listType(
                             item=[
@@ -197,18 +198,18 @@ def shipment_request(
                                     customs_description=item.description,
                                     sku=item.sku,
                                     hs_tariff_code=None,
-                                    unit_weight=WeightUnit.KG.value,
+                                    unit_weight=WeightUnit.KG.value.lower(),
                                     customs_value_per_unit=item.value_amount,
                                     customs_unit_of_measure=None,
-                                    country_of_origin=payload.shipper.country_code,
+                                    country_of_origin=item.origin_country,
                                     province_of_origin=None,
                                 )
-                                for item in payload.customs.commodities
+                                for item in customs.commodities
                             ]
                         )
-                    ) if any(payload.customs.commodities) else None
+                    ) if any(customs.commodities or []) else None
                 )
-                if payload.customs is not None else None
+                if customs is not None else None
             ),
             references=ReferencesType(
                 cost_centre=None,
