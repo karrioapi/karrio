@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from django.urls import path
 
+from purpleserver.serializers import SerializerDecorator
 from purpleserver.core.views.api import APIView
 from purpleserver.core.serializers import (
     RateRequest, RateResponse, ErrorResponse
@@ -32,10 +33,8 @@ class RateViewAPI(APIView):
         request_body=RateRequest(),
     )
     def post(self, request: Request):
-        rate_request = RateRequest(data=request.data)
-        rate_request.is_valid(raise_exception=True)
-
-        response = Rates.fetch(rate_request.validated_data, context=request)
+        payload = SerializerDecorator[RateRequest](data=request.data).data
+        response = Rates.fetch(payload, context=request)
 
         return Response(
             RateResponse(response).data,

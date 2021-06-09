@@ -45,14 +45,6 @@ class ShipmentSerializer(ShipmentData):
     test_mode = BooleanField(required=False)
     messages = Message(many=True, required=False)
 
-    def __init__(self, instance: models.Shipment = None, **kwargs):
-        data = kwargs.get('data')
-
-        if data is not None and isinstance(data, str):
-            kwargs.update(data=ShipmentData(models.Shipment.objects.get(pk=data)).data)
-
-        super().__init__(instance, **kwargs)
-
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Shipment:
         test = validated_data.get('test')

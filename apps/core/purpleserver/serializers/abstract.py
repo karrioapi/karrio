@@ -1,7 +1,9 @@
+import pydoc
 import logging
 import importlib
 from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple
 from django.db import models
+from django.forms.models import model_to_dict
 from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
@@ -191,3 +193,33 @@ def save_one_to_one_data(
         return new_instance
 
     return SerializerDecorator[serializer](instance=instance, data=data, partial=True, **kwargs).save().instance
+
+
+def allow_model_id(model_paths: []):
+
+    def _decorator(serializer: Type[Serializer]):
+        class ModelIdSerializer(serializer):
+            def __init__(self, *args, **kwargs):
+                for param, model_path in model_paths:
+                    content = kwargs.get('data', {}).get(param)
+                    values = content if isinstance(content, list) else [content]
+                    model = pydoc.locate(model_path)
+
+                    if any([isinstance(val, str) for val in values]):
+                        new_content = []
+                        for value in values:
+                            if isinstance(value, str) and (model is not None):
+                                data = model_to_dict(model.objects.get(pk=value))
+                                ('id' in data) and data.pop('id')
+                                new_content.append(data)
+
+                        kwargs.update(data={
+                            **kwargs['data'],
+                            param: new_content if isinstance(content, list) else next(iter(new_content))
+                        })
+
+                super().__init__(*args, **kwargs)
+
+        return type(serializer.__name__, (ModelIdSerializer,), {})
+
+    return _decorator

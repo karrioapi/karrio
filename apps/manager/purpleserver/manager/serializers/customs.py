@@ -14,9 +14,6 @@ class CustomsSerializer(CustomsData):
         data = kwargs.get('data')
 
         if data is not None:
-            if isinstance(data, str):
-                kwargs.update(data=CustomsData(models.Customs.objects.get(pk=kwargs['data'])).data)
-
             if 'commodities' in data and instance is not None:
                 extra = {'partial': True, 'context': self.context}
                 save_many_to_many_data('commodities', CommoditySerializer, instance, payload=data, **extra)

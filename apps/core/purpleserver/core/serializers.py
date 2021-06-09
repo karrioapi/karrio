@@ -12,7 +12,7 @@ from purplship.core.units import (
     LabelType
 )
 from purpleserver.providers.models import MODELS
-from purpleserver.serializers import Serializer
+from purpleserver.serializers import Serializer, allow_model_id
 from purpleserver.core.validators import (
     AugmentedAddressSerializer,
     PresetSerializer,
@@ -221,6 +221,9 @@ class Duty(Serializer):
     bill_to = Address(required=False, allow_null=True, help_text="The duty billing address")
 
 
+@allow_model_id([
+    ('commodities', 'purpleserver.manager.models.Commodity'),
+])
 class CustomsData(Serializer):
 
     aes = CharField(required=False, allow_blank=True, allow_null=True)
@@ -273,20 +276,25 @@ class Charge(Serializer):
     currency = CharField(required=False, allow_blank=True, allow_null=True, help_text="The charge amount currency")
 
 
+@allow_model_id([
+    ('shipper', 'purpleserver.manager.models.Address'),
+    ('recipient', 'purpleserver.manager.models.Address'),
+    ('parcels', 'purpleserver.manager.models.Parcel')
+])
 class RateRequest(Serializer):
-    shipper = Address(required=True, help_text="""
+    shipper = AddressData(required=True, help_text="""
     The address of the party
     
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    recipient = Address(required=True, help_text="""
+    recipient = AddressData(required=True, help_text="""
     The address of the party
     
     Origin address (ship from) for the **shipper**<br/>
     Destination address (ship to) for the **recipient**
     """)
-    parcels = Parcel(many=True, required=True, help_text="The shipment's parcels")
+    parcels = ParcelData(many=True, required=True, help_text="The shipment's parcels")
 
     services = StringListField(required=False, allow_null=True, help_text="""
     The requested carrier service for the shipment.<br/>
@@ -311,7 +319,10 @@ class TrackingRequest(Serializer):
     language_code = CharField(required=False, allow_blank=True, allow_null=True, default="en", help_text="The tracking details language code")
     level_of_details = CharField(required=False, allow_blank=True, allow_null=True, help_text="The level of event details.")
 
-
+@allow_model_id([
+    ('address', 'purpleserver.manager.models.Address'),
+    ('parcels', 'purpleserver.manager.models.Parcel')
+])
 class PickupRequest(Serializer):
 
     pickup_date = CharField(required=True, validators=[valid_date_format], help_text="""
@@ -343,9 +354,11 @@ class PickupRequest(Serializer):
     """)
     options = PlainDictField(required=False, allow_null=True, help_text="Advanced carrier specific pickup options")
 
-
+@allow_model_id([
+    ('address', 'purpleserver.manager.models.Address'),
+    ('parcels', 'purpleserver.manager.models.Parcel')
+])
 class PickupUpdateRequest(Serializer):
-
     pickup_date = CharField(required=True, help_text="""
     The expected pickup date
     
@@ -394,7 +407,9 @@ class Pickup(PickupDetails, PickupRequest):
     parcels = Parcel(required=True, many=True, allow_null=True, help_text="The shipment parcels to pickup.")
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
 
-
+@allow_model_id([
+    ('address', 'purpleserver.manager.models.Address'),
+])
 class PickupCancelRequest(Serializer):
     confirmation_number = CharField(required=True, help_text="The pickup confirmation identifier")
     address = AddressData(required=False, help_text="The pickup address")
@@ -453,6 +468,12 @@ class TrackingStatus(EntitySerializer, TrackingDetails):
     pass
 
 
+@allow_model_id([
+    ('shipper', 'purpleserver.manager.models.Address'),
+    ('recipient', 'purpleserver.manager.models.Address'),
+    ('parcels', 'purpleserver.manager.models.Parcel'),
+    ('customs', 'purpleserver.manager.models.Customs')
+])
 class ShippingData(Serializer):
     shipper = AddressData(required=True, help_text="""
     The address of the party
