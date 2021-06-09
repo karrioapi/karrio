@@ -30,7 +30,7 @@ services:
         test
       else
         export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
-        export RELOAD=${RELOAD:-False}
+        export DEBUG_MODE=${DEBUG_MODE:-False}
         cd /temp/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade --src /temp/src && \
         source /temp/dev/scripts.sh && \
         add_data

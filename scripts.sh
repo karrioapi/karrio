@@ -165,7 +165,8 @@ runserver() {
 		migrate
 	fi
 
-	gunicorn --config "${ROOT:?}/gunicorn-cfg.py" purpleserver.asgi -k uvicorn.workers.UvicornWorker &
+# 	gunicorn --config "${ROOT:?}/gunicorn-cfg.py" purpleserver.asgi -k uvicorn.workers.UvicornWorker &
+	purplship runserver &
 	sleep 1
 	purplship run_huey -w 2
 

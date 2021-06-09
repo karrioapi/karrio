@@ -1,5 +1,4 @@
 import logging
-import importlib
 from django.db.models import Q
 from django.contrib.auth import mixins
 from django.utils.translation import gettext_lazy as _
@@ -43,7 +42,7 @@ class JWTAuthentication(BaseJWTAuthentication):
         """
         Attempts to find and return an organization using the given validated token.
         """
-        if importlib.util.find_spec('purpleserver.orgs') is not None:
+        if hasattr(request.user, 'org'):
             from purpleserver.orgs.models import Organization
 
             org_id = validated_token.get('org_id')
@@ -79,7 +78,7 @@ class LoginRequiredMixin(mixins.LoginRequiredMixin):
 
 class AuthenticationMiddleware(BaseAuthenticationMiddleware):
     def process_response(self, request, response):
-        if (importlib.util.find_spec('purpleserver.orgs') is not None) and (getattr(request, 'org', None) is not None):
+        if getattr(request, 'org', None) is not None:
             response.set_cookie('org_id', getattr(request.org, 'id', None))
 
         return response
@@ -94,7 +93,7 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
         """
         Attempts to find and return an organization using the given validated token.
         """
-        if importlib.util.find_spec('purpleserver.orgs') is not None:
+        if hasattr(request.user, 'org'):
             from purpleserver.orgs.models import Organization
             org_id = request.META.get('HTTP_X_ORG_ID') or request.COOKIES.get('org_id')
             orgs = Organization.objects.filter(users__id=request.user.id)

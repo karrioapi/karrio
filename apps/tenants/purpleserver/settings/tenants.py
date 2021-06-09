@@ -23,7 +23,9 @@ SHARED_APPS = [
     'constance.backends.database',
 ]
 
-TENANT_APPS = [*INSTALLED_APPS]
+EXCLUDED_TENANT_APPS = ['constance', 'constance.backends.database']
+
+TENANT_APPS = [app for app in INSTALLED_APPS if app not in EXCLUDED_TENANT_APPS]
 
 INSTALLED_APPS = [
     "django_tenants",
