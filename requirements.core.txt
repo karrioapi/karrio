@@ -7,8 +7,8 @@ purplship-server.core==2021.6-rc
 purplship-server.events==2021.6-rc
 purplship-server.graph==2021.6-rc
 purplship-server.manager==2021.6-rc
-purplship-server.pricing
-purplship-server.proxy
+purplship-server.pricing==2021.6-rc
+purplship-server.proxy==2021.6-rc
 purplship.aramex
 purplship.australiapost
 purplship.canadapost
