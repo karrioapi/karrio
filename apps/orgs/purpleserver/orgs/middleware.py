@@ -5,7 +5,7 @@ class OrganizationAccess:
     def __call__(self, context, key: str = 'created_by', **kwargs):
         import purpleserver.orgs.models as orgs
 
-        user_key = f'{key}__id'
+        user_key = f'{key}'
         user = getattr(context, 'user', context)
         user_id = getattr(user, 'id', None)
         org = (
@@ -15,6 +15,6 @@ class OrganizationAccess:
         org_id = getattr(org, 'id', None)
 
         return (
-            Q(**{user_key: user_id, 'org__id': org_id})
+            Q(**{'org__id': org_id})
             | Q(**{user_key: user_id, 'org': None})
         )
