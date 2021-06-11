@@ -29,7 +29,7 @@ setup(
     description="eShipper purplship extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/PurplShip/purplship-eshipper-extension",
+    url="https://github.com/Purplship/purplship-bridges/eshipper",
     license="LGPLv3",
     packages=find_namespace_packages(exclude=["tests*"]),
     install_requires=[
