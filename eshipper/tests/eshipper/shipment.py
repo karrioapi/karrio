@@ -125,17 +125,6 @@ shipment_data = {
     },
     "payment": {
         "paid_by": "third_party",
-        "contact": {
-            "company_name": "ABC Towing",
-            "address_line1": "444 Highway 401",
-            "city": "Toronto",
-            "postal_code": "A1B 2C3",
-            "person_name": "Alfred",
-            "country_code": "CA",
-            "state_code": "ON",
-            "phone_number": "555-555-4444",
-            "email": "riz@shaw.ca",
-        },
     },
 }
 
@@ -187,8 +176,8 @@ ShipmentRequestXML = """<EShipper xmlns="http://www.eshipper.net/XMLSchema" user
         </Packages>
         <Payment type="3rd Party"/>
         <CustomsInvoice>
-            <BillTo company="ABC Towing" name="Alfred" address1="444 Highway 401" city="Toronto" state="ON" zip="A1B 2C3" country="CA"/>
-            <Contact name="Alfred" phone="555-555-4444"/>
+            <BillTo company="Test Company" name="RizTo" address1="650 CIT Drive" city="Livingston" state="BC" zip="V3N4R3" country="CA"/>
+            <Contact name="RizTo" phone="4162223333"/>
             <Item code="1234" description="Laptop computer" originCountry="US" quantity="100" unitPrice="1000."/>
         </CustomsInvoice>
     </ShippingRequest>

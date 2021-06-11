@@ -47,7 +47,7 @@ from purplship.providers.eshipper.error import parse_error_response
 
 
 def parse_shipping_reply(
-    response: Element, settings: Settings
+        response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
     shipping_node = next(
         iter(response.xpath(".//*[local-name() = $name]", name="ShippingReply")), None
@@ -108,7 +108,7 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
 
 
 def shipping_request(
-    payload: ShipmentRequest, settings: Settings
+        payload: ShipmentRequest, settings: Settings
 ) -> Serializable[EShipper]:
     packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
     packaging_type = (
@@ -125,7 +125,7 @@ def shipping_request(
     )
     freight_class = (
         FreightClass[payload.options["freight_class"]].value
-        if payload.options.get("freight_class") in FreightClass.__members__
+        if payload.options.get("freight_class") in FreightClass
         else None
     )
     payment_type = (
@@ -137,9 +137,8 @@ def shipping_request(
     payer: Address = {
         PaymentType.sender: payload.shipper,
         PaymentType.recipient: payload.recipient,
-        PaymentType.third_party: payload.payment.contact
-        if payload.payment is not None
-        else None,
+        PaymentType.third_party: payload.recipient
+        if payload.payment is not None else None,
     }.get(PaymentType[payload.payment.paid_by]) if payload.payment else None
 
     request = EShipper(
@@ -202,20 +201,21 @@ def shipping_request(
                 zip=payload.recipient.postal_code,
                 country=payload.recipient.country_code,
             ),
-            COD=CODType(
-                paymentType=PaymentType.recipient.value,
-                CODReturnAddress=CODReturnAddressType(
-                    codCompany=payload.recipient.company_name,
-                    codName=payload.recipient.person_name,
-                    codAddress1=SF.concat_str(payload.recipient.address_line1, join=True),
-                    codCity=payload.recipient.city,
-                    codStateCode=payload.recipient.state_code,
-                    codZip=payload.recipient.postal_code,
-                    codCountry=payload.recipient.country_code,
-                ),
-            )
-            if options.cash_on_delivery is not None
-            else None,
+            COD=(
+                CODType(
+                    paymentType=PaymentType.recipient.value,
+                    CODReturnAddress=CODReturnAddressType(
+                        codCompany=payload.recipient.company_name,
+                        codName=payload.recipient.person_name,
+                        codAddress1=SF.concat_str(payload.recipient.address_line1, join=True),
+                        codCity=payload.recipient.city,
+                        codStateCode=payload.recipient.state_code,
+                        codZip=payload.recipient.postal_code,
+                        codCountry=payload.recipient.country_code,
+                    ),
+                )
+                if options.cash_on_delivery is not None else None
+            ),
             Packages=PackagesType(
                 Package=[
                     PackageType(
@@ -234,33 +234,36 @@ def shipping_request(
                 ],
                 type_=packaging,
             ),
-            Payment=RequestPaymentType(type_=payment_type)
-            if payload.payment is not None
-            else None,
-            Reference=[ReferenceType(name="", code=payload.reference)]
-            if payload.reference != ""
-            else None,
-            CustomsInvoice=CustomsInvoiceType(
-                BillTo=BillToType(
-                    company=payer.company_name,
-                    name=payer.person_name,
-                    address1=SF.concat_str(payer.address_line1, join=True),
-                    city=payer.city,
-                    state=payer.state_code,
-                    zip=payer.postal_code,
-                    country=payer.country_code,
-                ),
-                Contact=ContactType(name=payer.person_name, phone=payer.phone_number),
-                Item=ItemType(
-                    code=item.sku,
-                    description=item.description,
-                    originCountry=item.origin_country,
-                    quantity=item.quantity,
-                    unitPrice=item.value_amount,
-                ),
-            )
-            if payload.customs is not None and payer is not None
-            else None,
+            Payment=(
+                RequestPaymentType(type_=payment_type)
+                if payload.payment is not None else None
+            ),
+            Reference=(
+                [ReferenceType(name="", code=payload.reference)]
+                if payload.reference != "" else None
+            ),
+            CustomsInvoice=(
+                CustomsInvoiceType(
+                    BillTo=BillToType(
+                        company=payer.company_name,
+                        name=payer.person_name,
+                        address1=SF.concat_str(payer.address_line1, join=True),
+                        city=payer.city,
+                        state=payer.state_code,
+                        zip=payer.postal_code,
+                        country=payer.country_code,
+                    ),
+                    Contact=ContactType(name=payer.person_name, phone=payer.phone_number),
+                    Item=ItemType(
+                        code=item.sku,
+                        description=item.description,
+                        originCountry=item.origin_country,
+                        quantity=item.quantity,
+                        unitPrice=item.value_amount,
+                    ),
+                )
+                if all([payload.customs, payer]) else None
+            ),
         ),
     )
 
