@@ -15,6 +15,6 @@ class OrganizationAccess:
         org_id = getattr(org, 'id', None)
 
         return (
-            Q(**{'org__id': org_id})
+            Q(**{'org__id': org_id, 'org__users__id__contains': user_id})
             | Q(**{user_key: user_id, 'org': None})
         )
