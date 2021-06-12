@@ -58,11 +58,10 @@ class PackagePresets(Flag):
 
 
 class LabelType(Flag):
-    PDF_4x6 = ('PDF', 'PAPER_4X6')
-    PDF_4x6_75 = ('PDF', 'PAPER_4X6.75')
-    PDF_4x8 = ('PDF', 'PAPER_4X8')
-    PDF_4x9 = ('PDF', 'PAPER_4X9')
-    PDF_7x4_75 = ('PDF', 'PAPER_7X4.75')
+    PDF_4x6 = ('PDF', 'STOCK_4X6')
+    PDF_4x6_75 = ('PDF', 'STOCK_4X6.75')
+    PDF_4x8 = ('PDF', 'STOCK_4X8')
+    PDF_4x9 = ('PDF', 'STOCK_4X9')
     ZPL_4x6 = ('ZPLII', 'STOCK_4X6')
     ZPL_4x6_75 = ('ZPLII', 'STOCK_4X6.75')
     ZPL_4x8 = ('ZPLII', 'STOCK_4X8')

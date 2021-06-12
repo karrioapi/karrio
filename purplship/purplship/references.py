@@ -10,7 +10,6 @@ import purplship.core.units as units
 from purplship.core.utils import DP
 from purplship.core.metadata import Metadata
 
-
 PROVIDERS = None
 PROVIDERS_DATA = None
 REFERENCES = None
@@ -52,6 +51,17 @@ def collect_references() -> dict:
     if PROVIDERS_DATA is None:
         collect_providers_data()
 
+    services = {
+        key: {c.name: c.value for c in list(mapper['services'])}  # type: ignore
+        for key, mapper in PROVIDERS_DATA.items()
+        if mapper.get('services') is not None
+    }
+    options = {
+        key: {c.name: DP.to_dict(c.value) for c in list(mapper['options'])}  # type: ignore
+        for key, mapper in PROVIDERS_DATA.items()
+        if mapper.get('options') is not None
+    }
+
     REFERENCES = {
         "countries": {c.name: c.value for c in list(units.Country)},
         "currencies": {c.name: c.value for c in list(units.Currency)},
@@ -62,16 +72,8 @@ def collect_references() -> dict:
         "customs_content_type": {c.name: c.value for c in list(units.CustomsContentType)},
         "incoterms": {c.name: c.value for c in list(units.Incoterm)},
         "carriers": {carrier_name: metadata.label for carrier_name, metadata in PROVIDERS.items()},
-        "services": {
-            key: {c.name: c.value for c in list(mapper['services'])}  # type: ignore
-            for key, mapper in PROVIDERS_DATA.items()
-            if mapper.get('services') is not None
-        },
-        "options": {
-            key: {c.name: DP.to_dict(c.value) for c in list(mapper['options'])}  # type: ignore
-            for key, mapper in PROVIDERS_DATA.items()
-            if mapper.get('options') is not None
-        },
+        "services": services,
+        "options": options,
         "packaging_types": {
             key: {c.name: c.value for c in list(mapper['packaging_types'])}  # type: ignore
             for key, mapper in PROVIDERS_DATA.items()
@@ -81,7 +83,15 @@ def collect_references() -> dict:
             key: {c.name: DP.to_dict(c.value) for c in list(mapper['package_presets'])}  # type: ignore
             for key, mapper in PROVIDERS_DATA.items()
             if mapper.get('package_presets') is not None
-        }
+        },
+        "option_names": {
+            name: {key: key.upper().replace('_', ' ') for key, _ in value.items()}
+            for name, value in options.items()
+        },
+        "service_names": {
+            name: {key: key.upper().replace('_', ' ') for key, _ in value.items()}
+            for name, value in services.items()
+        },
     }
 
     return REFERENCES
