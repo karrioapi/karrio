@@ -37,10 +37,6 @@ def parse_shipment_response(response: Element, settings: Settings) -> Tuple[Ship
 
 def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
     shipment = XP.build(eVSResponse, response)
-    charges: List[ExtraServiceType] = shipment.ExtraServices.ExtraService
-    total_charge = sum([
-        NF.decimal(shipment.Postage), *[NF.decimal(c.Price) for c in charges]
-    ], 0.0)
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -49,23 +45,6 @@ def _extract_details(response: Element, settings: Settings) -> ShipmentDetails:
         label=shipment.LabelImage,
         tracking_number=shipment.BarcodeNumber,
         shipment_identifier=shipment.BarcodeNumber,
-        selected_rate=RateDetails(
-            carrier_name=settings.carrier_name,
-            carrier_id=settings.carrier_id,
-
-            service=ServiceClassID(shipment).name,
-            currency=Currency.USD.value,
-            base_charge=NF.decimal(shipment.Postage),
-            total_charge=total_charge,
-            extra_charges=[
-                ChargeDetails(
-                    name=charge.ServiceName,
-                    amount=NF.decimal(charge.Price),
-                    currency=Currency.USD.value
-                )
-                for charge in charges
-            ]
-        )
     )
 
 
@@ -86,7 +65,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
     insurance = next((option.value for key, option in options if 'usps_insurance' in key), options.insurance)
     # Gets the first provided non delivery option or default to "RETURN"
     non_delivery = next((option.value for name, option in options if 'non_delivery' in name), "RETURN")
-    redirect_address = Address(**(options['usps_option_redirect_non_delivery'] or {}))
+    redirect_address = Address(**(options.usps_option_redirect_non_delivery or {}))
 
     request = eVSRequest(
         USERID=settings.username,
@@ -98,23 +77,23 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ),
         FromName=payload.shipper.person_name,
         FromFirm=payload.shipper.company_name or "N/A",
-        FromAddress1=payload.shipper.address_line1,
-        FromAddress2=payload.shipper.address_line2,
+        FromAddress1=payload.shipper.address_line2,
+        FromAddress2=payload.shipper.address_line1,
         FromCity=payload.shipper.city,
         FromState=payload.shipper.state_code,
-        FromZip5=Location(payload.shipper.postal_code).as_zip5,
-        FromZip4=Location(payload.shipper.postal_code).as_zip4,
+        FromZip5=Location(payload.shipper.postal_code).as_zip5 or "",
+        FromZip4=Location(payload.shipper.postal_code).as_zip4 or "",
         FromPhone=payload.shipper.phone_number,
         POZipCode=None,
         AllowNonCleansedOriginAddr=False,
         ToName=payload.recipient.person_name,
         ToFirm=payload.recipient.company_name or "N/A",
-        ToAddress1=payload.recipient.address_line1,
-        ToAddress2=payload.recipient.address_line2,
+        ToAddress1=payload.recipient.address_line2,
+        ToAddress2=payload.recipient.address_line1,
         ToCity=payload.recipient.city,
         ToState=payload.recipient.state_code,
-        ToZip5=Location(payload.recipient.postal_code).as_zip5,
-        ToZip4=Location(payload.recipient.postal_code).as_zip4,
+        ToZip5=Location(payload.recipient.postal_code).as_zip5 or "",
+        ToZip4=Location(payload.recipient.postal_code).as_zip4 or "",
         ToPhone=payload.recipient.phone_number,
         POBox=None,
         ToContactPreference=None,
@@ -128,7 +107,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         Length=package.length.IN,
         Height=package.height.IN,
         Girth=(package.girth.value if package.packaging_type == "tube" else None),
-        Machinable=options["usps_option_machinable_item"],
+        Machinable=options.usps_option_machinable_item,
         ProcessingCategory=None,
         PriceOptions=None,
         InsuredAmount=insurance,
@@ -137,16 +116,12 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ShipDate=options.shipment_date,
         CustomerRefNo=None,
         ExtraServices=(
-            ExtraServicesType(
-                ExtraService=[
-                    getattr(option, 'value', option)
-                    for option in extra_services
-                ]
-            ) if any(extra_services) else None
+            ExtraServicesType(ExtraService=[s for s in extra_services])
+            if any(extra_services) else None
         ),
-        CRID=None,
-        MID=None,
-        LogisticsManagerMID=None,
+        CRID=settings.customer_registration_id,
+        MID=settings.mailer_id,
+        LogisticsManagerMID=settings.logistics_manager_mailer_id,
         VendorCode=None,
         VendorProductVersionNumber=None,
         SenderName=(payload.shipper.person_name or payload.shipper.company_name),
@@ -157,7 +132,7 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         ImageType="PDF",
         HoldForManifest=None,
         NineDigitRoutingZip=None,
-        ShipInfo=options["usps_option_ship_info"],
+        ShipInfo=options.usps_option_ship_info,
         CarrierRelease=None,
         DropOffTime=None,
         ReturnCommitments=None,
@@ -180,7 +155,10 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
             )
             if payload.customs is not None else None
         ),
-        CustomsContentType=ContentType[customs.content_type or "other"].value,
+        CustomsContentType=(
+            ContentType[customs.content_type or "other"].value
+            if payload.customs is not None else None
+        ),
         ContentComments=None,
         RestrictionType=None,
         RestrictionComments=None,
@@ -205,4 +183,4 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         TrackingRetentionPeriod=None,
     )
 
-    return Serializable(request)
+    return Serializable(request, XP.export)

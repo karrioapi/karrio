@@ -44,4 +44,4 @@ def shipment_cancel_request(payload: ShipmentCancelRequest, settings: Settings) 
         BarcodeNumber=payload.shipment_identifier
     )
 
-    return Serializable(request)
+    return Serializable(request, XP.export)
