@@ -252,7 +252,7 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                 <v26:LabelSpecification>
                     <v26:LabelFormatType>COMMON2D</v26:LabelFormatType>
                     <v26:ImageType>PDF</v26:ImageType>
-                    <v26:LabelStockType>PAPER_4X6</v26:LabelStockType>
+                    <v26:LabelStockType>STOCK_4X6</v26:LabelStockType>
                     <v26:LabelPrintingOrientation>TOP_EDGE_OF_TEXT_FIRST</v26:LabelPrintingOrientation>
                     <v26:LabelOrder>SHIPPING_LABEL_FIRST</v26:LabelOrder>
                 </v26:LabelSpecification>
