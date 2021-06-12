@@ -35,7 +35,10 @@ from purolator_lib.shipping_service_2_1_3 import (
     ArrayOfContentDetail,
 )
 from purplship.core.units import Options, Packages, Phone
-from purplship.core.utils import Serializable, Element, create_envelope, Pipeline, Job, Envelope, XP, SF
+from purplship.core.utils import (
+    Serializable, Element, create_envelope, Pipeline, Job, Envelope, XP, SF,
+    LABEL_NOT_SUPPORTED_PRINT
+)
 from purplship.core.models import ShipmentRequest, ShipmentDetails, Message
 
 from purplship.providers.purolator_courier.shipment.documents import get_shipping_documents_request
@@ -58,32 +61,20 @@ ShipmentRequestType = Type[Union[ValidateShipmentRequest, CreateShipmentRequest]
 def parse_shipment_response(
     response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    details = next(
-        iter(
-            response.xpath(".//*[local-name() = $name]", name="CreateShipmentResponse")
-        ),
-        None,
-    )
+    details = XP.find("CreateShipmentResponse", response, first=True)
     shipment = _extract_shipment(response, settings) if details is not None else None
     return shipment, parse_error_response(response, settings)
 
 
 def _extract_shipment(response: Element, settings: Settings) -> ShipmentDetails:
-    shipment = CreateShipmentResponse()
-    document = DocumentDetail()
-    shipment_nodes = response.xpath(
-        ".//*[local-name() = $name]", name="CreateShipmentResponse"
-    )
-    document_nodes = response.xpath(".//*[local-name() = $name]", name="DocumentDetail")
+    shipment = XP.find("CreateShipmentResponse", response, CreateShipmentResponse, first=True)
+    document = XP.find("DocumentDetail", response, DocumentDetail, first=True) or DocumentDetail()
 
-    next((shipment.build(node) for node in shipment_nodes), None)
-    next((document.build(node) for node in document_nodes), None)
-
+    pin = cast(PIN, shipment.ShipmentPIN).Value
     label = next(
         (content for content in [document.Data, document.URL] if content is not None),
-        "No label returned",
+        LABEL_NOT_SUPPORTED_PRINT,
     )
-    pin = cast(PIN, shipment.ShipmentPIN).Value
 
     return ShipmentDetails(
         carrier_name=settings.carrier_name,

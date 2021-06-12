@@ -1,9 +1,8 @@
 import re
 import unittest
 import logging
-from datetime import datetime
 from unittest.mock import patch
-from purplship.core.utils import DP
+from purplship.core.utils import DP, LABEL_NOT_SUPPORTED_PRINT
 from purplship.core.models import ShipmentRequest, ShipmentCancelRequest
 from purplship import Shipment
 from tests.purolator_courier.fixture import gateway
@@ -162,7 +161,7 @@ PARSED_INVALID_SHIPMENT_RESPONSE = [
     {
         "carrier_name": "purolator_courier",
         "carrier_id": "purolator_courier",
-        "label": "No label returned",
+        "label": LABEL_NOT_SUPPORTED_PRINT,
     },
     [
         {
