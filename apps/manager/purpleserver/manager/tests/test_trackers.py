@@ -8,11 +8,10 @@ from purpleserver.core.tests import APITestCase
 
 
 class TestTrackers(APITestCase):
-
     def test_shipment_tracking(self):
         url = reverse(
-            'purpleserver.manager:shipment-tracker',
-            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups")
+            "purpleserver.manager:shipment-tracker",
+            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups"),
         )
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -25,8 +24,8 @@ class TestTrackers(APITestCase):
 
     def test_shipment_tracking_retry(self):
         url = reverse(
-            'purpleserver.manager:shipment-tracker',
-            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups")
+            "purpleserver.manager:shipment-tracker",
+            kwargs=dict(tracking_number="1Z12345E6205277936", carrier_name="ups"),
         )
 
         with patch("purpleserver.core.gateway.identity") as mock:
@@ -54,9 +53,9 @@ RETURNED_VALUE = (
                     date="2010-08-30",
                     description="UPS INTERNAL ACTIVITY CODE",
                     location="BONN",
-                    time="10:39"
+                    time="10:39",
                 )
-            ]
+            ],
         )
     ],
     [],
@@ -68,14 +67,14 @@ TRACKING_RESPONSE = {
     "carrier_name": "ups",
     "tracking_number": "1Z12345E6205277936",
     "test_mode": True,
-    'delivered': False,
+    "delivered": False,
     "events": [
         {
             "code": "KB",
             "date": "2010-08-30",
             "description": "UPS INTERNAL ACTIVITY CODE",
             "location": "BONN",
-            "time": "10:39"
+            "time": "10:39",
         }
-    ]
+    ],
 }

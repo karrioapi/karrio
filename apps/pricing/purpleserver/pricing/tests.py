@@ -173,7 +173,7 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"carrier_name": "canadapost", "service_name": "CANADAPOST EXPEDITED PARCEL"},
       "service": "canadapost_expedited_parcel",
       "total_charge": 32.99,
       "transit_days": 7,
@@ -200,7 +200,7 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"carrier_name": "canadapost", "service_name": "CANADAPOST XPRESSPOST"},
       "service": "canadapost_xpresspost",
       "total_charge": 85.65,
       "transit_days": 2,
@@ -232,7 +232,7 @@ RATING_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"carrier_name": "canadapost", "service_name": "CANADAPOST PRIORITY"},
       "service": "canadapost_priority",
       "total_charge": 114.93,
       "transit_days": 2,
@@ -265,7 +265,7 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"carrier_name": "canadapost", "service_name": "CANADAPOST EXPEDITED PARCEL"},
       "service": "canadapost_expedited_parcel",
       "total_charge": 32.99,
       "transit_days": 7,
@@ -292,7 +292,7 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"carrier_name": "canadapost", "service_name": "CANADAPOST XPRESSPOST"},
       "service": "canadapost_xpresspost",
       "total_charge": 85.65,
       "transit_days": 2,
@@ -324,7 +324,7 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
         }
       ],
       "id": ANY,
-      "meta": None,
+      "meta": {"carrier_name": "canadapost", "service_name": "CANADAPOST PRIORITY"},
       "service": "canadapost_priority",
       "total_charge": 116.21,
       "transit_days": 2,

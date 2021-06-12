@@ -1,5 +1,5 @@
 import functools
-from typing import TypeVar, Union, Callable, Any, List
+from typing import TypeVar, Union, Callable, Any, List, Optional
 
 T = TypeVar('T')
 
@@ -34,3 +34,10 @@ def post_processing(methods: List[str] = None):
         return klass
 
     return class_wrapper
+
+
+def upper(value_str: Optional[str]) -> Optional[str]:
+    if value_str is None:
+        return None
+
+    return value_str.upper().replace('_', ' ')
