@@ -36,7 +36,6 @@ from fedex_lib.ship_service_v26 import (
     CustomsClearanceDetail,
     Commodity,
     CommercialInvoice,
-    LabelStockType
 )
 from purplship.core.utils import Serializable, apply_namespaceprefix, create_envelope, Element, SF, XP, DF
 from purplship.core.units import Options, Packages, CompleteAddress, Weight
