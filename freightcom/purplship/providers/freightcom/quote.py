@@ -26,7 +26,7 @@ from purplship.providers.freightcom.error import parse_error_response
 
 
 def parse_quote_reply(
-    response: Element, settings: Settings
+        response: Element, settings: Settings
 ) -> Tuple[List[RateDetails], List[Message]]:
     estimates = response.xpath(".//*[local-name() = $name]", name="Quote")
     return (
@@ -66,7 +66,10 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         total_charge=NF.decimal(quote.totalCharge),
         transit_days=quote.transitDays,
         extra_charges=[fuel_surcharge] + surcharges,
-        meta=dict(service_name=quote.serviceName)
+        meta=dict(
+            carrier_name=quote.carrierName.lower(),
+            service_name=quote.serviceName
+        )
     )
 
 

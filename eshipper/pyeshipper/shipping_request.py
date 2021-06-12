@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Jun 27 22:49:20 2020 by generateDS.py version 2.35.24.
-# Python 3.7.7 (default, Mar 10 2020, 15:43:27)  [Clang 10.0.0 (clang-1000.11.45.5)]
+# Generated Fri Jun 11 20:44:17 2021 by generateDS.py version 2.38.6.
+# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,22 +13,26 @@
 #   ./vendor/schemas/shipping_request.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-extension/purplship/eshipper/.venv/eshipper/bin/generateDS --no-namespace-defs -o "./pyeshipper/shipping_request.py" ./vendor/schemas/shipping_request.xsd
+#   /Users/danielkobina/Workspace/project/purplship-bridges/eshipper/.venv/eshipper/bin/generateDS --no-namespace-defs -o "./pyeshipper/shipping_request.py" ./vendor/schemas/shipping_request.xsd
 #
 # Current working directory (os.getcwd()):
 #   eshipper
 #
 
+import sys
+try:
+    ModulenotfoundExp_ = ModuleNotFoundError
+except NameError:
+    ModulenotfoundExp_ = ImportError
 from six.moves import zip_longest
 import os
-import sys
 import re as re_
 import base64
 import datetime as datetime_
 import decimal as decimal_
 try:
     from lxml import etree as etree_
-except ImportError:
+except ModulenotfoundExp_ :
     from xml.etree import ElementTree as etree_
 
 
@@ -107,11 +111,11 @@ def parsexmlstring_(instring, parser=None, **kwargs):
 
 try:
     from generatedsnamespaces import GenerateDSNamespaceDefs as GenerateDSNamespaceDefs_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceDefs_ = {}
 try:
     from generatedsnamespaces import GenerateDSNamespaceTypePrefixes as GenerateDSNamespaceTypePrefixes_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceTypePrefixes_ = {}
 
 #
@@ -122,7 +126,7 @@ except ImportError:
 #
 try:
     from generatedscollector import GdsCollector as GdsCollector_
-except ImportError:
+except ModulenotfoundExp_ :
 
     class GdsCollector_(object):
 
@@ -156,7 +160,7 @@ except ImportError:
 
 try:
     from enum import Enum
-except ImportError:
+except ModulenotfoundExp_ :
     Enum = object
 
 #
@@ -168,7 +172,7 @@ except ImportError:
 
 try:
     from generatedssuper import GeneratedsSuper
-except ImportError as exp:
+except ModulenotfoundExp_ as exp:
     
     class GeneratedsSuper(object):
         __hash__ = object.__hash__
@@ -211,6 +215,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires integer value')
             return value
         def gds_format_integer_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_integer_list(
                 self, input_data, node=None, input_name=''):
@@ -219,7 +225,7 @@ except ImportError as exp:
                 try:
                     int(value)
                 except (TypeError, ValueError):
-                    raise_parse_error(node, 'Requires sequence of integer valuess')
+                    raise_parse_error(node, 'Requires sequence of integer values')
             return values
         def gds_format_float(self, input_data, input_name=''):
             return ('%.15f' % input_data).rstrip('0')
@@ -236,6 +242,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires float value')
             return value
         def gds_format_float_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_float_list(
                 self, input_data, node=None, input_name=''):
@@ -266,6 +274,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
@@ -277,7 +287,7 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of decimal values')
             return values
         def gds_format_double(self, input_data, input_name=''):
-            return '%e' % input_data
+            return '%s' % input_data
         def gds_parse_double(self, input_data, node=None, input_name=''):
             try:
                 fval_ = float(input_data)
@@ -291,6 +301,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires double or float value')
             return value
         def gds_format_double_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_double_list(
                 self, input_data, node=None, input_name=''):
@@ -320,11 +332,14 @@ except ImportError as exp:
                     '(one of True, 1, False, 0)')
             return input_data
         def gds_format_boolean_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_boolean_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
             for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
                 if value not in (True, 1, False, 0, ):
                     raise_parse_error(
                         node,
@@ -771,7 +786,10 @@ def find_attr_value_(attr_name, node):
         value = attrs.get(attr_name)
     elif len(attr_parts) == 2:
         prefix, name = attr_parts
-        namespace = node.nsmap.get(prefix)
+        if prefix == 'xml':
+            namespace = 'http://www.w3.org/XML/1998/namespace'
+        else:
+            namespace = node.nsmap.get(prefix)
         if namespace is not None:
             value = attrs.get('{%s}%s' % (namespace, name, ))
     return value
@@ -4635,6 +4653,12 @@ if __name__ == '__main__':
 
 RenameMappings_ = {
 }
+
+#
+# Mapping of namespaces to types defined in them
+# and the file in which each is defined.
+# simpleTypes are marked "ST" and complexTypes "CT".
+NamespaceToDefMappings_ = {'http://www.eshipper.net/XMLSchema': []}
 
 __all__ = [
     "BillToType",

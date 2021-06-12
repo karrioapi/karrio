@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Jun 27 22:49:21 2020 by generateDS.py version 2.35.24.
-# Python 3.7.7 (default, Mar 10 2020, 15:43:27)  [Clang 10.0.0 (clang-1000.11.45.5)]
+# Generated Fri Jun 11 20:44:18 2021 by generateDS.py version 2.38.6.
+# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,22 +13,26 @@
 #   ./vendor/schemas/shipping_reply.xsd
 #
 # Command line:
-#   /Users/daniel/Workspace/Project/purplship-extension/purplship/eshipper/.venv/eshipper/bin/generateDS --no-namespace-defs -o "./pyeshipper/shipping_reply.py" ./vendor/schemas/shipping_reply.xsd
+#   /Users/danielkobina/Workspace/project/purplship-bridges/eshipper/.venv/eshipper/bin/generateDS --no-namespace-defs -o "./pyeshipper/shipping_reply.py" ./vendor/schemas/shipping_reply.xsd
 #
 # Current working directory (os.getcwd()):
 #   eshipper
 #
 
+import sys
+try:
+    ModulenotfoundExp_ = ModuleNotFoundError
+except NameError:
+    ModulenotfoundExp_ = ImportError
 from six.moves import zip_longest
 import os
-import sys
 import re as re_
 import base64
 import datetime as datetime_
 import decimal as decimal_
 try:
     from lxml import etree as etree_
-except ImportError:
+except ModulenotfoundExp_ :
     from xml.etree import ElementTree as etree_
 
 
@@ -107,11 +111,11 @@ def parsexmlstring_(instring, parser=None, **kwargs):
 
 try:
     from generatedsnamespaces import GenerateDSNamespaceDefs as GenerateDSNamespaceDefs_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceDefs_ = {}
 try:
     from generatedsnamespaces import GenerateDSNamespaceTypePrefixes as GenerateDSNamespaceTypePrefixes_
-except ImportError:
+except ModulenotfoundExp_ :
     GenerateDSNamespaceTypePrefixes_ = {}
 
 #
@@ -122,7 +126,7 @@ except ImportError:
 #
 try:
     from generatedscollector import GdsCollector as GdsCollector_
-except ImportError:
+except ModulenotfoundExp_ :
 
     class GdsCollector_(object):
 
@@ -156,7 +160,7 @@ except ImportError:
 
 try:
     from enum import Enum
-except ImportError:
+except ModulenotfoundExp_ :
     Enum = object
 
 #
@@ -168,7 +172,7 @@ except ImportError:
 
 try:
     from generatedssuper import GeneratedsSuper
-except ImportError as exp:
+except ModulenotfoundExp_ as exp:
     
     class GeneratedsSuper(object):
         __hash__ = object.__hash__
@@ -211,6 +215,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires integer value')
             return value
         def gds_format_integer_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_integer_list(
                 self, input_data, node=None, input_name=''):
@@ -219,7 +225,7 @@ except ImportError as exp:
                 try:
                     int(value)
                 except (TypeError, ValueError):
-                    raise_parse_error(node, 'Requires sequence of integer valuess')
+                    raise_parse_error(node, 'Requires sequence of integer values')
             return values
         def gds_format_float(self, input_data, input_name=''):
             return ('%.15f' % input_data).rstrip('0')
@@ -236,6 +242,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires float value')
             return value
         def gds_format_float_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_float_list(
                 self, input_data, node=None, input_name=''):
@@ -266,6 +274,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires decimal value')
             return value
         def gds_format_decimal_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return ' '.join([self.gds_format_decimal(item) for item in input_data])
         def gds_validate_decimal_list(
                 self, input_data, node=None, input_name=''):
@@ -277,7 +287,7 @@ except ImportError as exp:
                     raise_parse_error(node, 'Requires sequence of decimal values')
             return values
         def gds_format_double(self, input_data, input_name=''):
-            return '%e' % input_data
+            return '%s' % input_data
         def gds_parse_double(self, input_data, node=None, input_name=''):
             try:
                 fval_ = float(input_data)
@@ -291,6 +301,8 @@ except ImportError as exp:
                 raise_parse_error(node, 'Requires double or float value')
             return value
         def gds_format_double_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_double_list(
                 self, input_data, node=None, input_name=''):
@@ -320,11 +332,14 @@ except ImportError as exp:
                     '(one of True, 1, False, 0)')
             return input_data
         def gds_format_boolean_list(self, input_data, input_name=''):
+            if len(input_data) > 0 and not isinstance(input_data[0], BaseStrType_):
+                input_data = [str(s) for s in input_data]
             return '%s' % ' '.join(input_data)
         def gds_validate_boolean_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
             for value in values:
+                value = self.gds_parse_boolean(value, node, input_name)
                 if value not in (True, 1, False, 0, ):
                     raise_parse_error(
                         node,
@@ -771,7 +786,10 @@ def find_attr_value_(attr_name, node):
         value = attrs.get(attr_name)
     elif len(attr_parts) == 2:
         prefix, name = attr_parts
-        namespace = node.nsmap.get(prefix)
+        if prefix == 'xml':
+            namespace = 'http://www.w3.org/XML/1998/namespace'
+        else:
+            namespace = node.nsmap.get(prefix)
         if namespace is not None:
             value = attrs.get('{%s}%s' % (namespace, name, ))
     return value
@@ -1307,7 +1325,7 @@ class OrderType(GeneratedsSuper):
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.id = _cast(int, id)
+        self.id = _cast(None, id)
         self.id_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
@@ -1364,7 +1382,7 @@ class OrderType(GeneratedsSuper):
     def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='OrderType'):
         if self.id is not None and 'id' not in already_processed:
             already_processed.add('id')
-            outfile.write(' id="%s"' % self.gds_format_integer(self.id, input_name='id'))
+            outfile.write(' id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.id), input_name='id')), ))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='OrderType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
@@ -1383,7 +1401,7 @@ class OrderType(GeneratedsSuper):
         value = find_attr_value_('id', node)
         if value is not None and 'id' not in already_processed:
             already_processed.add('id')
-            self.id = self.gds_parse_integer(value, node, 'id')
+            self.id = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
 # end class OrderType
@@ -1609,7 +1627,7 @@ class PackageType(GeneratedsSuper):
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.trackingNumber = _cast(int, trackingNumber)
+        self.trackingNumber = _cast(None, trackingNumber)
         self.trackingNumber_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
@@ -1666,7 +1684,7 @@ class PackageType(GeneratedsSuper):
     def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PackageType'):
         if self.trackingNumber is not None and 'trackingNumber' not in already_processed:
             already_processed.add('trackingNumber')
-            outfile.write(' trackingNumber="%s"' % self.gds_format_integer(self.trackingNumber, input_name='trackingNumber'))
+            outfile.write(' trackingNumber=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.trackingNumber), input_name='trackingNumber')), ))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PackageType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
@@ -1685,7 +1703,7 @@ class PackageType(GeneratedsSuper):
         value = find_attr_value_('trackingNumber', node)
         if value is not None and 'trackingNumber' not in already_processed:
             already_processed.add('trackingNumber')
-            self.trackingNumber = self.gds_parse_integer(value, node, 'trackingNumber')
+            self.trackingNumber = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
 # end class PackageType
@@ -1701,7 +1719,7 @@ class PickupType(GeneratedsSuper):
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.confirmationNumber = _cast(int, confirmationNumber)
+        self.confirmationNumber = _cast(None, confirmationNumber)
         self.confirmationNumber_nsprefix_ = None
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
@@ -1758,7 +1776,7 @@ class PickupType(GeneratedsSuper):
     def exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PickupType'):
         if self.confirmationNumber is not None and 'confirmationNumber' not in already_processed:
             already_processed.add('confirmationNumber')
-            outfile.write(' confirmationNumber="%s"' % self.gds_format_integer(self.confirmationNumber, input_name='confirmationNumber'))
+            outfile.write(' confirmationNumber=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.confirmationNumber), input_name='confirmationNumber')), ))
     def exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PickupType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node, gds_collector_=None):
@@ -1777,7 +1795,7 @@ class PickupType(GeneratedsSuper):
         value = find_attr_value_('confirmationNumber', node)
         if value is not None and 'confirmationNumber' not in already_processed:
             already_processed.add('confirmationNumber')
-            self.confirmationNumber = self.gds_parse_integer(value, node, 'confirmationNumber')
+            self.confirmationNumber = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         pass
 # end class PickupType
@@ -2537,6 +2555,12 @@ if __name__ == '__main__':
 
 RenameMappings_ = {
 }
+
+#
+# Mapping of namespaces to types defined in them
+# and the file in which each is defined.
+# simpleTypes are marked "ST" and complexTypes "CT".
+NamespaceToDefMappings_ = {'http://www.eshipper.net/xml/XMLSchema': []}
 
 __all__ = [
     "CarrierType",

@@ -91,19 +91,27 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
         tracking_number=tracking_number,
         shipment_identifier=shipping.Order.id,
         label=shipping.Labels,
-        selected_rate=RateDetails(
-            carrier_name=settings.carrier_name,
-            carrier_id=settings.carrier_id,
-            service=service,
-            currency=quote.currency,
-            base_charge=NF.decimal(quote.baseCharge),
-            total_charge=NF.decimal(quote.totalCharge),
-            transit_days=quote.transitDays,
-            extra_charges=[fuel_surcharge] + surcharges,
+        selected_rate=(
+            RateDetails(
+                carrier_name=settings.carrier_name,
+                carrier_id=settings.carrier_id,
+                service=service,
+                currency=quote.currency,
+                base_charge=NF.decimal(quote.baseCharge),
+                total_charge=NF.decimal(quote.totalCharge),
+                transit_days=quote.transitDays,
+                extra_charges=[fuel_surcharge] + surcharges,
+                meta=dict(
+                    carrier_name=quote.carrierName.lower(),
+                    service_name=quote.serviceName
+                )
+            ) if quote is not None else None
+        ),
+        meta=dict(
+            carrier_name=shipping.Carrier.carrierName.lower(),
+            service_name=shipping.Carrier.serviceName,
+            tracking_url=shipping.TrackingURL
         )
-        if quote is not None
-        else None,
-        meta=dict(carrier_name=shipping.Carrier.carrierName.lower())
     )
 
 

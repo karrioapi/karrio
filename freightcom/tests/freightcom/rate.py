@@ -34,7 +34,7 @@ class TestFreightcomRating(unittest.TestCase):
         with patch("purplship.mappers.freightcom.proxy.http") as mock:
             mock.return_value = RateResponseXml
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
+            
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(ParsedQuoteResponse)
             )
@@ -82,7 +82,7 @@ ParsedQuoteResponse = [
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
-            "meta": {"service_name": "Central Transport"},
+            "meta": {"carrier_name": "freightcom", "service_name": "Central Transport"},
             "service": "freightcom_central_transport",
             "total_charge": 177.0,
             "transit_days": 1,
@@ -95,7 +95,7 @@ ParsedQuoteResponse = [
             "extra_charges": [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"}
             ],
-            "meta": {"service_name": "Estes"},
+            "meta": {"carrier_name": "freightcom", "service_name": "Estes"},
             "service": "freigthcom_estes",
             "total_charge": 28.65,
             "transit_days": 1,
@@ -108,7 +108,7 @@ ParsedQuoteResponse = [
             "extra_charges": [
                 {"amount": 6.25, "currency": "CAD", "name": "Fuel surcharge"}
             ],
-            "meta": {"service_name": "USF Holland"},
+            "meta": {"carrier_name": "freightcom", "service_name": "USF Holland"},
             "service": "freigthcom_usf_holland",
             "total_charge": 52.52,
             "transit_days": 0,

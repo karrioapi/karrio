@@ -67,7 +67,10 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         total_charge=NF.decimal(quote.totalCharge),
         transit_days=quote.transitDays,
         extra_charges=[fuel_surcharge] + surcharges,
-        meta=dict(service_name=quote.serviceName)
+        meta=dict(
+            carrier_name=quote.carrierName.lower(),
+            service_name=quote.serviceName
+        )
     )
 
 
