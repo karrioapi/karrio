@@ -30,7 +30,11 @@ ENV LOG_DIR /log
 ENV STATIC_ROOT_DIR /static
 
 RUN mkdir $WORK_DIR $LOG_DIR $STATIC_ROOT_DIR
+RUN useradd -m pship
+RUN chown pship:pship $WORK_DIR $LOG_DIR $STATIC_ROOT_DIR
 WORKDIR $WORK_DIR
+
+USER pship
 
 # Make sure we use the virtualenv:
 ENV PATH="/opt/venv/bin:$PATH"

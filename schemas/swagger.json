@@ -2,11 +2,11 @@
     "swagger": "2.0",
     "info": {
         "title": "Purplship API",
-        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.6-rc`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, \nlist shipments, and list trackers. These list API methods share a common structure, taking at least these \ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order. \nThe offset parameter returns objects listed after an index. \nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates, \nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
+        "description": "\n## API Reference\n\nPurplship is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.\n\nThe Purplship API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded \nrequest bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.\n\nThe Purplship API differs for every account as we release new versions.\nThese docs are customized to your version of the API.\n\n\n## Versioning\n\nWhen backwards-incompatible changes are made to the API, a new, dated version is released. \nThe current version is `2021.6-rc1`. \n\nRead our API changelog and to learn more about backwards compatibility.\n\nAs a precaution, use API versioning to check a new API version before committing to an upgrade.\n\n\n## Pagination\n\nAll top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, \nlist shipments, and list trackers. These list API methods share a common structure, taking at least these \ntwo parameters: limit, and offset.\n\nPurplship utilizes offset-based pagination via the offset and limit parameters.\nBoth parameters take a number as value (see below) and return objects in reverse chronological order. \nThe offset parameter returns objects listed after an index. \nThe limit parameter take a limit on the number of objects to be returned from 1 to 100.\n\n\n```json\n{\n    \"next\": \"/v1/shipments?limit=25&offset=50\",\n    \"previous\": \"/v1/shipments?limit=25&offset=25\",\n    \"results\": [\n    ]\n}\n```\n\n## Environments\n\nThe Purplship API offer the possibility to create and retrieve certain objects in `test_mode`.\nIn development, it is therefore possible to add carrier connections, get live rates, \nbuy labels, create trackers and schedule pickups in `test_mode`.\n\n",
         "contact": {
             "email": "hello@purplship.com"
         },
-        "version": "2021.6-rc"
+        "version": "2021.6-rc1"
     },
     "host": "app.purplship.com",
     "schemes": [
@@ -356,6 +356,7 @@
                             "tnt",
                             "ups",
                             "usps",
+                            "usps_international",
                             "yanwen",
                             "yunexpress"
                         ]
@@ -406,7 +407,7 @@
                 "x-code-samples": [
                     {
                         "lang": "bash",
-                        "source": "\ncurl --request GET                   --url '/v1/carriers' \\\n  --header 'Authorization: Token <API_KEY>'\n"
+                        "source": "\ncurl --request GET \\\n  --url '/v1/carriers' \\\n  --header 'Authorization: Token <API_KEY>'\n"
                     }
                 ]
             },
@@ -3114,6 +3115,7 @@
                         "tnt",
                         "ups",
                         "usps",
+                        "usps_international",
                         "yanwen",
                         "yunexpress"
                     ]
@@ -4419,16 +4421,16 @@
             "type": "object",
             "properties": {
                 "shipper": {
-                    "$ref": "#/definitions/Address"
+                    "$ref": "#/definitions/AddressData"
                 },
                 "recipient": {
-                    "$ref": "#/definitions/Address"
+                    "$ref": "#/definitions/AddressData"
                 },
                 "parcels": {
                     "description": "The shipment's parcels",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Parcel"
+                        "$ref": "#/definitions/ParcelData"
                     }
                 },
                 "services": {
@@ -5148,7 +5150,9 @@
                 "incoterms",
                 "states",
                 "services",
+                "service_names",
                 "options",
+                "option_names",
                 "package_presets",
                 "packaging_types",
                 "payment_types"
@@ -5200,8 +5204,18 @@
                     "type": "object",
                     "additionalProperties": true
                 },
+                "service_names": {
+                    "title": "Service names",
+                    "type": "object",
+                    "additionalProperties": true
+                },
                 "options": {
                     "title": "Options",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "option_names": {
+                    "title": "Option names",
                     "type": "object",
                     "additionalProperties": true
                 },
