@@ -1,7 +1,7 @@
 # The base image compilation
 FROM python:3.8-slim AS compile-image
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+RUN python -m venv /pship/venv
+ENV PATH="/pship/venv/bin:$PATH"
 
 COPY requirements.txt /temp/
 RUN pip install --upgrade pip && \
@@ -10,7 +10,6 @@ RUN pip install --upgrade pip && \
 
 # The runtime image
 FROM python:3.8-slim AS build-image
-COPY --from=compile-image /opt/venv /opt/venv
 
 LABEL maintainer=hello@purplship.com
 LABEL org.opencontainers.image.title="Purplship Server"
@@ -25,19 +24,19 @@ ENV DEBUG_MODE False
 ENV USE_HTTPS False
 ENV ALLOWED_HOSTS *
 ENV SECRET_KEY "w;l5kj65lk6j;lj56kl56jk5l656j5k6jl5"
-ENV WORK_DIR /app
-ENV LOG_DIR /log
-ENV STATIC_ROOT_DIR /static
+ENV WORK_DIR /pship/app
+ENV LOG_DIR /pship/log
+ENV STATIC_ROOT_DIR /pship/static
 
+RUN useradd -m pship -d /pship
+USER pship
+COPY --chown=pship:pship --from=compile-image /pship/venv /pship/venv
 RUN mkdir $WORK_DIR $LOG_DIR $STATIC_ROOT_DIR
-RUN useradd -m pship
-RUN chown pship:pship $WORK_DIR $LOG_DIR $STATIC_ROOT_DIR
 WORKDIR $WORK_DIR
 
-USER pship
 
 # Make sure we use the virtualenv:
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/pship/venv/bin:$PATH"
 
 COPY gunicorn-cfg.py .docker/entrypoint.sh $WORK_DIR/
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]

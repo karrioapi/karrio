@@ -10,7 +10,7 @@ services:
     env_file: .env
     volumes:
       - .:/temp/dev
-      - purplship-statics:/static
+      - purplship-statics:/pship/static
     ports:
       - "5002:5002"
     depends_on:
@@ -21,7 +21,7 @@ services:
     entrypoint: |
       bash -c "bash -s <<EOF
       cd /temp/dev && pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade --src /temp/src &&
-      cd /app &&
+      cd /pship/app &&
       if [[ "${TEST:-False}" == "True" ]];
       then
         source /temp/dev/scripts.sh && \
