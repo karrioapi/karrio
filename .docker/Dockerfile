@@ -2,7 +2,6 @@
 FROM python:3.8-slim AS compile-image
 RUN python -m venv /pship/venv
 ENV PATH="/pship/venv/bin:$PATH"
-
 COPY requirements.txt /temp/
 RUN pip install --upgrade pip && \
     pip install -r /temp/requirements.txt
@@ -23,6 +22,10 @@ LABEL org.opencontainers.image.authors="hello@purplship.com"
 ENV DEBUG_MODE False
 ENV USE_HTTPS False
 ENV ALLOWED_HOSTS *
+ENV PURPLSHIP_WORKERS 2
+ENV BACKGROUND_WORKERS 2
+ENV ADMIN_EMAIL admin@domain.com
+ENV ADMIN_PASSWORD demo
 ENV SECRET_KEY "w;l5kj65lk6j;lj56kl56jk5l656j5k6jl5"
 ENV WORK_DIR /pship/app
 ENV LOG_DIR /pship/log
@@ -30,10 +33,9 @@ ENV STATIC_ROOT_DIR /pship/static
 
 RUN useradd -m pship -d /pship
 USER pship
-COPY --chown=pship:pship --from=compile-image /pship/venv /pship/venv
+COPY --chown=pship:pship --from=compile-image /pship/ /pship/
 RUN mkdir $WORK_DIR $LOG_DIR $STATIC_ROOT_DIR
 WORKDIR $WORK_DIR
-
 
 # Make sure we use the virtualenv:
 ENV PATH="/pship/venv/bin:$PATH"

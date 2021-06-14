@@ -18,13 +18,13 @@
 
 Purplship server is a headless **shipping platform** for innovators who want to regain control over their logistics
 processes and fulfilment automation.
-The server is in Python, but you can use any programming language to send API requests to the growing network of 
+The server is in Python, but you can use any programming language to send API requests to our growing network of 
 shipping carriers from your app.
 
 - [Join us on Discord](https://discord.gg/kXEa3UMRHd)
-- [Want to partner? Reach Out](https://purplship.com/#contact)
+- [Want to partner up? Reach Out](https://purplship.com/#contact)
 
-Purplship makes shipping service simple and accessible.
+Purplship makes shipping services simple and accessible.
 Help us out… If you love Open standard and great software, give us a star! 🌟
 
 
@@ -76,6 +76,8 @@ services:
     environment:
       - DEBUG_MODE=True
       - ALLOWED_HOSTS=*
+      - ADMIN_EMAIL=admin@domain.com
+      - ADMIN_PASSWORD=demo
       - DATABASE_NAME=db
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -85,25 +87,11 @@ services:
       - db
 ```
 
-- Setup the database
-
-```terminal
-docker-compose run --rm --entrypoint="purplship migrate" pship
-```
-
-- Create an admin user
-
-```terminal
-docker-compose run --rm --entrypoint="purplship createsuperuser" pship
-```
-
 - Run the application
 
 ```terminal
 docker-compose up
 ```
-
-Access the application at http://0.0.0.0:5002
 
 </details>
 
@@ -127,19 +115,22 @@ docker run -d \
 docker run -d \
   --name pship --rm \
   -e DEBUG_MODE=True \
+  -e ADMIN_EMAIL=admin@domain.com \
+  -e ADMIN_PASSWORD=demo \
   --link=db:db -p 5002:5002 \
   danh91.docker.scarf.sh/purplship/purplship-server:[version]
 ```
 
-- Create an admin user
-
-```terminal
-docker exec -it pship bash -c "purplship createsuperuser"
-```
+</details>
 
 Access the application at http://0.0.0.0:5002
 
-</details>
+**Default Login**
+
+| email            | Password |
+| ---------------- | -------- |
+| admin@domain.com | demo     |
+
 
 ### `Heroku`
 
@@ -151,9 +142,13 @@ Host your own Purplship server for FREE with One-Click Deploy.
 ## Editions
 
 Purplship is available in two editions - **OSS**, and **Enterprise**.
-Here you can find the Open Source Edition released under the `Apache 2`.
+Here you can find the Open Source Edition released under the `Apache 2` License.
 
-To get the quotation of our Enterprise Edition, please visit www.purplship.com and contact us.
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
+
+To get the quotation of our Enterprise Edition, please visit [purplship.com](https://purplship.com) and contact us.
+
+- [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
 
 
 |                                          | OSS         | Bronze Sponsor | Enterprise   |
@@ -168,17 +163,14 @@ To get the quotation of our Enterprise Edition, please visit www.purplship.com a
 | Shipping billing data (soon)             | No          | No             | Yes          |
 
 
-- [Become a backer or sponsor on Patreon](https://www.patreon.com/danh91)
-- [Book a Live Demo at purplship.com](https://purplship.com/schedule-demo/)
-
-
 ## Official Client Libraries
 
 - [Node](https://github.com/Purplship/purplship-node)
 - [PHP](https://github.com/Purplship/purplship-php-client)
 - [Python](https://github.com/Purplship/purplship-python-client)
 
-Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with our [OpenAPI References](https://github.com/Purplship/purplship-server/tree/main/openapi)
+Use the [swagger editor](https://editor.swagger.io/) to generate any additional client with 
+our [OpenAPI References](https://github.com/Purplship/purplship-server/tree/main/shemas)
 
 
 ## Resources

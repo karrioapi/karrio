@@ -9,7 +9,7 @@ services:
     container_name: pship
     env_file: .env
     volumes:
-      - .:/temp/dev
+      - .:/pship/dev
       - purplship-statics:/pship/static
     ports:
       - "5002:5002"
@@ -20,19 +20,18 @@ services:
       - web_network
     entrypoint: |
       bash -c "bash -s <<EOF
-      cd /temp/dev && pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade --src /temp/src &&
-      cd /pship/app &&
+      cd /pship/dev && pip install -f https://git.io/purplship -r requirements.dev.txt --upgrade &&
       if [[ "${TEST:-False}" == "True" ]];
       then
-        source /temp/dev/scripts.sh && \
+        source /pship/dev/scripts.sh && \
         test --no-insider && \
-        cd /temp/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade --src /temp/src && \
+        cd /pship/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade && \
         test
       else
         export MULTI_TENANT_ENABLE=${MULTI_TENANT_ENABLE:-False}
         export DEBUG_MODE=${DEBUG_MODE:-False}
-        cd /temp/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade --src /temp/src && \
-        source /temp/dev/scripts.sh && \
+        cd /pship/dev && pip install -f https://git.io/purplship -r requirements.insider.dev.txt --upgrade && \
+        source /pship/dev/scripts.sh && \
         add_data
         ./entrypoint.sh
       fi

@@ -266,7 +266,10 @@ dev_webapp() {
 }
 
 build_image() {
-  docker build -t "purplship/purplship-server:$1" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}" --no-cache
+	tag=$1
+	shift
+	args=$@
+  	docker build -t "purplship/purplship-server:$tag" -f "${ROOT:?}/.docker/Dockerfile" "${ROOT:?}" $args
 }
 
 generate_node_client() {

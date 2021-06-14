@@ -1,18 +1,21 @@
 #!/bin/bash
 
-# Init db and collect static files
-if [[ "$MULTI_TENANT_ENABLE" == "True" ]]; then
-	purplship migrate_schemas --shared || exit
-else
-	purplship migrate || exit
-fi
+# Setup DB and static files
+purplship migrate || exit
 purplship collectstatic --clear --noinput || exit
 
+# Setup Default super admin
+(echo "
+from django.contrib.auth import get_user_model
+if not any(get_user_model().objects.all()):
+   get_user_model().objects.create_superuser('$ADMIN_EMAIL', '$ADMIN_PASSWORD')
+" | purplship shell) || exit
+
 # Start services
-set -m # turn on bash's job control
+set -e # turn on bash's job control
+trap 'kill 0' INT
 
 gunicorn --config gunicorn-cfg.py purpleserver.asgi -k uvicorn.workers.UvicornWorker &
+purplship run_huey -w $BACKGROUND_WORKERS &
 
-purplship run_huey -w 2  || exit
-
-pkill -f gunicorn
+wait -n
