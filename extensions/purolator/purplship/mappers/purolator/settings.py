@@ -11,8 +11,8 @@ class Settings(BaseSettings):
     username: str
     password: str
     account_number: str
-    user_token: str
     language: str = "en"
+    user_token: str = None
     id: str = None
     test: bool = False
     carrier_id: str = "purolator"
