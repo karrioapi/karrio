@@ -27,7 +27,7 @@ mkdocs-material = "^6.2.6"
 "purplship.dhl_universal" = {path = "extensions/dhl_universal", develop = true}
 "purplship.dicom" = {path = "extensions/dicom", develop = true}
 "purplship.fedex" = {path = "extensions/fedex", develop = true}
-"purplship.purolator-courier" = {path = "extensions/purolator_courier", develop = true}
+"purplship.purolator" = {path = "extensions/purolator", develop = true}
 "purplship.royalmail" = {path = "extensions/royalmail", develop = true}
 "purplship.sendle" = {path = "extensions/sendle", develop = true}
 "purplship.sf_express" = {path = "extensions/sf_express", develop = true}
