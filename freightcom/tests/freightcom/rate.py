@@ -122,6 +122,7 @@ ParsedQuoteResponse = [
     ],
     [
         {
+            "code": "CarrierErrorMessage",
             "carrier_id": "freightcom",
             "carrier_name": "freightcom",
             "message": "Polaris:Military Base Delivery,Saturday Pickup,Construction Site,BORDER FEE,Homeland Security,Limited Access,Saturday Delivery,Sort and Segregate Charge,Pier Charge",
@@ -133,6 +134,7 @@ ParsedRateError = [
     [],
     [
         {
+            "code": "Error",
             "carrier_id": "freightcom",
             "carrier_name": "freightcom",
             "message": "Required field: company is missing.",

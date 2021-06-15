@@ -7,30 +7,28 @@ from purplship.providers.freightcom.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:
-    carrier_errors = XP.find("CarrierErrorMessage", response)
-    errors = XP.find("Error", response)
+    errors = XP.find("Error", response, ErrorType)
+    carrier_errors = XP.find("CarrierErrorMessage", response, CarrierErrorMessageType)
 
     return [
-        *[_extract_error(node, settings) for node in errors],
-        *[_extract_carrier_error(node, settings) for node in carrier_errors]
+        *[_extract_error(er, settings) for er in errors if er.Message != ""],
+        *[_extract_carrier_error(er, settings) for er in carrier_errors if er.errorMessage0 != ""]
     ]
 
 
-def _extract_carrier_error(error_node: Element, settings: Settings) -> Message:
-    error = XP.build(CarrierErrorMessageType, error_node)
+def _extract_carrier_error(error: CarrierErrorMessageType, settings: Settings) -> Message:
     return Message(
-        code="",
+        code="CarrierErrorMessage",
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        message=(error.errorMessage0 or "Not Detailed"),
+        message=error.errorMessage0,
     )
 
 
-def _extract_error(error_node: Element, settings: Settings) -> Message:
-    error = XP.build(ErrorType, error_node)
+def _extract_error(error: ErrorType, settings: Settings) -> Message:
     return Message(
-        code="",
+        code="Error",
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        message=(error.Message or "Not Detailed"),
+        message=error.Message,
     )

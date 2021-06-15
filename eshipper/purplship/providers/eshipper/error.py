@@ -6,14 +6,14 @@ from purplship.providers.eshipper.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:
-    errors = XP.find("Error", response)
+    errors = XP.find("Error", response, ErrorType)
     return [_extract_error(node, settings) for node in errors]
 
 
-def _extract_error(error_node: Element, settings: Settings) -> Message:
-    error = XP.build(ErrorType, error_node)
+def _extract_error(error: ErrorType, settings: Settings) -> Message:
     return Message(
+        code="Error",
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        message=(error.Message or "Not Detailed"),
+        message=error.Message,
     )
