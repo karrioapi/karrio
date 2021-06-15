@@ -422,7 +422,7 @@ PURCHASED_SHIPMENT = {
     "carrier_id": "canadapost",
     "label": ANY,
     "label_type": "PDF",
-    "meta": {},
+    "meta": {"rate_provider": "canadapost", "service_name": "CANADAPOST PRIORITY"},
     "tracking_number": "123456789012",
     "shipment_identifier": "123456789012",
     "selected_rate": SELECTED_RATE,
