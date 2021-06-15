@@ -128,7 +128,35 @@ shipment_data = {
     },
 }
 
-ParsedShipmentResponse = [{'carrier_id': 'eshipper', 'carrier_name': 'eshipper', 'label': '[base-64 encoded String]', 'meta': {'carrier_name': 'federal express', 'service_name': 'FedEx Ground', 'tracking_url': 'http://www.fedex.com/Tracking?tracknumbers=052800410000484'}, 'selected_rate': {'base_charge': 30.74, 'carrier_id': 'eshipper', 'carrier_name': 'eshipper', 'currency': 'CAD', 'extra_charges': [{'amount': 0.0, 'currency': 'CAD', 'name': 'Fuel surcharge'}, {'amount': 1.08, 'currency': 'CAD', 'name': 'Other'}], 'meta': {'carrier_name': 'federal express', 'service_name': 'Ground'}, 'service': 'eshipper_fedex_ground', 'total_charge': 31.82, 'transit_days': 0}, 'shipment_identifier': '181004', 'tracking_number': '052800410000484'}, []]
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "eshipper",
+        "carrier_name": "eshipper",
+        "label": "[base-64 encoded String]",
+        "meta": {
+            "rate_provider": "fedex",
+            "service_name": "eshipper_fedex_ground",
+            "tracking_url": "http://www.fedex.com/Tracking?tracknumbers=052800410000484",
+        },
+        "selected_rate": {
+            "base_charge": 30.74,
+            "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
+            "currency": "CAD",
+            "extra_charges": [
+                {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 1.08, "currency": "CAD", "name": "Other"},
+            ],
+            "meta": {"rate_provider": "fedex", "service_name": "eshipper_fedex_ground"},
+            "service": "eshipper_fedex_ground",
+            "total_charge": 31.82,
+            "transit_days": 0,
+        },
+        "shipment_identifier": "181004",
+        "tracking_number": "052800410000484",
+    },
+    [],
+]
 
 ParsedCancelShipmentResponse = [
     {

@@ -1,3 +1,4 @@
+import re
 from purplship.core.utils import Enum, Flag, Spec
 
 
@@ -50,12 +51,12 @@ class Service(Enum):
     eshipper_purolator_air = "4"
     eshipper_purolator_air_9_am = "5"
     eshipper_purolator_air_10_30 = "6"
-    eshipper_puro_letter = "7"
-    eshipper_puro_letter_9_am = "8"
-    eshipper_puro_letter_10_30 = "9"
-    eshipper_puro_pak = "10"
-    eshipper_puro_pak_9_am = "11"
-    eshipper_puro_pak_10_30 = "12"
+    eshipper_purolator_letter = "7"
+    eshipper_purolator_letter_9_am = "8"
+    eshipper_purolator_letter_10_30 = "9"
+    eshipper_purolator_pak = "10"
+    eshipper_purolator_pak_9_am = "11"
+    eshipper_purolator_pak_10_30 = "12"
     eshipper_purolator_ground = "13"
     eshipper_purolator_ground_9_am = "19"
     eshipper_purolator_ground_10_30 = "20"
@@ -77,15 +78,15 @@ class Service(Enum):
     eshipper_ups_three_day_select = "606"
     eshipper_ups_saver = "607"
     eshipper_ups_ground = "608"
-    eshipper_next_day_saver = "609"
-    eshipper_worldwide_express_plus = "610"
-    eshipper_second_day_air_am = "611"
+    eshipper_ups_next_day_saver = "609"
+    eshipper_ups_worldwide_express_plus = "610"
+    eshipper_ups_second_day_air_am = "611"
     eshipper_canada_post_priority = "500"
-    eshipper_canada_post_xpress_post = "501"
+    eshipper_canada_post_xpresspost = "501"
     eshipper_canada_post_expedited = "502"
     eshipper_canada_post_regular = "503"
-    eshipper_canada_post_xpress_post_usa = "504"
-    eshipper_canada_post_xpress_post_intl = "505"
+    eshipper_canada_post_xpresspost_usa = "504"
+    eshipper_canada_post_xpresspost_intl = "505"
     eshipper_canada_post_air_parcel_intl = "506"
     eshipper_canada_post_surface_parcel_intl = "507"
     eshipper_canada_post_expedited_parcel_usa = "508"
@@ -177,9 +178,32 @@ class Service(Enum):
     eshipper_global_mail_business_standard = "3506"
     eshipper_global_mail_parcel_direct_priority = "3507"
     eshipper_global_mail_parcel_direct_standard = "3508"
-    eshipper_ground = "4500"
-    eshipper_select_parcel = "4504"
-    eshipper_express_parcel = "4507"
+    eshipper_canpar_ground = "4500"
+    eshipper_canpar_select_parcel = "4504"
+    eshipper_canpar_express_parcel = "4507"
+
+    @staticmethod
+    def info(serviceId, carrierId, serviceName, carrierName):
+        carrier_name = CARRIER_IDS.get(str(carrierId)) or carrierName
+        service_key = next((s.name for s in Service if str(serviceId) == s.value), None)
+        formatted_name = re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', serviceName)
+        service_name = (service_key or formatted_name)
+
+        return carrier_name, (service_key or serviceId), service_name
+
+
+CARRIER_IDS = {
+    "1": "fedex",
+    "2": "purolator",
+    "3": "canada_worldwide",
+    "4": "dhl",
+    "5": "canadapost",
+    "6": "ups",
+    "11": "tst",
+    "18": "eshipper",
+    "35": "global_mail",
+    "45": "canpar",
+}
 
 
 class Option(Flag):

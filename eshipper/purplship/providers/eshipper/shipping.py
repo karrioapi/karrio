@@ -49,40 +49,37 @@ from purplship.providers.eshipper.error import parse_error_response
 def parse_shipping_reply(
         response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    shipping_node = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="ShippingReply")), None
+    shipping_node = XP.find("ShippingReply", response, first=True)
+    shipment = (
+        _extract_shipment(shipping_node, settings) if shipping_node is not None else None
     )
-    return (
-        _extract_shipment(shipping_node, settings)
-        if shipping_node is not None
-        else None,
-        parse_error_response(response, settings),
-    )
+
+    return shipment, parse_error_response(response, settings)
 
 
 def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     shipping = XP.build(ShippingReplyType, node)
     quote: QuoteType = shipping.Quote
-    package: ReplyPackageType = next(iter(shipping.Package), None)
-    tracking_number = package.trackingNumber if package is not None else None
-    service = next(
-        (s.name for s in Service if str(quote.serviceId) == s.value), quote.serviceId
+
+    tracking_number = getattr(next(iter(shipping.Package), None), 'trackingNumber', None)
+    rate_provider, service, service_name = Service.info(
+        quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     surcharges = [
         ChargeDetails(
-            name=charge.name, amount=NF.decimal(charge.amount), currency=quote.currency
+            name=charge.name,
+            currency=quote.currency,
+            amount=NF.decimal(charge.amount),
         )
         for charge in cast(List[SurchargeType], quote.Surcharge)
     ]
-
     fuel_surcharge = (
         ChargeDetails(
             name="Fuel surcharge",
-            amount=NF.decimal(quote.fuelSurcharge),
             currency=quote.currency,
+            amount=NF.decimal(quote.fuelSurcharge),
         )
-        if quote.fuelSurcharge is not None
-        else None
+        if quote.fuelSurcharge is not None else None
     )
 
     return ShipmentDetails(
@@ -100,16 +97,16 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
                 base_charge=NF.decimal(quote.baseCharge),
                 total_charge=NF.decimal(quote.totalCharge),
                 transit_days=quote.transitDays,
-                extra_charges=[fuel_surcharge] + surcharges,
+                extra_charges=([fuel_surcharge] + surcharges),
                 meta=dict(
-                    carrier_name=quote.carrierName.lower(),
-                    service_name=quote.serviceName
+                    rate_provider=rate_provider,
+                    service_name=service_name
                 )
             ) if quote is not None else None
         ),
         meta=dict(
-            carrier_name=shipping.Carrier.carrierName.lower(),
-            service_name=shipping.Carrier.serviceName,
+            rate_provider=rate_provider,
+            service_name=service_name,
             tracking_url=shipping.TrackingURL
         )
     )
@@ -119,18 +116,11 @@ def shipping_request(
         payload: ShipmentRequest, settings: Settings
 ) -> Serializable[EShipper]:
     packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
-    packaging_type = (
-        PackagingType[packages[0].packaging_type or "eshipper_boxes"].value
-        if len(packages) == 1 else "eshipper_boxes"
-    )
-    packaging = (
-        "Pallet" if packaging_type in [PackagingType.pallet.value] else "Package"
-    )
     options = Options(payload.options, Option)
-    service = next(
-        (Service[payload.service].value for s in Service if s.name == payload.service),
-        payload.service,
-    )
+
+    packaging_type = PackagingType[packages.package_type or "eshipper_boxes"].value
+    packaging = ("Pallet" if packaging_type in [PackagingType.pallet.value] else "Package")
+    service = (Service[payload.service].value if payload.service in Service else payload.service)
     freight_class = (
         FreightClass[payload.options["freight_class"]].value
         if payload.options.get("freight_class") in FreightClass
@@ -145,8 +135,7 @@ def shipping_request(
     payer: Address = {
         PaymentType.sender: payload.shipper,
         PaymentType.recipient: payload.recipient,
-        PaymentType.third_party: payload.recipient
-        if payload.payment is not None else None,
+        PaymentType.third_party: payload.recipient,
     }.get(PaymentType[payload.payment.paid_by]) if payload.payment else None
 
     request = EShipper(
@@ -154,28 +143,28 @@ def shipping_request(
         password=settings.password,
         version="3.0.0",
         ShippingRequest=ShippingRequestType(
-            saturdayPickupRequired=options['eshipper_saturday_pickup_required'],
-            homelandSecurity=options['eshipper_homeland_security'],
+            saturdayPickupRequired=options.eshipper_saturday_pickup_required,
+            homelandSecurity=options.eshipper_homeland_security,
             pierCharge=None,
-            exhibitionConventionSite=options['eshipper_exhibition_convention_site'],
-            militaryBaseDelivery=options['eshipper_military_base_delivery'],
-            customsIn_bondFreight=options['eshipper_customs_in_bond_freight'],
-            limitedAccess=options['eshipper_limited_access'],
-            excessLength=options['eshipper_excess_length'],
-            tailgatePickup=options['eshipper_tailgate_pickup'],
-            residentialPickup=options['eshipper_residential_pickup'],
+            exhibitionConventionSite=options.eshipper_exhibition_convention_site,
+            militaryBaseDelivery=options.eshipper_military_base_delivery,
+            customsIn_bondFreight=options.eshipper_customs_in_bond_freight,
+            limitedAccess=options.eshipper_limited_access,
+            excessLength=options.eshipper_excess_length,
+            tailgatePickup=options.eshipper_tailgate_pickup,
+            residentialPickup=options.eshipper_residential_pickup,
             crossBorderFee=None,
-            notifyRecipient=options['eshipper_notify_recipient'],
-            singleShipment=options['eshipper_single_shipment'],
-            tailgateDelivery=options['eshipper_tailgate_delivery'],
-            residentialDelivery=options['eshipper_residential_delivery'],
+            notifyRecipient=options.eshipper_notify_recipient,
+            singleShipment=options.eshipper_single_shipment,
+            tailgateDelivery=options.eshipper_tailgate_delivery,
+            residentialDelivery=options.eshipper_residential_delivery,
             insuranceType=options.insurance is not None,
             scheduledShipDate=None,
-            insideDelivery=options['eshipper_inside_delivery'],
-            isSaturdayService=options['eshipper_is_saturday_service'],
-            dangerousGoodsType=options['eshipper_dangerous_goods_type'],
+            insideDelivery=options.eshipper_inside_delivery,
+            isSaturdayService=options.eshipper_is_saturday_service,
+            dangerousGoodsType=options.eshipper_dangerous_goods_type,
             serviceId=service,
-            stackable=options['eshipper_stackable'],
+            stackable=options.eshipper_stackable,
             From=FromType(
                 id=payload.shipper.id,
                 company=payload.shipper.company_name,
