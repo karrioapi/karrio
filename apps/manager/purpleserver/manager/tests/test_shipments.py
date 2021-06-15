@@ -140,7 +140,7 @@ class TestShipmentPurchase(TestShipmentFixture):
                 "transit_days": 2,
                 "test_mode": True,
                 "meta": {
-                    "carrier_name": "canadapost",
+                    "rate_provider": "canadapost",
                     "service_name": "CANADAPOST PRIORITY",
                 },
             }
@@ -258,7 +258,7 @@ SHIPMENT_RATES = {
             "total_charge": 106.71,
             "transit_days": 2,
             "meta": {
-                "carrier_name": "canadapost",
+                "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
             },
             "test_mode": True,
@@ -388,7 +388,7 @@ SELECTED_RATE = {
     "total_charge": 106.71,
     "transit_days": 2,
     "meta": {
-        "carrier_name": "canadapost",
+        "rate_provider": "canadapost",
         "service_name": "CANADAPOST PRIORITY",
     },
     "test_mode": True,

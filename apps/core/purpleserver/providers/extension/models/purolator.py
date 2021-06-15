@@ -2,13 +2,13 @@ from django.db import models
 from purpleserver.providers.models.carrier import Carrier
 
 
-class PurolatorCourierSettings(Carrier):
-    CARRIER_NAME = 'purolator_courier'
+class PurolatorSettings(Carrier):
+    CARRIER_NAME = 'purolator'
 
     class Meta:
-        db_table = "purolator_courier-settings"
-        verbose_name = 'Purolator Courier Settings'
-        verbose_name_plural = 'Purolator Courier Settings'
+        db_table = "purolator-settings"
+        verbose_name = 'Purolator Settings'
+        verbose_name_plural = 'Purolator Settings'
 
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
@@ -20,4 +20,4 @@ class PurolatorCourierSettings(Carrier):
         return self.CARRIER_NAME
 
 
-SETTINGS = PurolatorCourierSettings
+SETTINGS = PurolatorSettings

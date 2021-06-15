@@ -91,7 +91,7 @@ RATING_RESPONSE = {
             "total_charge": 106.71,
             "transit_days": 2,
             "meta": {
-                "carrier_name": "canadapost",
+                "rate_provider": "canadapost",
                 "service_name": "CANADAPOST PRIORITY",
             },
         }

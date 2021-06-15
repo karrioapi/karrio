@@ -57,9 +57,9 @@ class ShippingDetails(APIView):
         response = Shipments.create(
             payload,
             resolve_tracking_url=(
-                lambda shipment: reverse(
+                lambda tracking_number, carrier_name: reverse(
                     "purpleserver.proxy:shipment-tracking",
-                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
+                    kwargs=dict(tracking_number=tracking_number, carrier_name=carrier_name)
                 )
             )
         )

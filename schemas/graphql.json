@@ -9045,7 +9045,7 @@
             },
             {
               "kind": "OBJECT",
-              "name": "PurolatorCourierSettings",
+              "name": "PurolatorSettings",
               "ofType": null
             },
             {
@@ -10813,7 +10813,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "PurolatorCourierSettings",
+          "name": "PurolatorSettings",
           "possibleTypes": null
         },
         {
@@ -17923,10 +17923,10 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "purolatorcouriersettings",
+              "name": "purolatorsettings",
               "type": {
                 "kind": "OBJECT",
-                "name": "PurolatorCourierSettings",
+                "name": "PurolatorSettings",
                 "ofType": null
               }
             },
@@ -18195,10 +18195,10 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "purolatorcouriersettings",
+              "name": "purolatorsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PurolatorCourierSettingsInput",
+                "name": "PurolatorSettingsInput",
                 "ofType": null
               }
             },
@@ -19246,7 +19246,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PurolatorCourierSettingsInput",
+          "name": "PurolatorSettingsInput",
           "possibleTypes": null
         },
         {
@@ -20395,10 +20395,10 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "purolatorcouriersettings",
+              "name": "purolatorsettings",
               "type": {
                 "kind": "OBJECT",
-                "name": "PurolatorCourierSettings",
+                "name": "PurolatorSettings",
                 "ofType": null
               }
             },
@@ -20667,10 +20667,10 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "purolatorcouriersettings",
+              "name": "purolatorsettings",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PartialPurolatorCourierSettingsInput",
+                "name": "PartialPurolatorSettingsInput",
                 "ofType": null
               }
             },
@@ -21566,7 +21566,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "PartialPurolatorCourierSettingsInput",
+          "name": "PartialPurolatorSettingsInput",
           "possibleTypes": null
         },
         {

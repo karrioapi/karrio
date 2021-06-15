@@ -338,7 +338,7 @@ class ShipmentPurchase(APIView):
 
         # Update shipment state
         SerializerDecorator[ShipmentSerializer](shipment, data=DP.to_dict(response), context=request).save()
-        create_shipment_tracker(shipment)
+        create_shipment_tracker(shipment, context=request)
 
         return Response(Shipment(shipment).data)
 

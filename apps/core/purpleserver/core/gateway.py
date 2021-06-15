@@ -98,16 +98,17 @@ class Shipments:
         shipment, messages = identity(lambda: purplship.Shipment.create(request).from_(gateway).parse())
 
         if shipment is None:
-            raise exceptions.PurplShipApiException(detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.PurplShipApiException(
+                detail=datatypes.ErrorResponse(messages=messages), status_code=status.HTTP_400_BAD_REQUEST)
 
-        def process_meta(parent):
+        def process_meta(parent) -> dict:
             return {
                 **(parent.meta or {}),
-                'carrier_name': (parent.meta or {}).get('carrier_name') or carrier.carrier_name,
-                'service_name': (parent.meta or {}).get('service_name') or upper(selected_rate.service)
+                'rate_provider': ((parent.meta or {}).get('rate_provider') or carrier.carrier_name).lower(),
+                'service_name': upper((parent.meta or {}).get('service_name') or selected_rate.service)
             }
 
-        def process_selected_rate():
+        def process_selected_rate() -> dict:
             rate = (
                 {**DP.to_dict(shipment.selected_rate), 'id': f'rat_{uuid.uuid4().hex}', 'test_mode': carrier.test}
                 if shipment.selected_rate is not None else
@@ -115,12 +116,14 @@ class Shipments:
             )
             return {**rate, 'meta': process_meta(shipment.selected_rate or selected_rate)}
 
-        def process_tracking_url():
-            if (shipment.meta or {}).get('tracking_url') is not None:
+        def process_tracking_url(rate: datatypes.Rate) -> str:
+            rate_provider = (rate.get('meta') or {}).get('rate_provider')
+            if (rate_provider not in models.MODELS) and ((shipment.meta or {}).get('tracking_url') is not None):
                 return shipment.meta['tracking_url']
 
             if resolve_tracking_url is not None:
-                return f"{resolve_tracking_url(shipment)}{'?test' if carrier.test else ''}"
+                url = resolve_tracking_url(shipment.tracking_number, rate_provider or rate.carrier_name)
+                return f"{url}{'?test' if carrier.test else ''}"
 
             return ''
 
@@ -134,7 +137,7 @@ class Shipments:
             "selected_rate": shipment_rate,
             "service": shipment_rate["service"],
             "selected_rate_id": shipment_rate["id"],
-            "tracking_url": process_tracking_url(),
+            "tracking_url": process_tracking_url(shipment_rate),
             "status": serializers.ShipmentStatus.purchased.value,
             "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
             "messages": messages,
@@ -317,8 +320,8 @@ class Rates:
             carrier = next((c for c in carrier_settings_list if c.carrier_id == rate.carrier_id))
             meta = {
                 **(rate.meta or {}),
-                'carrier_name': (rate.meta or {}).get('carrier_name') or rate.carrier_name,
-                'service_name': (rate.meta or {}).get('service_name') or upper(rate.service)
+                'rate_provider': ((rate.meta or {}).get('rate_provider') or rate.carrier_name).lower(),
+                'service_name': upper((rate.meta or {}).get('service_name') or rate.service)
             }
 
             return datatypes.Rate(**{

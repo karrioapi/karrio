@@ -6,10 +6,14 @@ from rest_framework.serializers import Serializer, CharField, ChoiceField, Boole
 
 from purplship.core.utils import DP, DF
 from purpleserver.core.gateway import Shipments, Carriers
-from purpleserver.serializers import SerializerDecorator, owned_model_serializer, save_one_to_one_data, \
+from purpleserver.serializers import (
+    SerializerDecorator,
+    owned_model_serializer,
+    save_one_to_one_data,
     save_many_to_many_data
+)
 import purpleserver.core.datatypes as datatypes
-from purpleserver.providers.models import Carrier
+from purpleserver.providers.models import Carrier, MODELS
 from purpleserver.core.serializers import (
     SHIPMENT_STATUS,
     ShipmentStatus,
@@ -22,6 +26,7 @@ from purpleserver.core.serializers import (
     LABEL_TYPES,
     LabelType,
     Message,
+    PlainDictField,
 )
 from purpleserver.manager.serializers.address import AddressSerializer
 from purpleserver.manager.serializers.customs import CustomsSerializer
@@ -43,6 +48,7 @@ class ShipmentSerializer(ShipmentData):
     selected_rate = Rate(required=False, allow_null=True)
     tracking_url = CharField(required=False, allow_blank=True, allow_null=True)
     test_mode = BooleanField(required=False)
+    meta = PlainDictField(required=False, allow_null=True)
     messages = Message(many=True, required=False)
 
     @transaction.atomic
@@ -114,7 +120,10 @@ class ShipmentSerializer(ShipmentData):
 
         if 'carrier_ids' in validated_data:
             carrier_ids = validated_data.get('carrier_ids', [])
-            carriers = Carriers.list(carrier_ids=carrier_ids, created_by=instance.created_by) if any(carrier_ids) else instance.carriers
+            carriers = (
+                Carriers.list(carrier_ids=carrier_ids, created_by=instance.created_by)
+                if any(carrier_ids) else instance.carriers
+            )
             instance.carriers.set(carriers)
 
         return instance
@@ -136,9 +145,9 @@ class ShipmentValidationData(Shipment):
         return Shipments.create(
             ShippingRequest(validated_data).data,
             resolve_tracking_url=(
-                lambda shipment: reverse(
+                lambda tracking_number, carrier_name: reverse(
                     "purpleserver.manager:shipment-tracker",
-                    kwargs=dict(tracking_number=shipment.tracking_number, carrier_name=shipment.carrier_name)
+                    kwargs=dict(tracking_number=tracking_number, carrier_name=carrier_name)
                 )
             )
         )
@@ -175,23 +184,31 @@ def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
         shipment.save()
 
 
-def create_shipment_tracker(shipment: Optional[models.Shipment]):
-    try:
-        models.Tracking.objects.create(
-            tracking_number=shipment.tracking_number,
-            events=[DP.to_dict(datatypes.TrackingEvent(
-                date=DF.fdate(shipment.updated_at),
-                description="Label created and ready for shipment",
-                location="",
-                code="CREATED",
-                time=DF.ftime(shipment.updated_at)
-            ))],
-            delivered=False,
-            test_mode=shipment.test_mode,
-            tracking_carrier=shipment.selected_rate_carrier,
-            created_by=shipment.created_by,
-            shipment=shipment,
-        )
-        logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
-    except Exception as e:
-        logger.exception("Failed to create new label tracker", e)
+def create_shipment_tracker(shipment: Optional[models.Shipment], context):
+    rate_provider = ((shipment.meta or {}).get('rate_provider') or shipment.carrier_name)
+
+    if rate_provider == shipment.carrier_name:
+        carrier = shipment.selected_rate_carrier
+    elif rate_provider in MODELS:
+        carrier = MODELS[rate_provider].access_by(context).filter(test=shipment.test_mode).first()
+
+    if carrier is not None:
+        try:
+            models.Tracking.objects.create(
+                tracking_number=shipment.tracking_number,
+                events=[DP.to_dict(datatypes.TrackingEvent(
+                    date=DF.fdate(shipment.updated_at),
+                    description="Label created and ready for shipment",
+                    location="",
+                    code="CREATED",
+                    time=DF.ftime(shipment.updated_at)
+                ))],
+                delivered=False,
+                test_mode=shipment.test_mode,
+                tracking_carrier=carrier,
+                created_by=shipment.created_by,
+                shipment=shipment,
+            )
+            logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
+        except Exception as e:
+            logger.exception("Failed to create new label tracker", e)
