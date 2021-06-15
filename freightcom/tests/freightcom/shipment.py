@@ -107,7 +107,10 @@ ParsedShipmentResponse = [
         "carrier_id": "freightcom",
         "carrier_name": "freightcom",
         "label": "[base-64 encoded String]",
-        "meta": {"carrier_name": "freightcom", "service_name": "Central Transport"},
+        "meta": {
+            "rate_provider": "Freightcom",
+            "service_name": "freightcom_central_transport",
+        },
         "selected_rate": {
             "base_charge": 30.74,
             "carrier_id": "freightcom",
@@ -117,7 +120,10 @@ ParsedShipmentResponse = [
                 {"amount": 0.0, "currency": "CAD", "name": "Fuel surcharge"},
                 {"amount": 1.08, "currency": "CAD", "name": "Other"},
             ],
-            "meta": {"carrier_name": "freightcom", "service_name": "Central Transport"},
+            "meta": {
+                "rate_provider": "Freightcom",
+                "service_name": "freightcom_central_transport",
+            },
             "service": "freightcom_central_transport",
             "total_charge": 31.82,
             "transit_days": 0,
@@ -147,7 +153,7 @@ ShipmentRequestXML = """<Freightcom xmlns="http://www.freightcom.net/XMLSchema" 
             <CODReturnAddress codCompany="CGI" codName="Jain" codAddress1="23 jardin private" codCity="Ottawa" codStateCode="ON" codZip="K1K4T3" codCountry="CA"/>
         </COD>
         <Packages type="Package">
-            <Package length="3" width="5" height="4" weight="45" type="Boxes"/>
+            <Package length="3" width="5" height="4" weight="45" type="Package"/>
         </Packages>
     </ShippingRequest>
 </Freightcom>

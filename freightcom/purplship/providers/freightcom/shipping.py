@@ -49,37 +49,36 @@ from purplship.providers.freightcom.error import parse_error_response
 def parse_shipping_reply(
         response: Element, settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    shipping_node = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="ShippingReply")), None
-    )
-    return (
+    shipping_node = XP.find("ShippingReply", response, first=True)
+    shipment = (
         _extract_shipment(shipping_node, settings)
-        if shipping_node is not None
-        else None,
-        parse_error_response(response, settings),
+        if shipping_node is not None else None
     )
+
+    return shipment, parse_error_response(response, settings)
 
 
 def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
     shipping = XP.build(ShippingReplyType, node)
     quote: QuoteType = shipping.Quote
-    package: ReplyPackageType = next(iter(shipping.Package), None)
-    tracking_number = package.trackingNumber if package is not None else None
-    service = next(
-        (s.name for s in Service if str(quote.serviceId) == s.value), quote.serviceId
+
+    tracking_number = getattr(next(iter(shipping.Package), None), 'trackingNumber', None)
+    rate_provider, service, service_name = Service.info(
+        quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     surcharges = [
         ChargeDetails(
-            name=charge.name, amount=NF.decimal(charge.amount), currency=quote.currency
+            name=charge.name,
+            currency=quote.currency,
+            amount=NF.decimal(charge.amount),
         )
         for charge in cast(List[SurchargeType], quote.Surcharge)
     ]
-
     fuel_surcharge = (
         ChargeDetails(
             name="Fuel surcharge",
-            amount=NF.decimal(quote.fuelSurcharge),
             currency=quote.currency,
+            amount=NF.decimal(quote.fuelSurcharge),
         ) if quote.fuelSurcharge is not None else None
     )
 
@@ -98,16 +97,16 @@ def _extract_shipment(node: Element, settings: Settings) -> ShipmentDetails:
                 base_charge=NF.decimal(quote.baseCharge),
                 total_charge=NF.decimal(quote.totalCharge),
                 transit_days=quote.transitDays,
-                extra_charges=[fuel_surcharge] + surcharges,
+                extra_charges=([fuel_surcharge] + surcharges),
                 meta=dict(
-                    carrier_name=quote.carrierName.lower(),
-                    service_name=quote.serviceName
+                    rate_provider=rate_provider,
+                    service_name=service_name
                 )
             ) if quote is not None else None
         ),
         meta=dict(
-            carrier_name=shipping.Carrier.carrierName.lower(),
-            service_name=shipping.Carrier.serviceName,
+            rate_provider=rate_provider,
+            service_name=service_name,
             tracking_url=shipping.TrackingURL
         )
     )
@@ -117,32 +116,23 @@ def shipping_request(
         payload: ShipmentRequest, settings: Settings
 ) -> Serializable[Freightcom]:
     packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
-    packaging_type = (
-        FreightPackagingType[packages[0].packaging_type or "small_box"].value
-        if len(packages) == 1 else "small_box"
-    )
-
     options = Options(payload.options, Option)
-    service = next(
-        (Service[payload.service].value for s in Service if s.name == payload.service),
-        payload.service,
-    )
+
+    packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
+    packaging = ("Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package")
+    service = (Service[payload.service].value if payload.service in Service else payload.service)
     freight_class = next(
-        (
-            FreightClass[c].value
-            for c in payload.options.keys()
-            if c in FreightClass.__members__
-        ),
+        (FreightClass[c].value for c in payload.options.keys() if c in FreightClass.__members__),
         None,
     )
-
-    payment_type = PaymentType[payload.payment.paid_by] if payload.payment else None
+    payment_type = (PaymentType[payload.payment.paid_by] if payload.payment else None)
     item = next(
         iter(payload.customs.commodities if payload.customs is not None else []), None
     )
     payer: Address = {
         PaymentType.sender: payload.shipper,
         PaymentType.recipient: payload.recipient,
+        PaymentType.third_party: payload.recipient,
     }.get(PaymentType[payload.payment.paid_by]) if payload.payment else None
 
     request = Freightcom(
@@ -150,28 +140,28 @@ def shipping_request(
         password=settings.password,
         version="3.1.0",
         ShippingRequest=ShippingRequestType(
-            saturdayPickupRequired=options['freightcom_saturday_pickup_required'],
-            homelandSecurity=options['freightcom_homeland_security'],
+            saturdayPickupRequired=options.freightcom_saturday_pickup_required,
+            homelandSecurity=options.freightcom_homeland_security,
             pierCharge=None,
-            exhibitionConventionSite=options['freightcom_exhibition_convention_site'],
-            militaryBaseDelivery=options['freightcom_military_base_delivery'],
-            customsIn_bondFreight=options['freightcom_customs_in_bond_freight'],
-            limitedAccess=options['freightcom_limited_access'],
-            excessLength=options['freightcom_excess_length'],
-            tailgatePickup=options['freightcom_tailgate_pickup'],
-            residentialPickup=options['freightcom_residential_pickup'],
+            exhibitionConventionSite=options.freightcom_exhibition_convention_site,
+            militaryBaseDelivery=options.freightcom_military_base_delivery,
+            customsIn_bondFreight=options.freightcom_customs_in_bond_freight,
+            limitedAccess=options.freightcom_limited_access,
+            excessLength=options.freightcom_excess_length,
+            tailgatePickup=options.freightcom_tailgate_pickup,
+            residentialPickup=options.freightcom_residential_pickup,
             crossBorderFee=None,
-            notifyRecipient=options['freightcom_notify_recipient'],
-            singleShipment=options['freightcom_single_shipment'],
-            tailgateDelivery=options['freightcom_tailgate_delivery'],
-            residentialDelivery=options['freightcom_residential_delivery'],
-            insuranceType=options.insurance is not None,
+            notifyRecipient=options.freightcom_notify_recipient,
+            singleShipment=options.freightcom_single_shipment,
+            tailgateDelivery=options.freightcom_tailgate_delivery,
+            residentialDelivery=options.freightcom_residential_delivery,
+            insuranceType=(options.insurance is not None),
             scheduledShipDate=None,
-            insideDelivery=options['freightcom_inside_delivery'],
-            isSaturdayService=options['freightcom_is_saturday_service'],
-            dangerousGoodsType=options['freightcom_dangerous_goods_type'],
+            insideDelivery=options.freightcom_inside_delivery,
+            isSaturdayService=options.freightcom_is_saturday_service,
+            dangerousGoodsType=options.freightcom_dangerous_goods_type,
             serviceId=service,
-            stackable=options['freightcom_stackable'],
+            stackable=options.freightcom_stackable,
             From=FromType(
                 id=payload.shipper.id,
                 company=payload.shipper.company_name,
@@ -236,7 +226,7 @@ def shipping_request(
                     )
                     for package in packages
                 ],
-                type_="Package",
+                type_=packaging,
             ),
             Payment=(
                 RequestPaymentType(type_=payment_type)

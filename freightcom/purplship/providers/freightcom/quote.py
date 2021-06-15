@@ -37,8 +37,8 @@ def parse_quote_reply(
 
 def _extract_rate(node: Element, settings: Settings) -> RateDetails:
     quote = XP.build(QuoteType, node)
-    service = next(
-        (s.name for s in Service if str(quote.serviceId) == s.value), quote.serviceId
+    rate_provider, service, service_name = Service.info(
+        quote.serviceId, quote.carrierId, quote.serviceName, quote.carrierName
     )
     surcharges = [
         ChargeDetails(
@@ -46,15 +46,13 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         )
         for charge in cast(List[SurchargeType], quote.Surcharge)
     ]
-
     fuel_surcharge = (
         ChargeDetails(
             name="Fuel surcharge",
             amount=NF.decimal(quote.fuelSurcharge),
             currency=quote.currency,
         )
-        if quote.fuelSurcharge is not None
-        else None
+        if quote.fuelSurcharge is not None else None
     )
 
     return RateDetails(
@@ -65,29 +63,23 @@ def _extract_rate(node: Element, settings: Settings) -> RateDetails:
         base_charge=NF.decimal(quote.baseCharge),
         total_charge=NF.decimal(quote.totalCharge),
         transit_days=quote.transitDays,
-        extra_charges=[fuel_surcharge] + surcharges,
+        extra_charges=([fuel_surcharge] + surcharges),
         meta=dict(
-            carrier_name=quote.carrierName.lower(),
-            service_name=quote.serviceName
+            rate_provider=rate_provider,
+            service_name=service_name
         )
     )
 
 
 def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Freightcom]:
-    packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
-    packaging_type = (
-        FreightPackagingType[packages[0].packaging_type or "small_box"].value
-        if len(packages) == 1 else "small_box"
-    )
-
     options = Options(payload.options, Option)
-    service = Services(payload.services, Service).first or Service.freightcom_all
+    packages = Packages(payload.parcels, required=["weight", "height", "width", "length"])
+    packaging_type = FreightPackagingType[packages.package_type or "small_box"].value
+    packaging = ("Pallet" if packaging_type in [FreightPackagingType.pallet.value] else "Package")
+    service = (Services(payload.services, Service).first or Service.freightcom_all)
+
     freight_class = next(
-        (
-            FreightClass[c].value
-            for c in payload.options.keys()
-            if c in FreightClass.__members__
-        ),
+        (FreightClass[c].value for c in payload.options.keys() if c in FreightClass),
         None,
     )
 
@@ -96,28 +88,28 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
         password=settings.password,
         version="3.1.0",
         QuoteRequest=QuoteRequestType(
-            saturdayPickupRequired=options['freightcom_saturday_pickup_required'],
-            homelandSecurity=options['freightcom_homeland_security'],
+            saturdayPickupRequired=options.freightcom_saturday_pickup_required,
+            homelandSecurity=options.freightcom_homeland_security,
             pierCharge=None,
-            exhibitionConventionSite=options['freightcom_exhibition_convention_site'],
-            militaryBaseDelivery=options['freightcom_military_base_delivery'],
-            customsIn_bondFreight=options['freightcom_customs_in_bond_freight'],
-            limitedAccess=options['freightcom_limited_access'],
-            excessLength=options['freightcom_excess_length'],
-            tailgatePickup=options['freightcom_tailgate_pickup'],
-            residentialPickup=options['freightcom_residential_pickup'],
+            exhibitionConventionSite=options.freightcom_exhibition_convention_site,
+            militaryBaseDelivery=options.freightcom_military_base_delivery,
+            customsIn_bondFreight=options.freightcom_customs_in_bond_freight,
+            limitedAccess=options.freightcom_limited_access,
+            excessLength=options.freightcom_excess_length,
+            tailgatePickup=options.freightcom_tailgate_pickup,
+            residentialPickup=options.freightcom_residential_pickup,
             crossBorderFee=None,
-            notifyRecipient=options['freightcom_notify_recipient'],
-            singleShipment=options['freightcom_single_shipment'],
-            tailgateDelivery=options['freightcom_tailgate_delivery'],
-            residentialDelivery=options['freightcom_residential_delivery'],
+            notifyRecipient=options.freightcom_notify_recipient,
+            singleShipment=options.freightcom_single_shipment,
+            tailgateDelivery=options.freightcom_tailgate_delivery,
+            residentialDelivery=options.freightcom_residential_delivery,
             insuranceType=options.insurance is not None,
             scheduledShipDate=None,
-            insideDelivery=options['freightcom_inside_delivery'],
-            isSaturdayService=options['freightcom_is_saturday_service'],
-            dangerousGoodsType=options['freightcom_dangerous_goods_type'],
+            insideDelivery=options.freightcom_inside_delivery,
+            isSaturdayService=options.freightcom_is_saturday_service,
+            dangerousGoodsType=options.freightcom_dangerous_goods_type,
             serviceId=service.value,
-            stackable=options['freightcom_stackable'],
+            stackable=options.freightcom_stackable,
             From=FromType(
                 id=payload.shipper.id,
                 company=payload.shipper.company_name or " ",
@@ -168,7 +160,7 @@ def quote_request(payload: RateRequest, settings: Settings) -> Serializable[Frei
                     )
                     for package in packages
                 ],
-                type_="Package",
+                type_=packaging,
             ),
         ),
     )
