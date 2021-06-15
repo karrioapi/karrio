@@ -6,7 +6,7 @@ from purplship.providers.eshipper.utils import Settings
 
 
 def parse_error_response(response: Element, settings: Settings) -> List[Message]:
-    errors = response.xpath(".//*[local-name() = $name]", name="Error")
+    errors = XP.find("Error", response)
     return [_extract_error(node, settings) for node in errors]
 
 
@@ -15,5 +15,5 @@ def _extract_error(error_node: Element, settings: Settings) -> Message:
     return Message(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        message=error.Message,
+        message=(error.Message or "Not Detailed"),
     )
