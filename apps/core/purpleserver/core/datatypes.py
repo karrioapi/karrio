@@ -195,10 +195,12 @@ class Shipment:
     reference: str = ""
     label_type: str = None
     tracking_url: str = None
+    tracker_id: str = None
     status: str = ""
     meta: dict = None
     id: str = None
     created_at: str = None
+    archived: bool = None
     test_mode: bool = None
     messages: List[Message] = JList[Message]
 

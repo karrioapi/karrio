@@ -160,6 +160,7 @@ RETURNED_FAILED_CANCEL_VALUE = (
 
 SHIPPING_RESPONSE = {
     "id": ANY,
+    "archived": None,
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
@@ -228,6 +229,7 @@ SHIPPING_RESPONSE = {
         },
     ],
     "tracking_url": "/v1/proxy/tracking/canadapost/123456789012?test",
+    "tracker_id": None,
     "service": "canadapost_priority",
     "shipper": {
         "id": None,

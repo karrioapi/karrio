@@ -1,5 +1,5 @@
 from functools import partial
-from typing import List, cast
+from typing import List, cast, Optional
 from django.db import models
 
 from purpleserver.core.utils import identity
@@ -230,6 +230,7 @@ class Shipment(OwnedEntity):
     label = models.TextField(max_length=None, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
+    archived = models.BooleanField(null=False, default=False)
 
     customs = models.ForeignKey('Customs', on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -263,6 +264,10 @@ class Shipment(OwnedEntity):
     @property
     def carrier_name(self) -> str:
         return cast(Carrier, self.selected_rate_carrier).carrier_name
+
+    @property
+    def tracker_id(self) -> Optional[str]:
+        return getattr(self.tracker.first(), 'id', None)
 
     @property
     def carrier_ids(self) -> List[str]:

@@ -165,14 +165,15 @@ class ShipmentCancelSerializer(Shipment):
             response = datatypes.ConfirmationResponse(
                 messages=[],
                 confirmation=datatypes.Confirmation(
+                    operation="Cancel Shipment",
                     carrier_name="None Selected",
                     carrier_id="None Selected",
                     success=True,
-                    operation="Cancel Shipment",
                 )
             )
 
-        instance.delete()
+        instance.archived = True
+        instance.save(update_fields=['archived'])
         return response
 
 

@@ -49,7 +49,7 @@ class CustomsList(GenericAPIView):
         """
         Retrieve all stored customs declarations.
         """
-        customs_info = models.Customs.access_by(request).all()
+        customs_info = models.Customs.access_by(request).filter(shipment=None)
         serializer = Customs(customs_info, many=True)
         response = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(response)

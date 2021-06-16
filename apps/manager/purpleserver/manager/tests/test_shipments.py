@@ -200,7 +200,7 @@ class TestShipmentPurchase(TestShipmentFixture):
 
         self.assertFalse(
             models.Tracking.objects.filter(
-                tracking_number=self.shipment.tracking_number
+                tracking_number=self.shipment.tracking_number,
             ).exists()
         )
 
@@ -268,6 +268,7 @@ SHIPMENT_RATES = {
 
 SHIPMENT_RESPONSE = {
     "id": ANY,
+    "archived": False,
     "status": "created",
     "carrier_name": None,
     "carrier_id": None,
@@ -280,6 +281,7 @@ SHIPMENT_RESPONSE = {
     "selected_rate_id": None,
     **SHIPMENT_RATES,
     "tracking_url": None,
+    "tracker_id": None,
     "shipper": {
         "id": ANY,
         "postal_code": "V6M2V9",
@@ -417,6 +419,7 @@ RETURNED_CANCEL_VALUE = (
 
 PURCHASED_SHIPMENT = {
     "id": ANY,
+    "archived": False,
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
@@ -430,6 +433,7 @@ PURCHASED_SHIPMENT = {
     "service": "canadapost_priority",
     "rates": [SELECTED_RATE],
     "tracking_url": "/v1/trackers/canadapost/123456789012?test",
+    "tracker_id": ANY,
     "shipper": {
         "id": ANY,
         "postal_code": "E1C4Z8",
