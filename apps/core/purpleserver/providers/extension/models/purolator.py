@@ -13,7 +13,7 @@ class PurolatorSettings(Carrier):
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
-    user_token = models.CharField(max_length=200)
+    user_token = models.CharField(max_length=200, null=True)
 
     @property
     def carrier_name(self) -> str:
