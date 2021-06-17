@@ -58,6 +58,7 @@ TRACKING_RESPONSE = {
                 "time": "10:39",
             }
         ],
+        "pending": False,
         "test_mode": True,
         "tracking_number": "1Z12345E6205277936",
     },

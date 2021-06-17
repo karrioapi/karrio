@@ -16,6 +16,7 @@ class TrackingSerializer(TrackingDetails):
     carrier_id = CharField(required=False)
     carrier_name = CharField(required=False)
     test_mode = BooleanField(required=False)
+    pending = BooleanField(required=False)
 
     def create(self, validated_data: dict, **kwargs) -> models.Tracking:
         carrier_filter = validated_data['carrier_filter']
@@ -71,7 +72,12 @@ class TrackingSerializer(TrackingDetails):
 
 def update_shipment_tracker(tracker: models.Tracking):
     try:
-        status = (ShipmentStatus.delivered.value if tracker.delivered else ShipmentStatus.transit.value)
+        if tracker.delivered:
+            status = ShipmentStatus.delivered.value
+        elif tracker.pending:
+            status = ShipmentStatus.created.value
+        else:
+            status = ShipmentStatus.transit.value
 
         if tracker.shipment is not None and tracker.shipment.status != status:
             tracker.shipment.status = status

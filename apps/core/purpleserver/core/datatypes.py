@@ -235,6 +235,7 @@ class Tracking:
     delivered: bool = None
     id: str = None
     test_mode: bool = None
+    pending: bool = None
 
 
 @attr.s(auto_attribs=True)

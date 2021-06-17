@@ -1849,6 +1849,13 @@
                         }
                     },
                     {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "created_start",
                         "in": "query",
                         "schema": {
@@ -5609,6 +5616,18 @@
                         "items": {
                             "$ref": "#/components/schemas/Message"
                         }
+                    },
+                    "archived": {
+                        "title": "Archived",
+                        "type": "boolean",
+                        "description": "The shipment is archived state",
+                        "default": false
+                    },
+                    "tracker_id": {
+                        "title": "Tracker id",
+                        "type": "string",
+                        "description": "The selected service",
+                        "nullable": true
                     }
                 }
             },
@@ -5727,6 +5746,11 @@
                         "title": "Test mode",
                         "type": "boolean",
                         "description": "Specified whether the object was created with a carrier in test mode"
+                    },
+                    "pending": {
+                        "title": "Pending",
+                        "type": "boolean",
+                        "description": "Specified whether the shipment hasn't been picked up or is in an unknown state"
                     }
                 },
                 "description": "The tracking details retrieved"

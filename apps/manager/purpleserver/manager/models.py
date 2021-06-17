@@ -203,6 +203,13 @@ class Tracking(OwnedEntity):
     def carrier_name(self) -> str:
         return cast(Carrier, self.tracking_carrier).data.carrier_name
 
+    @property
+    def pending(self) -> bool:
+        return (
+            len(self.events) == 0 or
+            (len(self.events) == 1 and self.events[0].get('code') == 'CREATED')
+        )
+
 
 class Shipment(OwnedEntity):
     DIRECT_PROPS = [

@@ -11,7 +11,6 @@ from purpleserver.events.tasks import tracking
 
 
 class TestTrackersBackgroundUpdate(APITestCase):
-
     def setUp(self) -> None:
         super().setUp()
         trackers = [
@@ -29,7 +28,7 @@ class TestTrackersBackgroundUpdate(APITestCase):
                     }
                 ],
                 "created_by": self.user,
-                "tracking_carrier": self.ups_carrier
+                "tracking_carrier": self.ups_carrier,
             },
             {
                 "tracking_number": "00340434292135100124",
@@ -41,17 +40,17 @@ class TestTrackersBackgroundUpdate(APITestCase):
                         "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
                         "location": "BONN",
                         "code": "pre-transit",
-                        "time": "20:34"
+                        "time": "20:34",
                     }
                 ],
                 "created_by": self.user,
-                "tracking_carrier": self.dhl_carrier
-            }
+                "tracking_carrier": self.dhl_carrier,
+            },
         ]
         [models.Tracking.objects.create(**t) for t in trackers]
 
     def test_get_trackers(self):
-        url = reverse('purpleserver.manager:trackers-list')
+        url = reverse("purpleserver.manager:trackers-list")
 
         response = self.client.get(url)
         response_data = json.loads(response.content)
@@ -60,7 +59,7 @@ class TestTrackersBackgroundUpdate(APITestCase):
         self.assertDictEqual(response_data, TRACKERS_LIST)
 
     def test_get_updated_trackers(self):
-        url = reverse('purpleserver.manager:trackers-list')
+        url = reverse("purpleserver.manager:trackers-list")
 
         with patch("purpleserver.events.tasks.tracking.identity") as mocks:
             mocks.return_value = RETURNED_UPDATED_VALUE
@@ -87,9 +86,9 @@ RETURNED_VALUE = (
                     date="2010-08-30",
                     description="UPS INTERNAL ACTIVITY CODE",
                     location="BONN",
-                    time="10:39"
+                    time="10:39",
                 )
-            ]
+            ],
         )
     ],
     [],
@@ -101,58 +100,60 @@ TRACKING_RESPONSE = {
     "carrier_name": "ups",
     "tracking_number": "1Z12345E6205277936",
     "test_mode": True,
-    'delivered': False,
+    "delivered": False,
     "events": [
         {
             "code": "KB",
             "date": "2010-08-30",
             "description": "UPS INTERNAL ACTIVITY CODE",
             "location": "BONN",
-            "time": "10:39"
+            "time": "10:39",
         }
-    ]
+    ],
 }
 
 TRACKERS_LIST = {
-   "count": 2,
-   "next": ANY,
-   "previous": ANY,
-   "results": [
-      {
-         "id": ANY,
-         "carrier_name": "dhl_universal",
-         "carrier_id": "dhl_universal",
-         "tracking_number": "00340434292135100124",
-         "events": [
-            {
-               "date": "2021-01-11",
-               "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
-               "location": "BONN",
-               "code": "pre-transit",
-               "time": "20:34"
-            }
-         ],
-         "delivered": False,
-         "test_mode": True
-      },
-      {
-         "id": ANY,
-         "carrier_name": "ups",
-         "carrier_id": "ups_package",
-         "tracking_number": "1Z12345E6205277936",
-         "events": [
-            {
-               "date": "2012-10-04",
-               "description": "Order Processed: Ready for UPS",
-               "location": "FR",
-               "code": "MP",
-               "time": "13:58"
-            }
-         ],
-         "delivered": False,
-         "test_mode": True
-      }
-   ]
+    "count": 2,
+    "next": ANY,
+    "previous": ANY,
+    "results": [
+        {
+            "id": ANY,
+            "carrier_name": "dhl_universal",
+            "carrier_id": "dhl_universal",
+            "tracking_number": "00340434292135100124",
+            "events": [
+                {
+                    "date": "2021-01-11",
+                    "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
+                    "location": "BONN",
+                    "code": "pre-transit",
+                    "time": "20:34",
+                }
+            ],
+            "delivered": False,
+            "pending": False,
+            "test_mode": True,
+        },
+        {
+            "id": ANY,
+            "carrier_name": "ups",
+            "carrier_id": "ups_package",
+            "tracking_number": "1Z12345E6205277936",
+            "events": [
+                {
+                    "date": "2012-10-04",
+                    "description": "Order Processed: Ready for UPS",
+                    "location": "FR",
+                    "code": "MP",
+                    "time": "13:58",
+                }
+            ],
+            "delivered": False,
+            "pending": False,
+            "test_mode": True,
+        },
+    ],
 }
 
 RETURNED_UPDATED_VALUE = (
@@ -168,66 +169,68 @@ RETURNED_UPDATED_VALUE = (
                     date="2021-03-02",
                     description="JESSICA",
                     location="Oderweg 2, AMSTERDAM",
-                    time="07:53"
+                    time="07:53",
                 ),
                 TrackingEvent(
                     code="pre-transit",
                     date="2021-01-11",
                     description="The instruction data for this shipment have been provided by the sender to DHL electronically",
                     location="BONN",
-                    time="20:34"
-                )
-            ]
+                    time="20:34",
+                ),
+            ],
         )
     ],
     [],
 )
 
 UPDATED_TRACKERS_LIST = {
-   "count": 2,
-   "next": ANY,
-   "previous": ANY,
-   "results": [
-      {
-         "id": ANY,
-         "carrier_name": "dhl_universal",
-         "carrier_id": "dhl_universal",
-         "tracking_number": "00340434292135100124",
-         "events": [
-            {
-               "date": "2021-03-02",
-               "description": "JESSICA",
-               "location": "Oderweg 2, AMSTERDAM",
-               "code": "pre-transit",
-               "time": "07:53"
-            },
-            {
-               "date": "2021-01-11",
-               "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
-               "location": "BONN",
-               "code": "pre-transit",
-               "time": "20:34"
-            }
-         ],
-         "delivered": False,
-         "test_mode": True
-      },
-      {
-         "id": ANY,
-         "carrier_name": "ups",
-         "carrier_id": "ups_package",
-         "tracking_number": "1Z12345E6205277936",
-         "events": [
-            {
-               "date": "2012-10-04",
-               "description": "Order Processed: Ready for UPS",
-               "location": "FR",
-               "code": "MP",
-               "time": "13:58"
-            }
-         ],
-         "delivered": False,
-         "test_mode": True
-      }
-   ]
+    "count": 2,
+    "next": ANY,
+    "previous": ANY,
+    "results": [
+        {
+            "id": ANY,
+            "carrier_name": "dhl_universal",
+            "carrier_id": "dhl_universal",
+            "tracking_number": "00340434292135100124",
+            "events": [
+                {
+                    "date": "2021-03-02",
+                    "description": "JESSICA",
+                    "location": "Oderweg 2, AMSTERDAM",
+                    "code": "pre-transit",
+                    "time": "07:53",
+                },
+                {
+                    "date": "2021-01-11",
+                    "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
+                    "location": "BONN",
+                    "code": "pre-transit",
+                    "time": "20:34",
+                },
+            ],
+            "delivered": False,
+            "test_mode": True,
+            "pending": False,
+        },
+        {
+            "id": ANY,
+            "carrier_name": "ups",
+            "carrier_id": "ups_package",
+            "tracking_number": "1Z12345E6205277936",
+            "events": [
+                {
+                    "date": "2012-10-04",
+                    "description": "Order Processed: Ready for UPS",
+                    "location": "FR",
+                    "code": "MP",
+                    "time": "13:58",
+                }
+            ],
+            "delivered": False,
+            "test_mode": True,
+            "pending": False,
+        },
+    ],
 }

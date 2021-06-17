@@ -462,6 +462,7 @@ class TrackingDetails(Serializer):
     events = TrackingEvent(many=True, required=False, allow_null=True, help_text="The tracking details events")
     delivered = BooleanField(required=False, help_text="Specified whether the related shipment was delivered")
     test_mode = BooleanField(required=True, help_text="Specified whether the object was created with a carrier in test mode")
+    pending = BooleanField(required=False, help_text="Specified whether the shipment hasn't been picked up or is in an unknown state")
 
 
 class TrackingStatus(EntitySerializer, TrackingDetails):

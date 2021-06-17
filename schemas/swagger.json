@@ -1472,6 +1472,13 @@
                         "type": "string"
                     },
                     {
+                        "name": "archived",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
                         "name": "created_start",
                         "in": "query",
                         "type": "string",
@@ -5003,6 +5010,18 @@
                         "$ref": "#/definitions/Message"
                     },
                     "default": []
+                },
+                "archived": {
+                    "title": "Archived",
+                    "description": "The shipment is archived state",
+                    "type": "boolean",
+                    "default": false
+                },
+                "tracker_id": {
+                    "title": "Tracker id",
+                    "description": "The selected service",
+                    "type": "string",
+                    "x-nullable": true
                 }
             }
         },
@@ -5120,6 +5139,11 @@
                 "test_mode": {
                     "title": "Test mode",
                     "description": "Specified whether the object was created with a carrier in test mode",
+                    "type": "boolean"
+                },
+                "pending": {
+                    "title": "Pending",
+                    "description": "Specified whether the shipment hasn't been picked up or is in an unknown state",
                     "type": "boolean"
                 }
             }
