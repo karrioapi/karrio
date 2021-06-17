@@ -71,10 +71,10 @@ purplship.aramex==2021.3
 purplship.australiapost==2021.3
 purplship.canadapost==2021.5.3
 purplship.canpar==2021.3
-purplship.dhl-express==2021.5
+purplship.dhl-express==2021.6rc0
 purplship.dhl-universal==2021.3.1
 purplship.dicom==2021.3
-purplship.fedex==2021.6rc0
+purplship.fedex==2021.6rc1
 purplship.purolator==2021.6rc2
 purplship.royalmail==2021.3
 purplship.sendle==2021.3

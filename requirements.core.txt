@@ -13,10 +13,10 @@ purplship.aramex
 purplship.australiapost
 purplship.canadapost
 purplship.canpar
-purplship.dhl-express
+purplship.dhl-express==2021.6rc0
 purplship.dhl-universal
 purplship.dicom
-purplship.fedex==2021.6rc0
+purplship.fedex==2021.6rc1
 purplship.purolator==2021.6rc2
 purplship.royalmail
 purplship.sendle
