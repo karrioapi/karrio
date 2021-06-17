@@ -17,6 +17,7 @@ class SurchargeAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
             'fields': (
                 'carriers',
+                'carrier_accounts',
                 'services',
                 'discount_range',
                 'freight_range',

@@ -14,6 +14,7 @@ from purpleserver.core.models import Entity, uuid
 from purpleserver.core.views.references import REFERENCE_MODELS
 from purpleserver.core.datatypes import RateResponse, Rate
 from purpleserver.core.serializers import CARRIERS
+from purpleserver.providers.models import Carrier
 
 logger = logging.getLogger(__name__)
 CARRIER_SERVICES = [REFERENCE_MODELS["services"][name] for name in sorted(REFERENCE_MODELS["services"].keys())]
@@ -51,12 +52,17 @@ class Surcharge(Entity):
         """
     )
     carriers = MultiChoiceField(
-        models.CharField(max_length=50, choices=CARRIERS), null=True, blank=True,  help_text="""
+        models.CharField(max_length=50, choices=CARRIERS), null=True, blank=True, help_text="""
         The list of carriers you want to apply the surcharge to.
         <br/>
         Note that by default, the surcharge is applied to all carriers
         """
     )
+    carrier_accounts = models.ManyToManyField(Carrier, blank=True, help_text="""
+        The list of carrier accounts you want to apply the surcharge to.
+        <br/>
+        Note that by default, the surcharge is applied to all carrier accounts
+        """)
     services = MultiChoiceField(
         models.CharField(max_length=100, choices=SERVICES), null=True, blank=True, help_text="""
         The list of services you want to apply the surcharge to.
@@ -86,9 +92,13 @@ class Surcharge(Entity):
     def apply_charge(self, response: RateResponse) -> RateResponse:
         def apply(rate: Rate) -> Rate:
             applicable = []
+            carrier_ids = [c.carrier_id for c in self.carrier_accounts.all()]
 
             if any(self.carriers or []):
                 applicable.append(rate.carrier_name in self.carriers)
+
+            if any(carrier_ids):
+                applicable.append(rate.carrier_id in carrier_ids)
 
             if any(self.services or []):
                 applicable.append(rate.service in self.services)
@@ -100,13 +110,14 @@ class Surcharge(Entity):
                 applicable.append(rate.total_charge in cast(NumericRange, self.freight_range))
 
             if any(applicable) and all(applicable):
-                logger.debug('applying broker surcharge to rates')
+                logger.debug('applying broker surcharge to rate')
 
                 amount = NF.decimal(
                     self.amount
                     if self.surcharge_type == 'AMOUNT' else
                     (rate.total_charge * (cast(float, self.amount) / 100))
                 )
+                base_charge = NF.decimal(rate.base_charge + amount)
                 total_charge = NF.decimal(rate.total_charge + amount)
                 extra_charges = (rate.extra_charges + [
                     ChargeDetails(
@@ -118,6 +129,7 @@ class Surcharge(Entity):
 
                 return Rate(**{
                     **DP.to_dict(rate),
+                    'base_charge': base_charge,
                     'total_charge': total_charge,
                     'extra_charges': extra_charges
                 })

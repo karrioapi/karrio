@@ -16,13 +16,17 @@ def register_rate_post_processing(*args, **kwargs):
 
 
 def apply_custom_surcharges(context: Context, result):
+    _filters = tuple()
+
     if importlib.util.find_spec('purpleserver.orgs') is not None:
-        charges = models.Surcharge.objects.filter(
+        _filters += (
             Q(active=True, org__id=getattr(context.org, 'id', None))
-            | Q(active=True, org=None)
+            | Q(active=True, org=None),
         )
     else:
-        charges = models.Surcharge.objects.filter(active=True)
+        _filters += (Q(active=True),)
+
+    charges = models.Surcharge.objects.filter(*_filters)
 
     return functools.reduce(
         lambda cummulated_result, charge: charge.apply_charge(cummulated_result),

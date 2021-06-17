@@ -207,7 +207,7 @@ RATING_RESPONSE = {
       "test_mode": True
     },
     {
-      "base_charge": 101.83,
+      "base_charge": 102.83,
       "carrier_id": "canadapost",
       "carrier_name": "canadapost",
       "carrier_ref": ANY,
@@ -299,7 +299,7 @@ RATING_WITH_PERCENTAGE_RESPONSE = {
       "test_mode": True
     },
     {
-      "base_charge": 101.83,
+      "base_charge": 104.11,
       "carrier_id": "canadapost",
       "carrier_name": "canadapost",
       "carrier_ref": ANY,
