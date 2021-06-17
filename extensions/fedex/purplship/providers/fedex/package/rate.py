@@ -17,8 +17,8 @@ from fedex_lib.rate_service_v28 import (
     RequestedPackageLineItem,
     Dimensions,
 )
-from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, SF, DF
-from purplship.core.units import Packages, Options, Services, WeightUnit, CompleteAddress
+from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, DF
+from purplship.core.units import Packages, Options, Services, CompleteAddress
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
 from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets
 from purplship.providers.fedex.error import parse_error_response
@@ -70,9 +70,9 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
         )
         for s in shipment_rate.Surcharges + shipment_rate.Taxes
     ]
-    estimated_delivery = DF.date(rate.DeliveryTimestamp, "%Y-%m-%d %H:%M:%S")
+    estimated_delivery = DF.date(rate.DeliveryTimestamp)
     transit = (
-        (estimated_delivery - datetime.now()).days
+        ((estimated_delivery - datetime.now()).days or 1)
         if estimated_delivery is not None
         else None
     )
