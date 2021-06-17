@@ -72,9 +72,8 @@ def _extract_rate(detail_node: Element, settings: Settings) -> Optional[RateDeta
     ]
     estimated_delivery = DF.date(rate.DeliveryTimestamp)
     transit = (
-        ((estimated_delivery - datetime.now()).days or 1)
-        if estimated_delivery is not None
-        else None
+        ((estimated_delivery.date() - datetime.today().date()).days or None)
+        if estimated_delivery is not None else None
     )
 
     return RateDetails(
