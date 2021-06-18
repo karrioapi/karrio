@@ -3,7 +3,7 @@
 {% block title %} | Tracking - {{ tracker.tracking_number }}{% endblock %}
 
 {% block root %}
-  <section class="hero is-fullheight">
+  <section class="hero is-fullheight p-2">
 
     <!-- Main content -->
     <div class="container">
@@ -16,7 +16,7 @@
         <div class="card-content">
 
           <p class="has-text-centered pb-4">
-            <strong class="tag is-{{carrier_name}} is-medium">{{ carrier_label }}</strong>
+            <img src="{% static 'carriers/' %}{{ carrier_name }}_icon.svg" width="60" alt="{{ carrier_label }}" />
           </p>
 
           <p class="subtitle has-text-centered is-6">
