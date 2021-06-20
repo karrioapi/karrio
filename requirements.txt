@@ -1,4 +1,4 @@
--f https://git.io/purplship
+-f https://git.io/purpleship
 aniso8601==7.0.0
 asgiref==3.3.4
 attrs==21.2.0
@@ -54,27 +54,27 @@ lxml-stubs==0.1.1
 MarkupSafe==2.0.1
 more-itertools==8.8.0
 packaging==20.9
-phonenumbers==8.12.24
+phonenumbers==8.12.25
 Pillow==8.2.0
 promise==2.3
-psycopg2-binary==2.8.6
+psycopg2-binary==2.9.1
 purplship==2021.6rc0
-purplship-server==2021.6rc2
-purplship-server.client==2021.6rc2
-purplship-server.core==2021.6rc2
-purplship-server.events==2021.6rc0
+purplship-server==2021.6rc3
+purplship-server.client==2021.6rc3
+purplship-server.core==2021.6rc3
+purplship-server.events==2021.6rc1
 purplship-server.graph==2021.6rc0
-purplship-server.manager==2021.6rc2
-purplship-server.pricing==2021.6rc2
-purplship-server.proxy==2021.6rc1
+purplship-server.manager==2021.6rc3
+purplship-server.pricing==2021.6rc3
+purplship-server.proxy==2021.6rc2
 purplship.aramex==2021.3
 purplship.australiapost==2021.3
-purplship.canadapost==2021.5.3
+purplship.canadapost==2021.6rc0
 purplship.canpar==2021.3
 purplship.dhl-express==2021.6rc0
 purplship.dhl-universal==2021.3.1
 purplship.dicom==2021.3
-purplship.fedex==2021.6rc1
+purplship.fedex==2021.6rc2
 purplship.purolator==2021.6rc2
 purplship.royalmail==2021.3
 purplship.sendle==2021.3
