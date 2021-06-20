@@ -235,6 +235,7 @@ QuoteMissingArgsError = """<messages xmlns="http://www.canadapost.ca/ws/messages
 
 RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>2004381</customer-number>
+    <contract-id>42708517</contract-id>
     <expected-mailing-date>2020-12-18</expected-mailing-date>
     <options>
         <option>
@@ -267,6 +268,7 @@ RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/r
 
 RateRequestUsingPackagePresetXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>2004381</customer-number>
+    <contract-id>42708517</contract-id>
     <parcel-characteristics>
         <weight>0.5</weight>
         <dimensions>

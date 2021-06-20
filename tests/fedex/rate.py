@@ -95,7 +95,6 @@ ParsedRateResponse = [
             ],
             "service": "fedex_first_overnight",
             "total_charge": 284.19,
-            "transit_days": 1,
         },
         {
             "base_charge": 229.15,
@@ -114,7 +113,6 @@ ParsedRateResponse = [
             ],
             "service": "fedex_priority_overnight",
             "total_charge": 265.42,
-            "transit_days": 1,
         },
         {
             "base_charge": 208.55,
@@ -133,7 +131,6 @@ ParsedRateResponse = [
             ],
             "service": "fedex_standard_overnight",
             "total_charge": 241.56,
-            "transit_days": 1,
         },
         {
             "base_charge": 195.2,
@@ -152,7 +149,6 @@ ParsedRateResponse = [
             ],
             "service": "fedex_2_day",
             "total_charge": 124.35,
-            "transit_days": 4,
         },
         {
             "base_charge": 124.7,
@@ -171,7 +167,6 @@ ParsedRateResponse = [
             ],
             "service": "fedex_express_saver",
             "total_charge": 31.77,
-            "transit_days": 5,
         },
         {
             "base_charge": 27.99,
@@ -190,7 +185,6 @@ ParsedRateResponse = [
             ],
             "service": "fedex_ground",
             "total_charge": 33.43,
-            "transit_days": 7,
         },
     ],
     [],
@@ -445,7 +439,6 @@ RateResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.o
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <DeliveryStation>YVRA </DeliveryStation>
                 <DeliveryDayOfWeek>FRI</DeliveryDayOfWeek>
-                <DeliveryTimestamp>2021-06-18T10:00:00</DeliveryTimestamp>
                 <CommitDetails>
                     <ServiceType>FIRST_OVERNIGHT</ServiceType>
                     <ServiceDescription>
@@ -750,7 +743,6 @@ RateResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.o
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <DeliveryStation>YVRA </DeliveryStation>
                 <DeliveryDayOfWeek>FRI</DeliveryDayOfWeek>
-                <DeliveryTimestamp>2021-06-18T12:00:00</DeliveryTimestamp>
                 <CommitDetails>
                     <ServiceType>PRIORITY_OVERNIGHT</ServiceType>
                     <ServiceDescription>
@@ -1055,7 +1047,6 @@ RateResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.o
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <DeliveryStation>YVRA </DeliveryStation>
                 <DeliveryDayOfWeek>FRI</DeliveryDayOfWeek>
-                <DeliveryTimestamp>2021-06-18T17:00:00</DeliveryTimestamp>
                 <CommitDetails>
                     <ServiceType>STANDARD_OVERNIGHT</ServiceType>
                     <ServiceDescription>
@@ -1360,7 +1351,6 @@ RateResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.o
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <DeliveryStation>YVRA </DeliveryStation>
                 <DeliveryDayOfWeek>MON</DeliveryDayOfWeek>
-                <DeliveryTimestamp>2021-06-21T17:00:00</DeliveryTimestamp>
                 <CommitDetails>
                     <ServiceType>FEDEX_2_DAY</ServiceType>
                     <ServiceDescription>
@@ -1683,7 +1673,6 @@ RateResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.o
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <DeliveryStation>YVRA </DeliveryStation>
                 <DeliveryDayOfWeek>TUE</DeliveryDayOfWeek>
-                <DeliveryTimestamp>2021-06-22T17:00:00</DeliveryTimestamp>
                 <CommitDetails>
                     <ServiceType>FEDEX_EXPRESS_SAVER</ServiceType>
                     <ServiceDescription>
@@ -2005,7 +1994,6 @@ RateResponseXml = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.o
                 </ServiceDescription>
                 <PackagingType>YOUR_PACKAGING</PackagingType>
                 <DeliveryDayOfWeek>THU</DeliveryDayOfWeek>
-                <DeliveryTimestamp>2021-06-24T23:59:00</DeliveryTimestamp>
                 <CommitDetails>
                     <ServiceType>FEDEX_GROUND</ServiceType>
                     <ServiceDescription>

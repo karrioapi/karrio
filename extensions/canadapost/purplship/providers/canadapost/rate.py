@@ -95,7 +95,7 @@ def rate_request(
 
     request = mailing_scenario(
         customer_number=settings.customer_number,
-        contract_id=None,
+        contract_id=settings.contract_id,
         promo_code=None,
         quote_type=None,
         expected_mailing_date=options.shipment_date,

@@ -114,7 +114,7 @@ def rate_request(
             ShipTimestamp=DF.date(options.shipment_date or datetime.now()),
             DropoffType="REGULAR_PICKUP",
             ServiceType=(service.value if service is not None else None),
-            PackagingType=PackagingType[packages.package_type].value,
+            PackagingType=PackagingType[packages.package_type or 'your_packaging'].value,
             VariationOptions=None,
             TotalWeight=FedexWeight(
                 Units=packages.weight.unit,
