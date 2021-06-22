@@ -1,8 +1,8 @@
 
-# Purplship Server Documentation
+# purplship Server Documentation
 
-Purplship server is a self-hosted Multi-carrier Shipping API based on [Django](https://www.djangoproject.com/)
-and [Purplship SDK](https://sdk.purplship.com).
+purplship server is a self-hosted Multi-carrier Shipping API based on [Django](https://www.djangoproject.com/)
+and [purplship SDK](https://sdk.purplship.com).
 
 ## Guides
 
@@ -13,6 +13,6 @@ and [Purplship SDK](https://sdk.purplship.com).
 ## Resources
 
 - [Community on Discord](https://discord.gg/kXEa3UMRHd)
-- [Issue trackers](https://github.com/Purplship/purplship-server/issues)
-- [Puprlship blog](https://blog.purplship.com).
-- [@Purplship](https://twitter.com/purplship) on Twitter.
+- [Issue trackers](https://github.com/purplship/purplship-server/issues)
+- [puprlship blog](https://blog.purplship.com).
+- [@PurplShip](https://twitter.com/PurplShip) on Twitter.

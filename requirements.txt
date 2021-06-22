@@ -1,4 +1,4 @@
--f https://git.io/purpleship
+-f https://git.io/purplship
 aniso8601==7.0.0
 asgiref==3.3.4
 attrs==21.2.0
