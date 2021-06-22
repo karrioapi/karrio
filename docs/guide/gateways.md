@@ -72,17 +72,6 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | `carrier_id` | `str` | 
 
 
-#### BoxKnight Settings `[carrier_name = boxknight]`
-
-| Name | Type | Description 
-| --- | --- | --- |
-| `username` | `str` | **required**
-| `password` | `str` | **required**
-| `id` | `str` | 
-| `test` | `bool` | 
-| `carrier_id` | `str` | 
-
-
 #### Canada Post Settings `[carrier_name = canadapost]`
 
 | Name | Type | Description 
@@ -156,15 +145,15 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | `carrier_id` | `str` | 
 
 
-#### Purolator Courier Settings `[carrier_name = purolator_courier]`
+#### Purolator Settings `[carrier_name = purolator]`
 
 | Name | Type | Description 
 | --- | --- | --- |
 | `username` | `str` | **required**
 | `password` | `str` | **required**
 | `account_number` | `str` | **required**
-| `user_token` | `str` | **required**
 | `language` | `str` | 
+| `user_token` | `str` | 
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
@@ -235,6 +224,9 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | --- | --- | --- |
 | `username` | `str` | **required**
 | `password` | `str` | **required**
+| `mailer_id` | `str` | 
+| `customer_registration_id` | `str` | 
+| `logistics_manager_mailer_id` | `str` | 
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
@@ -246,6 +238,9 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | --- | --- | --- |
 | `username` | `str` | **required**
 | `password` | `str` | **required**
+| `mailer_id` | `str` | 
+| `customer_registration_id` | `str` | 
+| `logistics_manager_mailer_id` | `str` | 
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
@@ -271,7 +266,6 @@ carrier_gateway = purplship.gateway["carrier_name"].create(...)
 | `id` | `str` | 
 | `test` | `bool` | 
 | `carrier_id` | `str` | 
-
 
 
 !!! note ""

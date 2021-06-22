@@ -1,16 +1,17 @@
 # Introduction
 
 <p>
-    <a href="https://github.com/Purplship/Purplship/actions"><img src="https://github.com/Purplship/Purplship/workflows/puprlship-sdk/badge.svg" alt="CI" style="max-width:100%;"></a>
-    <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" data-canonical-src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" style="max-width:100%;"></a>
+    <a href="https://github.com/purplship/purplship/actions"><img src="https://github.com/purplship/purplship/workflows/purplship-sdk/badge.svg" alt="CI" style="max-width:100%;"></a>
+    <a href="https://www.gnu.org/licenses/lgpl-3.0" rel="nofollow"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" data-canonical-src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" style="max-width:100%;"></a>
     <a href="https://github.com/python/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" style="max-width:100%;"></a>
-    <a href="https://codecov.io/gh/Purplship/Purplship"><img src="https://codecov.io/gh/Purplship/Purplship/branch/main/graph/badge.svg" alt="codecov" style="max-width:100%;"></a>
+    <a href="https://codecov.io/gh/purplship/purplship"><img src="https://codecov.io/gh/purplship/purplship/branch/main/graph/badge.svg?token=D07fio4Dn6"/></a>
+    <a href="https://www.codacy.com/gh/purplship/purplship/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purplship/purplship&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41"></a>
 </p>
 
-## What is Purplship?
+## What is purplship?
 
 
-Puprlship is a modern development kit that simplifies the integration of shipping carriers services into an app.
+purplship is a modern development kit that simplifies the integration of shipping carriers services into an app.
 
 The key features are:
 
@@ -20,7 +21,7 @@ The key features are:
 - **Custom carrier**: A framework to integrate a shipping carrier services within minutes
 
 
-*For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/PurplShip/purplship-server).*
+*For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/purplship/purplship-server).*
 
 
 ## Requirements
@@ -30,7 +31,7 @@ Python 3.7+
 ## Installation
 
 ```bash
-# Install Purplship
+# Install purplship
 pip install purplship
 
 # Install carrier extensions
@@ -48,12 +49,14 @@ pip install purplship.canadapost
     - `purplship.dhl-universal`
     - `purplship.dicom`
     - `purplship.fedex`
-    - `purplship.purolator-courier`
+    - `purplship.purolator`
     - `purplship.royalmail`
     - `purplship.sendle`
     - `purplship.sf-express`
+    - `purplship.tnt`
     - `purplship.ups`
     - `purplship.usps`
+    - `purplship.usps-international`
     - `purplship.yanwen`
     - `purplship.yunexpress`
 
@@ -148,7 +151,7 @@ print(rates)
 ## License
 
 This project is licensed under the terms of the `LGPL v3` license.
-Please see [LICENSE.md](https://github.com/Purplship/Purplship/blob/main/LICENSE) for licensing details.
+Please see [LICENSE.md](https://github.com/purplship/purplship/blob/main/LICENSE) for licensing details.
 
 
 ## Authors

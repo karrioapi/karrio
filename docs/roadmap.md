@@ -239,7 +239,4 @@ we are constantly identifying things that can be abstracted and automated.
 
 - Document carrier specific getting started
 
-- Document purplship integration options
-> e.g: hide the library behind a thing gRPC service
-
 - Document each carrier integration with a light architecture decision record

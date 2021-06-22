@@ -97,27 +97,3 @@ request = purplship.Address.validate(
 
 tracking_details_list, messages = request.from_(carrier_gateway).parse()
 ```
-
-???+ check "Tracking output"
-
-    ```python
-    print(tracking_details_list)
-    # [
-    #     TrackingDetails(
-    #         carrier_name="canadapost",
-    #         carrier_id="canadapost",
-    #         tracking_number="7023210039414604",
-    #         events=[
-    #             TrackingEvent(
-    #                 date="2011-04-04",
-    #                 description="Order information received by Canada Post",
-    #                 location="",
-    #                 code="INDUCTION",
-    #                 time="13:34",
-    #                 signatory="",
-    #             )
-    #         ],
-    #         delivered=None,
-    #     )
-    # ]
-    ```

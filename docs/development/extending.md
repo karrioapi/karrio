@@ -2,9 +2,9 @@
 
 The question we are most asked is: **How to add a custom carrier?**
 
-We have experimented and studied approximately ~25 shipping carriers API/web services to design the Purplship structure as is.
+We have experimented and studied approximately ~25 shipping carriers API/web services to design the purplship structure as is.
 
-The good news is that making adding a custom carrier easy fits perfectly in Purplship vision.
+The good news is that making adding a custom carrier easy fits perfectly in purplship vision.
 
 !!! caution
     To integrate a custom carrier at this stage, you will need:
@@ -23,8 +23,8 @@ The good news is that making adding a custom carrier easy fits perfectly in Purp
     1. Generate Python data types from the carrier API schemas using the type generators bellow
     2. Package the generated data types as a library in [purplship-carriers](https://github.com/PurplShip/purplship-carriers)
     
-1. Create a Purplship extension package
-    1. Create a new Purplship extension by copying [.templates/carrier](https://github.com/PurplShip/purplship/tree/main/.templates/carrier)
+1. Create a purplship extension package
+    1. Create a new purplship extension by copying [.templates/carrier](https://github.com/PurplShip/purplship/tree/main/.templates/carrier)
         into [extensions/[carrier-name]](https://github.com/PurplShip/purplship/tree/main/extensions)
     
     2. Rename all instance for [carrier] to the appropriate carrier name you are integrating. This must be done for files
@@ -42,37 +42,37 @@ The good news is that making adding a custom carrier easy fits perfectly in Purp
 
 ### Extension anatomy 
 
-Considering the vision we aimed to achieve with Purplship, the codebase has been modularized with a clear separation of
+Considering the vision we aimed to achieve with purplship, the codebase has been modularized with a clear separation of
 concerns to decouple clearly the carrier integration from the integration abstraction. Additionally, each carrier
 integration is done in an isolated self-contained package.
 
 As a result, we have a very modular ecosystem where one can only select the carrier integrations of interest without
 carrying the whole codebase.
 
-**Most importantly, this flexibility allows the integration of additional carrier services under the Purplship umbrella.**
+**Most importantly, this flexibility allows the integration of additional carrier services under the purplship umbrella.**
 
 !!! info
-    Purplship makes shipping API integration easy for a single carrier and in a multi-carrier scenario, the benefit
+    purplship makes shipping API integration easy for a single carrier and in a multi-carrier scenario, the benefit
     is exponential.
  
 
 #### Module convention
 
-Two modules are required to create a Purplship extension.
+Two modules are required to create a purplship extension.
 
 !!! abstract "`purplship.mappers.[carrier_name]`"
-    This is where the Purplship abstract classes are implemented. Also, the Metadata require to identified
+    This is where the purplship abstract classes are implemented. Also, the Metadata require to identified
     the extension is also provided there.
     
     > on runtime, purplship retrieves all mappers by going trought the `purplship.mappers` modules
 
 !!! abstract "`purplship.providers.[carrier_name]`"
-    This is where the mapping between Purplship Unified API data is mapped on the carrier data type corresponding requests
+    This is where the mapping between purplship Unified API data is mapped on the carrier data type corresponding requests
     
 #### extension signature
 
-The Mapper is the cornerstone of Purplship's abstraction. A `Metadata` declared at `purplship.mappers.[carrier_name].__init__`
-specifies the integration classes required to define a Purplship compatible extension.
+The Mapper is the cornerstone of purplship's abstraction. A `Metadata` declared at `purplship.mappers.[carrier_name].__init__`
+specifies the integration classes required to define a purplship compatible extension.
 
 ```text
 from purplship.core.metadata import Metadata
@@ -150,7 +150,7 @@ The mapper function implementations consists of instantiating carrier specific r
 === "Mapper"
 
     ```python
-    # Import Purplship unified API models
+    # Import purplship unified API models
     from purplship.core.models import PickupRequest
     
     # Import requirements from the DHL generated data types library (py-dhl) 
@@ -271,7 +271,7 @@ The mapper function implementations consists of instantiating carrier specific r
 
 ### Generated schema data types
 
-To keep to robustness and simplify the maintenance of the codebase, In Purplship, we use Python data types reflecting
+To keep to robustness and simplify the maintenance of the codebase, In purplship, we use Python data types reflecting
 the schemas of carriers we want to integrate.
 That said, defining every schema object's structure can be tedious, long and unproductive. Therefore, code generators
 are used to generate Python data types based of the schema format definition.
@@ -305,7 +305,7 @@ to define yours.
 #### Multi requests
 
 Generally, the carrier web services expose one API endpoint to accomplish most operations describe supported by
-the Purplship unified interface. In some case, more than one API call are required to fulfil certain operation.
+the purplship unified interface. In some case, more than one API call are required to fulfil certain operation.
 
 ##### Abstraction
 
