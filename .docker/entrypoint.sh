@@ -11,11 +11,18 @@ if not any(get_user_model().objects.all()):
    get_user_model().objects.create_superuser('$ADMIN_EMAIL', '$ADMIN_PASSWORD')
 " | purplship shell) || exit
 
+
 # Start services
-set -e # turn on bash's job control
-trap 'kill 0' INT
+if [[ "$DETACHED_WORKER" == "False" ]];
+then
+	set -e # turn on bash's job control
+	trap 'kill 0' INT
 
-gunicorn --config gunicorn-cfg.py purpleserver.asgi -k uvicorn.workers.UvicornWorker &
-purplship run_huey -w $BACKGROUND_WORKERS &
+	gunicorn --config gunicorn-cfg.py purpleserver.asgi -k uvicorn.workers.UvicornWorker &
+	/bin/bash ./worker.sh &
 
-wait -n
+	wait -n
+
+else
+	gunicorn --config gunicorn-cfg.py purpleserver.asgi -k uvicorn.workers.UvicornWorker
+fi

@@ -4,7 +4,8 @@ import importlib.util
 from purpleserver.settings.base import *
 from purpleserver.settings.email import *
 from purpleserver.settings.constance import *
-from purpleserver.settings.tasks import *
+from purpleserver.settings.workers import *
+from purpleserver.settings.cache import *
 
 
 if importlib.util.find_spec('purpleserver.graph') is not None:

@@ -26,6 +26,7 @@ setup(
             'django-picklefield',
             'django-email-verification',
             'django-cors-headers',
+            'django-redis',
             'drf-api-tracking',
             'drf-yasg',
             'gunicorn',
