@@ -79,6 +79,7 @@ PURPLSHIP_CONF = [
 
 PURPLSHIP_APPS = [cfg['app'] for cfg in PURPLSHIP_CONF]
 PURPLSHIP_URLS = [cfg['urls'] for cfg in PURPLSHIP_CONF if 'urls' in cfg]
+MULTI_ORGANIZATIONS = importlib.util.find_spec('purpleserver.orgs') is not None
 
 
 BASE_APPS = [

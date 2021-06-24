@@ -4,6 +4,7 @@ from django.urls import path
 from django.http import HttpResponse
 from django.template import loader
 from django.db.models import Q
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from rest_framework.request import Request
 
@@ -13,7 +14,7 @@ import purpleserver.manager.models as manager
 
 FEATURE_FLAGS = dict(
     ADDRESS_AUTO_COMPLETE=any(config.GOOGLE_CLOUD_API_KEY or ""),
-    MULTI_ORGANIZATIONS=importlib.util.find_spec('purpleserver.orgs') is not None
+    MULTI_ORGANIZATIONS=settings.MULTI_ORGANIZATIONS
 )
 ENTITY_ACCESS_VIEWS = {
     '/api_logs/': core.APILog,
@@ -24,7 +25,7 @@ ENTITY_ACCESS_VIEWS = {
 @login_required(login_url='/login')
 def index(request: Request, *args, **kwargs):
 
-    if FEATURE_FLAGS['MULTI_ORGANIZATIONS'] and any(k in request.path for k, _ in ENTITY_ACCESS_VIEWS.items()):
+    if settings.MULTI_ORGANIZATIONS and any(k in request.path for k, _ in ENTITY_ACCESS_VIEWS.items()):
         model = next((m for k, m in ENTITY_ACCESS_VIEWS.items() if k in request.path))
         user_key = 'created_by' if hasattr(model, 'created_by') else 'user'
         orgs = getattr(
@@ -37,7 +38,7 @@ def index(request: Request, *args, **kwargs):
         request.org = orgs.first() if orgs.exists() else getattr(request, 'org', None)
 
     token = TokenSerializer.retrieve_token(request)
-    if FEATURE_FLAGS['MULTI_ORGANIZATIONS']:
+    if settings.MULTI_ORGANIZATIONS:
         request.org = token.organization
 
     context = dict(

@@ -17,11 +17,35 @@ class SignUpForm(UserCreationForm):
         fields = ("email", "full_name")
 
     def save(self, commit=True):
-        user = super().save(commit)
+        user = super().save(commit=False)
+
         if commit and settings.EMAIL_ENABLED:
+            user.is_active = False
             send_email(user)
 
+        if settings.MULTI_ORGANIZATIONS:
+            from purpleserver.orgs.models import Organization
+            org = Organization.objects.create(
+                name=user.full_name,
+                slug=user.full_name.replace(" ", ""),
+                is_active=False
+            )
+            # Set as organization user
+            owner = org.add_user(user, is_admin=True)
+            # Set as organization owner
+            org.change_owner(owner)
+            org.save()
+
+        if commit:
+            user.save()
+
         return user
+
+
+class SignUp(generic.CreateView):
+    form_class = SignUpForm
+    success_url = reverse_lazy('registration_done')
+    template_name = 'registration/signup.html'
 
 
 class LoginForm(AuthenticationForm):
@@ -40,12 +64,6 @@ class LoginForm(AuthenticationForm):
 
 class LogIn(LoginView):
     form_class = LoginForm
-
-
-class SignUp(generic.CreateView):
-    form_class = SignUpForm
-    success_url = reverse_lazy('registration_done')
-    template_name = 'registration/signup.html'
 
 
 class RegistrationDoneView(TemplateView):

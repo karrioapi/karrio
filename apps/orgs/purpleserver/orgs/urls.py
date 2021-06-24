@@ -6,5 +6,5 @@ from organizations.backends import invitation_backend
 
 
 urlpatterns = [
-    path('invitations/', include(invitation_backend().get_urls())),
+    path('invite/', include(invitation_backend().get_urls())),
 ]

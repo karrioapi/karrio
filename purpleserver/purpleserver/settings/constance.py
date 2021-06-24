@@ -7,7 +7,7 @@ from purpleserver.settings.email import (
     EMAIL_HOST,
     EMAIL_PORT,
     EMAIL_PAGE_DOMAIN,
-    EMAIL_FROM_ADDRESS
+    EMAIL_FROM_ADDRESS,
 )
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
