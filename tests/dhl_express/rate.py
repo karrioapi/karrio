@@ -100,6 +100,8 @@ RatePayload = {
             "length": 10,
             "width": 3,
             "weight": 4.0,
+            "weight_unit": "LB",
+            "dimension_unit": "IN",
             "is_document": True,
         }
     ],
@@ -312,8 +314,8 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
             <PaymentCountryCode>CA</PaymentCountryCode>
             
             
-            <DimensionUnit>IN</DimensionUnit>
-            <WeightUnit>LB</WeightUnit>
+            <DimensionUnit>CM</DimensionUnit>
+            <WeightUnit>KG</WeightUnit>
             <NumberOfPieces>1</NumberOfPieces>
             <ShipmentWeight>5</ShipmentWeight>
             <Pieces>

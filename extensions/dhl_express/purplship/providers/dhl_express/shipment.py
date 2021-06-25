@@ -207,11 +207,11 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
                         ScheduleB=None,
                         ECCN=None,
                         Weight=WeightType(
-                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB'])[weight_unit.name],
+                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'KG'])[weight_unit.name],
                             WeightUnit=DHLWeightUnit[weight_unit.name].value
                         ),
                         GrossWeight=WeightType(
-                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'LB'])[weight_unit.name],
+                            Weight=Weight(item.weight, WeightUnit[item.weight_unit or 'KG'])[weight_unit.name],
                             WeightUnit=DHLWeightUnit[weight_unit.name].value
                         ),
                         License=None,
