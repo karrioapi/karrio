@@ -223,3 +223,15 @@ def allow_model_id(model_paths: []):
         return type(serializer.__name__, (ModelIdSerializer,), {})
 
     return _decorator
+
+
+def make_fields_optional(serializer: Type[ModelSerializer]):
+    _name = f"Partial{serializer.__name__}"
+
+    class _Meta(serializer.Meta):
+        extra_kwargs = {
+            **getattr(serializer.Meta, 'extra_kwargs', {}),
+            **{field.name: {'required': False} for field in serializer.Meta.model._meta.fields}
+        }
+
+    return type(_name, (serializer,), dict(Meta=_Meta))

@@ -2,6 +2,7 @@ import logging
 import importlib
 from django.db.models import Q
 from django.db.utils import ProgrammingError
+from django.conf import settings
 from django.contrib.auth import mixins, get_user_model
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.middleware import AuthenticationMiddleware as BaseAuthenticationMiddleware
@@ -45,7 +46,7 @@ class JWTAuthentication(BaseJWTAuthentication):
         """
         Attempts to find and return an organization using the given validated token.
         """
-        if importlib.util.find_spec('purpleserver.orgs') is not None:
+        if settings.MULTI_ORGANIZATIONS:
             try:
                 from purpleserver.orgs.models import Organization
 
@@ -99,7 +100,7 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
         """
         Attempts to find and return an organization using the given validated token.
         """
-        if (importlib.util.find_spec('purpleserver.orgs') is not None):
+        if settings.MULTI_ORGANIZATIONS:
             try:
                 from purpleserver.orgs.models import Organization
                 org_id = request.META.get('HTTP_X_ORG_ID') or request.COOKIES.get('org_id')

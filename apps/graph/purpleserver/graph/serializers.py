@@ -1,10 +1,17 @@
 import typing
 from django.db import transaction
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from purplship.core.utils import DP
 from purpleserver.serializers import (
-    ModelSerializer, Serializer, save_one_to_one_data, save_many_to_many_data, owned_model_serializer, Context
+    ModelSerializer,
+    Serializer,
+    save_one_to_one_data,
+    save_many_to_many_data,
+    owned_model_serializer,
+    make_fields_optional,
+    Context
 )
 import purpleserver.core.serializers as serializers
 import purpleserver.core.validators as validators
@@ -13,18 +20,6 @@ import purpleserver.manager.models as manager
 import purpleserver.graph.models as graph
 
 User = get_user_model()
-
-
-def apply_optional_fields(serializer: typing.Type[ModelSerializer]):
-    _name = f"Partial{serializer.__name__}"
-
-    class _Meta(serializer.Meta):
-        extra_kwargs = {
-            **getattr(serializer.Meta, 'extra_kwargs', {}),
-            **{field.name: {'required': False} for field in serializer.Meta.model._meta.fields}
-        }
-
-    return type(_name, (serializer,), dict(Meta=_Meta))
 
 
 class UserModelSerializer(ModelSerializer):
@@ -36,6 +31,18 @@ class UserModelSerializer(ModelSerializer):
             field: {'read_only': True} for field in ['is_staff', 'last_login', 'date_joined']
         }
         fields = ['email', 'full_name', 'is_active', 'is_staff', 'last_login', 'date_joined']
+
+    @transaction.atomic
+    def update(self, instance, data: dict, **kwargs):
+        user = super().update(instance, data)
+
+        # Set all organization where user is owner inactive
+        if data.get('is_active') == False and settings.MULTI_ORGANIZATIONS:
+            from purpleserver.orgs import models as orgs
+            user_orgs = orgs.Organization.objects.filter(owner__organization_user__user__id=user.id)
+            user_orgs.update(is_active=False)
+
+        return user
 
 
 @owned_model_serializer
@@ -64,7 +71,7 @@ class CommodityModelSerializer(ModelSerializer):
 class CustomsModelSerializer(ModelSerializer):
     NESTED_FIELDS = ['commodities']
 
-    commodities = apply_optional_fields(CommodityModelSerializer)(many=True, allow_null=True, required=False)
+    commodities = make_fields_optional(CommodityModelSerializer)(many=True, allow_null=True, required=False)
 
     class Meta:
         model = manager.Customs
@@ -105,9 +112,9 @@ class ParcelModelSerializer(validators.PresetSerializer, ModelSerializer):
 
 @owned_model_serializer
 class TemplateModelSerializer(ModelSerializer):
-    address = apply_optional_fields(AddressModelSerializer)(required=False)
-    customs = apply_optional_fields(CustomsModelSerializer)(required=False)
-    parcel = apply_optional_fields(ParcelModelSerializer)(required=False)
+    address = make_fields_optional(AddressModelSerializer)(required=False)
+    customs = make_fields_optional(CustomsModelSerializer)(required=False)
+    parcel = make_fields_optional(ParcelModelSerializer)(required=False)
 
     class Meta:
         model = graph.Template
@@ -220,6 +227,6 @@ ConnectionModelSerializer = type('ConnectionModelSerializer', (ConnectionModelSe
 })
 
 PartialConnectionModelSerializer = type('PartialConnectionModelSerializer', (ConnectionModelSerializerBase,), {
-    _name: apply_optional_fields(_serializer)(required=False)
+    _name: make_fields_optional(_serializer)(required=False)
     for _name, _serializer in create_carrier_model_serializers(True).items()
 })

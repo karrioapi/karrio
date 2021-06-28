@@ -1,6 +1,6 @@
 import pydoc
 import graphene
-from graphene_django.rest_framework.mutation import SerializerMutation
+from graphene_django.rest_framework import mutation
 from django.conf import settings
 
 from purpleserver.serializers import save_many_to_many_data, SerializerDecorator
@@ -9,7 +9,7 @@ import purpleserver.graph.serializers as serializers
 import purpleserver.graph.extension.base.types as types
 
 
-class _SerializerMutation(SerializerMutation):
+class SerializerMutation(mutation.SerializerMutation):
     class Meta:
         abstract = True
 
@@ -25,7 +25,7 @@ class _SerializerMutation(SerializerMutation):
         return {'data': data, 'partial': False, 'context': info.context}
 
 
-class CreateConnection(_SerializerMutation):
+class CreateConnection(SerializerMutation):
 
     class Meta:
         model_operations = ("create",)
@@ -33,7 +33,7 @@ class CreateConnection(_SerializerMutation):
         serializer_class = serializers.ConnectionModelSerializer
 
 
-class UpdateConnection(_SerializerMutation):
+class UpdateConnection(SerializerMutation):
 
     class Meta:
         model_operations = ("update",)
@@ -41,20 +41,20 @@ class UpdateConnection(_SerializerMutation):
         serializer_class = serializers.PartialConnectionModelSerializer
 
 
-class CreateTemplate(_SerializerMutation):
+class CreateTemplate(SerializerMutation):
 
     class Meta:
         model_operations = ("create",)
         convert_choices_to_enum = False
-        serializer_class = serializers.apply_optional_fields(serializers.TemplateModelSerializer)
+        serializer_class = serializers.make_fields_optional(serializers.TemplateModelSerializer)
 
 
-class UpdateTemplate(_SerializerMutation):
+class UpdateTemplate(SerializerMutation):
 
     class Meta:
         model_operations = ("update",)
         convert_choices_to_enum = False
-        serializer_class = serializers.apply_optional_fields(serializers.TemplateModelSerializer)
+        serializer_class = serializers.make_fields_optional(serializers.TemplateModelSerializer)
 
     @classmethod
     def get_serializer_kwargs(cls, root, info, **input):
