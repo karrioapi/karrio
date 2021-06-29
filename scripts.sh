@@ -78,10 +78,10 @@ from django.contrib.auth import get_user_model
 from purpleserver.tenants.models import Client
 with tenant_context(Client.objects.get(schema_name='public')):
   if not any(get_user_model().objects.all()):
-     get_user_model().objects.create_superuser('root@domain.com', 'demo')
+     get_user_model().objects.create_superuser('root@example.com', 'demo')
 with tenant_context(Client.objects.get(schema_name='purplship')):
   if not any(get_user_model().objects.all()):
-     get_user_model().objects.create_superuser('admin@domain.com', 'demo')
+     get_user_model().objects.create_superuser('admin@example.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
   else
@@ -89,7 +89,7 @@ with tenant_context(Client.objects.get(schema_name='purplship')):
     (echo "
 from django.contrib.auth import get_user_model
 if not any(get_user_model().objects.all()):
-   get_user_model().objects.create_superuser('admin@domain.com', 'demo')
+   get_user_model().objects.create_superuser('admin@example.com', 'demo')
 " | purplship shell) > /dev/null 2>&1;
 
     (echo "from django.contrib.auth import get_user_model; from purpleserver.user.models import Token; Token.objects.create(user=get_user_model().objects.first(), key='key_3d601f1394b2ee95f412567c29d599a6')" | purplship shell) > /dev/null 2>&1;
