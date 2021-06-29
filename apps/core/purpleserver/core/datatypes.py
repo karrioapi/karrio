@@ -200,7 +200,6 @@ class Shipment:
     meta: dict = None
     id: str = None
     created_at: str = None
-    archived: bool = None
     test_mode: bool = None
     messages: List[Message] = JList[Message]
 

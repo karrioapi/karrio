@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 setup(
       name='purplship-server.events',
-      version='2021.6-rc1',
+      version='2021.6-rc4',
       description='Multi-carrier shipping API Events module',
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/PurplShip/purplship-server',
-      author='Purplship',
+      author='purplship',
       author_email='danielk.developer@gmail.com',
       license='Apache License Version 2.0',
       packages=find_packages("."),

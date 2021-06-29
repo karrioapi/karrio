@@ -237,7 +237,6 @@ class Shipment(OwnedEntity):
     label = models.TextField(max_length=None, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
-    archived = models.BooleanField(null=False, default=False)
 
     customs = models.ForeignKey('Customs', on_delete=models.SET_NULL, blank=True, null=True)
 

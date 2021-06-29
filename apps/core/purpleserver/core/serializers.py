@@ -33,6 +33,7 @@ LABEL_TYPES = [(c.name, c.name) for c in list(LabelType)]
 class ShipmentStatus(Enum):
     created = 'created'
     purchased = 'purchased'
+    cancelled = 'cancelled'
     shipped = 'shipped'
     transit = 'in-transit'
     delivered = 'delivered'
@@ -588,7 +589,6 @@ class ShipmentContent(Serializer):
     """)
     test_mode = BooleanField(required=True, help_text="Specified whether it was created with a carrier in test mode")
     messages = Message(required=False, many=True, default=[], help_text="The list of note or warning messages")
-    archived = BooleanField(required=False, default=False, help_text="The shipment is archived state")
     tracker_id = CharField(required=False, allow_blank=True, allow_null=True, help_text="The selected service")
 
 

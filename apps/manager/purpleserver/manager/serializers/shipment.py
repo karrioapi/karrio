@@ -172,8 +172,10 @@ class ShipmentCancelSerializer(Shipment):
                 )
             )
 
-        instance.archived = True
-        instance.save(update_fields=['archived'])
+        instance.status = ShipmentStatus.cancelled.value
+        instance.save(update_fields=['status'])
+        remove_shipment_tracker(instance)
+
         return response
 
 
@@ -185,12 +187,18 @@ def reset_related_shipment_rates(shipment: Optional[models.Shipment]):
         shipment.save()
 
 
+def remove_shipment_tracker(shipment: models.Shipment):
+    if any(shipment.tracker.all()):
+        shipment.tracker.all().delete()
+
+
+
+
 def create_shipment_tracker(shipment: Optional[models.Shipment], context):
     rate_provider = ((shipment.meta or {}).get('rate_provider') or shipment.carrier_name)
+    carrier = shipment.selected_rate_carrier
 
-    if rate_provider == shipment.carrier_name:
-        carrier = shipment.selected_rate_carrier
-    elif rate_provider in MODELS:
+    if (rate_provider != shipment.carrier_name) and rate_provider in MODELS:
         carrier = MODELS[rate_provider].access_by(context).filter(test=shipment.test_mode).first()
 
     if carrier is not None:

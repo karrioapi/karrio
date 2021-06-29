@@ -66,7 +66,7 @@ class ShipmentFilters(filters.FilterSet):
 
     class Meta:
         model = models.Shipment
-        fields = ['test_mode', 'status', 'archived']
+        fields = ['test_mode', 'status']
 
 
 class ShipmentMode(serializers.Serializer):
@@ -86,15 +86,12 @@ class ShipmentList(GenericAPIView):
         _filters = tuple()
         query_params = getattr(self.request, 'query_params', {})
         carrier_name = query_params.get('carrier_name')
-        archived = query_params.get('archived')
 
         if carrier_name is not None:
             _filters += (
                 Q(meta__rate_provider=carrier_name) |
                 Q(**{f'selected_rate_carrier__{carrier_name}settings__isnull': False}),
             )
-        if archived is None:
-            _filters += (Q(archived=False),)
 
         return queryset.filter(*_filters)
 
@@ -157,7 +154,7 @@ class ShipmentDetail(APIView):
         """
         Void a shipment with the associated label.
         """
-        shipment = models.Shipment.access_by(request).get(pk=pk, archived=False)
+        shipment = models.Shipment.access_by(request).get(pk=pk)
 
         if shipment.status not in [ShipmentStatus.purchased.value, ShipmentStatus.created.value]:
             raise PurplShipApiException(
@@ -191,7 +188,9 @@ class ShipmentRates(APIView):
         """
         Refresh the list of the shipment rates
         """
-        shipment = models.Shipment.access_by(request).get(pk=pk, archived=False)
+        shipment = models.Shipment.access_by(request)\
+            .exclude(status=ShipmentStatus.cancelled.value)\
+            .get(pk=pk)
 
         rate_response: RateResponse = SerializerDecorator[RateSerializer](
             data=ShipmentData(shipment).data, context=request).save(test=shipment.test_mode).instance
@@ -236,7 +235,9 @@ class ShipmentOptions(APIView):
 
         And many more, check additional options available in the [reference](#operation/all_references).
         """
-        shipment = models.Shipment.access_by(request).get(pk=pk, archived=False)
+        shipment = models.Shipment.access_by(request)\
+            .exclude(status=ShipmentStatus.cancelled.value)\
+            .get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -267,7 +268,9 @@ class ShipmentCustoms(APIView):
         """
         Add the customs declaration for the shipment if non existent.
         """
-        shipment = models.Shipment.access_by(request).get(pk=pk, archived=False)
+        shipment = models.Shipment.access_by(request)\
+            .exclude(status=ShipmentStatus.cancelled.value)\
+            .get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -302,7 +305,9 @@ class ShipmentParcels(APIView):
         """
         Add a parcel to an existing shipment for a multi-parcel shipment.
         """
-        shipment = models.Shipment.access_by(request).get(pk=pk, archived=False)
+        shipment = models.Shipment.access_by(request)\
+            .exclude(status=ShipmentStatus.cancelled.value)\
+            .get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(
@@ -328,7 +333,9 @@ class ShipmentPurchase(APIView):
         """
         Select your preferred rates to buy a shipment label.
         """
-        shipment = models.Shipment.access_by(request).get(pk=pk, archived=False)
+        shipment = models.Shipment.access_by(request)\
+            .exclude(status=ShipmentStatus.cancelled.value)\
+            .get(pk=pk)
 
         if shipment.status == ShipmentStatus.purchased.value:
             raise PurplShipApiException(

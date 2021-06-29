@@ -160,7 +160,6 @@ RETURNED_FAILED_CANCEL_VALUE = (
 
 SHIPPING_RESPONSE = {
     "id": ANY,
-    "archived": None,
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",

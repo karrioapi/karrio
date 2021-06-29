@@ -268,7 +268,6 @@ SHIPMENT_RATES = {
 
 SHIPMENT_RESPONSE = {
     "id": ANY,
-    "archived": False,
     "status": "created",
     "carrier_name": None,
     "carrier_id": None,
@@ -419,7 +418,6 @@ RETURNED_CANCEL_VALUE = (
 
 PURCHASED_SHIPMENT = {
     "id": ANY,
-    "archived": False,
     "status": "purchased",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
