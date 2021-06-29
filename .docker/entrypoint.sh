@@ -29,3 +29,11 @@ then
 else
 	gunicorn --config gunicorn-cfg.py purpleserver.asgi -k uvicorn.workers.UvicornWorker
 fi
+
+
+docker run -d \
+  --name pship --rm \
+  -e DEBUG_MODE=True \
+  -e ADMIN_PASSWORD=$PASS \
+  --link=db:db -p 5002:5002 \
+  purplship/purplship-server:2021.6rc4
