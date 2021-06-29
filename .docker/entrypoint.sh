@@ -6,9 +6,12 @@ purplship collectstatic --clear --noinput || exit
 
 # Setup Default super admin
 (echo "
+from decouple import config
 from django.contrib.auth import get_user_model
 if not any(get_user_model().objects.all()):
-   get_user_model().objects.create_superuser('$ADMIN_EMAIL', '$ADMIN_PASSWORD')
+   ADMIN_EMAIL = config('ADMIN_EMAIL')
+   ADMIN_PASSWORD = config('ADMIN_PASSWORD')
+   get_user_model().objects.create_superuser(ADMIN_EMAIL, ADMIN_PASSWORD)
 " | purplship shell) || exit
 
 
