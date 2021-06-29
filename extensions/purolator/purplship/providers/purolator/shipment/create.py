@@ -190,8 +190,9 @@ def _shipment_request(
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=payload.recipient.federal_tax_id
-                    or payload.recipient.state_tax_id,
+                    TaxNumber=(
+                        payload.recipient.federal_tax_id or payload.recipient.state_tax_id
+                    ),
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
@@ -209,51 +210,57 @@ def _shipment_request(
                     PiecesInformation=ArrayOfPiece(
                         Piece=[
                             Piece(
-                                Weight=PurolatorWeight(
-                                    Value=package.weight.map(MeasurementOptions).value,
-                                    WeightUnit=PurolatorWeightUnit[
-                                        package.weight_unit.value
-                                    ].value,
-                                )
-                                if package.weight.value
-                                else None,
-                                Length=PurolatorDimension(
-                                    Value=package.length.value,
-                                    DimensionUnit=PurolatorDimensionUnit[
-                                        package.dimension_unit.value
-                                    ].value,
-                                )
-                                if package.length.value
-                                else None,
-                                Width=PurolatorDimension(
-                                    Value=package.width.value,
-                                    DimensionUnit=PurolatorDimensionUnit[
-                                        package.dimension_unit.value
-                                    ].value,
-                                )
-                                if package.width.value
-                                else None,
-                                Height=PurolatorDimension(
-                                    Value=package.height.value,
-                                    DimensionUnit=PurolatorDimensionUnit[
-                                        package.dimension_unit.value
-                                    ].value,
-                                )
-                                if package.height.value
-                                else None,
+                                Weight=(
+                                    PurolatorWeight(
+                                        Value=package.weight.map(MeasurementOptions).value,
+                                        WeightUnit=PurolatorWeightUnit[
+                                            package.weight_unit.value
+                                        ].value,
+                                    )
+                                    if package.weight.value else None
+                                ),
+                                Length=(
+                                    PurolatorDimension(
+                                        Value=package.length.map(MeasurementOptions).value,
+                                        DimensionUnit=PurolatorDimensionUnit[
+                                            package.dimension_unit.value
+                                        ].value,
+                                    )
+                                    if package.length.value else None
+                                ),
+                                Width=(
+                                    PurolatorDimension(
+                                        Value=package.width.map(MeasurementOptions).value,
+                                        DimensionUnit=PurolatorDimensionUnit[
+                                            package.dimension_unit.value
+                                        ].value,
+                                    )
+                                    if package.width.value else None
+                                ),
+                                Height=(
+                                    PurolatorDimension(
+                                        Value=package.height.map(MeasurementOptions).value,
+                                        DimensionUnit=PurolatorDimensionUnit[
+                                            package.dimension_unit.value
+                                        ].value,
+                                    )
+                                    if package.height.value else None
+                                ),
                                 Options=None,
                             )
                             for package in packages
                         ]
                     ),
                     DangerousGoodsDeclarationDocumentIndicator=None,
-                    OptionsInformation=ArrayOfOptionIDValuePair(
-                        OptionIDValuePair=[
-                            OptionIDValuePair(ID=key, Value=value)
-                            for key, value in option_ids
-                        ]
-                    )
-                    if any(option_ids) else None,
+                    OptionsInformation=(
+                        ArrayOfOptionIDValuePair(
+                            OptionIDValuePair=[
+                                OptionIDValuePair(ID=key, Value=value)
+                                for key, value in option_ids
+                            ]
+                        )
+                        if any(option_ids) else None
+                    ),
                 ),
                 InternationalInformation=InternationalInformation(
                     DocumentsOnlyIndicator=is_document,
