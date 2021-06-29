@@ -57,6 +57,11 @@ class PackagePresets(Flag):
     fedex_pak = fedex_padded_pak
 
 
+class MeasurementOptions(Enum):
+    min_in = 1
+    min_cm = 1
+
+
 class LabelType(Flag):
     PDF_4x6 = ('PDF', 'STOCK_4X6')
     PDF_4x6_75 = ('PDF', 'STOCK_4X6.75')

@@ -20,7 +20,7 @@ from fedex_lib.rate_service_v28 import (
 from purplship.core.utils import create_envelope, apply_namespaceprefix, Element, Serializable, NF, XP, DF
 from purplship.core.units import Packages, Options, Services, CompleteAddress
 from purplship.core.models import RateDetails, RateRequest, Message, ChargeDetails
-from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets
+from purplship.providers.fedex.units import PackagingType, ServiceType, PackagePresets, MeasurementOptions
 from purplship.providers.fedex.error import parse_error_response
 from purplship.providers.fedex.utils import Settings
 
@@ -225,9 +225,9 @@ def rate_request(
                     ),
                     Dimensions=(
                         Dimensions(
-                            Length=package.length.value,
-                            Width=package.width.value,
-                            Height=package.height.value,
+                            Length=package.length.map(MeasurementOptions).value,
+                            Width=package.width.map(MeasurementOptions).value,
+                            Height=package.height.map(MeasurementOptions).value,
                             Units=package.dimension_unit.value,
                         )
                         if package.has_dimensions else None

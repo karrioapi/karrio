@@ -51,6 +51,7 @@ from purplship.providers.fedex.units import (
     LabelType,
     Incoterm,
     PurposeType,
+    MeasurementOptions,
 )
 
 
@@ -384,9 +385,9 @@ def shipment_request(
                     ),
                     Dimensions=(
                         FedexDimensions(
-                            Length=master_package.length.value,
-                            Width=master_package.width.value,
-                            Height=master_package.height.value,
+                            Length=master_package.length.map(MeasurementOptions).value,
+                            Width=master_package.width.map(MeasurementOptions).value,
+                            Height=master_package.height.map(MeasurementOptions).value,
                             Units=master_package.dimension_unit.value,
                         )
                         if master_package.has_dimensions else None
