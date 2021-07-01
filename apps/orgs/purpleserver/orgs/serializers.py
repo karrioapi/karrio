@@ -26,4 +26,7 @@ class OrganizationModelSerializer(ModelSerializer):
         if instance.organization_users.filter(is_admin=True, user__id=context.user.id).first() is None:
             raise Exception("User Not Authorized")
 
+        if 'name' in data and 'slug' not in data:
+            data.update(slug=data['name'].replace(" ", ""),)
+
         return super().update(instance, data)

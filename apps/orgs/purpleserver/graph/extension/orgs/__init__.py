@@ -6,7 +6,7 @@ import purpleserver.orgs.models as models
 
 
 class Query:
-    organizations = graphene.List(types.OrganizationType)
+    organizations = graphene.List(types.OrganizationType, is_active=graphene.Boolean(required=False))
     organization = graphene.Field(types.OrganizationType, id=graphene.String(required=True))
 
     def resolve_organization(self, info, **kwargs):

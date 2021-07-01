@@ -241,7 +241,7 @@ build_theme() {
 }
 
 build_dashboard() {
-  	cd "${ROOT:?}/webapp" || false &&
+  cd "${ROOT:?}/webapp" || false &&
 	if [[ "$*" == *-i* ]]; then
 		rm -rf node_modules; yarn
 	fi
@@ -262,8 +262,10 @@ build_js() {
 
 dev_webapp() {
   cd "${ROOT:?}/webapp" || false &&
-  rm -rf node_modules;
-  yarn && yarn build -w \
+	if [[ "$*" == *-i* ]]; then
+		rm -rf node_modules; yarn
+	fi
+  yarn build -w \
     --env postbuild="purplship collectstatic --noinput" \
     --output-path "${ROOT:?}/apps/client/purpleserver/client/static/client/"
   cd -

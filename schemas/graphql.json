@@ -66,7 +66,18 @@
           "enumValues": null,
           "fields": [
             {
-              "args": [],
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "is_active",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                }
+              ],
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
@@ -92,7 +103,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "Int",
+                      "name": "String",
                       "ofType": null
                     }
                   }
@@ -1388,7 +1399,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "UserType",
+                      "name": "OrganizationUserType",
                       "ofType": null
                     }
                   }
@@ -1407,6 +1418,22 @@
                 "ofType": {
                   "kind": "SCALAR",
                   "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "user",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -1618,7 +1645,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -1881,12 +1908,28 @@
                   "ofType": null
                 }
               }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "is_admin",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
             }
           ],
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "UserType",
+          "name": "OrganizationUserType",
           "possibleTypes": null
         },
         {
@@ -1992,7 +2035,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -2437,7 +2480,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -4157,7 +4200,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -6822,7 +6865,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -7160,7 +7203,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -7287,22 +7330,6 @@
               "description": "",
               "isDeprecated": false,
               "name": "test_mode",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": "",
-              "isDeprecated": false,
-              "name": "archived",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -7605,6 +7632,12 @@
               "description": "purchased",
               "isDeprecated": false,
               "name": "PURCHASED"
+            },
+            {
+              "deprecationReason": null,
+              "description": "cancelled",
+              "isDeprecated": false,
+              "name": "CANCELLED"
             },
             {
               "deprecationReason": null,
@@ -8187,7 +8220,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -8446,7 +8479,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -8710,7 +8743,7 @@
               "name": "user",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -8941,6 +8974,93 @@
           ],
           "kind": "OBJECT",
           "name": "LogType",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "last_login",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Designates whether the user can log into this admin site.",
+              "isDeprecated": false,
+              "name": "is_staff",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "date_joined",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "full_name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "",
+              "isDeprecated": false,
+              "name": "email",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "UserType",
           "possibleTypes": null
         },
         {
@@ -9229,7 +9349,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -9460,7 +9580,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -9643,7 +9763,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -9842,7 +9962,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -10009,7 +10129,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -10192,7 +10312,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -10359,7 +10479,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -10542,7 +10662,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -10741,7 +10861,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -10936,7 +11056,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -11103,7 +11223,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -11270,7 +11390,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -11437,7 +11557,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -11636,7 +11756,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -11835,7 +11955,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -12038,7 +12158,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -12241,7 +12361,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -12408,7 +12528,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -12575,7 +12695,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -12742,7 +12862,7 @@
               "name": "created_by",
               "type": {
                 "kind": "OBJECT",
-                "name": "UserType",
+                "name": "OrganizationUserType",
                 "ofType": null
               }
             },
@@ -12934,7 +13054,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -13173,7 +13293,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
@@ -13412,7 +13532,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "UserType",
+                  "name": "OrganizationUserType",
                   "ofType": null
                 }
               }
