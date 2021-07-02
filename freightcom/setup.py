@@ -25,15 +25,15 @@ dev_requirements = [
 
 setup(
     name="freightcom.extension",
-    version="2021.6rc1",
+    version="2021.6",
     description="Freightcom purplship extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Purplship/purplship-bridges/freightcom",
+    url="https://github.com/purplship/purplship-bridges/freightcom",
     license="LGPLv3",
     packages=find_namespace_packages(exclude=["tests*"]),
     install_requires=[
-        "purplship>=2021.5",
+        "purplship>=2021.6",
         "purplship-server.core",
     ],
     extras_require={"dev": dev_requirements},

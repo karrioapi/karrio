@@ -25,15 +25,15 @@ dev_requirements = [
 
 setup(
     name="eshipper.extension",
-    version="2021.6rc1",
+    version="2021.6",
     description="eShipper purplship extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Purplship/purplship-bridges/eshipper",
+    url="https://github.com/purplship/purplship-bridges/eshipper",
     license="LGPLv3",
     packages=find_namespace_packages(exclude=["tests*"]),
     install_requires=[
-        "purplship>=2021.5",
+        "purplship>=2021.6",
         "purplship-server.core",
     ],
     extras_require={"dev": dev_requirements},
