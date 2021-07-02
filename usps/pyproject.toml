@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.usps"
-version = "2021.6-rc"
+version = "2021.6"
 description = "USPS Web API Schemas Python Data Types library"
 repository="https://github.com/Purplship/purplship-carriers"
 homepage="https://github.com/Purplship/purplship-carriers/tree/master/usps"
