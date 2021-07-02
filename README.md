@@ -1,5 +1,5 @@
-# purplship-extension
+# purplship-bridges
 
-![PuprlShip Extension Tests](https://github.com/PurplShip/purplship-extension/workflows/PuprlShip%20Extension%20Tests/badge.svg)
+![puprlship-bridges](https://github.com/purplship/purplship/workflows/puprlship-bridges/badge.svg)
 
- PurplShip Extension packages
+ purplship 3rd party extensions

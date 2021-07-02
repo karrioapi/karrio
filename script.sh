@@ -63,8 +63,8 @@ _build() {
 }
 
 build() {
-  _build "${ROOT:?}/src/eshipper"
-  _build "${ROOT:?}/src/freightcom"
+  _build "${ROOT:?}/eshipper"
+  _build "${ROOT:?}/freightcom"
 }
 
 env:on || true
