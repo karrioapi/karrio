@@ -56,7 +56,8 @@ def _extract_pickup_details(
 def pickup_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[Pipeline]:
-    """Create a pickup request
+    """
+    Create a pickup request
     Steps
         1 - validate
         2 - create pickup
@@ -75,7 +76,8 @@ def pickup_request(
 def _schedule_pickup_request(
     payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
 ) -> Serializable[Envelope]:
-    """schedule_pickup_request create a serializable typed Envelope containing a SchedulePickUpRequest
+    """
+    Create a serializable typed Envelope containing a SchedulePickUpRequest
 
     Options:
         - LoadingDockAvailable

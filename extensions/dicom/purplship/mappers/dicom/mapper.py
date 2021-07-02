@@ -40,9 +40,6 @@ from purplship.mappers.dicom.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
-    
-
-
     # def create_rate_request(
     #     self, payload: RateRequest
     # ) -> Serializable:

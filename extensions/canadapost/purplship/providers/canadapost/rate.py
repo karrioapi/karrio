@@ -51,11 +51,7 @@ def _extract_quote(price_quote_node: Element, settings: Settings) -> RateDetails
         service=ServiceType(price_quote.service_code).name,
         base_charge=NF.decimal(price_quote.price_details.base or 0),
         total_charge=NF.decimal(price_quote.price_details.due or 0),
-<<<<<<< HEAD
-        discount=NF.decimal(sum([d.amount for d in discounts], 0.0)),
-=======
         discount=NF.decimal(discount),
->>>>>>> 177aeb9 (handle potential none rate adjustments)
         duties_and_taxes=NF.decimal(
             float(price_quote.price_details.taxes.gst.valueOf_ or 0)
             + float(price_quote.price_details.taxes.pst.valueOf_ or 0)

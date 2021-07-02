@@ -40,9 +40,6 @@ from purplship.mappers.canadapost.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
-    
-
-
     def create_rate_request(
         self, payload: RateRequest
     ) -> Serializable:
@@ -75,9 +72,6 @@ class Mapper(BaseMapper):
 
     def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable[str]:
         return shipment_cancel_request(payload, self.settings)
-
-    
-
 
     def parse_cancel_pickup_response(
         self, response: Deserializable[str]

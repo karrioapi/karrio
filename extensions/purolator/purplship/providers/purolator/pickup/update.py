@@ -42,7 +42,8 @@ def _extract_pickup_details(
 def pickup_update_request(
     payload: PickupUpdateRequest, settings: Settings
 ) -> Serializable[Pipeline]:
-    """Modify a pickup request
+    """
+    Modify a pickup request
     Steps
         1 - validate
         2 - modify pickup

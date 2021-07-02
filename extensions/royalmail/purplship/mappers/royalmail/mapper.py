@@ -44,9 +44,6 @@ from purplship.mappers.royalmail.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
-    
-
-
     # def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable:
     #     return address_validation_request(payload, self.settings)
     #

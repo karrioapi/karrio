@@ -44,9 +44,6 @@ from purplship.mappers.dhl_universal.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
-    
-
-
     # def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable:
     #     return address_validation_request(payload, self.settings)
     #
@@ -82,9 +79,6 @@ class Mapper(BaseMapper):
         self, payload: TrackingRequest
     ) -> Serializable:
         return tracking_request(payload, self.settings)
-
-    
-
 
     # def parse_address_validation_response(
     #     self, response: Deserializable
