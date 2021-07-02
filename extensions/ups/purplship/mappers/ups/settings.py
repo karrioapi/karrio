@@ -7,7 +7,6 @@ from purplship.providers.ups.utils import Settings as BaseSettings
 @attr.s(auto_attribs=True)
 class Settings(BaseSettings):
     """UPS connection settings."""
-
     username: str
     password: str
     access_license_number: str

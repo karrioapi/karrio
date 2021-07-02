@@ -1,4 +1,4 @@
-from typing import List, Tuple, cast
+from typing import List, Tuple
 from functools import partial
 from purolator_lib.tracking_service_1_2_2 import (
     TrackPackagesByPinRequest,
@@ -6,7 +6,6 @@ from purolator_lib.tracking_service_1_2_2 import (
     ArrayOfPIN,
     RequestContext,
     TrackingInformation,
-    Scan,
     Depot,
 )
 from purplship.core.models import (

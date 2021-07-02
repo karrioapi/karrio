@@ -1,7 +1,6 @@
-import logging
 import unittest
 import urllib.parse
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from purplship.core.utils import DP
 from purplship.core.models import RateRequest
 from purplship import Rating
@@ -179,7 +178,7 @@ RATE_REQUEST_XML = """<RateV4Request USERID="username">
 
 RATE_REQUEST = {"API": "RateV4", "XML": RATE_REQUEST_XML}
 
-RATE_RESPONSE_XML = f"""<?xml version="1.0" encoding="UTF-8"?>
+RATE_RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <RateV4Response>
   <Package ID="0">
     <ZipOrigination>44106</ZipOrigination>

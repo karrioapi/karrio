@@ -7,7 +7,7 @@ from usps_lib.evs_express_mail_intl_request import (
     ShippingContentsType,
     ItemDetailType,
 )
-from purplship.core.utils import Serializable, Element, XP, DF, SF, Location
+from purplship.core.utils import Serializable, Element, XP, DF, Location
 from purplship.core.units import Packages, Options, Weight, WeightUnit, CompleteAddress
 from purplship.core.models import (
     ShipmentRequest,

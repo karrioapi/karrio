@@ -62,7 +62,7 @@ PARSED_TRACKING_RESPONSE = [
 ]
 
 
-TRACKING_REQUEST = f"""<TrackFieldRequest USERID="username">
+TRACKING_REQUEST = """<TrackFieldRequest USERID="username">
     <Revision>1</Revision>
     <ClientIp>127.0.0.1</ClientIp>
     <SourceId>Purplship</SourceId>

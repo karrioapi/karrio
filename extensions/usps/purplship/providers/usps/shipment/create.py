@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from usps_lib.evs_response import eVSResponse, ExtraServiceType
+from usps_lib.evs_response import eVSResponse
 from usps_lib.evs_request import (
     eVSRequest,
     ImageParametersType,
@@ -9,12 +9,11 @@ from usps_lib.evs_request import (
     ExtraServicesType,
 )
 from purplship.core.errors import OriginNotServicedError, DestinationNotServicedError
-from purplship.core.units import Packages, Currency, Options, WeightUnit, Weight, Country
-from purplship.core.utils import Serializable, Element, Location, NF, XP
+from purplship.core.units import Packages, Options, WeightUnit, Weight, Country
+from purplship.core.utils import Serializable, Element, Location, XP
 from purplship.core.models import (
     ShipmentRequest,
     ShipmentDetails,
-    RateDetails,
     ChargeDetails,
     Message,
     Address,
@@ -22,7 +21,7 @@ from purplship.core.models import (
 )
 
 from purplship.providers.usps.units import (
-    LabelFormat, ServiceType, PackagingType, ServiceClassID, ShipmentOption, ContentType
+    LabelFormat, ServiceType, PackagingType, ShipmentOption, ContentType
 )
 from purplship.providers.usps.error import parse_error_response
 from purplship.providers.usps.utils import Settings

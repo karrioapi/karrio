@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "purplship.purolator"
-version = "2021.6-rc3"
+version = "2021.6"
 homepage="https://sdk.purplship.com"
 repository="https://github.com/Purplship/purplship"
 description = "Purplship - Purolator Shipping Extension"
@@ -17,7 +17,7 @@ classifiers=[
 
 [tool.poetry.dependencies]
 python = "^3.7"
-"purplship" = "^2021.2.2"
+"purplship" = "^2021.6"
 "carrier.purolator" = "^2020.4.1"
 
 [tool.poetry.dev-dependencies]

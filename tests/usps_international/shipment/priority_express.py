@@ -1,4 +1,3 @@
-import logging
 import unittest
 import urllib.parse
 from unittest.mock import patch

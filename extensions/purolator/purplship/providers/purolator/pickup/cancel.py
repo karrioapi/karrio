@@ -25,8 +25,7 @@ def parse_pickup_cancel_response(
             success=True,
             operation="Cancel Pickup",
         )
-        if not any(errors)
-        else None
+        if not any(errors) else None
     )
 
     return cancellation, errors

@@ -1,5 +1,4 @@
 import unittest
-import logging
 from unittest.mock import patch
 import purplship
 from purplship.core.utils import DP

@@ -21,8 +21,8 @@ puprlship is a modern development kit that simplifies the integration of shippin
 The key features are:
 
 - **Unified API**: A standardized set of models representing the common shipping data (`Address`, `Parcel`, `Shipment`...)
-- **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Pickup`, `Tracking`...) 
-- **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
+- **Intuitive API**: A library that abstracts and unifies the typical shipping API services (`Rating`, `Shipping`, `Tracking`...) 
+- **Multi-carrier**: Integrate purplship once and connect to multiple shipping carrier APIs
 - **Custom carrier**: A framework to integrate a shipping carrier services within hours instead of months
 
 
@@ -178,4 +178,4 @@ Please see [LICENSE.md](/LICENSE) for licensing details.
 ## Authors
 
 - **Daniel K.** | [@DanHK91](https://twitter.com/DanHK91) | [danielk.xyz](https://danielk.xyz/)
-- **Purplship Team** | hello@purplship.com | [purplship.com](https://purplship.com)
+- **purplship** | hello@purplship.com | [purplship.com](https://purplship.com)

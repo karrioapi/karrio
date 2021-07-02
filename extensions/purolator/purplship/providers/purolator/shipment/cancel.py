@@ -1,5 +1,4 @@
 from typing import Tuple, List
-from functools import partial
 from purolator_lib.shipping_service_2_1_3 import (
     VoidShipmentRequest,
     VoidShipmentResponse,
@@ -19,10 +18,7 @@ from purplship.providers.purolator.utils import Settings, standard_request_seria
 def parse_shipment_cancel_response(
     response: Element, settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    void_response = XP.build(VoidShipmentResponse, next(
-        iter(response.xpath(".//*[local-name() = $name]", name="VoidShipmentResponse")),
-        None
-    ))
+    void_response = XP.find("VoidShipmentResponse", response, VoidShipmentResponse, first=True)
     voided = void_response is not None and void_response.ShipmentVoided
     cancellation = ConfirmationDetails(
         carrier_id=settings.carrier_id,

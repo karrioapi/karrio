@@ -40,7 +40,8 @@ from purplship.mappers.dicom.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
-    """Request Mappers"""
+    
+
 
     # def create_rate_request(
     #     self, payload: RateRequest
@@ -75,7 +76,8 @@ class Mapper(BaseMapper):
     # def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable[str]:
     #     return shipment_cancel_request(payload, self.settings)
 
-    """Response Parsers"""
+    
+
 
     # def parse_cancel_pickup_response(
     #     self, response: Deserializable[str]

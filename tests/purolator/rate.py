@@ -218,7 +218,7 @@ PARSED_RATE_RESPONSE = [
 ]
 
 
-RATE_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
+RATE_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <soap:Header>
         <v2:RequestContext>
             <v2:Version>2.1</v2:Version>
@@ -296,7 +296,7 @@ RATE_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soa
 </soap:Envelope>
 """
 
-RATE_REQUEST_WITH_PRESET_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
+RATE_REQUEST_WITH_PRESET_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <soap:Header>
         <v2:RequestContext>
             <v2:Version>2.1</v2:Version>

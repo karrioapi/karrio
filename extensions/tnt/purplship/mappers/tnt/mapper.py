@@ -26,7 +26,8 @@ from purplship.mappers.tnt.settings import Settings
 class Mapper(BaseMapper):
     settings: Settings
 
-    """Request Mappers"""
+    
+
 
     # def create_rate_request(
     #     self, payload: RateRequest
@@ -43,7 +44,8 @@ class Mapper(BaseMapper):
     ) -> Serializable:
         return tracking_request(payload, self.settings)
 
-    """Response Parsers"""
+    
+
 
     # def parse_rate_response(
     #     self, response: Deserializable[str]

@@ -1,5 +1,4 @@
 import re
-import logging
 import unittest
 from unittest.mock import patch
 from purplship.core.utils import DP
@@ -142,7 +141,7 @@ RATE_REQUEST_XML = """<IntlRateV2Request USERID="username">
 
 RATE_REQUEST = {"API": "IntlRateV2", "XML": RATE_REQUEST_XML}
 
-RATE_RESPONSE_XML = f"""<?xml version="1.0" encoding="UTF-8"?>
+RATE_RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <IntlRateV2Response>
   <Package ID="0">
     <AreasServed>Please reference Express Mail for Areas Served.</AreasServed>

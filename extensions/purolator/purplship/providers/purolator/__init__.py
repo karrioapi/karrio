@@ -1,4 +1,3 @@
-from purplship.providers.purolator.utils import Settings
 from purplship.providers.purolator.rate import parse_rate_response, rate_request
 from purplship.providers.purolator.address import (
     parse_address_validation_response,

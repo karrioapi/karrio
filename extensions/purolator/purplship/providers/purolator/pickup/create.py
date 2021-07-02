@@ -32,17 +32,7 @@ from purplship.providers.purolator.units import PackagePresets
 def parse_pickup_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = XP.build(
-        SchedulePickUpResponse,
-        next(
-            iter(
-                response.xpath(
-                    ".//*[local-name() = $name]", name="SchedulePickUpResponse"
-                )
-            ),
-            None,
-        ),
-    )
+    reply = XP.find("SchedulePickUpResponse", response, SchedulePickUpResponse, first=True)
     pickup = (
         _extract_pickup_details(reply, settings)
         if reply is not None and reply.PickUpConfirmationNumber is not None
@@ -66,8 +56,7 @@ def _extract_pickup_details(
 def pickup_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[Pipeline]:
-    """
-    Create a pickup request
+    """Create a pickup request
     Steps
         1 - validate
         2 - create pickup
@@ -86,8 +75,7 @@ def pickup_request(
 def _schedule_pickup_request(
     payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
 ) -> Serializable[Envelope]:
-    """
-    schedule_pickup_request create a serializable typed Envelope containing a SchedulePickUpRequest
+    """schedule_pickup_request create a serializable typed Envelope containing a SchedulePickUpRequest
 
     Options:
         - LoadingDockAvailable

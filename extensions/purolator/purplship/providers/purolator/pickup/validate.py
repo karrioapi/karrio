@@ -20,8 +20,7 @@ from purplship.providers.purolator.units import PackagePresets
 def validate_pickup_request(
     payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
 ) -> Serializable[Envelope]:
-    """
-    validate_pickup_request create a serializable typed Envelope containing a ValidatePickUpRequest
+    """validate_pickup_request create a serializable typed Envelope containing a ValidatePickUpRequest
 
     Options:
         - LoadingDockAvailable

@@ -1,6 +1,4 @@
-import logging
 import unittest
-import urllib.parse
 from unittest.mock import patch
 import purplship
 from purplship.core.utils import DP

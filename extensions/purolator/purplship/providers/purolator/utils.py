@@ -4,8 +4,7 @@ from purplship.core.utils import Envelope, apply_namespaceprefix, XP
 
 
 class Settings(BaseSettings):
-    """UPS connection settings."""
-
+    """Purolator connection settings."""
     username: str
     password: str
     account_number: str
@@ -32,12 +31,15 @@ class Settings(BaseSettings):
 
 
 def standard_request_serializer(envelope: Envelope, version: str = "v2") -> str:
-    namespacedef_ = f'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:{version}="http://purolator.com/pws/datatypes/{version}"'
+    namespacedef_ = (
+        'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" '
+        f'xmlns:{version}="http://purolator.com/pws/datatypes/{version}"'
+    )
     envelope.ns_prefix_ = "soap"
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     envelope.Header.ns_prefix_ = envelope.ns_prefix_
-    [
+
+    for node in (envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_):
         apply_namespaceprefix(node, version)
-        for node in (envelope.Body.anytypeobjs_ + envelope.Header.anytypeobjs_)
-    ]
+
     return XP.export(envelope, namespacedef_=namespacedef_)

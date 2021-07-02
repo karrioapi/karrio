@@ -18,17 +18,7 @@ from purplship.providers.purolator.utils import Settings, standard_request_seria
 def parse_pickup_update_response(
     response: Element, settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
-    reply = XP.build(
-        ModifyPickUpResponse,
-        next(
-            iter(
-                response.xpath(
-                    ".//*[local-name() = $name]", name="ModifyPickUpResponse"
-                )
-            ),
-            None,
-        ),
-    )
+    reply = XP.find("ModifyPickUpResponse", response, ModifyPickUpResponse, first=True)
     pickup = (
         _extract_pickup_details(reply, settings)
         if reply is not None and reply.PickUpConfirmationNumber is not None
@@ -52,8 +42,7 @@ def _extract_pickup_details(
 def pickup_update_request(
     payload: PickupUpdateRequest, settings: Settings
 ) -> Serializable[Pipeline]:
-    """
-    Modify a pickup request
+    """Modify a pickup request
     Steps
         1 - validate
         2 - modify pickup

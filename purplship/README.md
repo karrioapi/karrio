@@ -25,9 +25,7 @@ The key features are:
 - **Multi-carrier**: Integrate Purplship once and connect to multiple shipping carrier APIs
 - **Custom carrier**: A framework to integrate a shipping carrier services within hours instead of months
 
-
 *For a complete shipping management REST API with a dashboard checkout [purplship-server](https://github.com/puprlship/purplship-server).*
-
 
 ## Requirements
 
